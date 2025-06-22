@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next"; // ✅ 追加
 import "./globals.css";
 
 // GoogleフォントをCSS変数として読み込む
@@ -29,6 +30,7 @@ export default function RootLayout({
     >
       <body>
         {children}
+        <SpeedInsights /> {/* ✅ ここに追加 */}
       </body>
     </html>
   );
