@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { SpeedInsights } from "@vercel/speed-insights/next"; // ✅ 追加
 import "./globals.css";
+import Header from "@/components/Header"; // ← ここ追加！
 
-// GoogleフォントをCSS変数として読み込む
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -29,8 +28,8 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
     >
       <body>
+        <Header /> {/* ← ここで表示させる */}
         {children}
-        <SpeedInsights /> {/* ✅ ここに追加 */}
       </body>
     </html>
   );
