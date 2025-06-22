@@ -3,7 +3,10 @@ import { getAllCasts } from "@/lib/getAllCasts";
 import CastCard from "@/components/cards/CastCard";
 
 export default async function CastListPage() {
-  const casts: Cast[] = await getAllCasts();
+  const casts: Cast[] = (await getAllCasts()).map(cast => ({
+    ...cast,
+    id: String(cast.id),
+  }));
 
   return (
     <div className="p-6">

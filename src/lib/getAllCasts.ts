@@ -1,22 +1,24 @@
 // src/lib/getAllCasts.ts
+
 export const getAllCasts = async () => {
-    const res = await fetch("http://localhost:1337/api/casts?populate=image");
-  
-    if (!res.ok) throw new Error("キャストの取得に失敗しました");
-  
-    const data = await res.json();
-  
-    return data.data.map((item: any) => {
-      const { customID, name, age, image } = item.attributes;
-      return {
-        id: item.id,
-        customID,
-        name,
-        age,
-        imageUrl: image?.data?.attributes?.url
-          ? `http://localhost:1337${image.data.attributes.url}`
-          : null,
-      };
-    });
-  };
-  
+  return [
+    {
+      id: 1,
+      customID: "test-1",
+      name: "テスト太郎",
+      age: 25,
+      height: 170,
+      weight: 60,
+      imageUrl: "",
+    },
+    {
+      id: 2,
+      customID: "test-2",
+      name: "テスト花子",
+      age: 22,
+      height: 160,
+      weight: 50,
+      imageUrl: "",
+    },
+  ];
+};
