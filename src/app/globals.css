@@ -1,5 +1,6 @@
-@import "tailwindcss/preflight"; /* ✅ v4 で base の代替 */
-@tailwind utilities;             /* ✅ utilities はそのまま使用可 */
+@tailwind base;       /* ✅ v4では preflight を明示的に import しない */
+@tailwind components;
+@tailwind utilities;  /* ✅ 必要に応じて追加 */
 
 /* 🎨 カスタムCSS変数とダークモード */
 :root {
