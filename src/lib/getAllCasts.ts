@@ -1,24 +1,27 @@
-// src/lib/getAllCasts.ts
+export interface Cast {
+  id: number;
+  name: string;
+  customID: string;
+}
 
-export const getAllCasts = async () => {
-  return [
-    {
-      id: 1,
-      customID: "test-1",
-      name: "テスト太郎",
-      age: 25,
-      height: 170,
-      weight: 60,
-      imageUrl: "",
-    },
-    {
-      id: 2,
-      customID: "test-2",
-      name: "テスト花子",
-      age: 22,
-      height: 160,
-      weight: 50,
-      imageUrl: "",
-    },
-  ];
+interface RawCast {
+  id: number;
+  name: string;
+  documentId: string;
+}
+
+export const getAllCasts = async (): Promise<Cast[]> => {
+  const res = await fetch(
+    "http://localhost:1337/api/casts?fields[0]=name&fields[1]=documentId"
+  );
+
+  if (!res.ok) throw new Error("キャストの取得に失敗しました");
+
+  const json: { data: RawCast[] } = await res.json();
+
+  return json.data.map((item) => ({
+    id: item.id,
+    name: item.name,
+    customID: item.documentId,
+  }));
 };
