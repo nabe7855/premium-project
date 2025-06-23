@@ -1,21 +1,29 @@
-import { Cast } from '@/types/cast';
-import { fetchFromStrapi } from './fetchFromStrapi';
+import { Cast, CastImage } from '@/types/cast';
+import { fetchFromStrapi } from '@/lib/fetchFromStrapi';
+
+type RawCast = {
+  id: number;
+  customID: string;
+  name: string;
+  age?: number;
+  height?: number;
+  weight?: number;
+  catchCopy?: string;
+  Image?: CastImage[];
+};
 
 export const getAllCasts = async (): Promise<Cast[]> => {
-  const response = await fetchFromStrapi('casts?populate=Image');
+  const res = await fetchFromStrapi('casts?populate=Image');
+  const rawData: RawCast[] = res.data;
 
-  const casts = response.data.map((item: any) => ({
+  return rawData.map((item) => ({
     id: item.id,
-    name: item.name,
     customID: item.customID,
-    age: item.age,
-    height: item.height,
-    weight: item.weight,
-    catchCopy: item.catchCopy,
-    Image: item.Image?.map((img: any) => ({
-      url: img.url,
-    })) || [],
+    name: item.name,
+    age: item.age ?? null,
+    height: item.height ?? null,
+    weight: item.weight ?? null,
+    catchCopy: item.catchCopy ?? '',
+    Image: item.Image ?? [],
   }));
-
-  return casts;
 };

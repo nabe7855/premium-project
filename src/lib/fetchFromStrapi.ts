@@ -1,18 +1,21 @@
 export const fetchFromStrapi = async (endpoint: string) => {
-    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL;
-    if (!baseUrl) {
-      throw new Error('❌ 環境変数 NEXT_PUBLIC_STRAPI_API_URL が設定されていません');
-    }
+    const API_URL = process.env.NEXT_PUBLIC_STRAPI_API_URL;
+    const TOKEN = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN_READ;
   
-    const res = await fetch(`${baseUrl}/api/${endpoint}`);
+    if (!API_URL) throw new Error('❌ STRAPI_API_URL が未定義です');
+  
+    const res = await fetch(`${API_URL}/api/${endpoint}`, {
+      headers: {
+        Authorization: `Bearer ${TOKEN}`,
+      },
+    });
   
     if (!res.ok) {
       const errorBody = await res.text();
-      console.error("❌ Strapiからの取得に失敗:", res.status, errorBody);
-      throw new Error("Strapi API fetch failed");
+      console.error('❌ Strapiからの取得に失敗:', res.status, errorBody);
+      throw new Error('Strapi API fetch failed');
     }
   
     const data = await res.json();
-    return data; // ✅ 必要な構造に応じてここは CastListPage 側で対応すればOK
+    return data;
   };
-  
