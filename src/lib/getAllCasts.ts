@@ -1,27 +1,21 @@
-export interface Cast {
-  id: number;
-  name: string;
-  customID: string;
-}
-
-interface RawCast {
-  id: number;
-  name: string;
-  documentId: string;
-}
+import { Cast } from '@/types/cast';
+import { fetchFromStrapi } from './fetchFromStrapi';
 
 export const getAllCasts = async (): Promise<Cast[]> => {
-  const res = await fetch(
-    "http://localhost:1337/api/casts?fields[0]=name&fields[1]=documentId"
-  );
+  const response = await fetchFromStrapi('casts?populate=Image');
 
-  if (!res.ok) throw new Error("キャストの取得に失敗しました");
-
-  const json: { data: RawCast[] } = await res.json();
-
-  return json.data.map((item) => ({
+  const casts = response.data.map((item: any) => ({
     id: item.id,
     name: item.name,
-    customID: item.documentId,
+    customID: item.customID,
+    age: item.age,
+    height: item.height,
+    weight: item.weight,
+    catchCopy: item.catchCopy,
+    Image: item.Image?.map((img: any) => ({
+      url: img.url,
+    })) || [],
   }));
+
+  return casts;
 };

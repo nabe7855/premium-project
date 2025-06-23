@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "@/components/Header"; // ← ここ追加！
+import Header from "@/components/Header";
+import Head from "next/head"; // ← 追加！
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,8 +28,11 @@ export default function RootLayout({
       lang="ja"
       className={`${geistSans.variable} ${geistMono.variable} bg-background text-foreground antialiased`}
     >
+      <Head>
+        <link rel="icon" href="/favicon.png" />
+      </Head>
       <body>
-        <Header /> {/* ← ここで表示させる */}
+        <Header />
         {children}
       </body>
     </html>

@@ -44,6 +44,7 @@ const CastCard: React.FC<CastCardProps> = ({
             alt={name}
             width={400}
             height={400}
+            priority 
             className="w-full h-auto object-cover"
             unoptimized
           />
