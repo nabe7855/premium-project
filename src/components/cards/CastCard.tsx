@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -38,17 +37,20 @@ const CastCard: React.FC<CastCardProps> = ({
   return (
     <Link href={`/cast/${customID}`}>
       <div className="bg-pink-50 rounded-2xl overflow-hidden shadow-lg max-w-xs mx-auto transition-transform hover:scale-105">
-        {imageUrl && (
-          <Image
-            src={imageUrl}
-            alt={name}
-            width={400}
-            height={400}
-            priority 
-            className="w-full h-auto object-cover"
-            unoptimized
-          />
-        )}
+        {/* ✅ 画像サイズ固定部分 */}
+        <div className="relative w-full aspect-[3/4] overflow-hidden">
+          {imageUrl && (
+            <Image
+              src={imageUrl}
+              alt={name}
+              fill
+              className="object-cover"
+              priority
+              unoptimized
+            />
+          )}
+        </div>
+
         <div className="p-4 text-center">
           <h2 className="text-pink-700 font-semibold text-lg">
             {name}
