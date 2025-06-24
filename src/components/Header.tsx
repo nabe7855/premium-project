@@ -20,7 +20,7 @@ const Header = () => {
   ];
 
   return (
-    <header className="bg-pink-50 text-pink-900 shadow-md border-b border-pink-100">
+    <header className="sticky top-0 z-50 bg-pink-50 text-pink-900 shadow-md border-b border-pink-100"> {/* ← 👈 修正済 */}
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* ロゴエリア */}
         <div className="flex items-center space-x-2">

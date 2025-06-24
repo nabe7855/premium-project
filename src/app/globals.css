@@ -1,10 +1,10 @@
-@tailwind base;       /* ✅ v4では preflight を明示的に import しない */
+@tailwind base;
 @tailwind components;
-@tailwind utilities;  /* ✅ 必要に応じて追加 */
+@tailwind utilities;
 
 /* 🎨 カスタムCSS変数とダークモード */
 :root {
-  --background: #ffffff;
+  --background: #fff1f2; /* ← ここを bg-pink-50 に相当する色に */
   --foreground: #171717;
 
   --color-background: var(--background);
@@ -16,13 +16,13 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #fff1f2; /* ← ダークモードでもピンクを維持 */
+    --foreground: #171717;
   }
 }
 
 body {
-  background: var(--background);
+  background: var(--background); /* ← 変数で指定されてるので上記が反映される */
   color: var(--foreground);
   font-family: var(--font-sans);
 }
