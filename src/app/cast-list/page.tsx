@@ -1,3 +1,4 @@
+// src/app/cast-list/page.tsx
 import { getAllCasts } from '@/lib/getAllCasts';
 import { Cast } from '@/types/cast';
 import CastCard from '@/components/cards/CastCard';
@@ -27,7 +28,7 @@ const CastListPage = async () => {
         {sortedCasts.map((cast) => (
           <CastCard
             key={cast.id}
-            slug={cast.slug} // ✅ 修正
+            slug={cast.slug}
             name={cast.name}
             catchCopy={cast.catchCopy}
             age={cast.age}
@@ -35,6 +36,7 @@ const CastListPage = async () => {
             weight={cast.weight}
             imageUrl={cast.imageUrl ?? '/no-image.png'}
             isNew={cast.isNew}
+            isReception={cast.isReception ?? false} // ✅ 忘れずに
           />
         ))}
       </div>

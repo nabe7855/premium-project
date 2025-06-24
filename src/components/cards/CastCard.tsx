@@ -1,5 +1,3 @@
-// CastCard.tsx
-
 "use client";
 
 import React from "react";
@@ -8,6 +6,7 @@ import Link from "next/link";
 
 interface CastCardProps {
   slug: string;
+  storeSlug?: string; // ✅ 任意プロパティに変更
   name: string;
   age: number;
   height: number;
@@ -15,10 +14,12 @@ interface CastCardProps {
   imageUrl: string | null;
   catchCopy?: string;
   isNew?: boolean;
+  isReception?: boolean;
 }
 
 const CastCard: React.FC<CastCardProps> = ({
   slug,
+  storeSlug, // ✅ 任意
   name,
   age,
   height,
@@ -27,9 +28,12 @@ const CastCard: React.FC<CastCardProps> = ({
   catchCopy,
   isNew,
 }) => {
+  // ✅ storeSlug があれば store パス、なければ /cast/slug にリンク
+  const href = storeSlug ? `/store/${storeSlug}/cast/${slug}` : `/cast/${slug}`;
+
   return (
     <Link
-      href={`/cast/${slug}`}
+      href={href}
       className="block rounded-xl overflow-hidden shadow-md hover:shadow-lg transition bg-white"
     >
       {/* ✅ 画像エリア */}
@@ -59,7 +63,9 @@ const CastCard: React.FC<CastCardProps> = ({
       {/* ✅ キャッチコピー */}
       <div className="text-center px-3 pt-3 pb-1">
         {catchCopy && (
-          <p className="text-sm text-pink-800 font-medium truncate">{catchCopy}</p>
+          <p className="text-sm text-pink-800 font-medium truncate">
+            {catchCopy}
+          </p>
         )}
       </div>
 
