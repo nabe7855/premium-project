@@ -22,14 +22,16 @@ const CastTabs = () => {
       <div className="flex gap-4 border-b pb-2">
         {tabs.map((tab) => (
           <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            className={`pb-1 border-b-2 ${
-              activeTab === tab.key ? "border-pink-500 text-pink-700" : "border-transparent text-gray-400"
-            }`}
-          >
-            {tab.label}
-          </button>
+          key={tab.key}
+          onClick={() => setActiveTab(tab.key)}
+          className={`flex-1 text-sm pb-1 border-b-2 text-center ${
+            activeTab === tab.key
+              ? "border-pink-500 text-pink-700"
+              : "border-transparent text-gray-400"
+          }`}
+        >
+          {tab.label}
+        </button>
         ))}
       </div>
 
