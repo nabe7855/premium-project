@@ -10,7 +10,7 @@ const Header = () => {
 
   const navItems = [
     { label: "ご案内", href: "/" },
-    { label: "セラピスト一覧", href: "/cast" },
+    { label: "セラピスト一覧", href: "/cast-list" },
     { label: "出勤スケジュール", href: "/schedule" },
     { label: "口コミ", href: "/reviews" },
     { label: "写メ日記", href: "/diary" },
