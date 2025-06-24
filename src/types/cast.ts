@@ -42,4 +42,15 @@ export interface Cast {
   isNew?: boolean;
   sexinessLevel?: number;
   isReception?: boolean;
+  stillwork: boolean;
+}
+
+
+export interface CastSummary {
+  id: number;
+  slug: string;  
+  name: string;
+  catchCopy: string;  
+  imageUrl: string | null;
+  stillwork: boolean;
 }

@@ -81,6 +81,7 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
+      stillwork: item.stillwork ?? false,
     };
   });
 };

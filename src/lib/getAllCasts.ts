@@ -77,6 +77,7 @@ export const getAllCasts = async (): Promise<Cast[]> => {
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
+      stillwork: item.stillwork ?? true,
     };
   });
 };

@@ -1,4 +1,3 @@
-// components/cast/CastHeader.tsx
 "use client";
 
 import Image from "next/image";
@@ -7,7 +6,7 @@ import { FaCamera, FaTwitter } from "react-icons/fa";
 interface CastHeaderProps {
   name: string;
   catchCopy?: string;
-  imageUrl: string;
+  imageUrl: string | null;
 }
 
 const CastHeader: React.FC<CastHeaderProps> = ({ name, catchCopy, imageUrl }) => {
@@ -18,7 +17,6 @@ const CastHeader: React.FC<CastHeaderProps> = ({ name, catchCopy, imageUrl }) =>
       </h2>
       <p className="text-sm text-gray-600 mt-1">{catchCopy}</p>
 
-      {/* ✅ 画像表示 */}
       <div className="relative w-40 h-52 mx-auto mt-4 rounded-lg overflow-hidden shadow-md bg-white">
         <Image
           src={imageUrl || "/no-image.png"}
@@ -26,10 +24,10 @@ const CastHeader: React.FC<CastHeaderProps> = ({ name, catchCopy, imageUrl }) =>
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover"
+          priority
         />
       </div>
 
-      {/* ✅ 写メ日記・SNSリンクボタン */}
       <div className="flex justify-center gap-4 mt-3">
         <button className="flex items-center gap-2 px-3 py-1 bg-pink-100 text-pink-700 text-sm rounded-full shadow hover:bg-pink-200">
           <FaCamera />
