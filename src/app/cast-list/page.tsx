@@ -27,7 +27,7 @@ const CastListPage = async () => {
         {sortedCasts.map((cast) => (
           <CastCard
             key={cast.id}
-            customID={cast.customID}
+            slug={cast.slug} // ✅ 修正
             name={cast.name}
             catchCopy={cast.catchCopy}
             age={cast.age}

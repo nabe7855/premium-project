@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 interface CastCardProps {
-  customID: string;
+  slug: string;
   name: string;
   age: number;
   height: number;
@@ -18,7 +18,7 @@ interface CastCardProps {
 }
 
 const CastCard: React.FC<CastCardProps> = ({
-  customID,
+  slug,
   name,
   age,
   height,
@@ -29,7 +29,7 @@ const CastCard: React.FC<CastCardProps> = ({
 }) => {
   return (
     <Link
-      href={`/cast/${customID}`}
+      href={`/cast/${slug}`}
       className="block rounded-xl overflow-hidden shadow-md hover:shadow-lg transition bg-white"
     >
       {/* ✅ 画像エリア */}

@@ -30,14 +30,14 @@ export interface CastSNS {
 // ✅ キャスト本体型（APIレスポンスに合わせて記述）
 export interface Cast {
   id: number;
-  customID: string;
+  slug: string; // ✅ 英語URL用 slug
   name: string;
   age: number;
   height: number;
   weight: number;
   catchCopy?: string;
-  imageUrl: string | null; // ← ❗ no-image対応済なら string でOK
-  galleryItems: GalleryItem[]; // ← JSON上の GalleryItem[] に一致
+  imageUrl: string | null;
+  galleryItems: GalleryItem[];
   sns?: CastSNS;
   isNew?: boolean;
   sexinessLevel?: number;

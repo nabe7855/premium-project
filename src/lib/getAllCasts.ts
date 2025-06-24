@@ -4,7 +4,7 @@ import qs from 'qs';
 // StrapiのAPIレスポンス型を定義
 interface StrapiCastItem {
   id: number;
-  customID: string;
+  slug: string;
   name: string;
   age: number;
   height: number;
@@ -64,7 +64,8 @@ export const getAllCasts = async (): Promise<Cast[]> => {
 
     return {
       id: item.id,
-      customID: item.customID,
+      slug: item.slug,
+      
       name: item.name,
       age: item.age,
       height: item.height,
