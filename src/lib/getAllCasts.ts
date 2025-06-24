@@ -14,6 +14,7 @@ interface StrapiCastItem {
   GalleryItem?: GalleryItem[];
   isNew?: boolean;
   sexinessLevel?: number;
+  stillwork?: boolean; // ✅ 追加（Boolean型）
 }
 
 interface StrapiResponse {
@@ -23,6 +24,11 @@ interface StrapiResponse {
 export const getAllCasts = async (): Promise<Cast[]> => {
   const query = qs.stringify(
     {
+      filters: {
+        stillwork: {
+          $eq: true, // ✅ stillwork が true のキャストのみ取得
+        },
+      },
       populate: {
         GalleryItem: true,
       },
