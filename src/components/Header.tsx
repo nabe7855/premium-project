@@ -23,12 +23,12 @@ const Header = () => {
     <header className="sticky top-0 z-50 bg-pink-50 text-pink-900 shadow-md border-b border-pink-100"> {/* ← 👈 修正済 */}
       <div className="max-w-6xl mx-auto flex items-center justify-between px-4 py-3">
         {/* ロゴエリア */}
-        <div className="flex items-center space-x-2">
-          <span className="text-2xl">🍓</span>
-          <h1 className="text-2xl font-extrabold tracking-wide text-pink-700">
+        <Link href="/store" className="flex items-center space-x-2" aria-label="店舗一覧へ移動">
+        <span className="text-2xl">🍓</span>
+        <h1 className="text-2xl font-extrabold tracking-wide text-pink-700">
             ストロベリーボーイズ
-          </h1>
-        </div>
+        </h1>
+        </Link>
 
         {/* 電話番号（PCのみ） */}
         <div className="hidden md:flex items-center space-x-2">
