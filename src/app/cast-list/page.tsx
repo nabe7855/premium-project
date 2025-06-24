@@ -12,12 +12,19 @@ const CastListPage = async () => {
     return <div>キャスト情報の取得に失敗しました。</div>;
   }
 
+  // ✅ isReception が true のキャストを最後に回す
+  const sortedCasts = [...casts].sort((a, b) => {
+    if (a.isReception && !b.isReception) return 1;
+    if (!a.isReception && b.isReception) return -1;
+    return 0;
+  });
+
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-pink-700">🍓 キャスト一覧</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
-        {casts.map((cast) => (
+        {sortedCasts.map((cast) => (
           <CastCard
             key={cast.id}
             customID={cast.customID}

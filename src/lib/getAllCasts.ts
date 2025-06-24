@@ -15,6 +15,8 @@ interface StrapiCastItem {
   isNew?: boolean;
   sexinessLevel?: number;
   stillwork?: boolean; // ✅ 追加（Boolean型）
+  isReception?: boolean;
+  
 }
 
 interface StrapiResponse {
@@ -73,6 +75,7 @@ export const getAllCasts = async (): Promise<Cast[]> => {
       sns,
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
+      isReception: item.isReception,
     };
   });
 };

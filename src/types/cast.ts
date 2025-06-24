@@ -41,4 +41,5 @@ export interface Cast {
   sns?: CastSNS;
   isNew?: boolean;
   sexinessLevel?: number;
+  isReception?: boolean;
 }
