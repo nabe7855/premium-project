@@ -1,10 +1,17 @@
-export default function CastDetailPage() {
-    return (
-      <div className="p-4">
-        <h1 className="text-2xl font-bold">
-          キャスト詳細ページ
-        </h1>
-      </div>
-    );
-  }
-  
+// app/store/[store]/cast/[slug]/page.tsx
+import CastHeader from "@/components/cast/CastHeader";
+import CastTabs from "@/components/cast/CastTabs";
+
+const CastDetailPage = () => {
+  return (
+    <div className="bg-pink-50 min-h-screen">
+      {/* ヘッダー（名前・画像など） */}
+      <CastHeader />
+
+      {/* タブエリア */}
+      <CastTabs />
+    </div>
+  );
+};
+
+export default CastDetailPage;
