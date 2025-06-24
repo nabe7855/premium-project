@@ -14,35 +14,23 @@ const CastListPage = async () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4">キャスト一覧</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {casts.map((cast) => {
-          // ✅ 最初の画像のURLを取得（formats.large優先 → 通常のurl）
-          const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL ?? '';
-          const image = cast.Image[0];
-          const imageUrl =
-            image?.formats?.large?.url
-              ? baseUrl + image.formats.large.url
-              : image?.url
-              ? baseUrl + image.url
-              : '';
+      <h1 className="text-2xl font-bold mb-4 text-pink-700">🍓 キャスト一覧</h1>
 
-          return (
-            <CastCard
-              key={cast.id}
-              customID={cast.customID}
-              name={cast.name}
-              catchCopy={cast.catchCopy ?? ''}
-              age={cast.age ?? null}
-              height={cast.height ?? null}
-              weight={cast.weight ?? null}
-              type=""
-              imageUrl={imageUrl}
-              reviewCount={0}
-              sns={{ line: '', twitter: '', instagram: '' }}
-            />
-          );
-        })}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
+        {casts.map((cast) => (
+          <CastCard
+            key={cast.id}
+            customID={cast.customID}
+            name={cast.name}
+            catchCopy={cast.catchCopy}
+            age={cast.age}
+            height={cast.height}
+            weight={cast.weight}
+            imageUrl={cast.imageUrl ?? '/no-image.png'}
+            //reviewCount={0}
+            sns={{ line: cast.sns?.line }}  // ✅ CastSNS 型に対応
+          />
+        ))}
       </div>
     </div>
   );

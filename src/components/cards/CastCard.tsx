@@ -1,107 +1,65 @@
 "use client";
 
-import Link from 'next/link';
-import Image from 'next/image';
-import { FaCommentDots } from "react-icons/fa";
-import { FaLine, FaTwitter, FaInstagram } from "react-icons/fa6";
+import React from "react";
+import Image from "next/image";
+import Link from "next/link";
+import { CastSNS } from "@/types/cast";
 
 interface CastCardProps {
   customID: string;
   name: string;
+  age: number;
+  height: number;
+  weight: number;
+  imageUrl: string | null;
   catchCopy?: string;
-  age?: number | null;
-  height?: number | null;
-  weight?: number | null;
-  type?: string;
-  imageUrl?: string;
-  reviewCount?: number;
-  sns?: {
-    line?: string;
-    twitter?: string;
-    instagram?: string;
-  };
+  //reviewCount?: number;
+  snsUrl?: string;
+  sns?: CastSNS;
+  //isNewcomer?: boolean;
+  //sexinessLevel?: number;
 }
 
 const CastCard: React.FC<CastCardProps> = ({
   customID,
   name,
-  catchCopy,
   age,
   height,
   weight,
-  type,
   imageUrl,
-  reviewCount,
+  catchCopy,
+  //reviewCount = 0,
   sns,
+  //isNewcomer = false,
+  //sexinessLevel = 0,
 }) => {
   return (
-    <Link href={`/cast/${customID}`}>
-      <div className="bg-pink-50 rounded-2xl overflow-hidden shadow-lg max-w-xs mx-auto transition-transform hover:scale-105">
-        {/* ✅ 画像サイズ固定部分 */}
-        <div className="relative w-full aspect-[3/4] overflow-hidden">
-          {imageUrl && (
-            <Image
-              src={imageUrl}
-              alt={name}
-              fill
-              className="object-cover"
-              priority
-              unoptimized
-            />
-          )}
-        </div>
-
-        <div className="p-4 text-center">
-          <h2 className="text-pink-700 font-semibold text-lg">
-            {name}
-            {catchCopy && (
-              <span className="text-pink-500 text-sm ml-1">（{catchCopy}）</span>
-            )}
-          </h2>
-          {age && <p className="text-gray-500 text-sm mt-1">〔 {age} 歳 〕</p>}
-
-          <div className="grid grid-cols-3 gap-2 text-sm mt-3 bg-white border border-pink-100 rounded-xl p-2">
-            <div>
-              <div className="text-gray-500">身長</div>
-              <div>{height ?? "-"}</div>
-            </div>
-            <div>
-              <div className="text-gray-500">体重</div>
-              <div>{weight ?? "-"}</div>
-            </div>
-            <div>
-              <div className="text-gray-500">タイプ</div>
-              <div>{type ?? "-"}</div>
-            </div>
+    <Link
+      href={`/cast/${customID}`}
+      className="block rounded-xl overflow-hidden shadow hover:shadow-lg transition"
+    >
+      <div className="relative w-full aspect-[3/4] bg-gray-100">
+        <Image
+          src={imageUrl || '/no-image.png'} // ✅ fallback 画像に対応
+          alt={name}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover"
+        />
+      </div>
+      <div className="p-2">
+        <h2 className="font-bold text-pink-700">{name}</h2>
+        {catchCopy && <p className="text-sm text-gray-600">{catchCopy}</p>}
+        <p className="text-xs text-gray-500">
+          年齢: {age}歳　身長: {height}cm　体重: {weight}kg
+        </p>
+        {sns && (
+          <div className="mt-1 text-xs text-gray-400">
+            {sns.line && <div>LINE: {sns.line}</div>}
+            {sns.twitter && <div>Twitter: {sns.twitter}</div>}
+            {sns.instagram && <div>Instagram: {sns.instagram}</div>}
           </div>
-
-          {reviewCount !== undefined && (
-            <div className="mt-3 text-pink-600 text-sm flex items-center justify-center gap-1">
-              <FaCommentDots />
-              <span>{reviewCount}件の口コミがあります</span>
-            </div>
-          )}
-
-          {sns && (
-            <div className="flex justify-center gap-3 mt-3 text-2xl text-gray-500">
-              {sns.line && (
-                <a href={sns.line} target="_blank" rel="noopener noreferrer">
-                  <FaLine className="text-green-500" />
-                </a>
-              )}
-              {sns.twitter && (
-                <a href={sns.twitter} target="_blank" rel="noopener noreferrer">
-                  <FaTwitter className="text-sky-500" />
-                </a>
-              )}
-              {sns.instagram && (
-                <a href={sns.instagram} target="_blank" rel="noopener noreferrer">
-                  <FaInstagram className="text-pink-400" />
-                </a>
-              )}
-            </div>
-          )}
-        </div>
+        )}
       </div>
     </Link>
   );
