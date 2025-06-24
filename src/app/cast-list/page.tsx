@@ -28,7 +28,7 @@ const CastListPage = async () => {
             weight={cast.weight}
             imageUrl={cast.imageUrl ?? '/no-image.png'}
             //reviewCount={0}
-            sns={{ line: cast.sns?.line }}  // ✅ CastSNS 型に対応
+            //sns={{ line: cast.sns?.line }}  // ✅ CastSNS 型に対応
           />
         ))}
       </div>
