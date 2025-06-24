@@ -29,7 +29,7 @@ const CastCard: React.FC<CastCardProps> = ({
   isNew,
 }) => {
   // ✅ storeSlug があれば store パス、なければ /cast/slug にリンク
-  const href = storeSlug ? `/store/${storeSlug}/cast/${slug}` : `/cast/${slug}`;
+  const href = storeSlug ? `/store/${storeSlug}/${slug}` : `/cast/${slug}`;
 
   return (
     <Link
