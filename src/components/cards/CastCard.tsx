@@ -1,3 +1,5 @@
+// CastCard.tsx
+
 "use client";
 
 import React from "react";
@@ -12,6 +14,7 @@ interface CastCardProps {
   weight: number;
   imageUrl: string | null;
   catchCopy?: string;
+  isNew?: boolean;
 }
 
 const CastCard: React.FC<CastCardProps> = ({
@@ -22,6 +25,7 @@ const CastCard: React.FC<CastCardProps> = ({
   weight,
   imageUrl,
   catchCopy,
+  isNew,
 }) => {
   return (
     <Link
@@ -31,17 +35,25 @@ const CastCard: React.FC<CastCardProps> = ({
       {/* ✅ 画像エリア */}
       <div className="relative w-full aspect-[3/4] bg-gray-100">
         <Image
-          src={imageUrl || '/no-image.png'}
+          src={imageUrl || "/no-image.png"}
           alt={name}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover"
           priority={imageUrl === null}
         />
+
         {/* ✅ 名前タグ */}
         <div className="absolute top-2 left-2 bg-pink-700 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
           {name}
         </div>
+
+        {/* ✅ NEWバッジ */}
+        {isNew && (
+          <div className="absolute top-2 right-2 rotate-[15deg] scale-105 bg-yellow-400 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md border border-white">
+            NEW
+          </div>
+        )}
       </div>
 
       {/* ✅ キャッチコピー */}
