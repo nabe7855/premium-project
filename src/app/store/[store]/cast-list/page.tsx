@@ -9,29 +9,29 @@ export const dynamicParams = true;
 
 export async function generateStaticParams() {
   return [
-    { slug: 'tokyo' },
-    { slug: 'osaka' },
-    { slug: 'nagoya' },
+    { store: 'tokyo' },
+    { store: 'osaka' },
+    { store: 'nagoya' },
   ];
 }
 
 interface StoreCastListPageProps {
   params: {
-    slug: string;
+    store: string;
   };
 }
 
 // ✅ ここは同期関数
 const StoreCastListPage = ({ params }: StoreCastListPageProps) => {
-  return <PageContent slug={params.slug} />;
+  return <PageContent store={params.store} />;
 };
 
 // ✅ ここで非同期処理
-const PageContent = async ({ slug }: { slug: string }) => {
+const PageContent = async ({ store }: { store: string }) => {
   let casts: Cast[] = [];
 
   try {
-    casts = await getCastsByStoreSlug(slug);
+    casts = await getCastsByStoreSlug(store);
   } catch (error) {
     console.error('キャスト取得エラー:', error);
     return notFound();
@@ -50,14 +50,14 @@ const PageContent = async ({ slug }: { slug: string }) => {
   return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-pink-700">
-        🍓 {slug} 店キャスト一覧
+        🍓 {store} 店キャスト一覧
       </h1>
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
         {sortedCasts.map((cast) => (
           <CastCard
             key={cast.id}
             slug={cast.slug}
-            storeSlug={slug}
+            storeSlug={store}
             name={cast.name}
             catchCopy={cast.catchCopy}
             age={cast.age}
