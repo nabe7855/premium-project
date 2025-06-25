@@ -53,4 +53,5 @@ export interface CastSummary {
   catchCopy: string;  
   imageUrl: string | null;
   stillwork: boolean;
+  galleryItems?: GalleryItem[];
 }

@@ -1,19 +1,29 @@
 import qs from "qs";
-import { CastSummary } from "@/types/cast";
+import { CastSummary, GalleryItem } from "@/types/cast";
 
 export const getCastBySlug = async (slug: string): Promise<CastSummary | null> => {
-  const query = qs.stringify({
-    populate: ["GalleryItem"],
-  }, { encodeValuesOnly: true });
+  const query = qs.stringify(
+    {
+      filters: {
+        slug: {
+          $eq: slug,
+        },
+      },
+      populate: {
+        GalleryItem: true,
+      },
+    },
+    { encodeValuesOnly: true }
+  );
 
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/casts?${query}`;
-
   console.log("🔍 Fetching cast data with URL:", url);
 
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN_READ}`,
     },
+    cache: 'no-store', // ✅ 念のためキャッシュ無効
   });
 
   if (!res.ok) {
@@ -21,16 +31,24 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
     return null;
   }
 
-  const data = await res.json();
-  console.log("✅ Raw cast response:", data);
-  console.log("🔍 Looking for slug:", slug);
-  console.log("🔍 Available slugs:", data.data?.map((d: any) => d.slug));
+  const json = await res.json();
+  const item = json.data?.[0];
 
-  const item = data.data?.find((d: any) => d.slug?.toLowerCase() === slug.toLowerCase());
   if (!item) {
     console.warn("⚠️ No cast found for slug:", slug);
     return null;
   }
+
+  // ✅ GalleryItem の型安全な変換
+  const galleryItems: GalleryItem[] = Array.isArray(item.GalleryItem)
+    ? item.GalleryItem.map((img: GalleryItem) => ({
+        id: img.id,
+        imageUrl: img.imageUrl ?? "",
+        videoUrl: img.videoUrl ?? null,
+        caption: img.caption ?? null,
+        type: img.type ?? "image",
+      }))
+    : [];
 
   const result: CastSummary = {
     id: item.id,
@@ -38,10 +56,10 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
     name: item.name ?? "",
     catchCopy: item.catchCopy ?? "",
     stillwork: item.stillwork ?? false,
-    imageUrl: item.GalleryItem?.[0]?.imageUrl ?? null,
+    imageUrl: galleryItems[0]?.imageUrl ?? null,
+    galleryItems,
   };
 
   console.log("🎯 Parsed cast summary:", result);
-
   return result;
 };

@@ -65,6 +65,7 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
 
   return filtered.map((item): Cast => {
     const galleryItems: GalleryItem[] = item.GalleryItem ?? [];
+    console.log('🎯 galleryItems count:', galleryItems.length); 
     const firstImage = galleryItems.find((g) => g.imageUrl);
 
     const sns: CastSNS = {
