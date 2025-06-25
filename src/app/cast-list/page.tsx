@@ -25,7 +25,7 @@ const CastListPage = async () => {
       <h1 className="text-2xl font-bold mb-4 text-pink-700">🍓 キャスト一覧</h1>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
-        {sortedCasts.map((cast) => (
+        {sortedCasts.map((cast, index) => (
           <CastCard
             key={cast.id}
             slug={cast.slug}
@@ -37,6 +37,7 @@ const CastListPage = async () => {
             imageUrl={cast.imageUrl ?? '/no-image.png'}
             isNew={cast.isNew}
             isReception={cast.isReception ?? false} // ✅ 忘れずに
+            priority={index === 0}
           />
         ))}
       </div>

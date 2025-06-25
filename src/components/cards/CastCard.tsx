@@ -6,7 +6,7 @@ import Link from "next/link";
 
 interface CastCardProps {
   slug: string;
-  storeSlug?: string; // ✅ 任意プロパティに変更
+  storeSlug?: string;
   name: string;
   age: number;
   height: number;
@@ -15,20 +15,24 @@ interface CastCardProps {
   catchCopy?: string;
   isNew?: boolean;
   isReception?: boolean;
+  isFirstCard?: boolean; // ← ファーストビュー優先画像として使いたい場合に true
+  priority?: boolean;
 }
 
 const CastCard: React.FC<CastCardProps> = ({
   slug,
-  storeSlug, // ✅ 任意
+  storeSlug,
   name,
   age,
   height,
   weight,
   imageUrl,
   catchCopy,
-  isNew,
+  isNew = false,
+  isReception = false,
+  isFirstCard = false,
+  priority,
 }) => {
-  // ✅ storeSlug があれば store パス、なければ /cast/slug にリンク
   const href = storeSlug ? `/store/${storeSlug}/${slug}` : `/cast/${slug}`;
 
   return (
@@ -36,7 +40,7 @@ const CastCard: React.FC<CastCardProps> = ({
       href={href}
       className="block rounded-xl overflow-hidden shadow-md hover:shadow-lg transition bg-white"
     >
-      {/* ✅ 画像エリア */}
+      {/* 画像エリア */}
       <div className="relative w-full aspect-[3/4] bg-gray-100">
         <Image
           src={imageUrl || "/no-image.png"}
@@ -44,32 +48,39 @@ const CastCard: React.FC<CastCardProps> = ({
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
           className="object-cover"
-          priority={imageUrl === null}
+          priority={priority}// ← LCP画像のみpriority
         />
 
-        {/* ✅ 名前タグ */}
+        {/* 名前タグ */}
         <div className="absolute top-2 left-2 bg-pink-700 text-white text-xs font-semibold px-3 py-1 rounded-full shadow-sm">
           {name}
         </div>
 
-        {/* ✅ NEWバッジ */}
+        {/* NEWバッジ */}
         {isNew && (
           <div className="absolute top-2 right-2 rotate-[15deg] scale-105 bg-yellow-400 text-white text-[10px] font-bold px-2 py-1 rounded shadow-md border border-white">
             NEW
           </div>
         )}
-      </div>
 
-      {/* ✅ キャッチコピー */}
-      <div className="text-center px-3 pt-3 pb-1">
-        {catchCopy && (
-          <p className="text-sm text-pink-800 font-medium truncate">
-            {catchCopy}
-          </p>
+        {/* 受付バッジ */}
+        {isReception && (
+          <div className="absolute bottom-2 right-2 bg-blue-600 text-white text-[10px] font-semibold px-2 py-1 rounded shadow-md">
+            受付
+          </div>
         )}
       </div>
 
-      {/* ✅ 年齢・身長・体重 表形式 */}
+      {/* キャッチコピー */}
+      {catchCopy && (
+        <div className="text-center px-3 pt-3 pb-1">
+          <p className="text-sm text-pink-800 font-medium truncate">
+            {catchCopy}
+          </p>
+        </div>
+      )}
+
+      {/* 年齢・身長・体重 */}
       <div className="px-4 pb-3">
         <div className="grid grid-cols-3 text-center text-[11px] text-gray-500 font-semibold border-t border-gray-200 pt-2">
           <div>年齢</div>

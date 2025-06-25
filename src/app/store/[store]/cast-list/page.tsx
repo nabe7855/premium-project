@@ -21,12 +21,12 @@ interface StoreCastListPageProps {
   };
 }
 
-// ✅ ここは同期関数
+// ✅ 同期関数
 const StoreCastListPage = ({ params }: StoreCastListPageProps) => {
   return <PageContent store={params.store} />;
 };
 
-// ✅ ここで非同期処理
+// ✅ 非同期処理
 const PageContent = async ({ store }: { store: string }) => {
   let casts: Cast[] = [];
 
@@ -37,11 +37,14 @@ const PageContent = async ({ store }: { store: string }) => {
     return notFound();
   }
 
-  if (!casts || casts.length === 0) {
+  // ✅ stillwork === true のキャストのみ抽出
+  const activeCasts = casts.filter((cast) => cast.stillwork === true);
+
+  if (activeCasts.length === 0) {
     return <div className="p-4 text-gray-500">この店舗には現在キャストがいません。</div>;
   }
 
-  const sortedCasts = [...casts].sort((a, b) => {
+  const sortedCasts = [...activeCasts].sort((a, b) => {
     if (a.isReception && !b.isReception) return 1;
     if (!a.isReception && b.isReception) return -1;
     return 0;
