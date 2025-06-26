@@ -1,7 +1,6 @@
 import { getCastBySlug } from "@/lib/getCastData";
 import CastHeader from "@/components/cast/CastHeader";
 import CastTabs from "@/components/cast/CastTabs";
-import ImageCarousel from "@/components/ui/ImageCarousel"; // 🆕 追加！
 
 interface CastDetailPageProps {
   params: { store: string; cast: string };
@@ -34,15 +33,14 @@ const CastDetailPage = async ({ params }: CastDetailPageProps) => {
 
   return (
     <div className="bg-pink-50 min-h-screen">
-      
-      {/* 🖼️ ギャラリーがあれば表示 */}
-      {castData.galleryItems && castData.galleryItems.length > 0 && (
-        <div className="px-4 py-6">
-          <ImageCarousel items={castData.galleryItems} />
-        </div>
-      )}
+      {/* 🧑‍🎤 キャストのヘッダー部分（画像・名前・キャッチコピー） */}
+      <CastHeader
+        name={castData.name}
+        catchCopy={castData.catchCopy}
+        galleryItems={castData.galleryItems}
+      />
 
-      {/* 🔽 タブを表示 */}
+      {/* 🔽 タブ表示（口コミ・出勤など） */}
       <CastTabs cast={castData} />
     </div>
   );
