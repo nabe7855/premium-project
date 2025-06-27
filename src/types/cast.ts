@@ -56,4 +56,8 @@ export interface CastSummary {
   galleryItems?: GalleryItem[];
   diaryUrl?: string;
   snsUrl?: string;
+  height: number | null;
+  weight: number | null;
+  bloodType?: string | null;
+  age: number | null;
 }

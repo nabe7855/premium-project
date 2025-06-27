@@ -58,6 +58,10 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
     stillwork: item.stillwork ?? false,
     imageUrl: galleryItems[0]?.imageUrl ?? null,
     galleryItems,
+    height: item.height ?? null,
+    weight: item.weight ?? null,
+    age: item.age ?? null,
+    bloodType: item.bloodtype ?? null,
   };
 
   console.log("🎯 Parsed cast summary:", result);

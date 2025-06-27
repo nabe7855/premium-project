@@ -6,6 +6,8 @@ interface Props {
 }
 
 const CastInfoTab: React.FC<Props> = ({ cast }) => {
+  const { name, height, weight, age, bloodType } = cast;
+
   return (
     <div className="space-y-8">
       {/* PROFILE 表 */}
@@ -15,36 +17,25 @@ const CastInfoTab: React.FC<Props> = ({ cast }) => {
           <tbody>
             <tr className="border-t border-pink-200">
               <th className="bg-pink-100 px-3 py-2 w-32">名前</th>
-              <td className="bg-pink-50 px-3 py-2">トワ（心地良い距離感）</td>
+              <td className="bg-pink-50 px-3 py-2">{name || "ひみつ"}</td>
             </tr>
             <tr className="border-t border-pink-200">
               <th className="bg-pink-100 px-3 py-2">身長・体重</th>
-              <td className="bg-pink-50 px-3 py-2">179cm・68kg</td>
+              <td className="bg-pink-50 px-3 py-2">
+                {height && weight
+                  ? `${height}cm・${weight}kg`
+                  : "ひみつ"}
+              </td>
             </tr>
             <tr className="border-t border-pink-200">
               <th className="bg-pink-100 px-3 py-2">年齢</th>
-              <td className="bg-pink-50 px-3 py-2">33歳</td>
-            </tr>
-            <tr className="border-t border-pink-200">
-              <th className="bg-pink-100 px-3 py-2">血液型</th>
-              <td className="bg-pink-50 px-3 py-2">ひみつ</td>
-            </tr>
-            <tr className="border-t border-pink-200">
-              <th className="bg-pink-100 px-3 py-2">タイプ</th>
-              <td className="bg-pink-50 px-3 py-2">メンズモデル系</td>
+              <td className="bg-pink-50 px-3 py-2">
+                {age ? `${age}歳` : "ひみつ"}
+              </td>
             </tr>
             <tr className="border-t border-b border-pink-200">
-              <th className="bg-pink-100 px-3 py-2">Twitter</th>
-              <td className="bg-pink-50 px-3 py-2">
-                <a
-                  href="https://twitter.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-pink-700 underline hover:text-pink-900"
-                >
-                  トワ（心地良い距離感）さんのTwitterはこちら
-                </a>
-              </td>
+              <th className="bg-pink-100 px-3 py-2">血液型</th>
+              <td className="bg-pink-50 px-3 py-2">{bloodType || "ひみつ"}</td>
             </tr>
           </tbody>
         </table>
