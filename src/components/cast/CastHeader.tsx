@@ -59,22 +59,6 @@ const CastHeader: React.FC<CastHeaderProps> = ({ name, catchCopy, galleryItems =
         🍓 {name} さん
       </h2>
       <p className="text-sm text-gray-600 mt-1">{catchCopy}</p>
-
-      <div className="flex justify-center gap-4 mt-3">
-        <button className="flex items-center gap-2 px-3 py-1 bg-pink-100 text-pink-700 text-sm rounded-full shadow hover:bg-pink-200">
-          <FaCamera />
-          写メ日記
-        </button>
-        <a
-          href="https://twitter.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-2 px-3 py-1 bg-blue-100 text-blue-700 text-sm rounded-full shadow hover:bg-blue-200"
-        >
-          <FaTwitter />
-          SNSリンク
-        </a>
-      </div>
     </div>
   );
 };

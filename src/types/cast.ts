@@ -54,4 +54,6 @@ export interface CastSummary {
   imageUrl: string | null;
   stillwork: boolean;
   galleryItems?: GalleryItem[];
+  diaryUrl?: string;
+  snsUrl?: string;
 }

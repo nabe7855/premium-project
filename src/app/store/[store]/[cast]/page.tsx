@@ -1,3 +1,6 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import { getCastBySlug } from "@/lib/getCastData";
 import CastHeader from "@/components/cast/CastHeader";
 import CastTabs from "@/components/cast/CastTabs";
@@ -6,41 +9,36 @@ interface CastDetailPageProps {
   params: { store: string; cast: string };
 }
 
-const CastDetailPage = async ({ params }: CastDetailPageProps) => {
+const CastDetailPage = ({ params }: CastDetailPageProps) => {
   const { cast } = params;
+  const [castData, setCastData] = useState<any | null>(null);
 
-  console.log("🔍 [CastDetailPage] params:", params);
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await getCastBySlug(cast);
+      if (data?.stillwork) {
+        setCastData(data);
+      }
+    };
+    fetchData();
+  }, [cast]);
 
-  if (!cast || typeof cast !== "string") {
-    console.error("❌ 無効なURLです:", cast);
-    return (
-      <div className="text-center p-8 text-red-500">
-        無効なURLです。
-      </div>
-    );
+  if (!cast) {
+    return <div className="text-center p-8 text-red-500">無効なURLです。</div>;
   }
 
-  const castData = await getCastBySlug(cast);
-
-  if (!castData || !castData.stillwork) {
-    console.warn("⚠️ キャストが見つからないか非公開です:", castData);
-    return (
-      <div className="text-center p-8 text-gray-500">
-        現在このセラピストの情報は表示できません。
-      </div>
-    );
+  if (!castData) {
+    return <div className="text-center p-8 text-gray-500">現在このセラピストの情報は表示できません。</div>;
   }
 
   return (
     <div className="bg-pink-50 min-h-screen">
-      {/* 🧑‍🎤 キャストのヘッダー部分（画像・名前・キャッチコピー） */}
       <CastHeader
         name={castData.name}
         catchCopy={castData.catchCopy}
         galleryItems={castData.galleryItems}
       />
-
-      {/* 🔽 タブ表示（口コミ・出勤など） */}
+      {/* ✅ isSticky は不要なので削除 */}
       <CastTabs cast={castData} />
     </div>
   );
