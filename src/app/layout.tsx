@@ -1,7 +1,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google';
-import Header from '@/components/Header'; // Boltで使ってたHeader
+import HeaderGuard from '@/components/HeaderGuard'; // 追加ポイント
 
 const notoSans = Noto_Sans_JP({
   subsets: ['latin'],
@@ -56,33 +56,37 @@ export default function RootLayout({
                   "name": "初めてでも大丈夫ですか？",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "はい、初回の方には専任のコンシェルジュが丁寧にサポートいたします。不安なことがあれば何でもお気軽にご相談ください。"
-                  }
+                    "text":
+                      "はい、初回の方には専任のコンシェルジュが丁寧にサポートいたします。不安なことがあれば何でもお気軽にご相談ください。",
+                  },
                 },
                 {
                   "@type": "Question",
                   "name": "料金システムはどうなっていますか？",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "時間制の明確な料金システムです。追加料金等は一切発生いたしません。詳細はプランページをご確認ください。"
-                  }
+                    "text":
+                      "時間制の明確な料金システムです。追加料金等は一切発生いたしません。詳細はプランページをご確認ください。",
+                  },
                 },
                 {
                   "@type": "Question",
                   "name": "キャンセルはできますか？",
                   "acceptedAnswer": {
                     "@type": "Answer",
-                    "text": "ご予約の24時間前まででしたら無料でキャンセル可能です。それ以降はキャンセル料が発生する場合がございます。"
-                  }
-                }
-              ]
+                    "text":
+                      "ご予約の24時間前まででしたら無料でキャンセル可能です。それ以降はキャンセル料が発生する場合がございます。",
+                  },
+                },
+              ],
             }),
           }}
         />
       </head>
       <body>
-        <Header />
-        {children}
+        <HeaderGuard>
+          {children}
+        </HeaderGuard>
       </body>
     </html>
   );
