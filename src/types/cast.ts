@@ -60,4 +60,17 @@ export interface CastSummary {
   weight: number | null;
   bloodType?: string | null;
   age: number | null;
+  customID: string;
+}
+
+export interface CastFeature {
+  id: number;
+  value_text: string | null;
+  value_boolean: boolean | null;
+  feature_master: {
+    id: number;
+    category: 'face' | 'MBTI' | 'personality' | 'appearance';
+    name: string;
+    label_en: string;
+  };
 }

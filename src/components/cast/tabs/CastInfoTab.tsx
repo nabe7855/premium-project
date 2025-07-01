@@ -1,5 +1,8 @@
 import React from "react";
 import { CastSummary } from "@/types/cast";
+import { useEffect, useState } from "react";
+import { getCastFeaturesByCustomID } from "@/lib/getCastFeaturesByCustomID";
+import { CastFeature } from "@/types/cast";
 
 interface Props {
   cast: CastSummary;
@@ -7,6 +10,18 @@ interface Props {
 
 const CastInfoTab: React.FC<Props> = ({ cast }) => {
   const { name, height, weight, age, bloodType } = cast;
+
+  const [features, setFeatures] = useState<CastFeature[]>([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (!cast.customID) return;
+      const data = await getCastFeaturesByCustomID(cast.customID);
+      console.log("🎯 features", data);
+      setFeatures(data);
+    };
+    fetchData();
+  }, [cast.customID]);
 
   return (
     <div className="space-y-8">
@@ -39,6 +54,55 @@ const CastInfoTab: React.FC<Props> = ({ cast }) => {
             </tr>
           </tbody>
         </table>
+
+{/* MBTI */}
+{features.some(f => f.feature_master.category === "MBTI" && f.value_text) && (
+  <div className="mt-4">
+    <h4 className="text-sm font-bold text-gray-700">◆ MBTI</h4>
+    <ul className="list-disc pl-5 text-sm text-gray-600">
+      {features
+        .filter(f => f.feature_master.category === "MBTI" && f.value_text)
+        .map((f) => (
+          <li key={f.id}>{f.feature_master.name}（{f.value_text}）</li>
+        ))}
+    </ul>
+  </div>
+)}
+
+{/* face */} 
+{features.some(f => f.feature_master.category === "face" && f.value_text) && ( 
+  <div className="mt-4">
+    <h4 className="text-sm font-bold text-gray-700">◆ face</h4> 
+    <ul className="list-disc pl-5 text-sm text-gray-600">
+      {features
+        .filter(f => f.feature_master.category === "face" && f.value_text) 
+        .map((f) => (
+          <li key={f.id}>{f.feature_master.name}（{f.value_text}）</li>
+        ))}
+    </ul>
+  </div>
+)}
+
+
+{features.some(f => 
+  (f.feature_master.category === "appearance" || f.feature_master.category === "personality") 
+  && f.value_boolean
+) && (
+  <div className="mt-4">
+    <h4 className="text-sm font-bold text-gray-700">◆ APPEARANCE & PERSONALITY</h4>
+    <ul className="list-disc pl-5 text-sm text-gray-600">
+      {features
+        .filter(f => 
+          (f.feature_master.category === "appearance" || f.feature_master.category === "personality") 
+          && f.value_boolean
+        )
+        .map(f => (
+          <li key={f.id}>{f.feature_master.name}</li>
+        ))}
+    </ul>
+  </div>
+)}
+
       </div>
 
 

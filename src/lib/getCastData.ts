@@ -62,6 +62,7 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
     weight: item.weight ?? null,
     age: item.age ?? null,
     bloodType: item.bloodtype ?? null,
+    customID: item.customID ?? "", 
   };
 
   console.log("🎯 Parsed cast summary:", result);
