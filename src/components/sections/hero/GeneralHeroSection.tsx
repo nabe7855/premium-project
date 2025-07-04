@@ -86,12 +86,12 @@ export default function HeroSection() {
               毎日頑張るあなたに、
               <br />
               <span className="text-rose-600">
-  甘くとろける
-  <span className="text-rose-700 text-[1.3em] font-bold animate-float inline-block  mx-1">
-    いちご一会
-  </span>
-  なひととき
-</span>を
+                甘くとろける
+                <span className="text-rose-700 text-[1.3em] font-bold animate-float inline-block  mx-1">
+                  いちご一会
+                </span>
+                なひととき
+              </span>を
             </h1>
 
             {/* サブ見出し */}

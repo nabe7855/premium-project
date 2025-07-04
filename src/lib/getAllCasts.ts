@@ -1,4 +1,4 @@
-import { Cast, GalleryItem, CastSNS } from '@/types/cast';
+import { Cast, GalleryItem, CastSNS as CastSNSType } from '@/types/cast';
 import qs from 'qs';
 
 // StrapiのAPIレスポンス型を定義
@@ -16,7 +16,6 @@ interface StrapiCastItem {
   sexinessLevel?: number;
   stillwork?: boolean; // ✅ 追加（Boolean型）
   isReception?: boolean;
-  
 }
 
 interface StrapiResponse {
@@ -28,14 +27,14 @@ export const getAllCasts = async (): Promise<Cast[]> => {
     {
       filters: {
         stillwork: {
-          $eq: true, // ✅ stillwork が true のキャストのみ取得
+          $eq: true,
         },
       },
       populate: {
         GalleryItem: true,
       },
     },
-    { encodeValuesOnly: true }
+    { encodeValuesOnly: true },
   );
 
   const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/casts?${query}`;
@@ -58,14 +57,13 @@ export const getAllCasts = async (): Promise<Cast[]> => {
     const galleryItems: GalleryItem[] = item.GalleryItem ?? [];
     const firstImage = galleryItems.find((g) => g.imageUrl);
 
-    const sns: CastSNS = {
+    const sns: CastSNSType = {
       line: item.SNSURL ?? '',
     };
 
     return {
       id: item.id,
       slug: item.slug,
-      
       name: item.name,
       age: item.age,
       height: item.height,

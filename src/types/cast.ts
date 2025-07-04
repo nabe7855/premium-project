@@ -1,36 +1,18 @@
-// ✅ Cloudinaryなど画像の詳細情報（今回は未使用なら削除してもOK）
-export interface CastImageFormat {
-  ext: string;
-  url: string;
-  mime: string;
-  name: string;
-  width: number;
-  height: number;
-  size: number;
-  sizeInBytes?: number;
-  path?: string | null;
-}
-
-// ✅ ギャラリー画像 or 動画1件分の型
 export interface GalleryItem {
   id: number;
-  imageUrl?: string;
-  videoUrl?: string | null;
-  type?: string;
-  caption?: string | null;
+  imageUrl: string;
+  caption?: string;
+  videoUrl?: string | null; // ✅ 追加
+  type?: 'image' | 'video'; // ✅ 画像 or 動画判別用
 }
 
-// ✅ SNSリンク型（LINE以外も今後追加しやすい構造）
 export interface CastSNS {
-  line?: string;
-  twitter?: string;
-  instagram?: string;
+  line: string;
 }
 
-// ✅ キャスト本体型（APIレスポンスに合わせて記述）
 export interface Cast {
   id: number;
-  slug: string; // ✅ 英語URL用 slug
+  slug: string;
   name: string;
   age: number;
   height: number;
@@ -38,39 +20,44 @@ export interface Cast {
   catchCopy?: string;
   imageUrl: string | null;
   galleryItems: GalleryItem[];
-  sns?: CastSNS;
-  isNew?: boolean;
-  sexinessLevel?: number;
+  sns: CastSNS;
+  isNew: boolean;
+  sexinessLevel: number;
   isReception?: boolean;
   stillwork: boolean;
 }
 
-
 export interface CastSummary {
   id: number;
-  slug: string;  
+  slug?: string;
   name: string;
-  catchCopy: string;  
-  imageUrl: string | null;
-  stillwork: boolean;
-  galleryItems?: GalleryItem[];
+  age: number;
+  height: number;
+  weight: number;
+  bloodType?: string;
+  catchCopy?: string;
+  imageUrl?: string;
   diaryUrl?: string;
   snsUrl?: string;
-  height: number | null;
-  weight: number | null;
-  bloodType?: string | null;
-  age: number | null;
-  customID: string;
+  isReception?: boolean;
+  stillwork?: boolean;
+  customID?: string;
+
+  // ✅ 追加
+  galleryItems?: GalleryItem[];
+}
+
+export interface FeatureMaster {
+  id: number;
+  category: string; // 例: "MBTI", "personality", "appearance"
+  label: string;
+  name: string;
 }
 
 export interface CastFeature {
   id: number;
-  value_text: string | null;
-  value_boolean: boolean | null;
-  feature_master: {
-    id: number;
-    category: 'face' | 'MBTI' | 'personality' | 'appearance';
-    name: string;
-    label_en: string;
-  };
+  feature_master: FeatureMaster;
+  value_text?: string;
+  value_number?: number;
+  value_boolean?: boolean;
 }

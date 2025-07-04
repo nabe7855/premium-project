@@ -2,24 +2,24 @@
 @tailwind components;
 @tailwind utilities;
 
-/* 🎨 CSS変数（高機能 + Bolt対応） */
+/* 🎨 Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
+
+/* 🌈 CSS変数（高機能 + Bolt対応） */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
   --background-end-rgb: 255, 255, 255;
 
-  /* Bolt用テーマカラー変数（薄ピンク背景） */
-  --background: #fff1f2; /* 相当: bg-pink-50 */
+  --background: #fff1f2;
   --foreground: #171717;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
 
-  /* フォント（Bolt） */
   --font-sans: var(--font-noto-sans, Arial, sans-serif);
   --font-serif: var(--font-noto-serif, serif);
 
-  /* Tailwindテーマ連携用 */
   --radius: 0.5rem;
 
   --card: 0 0% 100%;
@@ -39,6 +39,7 @@
   --border: 0 0% 89.8%;
   --input: 0 0% 89.8%;
   --ring: 0 0% 3.9%;
+
   --chart-1: 12 76% 61%;
   --chart-2: 173 58% 39%;
   --chart-3: 197 37% 24%;
@@ -46,7 +47,6 @@
   --chart-5: 27 87% 67%;
 }
 
-/* 🌙 ダークモード対応 */
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
@@ -72,6 +72,7 @@
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
+
     --chart-1: 220 70% 50%;
     --chart-2: 160 60% 45%;
     --chart-3: 30 80% 55%;
@@ -80,19 +81,43 @@
   }
 }
 
+/* ========= Base Layer ========= */
 @layer base {
   * {
     @apply border-border;
+    font-family:
+      var(--font-sans),
+      system-ui,
+      -apple-system,
+      sans-serif;
+    transition-property: transform, opacity, filter, box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   }
+
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-sans), system-ui, -apple-system, sans-serif;
   }
+
   .font-serif {
     font-family: var(--font-serif), serif;
   }
+
+  .font-sans {
+    font-family: var(--font-sans), sans-serif;
+  }
+
+  img {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+
+  *:focus {
+    outline: 2px solid #fca5a5;
+    outline-offset: 2px;
+  }
 }
 
+/* ========= Utilities Layer ========= */
 @layer utilities {
   .line-clamp-2 {
     display: -webkit-box;
@@ -107,31 +132,48 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
-}
 
-/* 🎈 float animation */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-10px); }
-}
-.animate-float {
-  animation: float 3s ease-in-out infinite;
-}
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
 
-/* 📱 Mobile bottom navigation padding */
-@media (max-width: 768px) {
-  body {
-    padding-bottom: 80px;
+  .animation-delay-200 {
+    animation-delay: 0.2s;
+  }
+
+  .animation-delay-400 {
+    animation-delay: 0.4s;
+  }
+
+  .animation-delay-500 {
+    animation-delay: 0.5s;
+  }
+
+  .animation-delay-1000 {
+    animation-delay: 1s;
+  }
+
+  .animation-delay-1500 {
+    animation-delay: 1.5s;
+  }
+
+  .animation-delay-2000 {
+    animation-delay: 2s;
+  }
+
+  .text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+  }
+
+  .border-3 {
+    border-width: 3px;
   }
 }
 
-/* 🔁 Smooth scroll */
-html {
-  scroll-behavior: smooth;
-}
-
+/* ========= Keyframes ========= */
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0px) scale(1);
   }
   50% {
@@ -139,6 +181,31 @@ html {
   }
 }
 
-.animate-float {
-  animation: float 3s ease-in-out infinite;
+/* ========= Global Styles ========= */
+html {
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 768px) {
+  body {
+    padding-bottom: 80px;
+  }
+}
+
+/* カスタムスクロールバー */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fca5a5;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f87171;
 }

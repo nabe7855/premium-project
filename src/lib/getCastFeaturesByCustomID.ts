@@ -26,7 +26,7 @@ export const getCastFeaturesByCustomID = async (customID: string): Promise<CastF
       },
       populate: { feature_master: true },
     },
-    { encodeValuesOnly: true }
+    { encodeValuesOnly: true },
   );
 
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/cast-features?${query}`;
@@ -35,7 +35,10 @@ export const getCastFeaturesByCustomID = async (customID: string): Promise<CastF
     headers: {
       Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN_READ}`,
     },
-    cache: 'no-store',
+    // ✅ ISRを有効にして毎回のAPIアクセスを回避
+    next: {
+      revalidate: 60, // ← 60秒キャッシュ（状況に応じて調整可能）
+    },
   });
 
   if (!res.ok) throw new Error('Cast Feature fetch failed');

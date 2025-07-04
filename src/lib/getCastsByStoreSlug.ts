@@ -30,14 +30,13 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
             $eq: storeSlug,
           },
         },
-        // stillwork の filter は Strapi 側で型によって効かない可能性があるため、フロント側で処理
       },
       populate: {
         GalleryItem: true,
         store: true,
       },
     },
-    { encodeValuesOnly: true }
+    { encodeValuesOnly: true },
   );
 
   const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/casts?${query}`;
@@ -47,7 +46,10 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
     headers: {
       Authorization: `Bearer ${token}`,
     },
-    cache: 'no-store', // ✅ 最新データを必ず取得
+    // ✅ 最適なキャッシュ設定（ISR）
+    next: {
+      revalidate: 60, // ← 60秒ごとにデータを再取得してページ再生成
+    },
   });
 
   if (!res.ok) {
@@ -60,12 +62,11 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
   // ✅ stillwork が true または "true" のみ通す
   const filtered = data.data.filter((item) => {
     const val = item.stillwork;
-    return val === true || val === "true";
+    return val === true || val === 'true';
   });
 
   return filtered.map((item): Cast => {
     const galleryItems: GalleryItem[] = item.GalleryItem ?? [];
-    console.log('🎯 galleryItems count:', galleryItems.length); 
     const firstImage = galleryItems.find((g) => g.imageUrl);
 
     const sns: CastSNS = {
@@ -86,7 +87,7 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
-      stillwork: true, // ✅ ここは既に filter 済みなので true に固定でOK
+      stillwork: true, // ここは filter 済みなので true に固定
     };
   });
 };

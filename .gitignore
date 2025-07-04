@@ -1,7 +1,14 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+# ────────────── Logs ──────────────
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
 
 # ────────────── Dependencies ──────────────
-/node_modules
+node_modules
 /.pnp
 .pnp.js
 .pnp.*
@@ -11,27 +18,25 @@
 !.yarn/releases
 !.yarn/versions
 
-# ────────────── Testing ──────────────
-/coverage
+# ────────────── Build / Output ──────────────
+dist
+dist-ssr
+.next/
+out/
+build
 
-# ────────────── Next.js ──────────────
-/.next/
-/out/
-
-# ────────────── Production ──────────────
-/build
-
-# ────────────── Misc ──────────────
+# ────────────── Editor / IDE ──────────────
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-*.pem
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
 
-# ────────────── Debug ──────────────
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-debug.log*
-
-# ────────────── Env files ──────────────
+# ────────────── Env / Secrets ──────────────
 .env
 .env.local
 .env.development.local
@@ -44,9 +49,15 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# ────────────── Vercel ──────────────
+# ────────────── Testing / Coverage ──────────────
+/coverage
+
+# ────────────── Hosting / Deploy ──────────────
 .vercel
 
-# ────────────── Strapi ──────────────
+# ────────────── CMS / Bolt Plugins ──────────────
 /tmp/
 /.cache/
+
+# ────────────── Misc ──────────────
+*.local

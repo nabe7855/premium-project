@@ -6,8 +6,11 @@ import Header from '@/components/Header';
 
 export default function HeaderGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const hideHeaderPaths = ['/age-check'];
 
+  // ✅ ヘッダーを非表示にしたいパス一覧
+  const hideHeaderPaths = ['/', '/age-check', '/store-select'];
+
+  // ✅ 上記に含まれていない場合のみヘッダーを表示
   const showHeader = !hideHeaderPaths.includes(pathname);
 
   return (
