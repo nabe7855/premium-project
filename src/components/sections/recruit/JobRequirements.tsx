@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { Users, GraduationCap, Heart } from 'lucide-react';
+import { Users, GraduationCap } from 'lucide-react';
 
 const JobRequirements: React.FC = () => {
   const requirements = [
@@ -10,7 +10,7 @@ const JobRequirements: React.FC = () => {
     },
     {
       category: '勤務地',
-      items: ['都内主要エリア', '完全個室制', '最寄駅から徒歩5分以内', '女性専用待機室完備'],
+      items: ['都内主要エリア', '完全個室制', '最寄駅から徒歩5分以内'],
     },
     {
       category: '勤務時間',
@@ -24,20 +24,15 @@ const JobRequirements: React.FC = () => {
     {
       category: '報酬',
       items: [
-        '時給 3,000円〜8,000円',
+        '時給 5,000円〜',
         '経験・スキルに応じて昇給',
         '各種手当あり',
-        '日払い・週払い対応',
       ],
     },
   ];
 
   const benefits = [
-    {
-      icon: <Heart className="h-6 w-6 text-pink-500" />,
-      title: '充実した待遇',
-      items: ['社会保険完備', '有給休暇', '退職金制度', '健康診断'],
-    },
+
     {
       icon: <GraduationCap className="h-6 w-6 text-blue-500" />,
       title: '研修・サポート',
@@ -46,7 +41,7 @@ const JobRequirements: React.FC = () => {
     {
       icon: <Users className="h-6 w-6 text-green-500" />,
       title: '働きやすい環境',
-      items: ['女性スタッフ常駐', '完全個室待機', '24時間サポート', 'プライバシー保護'],
+      items: ['専任スタッフ常駐', '働き方自由', '24時間サポート', 'プライバシー保護'],
     },
   ];
 
@@ -113,7 +108,7 @@ const JobRequirements: React.FC = () => {
                   2
                 </div>
                 <h4 className="mb-1 font-semibold text-gray-800">面接</h4>
-                <p className="text-sm text-gray-600">女性スタッフが対応</p>
+                <p className="text-sm text-gray-600">専任スタッフが対応</p>
               </div>
               <div className="rounded-lg bg-white p-4 text-center">
                 <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center rounded-full bg-pink-500 text-white">

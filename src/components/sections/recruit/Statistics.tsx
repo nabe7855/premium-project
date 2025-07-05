@@ -13,13 +13,13 @@ const Statistics: React.FC = () => {
     {
       icon: <TrendingUp className="h-8 w-8 text-green-500 lg:h-12 lg:w-12" />,
       value: '¥5,000〜',
-      label: '平均時給',
+      label: '業界最高水準の給与',
       description: '経験・スキルに応じて',
     },
     {
       icon: <Users className="h-8 w-8 text-blue-500 lg:h-12 lg:w-12" />,
       value: '100%',
-      label: '女性スタッフ比率',
+      label: '専任スタッフ',
       description: '安心のサポート体制',
     },
     {

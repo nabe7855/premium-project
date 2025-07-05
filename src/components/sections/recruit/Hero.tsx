@@ -16,11 +16,11 @@ const Hero: React.FC = () => {
           <p className="mb-4 font-serif text-lg text-gray-600 sm:text-xl lg:text-2xl">
             週2日から、月収50万円も可能。
             <br />
-            完全個室・女性スタッフ常駐で安心。
+            身バレ対策・迅速なスタッフ対応で安心。
           </p>
 
           <p className="mx-auto mb-8 max-w-2xl text-sm leading-relaxed text-gray-600 sm:text-base">
-            ストロベリーボーイズでは、上質で可愛らしい世界観の中で、
+            ストロベリーボーイズでは、見た目も中身も中身もハイセンスな世界観の中で、
             <br className="hidden sm:block" />
             "大人の遊び心"を共に提供してくれるセラピストを募集しています。
           </p>
@@ -55,13 +55,13 @@ const Hero: React.FC = () => {
           <div className="mx-auto grid max-w-3xl grid-cols-2 gap-4 lg:grid-cols-4 lg:gap-6">
             <div className="rounded-lg bg-white p-3 text-center shadow-sm lg:p-4">
               <Shield className="mx-auto mb-2 h-6 w-6 text-pink-500 lg:h-8 lg:w-8" />
-              <div className="text-xl font-bold text-gray-800 lg:text-2xl">100%</div>
-              <div className="text-xs text-gray-600 lg:text-sm">完全個室</div>
+              <div className="text-xl font-bold text-gray-800 lg:text-2xl">SNSを駆使した</div>
+              <div className="text-xs text-gray-600 lg:text-sm">プロデュース</div>
             </div>
             <div className="rounded-lg bg-white p-3 text-center shadow-sm lg:p-4">
               <Users className="mx-auto mb-2 h-6 w-6 text-pink-500 lg:h-8 lg:w-8" />
               <div className="text-xl font-bold text-gray-800 lg:text-2xl">24h</div>
-              <div className="text-xs text-gray-600 lg:text-sm">女性サポート</div>
+              <div className="text-xs text-gray-600 lg:text-sm">徹底したサポート</div>
             </div>
             <div className="rounded-lg bg-white p-3 text-center shadow-sm lg:p-4">
               <TrendingUp className="mx-auto mb-2 h-6 w-6 text-pink-500 lg:h-8 lg:w-8" />
