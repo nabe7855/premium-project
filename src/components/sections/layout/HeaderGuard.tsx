@@ -2,7 +2,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import Header from '@/components/Header';
+import Header from '@/components/sections/layout/Header';
 
 export default function HeaderGuard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

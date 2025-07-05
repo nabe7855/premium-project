@@ -4,13 +4,13 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation'; // ← router は削除
 import { stores } from '@/data/stores';
 import { mockCastMembers, mockNews } from '@/data/mockData';
-import Header from '@/components/Header';
+import Header from '@/components/sections/layout/Header';
 import HeroSection from '@/components/sections/store/HeroSection';
 import TodaysCast from '@/components/sections/store/TodaysCast';
 import NewsSection from '@/components/sections/store/NewsSection';
 import StoreMessage from '@/components/sections/store/StoreMessage';
 import InformationGrid from '@/components/sections/store/InformationGrid';
-import Footer from '@/components/Footer';
+import Footer from '@/components/sections/layout/Footer';
 import { StoreLocation } from '@/types/store';
 
 export default function StorePage() {

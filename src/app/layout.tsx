@@ -2,7 +2,7 @@
 import './globals.css';
 import type { Metadata } from 'next';
 import { Noto_Sans_JP, Noto_Serif_JP, Dancing_Script } from 'next/font/google';
-import HeaderGuard from '@/components/HeaderGuard';
+import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import Head from 'next/head';
 
 // ✅ Google Fonts 設定

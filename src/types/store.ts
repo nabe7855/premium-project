@@ -7,6 +7,8 @@ export interface Store {
   catchphrase: string;
   heroTitle: string;
   description: string;
+  emoji?: string;
+  subtext?: string;
   colors: {
     primary: string;
     secondary: string;

@@ -8,6 +8,8 @@ export const stores: Record<string, Store> = {
     catchphrase: '極上のひと時を',
     heroTitle: '心とろける極上のひととき',
     description: '東京の夜に甘い魔法をかける、上質なエンターテインメント',
+    emoji: '🌸', // ← ヘッダーやメニュー用に追加
+    subtext: '上質な癒しの時間', // ← サブテキスト（必要に応じて）
     colors: {
       primary: 'tokyo-500',
       secondary: 'tokyo-300',
@@ -27,6 +29,8 @@ export const stores: Record<string, Store> = {
     catchphrase: 'え、やばい。こんな楽しいの反則やん',
     heroTitle: 'え、やばい。こんな楽しいの反則やん。',
     description: '大阪の街に輝く、最高のエンターテインメント体験',
+    emoji: '🍮',
+    subtext: '笑いと癒しの融合',
     colors: {
       primary: 'osaka-500',
       secondary: 'osaka-300',
@@ -46,6 +50,8 @@ export const stores: Record<string, Store> = {
     catchphrase: '誰にも言えない、秘密のご褒美',
     heroTitle: '誰にも言えない魅惑のご褒美',
     description: '名古屋の夜に隠された、特別なひととき',
+    emoji: '🍓',
+    subtext: '秘密のご褒美',
     colors: {
       primary: 'nagoya-500',
       secondary: 'nagoya-300',
