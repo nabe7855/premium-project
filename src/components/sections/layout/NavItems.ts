@@ -56,7 +56,7 @@ export const secondaryNavItems = [
   },
   {
     name: '求人・採用情報',
-    href: '/recruit',
+    href: '/Announcement-information/recruit',
     icon: Briefcase,
   },
   {

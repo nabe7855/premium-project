@@ -11,6 +11,14 @@ export default {
   safelist: [],
   theme: {
     extend: {
+      fontFamily: {
+        serif: ['Noto Serif JP', 'serif'],
+        rounded: ['Noto Sans JP', 'sans-serif'],
+        noto: ['Noto Sans JP', 'sans-serif'],
+        mono: 'var(--font-mono)',
+        dancing: ['Dancing Script', 'cursive'],
+        sans: 'var(--font-sans)',
+      },
       colors: {
         // Predefined colors
         strawberry: {
@@ -38,6 +46,18 @@ export default {
           900: '#a85817',
         },
         // Additional colors (e.g., Tokyo, Osaka)
+        pink: {
+          50: '#fdf2f8',
+          100: '#fce7f3',
+          200: '#fbcfe8',
+          300: '#f9a8d4',
+          400: '#f472b6',
+          500: '#ec4899',
+          600: '#db2777',
+          700: '#be185d',
+          800: '#9d174d',
+          900: '#831843',
+        },
         rose: {
           50: '#FFF8F8',
           100: '#FFE4E1',
@@ -83,14 +103,6 @@ export default {
           900: '#5522a3',
         },
       },
-      fontFamily: {
-        sans: 'var(--font-sans)',
-        mono: 'var(--font-mono)',
-        noto: ['Noto Sans JP', 'sans-serif'],
-        dancing: ['Dancing Script', 'cursive'],
-        serif: ['Noto Serif JP', 'serif'],
-        rounded: ['M PLUS Rounded 1c', 'sans-serif'],
-      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
@@ -106,6 +118,9 @@ export default {
         sm: 'calc(var(--radius) - 4px)',
       },
       animation: {
+        fadeInUp: 'fadeInUp 0.8s ease-out',
+        'bounce-slow': 'bounce 2s infinite',
+        'pulse-slow': 'pulse 3s infinite',
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
         twinkle: 'twinkle 0.4s ease-in-out',
