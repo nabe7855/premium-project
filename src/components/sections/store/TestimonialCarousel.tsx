@@ -1,10 +1,9 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Star, Quote, Heart } from 'lucide-react';
 
 interface Testimonial {
   id: string;
-
   content: string;
   rating: number;
 }
@@ -19,29 +18,43 @@ interface TestimonialCarouselProps {
 export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   testimonials,
   displayDuration = 5000,
-  fadeTransition = 800,
+  fadeTransition = 500, // フェードイン・アウトのアニメーション時間 (ミリ秒)
   className = '',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
-  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [containerHeight, setContainerHeight] = useState<number | 'auto'>('auto');
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (testimonials.length <= 1) return;
 
     const interval = setInterval(() => {
-      setIsTransitioning(true);
-      setIsVisible(false);
+      setIsVisible(false); // 1. まずコンテンツをフェードアウトさせる
 
+      // 2. フェードアウトのアニメーションが終わるのを待つ
       setTimeout(() => {
+        // 3. 表示するコンテンツのインデックスを更新する
         setCurrentIndex((prev) => (prev + 1) % testimonials.length);
+        // 4. 新しいコンテンツをフェードインさせる
         setIsVisible(true);
-        setTimeout(() => setIsTransitioning(false), fadeTransition / 2);
-      }, fadeTransition / 2);
+      }, fadeTransition);
     }, displayDuration);
 
     return () => clearInterval(interval);
   }, [testimonials.length, displayDuration, fadeTransition]);
+
+  // コンテンツが切り替わるたびに、その高さを取得して親コンテナに適用する
+  useEffect(() => {
+    if (contentRef.current) {
+      // requestAnimationFrameを使用して、レンダリング後の正確な高さを取得
+      requestAnimationFrame(() => {
+        if (contentRef.current) {
+          setContainerHeight(contentRef.current.offsetHeight);
+        }
+      });
+    }
+  }, [currentIndex]); // currentIndexが変わった時だけ高さを再計算
 
   if (testimonials.length === 0) return null;
 
@@ -63,7 +76,10 @@ export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   };
 
   return (
-    <div className={`relative flex min-h-[280px] items-center justify-center ${className}`}>
+    <div
+      className={`transition-height relative flex items-center justify-center duration-300 ease-in-out ${className}`}
+      style={{ height: containerHeight }}
+    >
       {/* Background decorative elements */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute left-10 top-10 h-20 w-20 animate-pulse rounded-full bg-gradient-to-br from-pink-200 to-rose-300 opacity-20"></div>
@@ -72,11 +88,12 @@ export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
       </div>
 
       <div
-        className={`transition-all duration-${fadeTransition} transform ease-in-out ${
-          isVisible && !isTransitioning
-            ? 'translate-y-0 scale-100 opacity-100'
-            : 'translate-y-6 scale-95 opacity-0'
-        }`}
+        ref={contentRef}
+        className={`w-full transition-opacity ease-in-out`}
+        style={{
+          transitionDuration: `${fadeTransition}ms`,
+          opacity: isVisible ? 1 : 0,
+        }}
       >
         <div className="relative mx-auto max-w-2xl">
           {/* Main testimonial card */}
@@ -114,7 +131,7 @@ export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
               </div>
             </div>
 
-            {/* Elegant speech bubble tail - moved to right side */}
+            {/* Elegant speech bubble tail */}
             <div className="absolute -bottom-3 right-8">
               <div className="h-6 w-6 rotate-45 transform border-b border-r border-rose-100 bg-gradient-to-br from-rose-50 to-pink-50 shadow-sm"></div>
             </div>

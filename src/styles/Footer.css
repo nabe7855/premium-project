@@ -1,17 +1,17 @@
 /* Footer Navigation Styles */
 .footer-nav {
-  position: fixed;
+  position: fixed; /* sticky から fixed に変更 */
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 999;
+  z-index: 9999; /* さらに高い z-index を設定 */
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-top: 1px solid rgba(255, 182, 193, 0.3);
   padding: 8px 0;
-  padding-bottom: max(8px, env(safe-area-inset-bottom));
-  transition: all 0.3s ease;
+  padding-bottom: max(8px, env(safe-area-inset-bottom)); /* スマホのセーフエリアに対応 */
+  transition: none; /* transitionを削除 */
 }
 
 .footer-nav__container {
@@ -234,29 +234,32 @@
 
 /* Animations */
 @keyframes strawberry-bounce {
-  0%, 100% { 
-    transform: translateY(0) scale(1); 
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
   }
-  50% { 
-    transform: translateY(-3px) scale(1.05); 
+  50% {
+    transform: translateY(-3px) scale(1.05);
   }
 }
 
 @keyframes pulse-subtle {
-  0%, 100% { 
-    opacity: 1; 
+  0%,
+  100% {
+    opacity: 1;
   }
-  50% { 
-    opacity: 0.8; 
+  50% {
+    opacity: 0.8;
   }
 }
 
 @keyframes bounce-gentle {
-  0%, 100% { 
-    transform: translateY(0); 
+  0%,
+  100% {
+    transform: translateY(0);
   }
-  50% { 
-    transform: translateY(-2px); 
+  50% {
+    transform: translateY(-2px);
   }
 }
 
