@@ -3,9 +3,10 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Noto_Sans_JP, Noto_Serif_JP, Dancing_Script } from 'next/font/google';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
+import Footer from '@/components/sections/layout/Footer';
 import Head from 'next/head';
+import '@/styles/footer.css';
 
-// ✅ Google Fonts 設定
 const notoSans = Noto_Sans_JP({
   subsets: ['latin'],
   variable: '--font-noto-sans',
@@ -30,7 +31,6 @@ const dancingScript = Dancing_Script({
   preload: true,
 });
 
-// ✅ SEO & OGP
 export const metadata: Metadata = {
   title: '【公式】ストロベリーボーイ｜AIで出会う癒しの女性用風俗',
   description:
@@ -58,12 +58,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${notoSans.variable} ${notoSerif.variable} ${dancingScript.variable} bg-background font-sans text-foreground antialiased`}
     >
       <Head>
-        {/* ✅ Google Fonts 最適化用 preconnect */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       </Head>
+
       <body>
         <HeaderGuard>{children}</HeaderGuard>
+        <Footer />
 
         {/* ✅ JSON-LD構造化データ（FAQ） */}
         <script

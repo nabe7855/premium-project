@@ -71,7 +71,7 @@ export default function StorePage() {
         <StoreMessage store={store} />
         <InformationGrid store={store} />
       </main>
-      <Footer store={store} />
+      <Footer />
     </div>
   );
 }

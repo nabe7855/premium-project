@@ -1,131 +1,123 @@
-import React from 'react';
-import { Phone, Calendar, Bot, MessageCircle } from 'lucide-react';
-import { Store } from '@/types/store';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import { Calendar, CreditCard, Phone, MessageCircle, Heart } from 'lucide-react';
 
 interface FooterProps {
-  store: Store;
+  className?: string;
 }
 
-const Footer: React.FC<FooterProps> = ({ store }) => {
-  const footerActions = [
+const Footer: React.FC<FooterProps> = ({ className = '' }) => {
+  const [isMounted, setIsMounted] = useState(false);
+  const [isFirstVisit, setIsFirstVisit] = useState(false);
+  const [isBusinessHours, setIsBusinessHours] = useState(true);
+
+  useEffect(() => {
+    setIsMounted(true);
+
+    const visited = localStorage.getItem('sb_visited');
+    if (!visited) {
+      setIsFirstVisit(true);
+      localStorage.setItem('sb_visited', 'true');
+    }
+
+    const updateBusinessHours = () => {
+      const now = new Date();
+      const hour = now.getHours();
+      setIsBusinessHours(hour >= 10 && hour < 24);
+    };
+
+    updateBusinessHours();
+    const interval = setInterval(updateBusinessHours, 60000);
+    return () => clearInterval(interval);
+  }, []);
+
+  if (!isMounted) return null;
+
+  const footerItems = [
     {
-      icon: Phone,
-      label: '電話',
-      href: `tel:03-1234-5678`,
-      color: 'bg-green-500',
-    },
-    {
+      id: 'schedule',
+      label: '出勤',
       icon: Calendar,
-      label: 'スケジュール',
-      href: `/${store.id}/schedule`,
-      color: `bg-${store.colors.primary}`,
+      href: '/schedule',
+      ariaLabel: '今日明日の出勤スケジュール確認',
     },
     {
-      icon: Bot,
-      label: 'AI診断',
-      href: `/${store.id}/ai-matching`,
-      color: 'bg-blue-500',
+      id: 'pricing',
+      label: '料金',
+      icon: CreditCard,
+      href: '/guide#price',
+      ariaLabel: '料金システム・予算確認',
+      badge: isFirstVisit ? '初' : null,
     },
     {
+      id: 'phone',
+      label: '電話',
+      icon: Phone,
+      href: 'tel:050-5212-5818',
+      ariaLabel: isBusinessHours
+        ? '今すぐ電話で予約・相談'
+        : '営業時間外のためLINEをご利用ください',
+      urgent: isBusinessHours,
+    },
+    {
+      id: 'line',
+      label: 'LINE',
       icon: MessageCircle,
-      label: 'LINE相談',
-      href: 'https://line.me/',
-      color: 'bg-emerald-500',
+      href: 'https://lin.ee/xxxxx',
+      ariaLabel: 'LINEで手軽に予約・相談',
+      highlighted: !isBusinessHours,
+    },
+    {
+      id: 'cast',
+      label: '推し',
+      icon: Heart,
+      href: '/cast-list?sort=popular',
+      ariaLabel: '人気キャスト一覧・お気に入り確認',
     },
   ];
 
   return (
-    <>
-      {/* Main footer */}
-      <footer className="bg-gray-900 text-white py-12 px-4 pb-24 md:pb-12">
-        <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Store info */}
-            <div>
-              <h3 className="text-xl font-bold mb-4 font-noto">{store.name}</h3>
-              <p className="text-gray-300 leading-relaxed mb-4">
-                {store.description}
-              </p>
-              <div className="space-y-2 text-sm text-gray-400">
-                <p>営業時間: 18:00 - 翌5:00</p>
-                <p>定休日: 年中無休</p>
-                <p>TEL: 03-1234-5678</p>
-              </div>
-            </div>
+    <footer
+      className={`footer-nav sm:relative sm:mt-10 ${className}`}
+      role="navigation"
+      aria-label="主要サービスへのクイックアクセス"
+      itemScope
+      itemType="https://schema.org/LocalBusiness"
+    >
+      <meta itemProp="name" content="ストロベリーボーイズ" />
+      <meta itemProp="telephone" content="050-5212-5818" />
 
-            {/* Quick links */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 font-noto">クイックリンク</h4>
-              <nav className="space-y-2">
-                {[
-                  { label: 'キャスト一覧', href: `/${store.id}/cast` },
-                  { label: 'ご予約', href: `/${store.id}/reservation` },
-                  { label: '料金案内', href: `/${store.id}/pricing` },
-                  { label: 'ご利用案内', href: `/${store.id}/guide` },
-                  { label: 'お問い合わせ', href: `/${store.id}/contact` },
-                ].map((link) => (
-                  <a
-                    key={link.label}
-                    href={link.href}
-                    className="block text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link.label}
-                  </a>
-                ))}
-              </nav>
-            </div>
-
-            {/* Social & Contact */}
-            <div>
-              <h4 className="text-lg font-semibold mb-4 font-noto">フォロー・お問い合わせ</h4>
-              <div className="space-y-4">
-                <a
-                  href="#"
-                  className="flex items-center space-x-3 text-gray-300 hover:text-white transition-colors"
-                >
-                  <MessageCircle className="h-5 w-5" />
-                  <span>LINE公式アカウント</span>
-                </a>
-                <div className="pt-4">
-                  <p className="text-sm text-gray-400 leading-relaxed">
-                    ご不明点やご相談がございましたら、お気軽にお問い合わせください。
-                  </p>
+      <nav className="footer-nav__container">
+        <ul className="footer-nav__list">
+          {footerItems.map((item, index) => (
+            <li key={item.id} className="footer-nav__item">
+              <a
+                href={item.href}
+                className={`footer-nav__link ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
+                aria-label={item.ariaLabel}
+              >
+                <div className="footer-nav__icon-container">
+                  <item.icon className="footer-nav__icon" aria-hidden="true" />
+                  {item.urgent && <span className="footer-nav__urgent-indicator">🔥</span>}
                 </div>
-              </div>
-            </div>
-          </div>
+                <span className="footer-nav__text">{item.label}</span>
+                {item.badge && <span className="footer-nav__badge">{item.badge}</span>}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </nav>
 
-          <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 Strawberry Boys. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
-
-      {/* Fixed bottom navigation for mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-        <div className="bg-white border-t border-gray-200 shadow-lg">
-          <div className="grid grid-cols-4">
-            {footerActions.map((action, index) => {
-              const IconComponent = action.icon;
-              return (
-                <a
-                  key={index}
-                  href={action.href}
-                  className="flex flex-col items-center justify-center py-3 px-2 text-center hover:bg-gray-50 transition-colors"
-                >
-                  <div className={`p-2 rounded-full ${action.color} mb-1`}>
-                    <IconComponent className="h-4 w-4 text-white" />
-                  </div>
-                  <span className="text-xs font-medium text-gray-700">
-                    {action.label}
-                  </span>
-                </a>
-              );
-            })}
-          </div>
-        </div>
+      <div className="footer-legal">
+        <a href="/privacy" className="footer-legal__link">
+          プライバシーポリシー
+        </a>
+        <a href="/terms" className="footer-legal__link">
+          利用規約
+        </a>
       </div>
-    </>
+    </footer>
   );
 };
 
