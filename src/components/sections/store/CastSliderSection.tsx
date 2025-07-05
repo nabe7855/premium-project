@@ -20,7 +20,7 @@ export default function CastSliderSection() {
   };
 
   const toggleLike = (castId: string) => {
-    setLikedCasts(prev => {
+    setLikedCasts((prev) => {
       const newSet = new Set(prev);
       if (newSet.has(castId)) {
         newSet.delete(castId);
@@ -38,34 +38,30 @@ export default function CastSliderSection() {
   const currentCast = store.casts[currentIndex];
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            本日出勤のキャスト
-          </h2>
-          <p className="text-gray-600 text-lg">
-            今すぐお会いできる素敵なキャストをご紹介
-          </p>
+    <section className="px-4 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">本日出勤のキャスト</h2>
+          <p className="text-lg text-gray-600">今すぐお会いできる素敵なキャストをご紹介</p>
         </div>
 
-        <div className="relative max-w-md mx-auto">
+        <div className="relative mx-auto max-w-md">
           {/* Tinder-style Card */}
           <div className="relative h-96 md:h-[500px]">
-            <div className="absolute inset-0 bg-white rounded-3xl shadow-2xl overflow-hidden transform transition-all duration-300 hover:scale-105">
+            <div className="absolute inset-0 transform overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 hover:scale-105">
               <div className="relative h-full">
                 <img
                   src={currentCast.image}
                   alt={currentCast.name}
-                  className="w-full h-2/3 object-cover"
+                  className="h-2/3 w-full object-cover"
                 />
-                
+
                 {/* Status Badge */}
-                <div className="absolute top-4 right-4">
-                  <Badge 
+                <div className="absolute right-4 top-4">
+                  <Badge
                     className={`${
-                      currentCast.isWorking 
-                        ? 'bg-green-500 hover:bg-green-600' 
+                      currentCast.isWorking
+                        ? 'bg-green-500 hover:bg-green-600'
                         : 'bg-gray-500 hover:bg-gray-600'
                     } text-white`}
                   >
@@ -76,28 +72,26 @@ export default function CastSliderSection() {
                 {/* Like Button */}
                 <button
                   onClick={() => toggleLike(currentCast.id)}
-                  className="absolute top-4 left-4 p-2 bg-white/90 rounded-full shadow-lg hover:bg-white transition-colors"
+                  className="absolute left-4 top-4 rounded-full bg-white/90 p-2 shadow-lg transition-colors hover:bg-white"
                 >
-                  <Heart 
-                    className={`w-6 h-6 ${
-                      likedCasts.has(currentCast.id) 
-                        ? 'fill-red-500 text-red-500' 
-                        : 'text-gray-400'
-                    }`} 
+                  <Heart
+                    className={`h-6 w-6 ${
+                      likedCasts.has(currentCast.id) ? 'fill-red-500 text-red-500' : 'text-gray-400'
+                    }`}
                   />
                 </button>
 
                 {/* Cast Info */}
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
-                  <h3 className="text-2xl font-bold mb-2">{currentCast.name}</h3>
-                  <p className="text-lg mb-2">{currentCast.age}歳</p>
-                  <div className="flex items-center gap-2 mb-2">
-                    <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  <h3 className="mb-2 text-2xl font-bold">{currentCast.name}</h3>
+                  <p className="mb-2 text-lg">{currentCast.age}歳</p>
+                  <div className="mb-2 flex items-center gap-2">
+                    <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                     <span className="text-sm">{currentCast.specialty}</span>
                   </div>
                   {currentCast.isWorking && (
                     <div className="flex items-center gap-2">
-                      <Clock className="w-4 h-4" />
+                      <Clock className="h-4 w-4" />
                       <span className="text-sm">{currentCast.schedule.join(', ')}</span>
                     </div>
                   )}
@@ -107,51 +101,37 @@ export default function CastSliderSection() {
           </div>
 
           {/* Navigation Buttons */}
-          <div className="flex justify-between items-center mt-8">
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={prevSlide}
-              className="rounded-full p-3"
-            >
-              <ChevronLeft className="w-6 h-6" />
+          <div className="mt-8 flex items-center justify-between">
+            <Button variant="outline" size="lg" onClick={prevSlide} className="rounded-full p-3">
+              <ChevronLeft className="h-6 w-6" />
             </Button>
 
             <div className="flex gap-2">
-              {store.casts.map((_, index) => (
+              {store.casts.map((cast, index) => (
                 <button
-                  key={index}
+                  key={cast.id}
                   onClick={() => setCurrentIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-colors ${
-                    index === currentIndex 
-                      ? `bg-gradient-to-r ${store.theme.gradient}` 
+                  className={`h-3 w-3 rounded-full transition-colors ${
+                    index === currentIndex
+                      ? `bg-gradient-to-r ${store.theme.gradient}`
                       : 'bg-gray-300'
                   }`}
                 />
               ))}
             </div>
 
-            <Button
-              variant="outline"
-              size="lg"
-              onClick={nextSlide}
-              className="rounded-full p-3"
-            >
-              <ChevronRight className="w-6 h-6" />
+            <Button variant="outline" size="lg" onClick={nextSlide} className="rounded-full p-3">
+              <ChevronRight className="h-6 w-6" />
             </Button>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-4 mt-8">
-            <Button
-              variant="outline"
-              className="flex-1 rounded-full py-3"
-              onClick={prevSlide}
-            >
+          <div className="mt-8 flex gap-4">
+            <Button variant="outline" className="flex-1 rounded-full py-3" onClick={prevSlide}>
               パス
             </Button>
             <Button
-              className={`flex-1 rounded-full py-3 bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} text-white`}
+              className={`flex-1 rounded-full bg-gradient-to-r py-3 ${store.theme.gradient} hover:${store.theme.gradientHover} text-white`}
               onClick={() => toggleLike(currentCast.id)}
             >
               お気に入り
@@ -159,9 +139,9 @@ export default function CastSliderSection() {
           </div>
         </div>
 
-        <div className="text-center mt-12">
+        <div className="mt-12 text-center">
           <Button
-            className={`bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} text-white px-8 py-3 rounded-full text-lg font-semibold`}
+            className={`bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} rounded-full px-8 py-3 text-lg font-semibold text-white`}
           >
             全キャスト一覧を見る
           </Button>

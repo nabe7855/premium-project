@@ -3,6 +3,7 @@
 import { useStore } from '@/contexts/StoreContext';
 import { Button } from '@/components/ui/button';
 import { Play, Eye, Calendar } from 'lucide-react';
+import type { Video } from '@/types/store';
 
 export default function VideoSection() {
   const { store } = useStore();
@@ -12,54 +13,49 @@ export default function VideoSection() {
   }
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            最新動画更新
-          </h2>
-          <p className="text-gray-300 text-lg">
-            キャストたちの魅力をもっと知ってください
-          </p>
+    <section className="bg-gradient-to-br from-gray-900 to-gray-800 px-4 py-16 text-white">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">最新動画更新</h2>
+          <p className="text-lg text-gray-300">キャストたちの魅力をもっと知ってください</p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {store.videos.map((video) => (
-            <div key={video.id} className="bg-gray-800 rounded-2xl overflow-hidden hover:bg-gray-700 transition-all duration-300 hover:scale-105">
-              <div className="relative group cursor-pointer">
-                <img
-                  src={video.thumbnail}
-                  alt={video.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {store.videos.map((video: Video) => (
+            <div
+              key={video.id}
+              className="overflow-hidden rounded-2xl bg-gray-800 transition-all duration-300 hover:scale-105 hover:bg-gray-700"
+            >
+              <div className="group relative cursor-pointer">
+                <img src={video.thumbnail} alt={video.title} className="h-48 w-full object-cover" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 transition-opacity group-hover:opacity-100">
                   <div className={`bg-gradient-to-r ${store.theme.gradient} rounded-full p-4`}>
-                    <Play className="w-8 h-8 text-white fill-white" />
+                    <Play className="h-8 w-8 fill-white text-white" />
                   </div>
                 </div>
-                <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-sm">
+                <div className="absolute bottom-2 right-2 rounded bg-black/70 px-2 py-1 text-sm text-white">
                   {video.duration}
                 </div>
               </div>
-              
+
               <div className="p-6">
-                <h3 className="text-lg font-bold mb-3 line-clamp-2">{video.title}</h3>
-                
-                <div className="flex items-center justify-between text-gray-400 text-sm mb-4">
+                <h3 className="mb-3 line-clamp-2 text-lg font-bold">{video.title}</h3>
+
+                <div className="mb-4 flex items-center justify-between text-sm text-gray-400">
                   <div className="flex items-center gap-1">
-                    <Eye className="w-4 h-4" />
+                    <Eye className="h-4 w-4" />
                     <span>{video.views.toLocaleString()}回再生</span>
                   </div>
                   <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
+                    <Calendar className="h-4 w-4" />
                     <span>{video.date}</span>
                   </div>
                 </div>
-                
+
                 <Button
-                  className={`w-full bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} text-white rounded-full font-semibold`}
+                  className={`w-full bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} rounded-full font-semibold text-white`}
                 >
-                  <Play className="w-4 h-4 mr-2" />
+                  <Play className="mr-2 h-4 w-4" />
                   動画を見る
                 </Button>
               </div>
@@ -67,10 +63,10 @@ export default function VideoSection() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        <div className="mt-12 text-center">
           <Button
             variant="outline"
-            className="px-8 py-3 rounded-full text-lg font-semibold border-white/30 text-white hover:bg-white/10"
+            className="rounded-full border-white/30 px-8 py-3 text-lg font-semibold text-white hover:bg-white/10"
           >
             すべての動画を見る
           </Button>

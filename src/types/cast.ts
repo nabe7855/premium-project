@@ -1,9 +1,11 @@
+// cast.ts
+
 export interface GalleryItem {
   id: number;
   imageUrl: string;
   caption?: string;
-  videoUrl?: string | null; // ✅ 追加
-  type?: 'image' | 'video'; // ✅ 画像 or 動画判別用
+  videoUrl?: string | null;
+  type?: 'image' | 'video';
 }
 
 export interface CastSNS {
@@ -28,23 +30,22 @@ export interface Cast {
 }
 
 export interface CastSummary {
-  id: number;
-  slug?: string;
-  name: string;
-  age: number;
-  height: number;
-  weight: number;
-  bloodType?: string;
-  catchCopy?: string;
-  imageUrl?: string;
-  diaryUrl?: string;
-  snsUrl?: string;
-  isReception?: boolean;
-  stillwork?: boolean;
-  customID?: string;
-
-  // ✅ 追加
-  galleryItems?: GalleryItem[];
+  id: string; // 必須: キャストのID
+  name: string; // 必須: キャストの名前
+  age: number; // 必須: キャストの年齢
+  height: number; // 必須: キャストの身長
+  weight: number; // 必須: キャストの体重
+  catchCopy?: string; // 任意: キャッチコピー（あれば設定）
+  imageUrl?: string; // 任意: 画像URL（あれば設定）
+  galleryItems?: GalleryItem[]; // 任意: ギャラリーアイテム（あれば設定）
+  isWorking: boolean; // 必須: 出勤中かどうか
+  schedule?: string[]; // 任意: スケジュール（あれば設定）
+  stillwork?: boolean; // 任意: まだ働いているかどうか（あれば設定）
+  diaryUrl?: string; // 任意: 写メ日記のURL（あれば設定）
+  snsUrl?: string; // 任意: SNSのURL（あれば設定）
+  bloodType?: string; // 任意: 血液型（あれば設定）
+  customID?: string; // 任意: カスタムID（あれば設定）
+  slug?: string; // 任意: スラッグ（あれば設定）
 }
 
 export interface FeatureMaster {

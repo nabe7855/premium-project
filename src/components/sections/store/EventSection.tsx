@@ -8,13 +8,13 @@ import { Calendar, Clock, Zap, Gift, Radio } from 'lucide-react';
 const getEventIcon = (type: string) => {
   switch (type) {
     case 'live':
-      return <Radio className="w-5 h-5" />;
+      return <Radio className="h-5 w-5" />;
     case 'campaign':
-      return <Gift className="w-5 h-5" />;
+      return <Gift className="h-5 w-5" />;
     case 'event':
-      return <Zap className="w-5 h-5" />;
+      return <Zap className="h-5 w-5" />;
     default:
-      return <Calendar className="w-5 h-5" />;
+      return <Calendar className="h-5 w-5" />;
   }
 };
 
@@ -39,48 +39,42 @@ export default function EventSection() {
   }
 
   return (
-    <section className="py-16 px-4">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            {store.city}店限定イベント
-          </h2>
-          <p className="text-gray-600 text-lg">
-            特別な時間をお過ごしいただけるイベント情報
-          </p>
+    <section className="px-4 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">{store.city}店限定イベント</h2>
+          <p className="text-lg text-gray-600">特別な時間をお過ごしいただけるイベント情報</p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8">
+        <div className="grid gap-8 md:grid-cols-2">
           {store.events.map((event) => (
-            <div key={event.id} className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div
+              key={event.id}
+              className="overflow-hidden rounded-2xl bg-white shadow-lg transition-shadow hover:shadow-xl"
+            >
               <div className="relative">
-                <img
-                  src={event.image}
-                  alt={event.title}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute top-4 left-4">
+                <img src={event.image} alt={event.title} className="h-48 w-full object-cover" />
+                <div className="absolute left-4 top-4">
                   <Badge className={`bg-gradient-to-r ${store.theme.gradient} text-white`}>
                     {getEventIcon(event.type)}
                     <span className="ml-1">{getEventTypeLabel(event.type)}</span>
                   </Badge>
                 </div>
               </div>
-              
+
               <div className="p-6">
-                <div className="flex items-center gap-2 text-gray-500 text-sm mb-2">
-                  <Calendar className="w-4 h-4" />
-                  <span>{event.date}</span>
+                {/* 日付部分に Clock アイコンを追加 */}
+                <div className="mb-2 flex items-center gap-2 text-sm text-gray-500">
+                  <Clock className="h-4 w-4" />
+                  <span>{event.date}</span> {/* イベント日付を表示 */}
                 </div>
-                
-                <h3 className="text-xl font-bold mb-3">{event.title}</h3>
-                
-                <p className="text-gray-600 mb-4 leading-relaxed">
-                  {event.description}
-                </p>
-                
+
+                <h3 className="mb-3 text-xl font-bold">{event.title}</h3>
+
+                <p className="mb-4 leading-relaxed text-gray-600">{event.description}</p>
+
                 <Button
-                  className={`w-full bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} text-white rounded-full font-semibold`}
+                  className={`w-full bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} rounded-full font-semibold text-white`}
                 >
                   詳細を見る
                 </Button>
@@ -89,11 +83,8 @@ export default function EventSection() {
           ))}
         </div>
 
-        <div className="text-center mt-12">
-          <Button
-            variant="outline"
-            className="px-8 py-3 rounded-full text-lg font-semibold"
-          >
+        <div className="mt-12 text-center">
+          <Button variant="outline" className="rounded-full px-8 py-3 text-lg font-semibold">
             すべてのイベントを見る
           </Button>
         </div>

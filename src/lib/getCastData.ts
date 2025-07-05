@@ -1,5 +1,5 @@
-import qs from "qs";
-import { CastSummary, GalleryItem } from "@/types/cast";
+import qs from 'qs';
+import { CastSummary, GalleryItem } from '@/types/cast';
 
 export const getCastBySlug = async (slug: string): Promise<CastSummary | null> => {
   const query = qs.stringify(
@@ -10,24 +10,24 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
         },
       },
       populate: {
-        GalleryItem: true,
+        galleryItems: true, // 小文字に修正
       },
     },
-    { encodeValuesOnly: true }
+    { encodeValuesOnly: true },
   );
 
   const url = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/casts?${query}`;
-  console.log("🔍 Fetching cast data with URL:", url);
+  console.log('🔍 Fetching cast data with URL:', url);
 
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${process.env.NEXT_PUBLIC_STRAPI_API_TOKEN_READ}`,
     },
-    cache: 'no-store', // ✅ 念のためキャッシュ無効
+    cache: 'no-store', // キャッシュ無効
   });
 
   if (!res.ok) {
-    console.error("❌ Fetch failed:", res.status, res.statusText);
+    console.error('❌ Fetch failed:', res.status, res.statusText);
     return null;
   }
 
@@ -35,36 +35,38 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
   const item = json.data?.[0];
 
   if (!item) {
-    console.warn("⚠️ No cast found for slug:", slug);
+    console.warn('⚠️ No cast found for slug:', slug);
     return null;
   }
 
-  // ✅ GalleryItem の型安全な変換
-  const galleryItems: GalleryItem[] = Array.isArray(item.GalleryItem)
-    ? item.GalleryItem.map((img: GalleryItem) => ({
+  // galleryItemsの型変換
+  const galleryItems: GalleryItem[] = Array.isArray(item.galleryItems)
+    ? item.galleryItems.map((img: GalleryItem) => ({
         id: img.id,
-        imageUrl: img.imageUrl ?? "",
-        videoUrl: img.videoUrl ?? null,
-        caption: img.caption ?? null,
-        type: img.type ?? "image",
+        imageUrl: img.imageUrl ?? '', // デフォルト値
+        videoUrl: img.videoUrl ?? null, // 動画URLがない場合はnull
+        caption: img.caption ?? '', // キャプションがない場合は空文字
+        type: img.type ?? 'image', // タイプがない場合はデフォルトで'image'
       }))
     : [];
 
+  // CastSummaryに合わせたデータ構造
   const result: CastSummary = {
     id: item.id,
-    slug: item.slug ?? "",
-    name: item.name ?? "",
-    catchCopy: item.catchCopy ?? "",
-    stillwork: item.stillwork ?? false,
-    imageUrl: galleryItems[0]?.imageUrl ?? null,
-    galleryItems,
-    height: item.height ?? null,
-    weight: item.weight ?? null,
-    age: item.age ?? null,
-    bloodType: item.bloodtype ?? null,
-    customID: item.customID ?? "", 
+    slug: item.slug ?? '', // slugがなければ空文字
+    name: item.name ?? '',
+    catchCopy: item.catchCopy ?? '',
+    stillwork: item.stillwork ?? false, // stillworkがない場合はfalse
+    imageUrl: item.imageUrl ?? '',
+    galleryItems: galleryItems, // 修正済みのgalleryItemsを使用
+    height: item.height ?? 0, // デフォルト値0
+    weight: item.weight ?? 0, // デフォルト値0
+    age: item.age ?? 0, // デフォルト値0
+    bloodType: item.bloodType ?? '', // デフォルト値空文字
+    customID: item.customID ?? '', // デフォルト値空文字
+    isWorking: item.isWorking ?? false, // isWorkingがなければfalse
   };
 
-  console.log("🎯 Parsed cast summary:", result);
+  console.log('🎯 Parsed cast summary:', result);
   return result;
 };

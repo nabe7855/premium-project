@@ -3,10 +3,11 @@
 import { useStore } from '@/contexts/StoreContext';
 import { useState, useEffect } from 'react';
 import { Star, User, Calendar } from 'lucide-react';
+import type { Review } from '@/types/store'; // または '@/types/store'
 
 export default function ReviewSection() {
   const { store } = useStore();
-  const [currentReview, setCurrentReview] = useState(0);
+  const [currentReview, setCurrentReview] = useState<number>(0);
 
   useEffect(() => {
     if (store.reviews.length > 0) {
@@ -25,7 +26,7 @@ export default function ReviewSection() {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
         key={index}
-        className={`w-5 h-5 ${
+        className={`h-5 w-5 ${
           index < rating ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
         }`}
       />
@@ -33,51 +34,47 @@ export default function ReviewSection() {
   };
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
-      <div className="max-w-6xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            お客様の声
-          </h2>
-          <p className="text-gray-600 text-lg">
-            実際にご利用いただいたお客様からの嬉しいお声
-          </p>
+    <section className="bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-16">
+      <div className="mx-auto max-w-6xl">
+        <div className="mb-12 text-center">
+          <h2 className="mb-4 text-3xl font-bold md:text-4xl">お客様の声</h2>
+          <p className="text-lg text-gray-600">実際にご利用いただいたお客様からの嬉しいお声</p>
         </div>
 
-        <div className="relative max-w-4xl mx-auto">
-          <div className="bg-white rounded-3xl shadow-xl p-8 md:p-12 min-h-[300px] flex flex-col justify-center">
-            <div className="text-center mb-8">
-              <div className="flex justify-center mb-4">
+        <div className="relative mx-auto max-w-4xl">
+          <div className="flex min-h-[300px] flex-col justify-center rounded-3xl bg-white p-8 shadow-xl md:p-12">
+            <div className="mb-8 text-center">
+              <div className="mb-4 flex justify-center">
                 {renderStars(store.reviews[currentReview].rating)}
               </div>
-              <blockquote className="text-xl md:text-2xl text-gray-800 leading-relaxed mb-6 italic">
+              <blockquote className="mb-6 text-xl italic leading-relaxed text-gray-800 md:text-2xl">
                 "{store.reviews[currentReview].content}"
               </blockquote>
               <div className="flex items-center justify-center gap-4 text-gray-600">
                 <div className="flex items-center gap-1">
-                  <User className="w-4 h-4" />
+                  <User className="h-4 w-4" />
                   <span>{store.reviews[currentReview].author}</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-4 h-4" />
+                  <Calendar className="h-4 w-4" />
                   <span>{store.reviews[currentReview].date}</span>
                 </div>
               </div>
-              <div className="text-sm text-gray-500 mt-2">
+              <div className="mt-2 text-sm text-gray-500">
                 ご利用プラン: {store.reviews[currentReview].service}
               </div>
             </div>
           </div>
 
           {/* Review Navigation Dots */}
-          <div className="flex justify-center gap-2 mt-8">
-            {store.reviews.map((_, index) => (
+          <div className="mt-8 flex justify-center gap-2">
+            {store.reviews.map((_: Review, index: number) => (
               <button
                 key={index}
                 onClick={() => setCurrentReview(index)}
-                className={`w-3 h-3 rounded-full transition-colors ${
-                  index === currentReview 
-                    ? `bg-gradient-to-r ${store.theme.gradient}` 
+                className={`h-3 w-3 rounded-full transition-colors ${
+                  index === currentReview
+                    ? `bg-gradient-to-r ${store.theme.gradient}`
                     : 'bg-gray-300'
                 }`}
               />
@@ -86,21 +83,21 @@ export default function ReviewSection() {
         </div>
 
         {/* Statistics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+        <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">4.8</div>
+            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">4.8</div>
             <div className="text-gray-600">平均評価</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">247+</div>
+            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">247+</div>
             <div className="text-gray-600">レビュー数</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">98%</div>
+            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">98%</div>
             <div className="text-gray-600">満足度</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">89%</div>
+            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">89%</div>
             <div className="text-gray-600">リピート率</div>
           </div>
         </div>

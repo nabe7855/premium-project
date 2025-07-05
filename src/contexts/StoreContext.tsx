@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { Store } from '@/lib/store-data';
+import { Store } from '@/lib/store/store-data';
 
 interface StoreContextType {
   store: Store;
@@ -15,11 +15,7 @@ interface StoreProviderProps {
 }
 
 export function StoreProvider({ store, children }: StoreProviderProps) {
-  return (
-    <StoreContext.Provider value={{ store }}>
-      {children}
-    </StoreContext.Provider>
-  );
+  return <StoreContext.Provider value={{ store }}>{children}</StoreContext.Provider>;
 }
 
 export function useStore() {

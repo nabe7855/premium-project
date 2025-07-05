@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 import {
   ResponsiveContainer,
@@ -9,19 +11,10 @@ import {
 } from 'recharts';
 import { cn } from '@/lib/utils';
 
-// ✅ 2. import 文の後に型定義を追加
-type TooltipPayload<TValue = number | string, TName = string> = {
-  name: TName;
-  value: TValue;
-  dataKey: string;
-  color?: string;
-  payload: Record<string, unknown>;
-};
-
 const THEMES = { light: '', dark: '.dark' } as const;
 
 export type ChartConfig = {
-  [k in string]: {
+  [k: string]: {
     label?: React.ReactNode;
     icon?: React.ComponentType;
   } & (
@@ -79,7 +72,8 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
       dangerouslySetInnerHTML={{
         __html: Object.entries(THEMES)
           .map(
-            ([theme, prefix]) => `
+            ([theme, prefix]) =>
+              `
 ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, cfg]) => {
@@ -95,9 +89,15 @@ ${colorConfig
   );
 };
 
-const ChartTooltip = RechartsTooltip;
+type TooltipPayload = {
+  name: string;
+  value: string | number;
+  dataKey?: string;
+  color?: string;
+  payload?: Record<string, any>;
+};
 
-type CustomTooltipProps = RechartsTooltipProps<string | number, string> & {
+type CustomTooltipProps = Omit<RechartsTooltipProps<string | number, string>, 'payload'> & {
   className?: string;
   hideLabel?: boolean;
   hideIndicator?: boolean;
@@ -106,7 +106,8 @@ type CustomTooltipProps = RechartsTooltipProps<string | number, string> & {
   labelKey?: string;
   color?: string;
   label?: string;
-  payload?: LegendPayload[];
+  labelClassName?: string;
+  payload?: TooltipPayload[];
 };
 
 const ChartTooltipContent = React.forwardRef<HTMLDivElement, CustomTooltipProps>((props, ref) => {
@@ -117,7 +118,6 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, CustomTooltipProps>
     hideIndicator = false,
     labelFormatter,
     labelClassName,
-    //formatter,
     nameKey,
     labelKey,
     payload = [],
@@ -140,7 +140,7 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, CustomTooltipProps>
 
     return (
       <div className={cn('font-medium', labelClassName)}>
-        {labelFormatter ? labelFormatter(labelValue, payload as TooltipPayload[]) : labelValue}
+        {labelFormatter ? labelFormatter(labelValue, payload) : labelValue}
       </div>
     );
   }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
@@ -180,8 +180,6 @@ const ChartTooltipContent = React.forwardRef<HTMLDivElement, CustomTooltipProps>
 });
 ChartTooltipContent.displayName = 'ChartTooltipContent';
 
-const ChartLegend = RechartsLegend;
-
 const ChartLegendContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'> & {
@@ -206,8 +204,7 @@ const ChartLegendContent = React.forwardRef<
     >
       {payload.map((item, index) => {
         const key = `${nameKey || item.dataKey || 'value'}`;
-        const itemConfig = getPayloadConfigFromPayload(config, item, key);
-
+        const itemConfig = config[key];
         return (
           <div key={item.dataKey?.toString() || index} className="flex items-center gap-1.5">
             {!hideIcon && (
@@ -224,15 +221,15 @@ ChartLegendContent.displayName = 'ChartLegendContent';
 
 function getPayloadConfigFromPayload(
   config: ChartConfig,
-  payload: LegendPayload,
+  payload: TooltipPayload,
   key: string,
 ): { label?: React.ReactNode; icon?: React.ComponentType } | undefined {
   const payloadPayload = typeof payload.payload === 'object' ? payload.payload : undefined;
 
   let configLabelKey = key;
 
-  if (key in payload && typeof payload[key as keyof LegendPayload] === 'string') {
-    configLabelKey = payload[key as keyof LegendPayload] as string;
+  if (key in payload && typeof payload[key as keyof TooltipPayload] === 'string') {
+    configLabelKey = payload[key as keyof TooltipPayload] as string;
   } else if (
     payloadPayload &&
     key in payloadPayload &&
@@ -246,9 +243,9 @@ function getPayloadConfigFromPayload(
 
 export {
   ChartContainer,
-  ChartTooltip,
+  RechartsTooltip as ChartTooltip,
   ChartTooltipContent,
-  ChartLegend,
+  RechartsLegend as ChartLegend,
   ChartLegendContent,
   ChartStyle,
 };
