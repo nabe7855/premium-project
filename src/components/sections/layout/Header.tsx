@@ -16,9 +16,8 @@ export default function Header() {
   const pathname = usePathname();
   const router = useRouter();
 
-  // ✅ 現在のストアIDをURLから取得
   const match = pathname.match(/^\/store\/([^/]+)/);
-  const currentStoreId = match?.[1] ?? 'tokyo'; // デフォルト: tokyo
+  const currentStoreId = match?.[1] ?? 'tokyo';
   const currentStore = stores[currentStoreId];
 
   useEffect(() => {
@@ -27,20 +26,18 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // ✅ 店舗切り替え（今のページのまま store 切替）
   const handleStoreChange = (newStoreId: string) => {
-    const pagePath = pathname.replace(/^\/store\/[^/]+/, ''); // /schedule など
+    const pagePath = pathname.replace(/^\/store\/[^/]+/, '');
     router.push(`/store/${newStoreId}${pagePath}`);
     setIsMenuOpen(false);
     setIsStoreDropdownOpen(false);
   };
 
-  // ✅ 各ナビリンク描画
-  const renderNavItem = (item: any) => (
+  const renderNavItem = (item: any, index: number) => (
     <Link
       key={item.href}
-      href={`/store/${currentStoreId}${item.href}`} // ← 動的にストアID付加
-      className={`flex items-center gap-1 px-2 py-1 transition-colors duration-200 hover:text-pink-600 ${
+      href={`/store/${currentStoreId}${item.href}`}
+      className={`fade-slide-in-x flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 fade-slide-in-x-delayed-${index + 1} ${
         pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
       }`}
       aria-label={item.name}
@@ -60,7 +57,6 @@ export default function Header() {
       }`}
     >
       <div className="flex items-center justify-between px-4 py-3 md:px-8">
-        {/* ロゴ */}
         <Link
           href="/"
           className="flex items-center gap-2 text-xl font-bold text-pink-600 transition-transform hover:scale-105"
@@ -71,7 +67,6 @@ export default function Header() {
           </span>
         </Link>
 
-        {/* メニューアイコン */}
         <button
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="text-gray-700 transition-colors hover:text-pink-600 md:hidden"
@@ -80,11 +75,9 @@ export default function Header() {
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
 
-        {/* ナビゲーション（PC表示） */}
         <nav className="hidden items-center gap-4 md:flex">
-          {primaryNavItems.map(renderNavItem)}
+          {primaryNavItems.map((item, index) => renderNavItem(item, index))}
 
-          {/* 店舗選択ドロップダウン */}
           <div className="relative">
             <button
               onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
@@ -113,12 +106,17 @@ export default function Header() {
         </nav>
       </div>
 
-      {/* モバイルメニュー */}
       {isMenuOpen && (
-        <div className="animate-slideDown space-y-3 px-4 pb-4 md:hidden">
-          {primaryNavItems.map(renderNavItem)}
+        <div className="animate-floatFadeInRight fixed right-0 top-0 z-40 h-full w-2/5 rounded-l-2xl bg-white p-4 shadow-xl md:hidden">
+          <button
+            onClick={() => setIsMenuOpen(false)}
+            className="absolute right-3 top-3 text-gray-500 hover:text-pink-600"
+            aria-label="メニューを閉じる"
+          >
+            <X size={24} />
+          </button>
 
-          <div className="border-t border-gray-200 pt-2">
+          <div className="mb-4 mt-8 border-b pb-2">
             <div className="mb-1 text-sm text-gray-500">店舗を選ぶ</div>
             {Object.values(stores).map((store) => (
               <button
@@ -131,8 +129,12 @@ export default function Header() {
             ))}
           </div>
 
-          <div className="border-t border-gray-200 pt-2">
-            {secondaryNavItems.map(renderNavItem)}
+          <div className="space-y-2 border-b pb-2">
+            {primaryNavItems.map((item, index) => renderNavItem(item, index))}
+          </div>
+
+          <div className="mt-2 pt-2">
+            {secondaryNavItems.map((item, index) => renderNavItem(item, index + 5))}
           </div>
         </div>
       )}
