@@ -2,8 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Google Fonts */
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;500;700&display=swap');
 
+/* ===== Root Variables ===== */
 :root {
   --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
   --font-serif: 'Noto Serif JP', serif;
@@ -11,7 +13,6 @@
   --background: #fff1f2;
   --foreground: #171717;
 }
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #121212;
@@ -19,6 +20,7 @@
   }
 }
 
+/* ===== Base Styles ===== */
 @layer base {
   html {
     scroll-behavior: smooth;
@@ -34,7 +36,6 @@
     @media (min-width: 640px) {
       font-size: 15px;
     }
-
     @media (min-width: 1024px) {
       font-size: 16px;
     }
@@ -58,6 +59,7 @@
   }
 }
 
+/* ===== Utility Classes ===== */
 @layer utilities {
   .line-clamp-2 {
     @apply overflow-hidden;
@@ -67,7 +69,7 @@
     -webkit-box-orient: vertical;
   }
 
-  .text-gradient {
+  .gradient-text {
     background: linear-gradient(135deg, #d63384, #e91e63);
     -webkit-background-clip: text;
     background-clip: text;
@@ -79,8 +81,8 @@
     backdrop-filter: blur(10px);
   }
 
-  .fade-slide-in {
-    animation: fadeSlideIn 0.6s ease-out both;
+  .fade-in {
+    animation: fadeIn 0.4s ease-out both;
   }
 
   .slide-in-right {
@@ -89,10 +91,6 @@
 
   .slide-in-bottom {
     animation: slideInFromBottom 0.6s ease-out both;
-  }
-
-  .fade-in {
-    animation: fadeIn 0.4s ease-out both;
   }
 
   .text-shadow {
@@ -106,6 +104,7 @@
     z-index: 50;
     cursor: pointer;
     transition: opacity 0.3s ease;
+    @apply text-gray-600 hover:text-pink-500 focus:outline-none;
   }
 
   .transition-all {
@@ -121,19 +120,21 @@
   .animate-floatFadeInRight {
     animation: floatFadeInRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
+
+  .animate-floatFadeOutRight {
+    animation: floatFadeOutRight 0.4s ease-in forwards;
+  }
 }
 
-@keyframes fadeSlideIn {
+/* ===== Keyframes ===== */
+@keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(16px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
   }
 }
-
 @keyframes slideInFromRight {
   from {
     opacity: 0;
@@ -144,7 +145,6 @@
     transform: translateX(0);
   }
 }
-
 @keyframes slideInFromBottom {
   from {
     opacity: 0;
@@ -155,16 +155,6 @@
     transform: translateY(0);
   }
 }
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
 @keyframes floatFadeInRight {
   0% {
     opacity: 0;
@@ -175,15 +165,26 @@
     transform: translateX(0) scale(1);
   }
 }
+@keyframes floatFadeOutRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.95);
+  }
+}
 
+/* ===== Mobile Menu Styles ===== */
 @media (max-width: 768px) {
   body {
     padding-bottom: 80px;
   }
 
   .mobile-menu {
-    @apply slide-in-right bg-glass p-4;
-    max-width: 60vw;
+    @apply bg-glass p-4 transition-all will-change-transform;
+    max-width: 40vw;
     min-width: 280px;
     height: 100vh;
     position: fixed;
@@ -194,25 +195,22 @@
   }
 }
 
+/* ===== Scrollbar ===== */
 ::-webkit-scrollbar {
   width: 6px;
 }
-
 @media (min-width: 1024px) {
   ::-webkit-scrollbar {
     width: 8px;
   }
 }
-
 ::-webkit-scrollbar-track {
   background: #f1f1f1;
 }
-
 ::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #d63384, #e91e63);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(135deg, #b02a5b, #c2185b);
 }

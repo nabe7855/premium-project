@@ -10,6 +10,7 @@ import { stores } from '@/data/stores';
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
   const [scrollY, setScrollY] = useState(0);
 
@@ -29,8 +30,15 @@ export default function Header() {
   const handleStoreChange = (newStoreId: string) => {
     const pagePath = pathname.replace(/^\/store\/[^/]+/, '');
     router.push(`/store/${newStoreId}${pagePath}`);
-    setIsMenuOpen(false);
-    setIsStoreDropdownOpen(false);
+    closeMenu();
+  };
+
+  const closeMenu = () => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setIsMenuOpen(false);
+      setIsAnimating(false);
+    }, 400); // アニメーション時間に合わせる
   };
 
   const renderNavItem = (item: any, index: number) => (
@@ -68,7 +76,10 @@ export default function Header() {
         </Link>
 
         <button
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={() => {
+            if (!isMenuOpen) setIsMenuOpen(true);
+            else closeMenu();
+          }}
           className="text-gray-700 transition-colors hover:text-pink-600 md:hidden"
           aria-label="メニューを開閉"
         >
@@ -106,17 +117,22 @@ export default function Header() {
         </nav>
       </div>
 
-      {isMenuOpen && (
-        <div className="animate-floatFadeInRight fixed right-0 top-0 z-40 h-full w-2/5 rounded-l-2xl bg-white p-4 shadow-xl md:hidden">
+      {/* モバイルメニュー */}
+      {(isMenuOpen || isAnimating) && (
+        <div
+          className={`mobile-menu transition-all will-change-transform ${
+            isAnimating ? 'animate-floatFadeOutRight' : 'animate-floatFadeInRight'
+          }`}
+        >
           <button
-            onClick={() => setIsMenuOpen(false)}
-            className="absolute right-3 top-3 text-gray-500 hover:text-pink-600"
+            onClick={closeMenu}
+            className="menu-close-button text-gray-600 hover:text-pink-500"
             aria-label="メニューを閉じる"
           >
             <X size={24} />
           </button>
 
-          <div className="mb-4 mt-8 border-b pb-2">
+          <div className="mb-4 border-b pb-2">
             <div className="mb-1 text-sm text-gray-500">店舗を選ぶ</div>
             {Object.values(stores).map((store) => (
               <button
