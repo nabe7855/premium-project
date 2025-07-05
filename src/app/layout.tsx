@@ -1,62 +1,37 @@
-// app/layout.tsx
 import './globals.css';
 import type { Metadata } from 'next';
-import { Noto_Sans_JP, Noto_Serif_JP, Dancing_Script } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import Footer from '@/components/sections/layout/Footer';
 import Head from 'next/head';
 import '@/styles/Footer.css';
 
-const notoSans = Noto_Sans_JP({
-  subsets: ['latin'],
-  variable: '--font-noto-sans',
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  preload: true,
-});
-
-const notoSerif = Noto_Serif_JP({
-  subsets: ['latin'],
-  variable: '--font-noto-serif',
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  preload: true,
-});
-
-const dancingScript = Dancing_Script({
-  subsets: ['latin'],
-  variable: '--font-dancing-script',
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  preload: true,
-});
+const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: '【公式】ストロベリーボーイ｜AIで出会う癒しの女性用風俗',
-  description:
-    '毎日頑張るあなたに、甘くとろけるいちご一会なひとときを。創業7年の安心とAIによる最適マッチングで、あなただけの"ストロベリー"と出会える女性用風俗です。',
-  keywords: 'イケメン派遣,癒し,女性向け,AIマッチング,ストロベリーボーイズ',
+  title: 'ストロベリーボーイ - 女性向け癒しサービス',
+  description: '20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
+  keywords: 'イケメン派遣,癒し,女性向け,マッチング,ホスト,エンターテイメント',
+  authors: [{ name: 'ストロベリーボーイ' }],
+  creator: 'ストロベリーボーイ',
   openGraph: {
-    title: '【公式】ストロベリーボーイ｜AIで出会う癒しの女性用風俗',
-    description:
-      '毎日頑張るあなたに、甘くとろけるいちご一会なひとときを。創業7年の安心とAIによる最適マッチングで、あなただけの"ストロベリー"と出会える女性用風俗です。',
     type: 'website',
-  },
-  icons: {
-    icon: '/favicon.png',
+    locale: 'ja_JP',
+    url: 'https://strawberry-boy.com',
+    siteName: 'ストロベリーボーイ',
   },
   robots: {
-    index: false,
-    follow: false,
+    index: true,
+    follow: true,
+  },
+  verification: {
+    google: 'your-google-verification-code',
   },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html
-      lang="ja"
-      className={`${notoSans.variable} ${notoSerif.variable} ${dancingScript.variable} bg-background font-sans text-foreground antialiased`}
-    >
+    <html lang="ja" className={`${inter.className} antialiased`}>
       <Head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

@@ -12,11 +12,17 @@
   --radius: 0.5rem;
   --background: #fff1f2;
   --foreground: #171717;
+
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
 }
+
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #121212;
     --foreground: #f3f4f6;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
   }
 }
 
@@ -135,6 +141,7 @@
     opacity: 1;
   }
 }
+
 @keyframes slideInFromRight {
   from {
     opacity: 0;
@@ -145,6 +152,7 @@
     transform: translateX(0);
   }
 }
+
 @keyframes slideInFromBottom {
   from {
     opacity: 0;
@@ -155,6 +163,7 @@
     transform: translateY(0);
   }
 }
+
 @keyframes floatFadeInRight {
   0% {
     opacity: 0;
@@ -165,6 +174,7 @@
     transform: translateX(0) scale(1);
   }
 }
+
 @keyframes floatFadeOutRight {
   0% {
     opacity: 1;

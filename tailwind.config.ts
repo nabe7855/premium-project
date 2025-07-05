@@ -13,7 +13,6 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // 🎨 既存カラー定義（省略せず記載）
         background: 'hsl(var(--background))',
         foreground: 'hsl(var(--foreground))',
         card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
@@ -133,8 +132,6 @@ const config: Config = {
         float: 'float 3s ease-in-out infinite',
         'pulse-soft': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-soft': 'bounce 1s infinite',
-
-        // ✅ 封筒回転スケール＆フェード
         spinScale: 'spinScale 1.2s ease-out forwards',
         fadeIn: 'fadeIn 1s ease-out forwards',
       },
