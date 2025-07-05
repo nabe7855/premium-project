@@ -71,7 +71,7 @@ export const secondaryNavItems = [
   },
   {
     name: 'プライバシーポリシー',
-    href: '/privacy',
+    href: '/Announcement-information/policy',
     icon: Shield,
   },
 ];

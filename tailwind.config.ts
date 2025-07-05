@@ -1,6 +1,5 @@
-import type { Config } from 'tailwindcss';
-
-const config: Config = {
+/** @type {import('tailwindcss').Config} */
+export default {
   darkMode: ['class'],
   content: [
     './index.html',
@@ -13,51 +12,32 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: 'hsl(var(--background))',
-        foreground: 'hsl(var(--foreground))',
-        card: { DEFAULT: 'hsl(var(--card))', foreground: 'hsl(var(--card-foreground))' },
-        popover: { DEFAULT: 'hsl(var(--popover))', foreground: 'hsl(var(--popover-foreground))' },
-        primary: { DEFAULT: 'hsl(var(--primary))', foreground: 'hsl(var(--primary-foreground))' },
-        secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
-        },
-        muted: { DEFAULT: 'hsl(var(--muted))', foreground: 'hsl(var(--muted-foreground))' },
-        accent: { DEFAULT: 'hsl(var(--accent))', foreground: 'hsl(var(--accent-foreground))' },
-        destructive: {
-          DEFAULT: 'hsl(var(--destructive))',
-          foreground: 'hsl(var(--destructive-foreground))',
-        },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        chart: {
-          '1': 'hsl(var(--chart-1))',
-          '2': 'hsl(var(--chart-2))',
-          '3': 'hsl(var(--chart-3))',
-          '4': 'hsl(var(--chart-4))',
-          '5': 'hsl(var(--chart-5))',
-        },
+        // Predefined colors
         strawberry: {
-          50: '#FFF8F8',
-          100: '#FFE4E1',
-          200: '#FFCDD2',
-          300: '#EF9A9A',
-          400: '#E57373',
-          500: '#DC143C',
-          600: '#C62828',
-          700: '#B71C1C',
-          800: '#8D1414',
-          900: '#5D0E0E',
+          50: '#fff0f5',
+          100: '#ffe4e6',
+          200: '#fecdd3',
+          300: '#fda4af',
+          400: '#fb7185',
+          500: '#f43f5e',
+          600: '#e11d48',
+          700: '#be123c',
+          800: '#9f1239',
+          900: '#881337',
         },
         cream: {
-          50: '#FEFEFE',
-          100: '#F5F5DC',
-          200: '#F0F0E6',
-          300: '#E8E8D4',
-          400: '#E0E0C2',
-          500: '#D8D8B0',
+          50: '#fefdfb',
+          100: '#fef9f3',
+          200: '#fcf1e6',
+          300: '#f8e4d0',
+          400: '#f2d1a9',
+          500: '#e9ba82',
+          600: '#dfa05c',
+          700: '#d4853e',
+          800: '#c26d27',
+          900: '#a85817',
         },
+        // Additional colors (e.g., Tokyo, Osaka)
         rose: {
           50: '#FFF8F8',
           100: '#FFE4E1',
@@ -166,7 +146,25 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate')],
+  plugins: [
+    require('tailwindcss-animate'),
+    function ({
+      addUtilities,
+    }: {
+      addUtilities: (
+        utilities: Record<string, Record<string, string>>,
+        variants?: string[],
+      ) => void;
+    }) {
+      // Adding custom utility class for text-foreground
+      addUtilities(
+        {
+          '.text-foreground': {
+            color: 'hsl(var(--foreground))',
+          },
+        },
+        ['responsive', 'hover'],
+      );
+    },
+  ],
 };
-
-export default config;
