@@ -5,7 +5,7 @@ import { Noto_Sans_JP, Noto_Serif_JP, Dancing_Script } from 'next/font/google';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import Footer from '@/components/sections/layout/Footer';
 import Head from 'next/head';
-import '@/styles/footer.css';
+import '@/styles/Footer.css';
 
 const notoSans = Noto_Sans_JP({
   subsets: ['latin'],
