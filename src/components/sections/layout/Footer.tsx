@@ -90,7 +90,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
       <nav className="footer-nav__container">
         <ul className="footer-nav__list">
-          {footerItems.map((item, index) => (
+          {footerItems.map((item) => (
             <li key={item.id} className="footer-nav__item">
               <a
                 href={item.href}

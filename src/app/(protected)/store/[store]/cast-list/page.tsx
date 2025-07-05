@@ -1,5 +1,3 @@
-// src/app/store/[slug]/cast-list/page.tsx
-
 import { getCastsByStoreSlug } from '@/lib/getCastsByStoreSlug';
 import { Cast } from '@/types/cast';
 import CastCard from '@/components/cards/CastCard';
@@ -7,26 +5,23 @@ import { notFound } from 'next/navigation';
 
 export const dynamicParams = true;
 
+// ✅ ビルド用に正しいキー名（slug）で返す
 export async function generateStaticParams() {
-  return [
-    { store: 'tokyo' },
-    { store: 'osaka' },
-    { store: 'nagoya' },
-  ];
+  return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }];
 }
 
 interface StoreCastListPageProps {
   params: {
-    store: string;
+    slug: string; // ✅ 修正済み
   };
 }
 
-// ✅ 同期関数
+// ✅ 同期関数：動的ルートパラメータを渡す
 const StoreCastListPage = ({ params }: StoreCastListPageProps) => {
-  return <PageContent store={params.store} />;
+  return <PageContent store={params.slug} />;
 };
 
-// ✅ 非同期処理
+// ✅ 実データ取得ロジック
 const PageContent = async ({ store }: { store: string }) => {
   let casts: Cast[] = [];
 
@@ -37,7 +32,6 @@ const PageContent = async ({ store }: { store: string }) => {
     return notFound();
   }
 
-  // ✅ stillwork === true のキャストのみ抽出
   const activeCasts = casts.filter((cast) => cast.stillwork === true);
 
   if (activeCasts.length === 0) {
@@ -52,10 +46,8 @@ const PageContent = async ({ store }: { store: string }) => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-pink-700">
-        🍓 {store} 店キャスト一覧
-      </h1>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 items-stretch">
+      <h1 className="mb-4 text-2xl font-bold text-pink-700">🍓 {store} 店キャスト一覧</h1>
+      <div className="grid grid-cols-2 items-stretch gap-4 md:grid-cols-3 lg:grid-cols-4">
         {sortedCasts.map((cast) => (
           <CastCard
             key={cast.id}
