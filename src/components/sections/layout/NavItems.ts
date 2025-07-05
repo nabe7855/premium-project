@@ -36,7 +36,7 @@ export const primaryNavItems = [
   },
   {
     name: '写メ日記（更新中）',
-    href: '/diary',
+    href: '/diary/diary',
     icon: Image,
     hasUpdate: true,
   },
@@ -50,7 +50,7 @@ export const primaryNavItems = [
 export const secondaryNavItems = [
   {
     name: '最新のお知らせ',
-    href: '/news',
+    href: '/',
     icon: Megaphone,
     hasUpdate: true,
   },
