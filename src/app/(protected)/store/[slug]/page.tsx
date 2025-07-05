@@ -13,6 +13,9 @@ import AIMatchingSection from '@/components/sections/store/AIMatchingSection';
 import ClosingCTA from '@/components/sections/store/ClosingCTA';
 import { getStoreData } from '@/lib/store/store-data';
 import { StoreProvider } from '@/contexts/StoreContext';
+import React from 'react';
+import { BannerSlideSection } from '@/components/sections/BannerSlideSection';
+import { TestimonialSection } from '@/components/sections/TestimonialSection';
 
 interface StorePageProps {
   params: {
@@ -120,6 +123,8 @@ export default function StorePage({ params }: StorePageProps) {
 
         <main>
           <HeroSection />
+          <TestimonialSection /> {/* TestimonialSectionをHeroSectionの下に追加 */}
+          <BannerSlideSection /> {/* BannerSlideSectionをHeroSectionの下に追加 */}
           <CastSliderSection />
           <NewcomerSection />
           <EventSection />

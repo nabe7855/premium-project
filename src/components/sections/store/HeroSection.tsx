@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { useStore } from '@/contexts/StoreContext';
-import { ArrowRight, Heart, Sparkles } from 'lucide-react';
+import { Heart, Sparkles } from 'lucide-react';
 
 export default function HeroSection() {
   const { store } = useStore();
@@ -43,20 +43,21 @@ export default function HeroSection() {
               {store.hero.subtitle}
             </p>
           </div>
+
           <div className="rounded-2xl border border-white/20 bg-white/10 p-6 backdrop-blur-sm md:p-8">
             <p className="text-lg font-medium text-white md:text-xl">{store.hero.catchphrase}</p>
           </div>
+
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
               variant="outline"
               size="lg"
-              onClick={() => (window.location.href = `/store/${store.slug}/cast-list`)}
               className="rounded-full border-white/30 px-8 py-4 text-lg font-semibold text-white backdrop-blur-sm hover:bg-white/10"
             >
               キャスト一覧を見る
             </Button>
           </div>
-          ｝
+
           <div className="mx-auto grid max-w-md grid-cols-3 gap-4 md:gap-8">
             <div className="text-center">
               <div className="text-2xl font-bold text-white md:text-3xl">247+</div>

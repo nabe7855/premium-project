@@ -4,10 +4,7 @@ import { Star, Quote, Heart } from 'lucide-react';
 
 interface Testimonial {
   id: string;
-  name: string;
-  role: string;
-  company?: string;
-  avatar?: string;
+
   content: string;
   rating: number;
 }
@@ -109,33 +106,10 @@ export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
 
               {/* Author section with elegant design */}
               <div className="flex items-center justify-center space-x-4 pt-6">
-                <div className="relative">
-                  {currentTestimonial.avatar && (
-                    <>
-                      <div className="absolute inset-0 scale-110 rounded-full bg-gradient-to-br from-rose-300 to-pink-400 opacity-30 blur-sm"></div>
-                      <img
-                        src={currentTestimonial.avatar}
-                        alt={currentTestimonial.name}
-                        className="border-3 relative h-16 w-16 rounded-full border-white object-cover shadow-lg"
-                      />
-                    </>
-                  )}
-                  {!currentTestimonial.avatar && (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-rose-300 to-pink-400 shadow-lg">
-                      <Heart className="h-6 w-6 text-white" />
-                    </div>
-                  )}
-                </div>
+                <div className="relative"></div>
                 <div className="text-center">
-                  <h4 className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-lg font-semibold text-gray-800 text-transparent sm:text-xl">
-                    {currentTestimonial.name}
-                  </h4>
-                  <p className="text-sm font-light text-gray-500 sm:text-base">
-                    {currentTestimonial.role}
-                    {currentTestimonial.company && (
-                      <span className="text-gray-400"> • {currentTestimonial.company}</span>
-                    )}
-                  </p>
+                  <h4 className="bg-gradient-to-r from-rose-600 to-pink-600 bg-clip-text text-lg font-semibold text-gray-800 text-transparent sm:text-xl"></h4>
+                  <p className="text-sm font-light text-gray-500 sm:text-base"></p>
                 </div>
               </div>
             </div>
