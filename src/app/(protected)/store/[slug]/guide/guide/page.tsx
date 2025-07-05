@@ -796,7 +796,10 @@ function App() {
               <h2 className="mb-4 text-center font-serif text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
                 コース別
               </h2>
-              <p className="mb-12 text-center font-serif text-xl text-pink-600 md:mb-16 md:text-2xl lg:text-3xl">
+              <p
+                id="price"
+                className="mb-12 text-center font-serif text-xl text-pink-600 md:mb-16 md:text-2xl lg:text-3xl"
+              >
                 ご利用料金
               </p>
 

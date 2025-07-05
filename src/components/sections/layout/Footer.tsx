@@ -2,12 +2,16 @@
 
 import React, { useEffect, useState } from 'react';
 import { Calendar, CreditCard, Phone, MessageCircle, Heart } from 'lucide-react';
+import { useParams } from 'next/navigation';
 
 interface FooterProps {
   className?: string;
 }
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
+  const params = useParams();
+  const slug = params?.store ?? 'tokyo'; // fallback
+
   const [isMounted, setIsMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [isBusinessHours, setIsBusinessHours] = useState(true);
@@ -39,14 +43,14 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'schedule',
       label: '出勤',
       icon: Calendar,
-      href: '/schedule',
+      href: `/store/${slug}/schedule/schedule`, // ✅ 修正
       ariaLabel: '今日明日の出勤スケジュール確認',
     },
     {
       id: 'pricing',
       label: '料金',
       icon: CreditCard,
-      href: '/guide#price',
+      href: `/store/${slug}/guide/guide#price`, // ✅ 修正
       ariaLabel: '料金システム・予算確認',
       badge: isFirstVisit ? '初' : null,
     },
@@ -72,7 +76,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'cast',
       label: '推し',
       icon: Heart,
-      href: '/cast-list?sort=popular',
+      href: `/store/${slug}/cast-list?sort=popular`, // ✅ 修正
       ariaLabel: '人気キャスト一覧・お気に入り確認',
     },
   ];
