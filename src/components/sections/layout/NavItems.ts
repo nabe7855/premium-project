@@ -42,7 +42,7 @@ export const primaryNavItems = [
   },
   {
     name: '紹介動画',
-    href: '/videos',
+    href: '/videos/videos',
     icon: Video,
   },
 ];
