@@ -2,7 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
-import Footer from '@/components/sections/layout/Footer';
+import FooterGuard from '@/components/sections/layout/FooterGuard'; // 追加
+//import Footer from '@/components/sections/layout/Footer';
 import Head from 'next/head';
 import '@/styles/Footer.css';
 
@@ -38,8 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </Head>
 
       <body>
+        {/* HeaderGuard でヘッダーの表示/非表示を制御 */}
         <HeaderGuard>{children}</HeaderGuard>
-        <Footer />
+
+        {/* FooterGuard でフッターの表示/非表示を制御 */}
+        <FooterGuard>{children}</FooterGuard>
 
         {/* ✅ JSON-LD構造化データ（FAQ） */}
         <script
