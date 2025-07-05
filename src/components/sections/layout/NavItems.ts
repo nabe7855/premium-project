@@ -31,7 +31,7 @@ export const primaryNavItems = [
   },
   {
     name: '口コミ・レビュー',
-    href: '/reviews',
+    href: '/reviews/reviews',
     icon: MessageCircle,
   },
   {

@@ -20,7 +20,6 @@ export default {
         sans: 'var(--font-sans)',
       },
       colors: {
-        // Predefined colors
         strawberry: {
           50: '#fff0f5',
           100: '#ffe4e6',
@@ -45,7 +44,6 @@ export default {
           800: '#c26d27',
           900: '#a85817',
         },
-        // Additional colors (e.g., Tokyo, Osaka)
         pink: {
           50: '#fdf2f8',
           100: '#fce7f3',
@@ -101,6 +99,12 @@ export default {
           700: '#7932e8',
           800: '#6626c4',
           900: '#5522a3',
+        },
+        beige: {
+          50: '#F5F5DC',
+          100: '#F0F0E6',
+          200: '#E6E6D1',
+          300: '#D9D9C2',
         },
       },
       backgroundImage: {
