@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 /* ===== Google Fonts ===== */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@400;500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;700&display=swap');
 
 /* ===== Root Variables ===== */
 :root {
@@ -32,7 +32,8 @@
   }
 
   body {
-    @apply bg-background font-sans text-foreground;
+    @apply bg-background text-foreground;
+    font-family: var(--font-sans);
     font-feature-settings: 'palt';
     line-height: 1.6;
     letter-spacing: 0.05em;
@@ -57,6 +58,31 @@
   }
 }
 
+/* ===== Font Utilities ===== */
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+/* ===== Scrollbar ===== */
+::-webkit-scrollbar {
+  width: 6px;
+}
+@media (min-width: 1024px) {
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(135deg, #e91e63, #f8bbd9);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(135deg, #c2185b, #e91e63);
+}
+
 /* ===== Components ===== */
 @layer components {
   .strawberry-gradient {
@@ -78,23 +104,14 @@
     min-width: 44px;
   }
 
-  .polka-dots {
-    background-image: radial-gradient(circle, #dc2626 1px, transparent 1px);
-    background-size: 20px 20px;
-    opacity: 0.05;
-  }
-
-  /* Custom Slider */
   .slider {
     background: linear-gradient(to right, #8b5cf6, #ec4899);
     border-radius: 10px;
     outline: none;
-    -webkit-appearance: none;
     appearance: none;
   }
 
   .slider::-webkit-slider-thumb {
-    -webkit-appearance: none;
     appearance: none;
     width: 20px;
     height: 20px;
@@ -112,6 +129,15 @@
     cursor: pointer;
     border: none;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  }
+
+  .card-hover {
+    transition: all 0.3s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 40px rgba(233, 30, 99, 0.15);
   }
 }
 
@@ -138,7 +164,7 @@
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, #d63384, #e91e63);
+    background: linear-gradient(135deg, #e91e63, #f8bbd9);
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -147,6 +173,39 @@
   .bg-glass {
     background: rgba(255, 255, 255, 0.85);
     backdrop-filter: blur(10px);
+  }
+
+  .text-shadow {
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  }
+
+  .polka-dots::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0.05;
+    background-image:
+      radial-gradient(circle at 20% 80%, #e91e63 2px, transparent 2px),
+      radial-gradient(circle at 80% 20%, #e91e63 2px, transparent 2px),
+      radial-gradient(circle at 40% 40%, #e91e63 1px, transparent 1px);
+    background-size:
+      30px 30px,
+      30px 30px,
+      15px 15px;
+    background-position:
+      0 0,
+      15px 15px,
+      7px 7px;
+  }
+
+  .strawberry-pattern {
+    background-image:
+      radial-gradient(circle at 25% 25%, rgba(233, 30, 99, 0.1) 2px, transparent 2px),
+      radial-gradient(circle at 75% 75%, rgba(233, 30, 99, 0.1) 2px, transparent 2px);
+    background-size: 20px 20px;
   }
 
   .fade-in {
@@ -161,8 +220,12 @@
     animation: slideInFromBottom 0.6s ease-out both;
   }
 
-  .text-shadow {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  .float-animation {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .pulse-pink {
+    animation: pulse-pink 2s infinite;
   }
 }
 
@@ -198,48 +261,24 @@
   }
 }
 
-@keyframes floatFadeInRight {
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes pulse-pink {
   0% {
-    opacity: 0;
-    transform: translateX(30px) scale(0.95);
+    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(233, 30, 99, 0);
   }
   100% {
-    opacity: 1;
-    transform: translateX(0) scale(1);
+    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0);
   }
-}
-
-@keyframes floatFadeOutRight {
-  0% {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(30px) scale(0.95);
-  }
-}
-
-/* ===== Scrollbar ===== */
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-@media (min-width: 1024px) {
-  ::-webkit-scrollbar {
-    width: 8px;
-  }
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #d63384, #e91e63);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #b02a5b, #c2185b);
 }

@@ -16,7 +16,7 @@ import {
 export const primaryNavItems = [
   {
     name: 'はじめての方へ',
-    href: '/guide',
+    href: '/guide/guide',
     icon: BookOpenText,
   },
   {
@@ -26,7 +26,7 @@ export const primaryNavItems = [
   },
   {
     name: '本日の出勤情報',
-    href: '/schedule',
+    href: '/schedule/schedule',
     icon: Calendar,
   },
   {

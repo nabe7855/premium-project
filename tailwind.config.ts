@@ -167,14 +167,7 @@ export default {
   },
   plugins: [
     require('tailwindcss-animate'),
-    function ({
-      addUtilities,
-    }: {
-      addUtilities: (
-        utilities: Record<string, Record<string, string>>,
-        variants?: string[],
-      ) => void;
-    }) {
+    function ({ addUtilities }: { addUtilities: any }) {
       // Adding custom utility class for text-foreground
       addUtilities(
         {
