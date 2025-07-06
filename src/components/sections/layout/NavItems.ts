@@ -36,7 +36,7 @@ export const primaryNavItems = [
   },
   {
     name: '写メ日記（更新中）',
-    href: '/diary/diary',
+    href: '/diary/diary-list',
     icon: Image,
     hasUpdate: true,
   },

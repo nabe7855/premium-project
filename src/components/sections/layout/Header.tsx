@@ -71,7 +71,7 @@ export default function Header() {
         >
           <span>🍓 Strawberry Boys</span>
           <span className="text-sm font-normal text-gray-500">
-            | {currentStore.displayName} {currentStore.emoji}
+            | {currentStore?.displayName ?? '未選択'} {currentStore?.emoji ?? ''}
           </span>
         </Link>
 
@@ -101,7 +101,7 @@ export default function Header() {
             </button>
 
             {isStoreDropdownOpen && (
-              <div className="animate-fadeIn absolute right-0 z-50 mt-2 w-48 rounded-md border bg-white shadow-lg">
+              <div className="absolute right-0 z-50 mt-2 w-48 animate-fadeIn rounded-md border bg-white shadow-lg">
                 {Object.values(stores).map((store) => (
                   <button
                     key={store.id}

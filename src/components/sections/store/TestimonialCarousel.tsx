@@ -18,7 +18,7 @@ interface TestimonialCarouselProps {
 export const TestimonialCarousel: React.FC<TestimonialCarouselProps> = ({
   testimonials,
   displayDuration = 5000,
-  fadeTransition = 500, // フェードイン・アウトのアニメーション時間 (ミリ秒)
+  fadeTransition = 800, // フェードイン・アウトのアニメーション時間 (ミリ秒)
   className = '',
 }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
