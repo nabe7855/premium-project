@@ -7,8 +7,8 @@
 
 /* ===== Root Variables ===== */
 :root {
-  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', sans-serif;
-  --font-serif: 'Noto Serif JP', serif;
+  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', system-ui, sans-serif;
+  --font-serif: 'Noto Serif JP', 'Noto Serif', serif;
   --radius: 0.5rem;
   --background: #fafafa;
   --foreground: #171717;
@@ -62,7 +62,14 @@
   }
 }
 
-/* ===== Scrollbar ===== */
+/* ===== Scrollbar Styles ===== */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
 ::-webkit-scrollbar {
   width: 6px;
 }

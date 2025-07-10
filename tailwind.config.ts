@@ -1,25 +1,32 @@
 /** @type {import('tailwindcss').Config} */
-export default {
+module.exports = {
   darkMode: ['class'],
   content: [
     './index.html',
-    './src/**/*.{js,ts,jsx,tsx,mdx}',
     './pages/**/*.{js,ts,jsx,tsx,mdx}',
     './components/**/*.{js,ts,jsx,tsx,mdx}',
     './app/**/*.{js,ts,jsx,tsx,mdx}',
+    './src/**/*.{js,ts,jsx,tsx,mdx}',
   ],
   safelist: [],
   theme: {
     extend: {
-      fontFamily: {
-        serif: ['Noto Serif JP', 'serif'],
-        rounded: ['Noto Sans JP', 'sans-serif'],
-        noto: ['Noto Sans JP', 'sans-serif'],
-        mono: 'var(--font-mono)',
-        dancing: ['Dancing Script', 'cursive'],
-        sans: 'var(--font-sans)',
-      },
       colors: {
+        primary: '#DC143C',
+        secondary: '#FFF0F5',
+        accent: '#FF69B4',
+        neutral: {
+          50: '#FFFFFF',
+          100: '#F5F5DC',
+          200: '#F0F0F0',
+          300: '#E0E0E0',
+          400: '#C0C0C0',
+          500: '#999999',
+          600: '#666666',
+          700: '#333333',
+          800: '#1A1A1A',
+          900: '#0D0D0D',
+        },
         strawberry: {
           50: '#fff0f5',
           100: '#ffe4e6',
@@ -107,21 +114,23 @@ export default {
           300: '#D9D9C2',
         },
       },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-tokyo': 'linear-gradient(135deg, #fdeaea 0%, #f7b8bc 50%, #e85d75 100%)',
-        'gradient-osaka': 'linear-gradient(135deg, #fff4d9 0%, #ffe8b3 50%, #ffab2e 100%)',
-        'gradient-nagoya': 'linear-gradient(135deg, #f1ecff 0%, #e5ddff 50%, #9b69ff 100%)',
-        'polka-dot': 'radial-gradient(circle, #FFE4E1 2px, transparent 2px)',
-        'hero-gradient': 'linear-gradient(135deg, #FFF8F8 0%, #FFE4E1 100%)',
+      fontFamily: {
+        sans: ['Noto Sans JP', 'system-ui', 'sans-serif'],
+        serif: ['Noto Serif JP', 'serif'],
+        rounded: ['Noto Sans JP', 'sans-serif'],
+        noto: ['Noto Sans JP', 'sans-serif'],
+        mono: 'var(--font-mono)',
+        dancing: ['Dancing Script', 'cursive'],
       },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
       },
       animation: {
+        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'slide-up': 'slideUp 0.3s ease-out',
+        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
         fadeInUp: 'fadeInUp 0.8s ease-out',
         'bounce-slow': 'bounce 2s infinite',
         'pulse-slow': 'pulse 3s infinite',
@@ -129,12 +138,23 @@ export default {
         'accordion-up': 'accordion-up 0.2s ease-out',
         twinkle: 'twinkle 0.4s ease-in-out',
         float: 'float 3s ease-in-out infinite',
-        'pulse-soft': 'pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         'bounce-soft': 'bounce 1s infinite',
         spinScale: 'spinScale 1.2s ease-out forwards',
         fadeIn: 'fadeIn 1s ease-out forwards',
       },
       keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' },
+        },
+        slideUp: {
+          '0%': { transform: 'translateY(10px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '1' },
+        },
+        pulseSoft: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.8' },
+        },
         'accordion-down': {
           from: { height: '0' },
           to: { height: 'var(--radix-accordion-content-height)' },
@@ -153,22 +173,39 @@ export default {
           '50%': { transform: 'scale(1.05) rotate(1deg)' },
           '70%': { transform: 'scale(1.06) rotate(-0.5deg)' },
         },
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
         spinScale: {
           '0%': { transform: 'scale(0.8) rotate(0deg)', opacity: '0' },
           '50%': { transform: 'scale(1.2) rotate(180deg)', opacity: '1' },
           '100%': { transform: 'scale(1) rotate(360deg)', opacity: '0' },
         },
       },
+      boxShadow: {
+        luxury: '0 8px 32px rgba(220, 20, 60, 0.1)',
+        soft: '0 4px 16px rgba(0, 0, 0, 0.1)',
+      },
+      backgroundImage: {
+        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-tokyo': 'linear-gradient(135deg, #fdeaea 0%, #f7b8bc 50%, #e85d75 100%)',
+        'gradient-osaka': 'linear-gradient(135deg, #fff4d9 0%, #ffe8b3 50%, #ffab2e 100%)',
+        'gradient-nagoya': 'linear-gradient(135deg, #f1ecff 0%, #e5ddff 50%, #9b69ff 100%)',
+        'polka-dot': 'radial-gradient(circle, #FFE4E1 2px, transparent 2px)',
+        'hero-gradient': 'linear-gradient(135deg, #FFF8F8 0%, #FFE4E1 100%)',
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
     },
   },
   plugins: [
     require('tailwindcss-animate'),
-    function ({ addUtilities }: { addUtilities: any }) {
-      // Adding custom utility class for text-foreground
+    function ({
+      addUtilities,
+    }: {
+      addUtilities: (utils: Record<string, Record<string, string>>, variants?: string[]) => void;
+    }) {
       addUtilities(
         {
           '.text-foreground': {
