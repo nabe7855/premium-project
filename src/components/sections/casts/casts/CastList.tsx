@@ -7,7 +7,7 @@ import { useCastSearch } from '@/hooks/useCastSearch';
 import CastCard from './CastCard';
 import SearchFilters from './SearchFilters';
 import SortOptions from './SortOptions';
-import DiagnosisSection from './DiagnosisSection';
+//import DiagnosisSection from './DiagnosisSection';
 
 interface CastListProps {
   storeSlug?: string;
@@ -97,7 +97,7 @@ const CastList: React.FC<CastListProps> = ({}) => {
 
         <div className="mb-8">
           {/* 診断セクション（診断結果ページでは非表示） */}
-          {!isDiagnosisResult && <DiagnosisSection />}
+          {/* {!isDiagnosisResult && <DiagnosisSection />} */}
 
           <div className="mb-6 flex flex-col gap-4 lg:flex-row">
             <div className="relative flex-1">

@@ -1,9 +1,14 @@
 'use client';
 
 import React from 'react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { MapPin, Phone, Clock, Mail, Instagram, Twitter } from 'lucide-react';
 
 const Footer: React.FC = () => {
+  const params = useParams();
+  const storeSlug = (params?.slug as string) || 'tokyo'; // デフォルト"tokyo"でもOK
+
   return (
     <footer className="bg-neutral-800 text-white" role="contentinfo">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
@@ -15,20 +20,20 @@ const Footer: React.FC = () => {
               <h3 className="font-serif text-xl font-bold">Strawberry Boys</h3>
             </div>
             <p className="mb-4 text-neutral-300">
-              心とろける極上のひとときを、東京からお届けします。
+              心とろける極上のひとときを、{storeSlug}からお届けします。
             </p>
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-neutral-400 transition-colors duration-200 hover:text-white"
                 aria-label="Instagram"
+                className="text-neutral-400 transition-colors duration-200 hover:text-white"
               >
                 <Instagram className="h-5 w-5" />
               </a>
               <a
                 href="#"
-                className="text-neutral-400 transition-colors duration-200 hover:text-white"
                 aria-label="Twitter"
+                className="text-neutral-400 transition-colors duration-200 hover:text-white"
               >
                 <Twitter className="h-5 w-5" />
               </a>
@@ -40,44 +45,44 @@ const Footer: React.FC = () => {
             <h4 className="mb-4 text-lg font-semibold">ナビゲーション</h4>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#casts"
+                <Link
+                  href={`/store/${storeSlug}/cast`}
                   className="text-neutral-300 transition-colors duration-200 hover:text-white"
                 >
                   キャスト一覧
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#about"
+                <Link
+                  href={`/store/${storeSlug}/guide/guide`}
                   className="text-neutral-300 transition-colors duration-200 hover:text-white"
                 >
                   私たちについて
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#contact"
+                <Link
+                  href={`/store/${storeSlug}#contact`}
                   className="text-neutral-300 transition-colors duration-200 hover:text-white"
                 >
                   お問い合わせ
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href={`/store/${storeSlug}/guide/guide#prohibited`}
                   className="text-neutral-300 transition-colors duration-200 hover:text-white"
                 >
                   利用規約
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="#"
+                <Link
+                  href={`/store/${storeSlug}/Announcement-information/policy`}
                   className="text-neutral-300 transition-colors duration-200 hover:text-white"
                 >
                   プライバシーポリシー
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
@@ -124,7 +129,9 @@ const Footer: React.FC = () => {
         </div>
 
         <div className="mt-8 border-t border-neutral-700 pt-8 text-center">
-          <p className="text-neutral-400">© 2024 Strawberry Boys Tokyo. All rights reserved.</p>
+          <p className="text-neutral-400">
+            © 2024 Strawberry Boys {storeSlug}. All rights reserved.
+          </p>
         </div>
       </div>
     </footer>

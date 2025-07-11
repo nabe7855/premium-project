@@ -129,13 +129,13 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* Mobile-Optimized Header */}
-      <header className="shadow-soft sticky top-0 z-50 bg-white" role="banner">
+      <header className="sticky top-0 z-50 bg-white shadow-soft" role="banner">
         <div className="px-4 sm:px-6">
           <div className="flex h-14 items-center justify-between sm:h-16">
             <div className="flex min-w-0 flex-1 items-center">
               <button
                 onClick={onBack}
-                className="hover:text-primary mr-2 flex-shrink-0 p-2 text-neutral-600 transition-colors duration-200 sm:mr-4"
+                className="mr-2 flex-shrink-0 p-2 text-neutral-600 transition-colors duration-200 hover:text-primary sm:mr-4"
                 aria-label="キャスト一覧に戻る"
               >
                 <ArrowLeft className="h-5 w-5 sm:h-6 sm:w-6" />
@@ -156,7 +156,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
             <div className="flex flex-shrink-0 items-center space-x-2 sm:space-x-4">
               <button
                 onClick={() => setIsFavorite(!isFavorite)}
-                className="hover:text-primary p-2 text-neutral-600 transition-colors duration-200"
+                className="p-2 text-neutral-600 transition-colors duration-200 hover:text-primary"
                 aria-label={`${cast.name}をお気に入りに追加`}
                 aria-pressed={isFavorite}
               >
@@ -189,7 +189,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                   key={index}
                   onClick={() => setSelectedImage(index)}
                   className={`h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg sm:h-20 sm:w-20 ${
-                    selectedImage === index ? 'ring-primary ring-2' : ''
+                    selectedImage === index ? 'ring-2 ring-primary' : ''
                   }`}
                 >
                   <img
@@ -230,7 +230,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
           </div>
 
           {/* Cast Info Card */}
-          <div className="shadow-soft rounded-2xl bg-white p-4 sm:p-6">
+          <div className="rounded-2xl bg-white p-4 shadow-soft sm:p-6">
             <div className="mb-4 flex items-start justify-between">
               <div className="min-w-0 flex-1">
                 <h2 className="mb-2 text-xl font-bold text-neutral-800 sm:text-2xl">{cast.name}</h2>
@@ -249,7 +249,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
               {cast.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="bg-secondary text-primary rounded-full px-3 py-1 text-sm"
+                  className="rounded-full bg-secondary px-3 py-1 text-sm text-primary"
                 >
                   #{tag}
                 </span>
@@ -275,7 +275,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
           </div>
 
           {/* Rating Summary Card */}
-          <div className="shadow-soft rounded-2xl bg-white p-4 sm:p-6">
+          <div className="rounded-2xl bg-white p-4 shadow-soft sm:p-6">
             <div className="mb-4 flex items-center justify-between">
               <div className="flex items-center">
                 <span className="mr-2 text-2xl font-bold text-neutral-800 sm:text-3xl">
@@ -317,7 +317,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
               <div className={`${isTabsSticky ? 'mx-auto max-w-7xl' : ''}`}>
                 {/* Mobile-Optimized Tab Navigation */}
                 <nav
-                  className="shadow-soft mb-4 overflow-x-auto rounded-2xl bg-white p-1"
+                  className="mb-4 overflow-x-auto rounded-2xl bg-white p-1 shadow-soft"
                   role="tablist"
                 >
                   <div className="flex min-w-max space-x-1">
@@ -328,7 +328,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                         className={`flex items-center whitespace-nowrap rounded-lg px-3 py-2 font-medium transition-all duration-200 sm:px-4 sm:py-3 ${
                           activeTab === id
                             ? 'bg-primary text-white shadow-md'
-                            : 'hover:text-primary text-neutral-600 hover:bg-neutral-50'
+                            : 'text-neutral-600 hover:bg-neutral-50 hover:text-primary'
                         }`}
                         role="tab"
                         aria-selected={activeTab === id}
@@ -345,7 +345,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                 <div className="mb-4">
                   <button
                     onClick={() => setIsBookingModalOpen(true)}
-                    className="bg-primary hover:bg-primary/90 shadow-luxury w-full rounded-xl py-4 font-medium text-white transition-all duration-200 hover:shadow-xl"
+                    className="w-full rounded-xl bg-primary py-4 font-medium text-white shadow-luxury transition-all duration-200 hover:bg-primary/90 hover:shadow-xl"
                   >
                     {cast.name}を予約する
                   </button>
@@ -365,7 +365,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
               transition={{ duration: 0.3 }}
-              className="shadow-soft rounded-2xl bg-white p-4 sm:p-6"
+              className="rounded-2xl bg-white p-4 shadow-soft sm:p-6"
               role="tabpanel"
               id={`${activeTab}-panel`}
             >
@@ -440,7 +440,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                     <h3 className="text-lg font-semibold text-neutral-800">口コミ・レビュー</h3>
                     <button
                       onClick={() => setIsReviewModalOpen(true)}
-                      className="bg-primary hover:bg-primary/90 flex items-center rounded-full px-4 py-2 text-sm font-medium text-white transition-colors duration-200"
+                      className="flex items-center rounded-full bg-primary px-4 py-2 text-sm font-medium text-white transition-colors duration-200 hover:bg-primary/90"
                     >
                       <Edit3 className="mr-2 h-4 w-4" />
                       口コミを投稿
@@ -456,7 +456,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                       {reviewTags.map((tag) => (
                         <button
                           key={tag}
-                          className="hover:bg-primary rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-700 transition-colors duration-200 hover:text-white"
+                          className="rounded-full bg-neutral-100 px-3 py-1 text-sm text-neutral-700 transition-colors duration-200 hover:bg-primary hover:text-white"
                         >
                           #{tag}
                         </button>
@@ -497,7 +497,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                           {review.tags.map((tag) => (
                             <span
                               key={tag}
-                              className="bg-secondary text-primary rounded-full px-2 py-1 text-xs"
+                              className="rounded-full bg-secondary px-2 py-1 text-xs text-primary"
                             >
                               #{tag}
                             </span>
@@ -527,7 +527,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                           key={dateKey}
                           className={`rounded-xl border p-4 transition-all duration-200 ${
                             isToday
-                              ? 'bg-primary/5 border-primary/20'
+                              ? 'border-primary/20 bg-primary/5'
                               : availableTimes.length > 0
                                 ? 'border-green-200 bg-green-50'
                                 : 'border-neutral-200 bg-neutral-50'
@@ -547,7 +547,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                                 })}
                               </span>
                               {isToday && (
-                                <span className="bg-primary ml-2 rounded-full px-2 py-1 text-xs text-white">
+                                <span className="ml-2 rounded-full bg-primary px-2 py-1 text-xs text-white">
                                   TODAY
                                 </span>
                               )}
@@ -574,7 +574,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                                 <button
                                   key={time}
                                   onClick={() => setIsBookingModalOpen(true)}
-                                  className="hover:bg-primary rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-700 shadow-sm transition-all duration-200 hover:text-white hover:shadow-md"
+                                  className="rounded-lg border border-neutral-200 bg-white px-3 py-2 text-sm text-neutral-700 shadow-sm transition-all duration-200 hover:bg-primary hover:text-white hover:shadow-md"
                                 >
                                   {time}〜
                                 </button>
@@ -607,7 +607,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
 
           {/* Bottom CTA Section - Only visible when tabs are not sticky */}
           {!isTabsSticky && (
-            <div className="from-primary to-accent rounded-2xl bg-gradient-to-r p-4 text-white sm:p-6">
+            <div className="rounded-2xl bg-gradient-to-r from-primary to-accent p-4 text-white sm:p-6">
               <div className="text-center sm:flex sm:items-center sm:justify-between sm:text-left">
                 <div className="mb-4 sm:mb-0">
                   <h3 className="mb-2 text-lg font-bold sm:text-xl">特別なひとときを、今すぐ</h3>
@@ -617,7 +617,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
                 </div>
                 <button
                   onClick={() => setIsBookingModalOpen(true)}
-                  className="text-primary w-full rounded-full bg-white px-6 py-3 font-medium transition-colors duration-200 hover:bg-neutral-50 sm:w-auto sm:px-8"
+                  className="w-full rounded-full bg-white px-6 py-3 font-medium text-primary transition-colors duration-200 hover:bg-neutral-50 sm:w-auto sm:px-8"
                 >
                   予約する
                 </button>
@@ -634,7 +634,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
           animate={{ scale: 1 }}
           exit={{ scale: 0 }}
           onClick={() => setIsReviewModalOpen(true)}
-          className="bg-primary shadow-luxury hover:bg-primary/90 fixed bottom-6 right-6 z-30 rounded-full p-4 text-white transition-all duration-200 hover:shadow-xl"
+          className="fixed bottom-6 right-6 z-30 rounded-full bg-primary p-4 text-white shadow-luxury transition-all duration-200 hover:bg-primary/90 hover:shadow-xl"
           aria-label="口コミを投稿"
         >
           <Edit3 className="h-6 w-6" />
@@ -806,7 +806,7 @@ const GalleryTab: React.FC<{ cast: Cast }> = ({ cast }) => {
 
       {/* Media Grid */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-4 lg:grid-cols-4">
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {filteredItems.map((item, index) => (
             <MediaCard
               key={item.id}
@@ -892,9 +892,9 @@ const MediaCard: React.FC<{
         )}
 
         {item.type === 'voice' && (
-          <div className="from-primary/20 to-accent/20 flex h-full w-full flex-col items-center justify-center bg-gradient-to-br">
+          <div className="flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
             <div className="mb-2 rounded-full bg-white/90 p-3 backdrop-blur-sm">
-              <Headphones className="text-primary h-6 w-6" />
+              <Headphones className="h-6 w-6 text-primary" />
             </div>
             <div className="text-xs font-medium text-neutral-700">{item.duration}</div>
           </div>
@@ -958,7 +958,7 @@ const MediaModal: React.FC<{
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          className="shadow-luxury relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white"
+          className="relative w-full max-w-4xl overflow-hidden rounded-2xl bg-white shadow-luxury"
         >
           {/* Header */}
           <div className="flex items-center justify-between border-b border-neutral-200 p-4">
@@ -991,10 +991,10 @@ const MediaModal: React.FC<{
             )}
 
             {media.type === 'voice' && (
-              <div className="from-primary/10 to-accent/10 rounded-xl bg-gradient-to-br p-8">
+              <div className="rounded-xl bg-gradient-to-br from-primary/10 to-accent/10 p-8">
                 <div className="text-center">
-                  <div className="shadow-soft mb-4 inline-block rounded-full bg-white p-6">
-                    <Headphones className="text-primary h-12 w-12" />
+                  <div className="mb-4 inline-block rounded-full bg-white p-6 shadow-soft">
+                    <Headphones className="h-12 w-12 text-primary" />
                   </div>
                   <h4 className="mb-2 text-lg font-medium text-neutral-800">{media.title}</h4>
                   <p className="mb-6 text-neutral-600">{media.description}</p>

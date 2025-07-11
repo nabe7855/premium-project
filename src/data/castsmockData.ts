@@ -3,6 +3,8 @@ import { Cast, Review } from '@/types/caststypes';
 export const mockCasts: Cast[] = [
   {
     id: '1',
+    storeSlug: 'tokyo',             // ✅ 追加
+    customID: 'tanaka-taro-001',    // ✅ 追加
     name: '田中太郎',
     catchphrase: '優しさに包まれる至福の時間',
     avatar:
@@ -48,6 +50,8 @@ export const mockCasts: Cast[] = [
   },
   {
     id: '2',
+    storeSlug: 'tokyo',             // ✅ 追加
+    customID: 'sato-jiro-002',    // ✅ 追加
     name: '佐藤次郎',
     catchphrase: '記念日を特別な思い出に',
     avatar:
@@ -92,6 +96,8 @@ export const mockCasts: Cast[] = [
   },
   {
     id: '3',
+    storeSlug: 'tokyo',             // ✅ 追加
+    customID: 'suzuki-saburo-003',    // ✅ 追加
     name: '鈴木三郎',
     catchphrase: '心の扉を開く安らぎの時間',
     avatar:
@@ -137,6 +143,8 @@ export const mockCasts: Cast[] = [
   },
   {
     id: '4',
+    storeSlug: 'tokyo',             // ✅ 追加
+    customID: 'yamada-kento-004',    // ✅ 追加
     name: '山田健人',
     catchphrase: 'エネルギッシュで楽しい時間を',
     avatar:

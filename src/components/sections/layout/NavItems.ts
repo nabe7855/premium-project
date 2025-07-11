@@ -41,7 +41,7 @@ export const primaryNavItems = [
     hasUpdate: true,
   },
   {
-    name: '紹介動画',
+    name: '動画',
     href: '/videos/videos',
     icon: Video,
   },

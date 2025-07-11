@@ -29,6 +29,9 @@ export interface Cast {
   }>;
   mbtiType: string;
   faceType: string[];
+  storeSlug: string;     // ← 追加
+  customID: string;      // ← 追加
+  snsLink?: string; 
 }
 
 export interface VideoItem {

@@ -75,7 +75,7 @@ const CastList: React.FC = () => {
                 placeholder="キャスト名やキャッチフレーズで検索..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="focus:ring-primary/20 focus:border-primary w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:outline-none focus:ring-2"
+                className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                 aria-label="キャスト検索"
               />
             </div>
@@ -92,7 +92,7 @@ const CastList: React.FC = () => {
           </div>
 
           {/* Filter Panel */}
-          <AnimatePresence>
+          <AnimatePresence mode="wait">
             {showFilters && (
               <motion.div
                 id="filter-panel"
@@ -100,7 +100,7 @@ const CastList: React.FC = () => {
                 animate={{ opacity: 1, height: 'auto' }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.3 }}
-                className="shadow-soft rounded-2xl border border-neutral-200 bg-white p-6"
+                className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-soft"
               >
                 <div className="space-y-6">
                   {/* Age Range */}
@@ -201,7 +201,7 @@ const CastList: React.FC = () => {
                 setSelectedTags([]);
                 setAgeRange([20, 50]);
               }}
-              className="bg-primary hover:bg-primary/90 rounded-full px-6 py-2 text-white transition-colors duration-200"
+              className="rounded-full bg-primary px-6 py-2 text-white transition-colors duration-200 hover:bg-primary/90"
             >
               検索条件をリセット
             </button>
@@ -266,12 +266,12 @@ const FloatingReview: React.FC<{ castId: string }> = ({ castId }) => {
             }}
             className="absolute inset-0"
           >
-            <div className="from-primary/10 to-accent/10 border-primary/20 shadow-soft relative rounded-xl border bg-gradient-to-r p-3">
+            <div className="relative rounded-xl border border-primary/20 bg-gradient-to-r from-primary/10 to-accent/10 p-3 shadow-soft">
               {/* 吹き出しの三角形 */}
-              <div className="from-primary/10 to-accent/10 border-primary/20 absolute -top-2 left-4 h-4 w-4 rotate-45 transform border-l border-t bg-gradient-to-r"></div>
+              <div className="absolute -top-2 left-4 h-4 w-4 rotate-45 transform border-l border-t border-primary/20 bg-gradient-to-r from-primary/10 to-accent/10"></div>
 
               <div className="flex items-start space-x-2">
-                <MessageCircle className="text-primary mt-0.5 h-4 w-4 flex-shrink-0" />
+                <MessageCircle className="mt-0.5 h-4 w-4 flex-shrink-0 text-primary" />
                 <div className="min-w-0 flex-1">
                   <p className="line-clamp-3 text-xs leading-relaxed text-neutral-700">
                     {currentReview.comment}
@@ -301,7 +301,7 @@ const CastCard: React.FC<{
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
       transition={{ delay: index * 0.1 }}
-      className="shadow-soft hover:shadow-luxury group cursor-pointer overflow-hidden rounded-2xl bg-white transition-all duration-300"
+      className="group cursor-pointer overflow-hidden rounded-2xl bg-white shadow-soft transition-all duration-300 hover:shadow-luxury"
       onClick={onCastSelect}
       role="article"
       aria-labelledby={`cast-name-${cast.id}`}
@@ -368,7 +368,7 @@ const CastCard: React.FC<{
           {cast.tags.slice(0, 2).map((tag) => (
             <span
               key={tag}
-              className="bg-secondary text-primary truncate rounded-full px-2 py-0.5 text-xs"
+              className="truncate rounded-full bg-secondary px-2 py-0.5 text-xs text-primary"
             >
               #{tag}
             </span>
@@ -388,7 +388,7 @@ const CastCard: React.FC<{
 
           <button
             onClick={onBookingClick}
-            className="bg-primary hover:bg-primary/90 rounded-full px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200 sm:px-4 sm:py-2 sm:text-sm"
+            className="rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-white transition-colors duration-200 hover:bg-primary/90 sm:px-4 sm:py-2 sm:text-sm"
           >
             予約
           </button>

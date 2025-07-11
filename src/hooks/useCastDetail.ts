@@ -1,75 +1,42 @@
-'use client'
-
-import { useState, useEffect, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react';
 
 export const useCastDetail = () => {
-  const [activeTab, setActiveTab] = useState<'basic' | 'story' | 'schedule' | 'reviews' | 'videos'>('basic')
-  const [selectedImage, setSelectedImage] = useState(0)
-  const [isFavorite, setIsFavorite] = useState(false)
-  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false)
-  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false)
-  const [isSticky, setIsSticky] = useState(false)
-  const galleryRef = useRef<HTMLDivElement>(null)
+  const [activeTab, setActiveTab] = useState<'basic' | 'story' | 'schedule' | 'reviews' | 'videos'>('basic');
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [isSticky, setIsSticky] = useState(false);
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+
+  const actionBarRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (galleryRef.current) {
-        const galleryRect = galleryRef.current.getBoundingClientRect()
-        const headerHeight = 80 // ナビゲーションヘッダーの高さ
-        
-        // フォトギャラリーが画面から完全に消えたら固定表示
-        setIsSticky(galleryRect.bottom <= headerHeight)
-      }
-    }
+      if (!actionBarRef.current) return;
 
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+      const rect = actionBarRef.current.getBoundingClientRect();
+      const headerHeight = 56; // モバイル基準で確実に低めに設定
 
-  const handleDiaryClick = () => {
-    console.log('日記クリック - 外部リンクに遷移')
-    alert('日記ページに遷移します（デモ）')
-  }
+      setIsSticky(rect.top <= headerHeight);
+    };
 
-  const handleSNSClick = () => {
-    console.log('SNSクリック - 外部リンクに遷移')
-    alert('SNSページに遷移します（デモ）')
-  }
+    handleScroll(); // 初回強制判定（重要）
 
-  const handleBookingModalOpen = () => {
-    setIsBookingModalOpen(true)
-  }
-
-  const handleBookingModalClose = () => {
-    setIsBookingModalOpen(false)
-  }
-
-  const handleReviewModalOpen = () => {
-    setIsReviewModalOpen(true)
-  }
-
-  const handleReviewModalClose = () => {
-    setIsReviewModalOpen(false)
-  }
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return {
     activeTab,
+    setActiveTab,
     selectedImage,
-    isFavorite,
+    setSelectedImage,
+    isSticky,
+    actionBarRef,
     isBookingModalOpen,
     isReviewModalOpen,
-    isSticky,
-    galleryRef,
-    setActiveTab,
-    setSelectedImage,
-    setIsFavorite,
-    setIsBookingModalOpen,
-    setIsReviewModalOpen,
-    handleDiaryClick,
-    handleSNSClick,
-    handleBookingModalOpen,
-    handleBookingModalClose,
-    handleReviewModalOpen,
-    handleReviewModalClose
-  }
-}
+    handleBookingModalOpen: () => setIsBookingModalOpen(true),
+    handleBookingModalClose: () => setIsBookingModalOpen(false),
+    handleReviewModalOpen: () => setIsReviewModalOpen(true),
+    handleReviewModalClose: () => setIsReviewModalOpen(false),
+  };
+};
