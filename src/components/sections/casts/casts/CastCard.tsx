@@ -12,6 +12,7 @@ interface CastCardProps {
   onToggleFavorite: () => void;
   onCastSelect: () => void;
   audioSampleUrl?: string; // 今はなくてもOK
+  sortBy: string;
 }
 
 const CastCard: React.FC<CastCardProps> = ({
