@@ -1,8 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, Star, Clock } from 'lucide-react';
+import { Heart, Star, Clock, Play, Pause } from 'lucide-react';
 import { Cast } from '@/types/caststypes';
 
 interface CastCardProps {
@@ -11,7 +11,7 @@ interface CastCardProps {
   isFavorite: boolean;
   onToggleFavorite: () => void;
   onCastSelect: () => void;
-  sortBy: string;
+  audioSampleUrl?: string; // 今はなくてもOK
 }
 
 const CastCard: React.FC<CastCardProps> = ({
@@ -20,9 +20,28 @@ const CastCard: React.FC<CastCardProps> = ({
   isFavorite,
   onToggleFavorite,
   onCastSelect,
+  audioSampleUrl,
 }) => {
   const today = new Date().toISOString().split('T')[0];
   const isAvailableToday = cast.isOnline || cast.availability[today]?.length > 0;
+
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+
+  const handleAudioToggle = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    e.stopPropagation();
+
+    if (audioRef.current && audioSampleUrl) {
+      if (isPlaying) {
+        audioRef.current.pause();
+        setIsPlaying(false);
+      } else {
+        void audioRef.current.play();
+        setIsPlaying(true);
+        audioRef.current.onended = () => setIsPlaying(false);
+      }
+    }
+  };
 
   return (
     <motion.div
@@ -61,6 +80,26 @@ const CastCard: React.FC<CastCardProps> = ({
             className={`h-4 w-4 ${isFavorite ? 'fill-red-500 text-red-500' : 'text-neutral-400'}`}
           />
         </button>
+
+        {/* 🎤 音声バッジ（常時表示） */}
+        <div className="absolute left-2 bottom-2 rounded-full bg-white/80 px-2 py-1 text-[10px] font-semibold text-primary shadow-sm backdrop-blur-sm">
+          🎤 声あり
+        </div>
+
+        {/* ▶️ 再生ボタン（常時表示） */}
+        <button
+          onClick={handleAudioToggle}
+          className="absolute bottom-2 right-2 rounded-full bg-white p-2 shadow-md hover:bg-primary/10 transition-colors duration-200"
+          aria-label="音声サンプルを再生"
+        >
+          {isPlaying ? (
+            <Pause className="h-5 w-5 text-primary" />
+          ) : (
+            <Play className="h-5 w-5 text-primary" />
+          )}
+        </button>
+        {/* audio 要素（URLなしでも配置） */}
+        <audio ref={audioRef} src={audioSampleUrl || ''} preload="none" />
       </div>
 
       {/* コンテンツ部分 */}
@@ -79,15 +118,13 @@ const CastCard: React.FC<CastCardProps> = ({
           </div>
         </div>
 
-        {/* 評価とレビュー */}
-        <div className="mb-3 flex items-center justify-between">
-          <div className="flex items-center">
-            <Star className="h-3 w-3 fill-current text-amber-400 sm:h-4 sm:w-4" />
-            <span className="ml-1 text-xs font-medium text-neutral-700 sm:text-sm">
-              {cast.rating}
-            </span>
-            <span className="ml-1 text-xs text-neutral-500">({cast.reviewCount})</span>
-          </div>
+        {/* 評価 */}
+        <div className="mb-3 flex items-center">
+          <Star className="h-3 w-3 fill-current text-amber-400 sm:h-4 sm:w-4" />
+          <span className="ml-1 text-xs font-medium text-neutral-700 sm:text-sm">
+            {cast.rating}
+          </span>
+          <span className="ml-1 text-xs text-neutral-500">({cast.reviewCount})</span>
         </div>
 
         {/* タグ */}
@@ -107,7 +144,7 @@ const CastCard: React.FC<CastCardProps> = ({
           )}
         </div>
 
-        {/* 今日のスケジュール */}
+        {/* スケジュール */}
         {isAvailableToday && cast.availability[today]?.length > 0 && (
           <div className="flex items-center text-xs text-green-600">
             <Clock className="mr-1 h-3 w-3" />

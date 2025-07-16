@@ -252,7 +252,7 @@ const VideoContent: React.FC<VideoContentProps> = ({ cast }) => {
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
                     <button
                       onClick={() => handleVideoClick(video)}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/90 backdrop-blur-sm text-neutral-800 p-3 rounded-full hover:bg-white hover:scale-110 transform transition-all duration-200"
+                      className="opacity-0 group-hover:opacity-100  bg-white/90 backdrop-blur-sm text-neutral-800 p-3 rounded-full hover:bg-white hover:scale-110 transform transition-all duration-200"
                       aria-label={`${video.title}を再生`}
                     >
                       <Play className="w-6 h-6 fill-current" />
