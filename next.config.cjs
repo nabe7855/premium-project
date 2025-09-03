@@ -7,7 +7,7 @@ const nextConfig = {
   },
   images: {
     unoptimized: false, // ← 本番では true をやめる
-    domains: ['res.cloudinary.com'],
+    domains: ['vkrztvkpjcpejccyiviw.supabase.co'],
   },
   optimizeFonts: true, // ← Google Fonts を使ってるなら true
 };
