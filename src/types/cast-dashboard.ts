@@ -37,7 +37,8 @@ export interface CastDiary {
 }
 
 export interface AuthUser {
-  username: string;
+  id: string;              // SupabaseのユーザーID
+  email: string;           // Supabaseのメールアドレス
   isAuthenticated: boolean;
 }
 
