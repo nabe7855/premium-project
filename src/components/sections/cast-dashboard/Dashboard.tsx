@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import { LogOut, Menu, X, Calendar, Camera, BarChart3 } from 'lucide-react';
+import { LogOut, Menu, X, Calendar, Camera, BarChart3, User } from 'lucide-react';
 import RadarChartComponent from './dashboard/RadarChart';
 import SweetLevelGauge from './dashboard/SweetLevelGauge';
 import RankSystem from './dashboard/RankSystem';
@@ -8,14 +8,9 @@ import MotivationBadges from './dashboard/MotivationBadges';
 import CalendarEditor from './schedule/CalendarEditor';
 import DiaryEditor from './diary/DiaryEditor';
 import DiaryList from './diary/DiaryList';
+import ProfileEditor from './dashboard/ProfileEditor'; 
 import { CastPerformance, CastLevel, Badge, CastSchedule, CastDiary } from '@/types/cast-dashboard';
-
-// ✅ CastProfile 型
-interface CastProfile {
-  id: string;
-  name: string;
-  is_active: boolean;
-}
+import { CastProfile, FeatureMaster } from '@/types/cast'; // ✅ 型を共通化
 
 interface DashboardProps {
   cast: CastProfile;
@@ -24,15 +19,12 @@ interface DashboardProps {
 export default function Dashboard({ cast }: DashboardProps) {
   const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'schedule' | 'diary'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'schedule' | 'diary' | 'profile'>('dashboard');
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
-  const [] = useState(false);
 
-  // State for schedules and diaries
   const [schedules, setSchedules] = useState<CastSchedule[]>([]);
   const [diaries, setDiaries] = useState<CastDiary[]>([]);
 
-  // Sample data
   const performanceData: CastPerformance = {
     イケメン度: 4.5,
     ユーモア力: 4.0,
@@ -75,10 +67,20 @@ export default function Dashboard({ cast }: DashboardProps) {
     }
   };
 
+  // ナビゲーションタブ
   const tabs = [
     { id: 'dashboard', name: 'ダッシュボード', icon: BarChart3 },
     { id: 'schedule', name: 'スケジュール', icon: Calendar },
     { id: 'diary', name: '写メ日記', icon: Camera },
+    { id: 'profile', name: 'マイプロフィール', icon: User },
+  ];
+
+  // 仮データ（CSVの代わり）
+  const featureMasters: FeatureMaster[] = [
+    { id: 1, category: 'MBTI', label: 'ENTP', name: '挑戦者' },
+    { id: 2, category: 'personality', label: '優しい', name: '優しい' },
+    { id: 3, category: 'face', label: '爽やか', name: '爽やか' },
+    { id: 4, category: 'appearance', label: '筋肉質', name: '筋肉質' },
   ];
 
   return (
@@ -171,6 +173,19 @@ export default function Dashboard({ cast }: DashboardProps) {
             )}
           </div>
         )}
+
+{activeTab === 'profile' && (
+  <ProfileEditor
+    cast={{
+      ...cast,
+      personality: cast.personality ?? [], // null/undefinedなら空配列
+      appearance: cast.appearance ?? [],   // null/undefinedなら空配列
+    }}
+    featureMasters={featureMasters}
+    onSave={(updated) => console.log('保存結果', updated)}
+  />
+)}
+
       </main>
     </div>
   );
