@@ -25,7 +25,7 @@ export interface Store {
 export const store = {
   casts: [
     {
-      id: '1',
+      id: '1', // ← string 型に統一
       name: 'John Doe',
       age: 30,
       height: 180,
@@ -36,7 +36,7 @@ export const store = {
       schedule: ['Monday', 'Wednesday'],
     },
     {
-      id: '2',
+      id: '2', // ← string 型に統一
       name: 'Jane Smith',
       age: 28,
       height: 165,
@@ -51,15 +51,15 @@ export const store = {
 };
 
 export interface CastMember {
-  id: string; // `string` 型が適切（`CastSummary` と統一）
+  id: string; // ✅ string 型（UUIDに対応）
   name: string;
   image: string;
   isWorking: boolean;
-  schedule?: string[]; // `string[]` 型に変更（複数日のスケジュールが必要な場合）
+  schedule?: string[];
 }
 
 export interface NewsItem {
-  id: string;
+  id: string; // ✅ string 型に統一
   title: string;
   date: string;
   category: 'new-staff' | 'event' | 'diary' | 'media';
@@ -67,7 +67,7 @@ export interface NewsItem {
 }
 
 export interface StoreData {
-  id: string; // `string` 型が適切（`StoreLocation` と合わせる）
+  id: string; // ✅ string 型に統一
   name: string;
   catchCopy: string;
   link: string;
@@ -76,17 +76,17 @@ export interface StoreData {
 }
 
 export interface Diary {
-  id: number; // `number` 型（`Diary` ID が数値の場合）
+  id: number; // ✅ Diary は数値IDを維持
   title: string;
   excerpt: string;
   image: string;
   date: string; // フォーマット例: "2025-07-05"
   castName: string;
-  slug?: string; // 詳細ページへリンクしたい場合に使用
+  slug?: string;
 }
 
 export interface Event {
-  id: number;
+  id: number; // ✅ 数値ID
   image: string;
   title: string;
   date: string;
@@ -95,36 +95,36 @@ export interface Event {
 }
 
 export interface Media {
-  id: number;
+  id: number; // ✅ 数値ID
   title: string;
   image: string;
-  date: string; // 日付（例: "2025-07-05"）
-  publication: string; // 掲載されたメディア名（例: "日経ウーマン"）
-  url: string; // 記事へのリンク
+  date: string;
+  publication: string;
+  url: string;
 }
 
 export interface Newcomer {
-  id: number;
+  id: number; // ✅ 数値ID
   name: string;
   image: string;
   age: number;
-  startDate: string; // 入店日（例: '2025-07-01'）
+  startDate: string;
   introduction: string;
-  slug?: string; // 任意：プロフィール遷移などで使用される場合
+  slug?: string;
 }
 
 export interface Plan {
-  id: string; // `string` 型が適切
+  id: string; // ✅ string 型に統一
   name: string;
   price: string;
   duration: string;
   description: string;
   features: string[];
-  popular?: boolean; // 人気プランには true がついてる（オプション）
+  popular?: boolean;
 }
 
 export interface Review {
-  id: string;
+  id: string; // ✅ string 型に統一
   author: string;
   rating: number; // 1〜5
   content: string;
@@ -133,7 +133,7 @@ export interface Review {
 }
 
 export interface Video {
-  id: string; // `string` 型が適切
+  id: string; // ✅ string 型に統一
   thumbnail: string;
   title: string;
   duration: string;

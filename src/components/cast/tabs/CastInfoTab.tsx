@@ -56,52 +56,62 @@ const CastInfoTab: React.FC<Props> = ({ cast }) => {
         </table>
 
 {/* MBTI */}
-{features.some(f => f.feature_master.category === "MBTI" && f.value_text) && (
+{features.some(f => f.feature_master?.category === "MBTI") && (
   <div className="mt-4">
     <h4 className="text-sm font-bold text-gray-700">◆ MBTI</h4>
     <ul className="list-disc pl-5 text-sm text-gray-600">
       {features
-        .filter(f => f.feature_master.category === "MBTI" && f.value_text)
-        .map((f) => (
-          <li key={f.id}>{f.feature_master.name}（{f.value_text}）</li>
+        .filter(f => f.feature_master?.category === "MBTI")
+        .map(f => (
+          <li key={f.feature_id}>
+            {f.feature_master?.name ?? "未設定"}
+          </li>
         ))}
     </ul>
   </div>
 )}
 
-{/* face */} 
-{features.some(f => f.feature_master.category === "face" && f.value_text) && ( 
+{/* face */}
+{features.some(f => f.feature_master?.category === "face") && (
   <div className="mt-4">
-    <h4 className="text-sm font-bold text-gray-700">◆ face</h4> 
+    <h4 className="text-sm font-bold text-gray-700">◆ 顔タイプ</h4>
     <ul className="list-disc pl-5 text-sm text-gray-600">
       {features
-        .filter(f => f.feature_master.category === "face" && f.value_text) 
-        .map((f) => (
-          <li key={f.id}>{f.feature_master.name}（{f.value_text}）</li>
+        .filter(f => f.feature_master?.category === "face")
+        .map(f => (
+          <li key={f.feature_id}>
+            {f.feature_master?.name ?? "未設定"}
+          </li>
         ))}
     </ul>
   </div>
 )}
 
-
-{features.some(f => 
-  (f.feature_master.category === "appearance" || f.feature_master.category === "personality") 
-  && f.value_boolean
+{/* APPEARANCE & PERSONALITY */}
+{features.some(
+  f =>
+    f.feature_master?.category === "appearance" ||
+    f.feature_master?.category === "personality"
 ) && (
   <div className="mt-4">
     <h4 className="text-sm font-bold text-gray-700">◆ APPEARANCE & PERSONALITY</h4>
     <ul className="list-disc pl-5 text-sm text-gray-600">
       {features
-        .filter(f => 
-          (f.feature_master.category === "appearance" || f.feature_master.category === "personality") 
-          && f.value_boolean
+        .filter(
+          f =>
+            f.feature_master &&
+            (f.feature_master.category === "appearance" ||
+              f.feature_master.category === "personality")
         )
         .map(f => (
-          <li key={f.id}>{f.feature_master.name}</li>
+          <li key={f.feature_id}>
+            {f.feature_master?.name ?? "未設定"}
+          </li>
         ))}
     </ul>
   </div>
 )}
+
 
       </div>
 

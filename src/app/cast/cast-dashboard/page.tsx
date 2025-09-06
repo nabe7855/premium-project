@@ -4,12 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import Dashboard from '@/components/sections/cast-dashboard/Dashboard';
 import LoginForm from '@/components/sections/cast-dashboard/LoginForm';
-
-interface CastProfile {
-  id: string;
-  name: string;
-  is_active: boolean;
-}
+import { CastProfile } from '@/types/cast'; // ✅ 本物をインポート
 
 export default function CastDashboardPage() {
   const [loading, setLoading] = useState(true);
@@ -46,14 +41,11 @@ export default function CastDashboardPage() {
         return;
       }
 
-      // ✅ casts テーブルからプロフィールを取得
-      const { data: castData, error: castError } = await supabase
-        .from('casts')
-        .select('id, name, is_active')
-        .eq('user_id', user.id)
-        .single();
+      // ✅ getCastProfile を利用するのがベスト
+      const { getCastProfile } = await import('@/lib/getCastProfile');
+      const profile = await getCastProfile(user.id);
 
-      if (castError || !castData) {
+      if (!profile) {
         setIsAuthenticated(false);
         setCastProfile(null);
         setLoading(false);
@@ -61,7 +53,7 @@ export default function CastDashboardPage() {
       }
 
       setIsAuthenticated(true);
-      setCastProfile(castData);
+      setCastProfile(profile);
       setLoading(false);
     };
 

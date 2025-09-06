@@ -1,46 +1,60 @@
 import React from 'react';
-
-const featureOptions = [
-  "巨根", "ぽっちゃり", "ヒゲ", "EXILE系", "韓国系",
-  "塩顔", "ソース顔", "醤油顔", "メガネ", "スーツ",
-  "低ボイス", "筋肉質", "美肌", "陰毛処理済み",
-  "爬虫類系", "高身長", "ストリート系",
-];
+import { CastProfile, FeatureMaster } from '@/types/cast';
+import { OnChangeHandler } from '@/types/profileEditor';
 
 interface Props {
-  form: any;
-  onChange: (key: string, value: any) => void;
+  form: CastProfile;
+  onChange: OnChangeHandler;
+  featureMasters: FeatureMaster[];
+  category: 'appearance' | 'personality';
 }
 
-export default function FeatureSelector({ form, onChange }: Props) {
-  const toggle = (value: string) => {
-    const current: string[] = form.features || [];
-    onChange(
-      'features',
-      current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value]
-    );
+export default function FeatureSelector({ form, onChange, featureMasters, category }: Props) {
+  // ✅ 選択中の ID リストを決定
+  const selectedIds = category === 'appearance'
+    ? form.appearanceIds ?? []
+    : form.personalityIds ?? [];
+
+  const toggle = (id: string) => {
+    const newValue = selectedIds.includes(id)
+      ? selectedIds.filter((v) => v !== id)
+      : [...selectedIds, id];
+
+    const key = category === 'appearance' ? 'appearanceIds' : 'personalityIds';
+    onChange(key as keyof CastProfile, newValue);
   };
+
+  // ✅ 該当カテゴリだけ抽出
+  const options = featureMasters.filter((f) => f.category === category);
+
+  if (options.length === 0) {
+    return (
+      <p className="text-sm text-gray-500">
+        {category === 'appearance' ? '外見特徴が未設定です' : '性格特徴が未設定です'}
+      </p>
+    );
+  }
 
   return (
     <div>
-      <label className="block text-sm font-medium mb-2">特徴カテゴリ</label>
+      <label className="block text-sm font-medium mb-2">
+        {category === 'appearance' ? '外見の特徴' : '性格の特徴'}
+      </label>
       <div className="flex flex-wrap gap-2">
-        {featureOptions.map((opt) => {
-          const isSelected = form.features.includes(opt);
+        {options.map((opt) => {
+          const isSelected = selectedIds.includes(opt.id);
           return (
             <button
-              key={opt}
+              key={opt.id}
               type="button"
-              onClick={() => toggle(opt)}
+              onClick={() => toggle(opt.id)}
               className={`px-3 py-1 rounded-full border text-sm transition ${
                 isSelected
                   ? 'bg-green-500 text-white border-green-500'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
-              {opt}
+              {opt.name}
             </button>
           );
         })}

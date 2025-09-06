@@ -1,47 +1,49 @@
 import React from 'react';
-
-const personalityOptions = [
-  "ドS系", "ドM系", "文系", "理系", "インテリ系",
-  "僧職系", "小悪魔系", "体育会系", "地味系", "クール系",
-  "サブカル系", "オタク系", "アキバ系", "イヌ系", "ネコ系",
-  "キツネ系", "ゴリラ系", "ウサギ系", "タバコ", "アイコス",
-  "お酒好き", "辛いの好き", "スイーツ大好き系", "いっぱいたべーる系"
-];
+import { CastProfile, FeatureMaster } from '@/types/cast';
+import { OnChangeHandler } from '@/types/profileEditor';
 
 interface Props {
-  form: any;
-  onChange: (key: string, value: any) => void;
+  form: CastProfile;
+  onChange: OnChangeHandler;
+  featureMasters: FeatureMaster[];
 }
 
-export default function PersonalitySelector({ form, onChange }: Props) {
-  const toggle = (value: string) => {
-    const current: string[] = form.personality || [];
+export default function PersonalitySelector({ form, onChange, featureMasters }: Props) {
+  const toggle = (id: string) => {
+    const current = form.personalityIds ?? [];
     onChange(
-      'personality',
-      current.includes(value)
-        ? current.filter((v) => v !== value)
-        : [...current, value]
+      'personalityIds',
+      current.includes(id)
+        ? current.filter((v) => v !== id)
+        : [...current, id]
     );
   };
+
+  // ✅ personality カテゴリのみ抽出
+  const options = featureMasters.filter((f) => f.category === 'personality');
+
+  if (options.length === 0) {
+    return <p className="text-sm text-gray-500">性格カテゴリのマスターが未設定です</p>;
+  }
 
   return (
     <div>
       <label className="block text-sm font-medium mb-2">性格カテゴリ</label>
       <div className="flex flex-wrap gap-2">
-        {personalityOptions.map((opt) => {
-          const isSelected = form.personality.includes(opt);
+        {options.map((opt) => {
+          const isSelected = form.personalityIds?.includes(opt.id) ?? false;
           return (
             <button
-              key={opt}
+              key={opt.id}
               type="button"
-              onClick={() => toggle(opt)}
+              onClick={() => toggle(opt.id)}
               className={`px-3 py-1 rounded-full border text-sm transition ${
                 isSelected
                   ? 'bg-pink-500 text-white border-pink-500'
                   : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
               }`}
             >
-              {opt}
+              {opt.name}
             </button>
           );
         })}

@@ -8,9 +8,9 @@ interface CastCardProps {
   slug: string;
   storeSlug?: string;
   name: string;
-  age: number;
-  height: number;
-  weight: number;
+  age?: number;      // ← number → number | undefined に修正
+  height?: number;   // ← 同上
+  weight?: number;   // ← 同上
   imageUrl: string | null;
   catchCopy?: string;
   isNew?: boolean;
@@ -30,7 +30,6 @@ const CastCard: React.FC<CastCardProps> = ({
   catchCopy,
   isNew = false,
   isReception = false,
-
   priority,
 }) => {
   const href = storeSlug ? `/store/${storeSlug}/${slug}` : `/cast/${slug}`;
@@ -86,9 +85,9 @@ const CastCard: React.FC<CastCardProps> = ({
           <div>体重</div>
         </div>
         <div className="grid grid-cols-3 pt-1 text-center text-sm font-medium text-gray-700">
-          <div>{age}歳</div>
-          <div>{height}cm</div>
-          <div>{weight}kg</div>
+          <div>{age ? `${age}歳` : '-'}</div>
+          <div>{height ? `${height}cm` : '-'}</div>
+          <div>{weight ? `${weight}kg` : '-'}</div>
         </div>
       </div>
     </Link>

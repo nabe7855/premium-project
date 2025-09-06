@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { LogOut, Menu, X, Calendar, Camera, BarChart3, User } from 'lucide-react';
 import RadarChartComponent from './dashboard/RadarChart';
@@ -8,9 +10,13 @@ import MotivationBadges from './dashboard/MotivationBadges';
 import CalendarEditor from './schedule/CalendarEditor';
 import DiaryEditor from './diary/DiaryEditor';
 import DiaryList from './diary/DiaryList';
-import ProfileEditor from './dashboard/profile-editor/ProfileEditor'; 
+import ProfileEditor from './dashboard/profile-editor/ProfileEditor';
 import { CastPerformance, CastLevel, Badge, CastSchedule, CastDiary } from '@/types/cast-dashboard';
-import { CastProfile, FeatureMaster } from '@/types/cast'; // ✅ 型を共通化
+import { CastProfile, FeatureMaster } from '@/types/cast';
+import { getFeatureMasters } from '@/lib/getFeatureMasters';
+import { updateCast } from '@/lib/updateCast';
+import { updateCastFeatures } from '@/lib/updateCastFeatures';
+import { getCastProfile } from '@/lib/getCastProfile'; // ✅ Supabase ロジックはここに集約
 
 interface DashboardProps {
   cast: CastProfile;
@@ -24,7 +30,35 @@ export default function Dashboard({ cast }: DashboardProps) {
 
   const [schedules, setSchedules] = useState<CastSchedule[]>([]);
   const [diaries, setDiaries] = useState<CastDiary[]>([]);
+  const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
+  const [castState, setCastState] = useState<CastProfile>(cast);
 
+  // ✅ 特徴マスターのロード
+  useEffect(() => {
+    const loadMasters = async () => {
+      try {
+        const masters = await getFeatureMasters();
+        setFeatureMasters(masters);
+      } catch (err) {
+        console.error('特徴マスター取得エラー:', err);
+      }
+    };
+    loadMasters();
+  }, []);
+
+  // ✅ 保存後に最新プロフィールを再取得して state 更新
+  const refreshCastProfile = async (castId: string) => {
+    try {
+      const refreshed = await getCastProfile(castId);
+      if (refreshed) {
+        setCastState(refreshed);
+      }
+    } catch (err) {
+      console.error('キャスト再取得エラー:', err);
+    }
+  };
+
+  // ---- ダッシュボード用ダミーデータ ----
   const performanceData: CastPerformance = {
     イケメン度: 4.5,
     ユーモア力: 4.0,
@@ -49,6 +83,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: '3', name: '人気者', description: '高評価100件', icon: 'heart', unlocked: true, unlockedAt: '2024-02-01' },
   ];
 
+  // ---- 写メ日記関係 ----
   const handleScheduleUpdate = (updatedSchedules: CastSchedule[]) => setSchedules(updatedSchedules);
 
   const handleDiarySave = (diaryData: Omit<CastDiary, 'id' | 'createdAt'>) => {
@@ -67,20 +102,12 @@ export default function Dashboard({ cast }: DashboardProps) {
     }
   };
 
-  // ナビゲーションタブ
+  // ---- ナビゲーションタブ ----
   const tabs = [
     { id: 'dashboard', name: 'ダッシュボード', icon: BarChart3 },
     { id: 'schedule', name: 'スケジュール', icon: Calendar },
     { id: 'diary', name: '写メ日記', icon: Camera },
     { id: 'profile', name: 'マイプロフィール', icon: User },
-  ];
-
-  // 仮データ（CSVの代わり）
-  const featureMasters: FeatureMaster[] = [
-    { id: 1, category: 'MBTI', label: 'ENTP', name: '挑戦者' },
-    { id: 2, category: 'personality', label: '優しい', name: '優しい' },
-    { id: 3, category: 'face', label: '爽やか', name: '爽やか' },
-    { id: 4, category: 'appearance', label: '筋肉質', name: '筋肉質' },
   ];
 
   return (
@@ -102,7 +129,7 @@ export default function Dashboard({ cast }: DashboardProps) {
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
               <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">
-                ようこそ、{cast.name} さん
+                ようこそ、{castState.name} さん
               </span>
               <button
                 onClick={logout}
@@ -146,7 +173,7 @@ export default function Dashboard({ cast }: DashboardProps) {
         {activeTab === 'dashboard' && (
           <div>
             <h2 className="mb-2 text-xl font-bold text-gray-900 sm:text-2xl">
-              おかえりなさい、{cast.name} さん ✨
+              おかえりなさい、{castState.name} さん ✨
             </h2>
             <p className="text-sm text-gray-600 sm:text-base">
               今日も素敵な一日にしましょう！成長の記録を確認してみてください。
@@ -174,19 +201,34 @@ export default function Dashboard({ cast }: DashboardProps) {
           </div>
         )}
 
-{activeTab === 'profile' && (
-  <ProfileEditor
-    cast={{
-      ...cast,
-      personality: cast.personality ?? [], // null/undefinedなら空配列
-      features: cast.features ?? [],  // ← id の配列
-      appearance: cast.appearance ?? [],   // null/undefinedなら空配列
-    }}
-    featureMasters={featureMasters}
-    onSave={(updated) => console.log('保存結果', updated)}
-  />
-)}
+        {activeTab === 'profile' && featureMasters.length > 0 && (
+          <ProfileEditor
+            cast={{
+              ...castState,
+              personalityIds: castState.personalityIds ?? [],
+              appearanceIds: castState.appearanceIds ?? [],
+            }}
+            featureMasters={featureMasters}
+            onSave={async (updated) => {
+              try {
+                // 1. 基本情報更新
+                await updateCast(updated);
 
+                // 2. 複数特徴更新
+                const multi = [...updated.personalityIds, ...updated.appearanceIds];
+                await updateCastFeatures(updated.id, multi);
+
+                // 3. 保存後に最新データを再取得して state 更新
+                await refreshCastProfile(updated.id);
+
+                alert('保存しました！');
+              } catch (err) {
+                console.error('保存エラー:', err);
+                alert('保存に失敗しました');
+              }
+            }}
+          />
+        )}
       </main>
     </div>
   );

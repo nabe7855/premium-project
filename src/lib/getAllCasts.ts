@@ -3,7 +3,7 @@ import qs from 'qs';
 
 // StrapiのAPIレスポンス型を定義
 interface StrapiCastItem {
-  id: number;
+  id: string;
   slug: string;
   name: string;
   age: number;
@@ -16,6 +16,7 @@ interface StrapiCastItem {
   sexinessLevel?: number;
   stillwork?: boolean; // ✅ 追加（Boolean型）
   isReception?: boolean;
+  is_active?: boolean;
 }
 
 interface StrapiResponse {
@@ -62,20 +63,21 @@ export const getAllCasts = async (): Promise<Cast[]> => {
     };
 
     return {
-      id: item.id,
+      id: String(item.id),
       slug: item.slug,
       name: item.name,
       age: item.age,
       height: item.height,
       weight: item.weight,
       catchCopy: item.catchCopy,
-      imageUrl: firstImage?.imageUrl ?? null,
+      imageUrl: firstImage?.imageUrl ?? undefined,
       galleryItems,
       sns,
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
       stillwork: item.stillwork ?? true,
+      is_active: item.is_active ?? true,
     };
   });
 };

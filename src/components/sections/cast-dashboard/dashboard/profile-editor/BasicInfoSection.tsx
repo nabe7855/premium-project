@@ -1,8 +1,10 @@
 import React from 'react';
+import { CastProfile } from '@/types/cast';
+import { OnChangeHandler } from '@/types/profileEditor'; // 共通ハンドラ型
 
 interface Props {
-  form: any;
-  onChange: (key: string, value: any) => void;
+  form: CastProfile;
+  onChange: OnChangeHandler;
 }
 
 export default function BasicInfoSection({ form, onChange }: Props) {
@@ -23,16 +25,17 @@ export default function BasicInfoSection({ form, onChange }: Props) {
           <label className="block text-sm font-medium">年齢</label>
           <input
             type="number"
-            value={form.age || ''}
+            value={form.age ?? ''} // null/undefinedなら空文字
             onChange={(e) => onChange('age', Number(e.target.value))}
             className="w-full mt-1 rounded border px-3 py-2"
           />
         </div>
+
         <div>
           <label className="block text-sm font-medium">身長 (cm)</label>
           <input
             type="number"
-            value={form.height || ''}
+            value={form.height ?? ''} // null/undefinedなら空文字
             onChange={(e) => onChange('height', Number(e.target.value))}
             className="w-full mt-1 rounded border px-3 py-2"
           />

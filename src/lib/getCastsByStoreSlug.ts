@@ -2,7 +2,7 @@ import { Cast, GalleryItem, CastSNS } from '@/types/cast';
 import qs from 'qs';
 
 interface StrapiCastItem {
-  id: number;
+  id: string;
   slug: string;
   name: string;
   age: number;
@@ -14,6 +14,7 @@ interface StrapiCastItem {
   isNew?: boolean;
   sexinessLevel?: number;
   stillwork?: boolean | string;
+  is_active?: boolean;
   isReception?: boolean;
 }
 
@@ -74,19 +75,20 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
     };
 
     return {
-      id: item.id,
+      id: String(item.id),
       slug: item.slug,
       name: item.name,
       age: item.age,
       height: item.height,
       weight: item.weight,
       catchCopy: item.catchCopy,
-      imageUrl: firstImage?.imageUrl ?? null,
+      imageUrl: firstImage?.imageUrl ?? undefined,
       galleryItems,
       sns,
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
+      is_active: item.is_active ?? true,
       stillwork: true, // ここは filter 済みなので true に固定
     };
   });

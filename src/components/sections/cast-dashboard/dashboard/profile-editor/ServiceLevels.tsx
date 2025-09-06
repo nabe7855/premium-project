@@ -1,25 +1,32 @@
 import React from 'react';
+import { CastProfile } from '@/types/cast';
+import { OnChangeHandler } from '@/types/profileEditor';
 
 const serviceOptions = [
-  "アイラインタッチなし", "ドMコース", "洗体コース", "デート", "お泊り", "添い寝",
-  "3P(女性二人◯,セラピスト2人×)", "キス", "クンニ", "フェラ", "手コキ",
-  "モノ鑑賞", "全身リップ", "乳首舐め", "アナル舐め", "指入れ", "Gスポット",
-  "ポルチオ", "パウダー性感", "ソフトSM", "おもちゃプレイ",
-  "指圧マッサージ", "オイルマッサージ"
+  'アイラインタッチなし', 'ドMコース', '洗体コース', 'デート', 'お泊り', '添い寝',
+  '3P(女性二人◯,セラピスト2人×)', 'キス', 'クンニ', 'フェラ', '手コキ',
+  'モノ鑑賞', '全身リップ', '乳首舐め', 'アナル舐め', '指入れ', 'Gスポット',
+  'ポルチオ', 'パウダー性感', 'ソフトSM', 'おもちゃプレイ',
+  '指圧マッサージ', 'オイルマッサージ',
 ];
-const serviceLevels = ["NG", "要相談", "普通", "得意"];
+
+const serviceLevels: Array<'NG' | '要相談' | '普通' | '得意'> = [
+  'NG',
+  '要相談',
+  '普通',
+  '得意',
+];
 
 interface Props {
-  form: any;
-  setForm: React.Dispatch<React.SetStateAction<any>>;
+  form: CastProfile;
+  onChange: OnChangeHandler;
 }
 
-export default function ServiceLevels({ form, setForm }: Props) {
-  const handleChange = (service: string, level: string) => {
-    setForm((prev: any) => ({
-      ...prev,
-      services: { ...prev.services, [service]: level },
-    }));
+export default function ServiceLevels({ form, onChange }: Props) {
+  const services = form.services ?? {};
+
+  const handleChange = (service: string, level: 'NG' | '要相談' | '普通' | '得意') => {
+    onChange('services', { ...services, [service]: level });
   };
 
   return (
@@ -31,7 +38,7 @@ export default function ServiceLevels({ form, setForm }: Props) {
             <span className="w-48 text-sm">{service}</span>
             <div className="flex gap-2">
               {serviceLevels.map((level) => {
-                const isSelected = form.services?.[service] === level;
+                const isSelected = services[service] === level;
                 return (
                   <button
                     key={level}

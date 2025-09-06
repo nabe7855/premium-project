@@ -1,8 +1,6 @@
-// src/types/cast.ts
-
 // ギャラリー画像・動画
 export interface GalleryItem {
-  id: number;
+  id: string;
   imageUrl: string;
   caption?: string;
   videoUrl?: string | null;
@@ -11,38 +9,41 @@ export interface GalleryItem {
 
 // SNSリンク
 export interface CastSNS {
-  line: string;
+  line?: string;
+  twitter?: string;
+  instagram?: string;
 }
 
-// 完全なキャスト情報
+// 完全なキャスト情報（一覧・詳細用）
 export interface Cast {
-  id: number;
+  id: string;              // uuid
   slug: string;
   name: string;
-  age: number;
-  height: number;
-  weight: number;
+  age?: number;
+  height?: number;
+  weight?: number;
   catchCopy?: string;
-  imageUrl: string | null;
-  galleryItems: GalleryItem[];
-  sns: CastSNS;
-  isNew: boolean;
-  sexinessLevel: number;
+  imageUrl?: string;
+  galleryItems?: GalleryItem[];
+  sns?: CastSNS;
+  isNew?: boolean;
+  sexinessLevel?: number;
   isReception?: boolean;
-  stillwork: boolean;
+  stillwork?: boolean;
+  is_active: boolean;
 }
 
 // キャスト一覧用の軽量データ
 export interface CastSummary {
-  id: string;             // キャストのID
-  name: string;           // キャストの名前
-  age: number;            // 年齢
-  height: number;         // 身長
-  weight: number;         // 体重
-  catchCopy?: string;     // キャッチコピー
-  imageUrl?: string;      // 画像URL
+  id: string;
+  name: string;
+  age?: number;
+  height?: number;
+  weight?: number;
+  catchCopy?: string;
+  imageUrl?: string;
   galleryItems?: GalleryItem[];
-  isWorking: boolean;     // 出勤中かどうか
+  isWorking?: boolean;
   schedule?: string[];
   stillwork?: boolean;
   diaryUrl?: string;
@@ -52,21 +53,29 @@ export interface CastSummary {
   slug?: string;
 }
 
-// 特徴マスタ（CSVに対応）
+// 特徴マスタ（DB: feature_master）
+export type FeatureCategory =
+  | 'MBTI'
+  | 'animal'
+  | 'face'
+  | 'personality'
+  | 'appearance';
+
 export interface FeatureMaster {
-  id: number;
-  category: string;  // "MBTI" | "personality" | "face" | "appearance"
-  label: string;
-  name: string;
+  id: string;                  // uuid
+  category: FeatureCategory;
+  name: string;                // 表示名
+  label_en?: string;
+  created_at?: string;
 }
 
-// キャストに紐づく特徴
+// キャストに紐づく特徴（DB: cast_features）
 export interface CastFeature {
-  id: number;
-  feature_master: FeatureMaster;
-  value_text?: string;
-  value_number?: number;
-  value_boolean?: boolean;
+  id: string;
+  cast_id: string;
+  feature_id: string;
+  feature_master?: FeatureMaster;
+  created_at?: string;
 }
 
 // ✅ プロフィール編集用（Dashboard / ProfileEditor 用）
@@ -75,30 +84,51 @@ export interface CastProfile {
   name: string;
   age?: number;
   height?: number;
-  mbti?: string;
-  personality?: string[];  // 複数選択
-  face?: string;           // 単一選択
-  appearance?: string[];
-  sexinessLevel?: number;
-  bloodType?: string;
   profile?: string;
   imageUrl?: string;
   is_active: boolean;
 
-  // 追加
-  features?: string[]; // 特徴カテゴリー（複数選択）
-  animal?: string;     // 動物占い（単一選択）
+  // 単一選択（castsテーブルに外部キー）
+  mbtiId?: string;     // feature_master.id (category='mbti')
+  animalId?: string;   // feature_master.id (category='animal')
+  faceId?: string;     // feature_master.id (category='face')
+
+  // 複数選択（cast_featuresテーブル経由）
+  personalityIds: string[]; // feature_master.id[] (category='personality')
+  appearanceIds: string[];  // feature_master.id[] (category='appearance')
+
+  // 任意属性
+  sexinessLevel?: number;
+  bloodType?: string;
 
   // 施術内容の4段階
   services?: {
-    [key: string]: "NG" | "要相談" | "普通" | "得意";
+    [key: string]: 'NG' | '要相談' | '普通' | '得意';
   };
 
-  // ✅ SNS URL
+  // SNS
   snsUrl?: string;
 
-  // ✅ 質問一覧（キー: 質問文, 値: 回答）
+  // 質問一覧
   questions?: {
     [key: string]: string;
   };
 }
+
+// DBから直接取れるキャストデータ (Supabase/Strapiレスポンス用)
+export interface StrapiCastItem {
+  id: string | number;
+  slug: string;
+  name: string;
+  age?: number;
+  height?: number;
+  weight?: number;
+  catchCopy?: string;
+  imageUrl?: string;
+  isNew?: boolean;
+  sexinessLevel?: number;
+  isReception?: boolean;
+  stillwork?: boolean;
+  is_active?: boolean; // ✅ ここを追加
+}
+
