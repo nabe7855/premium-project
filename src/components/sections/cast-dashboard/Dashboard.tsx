@@ -8,7 +8,7 @@ import MotivationBadges from './dashboard/MotivationBadges';
 import CalendarEditor from './schedule/CalendarEditor';
 import DiaryEditor from './diary/DiaryEditor';
 import DiaryList from './diary/DiaryList';
-import ProfileEditor from './dashboard/ProfileEditor'; 
+import ProfileEditor from './dashboard/profile-editor/ProfileEditor'; 
 import { CastPerformance, CastLevel, Badge, CastSchedule, CastDiary } from '@/types/cast-dashboard';
 import { CastProfile, FeatureMaster } from '@/types/cast'; // ✅ 型を共通化
 
@@ -179,6 +179,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     cast={{
       ...cast,
       personality: cast.personality ?? [], // null/undefinedなら空配列
+      features: cast.features ?? [],  // ← id の配列
       appearance: cast.appearance ?? [],   // null/undefinedなら空配列
     }}
     featureMasters={featureMasters}
