@@ -16,7 +16,8 @@ import { CastProfile, FeatureMaster } from '@/types/cast';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { updateCast } from '@/lib/updateCast';
 import { updateCastFeatures } from '@/lib/updateCastFeatures';
-import { getCastProfile } from '@/lib/getCastProfile'; // ✅ Supabase ロジックはここに集約
+import { updateCastServices } from '@/lib/updateCastServices'; // ✅ 追加
+import { getCastProfile } from '@/lib/getCastProfile';
 
 interface DashboardProps {
   cast: CastProfile;
@@ -207,6 +208,7 @@ export default function Dashboard({ cast }: DashboardProps) {
               ...castState,
               personalityIds: castState.personalityIds ?? [],
               appearanceIds: castState.appearanceIds ?? [],
+              services: castState.services ?? {}, // ✅ 初期値
             }}
             featureMasters={featureMasters}
             onSave={async (updated) => {
@@ -218,7 +220,10 @@ export default function Dashboard({ cast }: DashboardProps) {
                 const multi = [...updated.personalityIds, ...updated.appearanceIds];
                 await updateCastFeatures(updated.id, multi);
 
-                // 3. 保存後に最新データを再取得して state 更新
+                // 3. サービス内容更新
+                await updateCastServices(updated.id, updated.services ?? {}, featureMasters);
+
+                // 4. 保存後に最新データを再取得して state 更新
                 await refreshCastProfile(updated.id);
 
                 alert('保存しました！');

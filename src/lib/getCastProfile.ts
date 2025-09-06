@@ -4,6 +4,7 @@ import { CastProfile } from '@/types/cast';
 // Supabase から join して返るレコード型
 interface CastFeatureRow {
   feature_id: string;
+  level?: 'NG' | '要相談' | '普通' | '得意'; // ✅ 追加
   feature_master: {
     id: string;
     category: string;
@@ -29,33 +30,34 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       face_id
     `)
     .eq('user_id', userId)
-    .maybeSingle(); // ✅ レコードが無い場合は null を返す
+    .maybeSingle();
 
   if (castError || !cast) {
     console.error('❌ cast取得エラー:', castError);
     return null;
   }
 
-  // 2. cast_features 経由で特徴取得
+  // 2. cast_features 経由で特徴 & サービス取得
   const { data: features, error: featureError } = await supabase
-  .from('cast_features')
-  .select(`
-    feature_id,
-    feature_master:cast_features_feature_id_fkey (
-      id,
-      category,
-      name,
-      label_en
-    )
-  `)
-  .eq('cast_id', cast.id);
+    .from('cast_features')
+    .select(`
+  feature_id,
+  level,
+  feature_master:cast_features_feature_id_fkey (
+    id,
+    category,
+    name,
+    label_en
+  )
+`)
+
+    .eq('cast_id', cast.id);
 
   if (featureError) {
     console.error('❌ features取得エラー:', featureError);
     return null;
   }
 
-  // ✅ TS が誤推論するため unknown を経由
   const typedFeatures: CastFeatureRow[] = (features ?? []) as unknown as CastFeatureRow[];
 
   // 3. カテゴリごとに分類
@@ -66,6 +68,16 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
   const appearanceIds = typedFeatures
     .filter((f) => f.feature_master?.category === 'appearance')
     .map((f) => f.feature_id);
+
+  // ✅ サービス内容を { サービス名: レベル } の形に変換
+  const services: Record<string, 'NG' | '要相談' | '普通' | '得意'> = {};
+  typedFeatures
+    .filter((f) => f.feature_master?.category === 'service')
+    .forEach((f) => {
+      if (f.feature_master?.name && f.level) {
+        services[f.feature_master.name] = f.level;
+      }
+    });
 
   // 4. CastProfile 型に整形
   const profile: CastProfile = {
@@ -81,6 +93,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     faceId: cast.face_id ?? undefined,
     personalityIds,
     appearanceIds,
+    services, // ✅ 追加
   };
 
   return profile;

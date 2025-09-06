@@ -59,7 +59,8 @@ export type FeatureCategory =
   | 'animal'
   | 'face'
   | 'personality'
-  | 'appearance';
+  | 'appearance'
+  | 'service';   // ✅ サービスを追加
 
 export interface FeatureMaster {
   id: string;                  // uuid
@@ -76,6 +77,7 @@ export interface CastFeature {
   feature_id: string;
   feature_master?: FeatureMaster;
   created_at?: string;
+  level?: 'NG' | '要相談' | '普通' | '得意'; // ✅ サービス用に追加
 }
 
 // ✅ プロフィール編集用（Dashboard / ProfileEditor 用）
@@ -89,7 +91,7 @@ export interface CastProfile {
   is_active: boolean;
 
   // 単一選択（castsテーブルに外部キー）
-  mbtiId?: string;     // feature_master.id (category='mbti')
+  mbtiId?: string;     // feature_master.id (category='MBTI')
   animalId?: string;   // feature_master.id (category='animal')
   faceId?: string;     // feature_master.id (category='face')
 
@@ -101,7 +103,7 @@ export interface CastProfile {
   sexinessLevel?: number;
   bloodType?: string;
 
-  // 施術内容の4段階
+  // 施術内容の4段階（UI用）
   services?: {
     [key: string]: 'NG' | '要相談' | '普通' | '得意';
   };
@@ -131,4 +133,3 @@ export interface StrapiCastItem {
   stillwork?: boolean;
   is_active?: boolean; // ✅ ここを追加
 }
-
