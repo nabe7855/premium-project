@@ -133,3 +133,31 @@ export interface StrapiCastItem {
   stillwork?: boolean;
   is_active?: boolean; // ✅ ここを追加
 }
+
+export interface QuestionMaster {
+  id: string;
+  text: string;
+  category?: string;
+  is_active: boolean;
+  created_at?: string;
+}
+
+export interface CastQuestion {
+  id: string;
+  cast_id: string;
+  question_id: string;
+  answer: string;
+  question?: QuestionMaster;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface GalleryItem {
+  id: string;
+  cast_id: string;
+  image_url: string;
+  caption?: string;
+  is_main: boolean;
+  created_at: string;
+  updated_at: string;
+}

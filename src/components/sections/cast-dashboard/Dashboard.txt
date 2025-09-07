@@ -12,12 +12,17 @@ import DiaryEditor from './diary/DiaryEditor';
 import DiaryList from './diary/DiaryList';
 import ProfileEditor from './dashboard/profile-editor/ProfileEditor';
 import { CastPerformance, CastLevel, Badge, CastSchedule, CastDiary } from '@/types/cast-dashboard';
-import { CastProfile, FeatureMaster } from '@/types/cast';
+import { CastProfile, FeatureMaster, QuestionMaster } from '@/types/cast';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { updateCast } from '@/lib/updateCast';
 import { updateCastFeatures } from '@/lib/updateCastFeatures';
-import { updateCastServices } from '@/lib/updateCastServices'; // ✅ 追加
+import { updateCastServices } from '@/lib/updateCastServices';
 import { getCastProfile } from '@/lib/getCastProfile';
+import { getCastQuestions } from '@/lib/getCastQuestions';
+import { updateCastQuestions } from '@/lib/updateCastQuestions';
+import { supabase } from '@/lib/supabaseClient';
+import { Image } from 'lucide-react';
+import GalleryEditor from './dashboard/profile-editor/GalleryEditor';
 
 interface DashboardProps {
   cast: CastProfile;
@@ -26,19 +31,23 @@ interface DashboardProps {
 export default function Dashboard({ cast }: DashboardProps) {
   const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'schedule' | 'diary' | 'profile'>('dashboard');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery'>('dashboard');
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
 
   const [schedules, setSchedules] = useState<CastSchedule[]>([]);
   const [diaries, setDiaries] = useState<CastDiary[]>([]);
   const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
+  const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
   const [castState, setCastState] = useState<CastProfile>(cast);
+
+  console.log('🟡 Dashboard props.cast:', cast);
 
   // ✅ 特徴マスターのロード
   useEffect(() => {
     const loadMasters = async () => {
       try {
         const masters = await getFeatureMasters();
+        console.log('✅ featureMasters:', masters);
         setFeatureMasters(masters);
       } catch (err) {
         console.error('特徴マスター取得エラー:', err);
@@ -47,15 +56,87 @@ export default function Dashboard({ cast }: DashboardProps) {
     loadMasters();
   }, []);
 
-  // ✅ 保存後に最新プロフィールを再取得して state 更新
+  // ✅ 質問マスターのロード
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('question_master')
+          .select('*')
+          .eq('is_active', true);
+        if (error) throw error;
+        console.log('✅ questionMasters:', data);
+        setQuestionMasters(data ?? []);
+      } catch (err) {
+        console.error('質問マスター取得エラー:', err);
+      }
+    };
+    loadQuestions();
+  }, []);
+
+  // ✅ 初回ロード
+  useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const refreshed = await getCastProfile(cast.id);
+        console.log('✅ getCastProfile:', refreshed);
+
+        if (refreshed) {
+          const answers = await getCastQuestions(cast.id);
+          console.log('✅ getCastQuestions:', answers);
+
+          const questions: Record<string, string> = {};
+          answers.forEach((a) => {
+            if (a.question?.id) {
+              questions[a.question.id] = a.answer ?? '';
+            }
+          });
+
+          console.log('✅ mapped questions:', questions);
+
+          setCastState({
+            ...refreshed,
+            questions,
+          });
+        }
+      } catch (err) {
+        console.error('初期プロフィール取得エラー:', err);
+      }
+    };
+
+    loadProfile();
+  }, [cast.id]);
+
+  // ✅ 保存後リロード
   const refreshCastProfile = async (castId: string) => {
     try {
       const refreshed = await getCastProfile(castId);
+      console.log('♻️ refreshCastProfile (getCastProfile):', refreshed);
+
       if (refreshed) {
-        setCastState(refreshed);
+        const answers = await getCastQuestions(castId);
+        console.log('♻️ refreshCastProfile (getCastQuestions):', answers);
+
+        const questions: Record<string, string> = {};
+        answers.forEach((a) => {
+          if (a.question?.id) {
+            questions[a.question.id] = a.answer ?? '';
+          }
+        });
+
+        console.log('♻️ mapped questions (before setCastState):', questions);
+        console.log('♻️ refreshCastProfile mapped questions:', questions);
+
+        setCastState({
+          ...refreshed,
+          questions,
+        });
+        console.log('🟢 castState refreshed:', { ...refreshed, questions });
+      } else {
+        console.warn('⚠️ getCastProfile returned null in refresh. castId =', castId);
       }
     } catch (err) {
-      console.error('キャスト再取得エラー:', err);
+      console.error('❌ キャスト再取得エラー:', err);
     }
   };
 
@@ -109,6 +190,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: 'schedule', name: 'スケジュール', icon: Calendar },
     { id: 'diary', name: '写メ日記', icon: Camera },
     { id: 'profile', name: 'マイプロフィール', icon: User },
+    { id: 'gallery', name: 'ギャラリー', icon: Image },
   ];
 
   return (
@@ -202,28 +284,26 @@ export default function Dashboard({ cast }: DashboardProps) {
           </div>
         )}
 
-        {activeTab === 'profile' && featureMasters.length > 0 && (
+        {activeTab === 'profile' && featureMasters.length > 0 && questionMasters.length > 0 && (
           <ProfileEditor
             cast={{
               ...castState,
               personalityIds: castState.personalityIds ?? [],
               appearanceIds: castState.appearanceIds ?? [],
-              services: castState.services ?? {}, // ✅ 初期値
+              services: castState.services ?? {},
+              questions: castState.questions ?? {},
             }}
             featureMasters={featureMasters}
+            questionMasters={questionMasters}
             onSave={async (updated) => {
               try {
-                // 1. 基本情報更新
-                await updateCast(updated);
+                console.log('💾 onSave updated:', updated);
 
-                // 2. 複数特徴更新
+                await updateCast(updated);
                 const multi = [...updated.personalityIds, ...updated.appearanceIds];
                 await updateCastFeatures(updated.id, multi);
-
-                // 3. サービス内容更新
                 await updateCastServices(updated.id, updated.services ?? {}, featureMasters);
-
-                // 4. 保存後に最新データを再取得して state 更新
+                await updateCastQuestions(updated.id, updated.questions ?? {});
                 await refreshCastProfile(updated.id);
 
                 alert('保存しました！');
@@ -233,8 +313,14 @@ export default function Dashboard({ cast }: DashboardProps) {
               }
             }}
           />
+
         )}
+
+        {activeTab === 'gallery' && (
+  <GalleryEditor castId={castState.id} />
+)}
       </main>
     </div>
+  
   );
 }

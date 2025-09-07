@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
-import Dashboard from '@/components/sections/cast-dashboard/Dashboard';
+import Dashboard from '@/components/sections/cast-dashboard/dashboard/Dashboard';
 import LoginForm from '@/components/sections/cast-dashboard/LoginForm';
 import { CastProfile } from '@/types/cast'; // ✅ 本物をインポート
 
