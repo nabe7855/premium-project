@@ -9,7 +9,7 @@ interface GalleryItem {
   image_url: string;
   caption: string | null;
   created_at: string;
-  file_path?: string; // 👈 追加
+  file_path?: string;
 }
 
 interface GalleryEditorProps {
@@ -21,8 +21,9 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
   const [file, setFile] = useState<File | null>(null);
   const [caption, setCaption] = useState('');
   const [uploading, setUploading] = useState(false);
+  const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
 
-  // ✅ ギャラリー一覧取得
+  // ✅ ギャラリー & メイン画像取得
   useEffect(() => {
     const loadGallery = async () => {
       const { data, error } = await supabase
@@ -36,12 +37,23 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
         return;
       }
       setItems(data ?? []);
+
+      // casts から main_image_url を取得
+      const { data: cast, error: castError } = await supabase
+        .from('casts')
+        .select('main_image_url')
+        .eq('id', castId)
+        .maybeSingle();
+
+      if (!castError) {
+        setMainImageUrl(cast?.main_image_url ?? null);
+      }
     };
 
     loadGallery();
   }, [castId]);
 
-  // ✅ 画像アップロード
+  // ✅ アップロード
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
@@ -64,7 +76,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
       const publicUrl = publicData.publicUrl;
       if (!publicUrl) throw new Error('公開URLの取得に失敗しました');
 
-      // DBに保存
       const { data: inserted, error: insertError } = await supabase
         .from('gallery_items')
         .insert([
@@ -72,7 +83,7 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
             cast_id: castId,
             image_url: publicUrl,
             caption: caption || null,
-            file_path: filePath, // 👈 保存
+            file_path: filePath,
           },
         ])
         .select()
@@ -80,7 +91,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       if (insertError) throw insertError;
 
-      // UI更新
       setItems([inserted as GalleryItem, ...items]);
       setFile(null);
       setCaption('');
@@ -92,12 +102,11 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     }
   };
 
-  // ✅ 削除 (DB + Storage)
+  // ✅ 削除
   const handleDelete = async (id: string) => {
     if (!confirm('この画像を削除しますか？')) return;
 
     try {
-      // 1. gallery_items から file_path を取得
       const { data: record, error: fetchError } = await supabase
         .from('gallery_items')
         .select('file_path')
@@ -108,7 +117,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       const filePath = record?.file_path as string | undefined;
 
-      // 2. Storageから削除
       if (filePath) {
         const { error: storageError } = await supabase.storage
           .from('gallery')
@@ -116,18 +124,34 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
         if (storageError) throw storageError;
       }
 
-      // 3. DBから削除
       const { error: dbError } = await supabase
         .from('gallery_items')
         .delete()
         .eq('id', id);
       if (dbError) throw dbError;
 
-      // 4. UI更新
       setItems(items.filter((item) => item.id !== id));
     } catch (err) {
       console.error('❌ 削除エラー:', err);
       alert('削除に失敗しました');
+    }
+  };
+
+  // ✅ メイン画像に設定
+  const handleSetMain = async (imageUrl: string) => {
+    try {
+      const { error } = await supabase
+        .from('casts')
+        .update({ main_image_url: imageUrl })
+        .eq('id', castId);
+
+      if (error) throw error;
+
+      setMainImageUrl(imageUrl);
+      alert('一覧ページ用のメイン画像を設定しました！');
+    } catch (err) {
+      console.error('❌ メイン画像設定エラー:', err);
+      alert('メイン画像の設定に失敗しました');
     }
   };
 
@@ -173,11 +197,28 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
             {item.caption && (
               <p className="p-2 text-sm text-gray-700">{item.caption}</p>
             )}
+
+            {/* メイン表示ラベル */}
+            {mainImageUrl === item.image_url && (
+              <span className="absolute top-2 left-2 bg-pink-600 text-white text-xs px-2 py-1 rounded">
+                メイン画像
+              </span>
+            )}
+
+            {/* 削除ボタン */}
             <button
               onClick={() => handleDelete(item.id)}
               className="absolute top-2 right-2 bg-black/50 text-white px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition"
             >
               削除
+            </button>
+
+            {/* メインに設定ボタン */}
+            <button
+              onClick={() => handleSetMain(item.image_url)}
+              className="absolute bottom-2 left-2 bg-pink-500 text-white px-2 py-1 rounded text-xs opacity-0 group-hover:opacity-100 transition"
+            >
+              メインに設定
             </button>
           </div>
         ))}
