@@ -2,7 +2,8 @@
 
 import React from 'react';
 import CalendarEditor from '../../schedule/CalendarEditor';
-import { CastSchedule, CastDiary } from '@/types/cast-dashboard';
+import { CastSchedule } from '@/types/cast-dashboard';
+import { CastDiary } from '@/types/cast';
 
 interface Props {
   schedules: CastSchedule[];

@@ -1,14 +1,13 @@
-'use client';
-
-import React from 'react';
+import React, { useState } from 'react';
 import DiaryEditor from '../../diary/DiaryEditor';
 import DiaryList from '../../diary/DiaryList';
-import { CastDiary } from '@/types/cast-dashboard';
+import { CastDiary } from '@/types/cast';
 
 interface Props {
   diaries: CastDiary[];
   showEditor: boolean;
-  onSave: (data: Omit<CastDiary, 'id' | 'createdAt'>) => void;
+  castId: string;
+onSave: (data: Omit<CastDiary, 'createdAt'>) => void;
   onDelete: (id: string) => void;
   onToggleEditor: (value: boolean) => void;
 }
@@ -16,16 +15,39 @@ interface Props {
 export default function DiarySection({
   diaries,
   showEditor,
+  castId,
   onSave,
   onDelete,
   onToggleEditor,
 }: Props) {
+  // 👇 編集中の日記を保持する state を追加
+  const [editingDiary, setEditingDiary] = useState<CastDiary | undefined>(undefined);
+
   return (
     <div>
       {!showEditor ? (
-        <DiaryList diaries={diaries} onEdit={() => onToggleEditor(true)} onDelete={onDelete} />
+        <DiaryList
+          diaries={diaries}
+          onEdit={(diary) => {          // 編集開始
+            setEditingDiary(diary);     // 編集対象をセット
+            onToggleEditor(true);
+          }}
+          onDelete={onDelete}
+          onCreate={() => {
+            setEditingDiary(undefined); // 新規作成なので初期化
+            onToggleEditor(true);
+          }}
+        />
       ) : (
-        <DiaryEditor onSave={onSave} onCancel={() => onToggleEditor(false)} />
+        <DiaryEditor
+          castId={castId}
+          initialData={editingDiary}   // ✅ ここで渡す
+          onSave={onSave}
+          onCancel={() => {
+            setEditingDiary(undefined); // キャンセルしたらクリア
+            onToggleEditor(false);
+          }}
+        />
       )}
     </div>
   );

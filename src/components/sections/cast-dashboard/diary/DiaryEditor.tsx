@@ -1,223 +1,294 @@
-import React, { useState } from 'react';
-import { Save, Hash, X } from 'lucide-react';
-import { CastDiary } from '@/types/cast-dashboard';
-import ImageUpload from './ImageUpload';
+'use client';
 
-interface DiaryEditorProps {
-  onSave: (diary: Omit<CastDiary, 'id' | 'createdAt'>) => void;
+import React, { useState, useEffect } from 'react';
+import { supabase } from '@/lib/supabaseClient';
+import { CastDiary } from '@/types/cast';
+import { v4 as uuidv4 } from 'uuid';
+
+interface Props {
+  castId: string;
+  initialData?: CastDiary; // 編集時に渡す
+  onSave: (data: Omit<CastDiary, 'createdAt'>) => void; // ✅ id を含める
   onCancel: () => void;
 }
 
-export default function DiaryEditor({ onSave, onCancel }: DiaryEditorProps) {
+interface TagMaster {
+  id: string;
+  name: string;
+  is_active: boolean;
+}
+
+export default function DiaryEditor({ castId, initialData, onSave, onCancel }: Props) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [images, setImages] = useState<string[]>([]);
+  const [files, setFiles] = useState<File[]>([]);
+  const [existingImages, setExistingImages] = useState<{ url: string; filePath: string }[]>([]);
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
-  const [error, setError] = useState('');
+  const [presetTags, setPresetTags] = useState<TagMaster[]>([]);
+  const [uploading, setUploading] = useState(false);
 
-  const suggestedTags = [
-    '#癒し系',
-    '#メガネ男子',
-    '#筋肉',
-    '#優しい',
-    '#面白い',
-    '#イケメン',
-    '#話し上手',
-    '#聞き上手',
-    '#テクニシャン',
-    '#余韻',
-  ];
-
-  const handleSave = () => {
-    setError('');
-
-    if (!title.trim()) {
-      setError('タイトルを入力してください');
-      return;
+  // ✅ 初期データセット
+  useEffect(() => {
+    if (initialData) {
+      setTitle(initialData.title);
+      setContent(initialData.content);
+      setTags(initialData.tags);
+      // 既存画像: url と file_path 両方を持たせる
+      setExistingImages(
+        (initialData.images || []).map((url) => ({
+          url,
+          filePath: url.split('/').slice(-2).join('/'), // 👈 file_path を推定（保存時に正しく渡す）
+        }))
+      );
     }
+  }, [initialData]);
 
-    if (!content.trim()) {
-      setError('内容を入力してください');
-      return;
-    }
+  // ✅ タグマスター取得
+  useEffect(() => {
+    const loadTags = async () => {
+      const { data, error } = await supabase
+        .from('blog_tag_master')
+        .select('id, name, is_active')
+        .eq('is_active', true)
+        .order('created_at', { ascending: true });
 
-    if (content.length > 500) {
-      setError('内容は500文字以内で入力してください');
-      return;
-    }
-
-    const diaryData: Omit<CastDiary, 'id' | 'createdAt'> = {
-      date: new Date().toISOString().split('T')[0],
-      title: title.trim(),
-      content: content.trim(),
-      images,
-      tags,
-      likes: 0,
+      if (!error) setPresetTags(data || []);
     };
+    loadTags();
+  }, []);
 
-    onSave(diaryData);
+  // ✅ 画像追加
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selected = e.target.files;
+    if (!selected) return;
+    setFiles((prev) => [...prev, ...Array.from(selected)]);
   };
 
-  const addTag = (tag: string) => {
-    const cleanTag = tag.startsWith('#') ? tag : `#${tag}`;
-    if (!tags.includes(cleanTag) && tags.length < 10) {
-      setTags([...tags, cleanTag]);
+  // ✅ 新規プレビュー削除
+  const handleRemoveFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // ✅ 既存画像削除（Storage + DBからも消す）
+  const removeExistingImage = async (filePath: string) => {
+    try {
+      await supabase.storage.from('diary').remove([filePath]);
+      await supabase.from('blog_images').delete().eq('file_path', filePath);
+      setExistingImages((prev) => prev.filter((img) => img.filePath !== filePath));
+    } catch (err) {
+      console.error('❌ 画像削除エラー:', err);
     }
   };
 
-  const removeTag = (tagToRemove: string) => {
-    setTags(tags.filter((tag) => tag !== tagToRemove));
+  // ✅ タグ操作
+  const addTag = (tag?: string) => {
+    const newTag = (tag ?? tagInput).trim();
+    if (newTag && !tags.includes(newTag)) {
+      setTags([...tags, newTag]);
+    }
+    setTagInput('');
+  };
+  const removeTag = (tag: string) => {
+    setTags(tags.filter((t) => t !== tag));
   };
 
-  const handleTagInputKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && tagInput.trim()) {
-      e.preventDefault();
-      addTag(tagInput.trim());
-      setTagInput('');
+  // ✅ 保存処理（新規・更新）
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setUploading(true);
+
+    try {
+      let blogId = initialData?.id;
+
+      if (!initialData) {
+        // ---- 新規作成 ----
+        const { data: blog, error: blogError } = await supabase
+          .from('blogs')
+          .insert({ cast_id: castId, title, content })
+          .select()
+          .single();
+        if (blogError) throw blogError;
+        blogId = blog.id;
+      } else {
+        // ---- 更新 ----
+        const { error: updateError } = await supabase
+          .from('blogs')
+          .update({ title, content })
+          .eq('id', blogId);
+        if (updateError) throw updateError;
+
+        // タグ・画像の関係はクリア済みなので再登録
+        await supabase.from('blog_tags').delete().eq('blog_id', blogId);
+      }
+
+      // ---- 新規アップロード画像 ----
+      const newImageUrls: string[] = [];
+      for (const file of files) {
+        const filePath = `diary/${uuidv4()}-${file.name}`;
+        const { error: uploadError } = await supabase.storage.from('diary').upload(filePath, file);
+        if (!uploadError) {
+          const url = supabase.storage.from('diary').getPublicUrl(filePath).data.publicUrl;
+          newImageUrls.push(url);
+          await supabase.from('blog_images').insert({
+            blog_id: blogId,
+            image_url: url,
+            file_path: filePath, // 👈 削除用に保存
+          });
+        }
+      }
+
+      // ---- タグ保存 ----
+      for (const tagName of tags) {
+        let { data: existing } = await supabase
+          .from('blog_tag_master')
+          .select('id')
+          .eq('name', tagName)
+          .maybeSingle();
+
+        let tagId = existing?.id;
+        if (!tagId) {
+          const { data: newTag } = await supabase
+            .from('blog_tag_master')
+            .insert({ name: tagName, is_active: true })
+            .select()
+            .single();
+          tagId = newTag.id;
+        }
+
+        await supabase.from('blog_tags').insert({ blog_id: blogId, tag_id: tagId });
+      }
+
+      // ---- 親に通知 ----
+      onSave({
+         id: initialData?.id ?? '', // ✅ 新規は空文字 / 編集は既存id
+  castId,
+  title,
+  content,
+  images: [...existingImages.map((i) => i.url), ...newImageUrls],
+  tags,
+      });
+    } catch (err) {
+      console.error('❌ 保存エラー:', err);
+    } finally {
+      setUploading(false);
+      onCancel();
     }
   };
 
   return (
-    <div className="rounded-2xl border border-pink-100 bg-white p-4 shadow-lg sm:p-6">
-      <div className="mb-4 flex items-center justify-between sm:mb-6">
-        <h3 className="text-base font-semibold text-gray-800 sm:text-lg">写メ日記投稿</h3>
-        <button
-          onClick={onCancel}
-          className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700"
-        >
-          <X className="h-4 w-4 sm:h-5 sm:w-5" />
-        </button>
-      </div>
+    <form onSubmit={handleSubmit} className="relative space-y-4 pb-32">
+      {/* タイトル */}
+      <input
+        type="text"
+        placeholder="タイトル"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        className="w-full border rounded p-2"
+      />
 
-      <div className="space-y-4 sm:space-y-6">
-        {/* Title Input */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">タイトル</label>
+      {/* 本文 */}
+      <textarea
+        placeholder="本文"
+        value={content}
+        onChange={(e) => setContent(e.target.value)}
+        className="w-full border rounded p-2 min-h-[120px]"
+      />
+
+      {/* 既存画像プレビュー */}
+      {existingImages.length > 0 && (
+        <div className="grid grid-cols-3 gap-2">
+          {existingImages.map((img, index) => (
+            <div key={index} className="relative">
+              <img src={img.url} alt={`existing-${index}`} className="w-full h-24 object-cover rounded" />
+              <button
+                type="button"
+                onClick={() => removeExistingImage(img.filePath)}
+                className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 新規ファイル選択 */}
+      <label className="block w-full p-4 text-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-pink-50">
+        <span className="text-gray-600">📸 写真を追加</span>
+        <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
+      </label>
+
+      {/* 新規プレビュー */}
+      {files.length > 0 && (
+        <div className="grid grid-cols-3 gap-2">
+          {files.map((file, index) => (
+            <div key={index} className="relative">
+              <img src={URL.createObjectURL(file)} alt={`preview-${index}`} className="w-full h-24 object-cover rounded" />
+              <button
+                type="button"
+                onClick={() => handleRemoveFile(index)}
+                className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* タグ入力 */}
+      <div>
+        <div className="flex gap-2">
           <input
             type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            placeholder="今日の出来事やメッセージを入力"
-            className="w-full rounded-xl border border-gray-300 px-3 py-2 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500 sm:px-4 sm:py-3 sm:text-base"
+            value={tagInput}
+            onChange={(e) => setTagInput(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
+            placeholder="タグを入力してEnter"
+            className="flex-1 border rounded px-2 py-1"
           />
+          <button type="button" onClick={() => addTag()} className="bg-pink-500 text-white px-3 rounded">
+            追加
+          </button>
         </div>
 
-        {/* Image Upload */}
-        <ImageUpload images={images} onImagesChange={setImages} maxImages={3} />
-
-        {/* Content Input */}
-        <div>
-          <div className="mb-2 flex items-center justify-between">
-            <label className="block text-sm font-medium text-gray-700">内容</label>
-            <span className={`text-xs ${content.length > 500 ? 'text-red-500' : 'text-gray-500'}`}>
-              {content.length}/500
-            </span>
-          </div>
-          <textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="今日の気持ちや出来事を書いてみましょう..."
-            rows={6}
-            className="w-full resize-none rounded-xl border border-gray-300 px-3 py-2 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500 sm:px-4 sm:py-3 sm:text-base"
-          />
-        </div>
-
-        {/* Tags */}
-        <div>
-          <label className="mb-2 block text-sm font-medium text-gray-700">ハッシュタグ</label>
-
-          {/* Tag Input */}
-          <div className="mb-3 flex flex-col space-y-2 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0">
-            <div className="relative flex-1">
-              <Hash className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
-              <input
-                type="text"
-                value={tagInput}
-                onChange={(e) => setTagInput(e.target.value)}
-                onKeyPress={handleTagInputKeyPress}
-                placeholder="タグを入力してEnter"
-                className="w-full rounded-lg border border-gray-300 py-2 pl-9 pr-4 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
-              />
-            </div>
+        {/* プリセットタグ */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {presetTags.map((preset) => (
             <button
-              onClick={() => {
-                if (tagInput.trim()) {
-                  addTag(tagInput.trim());
-                  setTagInput('');
-                }
-              }}
-              className="rounded-lg bg-pink-500 px-4 py-2 text-sm text-white transition-colors hover:bg-pink-600"
+              key={preset.id}
+              type="button"
+              onClick={() => addTag(preset.name)}
+              className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm hover:bg-pink-100 hover:text-pink-600"
             >
-              追加
+              #{preset.name}
             </button>
-          </div>
-
-          {/* Current Tags */}
-          {tags.length > 0 && (
-            <div className="mb-3 flex flex-wrap gap-2">
-              {tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center rounded-full bg-pink-100 px-3 py-1 text-sm text-pink-700"
-                >
-                  {tag}
-                  <button
-                    onClick={() => removeTag(tag)}
-                    className="ml-2 text-pink-500 hover:text-pink-700"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Suggested Tags */}
-          <div>
-            <p className="mb-2 text-xs text-gray-500">おすすめタグ:</p>
-            <div className="flex flex-wrap gap-2">
-              {suggestedTags.map((tag) => (
-                <button
-                  key={tag}
-                  onClick={() => addTag(tag)}
-                  disabled={tags.includes(tag)}
-                  className={`rounded-full px-3 py-1 text-sm transition-colors ${
-                    tags.includes(tag)
-                      ? 'cursor-not-allowed bg-gray-100 text-gray-400'
-                      : 'bg-gray-100 text-gray-600 hover:bg-pink-100 hover:text-pink-600'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
 
-        {error && (
-          <div className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-            {error}
-          </div>
-        )}
-
-        {/* Action Buttons */}
-        <div className="flex flex-col space-y-3 pt-4 sm:flex-row sm:space-x-3 sm:space-y-0">
-          <button
-            onClick={onCancel}
-            className="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-200 sm:text-base"
-          >
-            キャンセル
-          </button>
-          <button
-            onClick={handleSave}
-            className="flex flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-3 text-sm font-medium text-white transition-all hover:from-pink-600 hover:to-rose-600 sm:text-base"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            投稿する
-          </button>
+        {/* 選択済みタグ */}
+        <div className="flex flex-wrap gap-2 mt-2">
+          {tags.map((tag) => (
+            <span key={tag} className="bg-pink-100 text-pink-700 px-2 py-1 rounded-full flex items-center gap-1 text-sm">
+              #{tag}
+              <button type="button" onClick={() => removeTag(tag)} className="text-pink-500">
+                ×
+              </button>
+            </span>
+          ))}
         </div>
       </div>
-    </div>
+
+      {/* 固定ボタン */}
+      <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-2 z-50 shadow-md">
+        <button type="submit" disabled={uploading} className="flex-1 bg-blue-500 text-white py-3 rounded text-lg">
+          {uploading ? '保存中...' : initialData ? '更新' : '保存'}
+        </button>
+        <button type="button" onClick={onCancel} className="flex-1 bg-gray-300 py-3 rounded text-lg">
+          キャンセル
+        </button>
+      </div>
+    </form>
   );
 }

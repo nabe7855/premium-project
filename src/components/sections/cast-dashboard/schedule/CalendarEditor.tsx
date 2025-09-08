@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ChevronLeft, ChevronRight, Check, Plus, Camera } from 'lucide-react';
-import { CastSchedule, CastDiary } from '@/types/cast-dashboard';
+import { CastSchedule } from '@/types/cast-dashboard';
+import { CastDiary } from '@/types/cast';
 import ScheduleModal from './ScheduleModal';
 
 interface CalendarEditorProps {
@@ -64,9 +65,13 @@ export default function CalendarEditor({
     return schedules.find((schedule) => schedule.date === date);
   };
 
-  const getDiaryForDate = (date: string) => {
-    return diaries.find((diary) => diary.date === date);
-  };
+const getDiaryForDate = (date: string) => {   
+  return diaries.find((diary) => {
+    const diaryDate = new Date(diary.createdAt).toISOString().split('T')[0];
+    return diaryDate === date;
+  });
+};
+
 
   const isToday = (day: number) => {
     return today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;

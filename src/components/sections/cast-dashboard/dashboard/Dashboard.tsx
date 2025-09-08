@@ -12,14 +12,16 @@ import ProfileSection from './sections/ProfileSection';
 import GallerySection from './sections/GallerySection';
 
 // 型
-import { CastPerformance, CastLevel, Badge, CastSchedule, CastDiary } from '@/types/cast-dashboard';
-import { CastProfile, FeatureMaster, QuestionMaster } from '@/types/cast';
+import { CastPerformance, CastLevel, Badge, CastSchedule } from '@/types/cast-dashboard';
+import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
 
 // API
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getCastQuestions } from '@/lib/getCastQuestions';
 import { supabase } from '@/lib/supabaseClient';
+
+//import { BlogRow } from '@/types/supabase';
 
 interface DashboardProps {
   cast: CastProfile;
@@ -139,23 +141,173 @@ export default function Dashboard({ cast }: DashboardProps) {
   };
 
   // ---- 写メ日記関係 ----
-  const handleScheduleUpdate = (updatedSchedules: CastSchedule[]) => setSchedules(updatedSchedules);
+  const loadDiaries = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('blogs')
+.select(`
+  id,
+  cast_id,
+  title,
+  content,
+  created_at,
+  blog_images (image_url),
+  blog_tags (
+    tag_id,
+    blog_tag_master ( name )
+  )
+`)
+        .eq('cast_id', cast.id)
+        .order('created_at', { ascending: false });
 
-  const handleDiarySave = (diaryData: Omit<CastDiary, 'id' | 'createdAt'>) => {
-    const newDiary: CastDiary = {
-      ...diaryData,
-      id: Date.now().toString(),
-      createdAt: new Date().toISOString(),
-    };
-    setDiaries([newDiary, ...diaries]);
-    setShowDiaryEditor(false);
-  };
+      if (error) throw error;
 
-  const handleDiaryDelete = (id: string) => {
-    if (confirm('この日記を削除しますか？')) {
-      setDiaries(diaries.filter((diary) => diary.id !== id));
+    const mapped: CastDiary[] = (data as any[]).map((item) => ({
+  id: item.id,
+  castId: item.cast_id,
+  title: item.title,
+  content: item.content,
+  images: item.blog_images?.map((img: any) => img.image_url) ?? [],
+  tags: item.blog_tags?.map((bt: any) => bt.blog_tag_master?.name) ?? [],
+  createdAt: item.created_at,
+}));
+
+      setDiaries(mapped);
+    } catch (err) {
+      console.error('❌ 日記ロードエラー:', err);
     }
   };
+
+  // 初回ロード
+  useEffect(() => {
+    loadDiaries();
+  }, [cast.id]);
+
+  const handleScheduleUpdate = (updatedSchedules: CastSchedule[]) => setSchedules(updatedSchedules);
+
+// ---- 写メ日記保存 ----
+const handleDiarySave = async (data: Omit<CastDiary, 'createdAt'>) => {
+  try {
+    let blog: { id: string } | null = null; // 👈 型を明示
+
+    if (data.id) {
+      // 既存投稿の更新
+      const { data: updated, error } = await supabase
+        .from('blogs')
+        .update({
+          title: data.title,
+          content: data.content,
+        })
+        .eq('id', data.id)
+        .select()
+        .single();
+
+      if (error) throw error;
+      blog = updated;
+    } else {
+      // 新規投稿
+      const { data: inserted, error } = await supabase
+        .from('blogs')
+        .insert({
+          cast_id: data.castId,
+          title: data.title,
+          content: data.content,
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      blog = inserted;
+    }
+
+    if (!blog) throw new Error('ブログデータが取得できませんでした');
+
+    // 画像保存
+    if (data.images.length > 0) {
+      await supabase.from('blog_images').insert(
+        data.images.map((url) => ({
+          blog_id: blog!.id,
+          image_url: url,
+        }))
+      );
+    }
+
+    // タグ保存（tag_id or name の構造に合わせて調整）
+    if (data.tags.length > 0) {
+      await supabase.from('blog_tags').insert(
+        data.tags.map((tag) => ({
+          blog_id: blog!.id,
+          tag, // ここは schema に合わせる
+        }))
+      );
+    }
+
+    // ✅ 保存後リロード
+    await loadDiaries();
+    setShowDiaryEditor(false);
+  } catch (err) {
+    console.error('❌ 写メ日記保存エラー:', err);
+    alert('日記の保存に失敗しました');
+  }
+};
+
+const handleDiaryDelete = async (id: string) => {
+  if (!confirm('この日記を削除しますか？')) return;
+
+  try {
+    // 1. blog_images から画像URLを取得
+    const { data: images, error: imageError } = await supabase
+      .from('blog_images')
+      .select('image_url')
+      .eq('blog_id', id);
+
+    if (imageError) throw imageError;
+
+    // 2. Storage から削除
+    if (images && images.length > 0) {
+      const filePaths = images
+        .map((img) => {
+          try {
+            const url = new URL(img.image_url);
+            // 例: /storage/v1/object/public/diary/diary/uuid-filename.png
+            const idx = url.pathname.indexOf('/diary/');
+            if (idx !== -1) {
+              return url.pathname.substring(idx + 1); // "diary/uuid-filename.png"
+            }
+            return null;
+          } catch {
+            return null;
+          }
+        })
+        .filter((path): path is string => !!path);
+
+      if (filePaths.length > 0) {
+        const { error: storageError } = await supabase.storage
+          .from('diary')
+          .remove(filePaths);
+        if (storageError) {
+          console.error('⚠️ Storage削除エラー:', storageError);
+        }
+      }
+    }
+
+    // 3. blog_tags, blog_images を削除
+    await supabase.from('blog_tags').delete().eq('blog_id', id);
+    await supabase.from('blog_images').delete().eq('blog_id', id);
+
+    // 4. blogs を削除
+    const { error } = await supabase.from('blogs').delete().eq('id', id);
+    if (error) throw error;
+
+    // 5. 最新データを再取得
+    await loadDiaries();
+
+  } catch (err) {
+    console.error('❌ 写メ日記削除エラー:', err);
+    alert('日記の削除に失敗しました');
+  }
+};
+
 
   // ---- ナビゲーションタブ ----
   const tabs = [
@@ -245,6 +397,7 @@ export default function Dashboard({ cast }: DashboardProps) {
           <DiarySection
             diaries={diaries}
             showEditor={showDiaryEditor}
+            castId={cast.id}
             onSave={handleDiarySave}
             onDelete={handleDiaryDelete}
             onToggleEditor={setShowDiaryEditor}

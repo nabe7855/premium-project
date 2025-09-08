@@ -161,3 +161,13 @@ export interface GalleryItem {
   created_at: string;
   updated_at: string;
 }
+
+export interface CastDiary {
+  id: string;
+  castId: string;
+  title: string;
+  content: string;
+  images: string[];
+  tags: string[];
+  createdAt: string;
+}

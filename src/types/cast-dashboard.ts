@@ -25,16 +25,7 @@ export interface CastSchedule {
   createdAt: string;
 }
 
-export interface CastDiary {
-  id: string;
-  date: string;
-  title: string;
-  content: string;
-  images: string[];
-  tags: string[];
-  likes: number;
-  createdAt: string;
-}
+
 
 export interface AuthUser {
   id: string;              // SupabaseのユーザーID
