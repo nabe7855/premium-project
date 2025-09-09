@@ -34,7 +34,7 @@ export default function LoginForm() {
         return;
       }
 
-      // ここでロールチェック（rolesテーブルに cast ロールがあるかどうか）
+      // ロールチェック
       const { data: roleData, error: roleError } = await supabase
         .from('roles')
         .select('role')
@@ -47,9 +47,11 @@ export default function LoginForm() {
       }
 
       if (roleData.role === 'cast') {
-        router.push('/cast/cast-dashboard');
+        router.push('/cast/cast-dashboard'); // キャスト用ダッシュボード
+      } else if (roleData.role === 'admin') {
+        router.push('/admin'); // 管理者用ダッシュボード
       } else {
-        setError('キャストアカウントではありません');
+        setError('このアカウントにはアクセス権がありません');
       }
     } catch (err) {
       setError('ログイン処理中にエラーが発生しました');
@@ -67,7 +69,7 @@ export default function LoginForm() {
             <Heart className="h-6 w-6 text-white sm:h-8 sm:w-8" />
           </div>
           <h1 className="mb-2 text-xl font-bold text-gray-800 sm:text-2xl">
-            キャストマイページ
+            ログインページ
           </h1>
           <p className="text-sm text-gray-600 sm:text-base">
             Sweet Growth Dashboard
@@ -91,7 +93,7 @@ export default function LoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                autoComplete="off" // SSR差分を防ぐ
+                autoComplete="off"
                 className="w-full rounded-xl border border-gray-300 py-2 pl-9 pr-4 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500 sm:py-3 sm:pl-10 sm:text-base"
                 placeholder="メールアドレスを入力"
                 required
@@ -114,7 +116,7 @@ export default function LoginForm() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                autoComplete="off" // SSR差分を防ぐ
+                autoComplete="off"
                 className="w-full rounded-xl border border-gray-300 py-2 pl-9 pr-4 text-sm transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500 sm:py-3 sm:pl-10 sm:text-base"
                 placeholder="パスワードを入力"
                 required
