@@ -21,16 +21,29 @@ export default function ScheduleModal({
   const [endTime, setEndTime] = useState('');
   const [error, setError] = useState('');
 
+  // ✅ 28時対応フォーマッター
+  const formatTimeForInput = (datetime: string, baseDate: string | null) => {
+    if (!datetime || !baseDate) return '';
+    const d = new Date(datetime);
+    const base = new Date(baseDate + "T00:00:00+09:00");
+    let hours = d.getHours();
+    const minutes = d.getMinutes();
+    if (d.getDate() > base.getDate()) {
+      hours += 24; // 翌日なら +24時間
+    }
+    return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+  };
+
   useEffect(() => {
     if (existingSchedule) {
-      setStartTime(existingSchedule.startTime);
-      setEndTime(existingSchedule.endTime);
+      setStartTime(formatTimeForInput(existingSchedule.start_datetime, selectedDate));
+      setEndTime(formatTimeForInput(existingSchedule.end_datetime, selectedDate));
     } else {
       setStartTime('');
       setEndTime('');
     }
     setError('');
-  }, [existingSchedule, isOpen]);
+  }, [existingSchedule, isOpen, selectedDate]);
 
   const formatDateDisplay = (dateStr: string | null) => {
     if (!dateStr) return '';
@@ -38,32 +51,12 @@ export default function ScheduleModal({
     return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
   };
 
-  const validateTime = (time: string) => {
-    const timeRegex = /^([01]?[0-9]|2[0-3]):[0-5][0-9]$/;
-    return timeRegex.test(time);
-  };
-
   const handleSave = () => {
     setError('');
-
-    if (!startTime.trim() || !endTime.trim()) {
+    if (!startTime || !endTime) {
       setError('開始時間と終了時間を入力してください');
       return;
     }
-
-    if (!validateTime(startTime) || !validateTime(endTime)) {
-      setError('時間は HH:MM 形式で入力してください（例：14:00）');
-      return;
-    }
-
-    const startMinutes = parseInt(startTime.split(':')[0]) * 60 + parseInt(startTime.split(':')[1]);
-    const endMinutes = parseInt(endTime.split(':')[0]) * 60 + parseInt(endTime.split(':')[1]);
-
-    if (startMinutes >= endMinutes) {
-      setError('終了時間は開始時間より後に設定してください');
-      return;
-    }
-
     onSave({ startTime, endTime });
   };
 

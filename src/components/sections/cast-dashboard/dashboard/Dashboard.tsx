@@ -12,7 +12,7 @@ import ProfileSection from './sections/ProfileSection';
 import GallerySection from './sections/GallerySection';
 
 // 型
-import { CastPerformance, CastLevel, Badge, CastSchedule } from '@/types/cast-dashboard';
+import { CastPerformance, CastLevel, Badge } from '@/types/cast-dashboard';
 import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
 
 // API
@@ -38,7 +38,6 @@ export default function Dashboard({ cast }: DashboardProps) {
 
   // ✅ state 管理
   const [castState, setCastState] = useState<CastProfile>(cast);
-  const [schedules, setSchedules] = useState<CastSchedule[]>([]);
   const [diaries, setDiaries] = useState<CastDiary[]>([]);
   const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
   const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
@@ -183,7 +182,6 @@ export default function Dashboard({ cast }: DashboardProps) {
     loadDiaries();
   }, [cast.id]);
 
-  const handleScheduleUpdate = (updatedSchedules: CastSchedule[]) => setSchedules(updatedSchedules);
 
 // ---- 写メ日記保存 ----
 const handleDiarySave = async (data: Omit<CastDiary, 'createdAt'>) => {
@@ -385,13 +383,9 @@ const handleDiaryDelete = async (id: string) => {
           />
         )}
 
-        {activeTab === 'schedule' && (
-          <ScheduleSection
-            schedules={schedules}
-            diaries={diaries}
-            onScheduleUpdate={handleScheduleUpdate}
-          />
-        )}
+{activeTab === 'schedule' && (
+  <ScheduleSection diaries={diaries} />
+)}
 
         {activeTab === 'diary' && (
           <DiarySection

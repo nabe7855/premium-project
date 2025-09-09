@@ -16,15 +16,6 @@ export interface CastLevel {
   maxExperience: number;
 }
 
-export interface CastSchedule {
-  id: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  status: 'posted' | 'draft';
-  createdAt: string;
-}
-
 
 
 export interface AuthUser {
@@ -40,4 +31,15 @@ export interface Badge {
   icon: string;
   unlocked: boolean;
   unlockedAt?: string;
+}
+
+
+// src/types/cast-dashboard.ts
+export interface CastSchedule {
+  id: string;
+  cast_id: string;
+  store_id: string;
+  work_date: string;        // YYYY-MM-DD
+  start_datetime: string;   // ISO形式
+  end_datetime: string;     // ISO形式
 }
