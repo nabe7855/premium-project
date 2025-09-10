@@ -1,20 +1,49 @@
+// ==============================
 // ギャラリー画像・動画
+// ==============================
 export interface GalleryItem {
   id: string;
+  castId: string;
   imageUrl: string;
   caption?: string;
-  videoUrl?: string | null;
+  isMain: boolean;
   type?: 'image' | 'video';
+  videoUrl?: string | null;
+  createdAt: string;
+  updatedAt: string;
 }
 
+// ==============================
 // SNSリンク
+// ==============================
 export interface CastSNS {
   line?: string;
   twitter?: string;
   instagram?: string;
 }
 
+// ==============================
+// キャスト状態マスタ（DB: status_master）
+// ==============================
+export interface Status {
+  id: string;        // uuid
+  name: string;      // 表示名（例: 新人, 店長おすすめ）
+  label_en?: string; // 内部用ラベル
+  created_at?: string;
+}
+
+// キャストに紐づく状態（DB: cast_statuses）
+export interface CastStatus {
+  id: string;
+  cast_id: string;
+  status_id: string;
+  status_master?: Status;
+  created_at?: string;
+}
+
+// ==============================
 // 完全なキャスト情報（一覧・詳細用）
+// ==============================
 export interface Cast {
   id: string;              // uuid
   slug: string;
@@ -31,9 +60,14 @@ export interface Cast {
   isReception?: boolean;
   stillwork?: boolean;
   is_active: boolean;
+
+  // ✅ 複数の状態タグ
+  statuses?: Status[];
 }
 
+// ==============================
 // キャスト一覧用の軽量データ
+// ==============================
 export interface CastSummary {
   id: string;
   name: string;
@@ -53,7 +87,9 @@ export interface CastSummary {
   slug?: string;
 }
 
+// ==============================
 // 特徴マスタ（DB: feature_master）
+// ==============================
 export type FeatureCategory =
   | 'MBTI'
   | 'animal'
@@ -80,7 +116,9 @@ export interface CastFeature {
   level?: 'NG' | '要相談' | '普通' | '得意'; // ✅ サービス用に追加
 }
 
-// ✅ プロフィール編集用（Dashboard / ProfileEditor 用）
+// ==============================
+// プロフィール編集用（Dashboard / ProfileEditor 用）
+// ==============================
 export interface CastProfile {
   id: string;
   name: string;
@@ -115,9 +153,14 @@ export interface CastProfile {
   questions?: {
     [key: string]: string;
   };
+
+  // ✅ 状態タグ
+  statuses?: Status[];
 }
 
+// ==============================
 // DBから直接取れるキャストデータ (Supabase/Strapiレスポンス用)
+// ==============================
 export interface StrapiCastItem {
   id: string | number;
   slug: string;
@@ -131,9 +174,12 @@ export interface StrapiCastItem {
   sexinessLevel?: number;
   isReception?: boolean;
   stillwork?: boolean;
-  is_active?: boolean; // ✅ ここを追加
+  is_active?: boolean;
 }
 
+// ==============================
+// 質問関連
+// ==============================
 export interface QuestionMaster {
   id: string;
   text: string;
@@ -152,16 +198,9 @@ export interface CastQuestion {
   updated_at?: string;
 }
 
-export interface GalleryItem {
-  id: string;
-  cast_id: string;
-  image_url: string;
-  caption?: string;
-  is_main: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
+// ==============================
+// 写メ日記
+// ==============================
 export interface CastDiary {
   id: string;
   castId: string;
