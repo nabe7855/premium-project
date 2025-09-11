@@ -60,6 +60,8 @@ export interface Cast {
   isReception?: boolean;
   stillwork?: boolean;
   is_active: boolean;
+  voice_url?: string;   // ✅ 音声ファイルURL
+
 
   // ✅ 複数の状態タグ
   statuses?: Status[];
@@ -126,6 +128,7 @@ export interface CastProfile {
   height?: number;
   profile?: string;
   imageUrl?: string;
+  voiceUrl?: string | null;
   is_active: boolean;
 
   // 単一選択（castsテーブルに外部キー）

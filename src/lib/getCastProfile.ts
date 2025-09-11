@@ -1,10 +1,9 @@
 import { supabase } from './supabaseClient';
 import { CastProfile } from '@/types/cast';
 
-// Supabase から join して返るレコード型
 interface CastFeatureRow {
   feature_id: string;
-  level?: 'NG' | '要相談' | '普通' | '得意'; // ✅ 追加
+  level?: 'NG' | '要相談' | '普通' | '得意';
   feature_master: {
     id: string;
     category: string;
@@ -24,6 +23,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       height,
       profile,
       image_url,
+      voice_url,
       is_active,
       mbti_id,
       animal_id,
@@ -41,16 +41,15 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
   const { data: features, error: featureError } = await supabase
     .from('cast_features')
     .select(`
-  feature_id,
-  level,
-  feature_master:cast_features_feature_id_fkey (
-    id,
-    category,
-    name,
-    label_en
-  )
-`)
-
+      feature_id,
+      level,
+      feature_master:cast_features_feature_id_fkey (
+        id,
+        category,
+        name,
+        label_en
+      )
+    `)
     .eq('cast_id', cast.id);
 
   if (featureError) {
@@ -60,7 +59,6 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
 
   const typedFeatures: CastFeatureRow[] = (features ?? []) as unknown as CastFeatureRow[];
 
-  // 3. カテゴリごとに分類
   const personalityIds = typedFeatures
     .filter((f) => f.feature_master?.category === 'personality')
     .map((f) => f.feature_id);
@@ -69,7 +67,6 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     .filter((f) => f.feature_master?.category === 'appearance')
     .map((f) => f.feature_id);
 
-  // ✅ サービス内容を { サービス名: レベル } の形に変換
   const services: Record<string, 'NG' | '要相談' | '普通' | '得意'> = {};
   typedFeatures
     .filter((f) => f.feature_master?.category === 'service')
@@ -79,7 +76,6 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       }
     });
 
-  // 4. CastProfile 型に整形
   const profile: CastProfile = {
     id: cast.id,
     name: cast.name,
@@ -87,13 +83,14 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     height: cast.height ?? undefined,
     profile: cast.profile ?? undefined,
     imageUrl: cast.image_url ?? undefined,
+    voiceUrl: cast.voice_url ?? undefined,
     is_active: cast.is_active,
     mbtiId: cast.mbti_id ?? undefined,
     animalId: cast.animal_id ?? undefined,
     faceId: cast.face_id ?? undefined,
     personalityIds,
     appearanceIds,
-    services, // ✅ 追加
+    services,
   };
 
   return profile;

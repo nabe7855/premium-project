@@ -11,6 +11,7 @@ export async function updateCast(cast: CastProfile) {
       height: cast.height,
       profile: cast.profile,
       image_url: cast.imageUrl,
+      voice_url: cast.voiceUrl ?? null,
       is_active: cast.is_active,
       mbti_id: cast.mbtiId ?? null,
       animal_id: cast.animalId ?? null,

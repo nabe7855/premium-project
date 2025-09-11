@@ -29,15 +29,28 @@ export default function ProfileSection({
         appearanceIds: cast.appearanceIds ?? [],
         services: cast.services ?? {},
         questions: cast.questions ?? {},
+        voiceUrl: cast.voiceUrl ?? undefined, // ✅ 音声URLを正しく型に合わせる
       }}
       featureMasters={featureMasters}
       questionMasters={questionMasters}
       onSave={async (updated) => {
         try {
-          await updateCast(updated);
-          const multi = [...updated.personalityIds, ...updated.appearanceIds];
+          // ✅ voiceUrl も一緒に更新対象に含める
+          await updateCast({
+            ...updated,
+            voiceUrl: updated.voiceUrl ?? null,
+          });
+
+          const multi = [
+            ...(updated.personalityIds ?? []),
+            ...(updated.appearanceIds ?? []),
+          ];
           await updateCastFeatures(updated.id, multi);
-          await updateCastServices(updated.id, updated.services ?? {}, featureMasters);
+          await updateCastServices(
+            updated.id,
+            updated.services ?? {},
+            featureMasters,
+          );
           await updateCastQuestions(updated.id, updated.questions ?? {});
           await refreshCastProfile(updated.id);
           alert('保存しました！');

@@ -11,6 +11,7 @@ import {
   BarChart3,
   User,
   Image,
+  Mic,
 } from 'lucide-react';
 
 // 各セクションコンポーネント
@@ -19,15 +20,11 @@ import ScheduleSection from './sections/ScheduleSection';
 import DiarySection from './sections/DiarySection';
 import ProfileSection from './sections/ProfileSection';
 import GallerySection from './sections/GallerySection';
+import VoiceSection from './sections/VoiceSection';
 
 // 型
 import { CastPerformance, CastLevel, Badge } from '@/types/cast-dashboard';
-import {
-  CastProfile,
-  FeatureMaster,
-  QuestionMaster,
-  CastDiary,
-} from '@/types/cast';
+import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
 
 // API
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
@@ -43,18 +40,16 @@ export default function Dashboard({ cast }: DashboardProps) {
   const { logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // ✅ タブ管理
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery'
+    'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery' | 'voice'
   >('dashboard');
 
-  // ✅ state 管理
   const [castState, setCastState] = useState<CastProfile>(cast);
-  const [diaries, setDiaries] = useState<CastDiary[]>([]);
+  const [diaries] = useState<CastDiary[]>([]);
   const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
   const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
-  const [storeName, setStoreName] = useState<string | null>(null); // 所属店舗名
+  const [storeName, setStoreName] = useState<string | null>(null);
 
   // ---- ダッシュボード用ダミーデータ ----
   const performanceData: CastPerformance = {
@@ -76,95 +71,34 @@ export default function Dashboard({ cast }: DashboardProps) {
   };
 
   const badgesData: Badge[] = [
-    {
-      id: '1',
-      name: 'Sweet Royal',
-      description: '最高ランク達成',
-      icon: 'trophy',
-      unlocked: false,
-    },
-    {
-      id: '2',
-      name: '日記マスター',
-      description: '30日連続投稿',
-      icon: 'camera',
-      unlocked: true,
-      unlockedAt: '2024-01-15',
-    },
-    {
-      id: '3',
-      name: '人気者',
-      description: '高評価100件',
-      icon: 'heart',
-      unlocked: true,
-      unlockedAt: '2024-02-01',
-    },
+    { id: '1', name: 'Sweet Royal', description: '最高ランク達成', icon: 'trophy', unlocked: false },
+    { id: '2', name: '日記マスター', description: '30日連続投稿', icon: 'camera', unlocked: true, unlockedAt: '2024-01-15' },
+    { id: '3', name: '人気者', description: '高評価100件', icon: 'heart', unlocked: true, unlockedAt: '2024-02-01' },
   ];
 
   // ✅ 特徴マスターのロード
   useEffect(() => {
-    const loadMasters = async () => {
-      try {
-        const masters = await getFeatureMasters();
-        setFeatureMasters(masters);
-      } catch (err) {
-        console.error('特徴マスター取得エラー:', err);
-      }
-    };
-    loadMasters();
+    getFeatureMasters().then(setFeatureMasters).catch(err => console.error('特徴マスター取得エラー:', err));
   }, []);
 
   // ✅ 質問マスターのロード
   useEffect(() => {
-    const loadQuestions = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('question_master')
-          .select('*')
-          .eq('is_active', true);
-        if (error) throw error;
-        setQuestionMasters(data ?? []);
-      } catch (err) {
-        console.error('質問マスター取得エラー:', err);
-      }
-    };
-    loadQuestions();
+    supabase.from('question_master').select('*').eq('is_active', true).then(({ data, error }) => {
+      if (error) console.error(error);
+      else setQuestionMasters(data ?? []);
+    });
   }, []);
 
   // ✅ 初回プロフィールロード
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const refreshed = await getCastProfile(cast.id);
-        if (refreshed) {
-          const answers = await getCastQuestions(cast.id);
-          const questions: Record<string, string> = {};
-          answers.forEach((a) => {
-            if (a.question?.id) {
-              questions[a.question.id] = a.answer ?? '';
-            }
-          });
-          setCastState({ ...refreshed, questions });
-        }
-      } catch (err) {
-        console.error('初期プロフィール取得エラー:', err);
-      }
-    };
-    loadProfile();
-  }, [cast.id]);
+  useEffect(() => { refreshCastProfile(cast.id); }, [cast.id]);
 
-  // ✅ 保存後リロード
   const refreshCastProfile = async (castId: string) => {
     try {
       const refreshed = await getCastProfile(castId);
       if (refreshed) {
         const answers = await getCastQuestions(castId);
         const questions: Record<string, string> = {};
-        answers.forEach((a) => {
-          if (a.question?.id) {
-            questions[a.question.id] = a.answer ?? '';
-          }
-        });
+        answers.forEach((a) => { if (a.question?.id) questions[a.question.id] = a.answer ?? ''; });
         setCastState({ ...refreshed, questions });
       }
     } catch (err) {
@@ -172,183 +106,15 @@ export default function Dashboard({ cast }: DashboardProps) {
     }
   };
 
-  // ✅ 所属店舗の取得
-useEffect(() => {
-  const fetchStores = async () => {
-    const { data, error } = await supabase
-      .from('cast_store_memberships')
-      .select('stores(name)')
-      .eq('cast_id', cast.id);
-
-    console.log("🎯 fetchStores result:", { data, error });
-
-if (!error && data) {
-  const names = data
-    .map((item: any) => item.stores?.name) // ← オブジェクトから直接取り出す
-    .filter(Boolean); // null を除外
-  console.log("✅ 店舗名一覧:", names);
-  setStoreName(names.join('・'));
-}
-  };
-  fetchStores();
-}, [cast.id]);
-
-  // ---- 写メ日記関係 ----
-  const loadDiaries = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('blogs')
-        .select(
-          `
-  id,
-  cast_id,
-  title,
-  content,
-  created_at,
-  blog_images (image_url),
-  blog_tags (
-    tag_id,
-    blog_tag_master ( name )
-  )
-`
-        )
-        .eq('cast_id', cast.id)
-        .order('created_at', { ascending: false });
-
-      if (error) throw error;
-
-      const mapped: CastDiary[] = (data as any[]).map((item) => ({
-        id: item.id,
-        castId: item.cast_id,
-        title: item.title,
-        content: item.content,
-        images: item.blog_images?.map((img: any) => img.image_url) ?? [],
-        tags: item.blog_tags?.map((bt: any) => bt.blog_tag_master?.name) ?? [],
-        createdAt: item.created_at,
-      }));
-
-      setDiaries(mapped);
-    } catch (err) {
-      console.error('❌ 日記ロードエラー:', err);
-    }
-  };
-
-  // 初回ロード
+  // ✅ 所属店舗
   useEffect(() => {
-    loadDiaries();
+    supabase.from('cast_store_memberships').select('stores(name)').eq('cast_id', cast.id).then(({ data, error }) => {
+      if (!error && data) {
+        const names = data.map((item: any) => item.stores?.name).filter(Boolean);
+        setStoreName(names.join('・'));
+      }
+    });
   }, [cast.id]);
-
-  // ---- 写メ日記保存 ----
-  const handleDiarySave = async (data: Omit<CastDiary, 'createdAt'>) => {
-    try {
-      let blog: { id: string } | null = null;
-
-      if (data.id) {
-        // 更新
-        const { data: updated, error } = await supabase
-          .from('blogs')
-          .update({
-            title: data.title,
-            content: data.content,
-          })
-          .eq('id', data.id)
-          .select()
-          .single();
-
-        if (error) throw error;
-        blog = updated;
-      } else {
-        // 新規投稿
-        const { data: inserted, error } = await supabase
-          .from('blogs')
-          .insert({
-            cast_id: data.castId,
-            title: data.title,
-            content: data.content,
-          })
-          .select()
-          .single();
-
-        if (error) throw error;
-        blog = inserted;
-      }
-
-      if (!blog) throw new Error('ブログデータが取得できませんでした');
-
-      if (data.images.length > 0) {
-        await supabase.from('blog_images').insert(
-          data.images.map((url) => ({
-            blog_id: blog!.id,
-            image_url: url,
-          }))
-        );
-      }
-
-      if (data.tags.length > 0) {
-        await supabase.from('blog_tags').insert(
-          data.tags.map((tag) => ({
-            blog_id: blog!.id,
-            tag, // schema に合わせる
-          }))
-        );
-      }
-
-      await loadDiaries();
-      setShowDiaryEditor(false);
-    } catch (err) {
-      console.error('❌ 写メ日記保存エラー:', err);
-      alert('日記の保存に失敗しました');
-    }
-  };
-
-  const handleDiaryDelete = async (id: string) => {
-    if (!confirm('この日記を削除しますか？')) return;
-
-    try {
-      const { data: images, error: imageError } = await supabase
-        .from('blog_images')
-        .select('image_url')
-        .eq('blog_id', id);
-
-      if (imageError) throw imageError;
-
-      if (images && images.length > 0) {
-        const filePaths = images
-          .map((img) => {
-            try {
-              const url = new URL(img.image_url);
-              const idx = url.pathname.indexOf('/diary/');
-              if (idx !== -1) {
-                return url.pathname.substring(idx + 1);
-              }
-              return null;
-            } catch {
-              return null;
-            }
-          })
-          .filter((path): path is string => !!path);
-
-        if (filePaths.length > 0) {
-          const { error: storageError } = await supabase.storage
-            .from('diary')
-            .remove(filePaths);
-          if (storageError) {
-            console.error('⚠️ Storage削除エラー:', storageError);
-          }
-        }
-      }
-
-      await supabase.from('blog_tags').delete().eq('blog_id', id);
-      await supabase.from('blog_images').delete().eq('blog_id', id);
-      const { error } = await supabase.from('blogs').delete().eq('id', id);
-      if (error) throw error;
-
-      await loadDiaries();
-    } catch (err) {
-      console.error('❌ 写メ日記削除エラー:', err);
-      alert('日記の削除に失敗しました');
-    }
-  };
 
   // ---- ナビゲーションタブ ----
   const tabs = [
@@ -357,6 +123,7 @@ if (!error && data) {
     { id: 'diary', name: '写メ日記', icon: Camera },
     { id: 'profile', name: 'マイプロフィール', icon: User },
     { id: 'gallery', name: 'ギャラリー', icon: Image },
+    { id: 'voice', name: '音声データ', icon: Mic }, // 🎤 新規タブ
   ];
 
   return (
@@ -366,31 +133,18 @@ if (!error && data) {
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between sm:h-16">
             <div className="flex items-center">
-              <button
-                onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="rounded-md p-2 text-gray-600 hover:bg-pink-50 hover:text-pink-600 md:hidden"
-              >
+              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="rounded-md p-2 text-gray-600 hover:bg-pink-50 hover:text-pink-600 md:hidden">
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <h1 className="ml-2 text-lg font-bold text-gray-900 sm:text-xl">
                 キャストダッシュボード
-                {storeName && (
-                  <span className="ml-2 text-pink-600 text-base font-medium">
-                    （{storeName}）
-                  </span>
-                )}
+                {storeName && <span className="ml-2 text-pink-600 text-base font-medium">（{storeName}）</span>}
               </h1>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">
-                ようこそ、{castState.name} さん
-              </span>
-              <button
-                onClick={logout}
-                className="flex items-center space-x-1 text-gray-600 transition-colors hover:text-pink-600 sm:space-x-2"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden text-sm sm:inline">ログアウト</span>
+              <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">ようこそ、{castState.name} さん</span>
+              <button onClick={logout} className="flex items-center space-x-1 text-gray-600 hover:text-pink-600">
+                <LogOut className="h-4 w-4" /><span className="hidden text-sm sm:inline">ログアウト</span>
               </button>
             </div>
           </div>
@@ -407,14 +161,11 @@ if (!error && data) {
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-1 whitespace-nowrap border-b-2 px-1 py-3 text-xs font-medium transition-colors sm:space-x-2 sm:py-4 sm:text-sm ${
-                    activeTab === tab.id
-                      ? 'border-pink-500 text-pink-600'
-                      : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
+                  className={`flex items-center space-x-1 whitespace-nowrap border-b-2 px-1 py-3 text-xs sm:text-sm ${
+                    activeTab === tab.id ? 'border-pink-500 text-pink-600' : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{tab.name}</span>
+                  <Icon className="h-4 w-4" /><span>{tab.name}</span>
                 </button>
               );
             })}
@@ -425,39 +176,24 @@ if (!error && data) {
       {/* Main Content */}
       <main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
         {activeTab === 'dashboard' && (
-          <DashboardHome
-            castName={castState.name}
-            performanceData={performanceData}
-            levelData={levelData}
-            badgesData={badgesData}
-          />
+          <DashboardHome castName={castState.name} performanceData={performanceData} levelData={levelData} badgesData={badgesData} />
         )}
 
         {activeTab === 'schedule' && <ScheduleSection diaries={diaries} />}
-
-        {activeTab === 'diary' && (
-          <DiarySection
-            diaries={diaries}
-            showEditor={showDiaryEditor}
-            castId={cast.id}
-            onSave={handleDiarySave}
-            onDelete={handleDiaryDelete}
-            onToggleEditor={setShowDiaryEditor}
-          />
+        {activeTab === 'diary' && <DiarySection diaries={diaries} showEditor={showDiaryEditor} castId={cast.id} onSave={() => {}} onDelete={() => {}} onToggleEditor={setShowDiaryEditor} />}
+        {activeTab === 'profile' && (
+          <ProfileSection cast={castState} featureMasters={featureMasters} questionMasters={questionMasters} refreshCastProfile={refreshCastProfile} />
         )}
-
-        {activeTab === 'profile' &&
-          featureMasters.length > 0 &&
-          questionMasters.length > 0 && (
-            <ProfileSection
-              cast={castState}
-              featureMasters={featureMasters}
-              questionMasters={questionMasters}
-              refreshCastProfile={refreshCastProfile}
-            />
-          )}
-
         {activeTab === 'gallery' && <GallerySection castId={castState.id} />}
+
+        {/* 🎤 音声データ専用タブ */}
+        {activeTab === 'voice' && (
+          <VoiceSection
+    cast={castState}
+    setCastState={setCastState}
+    activeTab={activeTab} // ✅ 追加
+  />
+        )}
       </main>
     </div>
   );
