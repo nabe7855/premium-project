@@ -18,6 +18,7 @@ interface Cast {
   name: string;
   manager_comment?: string;
   is_active: boolean;
+  catch_copy?: string; // ✨ キャッチコピー
   stores: Store[];
   statuses: Status[];
 }
@@ -42,11 +43,18 @@ export default function CastListPage() {
           name,
           manager_comment,
           is_active,
+          catch_copy,
           cast_store_memberships (
-            stores ( id, name )
+            stores (
+              id,
+              name
+            )
           ),
           cast_statuses (
-            status_master ( id, name )
+            status_master (
+              id,
+              name
+            )
           )
         `);
 
@@ -61,6 +69,7 @@ export default function CastListPage() {
           name: c.name,
           manager_comment: c.manager_comment,
           is_active: c.is_active,
+          catch_copy: c.catch_copy,
           stores: c.cast_store_memberships?.map((cs: any) => cs.stores) || [],
           statuses: c.cast_statuses?.map((cs: any) => cs.status_master) || [],
         })) ?? [];
@@ -80,6 +89,7 @@ export default function CastListPage() {
         .update({
           manager_comment: cast.manager_comment,
           is_active: cast.is_active,
+          catch_copy: cast.catch_copy,
         })
         .eq('id', cast.id);
       if (castError) throw castError;
@@ -162,13 +172,32 @@ export default function CastListPage() {
     <div className="p-4 pb-24">
       <h1 className="text-xl font-bold mb-4">キャスト一覧</h1>
 
+      {/* 状態タグ追加フォーム（ページ上部） */}
+      <div className="mb-8 p-4 border rounded-lg bg-gray-50">
+        <h3 className="text-md font-semibold mb-2">状態タグを追加</h3>
+        <div className="flex gap-2">
+          <input
+            type="text"
+            value={newStatusName}
+            onChange={(e) => setNewStatusName(e.target.value)}
+            placeholder="例: 新人 / 店長一押し"
+            className="flex-1 border rounded px-2 py-1"
+          />
+          <button
+            onClick={handleAddStatus}
+            className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
+          >
+            追加
+          </button>
+        </div>
+      </div>
+
       {/* 在籍中 */}
       <h2 className="text-lg font-semibold mt-6 mb-2">✅ 在籍中</h2>
       <ul className="space-y-4">
-        {activeCasts.map((cast, idx) => (
+        {activeCasts.map((cast) => (
           <li key={cast.id} className="rounded-lg border shadow bg-white">
-            {/* 共通のキャスト編集UIを呼び出す */}
-            {renderCastDetail(cast, idx)}
+            {renderCastDetail(cast)}
           </li>
         ))}
       </ul>
@@ -176,17 +205,17 @@ export default function CastListPage() {
       {/* 離籍中 */}
       <h2 className="text-lg font-semibold mt-8 mb-2">🚫 離籍中</h2>
       <ul className="space-y-4 opacity-70">
-        {inactiveCasts.map((cast, idx) => (
+        {inactiveCasts.map((cast) => (
           <li key={cast.id} className="rounded-lg border shadow bg-white">
-            {renderCastDetail(cast, idx)}
+            {renderCastDetail(cast)}
           </li>
         ))}
       </ul>
     </div>
   );
 
-  // 🔽 共通のキャスト詳細UI（切り出し）
-  function renderCastDetail(cast: Cast, idx: number) {
+  // 🔽 共通のキャスト詳細UI
+  function renderCastDetail(cast: Cast) {
     return (
       <>
         <button
@@ -205,16 +234,18 @@ export default function CastListPage() {
               <input
                 type="checkbox"
                 checked={cast.is_active}
-                onChange={(e) => {
-                  const newCasts = [...casts];
-                  newCasts[idx].is_active = e.target.checked;
-                  setCasts(newCasts);
-                }}
+                onChange={(e) =>
+                  setCasts((prev) =>
+                    prev.map((c) =>
+                      c.id === cast.id ? { ...c, is_active: e.target.checked } : c
+                    )
+                  )
+                }
               />
               <span>{cast.is_active ? '在籍中（公開）' : '非公開'}</span>
             </div>
 
-            {/* 店舗一覧 */}
+            {/* 所属店舗 */}
             <label className="block text-sm font-medium mt-2 mb-1">所属店舗</label>
             <div className="space-y-1">
               {stores.map((store) => {
@@ -224,10 +255,10 @@ export default function CastListPage() {
                     <input
                       type="checkbox"
                       checked={checked}
-                      onChange={(e) => {
+                      onChange={(e) =>
                         setCasts((prev) =>
-                          prev.map((c, i) =>
-                            i === idx
+                          prev.map((c) =>
+                            c.id === cast.id
                               ? {
                                   ...c,
                                   stores: e.target.checked
@@ -236,8 +267,8 @@ export default function CastListPage() {
                                 }
                               : c
                           )
-                        );
-                      }}
+                        )
+                      }
                     />
                     <span>{store.name}</span>
                   </label>
@@ -251,7 +282,10 @@ export default function CastListPage() {
               {statuses.map((status) => {
                 const checked = cast.statuses.some((s) => s.id === status.id);
                 return (
-                  <div key={status.id} className="flex items-center justify-between border rounded px-2 py-1">
+                  <div
+                    key={status.id}
+                    className="flex items-center justify-between border rounded px-2 py-1"
+                  >
                     <div className="flex items-center gap-2">
                       {editingStatusId === status.id ? (
                         <input
@@ -283,7 +317,7 @@ export default function CastListPage() {
                       <input
                         type="checkbox"
                         checked={checked}
-                        onChange={(e) => {
+                        onChange={(e) =>
                           setCasts((prev) =>
                             prev.map((c) =>
                               c.id === cast.id
@@ -292,11 +326,11 @@ export default function CastListPage() {
                                     statuses: e.target.checked
                                       ? [...c.statuses, status]
                                       : c.statuses.filter((s) => s.id !== status.id),
-                                  }
+                                }
                                 : c
                             )
-                          );
-                        }}
+                          )
+                        }
                       />
                     </div>
 
@@ -312,31 +346,30 @@ export default function CastListPage() {
               })}
             </div>
 
-            {/* 管理者専用: 状態タグ追加フォーム */}
-            <div className="flex items-center gap-2 mt-3">
-              <input
-                type="text"
-                value={newStatusName}
-                onChange={(e) => setNewStatusName(e.target.value)}
-                placeholder="新しいタグ名を入力"
-                className="border rounded px-2 py-1 flex-1"
-              />
-              <button
-                onClick={handleAddStatus}
-                className="rounded bg-green-500 px-3 py-1 text-white hover:bg-green-600 text-sm"
-              >
-                追加
-              </button>
-            </div>
+            {/* キャッチコピー */}
+            <label className="block text-sm font-medium mt-4">キャッチコピー</label>
+            <input
+              type="text"
+              value={cast.catch_copy ?? ''}
+              onChange={(e) => {
+                const value = e.target.value;
+                setCasts((prev) =>
+                  prev.map((c) => (c.id === cast.id ? { ...c, catch_copy: value } : c))
+                );
+              }}
+              className="w-full border rounded p-2 my-1"
+              placeholder="例: 究極の癒し系男子"
+            />
 
             {/* 店長コメント */}
             <label className="block text-sm font-medium mt-4">店長コメント</label>
             <textarea
-              value={cast.manager_comment || ''}
+              value={cast.manager_comment ?? ''}
               onChange={(e) => {
-                const newCasts = [...casts];
-                newCasts[idx].manager_comment = e.target.value;
-                setCasts(newCasts);
+                const value = e.target.value;
+                setCasts((prev) =>
+                  prev.map((c) => (c.id === cast.id ? { ...c, manager_comment: value } : c))
+                );
               }}
               className="w-full border rounded p-2 my-1"
               placeholder="店長コメントを入力"
