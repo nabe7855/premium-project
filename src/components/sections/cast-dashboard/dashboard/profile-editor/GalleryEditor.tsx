@@ -16,6 +16,14 @@ interface GalleryEditorProps {
   castId: string;
 }
 
+// ✅ ファイル名を完全に英数字に変換（日本語・スペース対策）
+function sanitizeFileName(fileName: string): string {
+  const ext = fileName.includes('.') ? fileName.split('.').pop() : 'png';
+  // ランダム文字列を付けて衝突も防ぐ
+  const random = Math.random().toString(36).substring(2, 8);
+  return `${Date.now()}_${random}.${ext}`;
+}
+
 export default function GalleryEditor({ castId }: GalleryEditorProps) {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [file, setFile] = useState<File | null>(null);
@@ -59,9 +67,12 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     setUploading(true);
 
     try {
-      const filePath = `${castId}/${Date.now()}_${file.name}`;
+      // ファイル名を安全化
+      const safeFileName = sanitizeFileName(file.name);
+      const filePath = `${castId}/${safeFileName}`;
+
       const { error: storageError } = await supabase.storage
-        .from('gallery')
+        .from('gallery') // ← バケット名を確認
         .upload(filePath, file, {
           upsert: true,
           cacheControl: '3600',
