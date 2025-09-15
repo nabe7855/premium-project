@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { StoreData } from '@/data/storeData';
+import { StoreData } from '@/app/page'; // UI用型をimport
 import LoadingAnimation from '@/components/sections/age-verification/LoadingAnimation';
 
 interface StoreCardProps {
@@ -13,7 +12,7 @@ interface StoreCardProps {
 export default function StoreCard({ store }: StoreCardProps) {
   const router = useRouter();
   const [isVisible, setIsVisible] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // ← ← 追加
+  const [isLoading, setIsLoading] = useState(false);
   const cardRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -26,11 +25,10 @@ export default function StoreCard({ store }: StoreCardProps) {
 
   const handleCardClick = () => {
     if (isLoading) return;
-    setIsLoading(true); // ← ← 表示フラグON
-
+    setIsLoading(true);
     setTimeout(() => {
       router.push(store.link);
-    }, 2000); // ← アニメーション2秒間再生後に遷移
+    }, 2000);
   };
 
   return (
@@ -41,44 +39,53 @@ export default function StoreCard({ store }: StoreCardProps) {
         </div>
       )}
 
-      <div className="transform overflow-hidden rounded-3xl shadow-md transition-all duration-1000 ease-out">
-        <Image
+      {/* バナー画像 + グラデーションオーバーレイ */}
+      <div className="relative overflow-hidden rounded-3xl shadow-lg">
+        <img
           src={store.bannerImage}
           alt={`${store.name}バナー`}
-          width={800}
-          height={400}
           loading="lazy"
           className={`h-auto w-full rounded-3xl object-cover transition-opacity duration-1000 ${
             isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
           }`}
         />
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-t from-black/70 via-black/40 to-transparent rounded-3xl p-6 text-center">
+          <h2 className="mb-2 text-xl sm:text-2xl font-extrabold text-white drop-shadow-lg">
+            【ストロベリーボーイズ {store.name}】
+          </h2>
+          <p className="text-sm sm:text-base text-white/90 drop-shadow">
+            {store.description}
+          </p>
+        </div>
       </div>
 
+      {/* 詳細カード（テーマカラー反映） */}
       <div
         role="button"
         onClick={handleCardClick}
         aria-label={`${store.name}の詳細ページへ`}
-        className={`transform cursor-pointer rounded-3xl bg-gradient-to-br px-6 py-5 text-center text-white shadow-xl transition-all duration-1000 ease-out ${store.gradient} ${
+        className={`cursor-pointer rounded-3xl px-6 py-6 text-center text-white shadow-2xl transition-all duration-1000 ease-out ${
           isVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
         }`}
+        style={{
+          backgroundImage: store.gradient, // ← CSS値を直接適用
+        }}
       >
-        <h2 className="mb-2 text-lg font-bold">【ストロベリーボーイズ {store.name}】</h2>
-        <p className="mb-3 text-sm text-white/90">{store.description}</p>
-
-        <div className="mb-4 flex flex-wrap justify-center gap-2">
-          {store.hashtags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-white/90 px-3 py-1 text-xs text-pink-600 shadow-sm"
-            >
-              #{tag}
-            </span>
-          ))}
+        <div className="backdrop-blur-md bg-white/20 rounded-2xl p-5 sm:p-6">
+          <div className="mb-4 flex flex-wrap justify-center gap-2">
+            {store.hashtags?.map((tag: string) => (
+              <span
+                key={tag}
+                className="rounded-full bg-white/90 px-3 py-1 text-xs sm:text-sm text-pink-600 font-medium shadow-md"
+              >
+                #{tag}
+              </span>
+            ))}
+          </div>
+          <button className="rounded-full bg-gradient-to-r from-white to-gray-200 px-8 py-3 text-sm sm:text-base font-bold text-pink-600 shadow-lg hover:scale-105 hover:shadow-2xl transition-transform duration-300">
+            招待状を開く ✨
+          </button>
         </div>
-
-        <button className="rounded-full bg-white px-6 py-2 text-sm font-semibold text-pink-500 shadow hover:bg-pink-100">
-          招待状を開く
-        </button>
       </div>
     </div>
   );

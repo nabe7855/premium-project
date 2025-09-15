@@ -140,3 +140,18 @@ export interface Video {
   views: number;
   date: string;
 }
+
+// types/store.ts
+export interface StoreRow {
+  id: string;
+  name: string;
+  slug: string;
+  address?: string;
+  phone?: string;
+  catch_copy?: string;
+  image_url?: string;
+  theme_color?: string;
+  tags?: string[];
+  created_at?: string;
+}
+
