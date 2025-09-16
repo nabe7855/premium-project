@@ -78,17 +78,17 @@ export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> =>
       id: String(item.id),
       slug: item.slug,
       name: item.name,
-      age: item.age,
-      height: item.height,
-      weight: item.weight,
-      catchCopy: item.catchCopy,
+      age: item.age?? undefined,
+      height: item.height?? undefined,
+      weight: item.weight?? undefined,
+      catchCopy: item.catchCopy ?? undefined, // ✅ null を undefined に統一
       imageUrl: firstImage?.imageUrl ?? undefined,
       galleryItems,
       sns,
       isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
-      is_active: item.is_active ?? true,
+      isActive: item.is_active ?? true,
       stillwork: true, // ここは filter 済みなので true に固定
     };
   });

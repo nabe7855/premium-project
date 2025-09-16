@@ -48,24 +48,40 @@ export interface Cast {
   id: string;              // uuid
   slug: string;
   name: string;
+
   age?: number;
   height?: number;
   weight?: number;
-  catchCopy?: string;
-  imageUrl?: string;
-  galleryItems?: GalleryItem[];
-  sns?: CastSNS;
-  isNew?: boolean;
-  sexinessLevel?: number;
-  isReception?: boolean;
-  stillwork?: boolean;
-  is_active: boolean;
-  voice_url?: string;   // ✅ 音声ファイルURL
 
+  catchCopy?: string;        // DB: catch_copy
+  profile?: string | null;          // DB: profile
+  managerComment?: string | null;   // DB: manager_comment
 
-  // ✅ 複数の状態タグ
-  statuses?: Status[];
+  imageUrl?: string | null;         // DB: image_url
+  mainImageUrl?: string | null;     // DB: main_image_url
+  galleryItems?: GalleryItem[];     // DB: gallery_items
+
+  sns?: CastSNS;                    // SNSリンク
+
+  isNew?: boolean;                  // UI専用
+  sexinessLevel?: number;           // UI専用
+  isReception?: boolean;            // UI専用
+  stillwork?: boolean;              // UI専用（在籍フラグ）
+
+  isActive: boolean;                // DB: is_active
+  voiceUrl?: string | null;         // DB: voice_url
+
+  statuses?: Status[];              // 複数の状態タグ（リレーション）
+
+  // 外部キー
+  mbtiId?: string | null;           // DB: mbti_id
+  animalId?: string | null;         // DB: animal_id
+  faceId?: string | null;           // DB: face_id
+  userId?: string | null;           // DB: user_id
+
+  createdAt?: string;               // DB: created_at
 }
+
 
 // ==============================
 // キャスト一覧用の軽量データ
@@ -212,4 +228,17 @@ export interface CastDiary {
   images: string[];
   tags: string[];
   createdAt: string;
+}
+
+export interface TodayCast {
+  id: string;
+  name: string;
+  age?: number;
+  catch_copy?: string;
+  main_image_url?: string;
+  image_url?: string;
+  mbti_name?: string;
+  face_name?: string;
+  start_datetime?: string;
+  end_datetime?: string;
 }

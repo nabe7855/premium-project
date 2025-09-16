@@ -16,6 +16,7 @@ import { StoreProvider } from '@/contexts/StoreContext';
 import React from 'react';
 import { BannerSlideSection } from '@/components/sections/BannerSlideSection';
 import { TestimonialSection } from '@/components/sections/TestimonialSection';
+import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore'; // 👈 追加
 
 interface StorePageProps {
   params: {
@@ -25,9 +26,6 @@ interface StorePageProps {
 
 export async function generateMetadata({ params }: StorePageProps): Promise<Metadata> {
   const store = getStoreData(params.slug);
-
-  // データが正しく取得できているか確認
-  console.log('store data:', store);
 
   if (!store) {
     return {
@@ -69,17 +67,15 @@ export function generateStaticParams() {
   return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }];
 }
 
-export default function StorePage({ params }: StorePageProps) {
+export default async function StorePage({ params }: StorePageProps) {
   const store = getStoreData(params.slug);
 
-  // storeの中身を確認
-  console.log('store data on page render:', store);
-
   if (!store) {
-    // storeが見つからない場合はnotFoundを呼び出し
-    console.error('Store not found for slug:', params.slug);
     notFound();
   }
+
+  // ✅ Supabaseから今日のキャストを取得
+  const todayCasts = await getTodayCastsByStore(params.slug);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -123,9 +119,9 @@ export default function StorePage({ params }: StorePageProps) {
 
         <main>
           <HeroSection />
-          <TestimonialSection /> {/* TestimonialSectionをHeroSectionの下に追加 */}
-          <BannerSlideSection /> {/* BannerSlideSectionをHeroSectionの下に追加 */}
-          <CastSliderSection />
+          <TestimonialSection />
+          <BannerSlideSection />
+          <CastSliderSection casts={todayCasts} /> {/* 👈 propsで渡す */}
           <NewcomerSection />
           <EventSection />
           <DiarySection />
