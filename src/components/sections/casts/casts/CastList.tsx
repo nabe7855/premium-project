@@ -16,6 +16,7 @@ interface CastListProps {
 
 const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const [loading, setLoading] = useState(true);
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null); // ✅ 追加
 
   const {
     searchTerm,
@@ -38,15 +39,15 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
     handleCastSelect,
     toggleFavorite,
     resetFilters,
-    setOriginalCasts, // ✅ useCastSearch に追加しておく必要あり
-  } = useCastSearch({ storeSlug }); // ✅ storeSlug を渡す
+    setOriginalCasts,
+  } = useCastSearch({ storeSlug });
 
   // DBからキャスト取得
   useEffect(() => {
     const fetchCasts = async () => {
       setLoading(true);
       const result: Cast[] = await getCastsByStore(storeSlug);
-      setOriginalCasts(result); // ✅ hook に渡す
+      setOriginalCasts(result);
       setLoading(false);
     };
     fetchCasts();
@@ -183,15 +184,20 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
         <div className="grid grid-cols-2 gap-4 sm:gap-6">
           <AnimatePresence mode="sync">
             {filteredAndSortedCasts.map((cast, index) => (
-              <CastCard
-                key={cast.id}
-                cast={cast}
-                index={index}
-                isFavorite={favorites.includes(cast.id)}
-                onToggleFavorite={() => toggleFavorite(cast.id)}
-                onCastSelect={() => handleCastSelect(cast)}
-                sortBy={sortBy}
-              />
+<CastCard
+  key={cast.id}
+  cast={cast}
+  index={index}
+  isFavorite={favorites.includes(cast.id)}
+  onToggleFavorite={() => toggleFavorite(cast.id)}
+  onCastSelect={() => handleCastSelect(cast)}
+  sortBy={sortBy}
+  // ✅ null を undefined に変換
+  audioSampleUrl={cast.voiceUrl ?? undefined}
+  currentlyPlayingId={currentlyPlayingId}
+  setCurrentlyPlayingId={setCurrentlyPlayingId}
+/>
+
             ))}
           </AnimatePresence>
         </div>

@@ -81,7 +81,7 @@ export interface Cast {
   isActive: boolean;
   isOnline?: boolean;
   statuses?: CastStatus[];
-  voiceUrl?: string | null;
+  voiceUrl?: string; 
 
   // UI用数値系
   rating?: number;
@@ -150,6 +150,7 @@ export interface CastSummary {
   bloodType?: string;
   customID?: string;
   slug?: string;
+  voiceUrl?: string;
 }
 
 // ==============================

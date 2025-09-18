@@ -1,4 +1,4 @@
-// src/lib/getCastsByStore.ts
+// lib/getCastsByStore.ts
 import { supabase } from './supabaseClient';
 import { Cast, CastStatus } from '@/types/cast';
 
@@ -15,11 +15,10 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // キャスト一覧を取得（在籍中のみ）
+  // キャスト一覧を取得
   const { data, error } = await supabase
     .from('cast_store_memberships')
-    .select(
-      `
+    .select(`
       casts (
         id,
         slug,
@@ -45,8 +44,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
           )
         )
       )
-    `
-    )
+    `)
     .eq('store_id', store.id);
 
   if (error) {
@@ -54,31 +52,32 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // 整形して Cast[] に変換
   return (data ?? [])
     .map((item: any) => {
       const cast = item.casts;
       if (!cast || !cast.is_active) return null;
 
-      // ステータスを整形
+      // ✅ Supabase Storage の公開URLを組み立てる
+      const { data: urlData } = supabase.storage
+        .from('cast-voices')
+        .getPublicUrl(`voice-${cast.id}.webm`);
+
+      // ✅ statuses を CastStatus[] に整形
       const statuses: CastStatus[] =
         cast.cast_statuses?.map((s: any) => ({
           id: s.id,
-          cast_id: cast.id,
           status_id: s.status_id,
           is_active: s.is_active,
-          status_master: {
-            id: s.status_master?.id,
-            name: s.status_master?.name,
-            label_color: s.status_master?.label_color, // ✅ 追加
-            text_color: s.status_master?.text_color,   // ✅ 追加
-          },
           created_at: s.created_at,
+          status_master: s.status_master
+            ? {
+                id: s.status_master.id,
+                name: s.status_master.name,
+                label_color: s.status_master.label_color,
+                text_color: s.status_master.text_color,
+              }
+            : null,
         })) ?? [];
-
-      // セクシー度 🍓表現
-      const sexinessLevel: number = cast.sexiness_level ?? 3;
-      const sexinessStrawberry: string = '🍓'.repeat(sexinessLevel);
 
       const mapped: Cast = {
         id: cast.id,
@@ -91,15 +90,10 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         isActive: cast.is_active,
         mbtiType: cast.mbti?.name ?? undefined,
         faceType: cast.face ? [cast.face.name] : [],
-        statuses,
-        sexinessLevel,
-        // 🍓をUIで直接使いたいとき用に渡す
-        tags: cast.tags ?? [],
-        rating: cast.rating ?? 0,
-        reviewCount: cast.review_count ?? 0,
-        createdAt: cast.created_at ?? undefined,
-        // 新規追加: 🍓表現済みのセクシー度
-        sexinessStrawberry,
+        statuses, // ✅ 型安全にした CastStatus[]
+        sexinessLevel: cast.sexiness_level ?? 3,
+        sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
+        voiceUrl: urlData?.publicUrl ?? undefined, // 🎤 音声URL
       };
 
       return mapped;
