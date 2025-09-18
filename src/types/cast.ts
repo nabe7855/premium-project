@@ -23,13 +23,22 @@ export interface CastSNS {
 }
 
 // ==============================
+// 店舗
+// ==============================
+export interface Store {
+  id: string;
+  name: string;
+  slug?: string;
+}
+
+// ==============================
 // キャスト状態マスタ（DB: status_master）
 // ==============================
 export interface Status {
-  id: string;        // uuid
-  name: string;      // 表示名（例: 新人, 店長おすすめ）
-  label_color?: string;  // ✅ 追加
-  text_color?: string;   // ✅ 追加
+  id: string;             // uuid
+  name: string;           // 表示名（例: 新人, 店長おすすめ）
+  label_color?: string;   // バッジ背景色
+  text_color?: string;    // バッジ文字色
   created_at?: string;
 }
 
@@ -38,8 +47,8 @@ export interface CastStatus {
   id: string;
   cast_id: string;
   status_id: string;
-  is_active: boolean;       // ✅ ON/OFF フラグ
-  status_master: Status;    // ✅ 必須に変更
+  is_active: boolean;     // ON/OFF フラグ
+  status_master: Status;  // 必須
   created_at?: string;
 }
 
@@ -49,8 +58,8 @@ export interface CastStatus {
 export interface Cast {
   id: string;              // uuid
   slug: string;
-  customID?: string;        // カスタムID
-  storeSlug?: string;       // 店舗slug
+  customID?: string;       // カスタムID
+  storeSlug?: string;      // 店舗slug
   name: string;
 
   age?: number;
@@ -76,12 +85,12 @@ export interface Cast {
 
   // ステータス系
   sexinessLevel?: number;
-  sexinessStrawberry?: string; // 🍓表現を追加
+  sexinessStrawberry?: string; // 🍓表現
   isReception?: boolean;
   isActive: boolean;
   isOnline?: boolean;
   statuses?: CastStatus[];
-  voiceUrl?: string; 
+  voiceUrl?: string;
 
   // UI用数値系
   rating?: number;
@@ -101,7 +110,7 @@ export interface Cast {
   mbtiType?: string;
   faceType?: string[];
 
-  // 追加データ
+  // 詳細プロフィール
   profileDetail?: {
     introduction: string;
     experience: string;
@@ -122,6 +131,12 @@ export interface Cast {
   }>;
 
   createdAt?: string;
+
+  // ✅ 追加: 店舗が管理するおすすめ順フラグ
+  priority?: number;
+
+  // ✅ 所属店舗（JOIN用）
+  stores?: Store[];
 }
 
 // ==============================
