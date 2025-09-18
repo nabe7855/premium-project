@@ -16,7 +16,7 @@ const CastDetailPage = ({ params }: CastDetailPageProps) => {
   useEffect(() => {
     const fetchData = async () => {
       const data = await getCastBySlug(cast);
-      if (data?.stillwork) {
+      if (data?.isActive) {
         setCastData(data);
       }
     };

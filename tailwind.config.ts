@@ -15,208 +15,52 @@ module.exports = {
         primary: '#DC143C',
         secondary: '#FFF0F5',
         accent: '#FF69B4',
-        neutral: {
-          50: '#FFFFFF',
-          100: '#F5F5DC',
-          200: '#F0F0F0',
-          300: '#E0E0E0',
-          400: '#C0C0C0',
-          500: '#999999',
-          600: '#666666',
-          700: '#333333',
-          800: '#1A1A1A',
-          900: '#0D0D0D',
-        },
-        strawberry: {
-          50: '#fff0f5',
-          100: '#ffe4e6',
-          200: '#fecdd3',
-          300: '#fda4af',
-          400: '#fb7185',
-          500: '#f43f5e',
-          600: '#e11d48',
-          700: '#be123c',
-          800: '#9f1239',
-          900: '#881337',
-        },
-        cream: {
-          50: '#fefdfb',
-          100: '#fef9f3',
-          200: '#fcf1e6',
-          300: '#f8e4d0',
-          400: '#f2d1a9',
-          500: '#e9ba82',
-          600: '#dfa05c',
-          700: '#d4853e',
-          800: '#c26d27',
-          900: '#a85817',
-        },
-        pink: {
-          50: '#fdf2f8',
-          100: '#fce7f3',
-          200: '#fbcfe8',
-          300: '#f9a8d4',
-          400: '#f472b6',
-          500: '#ec4899',
-          600: '#db2777',
-          700: '#be185d',
-          800: '#9d174d',
-          900: '#831843',
-        },
-        rose: {
-          50: '#FFF8F8',
-          100: '#FFE4E1',
-          200: '#FFCCD5',
-          300: '#FFB3BA',
-          400: '#FF99A3',
-          500: '#FF8A95',
-        },
-        tokyo: {
-          50: '#fef7f7',
-          100: '#fdeaea',
-          200: '#fbd9db',
-          300: '#f7b8bc',
-          400: '#f18f96',
-          500: '#e85d75',
-          600: '#d63c5e',
-          700: '#b22d4a',
-          800: '#962843',
-          900: '#81263f',
-        },
-        osaka: {
-          50: '#fffbf0',
-          100: '#fff4d9',
-          200: '#ffe8b3',
-          300: '#ffd882',
-          400: '#ffc250',
-          500: '#ffab2e',
-          600: '#ff8f08',
-          700: '#e6730a',
-          800: '#bf5c0e',
-          900: '#9c4b10',
-        },
-        nagoya: {
-          50: '#faf7ff',
-          100: '#f1ecff',
-          200: '#e5ddff',
-          300: '#d2c1ff',
-          400: '#b897ff',
-          500: '#9b69ff',
-          600: '#8844ff',
-          700: '#7932e8',
-          800: '#6626c4',
-          900: '#5522a3',
-        },
-        beige: {
-          50: '#F5F5DC',
-          100: '#F0F0E6',
-          200: '#E6E6D1',
-          300: '#D9D9C2',
-        },
-      },
-      fontFamily: {
-        sans: ['Noto Sans JP', 'system-ui', 'sans-serif'],
-        serif: ['Noto Serif JP', 'serif'],
-        rounded: ['Noto Sans JP', 'sans-serif'],
-        noto: ['Noto Sans JP', 'sans-serif'],
-        mono: 'var(--font-mono)',
-        dancing: ['Dancing Script', 'cursive'],
-      },
-      spacing: {
-        '18': '4.5rem',
-        '88': '22rem',
-        '128': '32rem',
-      },
-      animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
-        'slide-up': 'slideUp 0.3s ease-out',
-        'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
-        fadeInUp: 'fadeInUp 0.8s ease-out',
-        'bounce-slow': 'bounce 2s infinite',
-        'pulse-slow': 'pulse 3s infinite',
-        'accordion-down': 'accordion-down 0.2s ease-out',
-        'accordion-up': 'accordion-up 0.2s ease-out',
-        twinkle: 'twinkle 0.4s ease-in-out',
-        float: 'float 3s ease-in-out infinite',
-        'bounce-soft': 'bounce 1s infinite',
-        spinScale: 'spinScale 1.2s ease-out forwards',
-        fadeIn: 'fadeIn 1s ease-out forwards',
-      },
-      keyframes: {
-        fadeIn: {
-          '0%': { opacity: '0' },
-          '100%': { opacity: '1' },
-        },
-        slideUp: {
-          '0%': { transform: 'translateY(10px)', opacity: '0' },
-          '100%': { transform: 'translateY(0)', opacity: '1' },
-        },
-        pulseSoft: {
-          '0%, 100%': { opacity: '1' },
-          '50%': { opacity: '0.8' },
-        },
-        'accordion-down': {
-          from: { height: '0' },
-          to: { height: 'var(--radix-accordion-content-height)' },
-        },
-        'accordion-up': {
-          from: { height: 'var(--radix-accordion-content-height)' },
-          to: { height: '0' },
-        },
-        float: {
-          '0%, 100%': { transform: 'translateY(0px)' },
-          '50%': { transform: 'translateY(-10px)' },
-        },
-        twinkle: {
-          '0%, 100%': { transform: 'scale(1)' },
-          '30%': { transform: 'scale(1.07) rotate(-1deg)' },
-          '50%': { transform: 'scale(1.05) rotate(1deg)' },
-          '70%': { transform: 'scale(1.06) rotate(-0.5deg)' },
-        },
-        spinScale: {
-          '0%': { transform: 'scale(0.8) rotate(0deg)', opacity: '0' },
-          '50%': { transform: 'scale(1.2) rotate(180deg)', opacity: '1' },
-          '100%': { transform: 'scale(1) rotate(360deg)', opacity: '0' },
+        // 既存 + ゴールド追加
+        gold: {
+          50: '#FFFBEA',
+          100: '#FFF3C4',
+          200: '#FCE588',
+          300: '#FADB5F',
+          400: '#F7C948',
+          500: '#F0B429',
+          600: '#DE911D',
+          700: '#CB6E17',
+          800: '#B44D12',
+          900: '#8D2B0B',
         },
       },
       boxShadow: {
         luxury: '0 8px 32px rgba(220, 20, 60, 0.1)',
         soft: '0 4px 16px rgba(0, 0, 0, 0.1)',
+        // ✨ ゴールドの発光感
+        rich: '0 0 15px rgba(255, 215, 0, 0.5), 0 0 30px rgba(255, 215, 0, 0.4), 0 0 45px rgba(255, 165, 0, 0.3)',
       },
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-tokyo': 'linear-gradient(135deg, #fdeaea 0%, #f7b8bc 50%, #e85d75 100%)',
-        'gradient-osaka': 'linear-gradient(135deg, #fff4d9 0%, #ffe8b3 50%, #ffab2e 100%)',
-        'gradient-nagoya': 'linear-gradient(135deg, #f1ecff 0%, #e5ddff 50%, #9b69ff 100%)',
-        'polka-dot': 'radial-gradient(circle, #FFE4E1 2px, transparent 2px)',
-        'hero-gradient': 'linear-gradient(135deg, #FFF8F8 0%, #FFE4E1 100%)',
-      },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
+        // ゴールドグラデーションフレーム用
+        'gold-frame': 'linear-gradient(135deg, #FFD700, #FFA500, #FF69B4)',
       },
     },
   },
   plugins: [
-    require('tailwindcss-animate'),
-    function ({
-      addUtilities,
-    }: {
-      addUtilities: (utils: Record<string, Record<string, string>>, variants?: string[]) => void;
-    }) {
-      addUtilities(
-        {
-          '.text-foreground': {
-            color: 'hsl(var(--foreground))',
-          },
-        },
-        ['responsive', 'hover'],
-      );
-    },
-  ],
-  
+  require('tailwindcss-animate'),
+  /**
+   * Tailwind のユーティリティ追加用プラグイン
+   */
+  function ({ addUtilities }: { addUtilities: (utilities: Record<string, Record<string, string>>) => void }) {
+    addUtilities({
+      '.text-foreground': {
+        color: 'hsl(var(--foreground))',
+      },
+      '.border-gold': {
+        border: '2px solid #FFD700', // ゴールド枠
+      },
+      '.shadow-gold': {
+        boxShadow: '0 4px 15px rgba(255, 215, 0, 0.5)', // ゴールドの影
+      },
+      '.bg-gold-gradient': {
+        background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700)', // 高級感のあるゴールドグラデーション
+      },
+    });
+  },
+],
 };
-
-

@@ -33,14 +33,22 @@ export default function StoreListPage() {
   };
 
   return (
-    <div className="p-4 pb-24"> {/* ← 下に24（約6rem）の余白を追加 */}
+    <div className="p-4 pb-24">
       <h1 className="text-xl font-bold mb-4">店舗一覧</h1>
-      <a
-        href="/admin/stores/new"
-        className="inline-block mb-4 rounded bg-pink-500 px-4 py-2 text-white hover:bg-pink-600"
-      >
-        ＋ 新規店舗追加
-      </a>
+      <div className="mb-4 flex gap-2">
+        <a
+          href="/admin/stores/new"
+          className="rounded bg-pink-500 px-4 py-2 text-white hover:bg-pink-600"
+        >
+          ＋ 新規店舗追加
+        </a>
+        <a
+          href="/admin/casts"
+          className="rounded bg-purple-500 px-4 py-2 text-white hover:bg-purple-600"
+        >
+          👥 キャストステータス管理
+        </a>
+      </div>
 
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {stores.map((store) => (
@@ -72,16 +80,22 @@ export default function StoreListPage() {
             {store.phone && <p className="text-xs text-gray-500">電話: {store.phone}</p>}
 
             {/* アクションボタン */}
-            <div className="mt-3 flex gap-2">
+            <div className="mt-3 flex flex-col gap-2">
               <a
                 href={`/admin/stores/${store.id}/edit`}
-                className="flex-1 rounded bg-blue-500 px-3 py-1 text-center text-white hover:bg-blue-600 text-sm"
+                className="rounded bg-blue-500 px-3 py-1 text-center text-white hover:bg-blue-600 text-sm"
               >
                 ✏ 編集
               </a>
+              <a
+                href="/admin/casts"
+                className="rounded bg-purple-500 px-3 py-1 text-center text-white hover:bg-purple-600 text-sm"
+              >
+                👥 キャストステータス変更
+              </a>
               <button
                 onClick={() => handleDelete(store.id)}
-                className="flex-1 rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600 text-sm"
+                className="rounded bg-red-500 px-3 py-1 text-white hover:bg-red-600 text-sm"
               >
                 🗑 削除
               </button>

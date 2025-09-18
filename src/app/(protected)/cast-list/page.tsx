@@ -33,9 +33,7 @@ const CastListPage = async () => {
             catchCopy={cast.catchCopy}
             age={cast.age}
             height={cast.height}
-            weight={cast.weight}
             imageUrl={cast.imageUrl ?? '/no-image.png'}
-            isNew={cast.isNew}
             isReception={cast.isReception ?? false} // ✅ 忘れずに
             priority={index === 0}
           />

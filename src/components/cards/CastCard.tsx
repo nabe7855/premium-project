@@ -10,7 +10,6 @@ interface CastCardProps {
   name: string;
   age?: number;      // ← number → number | undefined に修正
   height?: number;   // ← 同上
-  weight?: number;   // ← 同上
   imageUrl: string | null;
   catchCopy?: string;
   isNew?: boolean;
@@ -25,7 +24,6 @@ const CastCard: React.FC<CastCardProps> = ({
   name,
   age,
   height,
-  weight,
   imageUrl,
   catchCopy,
   isNew = false,
@@ -77,17 +75,15 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
       )}
 
-      {/* 年齢・身長・体重 */}
+      {/* 年齢・身長 */}
       <div className="px-4 pb-3">
         <div className="grid grid-cols-3 border-t border-gray-200 pt-2 text-center text-[11px] font-semibold text-gray-500">
           <div>年齢</div>
           <div>身長</div>
-          <div>体重</div>
         </div>
         <div className="grid grid-cols-3 pt-1 text-center text-sm font-medium text-gray-700">
           <div>{age ? `${age}歳` : '-'}</div>
           <div>{height ? `${height}cm` : '-'}</div>
-          <div>{weight ? `${weight}kg` : '-'}</div>
         </div>
       </div>
     </Link>

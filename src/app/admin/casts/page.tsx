@@ -11,6 +11,8 @@ interface Store {
 interface Status {
   id: string;
   name: string;
+  label_color?: string;
+  text_color?: string;
 }
 
 interface Cast {
@@ -30,8 +32,14 @@ export default function CastListPage() {
   const [openCastId, setOpenCastId] = useState<string | null>(null);
 
   const [newStatusName, setNewStatusName] = useState('');
+  const [newLabelColor, setNewLabelColor] = useState('#374151'); // ✅ デフォルト背景色
+  const [newTextColor, setNewTextColor] = useState('#ffffff');   // ✅ デフォルト文字色
+
+  // 編集用 state
   const [editingStatusId, setEditingStatusId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState('');
+  const [editingLabelColor, setEditingLabelColor] = useState('#374151');
+  const [editingTextColor, setEditingTextColor] = useState('#ffffff');
 
   // 初期ロード
   useEffect(() => {
@@ -53,13 +61,17 @@ export default function CastListPage() {
           cast_statuses (
             status_master (
               id,
-              name
+              name,
+              label_color,
+              text_color
             )
           )
         `);
 
       const { data: storeData } = await supabase.from('stores').select('id, name');
-      const { data: statusData } = await supabase.from('status_master').select('id, name');
+      const { data: statusData } = await supabase
+        .from('status_master')
+        .select('id, name, label_color, text_color');
 
       if (castError) console.error(castError);
 
@@ -127,7 +139,7 @@ export default function CastListPage() {
     if (!newStatusName.trim()) return;
     const { data, error } = await supabase
       .from('status_master')
-      .insert([{ name: newStatusName }])
+      .insert([{ name: newStatusName, label_color: newLabelColor, text_color: newTextColor }])
       .select();
     if (error) {
       console.error(error);
@@ -137,6 +149,8 @@ export default function CastListPage() {
     if (data && data.length > 0) {
       setStatuses((prev) => [...prev, data[0]]);
       setNewStatusName('');
+      setNewLabelColor('#374151');
+      setNewTextColor('#ffffff');
     }
   };
 
@@ -151,16 +165,34 @@ export default function CastListPage() {
     setStatuses((prev) => prev.filter((s) => s.id !== id));
   };
 
-  // 状態タグ更新
-  const handleUpdateStatus = async (id: string, newName: string) => {
-    if (!newName.trim()) return;
-    const { error } = await supabase.from('status_master').update({ name: newName }).eq('id', id);
+  // 状態タグ更新（保存ボタン）
+  const handleUpdateStatus = async () => {
+    if (!editingStatusId) return;
+    if (!editingName.trim()) return;
+
+    const { error } = await supabase
+      .from('status_master')
+      .update({
+        name: editingName,
+        label_color: editingLabelColor,
+        text_color: editingTextColor,
+      })
+      .eq('id', editingStatusId);
+
     if (error) {
       console.error(error);
       alert('状態タグの更新に失敗しました');
       return;
     }
-    setStatuses((prev) => prev.map((s) => (s.id === id ? { ...s, name: newName } : s)));
+
+    setStatuses((prev) =>
+      prev.map((s) =>
+        s.id === editingStatusId
+          ? { ...s, name: editingName, label_color: editingLabelColor, text_color: editingTextColor }
+          : s
+      )
+    );
+
     setEditingStatusId(null);
   };
 
@@ -175,7 +207,7 @@ export default function CastListPage() {
       {/* 状態タグ追加フォーム（ページ上部） */}
       <div className="mb-8 p-4 border rounded-lg bg-gray-50">
         <h3 className="text-md font-semibold mb-2">状態タグを追加</h3>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
           <input
             type="text"
             value={newStatusName}
@@ -183,6 +215,14 @@ export default function CastListPage() {
             placeholder="例: 新人 / 店長一押し"
             className="flex-1 border rounded px-2 py-1"
           />
+          <input type="color" value={newLabelColor} onChange={(e) => setNewLabelColor(e.target.value)} />
+          <input type="color" value={newTextColor} onChange={(e) => setNewTextColor(e.target.value)} />
+          <span
+            className="px-2 py-1 rounded text-sm"
+            style={{ backgroundColor: newLabelColor, color: newTextColor }}
+          >
+            {newStatusName || 'プレビュー'}
+          </span>
           <button
             onClick={handleAddStatus}
             className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
@@ -288,26 +328,43 @@ export default function CastListPage() {
                   >
                     <div className="flex items-center gap-2">
                       {editingStatusId === status.id ? (
-                        <input
-                          type="text"
-                          value={editingName}
-                          onChange={(e) => setEditingName(e.target.value)}
-                          onBlur={() => handleUpdateStatus(status.id, editingName)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter') {
-                              handleUpdateStatus(status.id, editingName);
-                            }
-                          }}
-                          className="border rounded px-1 py-0.5"
-                          autoFocus
-                        />
+                        <>
+                          <input
+                            type="text"
+                            value={editingName}
+                            onChange={(e) => setEditingName(e.target.value)}
+                            className="border rounded px-1 py-0.5"
+                          />
+                          <input
+                            type="color"
+                            value={editingLabelColor}
+                            onChange={(e) => setEditingLabelColor(e.target.value)}
+                          />
+                          <input
+                            type="color"
+                            value={editingTextColor}
+                            onChange={(e) => setEditingTextColor(e.target.value)}
+                          />
+                          <button
+                            onClick={handleUpdateStatus}
+                            className="px-2 py-1 bg-blue-500 text-white rounded text-xs"
+                          >
+                            保存
+                          </button>
+                        </>
                       ) : (
                         <span
                           onClick={() => {
                             setEditingStatusId(status.id);
                             setEditingName(status.name);
+                            setEditingLabelColor(status.label_color || '#374151');
+                            setEditingTextColor(status.text_color || '#ffffff');
                           }}
-                          className="cursor-pointer"
+                          className="cursor-pointer px-2 py-1 rounded text-sm"
+                          style={{
+                            backgroundColor: status.label_color || '#374151',
+                            color: status.text_color || '#ffffff',
+                          }}
                         >
                           {status.name}
                         </span>

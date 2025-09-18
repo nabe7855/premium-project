@@ -14,7 +14,7 @@ interface StrapiCastItem {
   GalleryItem?: GalleryItem[];
   isNew?: boolean;
   sexinessLevel?: number;
-  stillwork?: boolean; // ✅ 追加（Boolean型）
+  isActive?: boolean; // ✅ 追加（Boolean型）
   isReception?: boolean;
   is_active?: boolean;
 }
@@ -27,7 +27,7 @@ export const getAllCasts = async (): Promise<Cast[]> => {
   const query = qs.stringify(
     {
       filters: {
-        stillwork: {
+        isActive: {
           $eq: true,
         },
       },
@@ -68,15 +68,12 @@ export const getAllCasts = async (): Promise<Cast[]> => {
       name: item.name,
       age: item.age,
       height: item.height,
-      weight: item.weight,
       catchCopy: item.catchCopy,
       imageUrl: firstImage?.imageUrl ?? undefined,
       galleryItems,
       sns,
-      isNew: item.isNew ?? false,
       sexinessLevel: item.sexinessLevel ?? 0,
       isReception: item.isReception,
-      stillwork: item.stillwork ?? true,
       isActive: item.is_active ?? true,
     };
   });

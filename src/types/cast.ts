@@ -28,7 +28,8 @@ export interface CastSNS {
 export interface Status {
   id: string;        // uuid
   name: string;      // 表示名（例: 新人, 店長おすすめ）
-  label_en?: string; // 内部用ラベル
+  label_color?: string;  // ✅ 追加
+  text_color?: string;   // ✅ 追加
   created_at?: string;
 }
 
@@ -37,7 +38,8 @@ export interface CastStatus {
   id: string;
   cast_id: string;
   status_id: string;
-  status_master?: Status;
+  is_active: boolean;       // ✅ ON/OFF フラグ
+  status_master: Status;    // ✅ 必須に変更
   created_at?: string;
 }
 
@@ -47,41 +49,87 @@ export interface CastStatus {
 export interface Cast {
   id: string;              // uuid
   slug: string;
+  customID?: string;        // カスタムID
+  storeSlug?: string;       // 店舗slug
   name: string;
 
   age?: number;
   height?: number;
-  weight?: number;
 
-  catchCopy?: string;        // DB: catch_copy
-  profile?: string | null;          // DB: profile
-  managerComment?: string | null;   // DB: manager_comment
+  // プロフィール系
+  catchCopy?: string;
+  catchphrase?: string;
+  profile?: string | null;
+  managerComment?: string | null;
+  story?: string;
 
-  imageUrl?: string | null;         // DB: image_url
-  mainImageUrl?: string | null;     // DB: main_image_url
-  galleryItems?: GalleryItem[];     // DB: gallery_items
+  // 画像
+  imageUrl?: string | null;
+  mainImageUrl?: string | null;
+  avatar?: string;
+  images?: string[];
+  galleryItems?: GalleryItem[];
 
-  sns?: CastSNS;                    // SNSリンク
+  // SNS
+  sns?: CastSNS;
+  snsLink?: string;
 
-  isNew?: boolean;                  // UI専用
-  sexinessLevel?: number;           // UI専用
-  isReception?: boolean;            // UI専用
-  stillwork?: boolean;              // UI専用（在籍フラグ）
+  // ステータス系
+  sexinessLevel?: number;
+  sexinessStrawberry?: string; // 🍓表現を追加
+  isReception?: boolean;
+  isActive: boolean;
+  isOnline?: boolean;
+  statuses?: CastStatus[];
+  voiceUrl?: string | null;
 
-  isActive: boolean;                // DB: is_active
-  voiceUrl?: string | null;         // DB: voice_url
-
-  statuses?: Status[];              // 複数の状態タグ（リレーション）
+  // UI用数値系
+  rating?: number;
+  reviewCount?: number;
+  bookingCount?: number;
+  responseRate?: number;
+  responseTime?: string;
 
   // 外部キー
-  mbtiId?: string | null;           // DB: mbti_id
-  animalId?: string | null;         // DB: animal_id
-  faceId?: string | null;           // DB: face_id
-  userId?: string | null;           // DB: user_id
+  mbtiId?: string | null;
+  animalId?: string | null;
+  faceId?: string | null;
+  userId?: string | null;
 
-  createdAt?: string;               // DB: created_at
+  // タグや特徴
+  tags?: string[];
+  mbtiType?: string;
+  faceType?: string[];
+
+  // 追加データ
+  profileDetail?: {
+    introduction: string;
+    experience: string;
+    specialties: string[];
+    hobbies: string[];
+  };
+
+  services?: { name: string; price: number }[];
+
+  // スケジュール/出勤
+  availability?: { [key: string]: string[] };
+
+  // レーダーチャート用
+  radarData?: Array<{
+    label: string;
+    value: number;
+    emoji: string;
+  }>;
+
+  createdAt?: string;
 }
 
+// ==============================
+// 診断検索用の拡張型
+// ==============================
+export type ScoredCast = Cast & {
+  compatibilityScore: number;
+};
 
 // ==============================
 // キャスト一覧用の軽量データ
@@ -91,13 +139,12 @@ export interface CastSummary {
   name: string;
   age?: number;
   height?: number;
-  weight?: number;
   catchCopy?: string;
   imageUrl?: string;
   galleryItems?: GalleryItem[];
   isWorking?: boolean;
+  isActive?: boolean;
   schedule?: string[];
-  stillwork?: boolean;
   diaryUrl?: string;
   snsUrl?: string;
   bloodType?: string;
@@ -114,24 +161,22 @@ export type FeatureCategory =
   | 'face'
   | 'personality'
   | 'appearance'
-  | 'service';   // ✅ サービスを追加
+  | 'service';
 
 export interface FeatureMaster {
-  id: string;                  // uuid
+  id: string;
   category: FeatureCategory;
-  name: string;                // 表示名
-  label_en?: string;
+  name: string;
   created_at?: string;
 }
 
-// キャストに紐づく特徴（DB: cast_features）
 export interface CastFeature {
   id: string;
   cast_id: string;
   feature_id: string;
   feature_master?: FeatureMaster;
   created_at?: string;
-  level?: 'NG' | '要相談' | '普通' | '得意'; // ✅ サービス用に追加
+  level?: 'NG' | '要相談' | '普通' | '得意';
 }
 
 // ==============================
@@ -147,38 +192,31 @@ export interface CastProfile {
   voiceUrl?: string | null;
   is_active: boolean;
 
-  // 単一選択（castsテーブルに外部キー）
-  mbtiId?: string;     // feature_master.id (category='MBTI')
-  animalId?: string;   // feature_master.id (category='animal')
-  faceId?: string;     // feature_master.id (category='face')
+  mbtiId?: string;
+  animalId?: string;
+  faceId?: string;
 
-  // 複数選択（cast_featuresテーブル経由）
-  personalityIds: string[]; // feature_master.id[] (category='personality')
-  appearanceIds: string[];  // feature_master.id[] (category='appearance')
+  personalityIds: string[];
+  appearanceIds: string[];
 
-  // 任意属性
   sexinessLevel?: number;
   bloodType?: string;
 
-  // 施術内容の4段階（UI用）
   services?: {
     [key: string]: 'NG' | '要相談' | '普通' | '得意';
   };
 
-  // SNS
   snsUrl?: string;
 
-  // 質問一覧
   questions?: {
     [key: string]: string;
   };
 
-  // ✅ 状態タグ
-  statuses?: Status[];
+  statuses?: CastStatus[];
 }
 
 // ==============================
-// DBから直接取れるキャストデータ (Supabase/Strapiレスポンス用)
+// DBから直接取れるキャストデータ
 // ==============================
 export interface StrapiCastItem {
   id: string | number;
@@ -186,13 +224,10 @@ export interface StrapiCastItem {
   name: string;
   age?: number;
   height?: number;
-  weight?: number;
   catchCopy?: string;
   imageUrl?: string;
-  isNew?: boolean;
   sexinessLevel?: number;
   isReception?: boolean;
-  stillwork?: boolean;
   is_active?: boolean;
 }
 
@@ -230,6 +265,9 @@ export interface CastDiary {
   createdAt: string;
 }
 
+// ==============================
+// 今日の出勤キャスト
+// ==============================
 export interface TodayCast {
   id: string;
   name: string;
@@ -241,4 +279,34 @@ export interface TodayCast {
   face_name?: string;
   start_datetime?: string;
   end_datetime?: string;
+}
+
+// ==============================
+// 動画
+// ==============================
+export interface VideoItem {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  duration: string;
+  viewCount: string;
+  uploadDate: string;
+  platform: 'youtube' | 'instagram' | 'tiktok';
+  url: string;
+  isNew?: boolean;
+  isPopular?: boolean;
+}
+
+// ==============================
+// レビュー
+// ==============================
+export interface Review {
+  id: string;
+  castId: string;
+  rating: number;
+  comment: string;
+  date: string;
+  author: string;
+  tags: string[];
 }

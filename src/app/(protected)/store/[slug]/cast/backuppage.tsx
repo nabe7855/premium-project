@@ -32,7 +32,7 @@ const PageContent = async ({ store }: { store: string }) => {
     return notFound();
   }
 
-  const activeCasts = casts.filter((cast) => cast.stillwork === true);
+  const activeCasts = casts.filter((cast) => cast.isActive === true);
 
   if (activeCasts.length === 0) {
     return <div className="p-4 text-gray-500">この店舗には現在キャストがいません。</div>;
@@ -57,9 +57,7 @@ const PageContent = async ({ store }: { store: string }) => {
             catchCopy={cast.catchCopy}
             age={cast.age}
             height={cast.height}
-            weight={cast.weight}
             imageUrl={cast.imageUrl ?? '/no-image.png'}
-            isNew={cast.isNew}
             isReception={cast.isReception ?? false}
           />
         ))}

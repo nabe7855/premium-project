@@ -8,7 +8,6 @@ interface CastFeatureRow {
     id: string;
     category: string;
     name: string;
-    label_en?: string;
   } | null;
 }
 
@@ -47,7 +46,6 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
         id,
         category,
         name,
-        label_en
       )
     `)
     .eq('cast_id', cast.id);

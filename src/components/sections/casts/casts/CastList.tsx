@@ -1,19 +1,22 @@
 'use client';
 
-//import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import { useCastSearch } from '@/hooks/useCastSearch';
 import CastCard from './CastCard';
 import SearchFilters from './SearchFilters';
 import SortOptions from './SortOptions';
-//import DiagnosisSection from './DiagnosisSection';
+import { getCastsByStore } from '@/lib/getCastsByStore';
+import { Cast } from '@/types/cast';
 
 interface CastListProps {
-  storeSlug?: string;
+  storeSlug: string; // ✅ 店舗slug必須
 }
 
-const CastList: React.FC<CastListProps> = ({}) => {
+const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
+  const [loading, setLoading] = useState(true);
+
   const {
     searchTerm,
     selectedTags,
@@ -24,7 +27,6 @@ const CastList: React.FC<CastListProps> = ({}) => {
     showFilters,
     favorites,
     filteredAndSortedCasts,
-    isLoading,
     isDiagnosisResult,
     setSearchTerm,
     setSelectedTags,
@@ -36,22 +38,30 @@ const CastList: React.FC<CastListProps> = ({}) => {
     handleCastSelect,
     toggleFavorite,
     resetFilters,
-  } = useCastSearch();
+    setOriginalCasts, // ✅ useCastSearch に追加しておく必要あり
+  } = useCastSearch({ storeSlug }); // ✅ storeSlug を渡す
+
+  // DBからキャスト取得
+  useEffect(() => {
+    const fetchCasts = async () => {
+      setLoading(true);
+      const result: Cast[] = await getCastsByStore(storeSlug);
+      setOriginalCasts(result); // ✅ hook に渡す
+      setLoading(false);
+    };
+    fetchCasts();
+  }, [storeSlug, setOriginalCasts]);
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    console.log('検索キーワード変更:', value);
-    setSearchTerm(value);
+    setSearchTerm(e.target.value);
   };
 
   const handleFilterToggle = () => {
-    console.log('フィルター表示切り替え:', !showFilters);
     setShowFilters(!showFilters);
   };
 
   const getActiveFilters = () => {
     const filters = [];
-
     if (searchTerm) filters.push({ type: 'search', value: `"${searchTerm}"` });
     if (selectedMBTI) filters.push({ type: 'mbti', value: selectedMBTI });
     if (selectedFaceTypes.length > 0)
@@ -60,13 +70,13 @@ const CastList: React.FC<CastListProps> = ({}) => {
       filters.push({ type: 'tags', value: `タグ${selectedTags.length}個` });
     if (ageRange[0] !== 20 || ageRange[1] !== 50)
       filters.push({ type: 'age', value: `${ageRange[0]}-${ageRange[1]}歳` });
-
     return filters;
   };
 
   const activeFilters = getActiveFilters();
 
-  if (isLoading) {
+  // 🔄 ローディング時
+  if (loading) {
     return (
       <section className="bg-neutral-50 py-16" id="casts">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -82,6 +92,7 @@ const CastList: React.FC<CastListProps> = ({}) => {
   return (
     <section className="bg-neutral-50 py-16" id="casts">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        {/* タイトル */}
         <div className="mb-12 text-center">
           <h2 className="mb-4 font-serif text-3xl font-bold text-neutral-800 md:text-4xl">
             {isDiagnosisResult
@@ -95,10 +106,8 @@ const CastList: React.FC<CastListProps> = ({}) => {
           </p>
         </div>
 
+        {/* 検索・フィルタ */}
         <div className="mb-8">
-          {/* 診断セクション（診断結果ページでは非表示） */}
-          {/* {!isDiagnosisResult && <DiagnosisSection />} */}
-
           <div className="mb-6 flex flex-col gap-4 lg:flex-row">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-neutral-400" />
@@ -108,10 +117,8 @@ const CastList: React.FC<CastListProps> = ({}) => {
                 value={searchTerm}
                 onChange={handleSearchChange}
                 className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                aria-label="キャスト検索"
               />
             </div>
-
             <button
               onClick={handleFilterToggle}
               className="flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 transition-all duration-200 hover:bg-neutral-50"
@@ -149,6 +156,7 @@ const CastList: React.FC<CastListProps> = ({}) => {
           />
         </div>
 
+        {/* 検索結果 */}
         <div className="mb-6">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="text-sm text-neutral-600">
@@ -156,7 +164,6 @@ const CastList: React.FC<CastListProps> = ({}) => {
                 ? `相性診断結果: ${filteredAndSortedCasts.length}名のキャストをご紹介`
                 : `${filteredAndSortedCasts.length}名のキャストが見つかりました`}
             </p>
-
             {activeFilters.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {activeFilters.map(({ value }, index) => (
@@ -172,8 +179,9 @@ const CastList: React.FC<CastListProps> = ({}) => {
           </div>
         </div>
 
+        {/* カードリスト */}
         <div className="grid grid-cols-2 gap-4 sm:gap-6">
-          <AnimatePresence mode="wait">
+          <AnimatePresence mode="sync">
             {filteredAndSortedCasts.map((cast, index) => (
               <CastCard
                 key={cast.id}
@@ -188,6 +196,7 @@ const CastList: React.FC<CastListProps> = ({}) => {
           </AnimatePresence>
         </div>
 
+        {/* 該当なし */}
         {filteredAndSortedCasts.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}

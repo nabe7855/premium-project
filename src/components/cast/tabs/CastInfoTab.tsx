@@ -9,7 +9,7 @@ interface Props {
 }
 
 const CastInfoTab: React.FC<Props> = ({ cast }) => {
-  const { name, height, weight, age, bloodType } = cast;
+  const { name, height, age, bloodType } = cast;
 
   const [features, setFeatures] = useState<CastFeature[]>([]);
 
@@ -37,8 +37,8 @@ const CastInfoTab: React.FC<Props> = ({ cast }) => {
             <tr className="border-t border-pink-200">
               <th className="bg-pink-100 px-3 py-2">身長・体重</th>
               <td className="bg-pink-50 px-3 py-2">
-                {height && weight
-                  ? `${height}cm・${weight}kg`
+                {height 
+                  ? `${height}cm`
                   : "ひみつ"}
               </td>
             </tr>

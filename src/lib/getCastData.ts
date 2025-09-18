@@ -56,11 +56,10 @@ export const getCastBySlug = async (slug: string): Promise<CastSummary | null> =
     slug: item.slug ?? '', // slugがなければ空文字
     name: item.name ?? '',
     catchCopy: item.catchCopy ?? '',
-    stillwork: item.stillwork ?? false, // stillworkがない場合はfalse
+    isActive: item.is_active ?? false, // is_activeがない場合はfalse
     imageUrl: item.imageUrl ?? '',
     galleryItems: galleryItems, // 修正済みのgalleryItemsを使用
     height: item.height ?? 0, // デフォルト値0
-    weight: item.weight ?? 0, // デフォルト値0
     age: item.age ?? 0, // デフォルト値0
     bloodType: item.bloodType ?? '', // デフォルト値空文字
     customID: item.customID ?? '', // デフォルト値空文字

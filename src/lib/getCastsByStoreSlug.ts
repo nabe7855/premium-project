@@ -1,95 +1,84 @@
-import { Cast, GalleryItem, CastSNS } from '@/types/cast';
-import qs from 'qs';
+import { supabase } from './supabaseClient';
+import { Cast } from '@/types/cast';
 
-interface StrapiCastItem {
+// Supabaseから返るキャスト型
+interface SupabaseCast {
   id: string;
   slug: string;
   name: string;
-  age: number;
-  height: number;
-  weight: number;
-  catchCopy?: string;
-  SNSURL?: string;
-  GalleryItem?: GalleryItem[];
-  isNew?: boolean;
-  sexinessLevel?: number;
-  stillwork?: boolean | string;
-  is_active?: boolean;
-  isReception?: boolean;
+  age?: number;
+  height?: number;
+  catch_copy?: string;
+  image_url?: string;
+  main_image_url?: string;
+  is_active: boolean;
+  sexiness_level?: number;
+  face?: { name: string } | null;
 }
 
-interface StrapiResponse {
-  data: StrapiCastItem[];
+// 中間テーブルの型
+interface CastMembershipRow {
+  id: string;
+  cast: SupabaseCast;
 }
 
 export const getCastsByStoreSlug = async (storeSlug: string): Promise<Cast[]> => {
-  const query = qs.stringify(
-    {
-      filters: {
-        store: {
-          slug: {
-            $eq: storeSlug,
-          },
-        },
-      },
-      populate: {
-        GalleryItem: true,
-        store: true,
-      },
-    },
-    { encodeValuesOnly: true },
-  );
+  // 1. 店舗IDを取得
+  const { data: store, error: storeError } = await supabase
+    .from('stores')
+    .select('id')
+    .eq('slug', storeSlug)
+    .single();
 
-  const apiUrl = `${process.env.NEXT_PUBLIC_STRAPI_API_URL}/api/casts?${query}`;
-  const token = process.env.NEXT_PUBLIC_STRAPI_API_TOKEN_READ;
-
-  const res = await fetch(apiUrl, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-    },
-    // ✅ 最適なキャッシュ設定（ISR）
-    next: {
-      revalidate: 60, // ← 60秒ごとにデータを再取得してページ再生成
-    },
-  });
-
-  if (!res.ok) {
-    console.error('❌ Strapi API fetch failed', res.status, res.statusText);
-    throw new Error('Strapi API fetch failed');
+  if (storeError || !store) {
+    console.error('❌ 店舗が見つかりません', storeError);
+    return [];
   }
 
-  const data: StrapiResponse = await res.json();
+  // 2. 店舗に所属するキャストを取得
+  const { data, error } = await supabase
+    .from('cast_store_memberships')
+    .select(`
+      id,
+      cast:casts (
+        id,
+        slug,
+        name,
+        age,
+        height,
+        catch_copy,
+        image_url,
+        main_image_url,
+        is_active,
+        sexiness_level,
+        face:face_id(name)
+      )
+    `)
+    .eq('store_id', store.id)
+    .returns<CastMembershipRow[]>(); // ✅ 型を明示
 
-  // ✅ stillwork が true または "true" のみ通す
-  const filtered = data.data.filter((item) => {
-    const val = item.stillwork;
-    return val === true || val === 'true';
-  });
+  if (error) {
+    console.error('❌ キャスト取得エラー', error);
+    return [];
+  }
 
-  return filtered.map((item): Cast => {
-    const galleryItems: GalleryItem[] = item.GalleryItem ?? [];
-    const firstImage = galleryItems.find((g) => g.imageUrl);
-
-    const sns: CastSNS = {
-      line: item.SNSURL ?? '',
-    };
-
-    return {
-      id: String(item.id),
-      slug: item.slug,
-      name: item.name,
-      age: item.age?? undefined,
-      height: item.height?? undefined,
-      weight: item.weight?? undefined,
-      catchCopy: item.catchCopy ?? undefined, // ✅ null を undefined に統一
-      imageUrl: firstImage?.imageUrl ?? undefined,
-      galleryItems,
-      sns,
-      isNew: item.isNew ?? false,
-      sexinessLevel: item.sexinessLevel ?? 0,
-      isReception: item.isReception,
-      isActive: item.is_active ?? true,
-      stillwork: true, // ここは filter 済みなので true に固定
-    };
-  });
+  // 3. 型を Cast にマッピング
+  return (
+    data?.map((item) => {
+      const c = item.cast;
+      return {
+        id: c.id,
+        slug: c.slug,
+        name: c.name,
+        age: c.age ?? undefined,
+        height: c.height ?? undefined,
+        catchCopy: c.catch_copy ?? undefined,
+        imageUrl: c.image_url ?? undefined,
+        mainImageUrl: c.main_image_url ?? undefined,
+        isActive: c.is_active ?? false,
+        sexinessLevel: c.sexiness_level ?? 0,
+        faceType: c.face ? [c.face.name] : [],
+      } as Cast;
+    }) ?? []
+  );
 };
