@@ -192,11 +192,12 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   onToggleFavorite={() => toggleFavorite(cast.id)}
   onCastSelect={() => handleCastSelect(cast)}
   sortBy={sortBy}
-  // ✅ null を undefined に変換
   audioSampleUrl={cast.voiceUrl ?? undefined}
   currentlyPlayingId={currentlyPlayingId}
   setCurrentlyPlayingId={setCurrentlyPlayingId}
+  storeSlug={storeSlug}   // ✅ 追加
 />
+
 
             ))}
           </AnimatePresence>

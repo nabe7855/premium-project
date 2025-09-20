@@ -2,10 +2,22 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, Heart, Share2, User, BookOpen, Calendar, MessageCircle, Play } from 'lucide-react';
-import { Cast, Review } from '@/types/caststypes';
+import {
+  ArrowLeft,
+  Heart,
+  Share2,
+  User,
+  BookOpen,
+  Calendar,
+  MessageCircle,
+  Play,
+} from 'lucide-react';
+
+import { Cast, Review, CastProfile as CastProfileType } from '@/types/cast';
 import { getReviewsByCastId } from '@/data/services/castService';
+import { getCastProfile } from '@/lib/getCastProfile'; // ← 追加
 import { useCastDetail } from '@/hooks/useCastDetail';
+
 import BookingModal from '../modals/BookingModal';
 import ReviewModal from '../modals/ReviewModal';
 import CastGallery from './detail/CastGallery';
@@ -23,6 +35,7 @@ interface CastDetailProps {
 
 const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
   const router = useRouter();
+  const [castProfile, setCastProfile] = useState<CastProfileType | null>(null);
   const [castReviews, setCastReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
 
@@ -41,6 +54,16 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     handleReviewModalClose,
   } = useCastDetail();
 
+  // ✅ プロフィール取得
+  useEffect(() => {
+    const fetchProfile = async () => {
+      const profile = await getCastProfile(cast.id);
+      setCastProfile(profile);
+    };
+    fetchProfile();
+  }, [cast.id]);
+
+  // ✅ レビュー取得
   useEffect(() => {
     const fetchReviews = async () => {
       try {
@@ -58,12 +81,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     fetchReviews();
   }, [cast.id]);
 
-  const tabs: {
-    id: TabType;
-    label: string;
-    icon: any;
-    count?: number;
-  }[] = [
+  // ✅ タブ
+  const tabs: { id: TabType; label: string; icon: any; count?: number }[] = [
     { id: 'basic', label: '基本情報', icon: User },
     { id: 'story', label: 'ストーリー', icon: BookOpen },
     { id: 'schedule', label: 'スケジュール', icon: Calendar },
@@ -75,27 +94,25 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     router.back();
   };
 
-  const allImages: string[] = [cast.avatar, ...cast.images];
+  // ✅ ギャラリー用画像配列（暫定）
+  const allImages: string[] = [
+    cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png',
+  ];
 
   const handleDragEnd = (_: unknown, info: any): void => {
     const swipeThreshold = 50;
     const swipeVelocityThreshold = 500;
 
-    if (Math.abs(info.offset.x) > swipeThreshold || Math.abs(info.velocity.x) > swipeVelocityThreshold) {
+    if (
+      Math.abs(info.offset.x) > swipeThreshold ||
+      Math.abs(info.velocity.x) > swipeVelocityThreshold
+    ) {
       if (info.offset.x > 0) {
         setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
       } else {
         setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
       }
     }
-  };
-
-  const handleDiaryClick = (): void => {
-    alert('写メ日記ページに遷移します（デモ）');
-  };
-
-  const handleSNSClick = (): void => {
-    alert('SNSページに遷移します（デモ）');
   };
 
   return (
@@ -143,16 +160,20 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onBookingOpen={handleBookingModalOpen}
-          onDiaryClick={handleDiaryClick}
-          onSNSClick={handleSNSClick}
+          onDiaryClick={() => alert('写メ日記ページに遷移します')}
+          onSNSClick={() => alert('SNSページに遷移します')}
         />
       </div>
 
       {/* タブコンテンツ */}
       <div className={`px-4 py-6 ${isSticky ? 'mt-[112px] sm:mt-32' : ''}`}>
-        {activeTab === 'basic' && <CastTabBasicInformation cast={cast} />}
+        {activeTab === 'basic' && castProfile && (
+          <CastTabBasicInformation cast={castProfile} />
+        )}
         {activeTab === 'story' && <CastTabStory cast={cast} />}
-        {activeTab === 'schedule' && <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />}
+        {activeTab === 'schedule' && (
+          <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />
+        )}
         {activeTab === 'reviews' && (
           <CastTabReviews
             castReviews={castReviews}
@@ -165,10 +186,18 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
 
       {/* モーダル */}
       {isBookingModalOpen && (
-        <BookingModal isOpen={isBookingModalOpen} castName={cast.name} onClose={handleBookingModalClose} />
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          castName={cast.name}
+          onClose={handleBookingModalClose}
+        />
       )}
       {isReviewModalOpen && (
-        <ReviewModal isOpen={isReviewModalOpen} castName={cast.name} onClose={handleReviewModalClose} />
+        <ReviewModal
+          isOpen={isReviewModalOpen}
+          castName={cast.name}
+          onClose={handleReviewModalClose}
+        />
       )}
     </div>
   );

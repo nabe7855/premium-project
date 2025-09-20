@@ -2,7 +2,7 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import { Cast } from '@/types/caststypes'
+import { Cast } from '@/types/cast'
 
 interface CastTabStoryProps {
   cast: Cast

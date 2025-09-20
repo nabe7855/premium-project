@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MessageCircle, Star } from 'lucide-react';
-import { Review } from '@/types/caststypes';
+import { Review } from '@/types/cast';
 
 interface CastTabReviewsProps {
   castReviews: Review[];

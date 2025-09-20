@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Play, ExternalLink, Heart, Share2, Eye, Calendar, Youtube, Instagram, TrendingUp } from 'lucide-react'
-import { Cast } from '@/types/caststypes'
+import { Cast } from '@/types/cast'
 
 interface VideoItem {
   id: string

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation'; // ✅ 追加
 import { motion } from 'framer-motion';
 import { Star, Clock, Play, Pause } from 'lucide-react';
 import { Cast, ScoredCast } from '@/types/cast';
@@ -8,9 +9,10 @@ import { Cast, ScoredCast } from '@/types/cast';
 interface CastCardProps {
   cast: Cast | ScoredCast;
   index: number;
+  storeSlug: string;
   isFavorite: boolean;
-  onToggleFavorite: () => void;
   onCastSelect: () => void;
+  onToggleFavorite: () => void;
   audioSampleUrl?: string;
   sortBy: string;
   currentlyPlayingId: string | null;
@@ -20,11 +22,15 @@ interface CastCardProps {
 const CastCard: React.FC<CastCardProps> = ({
   cast,
   index,
-  onCastSelect,
   audioSampleUrl,
   currentlyPlayingId,
   setCurrentlyPlayingId,
+  storeSlug, // ✅ ここ追加！
+  //isFavorite,
+  //onToggleFavorite,
 }) => {
+
+  const router = useRouter(); // ✅ 遷移用
   const today = new Date().toISOString().split('T')[0];
   const todaySchedules = cast.availability?.[today] ?? [];
   const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
@@ -34,7 +40,7 @@ const CastCard: React.FC<CastCardProps> = ({
   // 音声再生管理
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [audioError, setAudioError] = useState(false); // ✅ エラー時フラグ
+  const [audioError, setAudioError] = useState(false);
 
   // デバッグ: URL確認
   useEffect(() => {
@@ -52,7 +58,7 @@ const CastCard: React.FC<CastCardProps> = ({
     } else {
       setCurrentlyPlayingId(cast.id);
       void audioRef.current.play().catch((err) => {
-        console.error("❌ Audio再生エラー:", err);
+        console.error('❌ Audio再生エラー:', err);
         setAudioError(true);
       });
       setIsPlaying(true);
@@ -71,6 +77,15 @@ const CastCard: React.FC<CastCardProps> = ({
       setIsPlaying(false);
     }
   }, [currentlyPlayingId, cast.id, isPlaying]);
+
+  // ✅ 詳細ページへ遷移
+const handleNavigate = () => {
+  if (!storeSlug || !cast.slug) {
+    console.error("❌ storeSlug または slug が不足:", cast);
+    return;
+  }
+  router.push(`/store/${storeSlug}/cast/${cast.slug}`);
+};
 
   // 評価セクション
   const scoreSection = hasCompatibilityScore ? (
@@ -100,7 +115,7 @@ const CastCard: React.FC<CastCardProps> = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       className="shadow-soft hover:shadow-luxury group cursor-pointer rounded-xl bg-white transition-all duration-300"
-      onClick={onCastSelect}
+      onClick={handleNavigate} // ✅ 遷移処理
     >
       <div className="relative aspect-[3/4]">
         <div className="h-full w-full overflow-hidden rounded-t-xl">
@@ -119,36 +134,36 @@ const CastCard: React.FC<CastCardProps> = ({
           </div>
         )}
 
-{/* ▶️ 音声再生ボタン or 音声なし */}
-{audioSampleUrl && !audioError ? (
-  <>
-    <button
-      onClick={handleAudioToggle}
-      className="absolute bottom-2 right-2 rounded-full bg-white p-2 shadow-md hover:bg-primary/10 transition-colors duration-200"
-      aria-label="音声サンプルを再生"
-    >
-      {isPlaying ? (
-        <Pause className="h-5 w-5 text-primary" />
-      ) : (
-        <Play className="h-5 w-5 text-primary" />
-      )}
-    </button>
+        {/* ▶️ 音声再生ボタン or 音声なし */}
+        {audioSampleUrl && !audioError ? (
+          <>
+            <button
+              onClick={handleAudioToggle}
+              className="absolute bottom-2 right-2 rounded-full bg-white p-2 shadow-md hover:bg-primary/10 transition-colors duration-200"
+              aria-label="音声サンプルを再生"
+            >
+              {isPlaying ? (
+                <Pause className="h-5 w-5 text-primary" />
+              ) : (
+                <Play className="h-5 w-5 text-primary" />
+              )}
+            </button>
 
-    <audio
-      ref={audioRef}
-      src={audioSampleUrl}
-      preload="none"
-      onError={() => {
-        console.error("❌ Audioロード失敗:", audioSampleUrl);
-        setAudioError(true); // ← エラーが出たら「音声なし」UIに切り替え
-      }}
-    />
-  </>
-) : (
-  <div className="absolute bottom-2 right-2 rounded-full bg-gray-200 px-3 py-1 text-xs text-gray-600 shadow-md">
-    🎤 音声なし
-  </div>
-)}
+            <audio
+              ref={audioRef}
+              src={audioSampleUrl}
+              preload="none"
+              onError={() => {
+                console.error('❌ Audioロード失敗:', audioSampleUrl);
+                setAudioError(true);
+              }}
+            />
+          </>
+        ) : (
+          <div className="absolute bottom-2 right-2 rounded-full bg-gray-200 px-3 py-1 text-xs text-gray-600 shadow-md">
+            🎤 音声なし
+          </div>
+        )}
       </div>
 
       {/* ===================== */}
@@ -180,7 +195,7 @@ const CastCard: React.FC<CastCardProps> = ({
           )}
           {cast.faceType && cast.faceType.length > 0 && (
             <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-700">
-              顔型: {cast.faceType.join(", ")}
+              顔型: {cast.faceType.join(', ')}
             </span>
           )}
         </div>
@@ -208,8 +223,8 @@ const CastCard: React.FC<CastCardProps> = ({
           <div className="flex items-center text-xs text-green-600">
             <Clock className="mr-1 h-3 w-3" />
             <span>
-              {todaySchedules.slice(0, 2).join("・")}
-              {todaySchedules.length > 2 && "..."}
+              {todaySchedules.slice(0, 2).join('・')}
+              {todaySchedules.length > 2 && '...'}
             </span>
           </div>
         )}

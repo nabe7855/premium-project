@@ -37,19 +37,23 @@ export interface Store {
 export interface Status {
   id: string;             // uuid
   name: string;           // 表示名（例: 新人, 店長おすすめ）
-  label_color?: string;   // バッジ背景色
-  text_color?: string;    // バッジ文字色
+  label_color?: string | null; // バッジ背景色
+  text_color?: string | null;  // バッジ文字色
   created_at?: string;
 }
 
+// ==============================
 // キャストに紐づく状態（DB: cast_statuses）
+// ==============================
 export interface CastStatus {
-  id: string;
-  cast_id: string;
-  status_id: string;
+  id: string;             // uuid
+  cast_id: string;        // 紐づくキャストID
+  status_id: string;      // 紐づくステータスID
   is_active: boolean;     // ON/OFF フラグ
-  status_master: Status;  // 必須
   created_at?: string;
+
+  // 🔽 リレーションでJOINして取得する
+  status_master?: Status | null;
 }
 
 // ==============================

@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { Cast, Review } from '@/types/caststypes'
+import { Cast, Review, CastProfile } from '@/types/cast'
 import CastTabBasicInformation from './CastTabBasicInformation'
 import CastTabStory from './CastTabStory'
 import CastTabSchedule from './CastTabSchedule'
@@ -17,6 +17,7 @@ interface Tab {
 
 interface CastDetailTabsProps {
   cast: Cast
+  castProfile?: CastProfile   // ✅ 詳細用のCastProfileを追加
   activeTab: 'basic' | 'story' | 'schedule' | 'reviews' | 'videos'
   tabs: Tab[]
   isSticky: boolean
@@ -29,6 +30,7 @@ interface CastDetailTabsProps {
 
 export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
   cast,
+  castProfile,
   activeTab,
   castReviews = [],
   isLoadingReviews,
@@ -39,9 +41,10 @@ export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
     <div className="space-y-4 sm:space-y-6">
       {/* タブコンテンツ */}
       <div>
-        {activeTab === 'basic' && (
-          <CastTabBasicInformation cast={cast} />
-        )}
+{/* CastProfileを渡す */}
+{activeTab === 'basic' && castProfile && (
+  <CastTabBasicInformation cast={castProfile} />
+)}
 
         {activeTab === 'story' && (
           <CastTabStory cast={cast} />
