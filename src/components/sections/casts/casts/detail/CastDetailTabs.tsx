@@ -43,7 +43,7 @@ export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
       <div>
 {/* CastProfileを渡す */}
 {activeTab === 'basic' && castProfile && (
-  <CastTabBasicInformation cast={castProfile} />
+  <CastTabBasicInformation cast={cast} />
 )}
 
         {activeTab === 'story' && (
