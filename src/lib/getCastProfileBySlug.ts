@@ -1,10 +1,11 @@
 // lib/getCastProfileBySlug.ts
-import { supabase } from './supabaseClient';
-import { Cast } from '@/types/cast';
-import { normalizeCast } from './normalizeCast';
+import { supabase } from './supabaseClient'
+import { Cast } from '@/types/cast'
+import { normalizeCast } from './normalizeCast'
+import { getCastQuestions } from './getCastQuestions'
 
 export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
-  console.log("🔍 getCastProfileBySlug called with slug:", slug);
+  console.log('🔍 getCastProfileBySlug called with slug:', slug)
 
   // 1. キャスト本体
   const { data: cast, error: castError } = await supabase
@@ -27,11 +28,14 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       created_at
     `)
     .eq('slug', slug)
-    .maybeSingle();
+    .maybeSingle()
+
+  console.log('📦 cast data:', cast)
+  console.log('❌ cast error:', castError)
 
   if (castError || !cast) {
-    console.error('❌ cast取得エラー:', castError);
-    return null;
+    console.error('🚨 キャストが見つかりません')
+    return null
   }
 
   // 2. ギャラリー画像
@@ -39,14 +43,12 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
     .from('gallery_items')
     .select(`id, image_url, caption, is_main, created_at`)
     .eq('cast_id', cast.id)
-    .order('created_at', { ascending: false });
+    .order('created_at', { ascending: false })
 
-  if (galleryError) {
-    console.error('❌ gallery取得エラー:', galleryError);
-  }
+  console.log('🖼️ gallery data:', gallery)
+  console.log('❌ gallery error:', galleryError)
 
-  // ✅ メイン画像を決定（is_main優先、なければ最新の1枚）
-  const mainImage = gallery?.find((g) => g.is_main) ?? gallery?.[0];
+  const mainImage = gallery?.find((g) => g.is_main) ?? gallery?.[0]
 
   // 3. 特徴データ
   const { data: features, error: featureError } = await supabase
@@ -61,11 +63,10 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
         label_en
       )
     `)
-    .eq('cast_id', cast.id);
+    .eq('cast_id', cast.id)
 
-  if (featureError) {
-    console.error('❌ features取得エラー:', featureError);
-  }
+  console.log('⭐ features data:', features)
+  console.log('❌ features error:', featureError)
 
   // 4. ステータス
   const { data: statuses, error: statusError } = await supabase
@@ -83,27 +84,31 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
         text_color
       )
     `)
-    .eq('cast_id', cast.id);
+    .eq('cast_id', cast.id)
 
-  if (statusError) {
-    console.error('❌ statuses取得エラー:', statusError);
-  }
+  console.log('📋 statuses data:', statuses)
+  console.log('❌ statuses error:', statusError)
 
-  // ✅ デバッグログ
-  console.log("✅ castデータ:", cast);
-  console.log("🖼️ gallery:", gallery);
-  console.log("⭐ mainImage:", mainImage);
-  console.log("✅ featuresデータ:", features);
-  console.log("✅ statusesデータ:", statuses);
+  // 5. Q&A
+  console.log('🔎 Fetching castQuestions for cast.id:', cast.id)
+  const castQuestions = await getCastQuestions(cast.id)
+  console.log('❓ castQuestions:', castQuestions)
 
-  // 5. 整形して返却
-  return normalizeCast(
+  // 6. 整形して返却
+  const normalized = normalizeCast(
     {
       ...cast,
-      main_image_url: mainImage?.image_url ?? null, // ✅ メイン画像
+      main_image_url: mainImage?.image_url ?? null,
     },
     features ?? [],
     statuses ?? [],
-    gallery ?? [] // ✅ ここで第4引数に渡す
-  );
+    gallery ?? []
+  )
+
+  console.log('✅ normalized cast:', normalized)
+
+  return {
+    ...normalized,
+    castQuestions: castQuestions ?? [],
+  }
 }

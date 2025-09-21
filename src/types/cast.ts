@@ -115,7 +115,7 @@ export interface Cast {
   // タグや特徴（UI用）
   tags?: string[];
   mbtiType?: string;        // MBTI名
-  animalName?: string;      // 動物占い名 ✅ 追加
+  animalName?: string;      // 動物占い名
   faceType?: string[];      // 顔型名リスト
 
   // ✅ 特徴IDリスト
@@ -157,8 +157,10 @@ export interface Cast {
 
   // 🆕 最新のつぶやき（24h以内の最新1件）
   latestTweet?: string | null;
-}
 
+  // 🆕 Q&A一覧
+  castQuestions?: CastQuestion[];
+}
 
 
 

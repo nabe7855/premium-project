@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { getCastBySlug } from "@/lib/getCastData";
+import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import CastHeader from "@/components/cast/CastHeader";
 import CastTabs from "@/components/cast/CastTabs";
 
@@ -15,9 +15,9 @@ const CastDetailPage = ({ params }: CastDetailPageProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const data = await getCastBySlug(cast);
-      if (data) {
-        setCastData(data);
+      const cast = await getCastProfileBySlug(params.cast);
+      if (cast?.isActive) {
+        setCastData(cast);
       }
     };
     fetchData();

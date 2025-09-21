@@ -70,9 +70,10 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     if (tweetError) {
       console.error('❌ つぶやき取得エラー:', tweetError.message);
     } else if (tweets) {
-      // cast_id ごとに最新1件だけ保持
+      // cast_id ごとに最新 created_at を持つものを保持
       for (const t of tweets) {
-        if (!tweetsMap[t.cast_id]) {
+        const existing = tweetsMap[t.cast_id];
+        if (!existing) {
           tweetsMap[t.cast_id] = t.content;
         }
       }

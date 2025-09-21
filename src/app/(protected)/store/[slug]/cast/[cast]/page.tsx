@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug'; // ✅ Cast を返す
+import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
+import { getCastQuestions } from '@/lib/getCastQuestions'; // 👈 追加
 import CastDetail from '@/components/sections/casts/casts/CastDetail';
 import Footer from '@/components/sections/casts/ui/Footer';
 import { Cast } from '@/types/cast';
@@ -26,18 +27,25 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title: `${cast.name} - ${cast.catchCopy ?? ''}`,
       description: cast.catchCopy ?? '',
-      images: cast.imageUrl ? [cast.imageUrl] : [], // ✅ imageUrl に統一
+      images: cast.imageUrl ? [cast.imageUrl] : [],
     },
   };
 }
 
 // ✅ ページ本体
 export default async function CastDetailPage({ params }: Props) {
-  const cast: Cast | null = await getCastProfileBySlug(params.cast);
+  let cast: Cast | null = await getCastProfileBySlug(params.cast);
 
   if (!cast) {
     notFound();
   }
+
+  // ✅ Q&A を追加取得
+  const castQuestions = await getCastQuestions(cast.id);
+  cast = { ...cast, castQuestions };
+
+  // ✅ デバッグログ
+  console.log("🟢 CastDetailPage loaded cast:", cast);
 
   return (
     <>

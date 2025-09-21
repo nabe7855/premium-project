@@ -1,20 +1,10 @@
-import { supabase } from './supabaseClient';
-import { CastQuestion, QuestionMaster } from '@/types/cast';
+// lib/getCastQuestions.ts
+import { supabase } from './supabaseClient'
+import { CastQuestion, QuestionMaster } from '@/types/cast'
 
-export async function getCastQuestions(userId: string): Promise<CastQuestion[]> {
-  // 1. まずキャストを特定
-  const { data: cast, error: castError } = await supabase
-    .from('casts')
-    .select('id')
-    .eq('user_id', userId)
-    .maybeSingle();
+export async function getCastQuestions(castId: string): Promise<CastQuestion[]> {
+  console.log('🔍 getCastQuestions called with castId:', castId)
 
-  if (castError || !cast) {
-    console.error('❌ cast not found for user:', userId, castError);
-    return [];
-  }
-
-  // 2. 特定した cast.id で質問を取得
   const { data, error } = await supabase
     .from('cast_questions')
     .select(`
@@ -22,6 +12,8 @@ export async function getCastQuestions(userId: string): Promise<CastQuestion[]> 
       cast_id,
       question_id,
       answer,
+      created_at,
+      updated_at,
       question:question_master (
         id,
         text,
@@ -30,30 +22,35 @@ export async function getCastQuestions(userId: string): Promise<CastQuestion[]> 
         created_at
       )
     `)
-    .eq('cast_id', cast.id);
+    .eq('cast_id', castId)
+    .order('created_at', { ascending: true })
 
   if (error) {
-    console.error('❌ getCastQuestions error:', error);
-    return [];
+    console.error('❌ getCastQuestions error:', error)
+    return []
   }
 
-  return (data ?? []).map((row: any): CastQuestion => {
-  const q = row.question as QuestionMaster | null;
+  console.log('📦 raw cast_questions:', data)
 
-  return {
-    id: row.id,
-    cast_id: row.cast_id,
-    question_id: row.question_id,
-    answer: row.answer ?? undefined,
-    question: q
-      ? {
-          id: String(q.id),
-          text: String(q.text),
-          category: q.category ?? undefined,
-          is_active: q.is_active ?? false,
-          created_at: q.created_at ?? undefined,
-        }
-      : undefined,
-  };
-});
+  return (data ?? []).map((row: any): CastQuestion => {
+    const q = row.question as QuestionMaster | null
+
+    return {
+      id: row.id,
+      cast_id: row.cast_id,
+      question_id: row.question_id,
+      answer: row.answer ?? undefined,
+      created_at: row.created_at,
+      updated_at: row.updated_at ?? undefined,
+      question: q
+        ? {
+            id: String(q.id),
+            text: String(q.text),
+            category: q.category ?? undefined,
+            is_active: q.is_active ?? false,
+            created_at: q.created_at ?? undefined,
+          }
+        : undefined,
+    }
+  })
 }

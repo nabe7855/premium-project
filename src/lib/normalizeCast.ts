@@ -1,10 +1,11 @@
-import { Cast, CastStatus, Status, ServiceLevel, GalleryItem } from '@/types/cast';
+import { Cast, CastStatus, Status, ServiceLevel, GalleryItem, CastQuestion } from '@/types/cast';
 
 export function normalizeCast(
   cast: any,
   features: any[],
   statuses: any[],
-  gallery: any[] = []
+  gallery: any[] = [],
+  castQuestions: CastQuestion[] = [] // 🆕 Q&Aを追加
 ): Cast {
   // ✅ personality
   const personalityFeatures = features.filter(
@@ -115,5 +116,8 @@ export function normalizeCast(
     services,
     bloodType: cast.blood_type ?? undefined,
     createdAt: cast.created_at ?? undefined,
+
+    // 🆕 Q&Aを正しく統合
+    castQuestions: castQuestions,
   };
 }
