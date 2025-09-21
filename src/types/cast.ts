@@ -410,3 +410,4 @@ export interface CastSchedule {
   start: string; // ISO文字列
   end: string;   // ISO文字列
 }
+

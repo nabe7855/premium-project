@@ -32,3 +32,11 @@ export interface QuickInfo {
   tomorrowRecommended: number;
   availableNow: number;
 }
+
+
+// types/schedule.ts
+export interface Schedule {
+  work_date: string;          // YYYY-MM-DD
+  start_datetime: string | null;
+  end_datetime: string | null;
+}

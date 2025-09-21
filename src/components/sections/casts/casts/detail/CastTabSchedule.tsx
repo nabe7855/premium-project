@@ -1,39 +1,49 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Cast } from '@/types/cast'
+import { getCastSchedules } from '@/lib/getCastSchedules'
+import { convertSchedulesToAvailability } from '@/utils/scheduleUtils'
 
 interface CastTabScheduleProps {
   cast: Cast
   onBookingOpen: () => void
 }
 
-// 直近2週間のスケジュールを取得する関数
-const getTwoWeeksSchedule = (availability: { [key: string]: string[] } = {}) => {
-  const schedule: { [key: string]: string[] } = {}
-  const today = new Date()
+const CastTabSchedule: React.FC<CastTabScheduleProps> = ({ cast, onBookingOpen }) => {
+  const [availability, setAvailability] = useState<{ [key: string]: string[] }>({})
 
-  // 直近14日間のスケジュールを生成
-  for (let i = 0; i < 14; i++) {
-    const date = new Date(today)
-    date.setDate(today.getDate() + i)
-    const dateString = date.toISOString().split('T')[0]
+  // ✅ DBからスケジュール取得
+  useEffect(() => {
+    (async () => {
+      const schedules = await getCastSchedules(cast.id) // customIDならここ修正
+      setAvailability(convertSchedulesToAvailability(schedules))
+    })()
+  }, [cast.id])
 
-    // 既存のスケジュールがあればそれを使用、なければ空配列
-    schedule[dateString] = availability[dateString] || []
+  // 直近2週間を埋める（休みは空配列になる）
+  const getTwoWeeksSchedule = (availability: { [key: string]: string[] } = {}) => {
+    const schedule: { [key: string]: string[] } = {}
+    const today = new Date()
+
+    for (let i = 0; i < 14; i++) {
+      const date = new Date(today)
+      date.setDate(today.getDate() + i)
+      const dateString = date.toISOString().split('T')[0]
+      schedule[dateString] = availability[dateString] || []
+    }
+
+    return schedule
   }
 
-  return schedule
-}
-
-const CastTabSchedule: React.FC<CastTabScheduleProps> = ({ cast, onBookingOpen }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft"
     >
+      {/* 予約ボタン */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
         <h3 className="text-lg sm:text-xl font-semibold text-neutral-800">出勤スケジュール</h3>
         <button
@@ -44,8 +54,9 @@ const CastTabSchedule: React.FC<CastTabScheduleProps> = ({ cast, onBookingOpen }
         </button>
       </div>
 
+      {/* スケジュール一覧 */}
       <div className="space-y-3 sm:space-y-4 max-h-96 overflow-y-auto">
-        {Object.entries(getTwoWeeksSchedule(cast.availability ?? {})).map(([date, times]) => {
+        {Object.entries(getTwoWeeksSchedule(availability)).map(([date, times]) => {
           const dateObj = new Date(date)
           const isToday = date === new Date().toISOString().split('T')[0]
           const isTomorrow = (() => {
@@ -69,6 +80,7 @@ const CastTabSchedule: React.FC<CastTabScheduleProps> = ({ cast, onBookingOpen }
                   : 'border-neutral-200 hover:border-neutral-300'
               }`}
             >
+              {/* 日付ラベル */}
               <div className="mb-2 sm:mb-0">
                 <div
                   className={`font-medium text-sm sm:text-base flex items-center ${
@@ -103,6 +115,8 @@ const CastTabSchedule: React.FC<CastTabScheduleProps> = ({ cast, onBookingOpen }
                   )}
                 </div>
               </div>
+
+              {/* 出勤時間 or お休み */}
               <div className="flex flex-wrap gap-1 sm:gap-2">
                 {times.length > 0 ? (
                   times.map((time) => (
