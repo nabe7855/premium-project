@@ -52,6 +52,33 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
+  // まず全キャストIDを抽出
+  const castIds = (data ?? [])
+    .map((item: any) => item.casts?.id)
+    .filter((id: string | undefined): id is string => !!id);
+
+  // 🆕 各キャストの最新つぶやきを取得
+  let tweetsMap: Record<string, string> = {};
+  if (castIds.length > 0) {
+    const { data: tweets, error: tweetError } = await supabase
+      .from('cast_tweets')
+      .select('cast_id, content, created_at, expires_at')
+      .in('cast_id', castIds)
+      .gt('expires_at', new Date().toISOString())
+      .order('created_at', { ascending: false });
+
+    if (tweetError) {
+      console.error('❌ つぶやき取得エラー:', tweetError.message);
+    } else if (tweets) {
+      // cast_id ごとに最新1件だけ保持
+      for (const t of tweets) {
+        if (!tweetsMap[t.cast_id]) {
+          tweetsMap[t.cast_id] = t.content;
+        }
+      }
+    }
+  }
+
   return (data ?? [])
     .map((item: any) => {
       const cast = item.casts;
@@ -90,10 +117,12 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         isActive: cast.is_active,
         mbtiType: cast.mbti?.name ?? undefined,
         faceType: cast.face ? [cast.face.name] : [],
-        statuses, // ✅ 型安全にした CastStatus[]
+        statuses,
         sexinessLevel: cast.sexiness_level ?? 3,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
-        voiceUrl: urlData?.publicUrl ?? undefined, // 🎤 音声URL
+        voiceUrl: urlData?.publicUrl ?? undefined,
+        // 🆕 最新つぶやき
+        latestTweet: tweetsMap[cast.id] ?? null,
       };
 
       return mapped;

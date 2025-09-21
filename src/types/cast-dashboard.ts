@@ -43,3 +43,11 @@ export interface CastSchedule {
   start_datetime: string;   // ISO形式
   end_datetime: string;     // ISO形式
 }
+
+export interface CastTweet {
+  id: string;
+  cast_id: string;
+  content: string;
+  created_at: string;
+  expires_at: string;
+}

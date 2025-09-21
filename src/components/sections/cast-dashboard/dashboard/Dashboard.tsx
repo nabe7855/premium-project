@@ -174,10 +174,16 @@ export default function Dashboard({ cast }: DashboardProps) {
       </div>
 
       {/* Main Content */}
-      <main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
-        {activeTab === 'dashboard' && (
-          <DashboardHome castName={castState.name} performanceData={performanceData} levelData={levelData} badgesData={badgesData} />
-        )}
+<main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+  {activeTab === 'dashboard' && (
+    <DashboardHome
+      castName={castState.name}
+      castId={castState.id}                // ← 追加
+      performanceData={performanceData}
+      levelData={levelData}
+      badgesData={badgesData}
+    />
+  )}
 
         {activeTab === 'schedule' && <ScheduleSection diaries={diaries} />}
         {activeTab === 'diary' && <DiarySection diaries={diaries} showEditor={showDiaryEditor} castId={cast.id} onSave={() => {}} onDelete={() => {}} onToggleEditor={setShowDiaryEditor} />}

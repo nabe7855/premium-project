@@ -43,44 +43,81 @@ const CastTabBasicInformation: React.FC<CastTabBasicInformationProps> = ({ cast 
         </div>
       )}
 
-      {/* 基本情報カード */}
-      <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft">
-        <h3 className="text-lg sm:text-xl font-semibold mb-4 sm:mb-6 text-neutral-800">基本情報</h3>
-        <div className="grid grid-cols-2 gap-4 sm:gap-6">
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex justify-between">
-              <span className="text-sm sm:text-base text-neutral-600">年齢</span>
-              <span className="text-sm sm:text-base font-medium text-neutral-800">
-                {cast.age ? `${cast.age}歳` : '未登録'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm sm:text-base text-neutral-600">身長</span>
-              <span className="text-sm sm:text-base font-medium text-neutral-800">
-                {cast.height ? `${cast.height}cm` : '未登録'}
-              </span>
-            </div>
-          </div>
-          <div className="space-y-3 sm:space-y-4">
-            <div className="flex justify-between">
-              <span className="text-sm sm:text-base text-neutral-600">血液型</span>
-              <span className="text-sm sm:text-base font-medium text-neutral-800">
-                {cast.bloodType ?? '未登録'}
-              </span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-sm sm:text-base text-neutral-600">活動状況</span>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-medium ${
-                  cast.isActive ? 'bg-green-100 text-green-700' : 'bg-neutral-100 text-neutral-600'
-                }`}
-              >
-                {cast.isActive ? '稼働中' : 'お休み'}
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+ {/* 基本情報カード */}
+<div className="bg-white rounded-2xl p-6 shadow-lg">
+  <h3 className="text-xl font-bold mb-6 text-pink-600 flex items-center gap-2">
+    <span>🌸</span> 基本情報
+  </h3>
+
+  <div className="grid grid-cols-2 gap-6">
+    {/* 年齢 */}
+    <div className="flex justify-between items-center">
+      <span className="text-sm sm:text-base text-neutral-500">年齢</span>
+      <span
+        className="px-3 py-1 rounded-full text-sm font-semibold bg-pink-50 text-pink-600 shadow-sm"
+      >
+        {cast.age ? `${cast.age}歳` : '秘密❤'}
+      </span>
+    </div>
+
+    {/* 血液型 */}
+    <div className="flex justify-between items-center">
+      <span className="text-sm sm:text-base text-neutral-500">血液型</span>
+      <span
+        className="px-3 py-1 rounded-full text-sm font-semibold bg-purple-50 text-purple-600 shadow-sm"
+      >
+        {cast.bloodType ?? '秘密❤'}
+      </span>
+    </div>
+
+    {/* 身長 */}
+    <div className="flex justify-between items-center">
+      <span className="text-sm sm:text-base text-neutral-500">身長</span>
+      <span
+        className="px-3 py-1 rounded-full text-sm font-semibold bg-blue-50 text-blue-600 shadow-sm"
+      >
+        {cast.height ? `${cast.height}cm` : '秘密❤'}
+      </span>
+    </div>
+  </div>
+</div>
+
+
+
+{/* 性格 */} 
+{cast.personalityNames && cast.personalityNames.length > 0 && (
+  <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft">
+    <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-pink-600">✨ 性格</h4>
+    <div className="flex flex-wrap gap-3">
+      {cast.personalityNames.map((name, idx) => (
+        <span
+          key={idx}
+          className="px-4 py-1.5 rounded-full text-sm bg-pink-50 text-pink-700 font-medium shadow-sm hover:bg-pink-100 transition"
+        >
+          💕 {name}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
+
+{/* 外見 */} 
+{cast.appearanceNames && cast.appearanceNames.length > 0 && (
+  <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft">
+    <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4 text-purple-600">🌸 外見</h4>
+    <div className="flex flex-wrap gap-3">
+      {cast.appearanceNames.map((name, idx) => (
+        <span
+          key={idx}
+          className="px-4 py-1.5 rounded-full text-sm bg-purple-50 text-purple-700 font-medium shadow-sm hover:bg-purple-100 transition"
+        >
+          ✨ {name}
+        </span>
+      ))}
+    </div>
+  </div>
+)}
+
 
       {/* 自己紹介 */}
       <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft">
@@ -91,28 +128,36 @@ const CastTabBasicInformation: React.FC<CastTabBasicInformationProps> = ({ cast 
       </div>
 
 {/* サービススキル */}
-{cast.services &&
-  !Array.isArray(cast.services) &&
-  Object.keys(cast.services).length > 0 && (
-    <div className="bg-white rounded-xl sm:rounded-2xl p-4 sm:p-6 shadow-soft">
-      <h4 className="text-base sm:text-lg font-semibold mb-3 text-neutral-800">サービス対応</h4>
-      <div className="flex flex-wrap gap-2">
-        {Object.entries(cast.services).map(([service, level]) => {
-          const lvl = level as 'NG' | '要相談' | '普通' | '得意'; // 👈 型を明示
-          return (
-            <span
-              key={service}
-              className={`px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm font-medium ${getServiceColor(
-                lvl
-              )}`}
-            >
-              {service}：{lvl}
+{Array.isArray(cast.services) && cast.services.length > 0 && (
+  <div className="bg-gradient-to-br from-pink-50 via-white to-purple-50 rounded-2xl p-6 shadow-lg">
+    <h4 className="text-lg font-bold mb-4 text-pink-700">サービス対応</h4>
+    <ul className="space-y-3">
+      {cast.services.map((service, idx) => (
+        <li
+          key={idx}
+          className="bg-white rounded-xl shadow-md px-4 py-3 flex items-center justify-between hover:shadow-pink-200 transition"
+        >
+          {/* 左側（アイコン＋名前） */}
+          <div className="flex items-center gap-2">
+            <span className="text-pink-400 text-lg">💖</span>
+            <span className="text-sm sm:text-base font-medium text-neutral-800">
+              {service.name}
             </span>
-          );
-        })}
-      </div>
-    </div>
-  )}
+          </div>
+          {/* 右側（レベルバッジ） */}
+          <span
+            className={`px-3 py-1 rounded-full text-xs sm:text-sm font-semibold ${getServiceColor(
+              service.level
+            )}`}
+          >
+            {service.level}
+          </span>
+        </li>
+      ))}
+    </ul>
+  </div>
+)}
+
 
 
       {/* ステータス */}

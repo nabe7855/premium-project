@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation'; // ✅ 追加
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Star, Clock, Play, Pause } from 'lucide-react';
 import { Cast, ScoredCast } from '@/types/cast';
@@ -25,12 +25,9 @@ const CastCard: React.FC<CastCardProps> = ({
   audioSampleUrl,
   currentlyPlayingId,
   setCurrentlyPlayingId,
-  storeSlug, // ✅ ここ追加！
-  //isFavorite,
-  //onToggleFavorite,
+  storeSlug,
 }) => {
-
-  const router = useRouter(); // ✅ 遷移用
+  const router = useRouter();
   const today = new Date().toISOString().split('T')[0];
   const todaySchedules = cast.availability?.[today] ?? [];
   const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
@@ -41,11 +38,6 @@ const CastCard: React.FC<CastCardProps> = ({
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioError, setAudioError] = useState(false);
-
-  // デバッグ: URL確認
-  useEffect(() => {
-    console.log(`🎧 ${cast.name} の音声URL:`, audioSampleUrl);
-  }, [audioSampleUrl, cast.name]);
 
   const handleAudioToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -79,13 +71,13 @@ const CastCard: React.FC<CastCardProps> = ({
   }, [currentlyPlayingId, cast.id, isPlaying]);
 
   // ✅ 詳細ページへ遷移
-const handleNavigate = () => {
-  if (!storeSlug || !cast.slug) {
-    console.error("❌ storeSlug または slug が不足:", cast);
-    return;
-  }
-  router.push(`/store/${storeSlug}/cast/${cast.slug}`);
-};
+  const handleNavigate = () => {
+    if (!storeSlug || !cast.slug) {
+      console.error('❌ storeSlug または slug が不足:', cast);
+      return;
+    }
+    router.push(`/store/${storeSlug}/cast/${cast.slug}`);
+  };
 
   // 評価セクション
   const scoreSection = hasCompatibilityScore ? (
@@ -115,7 +107,7 @@ const handleNavigate = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay: index * 0.05 }}
       className="shadow-soft hover:shadow-luxury group cursor-pointer rounded-xl bg-white transition-all duration-300"
-      onClick={handleNavigate} // ✅ 遷移処理
+      onClick={handleNavigate}
     >
       <div className="relative aspect-[3/4]">
         <div className="h-full w-full overflow-hidden rounded-t-xl">
@@ -162,6 +154,17 @@ const handleNavigate = () => {
         ) : (
           <div className="absolute bottom-2 right-2 rounded-full bg-gray-200 px-3 py-1 text-xs text-gray-600 shadow-md">
             🎤 音声なし
+          </div>
+        )}
+
+        {/* 💬 最新つぶやき吹き出し */}
+        {cast.latestTweet && (
+          <div className="absolute bottom-3 left-1/2 -translate-x-1/2 max-w-[95%] pointer-events-none">
+            <div className="relative bg-white/90 text-gray-800 text-xs sm:text-sm px-4 py-2 rounded-2xl shadow-lg animate-float">
+              {cast.latestTweet}
+              {/* 吹き出しの三角 */}
+              <div className="absolute left-1/2 top-full -translate-x-1/2 w-0 h-0 border-l-6 border-r-6 border-t-8 border-l-transparent border-r-transparent border-t-white/90"></div>
+            </div>
           </div>
         )}
       </div>

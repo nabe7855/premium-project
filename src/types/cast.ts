@@ -112,14 +112,19 @@ export interface Cast {
   faceId?: string | null;
   userId?: string | null;
 
-  // タグや特徴
+  // タグや特徴（UI用）
   tags?: string[];
-  mbtiType?: string;
-  faceType?: string[];
+  mbtiType?: string;        // MBTI名
+  animalName?: string;      // 動物占い名 ✅ 追加
+  faceType?: string[];      // 顔型名リスト
 
-  // ✅ 追加: 特徴IDリスト
+  // ✅ 特徴IDリスト
   personalityIds?: string[];
   appearanceIds?: string[];
+
+  // ✅ 特徴名リスト（UI用に追加）
+  personalityNames?: string[];
+  appearanceNames?: string[];
 
   // 詳細プロフィール
   profileDetail?: {
@@ -149,7 +154,12 @@ export interface Cast {
 
   // ✅ 所属店舗（JOIN用）
   stores?: Store[];
+
+  // 🆕 最新のつぶやき（24h以内の最新1件）
+  latestTweet?: string | null;
 }
+
+
 
 
 // ==============================
