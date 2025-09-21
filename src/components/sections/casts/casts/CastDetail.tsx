@@ -13,9 +13,8 @@ import {
   Play,
 } from 'lucide-react';
 
-import { Cast, Review, CastProfile as CastProfileType } from '@/types/cast';
+import { Cast, Review } from '@/types/cast';
 import { getReviewsByCastId } from '@/data/services/castService';
-import { getCastProfile } from '@/lib/getCastProfile'; // ← 追加
 import { useCastDetail } from '@/hooks/useCastDetail';
 
 import BookingModal from '../modals/BookingModal';
@@ -35,7 +34,6 @@ interface CastDetailProps {
 
 const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
   const router = useRouter();
-  const [castProfile, setCastProfile] = useState<CastProfileType | null>(null);
   const [castReviews, setCastReviews] = useState<Review[]>([]);
   const [isLoadingReviews, setIsLoadingReviews] = useState(true);
 
@@ -53,15 +51,6 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     handleReviewModalOpen,
     handleReviewModalClose,
   } = useCastDetail();
-
-  // ✅ プロフィール取得
-  useEffect(() => {
-    const fetchProfile = async () => {
-      const profile = await getCastProfile(cast.id);
-      setCastProfile(profile);
-    };
-    fetchProfile();
-  }, [cast.id]);
 
   // ✅ レビュー取得
   useEffect(() => {
@@ -94,10 +83,11 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     router.back();
   };
 
-  // ✅ ギャラリー用画像配列（暫定）
-  const allImages: string[] = [
-    cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png',
-  ];
+  // ✅ ギャラリー用画像配列
+  const allImages: string[] =
+    cast.galleryItems && cast.galleryItems.length > 0
+      ? cast.galleryItems.map((g) => g.imageUrl) // ギャラリー全画像
+      : [cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png']; // fallback
 
   const handleDragEnd = (_: unknown, info: any): void => {
     const swipeThreshold = 50;
@@ -108,7 +98,9 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
       Math.abs(info.velocity.x) > swipeVelocityThreshold
     ) {
       if (info.offset.x > 0) {
-        setCurrentImageIndex((prev) => (prev - 1 + allImages.length) % allImages.length);
+        setCurrentImageIndex(
+          (prev) => (prev - 1 + allImages.length) % allImages.length
+        );
       } else {
         setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
       }
@@ -167,9 +159,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
 
       {/* タブコンテンツ */}
       <div className={`px-4 py-6 ${isSticky ? 'mt-[112px] sm:mt-32' : ''}`}>
-        {activeTab === 'basic' && castProfile && (
-          <CastTabBasicInformation cast={castProfile} />
-        )}
+        {activeTab === 'basic' && <CastTabBasicInformation cast={cast} />}
         {activeTab === 'story' && <CastTabStory cast={cast} />}
         {activeTab === 'schedule' && (
           <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />

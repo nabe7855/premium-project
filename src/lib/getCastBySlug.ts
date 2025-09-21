@@ -49,7 +49,7 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
       id: s.id,
       cast_id: data.id, // ← 必須の cast_id を補完
       status_id: s.status_id,
-      is_active: s.is_active,
+      isActive: s.is_active,
       created_at: s.created_at,
       status_master: {
         id: s.status_master.id,

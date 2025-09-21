@@ -12,7 +12,7 @@ export async function updateCast(cast: CastProfile) {
       profile: cast.profile,
       image_url: cast.imageUrl,
       voice_url: cast.voiceUrl ?? null,
-      is_active: cast.is_active,
+      isActive: cast.isActive,
       mbti_id: cast.mbtiId ?? null,
       animal_id: cast.animalId ?? null,
       face_id: cast.faceId ?? null,

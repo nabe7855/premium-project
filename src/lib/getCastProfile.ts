@@ -110,7 +110,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       id: s.id,
       cast_id: s.cast_id,
       status_id: s.status_id,
-      is_active: s.is_active,
+      isActive: s.is_active,
       created_at: s.created_at,
       status_master: s.status_master as Status,
     })) ?? []
@@ -124,7 +124,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     profile: cast.profile ?? undefined,
     imageUrl: cast.image_url ?? undefined,
     voiceUrl: cast.voice_url ?? undefined,
-    is_active: cast.is_active,
+    isActive: cast.is_active,
     mbtiId: cast.mbti_id ?? undefined,
     animalId: cast.animal_id ?? undefined,
     faceId: cast.face_id ?? undefined,

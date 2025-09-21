@@ -1,6 +1,6 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { getCastBySlug } from '@/lib/getCastBySlug'; // ✅ Supabase版を使う
+import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug'; // ✅ Cast を返す
 import CastDetail from '@/components/sections/casts/casts/CastDetail';
 import Footer from '@/components/sections/casts/ui/Footer';
 import { Cast } from '@/types/cast';
@@ -11,7 +11,7 @@ interface Props {
 
 // ✅ メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const cast = await getCastBySlug(params.cast);
+  const cast = await getCastProfileBySlug(params.cast);
 
   if (!cast) {
     return {
@@ -22,18 +22,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${cast.name} - ${cast.catchCopy ?? ''} | ${params.slug} | Strawberry Boys`,
-    description: `${cast.name}(${cast.age ?? '??'}歳) - ${cast.catchCopy ?? ''}。セクシー度${cast.sexinessLevel ?? 0}。`,
+    description: `${cast.name} (${cast.age ?? '??'}歳) - ${cast.catchCopy ?? ''}。セクシー度 ${cast.sexinessLevel ?? 0}。`,
     openGraph: {
       title: `${cast.name} - ${cast.catchCopy ?? ''}`,
       description: cast.catchCopy ?? '',
-      images: [cast.mainImageUrl ?? cast.imageUrl ?? ''], // ✅ 画像URL
+      images: cast.imageUrl ? [cast.imageUrl] : [], // ✅ imageUrl に統一
     },
   };
 }
 
 // ✅ ページ本体
 export default async function CastDetailPage({ params }: Props) {
-  const cast: Cast | null = await getCastBySlug(params.cast);
+  const cast: Cast | null = await getCastProfileBySlug(params.cast);
 
   if (!cast) {
     notFound();
