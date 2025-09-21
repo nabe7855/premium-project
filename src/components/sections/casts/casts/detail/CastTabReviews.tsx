@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { MessageCircle, Star } from 'lucide-react';
-import { Review } from '@/types/cast';
+import { MessageCircle } from 'lucide-react';
+import { Review } from '@/types/review';
 
 interface CastTabReviewsProps {
   castReviews: Review[];
@@ -18,7 +18,6 @@ const CastTabReviews: React.FC<CastTabReviewsProps> = ({
 }) => {
   return (
     <>
-      {/* 本体 */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -48,45 +47,52 @@ const CastTabReviews: React.FC<CastTabReviewsProps> = ({
               <p className="text-neutral-600">口コミを読み込み中...</p>
             </div>
           ) : castReviews.length > 0 ? (
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-6">
               {castReviews.map((review) => (
                 <div
                   key={review.id}
-                  className="border border-neutral-200 rounded-lg sm:rounded-xl p-4 sm:p-6 hover:shadow-md transition-shadow duration-200"
+                  className="border-b border-neutral-200 pb-6 last:border-none last:pb-0"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-3 sm:mb-4">
-                    <div className="flex items-center mb-2 sm:mb-0">
-                      <div className="flex text-amber-400 mr-2 sm:mr-3">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={`w-4 h-4 sm:w-5 sm:h-5 ${
-                              i < review.rating ? 'fill-current' : 'text-neutral-300'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                      <span className="font-medium text-neutral-800 text-sm sm:text-base">
-                        {review.author}
-                      </span>
+                  {/* 名前 */}
+                  <p className="font-semibold text-neutral-800 text-base mb-1">
+                    {review.userName}
+                  </p>
+
+                  {/* 評価 + 日付 */}
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex text-lg">
+                      {[...Array(5)].map((_, i) => (
+                        <span
+                          key={i}
+                          className={i < review.rating ? '' : 'opacity-30'}
+                        >
+                          🍓
+                        </span>
+                      ))}
                     </div>
-                    <span className="text-xs sm:text-sm text-neutral-500">{review.date}</span>
+                    <span className="text-xs sm:text-sm text-neutral-500">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </span>
                   </div>
 
-                  <p className="text-sm sm:text-base text-neutral-700 mb-3 sm:mb-4 leading-relaxed">
+                  {/* コメント */}
+                  <p className="text-sm sm:text-base text-neutral-700 leading-relaxed mb-2">
                     {review.comment}
                   </p>
 
-                  <div className="flex flex-wrap gap-1 sm:gap-2">
-                    {review.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="px-2 sm:px-3 py-1 bg-secondary text-primary rounded-full text-xs sm:text-sm"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
+                  {/* タグ */}
+                  {review.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-2">
+                      {review.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="px-2 sm:px-3 py-1 bg-pink-50 text-pink-600 rounded-full text-xs sm:text-sm"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
@@ -111,19 +117,6 @@ const CastTabReviews: React.FC<CastTabReviewsProps> = ({
           )}
         </div>
       </motion.div>
-
-      {/* ✅ モバイル画面下に固定ボタン */}
-      {!isLoadingReviews && (
-        <div className="fixed bottom-20 left-0 right-0 z-50 px-4 sm:hidden">
-          <button
-            onClick={onReviewOpen}
-            className="w-full bg-primary text-white py-3 rounded-full shadow-lg hover:bg-primary/90 transition duration-200 text-sm font-semibold flex items-center justify-center"
-          >
-            <MessageCircle className="w-4 h-4 mr-2" />
-            口コミを投稿
-          </button>
-        </div>
-      )}
     </>
   );
 };

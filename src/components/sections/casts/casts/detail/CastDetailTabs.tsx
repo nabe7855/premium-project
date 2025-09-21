@@ -1,7 +1,8 @@
 'use client'
 
 import React from 'react'
-import { Cast, Review, CastProfile } from '@/types/cast'
+import { Review } from '@/types/review';
+import { Cast, CastProfile } from '@/types/cast'
 import CastTabBasicInformation from './CastTabBasicInformation'
 import CastTabStory from './CastTabStory'
 import CastTabSchedule from './CastTabSchedule'

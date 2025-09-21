@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -13,8 +13,9 @@ import {
   Play,
 } from 'lucide-react';
 
-import { Cast, Review } from '@/types/cast';
-import { getReviewsByCastId } from '@/data/services/castService';
+import { Cast } from '@/types/cast';
+import { Review } from '@/types/review';
+import { getCastReviews } from '@/lib/reviews';
 import { useCastDetail } from '@/hooks/useCastDetail';
 
 import BookingModal from '../modals/BookingModal';
@@ -52,23 +53,24 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     handleReviewModalClose,
   } = useCastDetail();
 
-  // ✅ レビュー取得
-  useEffect(() => {
-    const fetchReviews = async () => {
-      try {
-        setIsLoadingReviews(true);
-        const reviews = await getReviewsByCastId(cast.id);
-        setCastReviews(reviews);
-      } catch (error) {
-        console.error('レビューデータの取得に失敗:', error);
-        setCastReviews([]);
-      } finally {
-        setIsLoadingReviews(false);
-      }
-    };
-
-    fetchReviews();
+  // ✅ レビュー取得関数（useCallbackで安定化）
+  const fetchReviews = useCallback(async () => {
+    try {
+      setIsLoadingReviews(true);
+      const reviews = await getCastReviews(cast.id);
+      setCastReviews(reviews);
+    } catch (error) {
+      console.error('レビューデータの取得に失敗:', error);
+      setCastReviews([]);
+    } finally {
+      setIsLoadingReviews(false);
+    }
   }, [cast.id]);
+
+  // 初回ロード時に実行
+  useEffect(() => {
+    fetchReviews();
+  }, [fetchReviews]);
 
   // ✅ タブ
   const tabs: { id: TabType; label: string; icon: any; count?: number }[] = [
@@ -86,8 +88,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
   // ✅ ギャラリー用画像配列
   const allImages: string[] =
     cast.galleryItems && cast.galleryItems.length > 0
-      ? cast.galleryItems.map((g) => g.imageUrl) // ギャラリー全画像
-      : [cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png']; // fallback
+      ? cast.galleryItems.map((g) => g.imageUrl)
+      : [cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png'];
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -166,8 +168,10 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
       {isReviewModalOpen && (
         <ReviewModal
           isOpen={isReviewModalOpen}
+          castId={cast.id}
           castName={cast.name}
           onClose={handleReviewModalClose}
+          onSubmitted={fetchReviews}   // ✅ 投稿後にリロード
         />
       )}
     </div>

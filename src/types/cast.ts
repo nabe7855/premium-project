@@ -343,15 +343,6 @@ export interface VideoItem {
 // ==============================
 // レビュー
 // ==============================
-export interface Review {
-  id: string;
-  castId: string;
-  rating: number;
-  comment: string;
-  date: string;
-  author: string;
-  tags: string[];
-}
 
 
 // ==============================
