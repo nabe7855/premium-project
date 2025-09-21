@@ -89,24 +89,6 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
       ? cast.galleryItems.map((g) => g.imageUrl) // ギャラリー全画像
       : [cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png']; // fallback
 
-  const handleDragEnd = (_: unknown, info: any): void => {
-    const swipeThreshold = 50;
-    const swipeVelocityThreshold = 500;
-
-    if (
-      Math.abs(info.offset.x) > swipeThreshold ||
-      Math.abs(info.velocity.x) > swipeVelocityThreshold
-    ) {
-      if (info.offset.x > 0) {
-        setCurrentImageIndex(
-          (prev) => (prev - 1 + allImages.length) % allImages.length
-        );
-      } else {
-        setCurrentImageIndex((prev) => (prev + 1) % allImages.length);
-      }
-    }
-  };
-
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* ヘッダー */}
@@ -138,7 +120,6 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
         allImages={allImages}
         currentImageIndex={currentImageIndex}
         onImageChange={setCurrentImageIndex}
-        onDragEnd={handleDragEnd}
       />
 
       {/* プロフィール */}
