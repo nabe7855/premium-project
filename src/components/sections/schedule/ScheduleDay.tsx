@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Star } from 'lucide-react';
+import { Calendar } from 'lucide-react';
 import { ScheduleDay as ScheduleDayType } from '@/types/schedule';
 import CastCard from './CastCard';
 import EmptyState from './EmptyState';
@@ -61,28 +61,6 @@ const ScheduleDay: React.FC<ScheduleDayProps> = ({
           <div className="h-px flex-1 bg-gradient-to-r from-transparent via-pink-200 to-transparent"></div>
         </div>
       </div>
-
-      {/* Recommended casts */}
-      {day.recommendedCasts.length > 0 && (
-        <div className="mb-6 rounded-2xl border border-amber-100 bg-gradient-to-r from-amber-50 to-orange-50 p-4">
-          <div className="mb-3 flex items-center space-x-2">
-            <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100">
-              <Star className="h-3 w-3 text-amber-600" />
-            </div>
-            <h3 className="text-sm font-medium text-gray-900">本日のおすすめキャスト</h3>
-          </div>
-          <div className="space-y-3">
-            {day.recommendedCasts.map((cast) => (
-              <CastCard
-                key={cast.id}
-                cast={cast}
-                onBooking={onBooking}
-                onFavoriteToggle={onFavoriteToggle}
-              />
-            ))}
-          </div>
-        </div>
-      )}
 
       {/* All casts */}
       <div className="space-y-3">
