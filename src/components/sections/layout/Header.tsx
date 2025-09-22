@@ -41,21 +41,22 @@ export default function Header() {
     }, 400); // アニメーション時間に合わせる
   };
 
-  const renderNavItem = (item: any, index: number) => (
-    <Link
-      key={item.href}
-      href={`/store/${currentStoreId}${item.href}`}
-      className={`fade-slide-in-x flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 fade-slide-in-x-delayed-${index + 1} ${
-        pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
-      }`}
-      aria-label={item.name}
-    >
-      <item.icon size={18} />
-      <span className="text-sm">{item.name}</span>
-      {item.hasUpdate && (
-        <span className="ml-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-500" />
-      )}
-    </Link>
+const renderNavItem = (item: any, index: number) => (
+  <Link
+    key={item.href}
+    href={`/store/${currentStoreId}${item.href}`}
+    onClick={closeMenu} // ← 追加
+    className={`fade-slide-in-x flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 fade-slide-in-x-delayed-${index + 1} ${
+      pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
+    }`}
+    aria-label={item.name}
+  >
+    <item.icon size={18} />
+    <span className="text-sm">{item.name}</span>
+    {item.hasUpdate && (
+      <span className="ml-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-500" />
+    )}
+  </Link>
   );
 
   return (
@@ -120,37 +121,39 @@ export default function Header() {
       {/* モバイルメニュー */}
       {(isMenuOpen || isAnimating) && (
         <div
-          className={`mobile-menu transition-all will-change-transform ${
-            isAnimating ? 'animate-floatFadeOutRight' : 'animate-floatFadeInRight'
-          }`}
+          className={`fixed top-0 right-0 h-full w-[40%] max-w-xs bg-white shadow-xl transition-all will-change-transform 
+            ${isAnimating ? 'animate-floatFadeOutRight' : 'animate-floatFadeInRight'}
+          `}
         >
           <button
             onClick={closeMenu}
-            className="menu-close-button text-gray-600 hover:text-pink-500"
+            className="absolute top-4 right-4 text-gray-600 hover:text-pink-500"
             aria-label="メニューを閉じる"
           >
             <X size={24} />
           </button>
 
-          <div className="mb-4 border-b pb-2">
-            <div className="mb-1 text-sm text-gray-500">店舗を選ぶ</div>
-            {Object.values(stores).map((store) => (
-              <button
-                key={store.id}
-                onClick={() => handleStoreChange(store.id)}
-                className="block w-full px-2 py-1 text-left text-sm hover:bg-pink-100"
-              >
-                {store.emoji} {store.displayName}
-              </button>
-            ))}
-          </div>
+          <div className="p-4 overflow-y-auto h-full">
+            <div className="mb-4 border-b pb-2">
+              <div className="mb-1 text-sm text-gray-500">店舗を選ぶ</div>
+              {Object.values(stores).map((store) => (
+                <button
+                  key={store.id}
+                  onClick={() => handleStoreChange(store.id)}
+                  className="block w-full px-2 py-1 text-left text-sm hover:bg-pink-100"
+                >
+                  {store.emoji} {store.displayName}
+                </button>
+              ))}
+            </div>
 
-          <div className="space-y-2 border-b pb-2">
-            {primaryNavItems.map((item, index) => renderNavItem(item, index))}
-          </div>
+            <div className="space-y-2 border-b pb-2">
+              {primaryNavItems.map((item, index) => renderNavItem(item, index))}
+            </div>
 
-          <div className="mt-2 pt-2">
-            {secondaryNavItems.map((item, index) => renderNavItem(item, index + 5))}
+            <div className="mt-2 pt-2">
+              {secondaryNavItems.map((item, index) => renderNavItem(item, index + 5))}
+            </div>
           </div>
         </div>
       )}

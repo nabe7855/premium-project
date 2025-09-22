@@ -107,16 +107,19 @@ const CastTabReviews: React.FC<CastTabReviewsProps> = ({
               <p className="text-sm sm:text-base text-neutral-500 mb-4 sm:mb-6">
                 最初の口コミを投稿してみませんか？
               </p>
-              <button
-                onClick={onReviewOpen}
-                className="bg-primary text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-primary/90 transition-colors duration-200 text-sm sm:text-base"
-              >
-                口コミを投稿する
-              </button>
             </div>
           )}
         </div>
       </motion.div>
+
+      {/* ✅ 右下に浮遊ボタン（テキスト付き） */}
+      <button
+        onClick={onReviewOpen}
+        className="fixed bottom-20 right-5 sm:bottom-24 sm:right-8 z-30 flex items-center gap-2 bg-primary text-white px-4 py-3 rounded-full shadow-lg hover:scale-105 active:scale-95 transition transform text-sm sm:text-base"
+      >
+        <MessageCircle className="w-5 h-5" />
+        ＋口コミ投稿
+      </button>
     </>
   );
 };
