@@ -1,66 +1,135 @@
 'use client';
-import React, { useState, useEffect, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { generateSchedule, getQuickInfo } from '@/data/schedule';
-import { ScheduleDay as ScheduleDayType, FilterOptions } from '@/types/schedule';
-import QuickInfoBar from '@/components/sections/schedule/QuickInfoBar';
-import DateNavigation from '@/components/sections/schedule/DateNavigation';
-import FilterSection from '@/components/sections/schedule/FilterSection';
-// ❌ PersonalizationSection 削除
-import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
 
-function App() {
+import React, { useState, useEffect} from 'react';
+import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabaseClient';
+import { ScheduleDay as ScheduleDayType, Cast } from '@/types/schedule';
+//import QuickInfoBar from '@/components/sections/schedule/QuickInfoBar';
+import DateNavigation from '@/components/sections/schedule/DateNavigation';
+// import FilterSection from '@/components/sections/schedule/FilterSection';
+import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
+import { useParams } from 'next/navigation'; // ✅ 追加
+
+function SchedulePage() {
+  const params = useParams();
+  const storeSlug = params.slug as string; // ✅ URLから取得 ("tokyo" など)
+
   const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
   const [activeDate, setActiveDate] = useState<string>('');
-  const [filters, setFilters] = useState<FilterOptions>({
-    favoritesOnly: false,
-    recentlyViewedFirst: false,
-    availableOnly: false,
-  });
 
-  useEffect(() => {
-    const generatedSchedule = generateSchedule();
-    setSchedule(generatedSchedule);
-    setActiveDate(generatedSchedule[0]?.date || '');
-  }, []);
-
-  const quickInfo = useMemo(() => getQuickInfo(schedule), [schedule]);
-
-  const filteredSchedule = useMemo(() => {
-    return schedule.map((day) => {
-      let casts = [...day.casts];
-
-      if (filters.favoritesOnly) {
-        casts = casts.filter((cast) => cast.isFavorite);
-      }
-
-      if (filters.availableOnly) {
-        casts = casts.filter((cast) => cast.status !== 'full');
-      }
-
-      if (filters.recentlyViewedFirst) {
-        casts.sort((a, b) => {
-          if (a.isRecentlyViewed && !b.isRecentlyViewed) return -1;
-          if (!a.isRecentlyViewed && b.isRecentlyViewed) return 1;
-          return 0;
-        });
-      }
-
-      return { ...day, casts };
-    });
-  }, [schedule, filters]);
-
+  // ✅ 予約ボタン押下処理
   const handleBooking = (castId: string) => {
-    console.log('Booking cast:', castId);
+    console.log(`🛎️ 予約処理: castId=${castId}, store=${storeSlug}`);
   };
 
-  const handleFavoriteToggle = (castId: string) => {
-    console.log('Toggle favorite:', castId);
+  // ✅ 今日〜14日間の日付リスト
+  const generateDateRange = (): { date: string; dayOfWeek: string }[] => {
+    const today = new Date();
+    const days = [];
+    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      days.push({ date: dateStr, dayOfWeek: dayNames[d.getDay()] });
+    }
+    return days;
   };
 
-  const handleDateChange = (date: string) => {
-    setActiveDate(date);
-  };
+  // ✅ Supabase からスケジュール取得
+  useEffect(() => {
+    const fetchSchedule = async () => {
+      const dateRange = generateDateRange();
+
+      const { data: schedules, error } = await supabase
+        .from('schedules')
+        .select(
+          `
+            id,
+            work_date,
+            start_datetime,
+            end_datetime,
+            casts (
+              id,
+              name,
+              age,
+              slug,
+              main_image_url,
+              catch_copy,
+              cast_statuses (
+                id,
+                status_id,
+                is_active,
+                status_master (
+                  name
+                )
+              )
+            )
+          `
+        )
+        .gte('work_date', dateRange[0].date)
+        .lte('work_date', dateRange[dateRange.length - 1].date);
+
+      if (error) {
+        console.error('❌ Supabase取得エラー:', error.message);
+        return;
+      }
+
+      // 日付ごとに整形
+      const scheduleData: ScheduleDayType[] = dateRange.map((day) => {
+        const castsForDay: Cast[] =
+          schedules
+            ?.filter((s) => s.work_date === day.date)
+            .map((s) => {
+              const cast = Array.isArray(s.casts) ? s.casts[0] : s.casts;
+
+              return {
+                id: cast?.id ?? '',
+                name: cast?.name ?? '',
+                age: cast?.age ?? 0,
+                photo: cast?.main_image_url ?? '',
+                slug: cast?.slug ?? '',
+                workingHours:
+                  s.start_datetime && s.end_datetime
+                    ? `${new Date(s.start_datetime).toLocaleTimeString('ja-JP', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })} - ${new Date(s.end_datetime).toLocaleTimeString('ja-JP', {
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}`
+                    : '時間未定',
+                status: 'available',
+                description: cast?.catch_copy ?? '',
+                isFavorite: false,
+                isRecentlyViewed: false,
+                category: '',
+                statuses: (cast?.cast_statuses ?? []).map((cs: any) => ({
+                  id: cs.id,
+                  statusId: cs.status_id,
+                  label: cs.status_master?.name ?? '',
+                })),
+                storeSlug, // ✅ キャストに storeSlug を持たせる
+              } as Cast;
+            }) ?? [];
+
+        return {
+          ...day,
+          casts: castsForDay,
+          recommendedCasts: [],
+        };
+      });
+
+      setSchedule(scheduleData);
+      setActiveDate(dateRange[0].date);
+    };
+
+    fetchSchedule();
+  }, [storeSlug]);
+
+  // ✅ QuickInfo を schedule から直接計算
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -100,65 +169,36 @@ function App() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 py-6">
-        <QuickInfoBar quickInfo={quickInfo} />
+        
 
         <div className="lg:grid lg:grid-cols-4 lg:gap-6">
           {/* Sidebar */}
           <div className="space-y-6 lg:col-span-1">
-            <div className="hidden lg:block">
-              <DateNavigation
-                schedule={schedule}
-                activeDate={activeDate}
-                onDateChange={handleDateChange}
-              />
-              <FilterSection filters={filters} onFilterChange={setFilters} />
-            </div>
-
-            <div className="lg:hidden">
-              <DateNavigation
-                schedule={schedule}
-                activeDate={activeDate}
-                onDateChange={handleDateChange}
-              />
-            </div>
+            <DateNavigation
+              schedule={schedule}
+              activeDate={activeDate}
+              onDateChange={setActiveDate}
+            />
           </div>
 
           {/* Content */}
           <div className="lg:col-span-3">
-            {/* ❌ PersonalizationSection を削除したので「おすすめキャスト」「最近チェックしたキャスト」は表示されない */}
             <div className="space-y-8">
-              {filteredSchedule.map((day, index) => (
+              {schedule.map((day, index) => (
                 <ScheduleDay
                   key={day.date}
                   day={day}
-                  onBooking={handleBooking}
-                  onFavoriteToggle={handleFavoriteToggle}
                   isToday={index === 0}
+                  storeSlug={storeSlug}
+                  onBooking={handleBooking}
                 />
               ))}
             </div>
           </div>
         </div>
       </main>
-
-      {/* Footer */}
-      <footer className="mt-12 border-t border-gray-200 bg-white">
-        <div className="mx-auto max-w-4xl px-4 py-8">
-          <div className="text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, ease: 'easeOut', delay: 0.3 }}
-              className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100"
-            >
-              <span className="text-2xl text-red-500">🍓</span>
-            </motion.div>
-            <p className="font-serif text-sm text-gray-600">素敵なひとときをお過ごしください</p>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
 
-export default App;
+export default SchedulePage;

@@ -7,15 +7,15 @@ import EmptyState from './EmptyState';
 interface ScheduleDayProps {
   day: ScheduleDayType;
   onBooking: (castId: string) => void;
-  onFavoriteToggle: (castId: string) => void;
   isToday?: boolean;
+  storeSlug: string;   // ✅ 追加
 }
 
 const ScheduleDay: React.FC<ScheduleDayProps> = ({
   day,
   onBooking,
-  onFavoriteToggle,
   isToday = false,
+  storeSlug,   // ✅ 受け取る
 }) => {
   if (day.casts.length === 0) {
     return (
@@ -68,8 +68,8 @@ const ScheduleDay: React.FC<ScheduleDayProps> = ({
           <CastCard
             key={cast.id}
             cast={cast}
+            storeSlug={storeSlug}   // ✅ 渡す
             onBooking={onBooking}
-            onFavoriteToggle={onFavoriteToggle}
           />
         ))}
       </div>
