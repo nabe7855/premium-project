@@ -22,7 +22,7 @@ const StoreSelectionScreen: React.FC = () => {
     const fetchStores = async () => {
       const { data, error } = await supabase
         .from('stores')
-        .select('id, name, slug, catch_copy, image_url, theme_color, tags');
+        .select('id, name, slug, catch_copy, description, image_url, theme_color, tags');
 
       if (error) {
         console.error('❌ stores取得エラー:', error.message);
@@ -37,7 +37,8 @@ const StoreSelectionScreen: React.FC = () => {
         portraitUrl: s.image_url || '/no-image.png',
         fullImageUrl: s.image_url || '/no-image.png',
         stats: { quality: 50, variety: 50, service: 50, rarity: 50 },
-        description: s.catch_copy || '',
+        catch_copy: s.catch_copy || '',
+        description: s.description || '',
         bannerImage: s.image_url || '/no-image.png',
         themeColor: s.theme_color || '#ec4899',
         tags: s.tags || [],

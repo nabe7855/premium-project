@@ -17,4 +17,8 @@ export interface Store {
   bannerImage: string;
   themeColor: string;
   tags: string[];
+  catch_copy?: string;
+  address?: string;
+  phone?: string;
+  
 }

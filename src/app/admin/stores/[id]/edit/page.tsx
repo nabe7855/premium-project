@@ -14,6 +14,7 @@ interface StoreForm {
   catch_copy?: string;
   image_url?: string;
   theme_color?: string;
+  description?: string; // ✅ 店舗紹介文を追加
 }
 
 export default function EditStorePage() {
@@ -49,15 +50,12 @@ export default function EditStorePage() {
     setForm((prev) => (prev ? { ...prev, [key]: value } : prev));
   };
 
-  // 画像アップロード（直下保存）
+  // 画像アップロード
   const handleUpload = async () => {
     if (!file || !form) {
       alert('画像ファイルを選択してください');
       return;
     }
-
-    console.log('📂 File selected:', file);
-    console.log('📏 File size:', file.size);
 
     if (file.size === 0) {
       alert('❌ ファイルサイズが 0 です');
@@ -65,16 +63,14 @@ export default function EditStorePage() {
     }
 
     setUploading(true);
-
-    const filePath = `${Date.now()}-${file.name}`; // ✅ バケット直下に保存
-    console.log('📡 Uploading to bucket=store-images, path=', filePath);
+    const filePath = `${Date.now()}-${file.name}`;
 
     const { error: uploadError } = await supabase.storage
       .from('store-images')
       .upload(filePath, file, {
         cacheControl: '3600',
         upsert: true,
-        contentType: file.type || 'image/png', // ✅ contentType を明示
+        contentType: file.type || 'image/png',
       });
 
     if (uploadError) {
@@ -84,13 +80,9 @@ export default function EditStorePage() {
       return;
     }
 
-    console.log('✅ Upload succeeded');
-
     const { data: publicData } = supabase.storage
       .from('store-images')
       .getPublicUrl(filePath);
-
-    console.log('🌍 Public URL result:', publicData);
 
     if (publicData?.publicUrl) {
       setForm((prev) =>
@@ -118,6 +110,7 @@ export default function EditStorePage() {
         catch_copy: form.catch_copy,
         image_url: form.image_url,
         theme_color: form.theme_color,
+        description: form.description, // ✅ 店舗紹介文を保存
       })
       .eq('id', id);
 
@@ -163,6 +156,20 @@ export default function EditStorePage() {
         placeholder="キャッチコピー"
       />
 
+      {/* 店舗紹介文 */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">
+          店舗紹介文
+        </label>
+        <textarea
+          value={form.description || ''}
+          onChange={(e) => handleChange('description', e.target.value)}
+          placeholder="店舗の紹介文を入力してください"
+          rows={6}
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
+
       {/* 画像アップロード */}
       <div>
         <input
@@ -188,7 +195,15 @@ export default function EditStorePage() {
         />
       </div>
 
-      <button onClick={handleSubmit}>更新</button>
+{/* ✅ 更新ボタン（フッターの上に浮かせる） */}
+<div className="fixed bottom-20 right-6 z-50">
+  <button
+    onClick={handleSubmit}
+    className="px-6 py-3 rounded-full bg-indigo-600 text-white font-semibold shadow-lg hover:bg-indigo-700 transition"
+  >
+    更新
+  </button>
+</div>
     </div>
   );
 }
