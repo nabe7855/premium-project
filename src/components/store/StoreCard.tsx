@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { StoreData } from '@/app/page'; // UI用型をimport
+import { StoreData } from '@/app/backup'; // UI用型をimport
 import LoadingAnimation from '@/components/sections/age-verification/LoadingAnimation';
 
 interface StoreCardProps {
