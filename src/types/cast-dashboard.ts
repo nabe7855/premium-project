@@ -33,6 +33,7 @@ export interface Badge {
   unlockedAt?: string;
 }
 
+export type ScheduleStatus = '予約可能' | '残りあとわずか' | '満員御礼' | '応相談';
 
 // src/types/cast-dashboard.ts
 export interface CastSchedule {
@@ -42,6 +43,7 @@ export interface CastSchedule {
   work_date: string;        // YYYY-MM-DD
   start_datetime: string;   // ISO形式
   end_datetime: string;     // ISO形式
+  status: ScheduleStatus;
 }
 
 export interface CastTweet {

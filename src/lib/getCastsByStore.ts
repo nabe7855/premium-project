@@ -95,7 +95,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         cast.cast_statuses?.map((s: any) => ({
           id: s.id,
           status_id: s.status_id,
-          is_active: s.is_active,
+          isActive: s.is_active,
           created_at: s.created_at,
           status_master: s.status_master
             ? {

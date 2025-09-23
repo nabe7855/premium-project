@@ -119,6 +119,37 @@ const CastCard: React.FC<CastCardProps> = ({
           />
         </div>
 
+{/* 🆕 キャスト状態ラベル（付箋風 + スクロール時スライドイン） */}
+{cast.statuses?.some((s) => s.isActive && s.status_master) && (
+  <div className="absolute top-2 right-0 flex flex-col gap-2 items-end pr-[-8px]">
+    {cast.statuses
+      ?.filter((s) => s.isActive && s.status_master)
+      .map((status, i) => (
+        <motion.div
+          key={status.id}
+          initial={{ opacity: 0, x: 60 }} // カードの外側右から
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{
+            duration: 0.5,
+            delay: i * 0.1,
+            ease: [0.25, 0.1, 0.25, 1],
+          }}
+          className="rounded-l-full px-3 py-1 text-xs font-bold shadow-md"
+          style={{
+            backgroundColor: status.status_master?.label_color ?? '#fce7f3',
+            color: status.status_master?.text_color ?? '#be185d',
+            // 右端から付箋っぽく飛び出す
+            marginRight: '-12px',
+          }}
+        >
+          {status.status_master?.name}
+        </motion.div>
+      ))}
+  </div>
+)}
+
+
         {/* 🟢 出勤バッジ */}
         {isAvailableToday && (
           <div className="absolute left-2 top-2 rounded-full bg-green-500 px-2 py-1 text-xs font-medium text-white">
