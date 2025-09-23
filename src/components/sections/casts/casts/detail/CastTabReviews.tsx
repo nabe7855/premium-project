@@ -1,11 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link'; // 👈 追加
 import { getReviewTags, postReview } from '@/lib/reviewPost';
 
 interface CastTabReviewPageProps {
   castId: string;
   castName?: string;
+  storeSlug?: string; // 👈 追加（店舗slugを受け取る）
 }
 
 interface Tag {
@@ -13,7 +15,7 @@ interface Tag {
   name: string;
 }
 
-const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName }) => {
+const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName, storeSlug }) => {
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
@@ -184,6 +186,16 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName 
             </div>
           </form>
         )}
+
+        {/* 🆕 口コミ一覧ページへリンク */}
+        <div className="mt-8 text-center">
+          <Link
+            href={`/store/${storeSlug}/reviews/reviews`}
+            className="inline-block rounded-full bg-pink-500 px-6 py-3 text-white font-medium shadow-md hover:bg-pink-600 transition-all"
+          >
+            📖 口コミ一覧を見る
+          </Link>
+        </div>
       </div>
     </div>
   );

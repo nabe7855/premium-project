@@ -14,10 +14,15 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
       created_at,
       casts (
         id,
+        slug,
         name,
-        main_image_url, 
+        main_image_url,
         cast_store_memberships (
-          stores ( id, slug, name )
+          stores (
+            id,
+            slug,
+            name
+          )
         )
       ),
       review_tag_links (
@@ -47,8 +52,9 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
       casts: d.casts
         ? {
             id: d.casts.id,
+            slug: d.casts.slug, // ✅ 追加
             name: d.casts.name,
-            main_image_url: d.casts.main_image_url || null, // 👈 追加
+            main_image_url: d.casts.main_image_url || null,
             cast_store_memberships: d.casts.cast_store_memberships || [],
           }
         : null,
@@ -68,8 +74,6 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
 
   // ② 店舗slugフィルタリング
   const filtered = reviews.filter((review) => {
-    console.log('🔎 判定中 review.id:', review.id, ' review.casts:', review.casts);
-
     const cast = review.casts;
     if (!cast) {
       console.log('⚠️ casts が null のため除外:', review.id);

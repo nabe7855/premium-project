@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
-import { getCastQuestions } from '@/lib/getCastQuestions'; // 👈 追加
+import { getCastQuestions } from '@/lib/getCastQuestions';
 import CastDetail from '@/components/sections/casts/casts/CastDetail';
 import Footer from '@/components/sections/casts/ui/Footer';
 import { Cast } from '@/types/cast';
@@ -45,11 +45,13 @@ export default async function CastDetailPage({ params }: Props) {
   cast = { ...cast, castQuestions };
 
   // ✅ デバッグログ
-  console.log("🟢 CastDetailPage loaded cast:", cast);
+  console.log('🟢 CastDetailPage params:', params);
+  console.log('🟢 CastDetailPage loaded cast:', cast);
 
   return (
     <>
-      <CastDetail cast={cast} />
+      {/* ✅ storeSlug を渡す */}
+      <CastDetail cast={cast} storeSlug={params.slug} />
       <Footer />
     </>
   );

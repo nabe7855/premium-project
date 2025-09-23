@@ -23,6 +23,7 @@ interface CastDetailTabsProps {
   isSticky: boolean
   onTabChange: (tab: 'basic' | 'story' | 'schedule' | 'reviews' | 'videos') => void
   onBookingOpen: () => void
+  storeSlug: string   // ✅ propsとして受け取る
 }
 
 export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
@@ -30,6 +31,7 @@ export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
   castProfile,
   activeTab,
   onBookingOpen,
+  storeSlug,   // ✅ propsから受け取る
 }) => {
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -47,9 +49,13 @@ export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
           <CastTabSchedule cast={cast} onBookingOpen={onBookingOpen} />
         )}
 
-        {/* ✅ 口コミタブはフォームを直接表示 */}
+        {/* ✅ 口コミタブ */}
         {activeTab === 'reviews' && (
-          <CastTabReviewPage castId={cast.id} castName={cast.name} />
+          <CastTabReviewPage
+            castId={cast.id}
+            castName={cast.name}
+            storeSlug={storeSlug}   // ✅ 修正：ここで props を使う
+          />
         )}
 
         {/* 動画 */}

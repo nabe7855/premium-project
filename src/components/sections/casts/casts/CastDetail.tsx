@@ -30,9 +30,10 @@ import CastTabReviewPage from './detail/CastTabReviews';
 
 interface CastDetailProps {
   cast: Cast;
+  storeSlug: string;   // ✅ 追加
 }
 
-const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
+const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
   const router = useRouter();
 
   const {
@@ -123,7 +124,11 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
           <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />
         )}
         {activeTab === 'reviews' && (
-          <CastTabReviewPage castId={cast.id} castName={cast.name} />
+          <CastTabReviewPage
+            castId={cast.id}
+            castName={cast.name}
+            storeSlug={storeSlug}  
+          />
         )}
         {activeTab === 'videos' && <CastTabMovie cast={cast} />}
       </div>

@@ -4,6 +4,10 @@ export function mapReview(raw: ReviewRaw): Review {
   // casts がオブジェクト or null の両対応
   const cast = raw.casts ?? null;
 
+  // cast_store_memberships から最初の store を拾う（複数対応なら工夫が必要）
+  const storeSlug =
+    cast?.cast_store_memberships?.[0]?.stores?.slug ?? undefined;
+
   return {
     id: raw.id,
     castId: raw.cast_id,
@@ -17,6 +21,8 @@ export function mapReview(raw: ReviewRaw): Review {
 
     // 追加フィールド
     castName: cast?.name ?? '不明',
-    castImage: cast?.main_image_url ?? undefined, // 👈 ここを追加
+    castImage: cast?.main_image_url ?? undefined,
+    castSlug: cast?.slug ?? undefined,     // ✅ キャストslug
+    storeSlug: storeSlug,                  // ✅ 店舗slug
   };
 }

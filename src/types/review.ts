@@ -9,6 +9,7 @@ export interface ReviewRaw {
 
   casts: {
     id: string;
+    slug: string;
     name: string;
     main_image_url?: string | null; // 👈 追加
     cast_store_memberships: {
@@ -31,12 +32,21 @@ export interface ReviewRaw {
 // フロント用 (camelCase)
 export interface Review {
   id: string;
-  castId: string;
+
+  // 紐づくキャスト
+  castId: string;          // DB用のID (UUIDなど)
+  castSlug?: string;       // URL用（/cast/[slug] に対応）
+  castName?: string;
+  castImage?: string;
+
+  // 紐づく店舗
+  storeSlug?: string;      // URL用（/store/[slug] に対応）
+
+  // レビュー内容
   userName: string;
   rating: number;
   comment: string;
   createdAt: string;
   tags: string[];
-  castName?: string;
-  castImage?: string; // 👈 追加
 }
+
