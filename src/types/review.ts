@@ -1,4 +1,4 @@
-// Supabaseから返ってくるそのままの型 (snake_case)
+// Supabaseから取ってくる生データ (snake_case)
 export interface ReviewRaw {
   id: string;
   cast_id: string;
@@ -6,11 +6,25 @@ export interface ReviewRaw {
   rating: number;
   comment: string;
   created_at: string;
-  review_tag_links?: {
+
+  casts: {
+    id: string;
+    name: string;
+    main_image_url?: string | null; // 👈 追加
+    cast_store_memberships: {
+      stores: {
+        id: string;
+        slug: string;
+        name: string;
+      };
+    }[];
+  } | null;
+
+  review_tag_links: {
     review_tag_master: {
       id: string;
       name: string;
-    };
+    } | null;
   }[];
 }
 
@@ -23,4 +37,6 @@ export interface Review {
   comment: string;
   createdAt: string;
   tags: string[];
+  castName?: string;
+  castImage?: string; // 👈 追加
 }

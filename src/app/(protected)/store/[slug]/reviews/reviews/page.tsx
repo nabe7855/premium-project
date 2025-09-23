@@ -1,19 +1,41 @@
 'use client';
-import React, { useState, useMemo } from 'react';
+
+import React, { useState, useEffect, useMemo } from 'react';
 import Header from '@/components/sections/reviews/Header';
 import EmotionFilter from '@/components/sections/reviews/EmotionFilter';
 import ReviewCard from '@/components/sections/reviews/ReviewCard';
 import PickupReviews from '@/components/sections/reviews/PickupReviews';
 import FAQ from '@/components/sections/reviews/FAQ';
-import { mockReviews } from '@//data/mockReviews';
+import { Review } from '@/types/review';
+import { getReviewsByStore } from '@/lib/getReviewsByStore';
 
-function App() {
+export default function StoreReviewsPage({ params }: { params: { slug: string } }) {
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [selectedEmotion, setSelectedEmotion] = useState<string>('');
+  const [loading, setLoading] = useState(true);
+
+  // Hydration error 対策: ランダム閲覧人数はクライアントでセット
+  const [viewers, setViewers] = useState<number | null>(null);
+  useEffect(() => {
+    setViewers(Math.floor(Math.random() * 20) + 10);
+  }, []);
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      setLoading(true);
+      console.log('🔎 storeSlug (URLパラメータ):', params.slug);
+      const data = await getReviewsByStore(params.slug);
+      console.log('📄 フロントで受け取った reviews:', data);
+      setReviews(data);
+      setLoading(false);
+    };
+    fetchReviews();
+  }, [params.slug]);
 
   const filteredReviews = useMemo(() => {
-    if (!selectedEmotion) return mockReviews;
-    return mockReviews.filter((review) => review.emotion === selectedEmotion);
-  }, [selectedEmotion]);
+    if (!selectedEmotion) return reviews;
+    return reviews.filter((review) => review.tags.includes(selectedEmotion));
+  }, [reviews, selectedEmotion]);
 
   const handleEmotionSelect = (emotion: string) => {
     setSelectedEmotion(emotion === selectedEmotion ? '' : emotion);
@@ -24,7 +46,10 @@ function App() {
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        <EmotionFilter onEmotionSelect={handleEmotionSelect} selectedEmotion={selectedEmotion} />
+        <EmotionFilter
+          onEmotionSelect={handleEmotionSelect}
+          selectedEmotion={selectedEmotion}
+        />
 
         <PickupReviews />
 
@@ -39,17 +64,24 @@ function App() {
               )}
             </h2>
             <div className="text-sm text-gray-600">
-              現在 {Math.floor(Math.random() * 20) + 10} 人が閲覧中
+              現在 {viewers ?? '-'} 人が閲覧中
             </div>
           </div>
 
-          <div className="space-y-4">
-            {filteredReviews.map((review) => (
-              <ReviewCard key={review.id} review={review} />
-            ))}
-          </div>
+          {/* ローディング */}
+          {loading && <p className="text-center text-gray-500 py-12">読み込み中...</p>}
 
-          {filteredReviews.length === 0 && (
+          {/* レビュー一覧 */}
+          {!loading && filteredReviews.length > 0 && (
+            <div className="space-y-4">
+              {filteredReviews.map((review) => (
+                <ReviewCard key={review.id} review={review} />
+              ))}
+            </div>
+          )}
+
+          {/* 該当なし */}
+          {!loading && filteredReviews.length === 0 && (
             <div className="py-12 text-center">
               <p className="mb-4 text-gray-600">
                 選択した条件に該当する口コミが見つかりませんでした。
@@ -90,5 +122,3 @@ function App() {
     </div>
   );
 }
-
-export default App;

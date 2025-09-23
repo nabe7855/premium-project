@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React from 'react';
 import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
@@ -14,20 +14,19 @@ import {
 } from 'lucide-react';
 
 import { Cast } from '@/types/cast';
-import { Review } from '@/types/review';
-import { getCastReviews } from '@/lib/reviews';
 import { useCastDetail } from '@/hooks/useCastDetail';
 
 import BookingModal from '../modals/BookingModal';
-import ReviewModal from '../modals/ReviewModal';
 import CastGallery from './detail/CastGallery';
 import CastProfile from './detail/CastProfile';
 import CastStickyActionBar, { TabType } from './detail/CastStickyActionBar';
 import CastTabBasicInformation from './detail/CastTabBasicInformation';
 import CastTabStory from './detail/CastTabStory';
 import CastTabSchedule from './detail/CastTabSchedule';
-import CastTabReviews from './detail/CastTabReviews';
 import CastTabMovie from './detail/CastTabMovie';
+
+// 👇 口コミ投稿フォームを直 import
+import CastTabReviewPage from './detail/CastTabReviews';
 
 interface CastDetailProps {
   cast: Cast;
@@ -35,8 +34,6 @@ interface CastDetailProps {
 
 const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
   const router = useRouter();
-  const [castReviews, setCastReviews] = useState<Review[]>([]);
-  const [isLoadingReviews, setIsLoadingReviews] = useState(true);
 
   const {
     activeTab,
@@ -46,38 +43,16 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
     isSticky,
     actionBarRef,
     isBookingModalOpen,
-    isReviewModalOpen,
     handleBookingModalOpen,
     handleBookingModalClose,
-    handleReviewModalOpen,
-    handleReviewModalClose,
   } = useCastDetail();
 
-  // ✅ レビュー取得関数（useCallbackで安定化）
-  const fetchReviews = useCallback(async () => {
-    try {
-      setIsLoadingReviews(true);
-      const reviews = await getCastReviews(cast.id);
-      setCastReviews(reviews);
-    } catch (error) {
-      console.error('レビューデータの取得に失敗:', error);
-      setCastReviews([]);
-    } finally {
-      setIsLoadingReviews(false);
-    }
-  }, [cast.id]);
-
-  // 初回ロード時に実行
-  useEffect(() => {
-    fetchReviews();
-  }, [fetchReviews]);
-
   // ✅ タブ
-  const tabs: { id: TabType; label: string; icon: any; count?: number }[] = [
+  const tabs: { id: TabType; label: string; icon: any }[] = [
     { id: 'basic', label: '基本情報', icon: User },
     { id: 'story', label: 'ストーリー', icon: BookOpen },
     { id: 'schedule', label: 'スケジュール', icon: Calendar },
-    { id: 'reviews', label: '口コミ', icon: MessageCircle, count: castReviews.length },
+    { id: 'reviews', label: '口コミ投稿', icon: MessageCircle },
     { id: 'videos', label: '動画', icon: Play },
   ];
 
@@ -148,30 +123,17 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast }) => {
           <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />
         )}
         {activeTab === 'reviews' && (
-          <CastTabReviews
-            castReviews={castReviews}
-            isLoadingReviews={isLoadingReviews}
-            onReviewOpen={handleReviewModalOpen}
-          />
+          <CastTabReviewPage castId={cast.id} castName={cast.name} />
         )}
         {activeTab === 'videos' && <CastTabMovie cast={cast} />}
       </div>
 
-      {/* モーダル */}
+      {/* モーダル（予約だけ残す） */}
       {isBookingModalOpen && (
         <BookingModal
           isOpen={isBookingModalOpen}
           castName={cast.name}
           onClose={handleBookingModalClose}
-        />
-      )}
-      {isReviewModalOpen && (
-        <ReviewModal
-          isOpen={isReviewModalOpen}
-          castId={cast.id}
-          castName={cast.name}
-          onClose={handleReviewModalClose}
-          onSubmitted={fetchReviews}   // ✅ 投稿後にリロード
         />
       )}
     </div>

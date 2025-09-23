@@ -1,13 +1,12 @@
 'use client'
 
 import React from 'react'
-import { Review } from '@/types/review';
 import { Cast, CastProfile } from '@/types/cast'
 import CastTabBasicInformation from './CastTabBasicInformation'
 import CastTabStory from './CastTabStory'
 import CastTabSchedule from './CastTabSchedule'
-import CastTabReviews from './CastTabReviews'
 import CastTabMovie from './CastTabMovie'
+import CastTabReviewPage from './CastTabReviews'  // ✅ 追加：投稿フォーム本体
 
 interface Tab {
   id: string
@@ -18,54 +17,43 @@ interface Tab {
 
 interface CastDetailTabsProps {
   cast: Cast
-  castProfile?: CastProfile   // ✅ 詳細用のCastProfileを追加
+  castProfile?: CastProfile
   activeTab: 'basic' | 'story' | 'schedule' | 'reviews' | 'videos'
   tabs: Tab[]
   isSticky: boolean
-  castReviews: Review[]
-  isLoadingReviews: boolean
   onTabChange: (tab: 'basic' | 'story' | 'schedule' | 'reviews' | 'videos') => void
   onBookingOpen: () => void
-  onReviewOpen: () => void
 }
 
 export const CastDetailTabs: React.FC<CastDetailTabsProps> = ({
   cast,
   castProfile,
   activeTab,
-  castReviews = [],
-  isLoadingReviews,
   onBookingOpen,
-  onReviewOpen
 }) => {
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* タブコンテンツ */}
       <div>
-{/* CastProfileを渡す */}
-{activeTab === 'basic' && castProfile && (
-  <CastTabBasicInformation cast={cast} />
-)}
-
-        {activeTab === 'story' && (
-          <CastTabStory cast={cast} />
+        {/* 基本情報 */}
+        {activeTab === 'basic' && castProfile && (
+          <CastTabBasicInformation cast={cast} />
         )}
 
+        {/* ストーリー */}
+        {activeTab === 'story' && <CastTabStory cast={cast} />}
+
+        {/* スケジュール */}
         {activeTab === 'schedule' && (
           <CastTabSchedule cast={cast} onBookingOpen={onBookingOpen} />
         )}
 
+        {/* ✅ 口コミタブはフォームを直接表示 */}
         {activeTab === 'reviews' && (
-          <CastTabReviews
-            castReviews={castReviews}
-            isLoadingReviews={isLoadingReviews}
-            onReviewOpen={onReviewOpen}
-          />
+          <CastTabReviewPage castId={cast.id} castName={cast.name} />
         )}
 
-        {activeTab === 'videos' && (
-          <CastTabMovie cast={cast} />
-        )}
+        {/* 動画 */}
+        {activeTab === 'videos' && <CastTabMovie cast={cast} />}
       </div>
     </div>
   )
