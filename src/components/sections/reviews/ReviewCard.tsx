@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Star, User, Clock, ThumbsUp } from 'lucide-react';
+import { Star, User } from 'lucide-react';
 import { Review } from '@/types/review';
 
 interface ReviewCardProps {
@@ -9,13 +9,6 @@ interface ReviewCardProps {
 
 const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(0); // 👍 DBにlikeCountがないので仮で0から
-
-  const handleLike = () => {
-    setIsLiked(!isLiked);
-    setLikes(isLiked ? likes - 1 : likes + 1);
-  };
 
   const truncatedText =
     review.comment.length > 150
@@ -24,23 +17,21 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
 
   return (
     <div className="mb-4 rounded-xl border border-gray-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md">
-      {/* ユーザー名・キャスト名・日付 */}
+      {/* キャスト名・日付 */}
       <div className="mb-4 flex items-center gap-3">
-<div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 overflow-hidden">
-  {review.castImage ? (
-    <img
-      src={review.castImage}
-      alt={review.castName || 'キャスト'}
-      className="h-full w-full object-cover"
-    />
-  ) : (
-    <User className="h-5 w-5 text-gray-500" />
-  )}
-</div>
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 overflow-hidden">
+          {review.castImage ? (
+            <img
+              src={review.castImage}
+              alt={review.castName || 'キャスト'}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <User className="h-5 w-5 text-gray-500" />
+          )}
+        </div>
 
         <div>
-          <h3 className="font-medium text-gray-800">{review.userName}</h3>
-          {/* キャスト名追加 */}
           <p className="text-sm text-pink-600">キャスト: {review.castName}</p>
           <p className="text-sm text-gray-500">
             {new Date(review.createdAt).toLocaleDateString()}
@@ -76,7 +67,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
       </div>
 
       {/* コメント */}
-      <div className="mb-4">
+      <div className="mb-6">
         <p className="font-serif leading-relaxed text-gray-700">
           {isExpanded ? review.comment : truncatedText}
         </p>
@@ -88,25 +79,11 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
             {isExpanded ? '閉じる' : 'もっと読む'}
           </button>
         )}
-        <div className="mt-2 flex items-center gap-2">
-          <Clock className="h-4 w-4 text-gray-400" />
-          <span className="text-sm text-gray-600">投稿ID: {review.id}</span>
-        </div>
       </div>
 
-      {/* いいね */}
-      <div className="flex items-center justify-between border-t border-gray-200 pt-4">
-        <button
-          onClick={handleLike}
-          className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-            isLiked
-              ? 'border border-pink-200 bg-pink-100 text-pink-700'
-              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-          }`}
-        >
-          <ThumbsUp className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
-          <span className="text-sm">参考になった ({likes})</span>
-        </button>
+      {/* 投稿者名（右下に配置） */}
+      <div className="flex justify-end">
+        <p className="text-sm text-gray-500">{review.userName}</p>
       </div>
     </div>
   );
