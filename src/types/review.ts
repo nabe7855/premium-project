@@ -13,6 +13,7 @@ export interface ReviewRaw {
     slug: string;
     name: string;
     main_image_url?: string | null;
+    is_active: boolean; // 👈 型に追加
     cast_store_memberships: {
       stores: {
         id: string;

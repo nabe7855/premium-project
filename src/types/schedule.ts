@@ -51,20 +51,23 @@ export interface Cast {
   age: number;
   description: string;
 
-  // ステータス系（予約枠の状態）
-  status: 'available' | 'limited' | 'full';
+  // スケジュール系（予約枠の状態）
+  status: string;              // 従来のstatus
+  scheduleStatus?: string | null;    // ✅ スケジュールテーブル由来の状態（予約可能 / 満員御礼 / 応相談）
+
+  // フラグ系
   isFavorite: boolean;
   isRecentlyViewed: boolean;
 
   // バッジ系（cast_statuses から取得）
   statuses: CastStatus[];
 
-
   // 分類
   category: string;
 
-storeSlug: string;
+  storeSlug: string;
 }
+
 
 export interface ScheduleDay {
   date: string;         // 2025-09-22
@@ -96,4 +99,5 @@ export interface Schedule {
   work_date: string;          // YYYY-MM-DD
   start_datetime: string | null;
   end_datetime: string | null;
+  status: string | null;
 }

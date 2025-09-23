@@ -75,52 +75,54 @@ export default function CalendarEditor({
     setIsModalOpen(true);
   };
 
-  // ✅ DB保存処理（start_datetime / end_datetime）
-  const handleScheduleSave = async (scheduleData: { startTime: string; endTime: string }) => {
-    if (!selectedDate) return;
+  // ✅ DB保存処理（start_datetime / end_datetime / status）
+const handleScheduleSave = async (scheduleData: { startTime: string; endTime: string; status: string }) => {
+  if (!selectedDate) return;
 
-    if (!castId || !storeId) {
-      console.error('❌ castId または storeId が空です');
-      return;
+  if (!castId || !storeId) {
+    console.error('❌ castId または storeId が空です');
+    return;
+  }
+
+  const existingSchedule = schedules.find((s) => s.work_date === selectedDate);
+
+  // 🔹 28時対応 → 翌日にシフト
+  const toDateTime = (date: string, time: string) => {
+    let [h, m] = time.split(':').map(Number);
+    let d = new Date(`${date}T00:00:00+09:00`); // 日本時間ベース
+    if (h >= 24) {
+      d.setDate(d.getDate() + 1);
+      h = h - 24;
     }
-
-    const existingSchedule = schedules.find((s) => s.work_date === selectedDate);
-
-    // 🔹 28時対応 → 翌日にシフト
-    const toDateTime = (date: string, time: string) => {
-      let [h, m] = time.split(':').map(Number);
-      let d = new Date(`${date}T00:00:00+09:00`); // 日本時間ベース
-      if (h >= 24) {
-        d.setDate(d.getDate() + 1);
-        h = h - 24;
-      }
-      d.setHours(h, m, 0, 0);
-      return d.toISOString();
-    };
-
-    const newSchedule = {
-      id: existingSchedule?.id ?? crypto.randomUUID(),
-      cast_id: castId,
-      store_id: storeId,
-      work_date: selectedDate, // YYYY-MM-DD
-      start_datetime: toDateTime(selectedDate, scheduleData.startTime),
-      end_datetime: toDateTime(selectedDate, scheduleData.endTime),
-    };
-
-    try {
-      const saved = await saveSchedule(newSchedule);
-      const updated = existingSchedule
-        ? schedules.map((s) => (s.id === saved.id ? saved : s))
-        : [...schedules, saved];
-
-      onScheduleUpdate(updated);
-    } catch (err) {
-      console.error('❌ スケジュール保存エラー:', err);
-    }
-
-    setIsModalOpen(false);
-    setSelectedDate(null);
+    d.setHours(h, m, 0, 0);
+    return d.toISOString();
   };
+
+  const newSchedule = {
+    id: existingSchedule?.id ?? crypto.randomUUID(),
+    cast_id: castId,
+    store_id: storeId,
+    work_date: selectedDate, // YYYY-MM-DD
+    start_datetime: toDateTime(selectedDate, scheduleData.startTime),
+    end_datetime: toDateTime(selectedDate, scheduleData.endTime),
+    status: scheduleData.status,   // ✅ 追加！
+  };
+
+  try {
+    const saved = await saveSchedule(newSchedule);
+    const updated = existingSchedule
+      ? schedules.map((s) => (s.id === saved.id ? saved : s))
+      : [...schedules, saved];
+
+    onScheduleUpdate(updated);
+  } catch (err) {
+    console.error('❌ スケジュール保存エラー:', err);
+  }
+
+  setIsModalOpen(false);
+  setSelectedDate(null);
+};
+
 
   // ✅ 表示用フォーマッター（28時 → そのまま28:00表記）
   const formatTime = (datetime: string, baseDate: string) => {

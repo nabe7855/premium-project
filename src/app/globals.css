@@ -326,3 +326,53 @@
     box-shadow: 0 0 0 0 rgba(233, 30, 99, 0);
   }
 }
+
+/* 共通スタイル（pill型・フォントなど） */
+.schedule-badge {
+  @apply inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-bold;
+}
+
+/* 予約可能（緑でゆっくり点滅） */
+.schedule-available {
+  @apply schedule-badge bg-green-200 text-green-800;
+  animation: blinkEffect 3.5s ease-in-out infinite;
+}
+
+/* 残りあとわずか（赤でランプっぽく発光） */
+.schedule-limited {
+  @apply schedule-badge bg-red-500 text-white;
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6), 0 0 24px rgba(239, 68, 68, 0.4);
+  animation: pulseLampEffect 2s ease-in-out infinite;
+}
+
+/* 満員御礼（黄色でハッピー感） */
+.schedule-full {
+  @apply schedule-badge bg-yellow-200 text-yellow-800;
+  animation: happyEffect 4s ease-in-out infinite;
+}
+
+/* 応相談（グレー固定） */
+.schedule-negotiable {
+  @apply schedule-badge bg-gray-200 text-gray-700;
+}
+
+/* デフォルト */
+.schedule-default {
+  @apply schedule-badge bg-gray-100 text-gray-500;
+}
+
+/* ==== アニメーション ==== */
+@keyframes blinkEffect {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+@keyframes pulseLampEffect {
+  0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,0.6); }
+  50% { box-shadow: 0 0 20px rgba(239,68,68,1); }
+}
+
+@keyframes happyEffect {
+  0%, 100% { background-color: #FEF9C3; }
+  50% { background-color: #FACC15; }
+}

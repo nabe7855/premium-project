@@ -4,7 +4,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import Header from '@/components/sections/reviews/Header';
 import EmotionFilter from '@/components/sections/reviews/EmotionFilter';
 import ReviewCard from '@/components/sections/reviews/ReviewCard';
-import PickupReviews from '@/components/sections/reviews/PickupReviews';
+//import PickupReviews from '@/components/sections/reviews/PickupReviews';
 import FAQ from '@/components/sections/reviews/FAQ';
 import { Review } from '@/types/review';
 import { getReviewsByStore } from '@/lib/getReviewsByStore';
@@ -51,7 +51,7 @@ export default function StoreReviewsPage({ params }: { params: { slug: string } 
           selectedEmotion={selectedEmotion}
         />
 
-        <PickupReviews />
+        {/* <PickupReviews /> */}
 
         <section className="mb-8">
           <div className="mb-6 flex items-center justify-between">

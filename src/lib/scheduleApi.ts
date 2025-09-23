@@ -9,6 +9,7 @@ export async function saveSchedule(schedule: {
   work_date: string;
   start_datetime: string; // ISO形式
   end_datetime: string;   // ISO形式
+  status: string;         // ✅ 状態を追加
 }): Promise<CastSchedule> {
   const { data, error } = await supabase
     .from('schedules')

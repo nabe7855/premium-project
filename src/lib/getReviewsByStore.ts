@@ -17,6 +17,7 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
         slug,
         name,
         main_image_url,
+        is_active,
         cast_store_memberships (
           stores (
             id,
@@ -36,9 +37,6 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
     return [];
   }
 
-  // ① Supabaseから取得した生データ
-  console.log('📡 Supabase reviews JSON:', JSON.stringify(data, null, 2));
-
   // Supabase → ReviewRaw に整形
   const reviews: ReviewRaw[] = (data || []).map((d: any) => {
     return {
@@ -48,17 +46,16 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
       rating: d.rating,
       comment: d.comment,
       created_at: d.created_at,
-      // casts はオブジェクト or null
       casts: d.casts
         ? {
             id: d.casts.id,
-            slug: d.casts.slug, // ✅ 追加
+            slug: d.casts.slug,
             name: d.casts.name,
             main_image_url: d.casts.main_image_url || null,
+            is_active: d.casts.is_active, // 👈 型に追加
             cast_store_memberships: d.casts.cast_store_memberships || [],
           }
         : null,
-      // review_tag_links は配列
       review_tag_links: (d.review_tag_links || []).map((l: any) => ({
         review_tag_master: l.review_tag_master
           ? {
@@ -70,13 +67,16 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
     };
   });
 
-  console.log('🟡 型整形後 (ReviewRaw[]):', JSON.stringify(reviews, null, 2));
-
-  // ② 店舗slugフィルタリング
+  // ② 店舗slug + 在籍フィルタリング
   const filtered = reviews.filter((review) => {
     const cast = review.casts;
     if (!cast) {
       console.log('⚠️ casts が null のため除外:', review.id);
+      return false;
+    }
+
+    if (!cast.is_active) {
+      console.log('⚠️ 非アクティブキャストのため除外:', review.id);
       return false;
     }
 
@@ -93,11 +93,8 @@ export async function getReviewsByStore(storeSlug: string): Promise<Review[]> {
     return matched;
   });
 
-  console.log('🟢 フィルタ後 reviews:', JSON.stringify(filtered, null, 2));
-
   // ③ mapReview適用後
   const mapped = filtered.map(mapReview);
-  console.log('🔵 mapReview後 (Review[]):', JSON.stringify(mapped, null, 2));
 
   return mapped;
 }

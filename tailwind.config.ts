@@ -43,10 +43,24 @@ const config: Config = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-6px)' },
         },
+        blink: {
+          '0%, 100%': { opacity: '1' },
+          '50%': { opacity: '0.4' },
+        },
+        pulseLamp: {
+          '0%, 100%': { boxShadow: '0 0 6px rgba(239,68,68,0.6)' },
+          '50%': { boxShadow: '0 0 16px rgba(239,68,68,1)' },
+        },
+        happy: {
+          '0%, 100%': { backgroundColor: '#FEF9C3' }, // yellow-100
+          '50%': { backgroundColor: '#FACC15' }, // yellow-400
+        },
       },
-      animation: {
-        float: 'float 3s ease-in-out infinite',
-      },
+animation: {
+  slowBlink: 'blink 3.5s ease-in-out infinite',
+  pulseLampCustom: 'pulseLamp 2.2s ease-in-out infinite',
+  happyCustom: 'happy 4s ease-in-out infinite',
+},
     },
   },
   plugins: [

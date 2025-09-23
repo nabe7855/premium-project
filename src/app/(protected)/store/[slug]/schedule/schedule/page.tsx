@@ -1,18 +1,16 @@
 'use client';
 
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabaseClient';
 import { ScheduleDay as ScheduleDayType, Cast } from '@/types/schedule';
-//import QuickInfoBar from '@/components/sections/schedule/QuickInfoBar';
 import DateNavigation from '@/components/sections/schedule/DateNavigation';
-// import FilterSection from '@/components/sections/schedule/FilterSection';
 import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
-import { useParams } from 'next/navigation'; // ✅ 追加
+import { useParams } from 'next/navigation';
 
 function SchedulePage() {
   const params = useParams();
-  const storeSlug = params.slug as string; // ✅ URLから取得 ("tokyo" など)
+  const storeSlug = params.slug as string;
 
   const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
   const [activeDate, setActiveDate] = useState<string>('');
@@ -50,6 +48,7 @@ function SchedulePage() {
             work_date,
             start_datetime,
             end_datetime,
+            status,
             casts (
               id,
               name,
@@ -62,7 +61,10 @@ function SchedulePage() {
                 status_id,
                 is_active,
                 status_master (
-                  name
+                  id,
+                  name,
+                  label_color,
+                  text_color
                 )
               )
             )
@@ -105,12 +107,17 @@ function SchedulePage() {
                 isFavorite: false,
                 isRecentlyViewed: false,
                 category: '',
+                // ✅ スケジュールのステータス
+                scheduleStatus: s.status ?? null,
+                // ✅ タグ用のステータス
                 statuses: (cast?.cast_statuses ?? []).map((cs: any) => ({
                   id: cs.id,
                   statusId: cs.status_id,
                   label: cs.status_master?.name ?? '',
+                  labelColor: cs.status_master?.label_color ?? '#fce7f3',
+                  textColor: cs.status_master?.text_color ?? '#9d174d',
                 })),
-                storeSlug, // ✅ キャストに storeSlug を持たせる
+                storeSlug,
               } as Cast;
             }) ?? [];
 
@@ -127,9 +134,6 @@ function SchedulePage() {
 
     fetchSchedule();
   }, [storeSlug]);
-
-  // ✅ QuickInfo を schedule から直接計算
-
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -169,8 +173,6 @@ function SchedulePage() {
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 py-6">
-        
-
         <div className="lg:grid lg:grid-cols-4 lg:gap-6">
           {/* Sidebar */}
           <div className="space-y-6 lg:col-span-1">

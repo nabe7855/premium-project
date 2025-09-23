@@ -7,7 +7,6 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
   const endDate = new Date();
   endDate.setDate(today.getDate() + 13);
 
-  // Supabase から schedules を取得
   const { data, error } = await supabase
     .from('schedules')
     .select(`
@@ -15,6 +14,8 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
       work_date,
       start_datetime,
       end_datetime,
+      status:status,      -- ✅ 直指定
+      cast_id,     -- ✅ 紐付け確認
       casts (
         id,
         name,
@@ -50,57 +51,79 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
     return [];
   }
 
-  console.log('📦 Supabase schedules raw:', data);
+  // ✅ まず全体をダンプ
+  console.log('📦 schedules raw:', JSON.stringify(data, null, 2));
 
-  // 📅 日付ごとに整形
   const grouped: { [date: string]: ScheduleDay } = {};
 
-  data?.forEach((row) => {
+  data?.forEach((row: any) => {
+    // ✅ row 単位のキー確認
+    console.log("🛠 row keys:", Object.keys(row));
+
+    // ✅ status の候補を徹底的にチェック
+    console.log("🛠 row.status:", row.status);
+    console.log("🛠 row.cast_id:", row.cast_id);
+    if (row.casts) {
+      (Array.isArray(row.casts) ? row.casts : [row.casts]).forEach((cast: any) => {
+        console.log("🛠 inside cast:", {
+          castName: cast.name,
+          directStatus: cast.status,        // cast 側に入ってないか？
+          scheduleStatus: row.status,       // schedule 側の値
+        });
+      });
+    }
+
     const date = row.work_date;
     if (!grouped[date]) {
-      const dayOfWeek = new Date(date).toLocaleDateString('ja-JP', { weekday: 'short' });
       grouped[date] = {
         date,
-        dayOfWeek,
+        dayOfWeek: new Date(date).toLocaleDateString('ja-JP', { weekday: 'short' }),
         casts: [],
         recommendedCasts: [],
       };
     }
 
-    // ✅ casts が配列の場合に対応
-(row.casts ? (Array.isArray(row.casts) ? row.casts : [row.casts]) : []).forEach((castData: any) => {
-  const statuses: CastStatus[] = (castData.cast_statuses ?? [])
-    .filter((cs: any) => cs.is_active)
-    .map((cs: any): CastStatus => ({
-      id: cs.id,
-      castId: castData.id,
-      statusId: cs.status_id,
-      label: cs.status_master?.name ?? '',
-      labelColor: cs.status_master?.label_color ?? '#fce7f3',
-      textColor: cs.status_master?.text_color ?? '#9d174d',
-    }));
+    (row.casts ? (Array.isArray(row.casts) ? row.casts : [row.casts]) : []).forEach((castData: any) => {
+      const statuses: CastStatus[] = (castData.cast_statuses ?? [])
+        .filter((cs: any) => cs.is_active)
+        .map((cs: any): CastStatus => ({
+          id: cs.id,
+          castId: castData.id,
+          statusId: cs.status_id,
+          label: cs.status_master?.name ?? '',
+          labelColor: cs.status_master?.label_color ?? '#fce7f3',
+          textColor: cs.status_master?.text_color ?? '#9d174d',
+        }));
 
-  const storeSlug = castData.cast_store_memberships?.[0]?.stores?.slug ?? 'tokyo';
+      const storeSlug = castData.cast_store_memberships?.[0]?.stores?.slug ?? 'tokyo';
 
-  const cast: Cast = {
-    id: castData.id,
-    name: castData.name,
-    age: castData.age ?? 0,
-    photo: castData.main_image_url ?? '',
-    slug: castData.slug ?? '',
-    workingHours: `${row.start_datetime?.slice(11, 16) ?? '??:??'} - ${row.end_datetime?.slice(11, 16) ?? '??:??'}`,
-    status: 'available',
-    description: castData.catch_copy ?? '',
-    isFavorite: false,
-    isRecentlyViewed: false,
-    category: '',
-    statuses,
-    storeSlug,
-  };
+      // ✅ schedule 側のステータスを採用
+      const scheduleStatus: string | null = row.status ?? null;
 
-  grouped[date].casts.push(cast);
-});
+      console.log("🟣 cast assignment:", {
+        castName: castData.name,
+        scheduleStatus,
+      });
 
+      const cast: Cast = {
+        id: castData.id,
+        name: castData.name,
+        age: castData.age ?? 0,
+        photo: castData.main_image_url ?? '',
+        slug: castData.slug ?? '',
+        workingHours: `${row.start_datetime?.slice(11, 16) ?? '??:??'} - ${row.end_datetime?.slice(11, 16) ?? '??:??'}`,
+        status: 'active',
+        scheduleStatus,
+        description: castData.catch_copy ?? '',
+        isFavorite: false,
+        isRecentlyViewed: false,
+        category: '',
+        statuses,
+        storeSlug,
+      };
+
+      grouped[date].casts.push(cast);
+    });
   });
 
   return Object.values(grouped);
