@@ -60,24 +60,27 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
           </span>
         </div>
 
-        {/* コメント */}
-        <div className="mb-6">
-          <p className="font-serif leading-relaxed text-gray-700">
-            {isExpanded ? review.comment : truncatedText}
-          </p>
-          {review.comment.length > 150 && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();     // ✅ リンク遷移防止
-                e.stopPropagation();    // ✅ クリックイベントバブリングを止める
-                setIsExpanded(!isExpanded);
-              }}
-              className="mt-2 text-sm font-medium text-pink-600 hover:text-pink-700"
-            >
-              {isExpanded ? '閉じる' : 'もっと読む'}
-            </button>
-          )}
-        </div>
+{/* コメント */}
+<div className="mb-6">
+  <p
+    className="font-serif leading-relaxed text-gray-700 whitespace-pre-line"
+  >
+    {isExpanded ? review.comment : truncatedText}
+  </p>
+  {review.comment.length > 150 && (
+    <button
+      onClick={(e) => {
+        e.preventDefault();     // ✅ リンク遷移防止
+        e.stopPropagation();    // ✅ クリックイベントバブリングを止める
+        setIsExpanded(!isExpanded);
+      }}
+      className="mt-2 text-sm font-medium text-pink-600 hover:text-pink-700"
+    >
+      {isExpanded ? '閉じる' : 'もっと読む'}
+    </button>
+  )}
+</div>
+
 
         {/* タグ */}
         {review.tags.length > 0 && (

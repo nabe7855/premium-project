@@ -8,7 +8,8 @@ export async function postReview(
   userName: string,
   rating: number,
   comment: string,
-  tagIds: string[] = []
+  tagIds: string[] = [],
+  userAgeGroup?: number // 👈 追加: ユーザー年代
 ): Promise<Review> {
   // 1. reviews に投稿
   const { data: review, error: reviewError } = await supabase
@@ -19,6 +20,7 @@ export async function postReview(
         user_name: userName || "匿名希望",
         rating,
         comment,
+        user_age_group: userAgeGroup ?? null, // 👈 年代を保存
       },
     ])
     .select(
@@ -28,7 +30,8 @@ export async function postReview(
       user_name,
       rating,
       comment,
-      created_at
+      created_at,
+      user_age_group
     `
     )
     .single<ReviewRaw>();
@@ -70,6 +73,7 @@ export async function postReview(
       rating,
       comment,
       created_at,
+      user_age_group,
       review_tag_links (
         review_tag_master ( id, name )
       )

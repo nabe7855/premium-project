@@ -1,13 +1,13 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link'; // 👈 追加
+import Link from 'next/link';
 import { getReviewTags, postReview } from '@/lib/reviewPost';
 
 interface CastTabReviewPageProps {
   castId: string;
   castName?: string;
-  storeSlug?: string; // 👈 追加（店舗slugを受け取る）
+  storeSlug?: string;
 }
 
 interface Tag {
@@ -20,6 +20,7 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
   const [comment, setComment] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [nickname, setNickname] = useState('');
+  const [userAgeGroup, setUserAgeGroup] = useState<number | null>(null); // 👈 年代
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
   const [showThanks, setShowThanks] = useState(false);
@@ -51,7 +52,8 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
         nickname || '匿名希望',
         rating,
         comment,
-        selectedTags
+        selectedTags,
+        userAgeGroup ?? undefined // 👈 年代を渡す
       );
 
       setShowThanks(true);
@@ -61,8 +63,8 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
       setComment('');
       setSelectedTags([]);
       setNickname('');
+      setUserAgeGroup(null);
 
-      // 3秒後にサンクスメッセージを消して再度フォーム表示
       setTimeout(() => setShowThanks(false), 3000);
     } catch (error) {
       console.error('❌ 口コミ投稿エラー:', error);
@@ -147,6 +149,26 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
               />
             </div>
 
+            {/* 年代（解析用） */}
+            <div>
+              <label className="mb-2 block text-sm font-medium text-neutral-700">
+                年代（解析用・非表示）
+              </label>
+              <select
+                value={userAgeGroup ?? ''}
+                onChange={(e) => setUserAgeGroup(Number(e.target.value))}
+                className="w-full rounded-xl border border-neutral-200 px-4 py-3 focus:border-red-500 focus:ring-2 focus:ring-red-500/20 transition-all"
+              >
+                <option value="">選択してください</option>
+                <option value="10">10代</option>
+                <option value="20">20代</option>
+                <option value="30">30代</option>
+                <option value="40">40代</option>
+                <option value="50">50代</option>
+                <option value="60">60代以上</option>
+              </select>
+            </div>
+
             {/* タグ */}
             <div>
               <label className="mb-3 block text-sm font-medium text-neutral-700">
@@ -187,15 +209,17 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
           </form>
         )}
 
-        {/* 🆕 口コミ一覧ページへリンク */}
-        <div className="mt-8 text-center">
-          <Link
-            href={`/store/${storeSlug}/reviews/reviews`}
-            className="inline-block rounded-full bg-pink-500 px-6 py-3 text-white font-medium shadow-md hover:bg-pink-600 transition-all"
-          >
-            📖 口コミ一覧を見る
-          </Link>
-        </div>
+        {/* 口コミ一覧ページへリンク */}
+        {storeSlug && (
+          <div className="mt-8 text-center">
+            <Link
+              href={`/store/${storeSlug}/reviews/reviews`}
+              className="inline-block rounded-full bg-pink-500 px-6 py-3 text-white font-medium shadow-md hover:bg-pink-600 transition-all"
+            >
+              📖 口コミ一覧を見る
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   );

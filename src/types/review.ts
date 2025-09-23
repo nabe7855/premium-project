@@ -6,12 +6,13 @@ export interface ReviewRaw {
   rating: number;
   comment: string;
   created_at: string;
+  user_age_group?: number | null; // ✅ 追加: 年代 (10, 20, 30...)
 
   casts: {
     id: string;
     slug: string;
     name: string;
-    main_image_url?: string | null; // 👈 追加
+    main_image_url?: string | null;
     cast_store_memberships: {
       stores: {
         id: string;
@@ -48,5 +49,7 @@ export interface Review {
   comment: string;
   createdAt: string;
   tags: string[];
-}
 
+  // ✅ 解析用（UIでは表示しない）
+  userAgeGroup?: number;   // 10 → 10代, 20 → 20代 ...
+}
