@@ -54,3 +54,19 @@ export interface Review {
   // ✅ 解析用（UIでは表示しない）
   userAgeGroup?: number;   // 10 → 10代, 20 → 20代 ...
 }
+
+
+
+
+export interface ReviewTagMaster {
+  id: string
+  name: string
+  category: string
+}
+
+
+export interface ReviewTagLinkWithMaster {
+  review_id: string
+  review_tag_master: ReviewTagMaster[]   // ← 複数タグ
+  reviews: { cast_id: string }[]
+}

@@ -7,21 +7,19 @@ import {
   Radar,
   ResponsiveContainer,
 } from 'recharts';
-import { CastPerformance } from '@/types/cast-dashboard';
 
 interface RadarChartProps {
-  data: CastPerformance;
+  // Record<string, number> を受け取る
+  data: Record<string, number>;
 }
 
 export default function RadarChartComponent({ data }: RadarChartProps) {
-  const chartData = [
-    { subject: 'イケメン度', A: data.イケメン度, fullMark: 5 },
-    { subject: 'ユーモア力', A: data.ユーモア力, fullMark: 5 },
-    { subject: '傾聴力', A: data.傾聴力, fullMark: 5 },
-    { subject: 'テクニック', A: data.テクニック, fullMark: 5 },
-    { subject: '癒し度', A: data.癒し度, fullMark: 5 },
-    { subject: '余韻力', A: data.余韻力, fullMark: 5 },
-  ];
+  // DBからのカテゴリを chartData に変換
+  const chartData = Object.entries(data).map(([category, score]) => ({
+    subject: category,
+    A: score,
+    fullMark: 5,
+  }));
 
   return (
     <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-lg">
@@ -60,7 +58,9 @@ export default function RadarChartComponent({ data }: RadarChartProps) {
         {chartData.map((item) => (
           <div key={item.subject} className="flex items-center justify-between">
             <span className="text-gray-600">{item.subject}</span>
-            <span className="font-semibold text-pink-600">{item.A.toFixed(1)}/5</span>
+            <span className="font-semibold text-pink-600">
+              {item.A.toFixed(1)}/5
+            </span>
           </div>
         ))}
       </div>

@@ -5,11 +5,11 @@ import RadarChartComponent from '../RadarChart';
 import SweetLevelGauge from '../SweetLevelGauge';
 import RankSystem from '../RankSystem';
 import MotivationBadges from '../MotivationBadges';
-import { CastPerformance, CastLevel, Badge, CastTweet } from '@/types/cast-dashboard';
+import { CastLevel, Badge, CastTweet } from '@/types/cast-dashboard';
 import { getCastTweets, postCastTweet } from '@/lib/getCastTweets';
 
 interface DashboardHomeProps {
-  performanceData: CastPerformance;
+  performanceData: Record<string, number>;
   levelData: CastLevel;
   badgesData: Badge[];
   castName: string;

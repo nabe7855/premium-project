@@ -23,13 +23,14 @@ import GallerySection from './sections/GallerySection';
 import VoiceSection from './sections/VoiceSection';
 
 // 型
-import { CastPerformance, CastLevel, Badge } from '@/types/cast-dashboard';
+import { CastLevel, Badge } from '@/types/cast-dashboard';
 import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
 
 // API
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getCastQuestions } from '@/lib/getCastQuestions';
+import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
 import { supabase } from '@/lib/supabaseClient';
 
 interface DashboardProps {
@@ -51,16 +52,10 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
   const [storeName, setStoreName] = useState<string | null>(null);
 
-  // ---- ダッシュボード用ダミーデータ ----
-  const performanceData: CastPerformance = {
-    イケメン度: 4.5,
-    ユーモア力: 4.0,
-    傾聴力: 4.9,
-    テクニック: 4.2,
-    癒し度: 4.9,
-    余韻力: 4.6,
-  };
+  // ✅ 能力チャート用データ（ダミー削除 → Supabaseから取得）
+  const [performanceData, setPerformanceData] = useState<Record<string, number>>({});
 
+  // ---- レベルとバッジは暫定的にダミーのまま ----
   const levelData: CastLevel = {
     level: 12,
     maxLevel: 15,
@@ -78,19 +73,27 @@ export default function Dashboard({ cast }: DashboardProps) {
 
   // ✅ 特徴マスターのロード
   useEffect(() => {
-    getFeatureMasters().then(setFeatureMasters).catch(err => console.error('特徴マスター取得エラー:', err));
+    getFeatureMasters()
+      .then(setFeatureMasters)
+      .catch((err) => console.error('特徴マスター取得エラー:', err));
   }, []);
 
   // ✅ 質問マスターのロード
   useEffect(() => {
-    supabase.from('question_master').select('*').eq('is_active', true).then(({ data, error }) => {
-      if (error) console.error(error);
-      else setQuestionMasters(data ?? []);
-    });
+    supabase
+      .from('question_master')
+      .select('*')
+      .eq('is_active', true)
+      .then(({ data, error }) => {
+        if (error) console.error(error);
+        else setQuestionMasters(data ?? []);
+      });
   }, []);
 
   // ✅ 初回プロフィールロード
-  useEffect(() => { refreshCastProfile(cast.id); }, [cast.id]);
+  useEffect(() => {
+    refreshCastProfile(cast.id);
+  }, [cast.id]);
 
   const refreshCastProfile = async (castId: string) => {
     try {
@@ -98,7 +101,9 @@ export default function Dashboard({ cast }: DashboardProps) {
       if (refreshed) {
         const answers = await getCastQuestions(castId);
         const questions: Record<string, string> = {};
-        answers.forEach((a) => { if (a.question?.id) questions[a.question.id] = a.answer ?? ''; });
+        answers.forEach((a) => {
+          if (a.question?.id) questions[a.question.id] = a.answer ?? '';
+        });
         setCastState({ ...refreshed, questions });
       }
     } catch (err) {
@@ -108,12 +113,24 @@ export default function Dashboard({ cast }: DashboardProps) {
 
   // ✅ 所属店舗
   useEffect(() => {
-    supabase.from('cast_store_memberships').select('stores(name)').eq('cast_id', cast.id).then(({ data, error }) => {
-      if (!error && data) {
-        const names = data.map((item: any) => item.stores?.name).filter(Boolean);
-        setStoreName(names.join('・'));
-      }
-    });
+    supabase
+      .from('cast_store_memberships')
+      .select('stores(name)')
+      .eq('cast_id', cast.id)
+      .then(({ data, error }) => {
+        if (!error && data) {
+          const names = data.map((item: any) => item.stores?.name).filter(Boolean);
+          setStoreName(names.join('・'));
+        }
+      });
+  }, [cast.id]);
+
+  // ✅ 能力チャートを Supabase からロード
+  useEffect(() => {
+    if (!cast.id) return;
+    getCastPerformance(cast.id)
+      .then((data) => setPerformanceData(data ?? {}))
+      .catch((err) => console.error('能力チャート取得エラー:', err));
   }, [cast.id]);
 
   // ---- ナビゲーションタブ ----
@@ -123,7 +140,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: 'diary', name: '写メ日記', icon: Camera },
     { id: 'profile', name: 'マイプロフィール', icon: User },
     { id: 'gallery', name: 'ギャラリー', icon: Image },
-    { id: 'voice', name: '音声データ', icon: Mic }, // 🎤 新規タブ
+    { id: 'voice', name: '音声データ', icon: Mic },
   ];
 
   return (
@@ -133,18 +150,29 @@ export default function Dashboard({ cast }: DashboardProps) {
         <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
           <div className="flex h-14 items-center justify-between sm:h-16">
             <div className="flex items-center">
-              <button onClick={() => setSidebarOpen(!sidebarOpen)} className="rounded-md p-2 text-gray-600 hover:bg-pink-50 hover:text-pink-600 md:hidden">
+              <button
+                onClick={() => setSidebarOpen(!sidebarOpen)}
+                className="rounded-md p-2 text-gray-600 hover:bg-pink-50 hover:text-pink-600 md:hidden"
+              >
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
               <h1 className="ml-2 text-lg font-bold text-gray-900 sm:text-xl">
                 キャストダッシュボード
-                {storeName && <span className="ml-2 text-pink-600 text-base font-medium">（{storeName}）</span>}
+                {storeName && (
+                  <span className="ml-2 text-pink-600 text-base font-medium">（{storeName}）</span>
+                )}
               </h1>
             </div>
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">ようこそ、{castState.name} さん</span>
-              <button onClick={logout} className="flex items-center space-x-1 text-gray-600 hover:text-pink-600">
-                <LogOut className="h-4 w-4" /><span className="hidden text-sm sm:inline">ログアウト</span>
+              <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">
+                ようこそ、{castState.name} さん
+              </span>
+              <button
+                onClick={logout}
+                className="flex items-center space-x-1 text-gray-600 hover:text-pink-600"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden text-sm sm:inline">ログアウト</span>
               </button>
             </div>
           </div>
@@ -162,10 +190,13 @@ export default function Dashboard({ cast }: DashboardProps) {
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
                   className={`flex items-center space-x-1 whitespace-nowrap border-b-2 px-1 py-3 text-xs sm:text-sm ${
-                    activeTab === tab.id ? 'border-pink-500 text-pink-600' : 'border-transparent text-gray-500 hover:text-gray-700'
+                    activeTab === tab.id
+                      ? 'border-pink-500 text-pink-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700'
                   }`}
                 >
-                  <Icon className="h-4 w-4" /><span>{tab.name}</span>
+                  <Icon className="h-4 w-4" />
+                  <span>{tab.name}</span>
                 </button>
               );
             })}
@@ -174,31 +205,39 @@ export default function Dashboard({ cast }: DashboardProps) {
       </div>
 
       {/* Main Content */}
-<main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
-  {activeTab === 'dashboard' && (
-    <DashboardHome
-      castName={castState.name}
-      castId={castState.id}                // ← 追加
-      performanceData={performanceData}
-      levelData={levelData}
-      badgesData={badgesData}
-    />
-  )}
+      <main className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-8 lg:px-8">
+        {activeTab === 'dashboard' && (
+          <DashboardHome
+            castName={castState.name}
+            castId={castState.id}
+            performanceData={performanceData}
+            levelData={levelData}
+            badgesData={badgesData}
+          />
+        )}
 
         {activeTab === 'schedule' && <ScheduleSection diaries={diaries} />}
-        {activeTab === 'diary' && <DiarySection diaries={diaries} showEditor={showDiaryEditor} castId={cast.id} onSave={() => {}} onDelete={() => {}} onToggleEditor={setShowDiaryEditor} />}
+        {activeTab === 'diary' && (
+          <DiarySection
+            diaries={diaries}
+            showEditor={showDiaryEditor}
+            castId={cast.id}
+            onSave={() => {}}
+            onDelete={() => {}}
+            onToggleEditor={setShowDiaryEditor}
+          />
+        )}
         {activeTab === 'profile' && (
-          <ProfileSection cast={castState} featureMasters={featureMasters} questionMasters={questionMasters} refreshCastProfile={refreshCastProfile} />
+          <ProfileSection
+            cast={castState}
+            featureMasters={featureMasters}
+            questionMasters={questionMasters}
+            refreshCastProfile={refreshCastProfile}
+          />
         )}
         {activeTab === 'gallery' && <GallerySection castId={castState.id} />}
-
-        {/* 🎤 音声データ専用タブ */}
         {activeTab === 'voice' && (
-          <VoiceSection
-    cast={castState}
-    setCastState={setCastState}
-    activeTab={activeTab} // ✅ 追加
-  />
+          <VoiceSection cast={castState} setCastState={setCastState} activeTab={activeTab} />
         )}
       </main>
     </div>
