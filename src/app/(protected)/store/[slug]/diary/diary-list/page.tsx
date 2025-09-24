@@ -5,7 +5,20 @@ import { Search, Filter, Grid, List, Flame, Sparkles } from 'lucide-react';
 import DiaryCard from '@/components/sections/diary/DiaryCard';
 import CastSearchDropdown from '@/components/sections/diary/CastSearchDropdown';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
-import { mockDiaryPosts } from '@/data/diarydata';
+import { supabase } from '@/lib/supabaseClient';
+
+interface DiaryPost {
+  id: string;
+  title: string;
+  content: string;
+  excerpt: string;
+  date: string;
+  tags: string[];
+  reactions: { total: number };
+  commentCount: number;
+  storeSlug: string;
+  castName: string;
+}
 
 const DiaryListPage = () => {
   const params = useParams();
@@ -14,36 +27,69 @@ const DiaryListPage = () => {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
-  const [filteredPosts, setFilteredPosts] = useState(mockDiaryPosts);
+  const [filteredPosts, setFilteredPosts] = useState<DiaryPost[]>([]);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 
+  // ✅ DBから日記取得
   useEffect(() => {
-    // Set canonical URL
-    const existingCanonical = document.querySelector('link[rel="canonical"]');
-    if (existingCanonical) existingCanonical.remove();
+    const fetchPosts = async () => {
+      const { data, error } = await supabase
+        .from('blogs')
+        .select(
+          `
+          id,
+          title,
+          content,
+          created_at,
+          casts (
+            id,
+            name,
+            cast_store_memberships (
+              stores ( slug )
+            )
+          ),
+          blog_tags (
+            blog_tag_master ( name )
+          )
+        `
+        )
+        .order('created_at', { ascending: false });
 
-    const canonical = document.createElement('link');
-    canonical.rel = 'canonical';
-    canonical.href = `${window.location.origin}/diary/diary-list`;
-    document.head.appendChild(canonical);
+      if (error) {
+        console.error('❌ fetchPosts error:', error.message);
+        return;
+      }
 
-    document.title = '写メ日記一覧｜Strawberry Boys';
-    const existingDescription = document.querySelector('meta[name="description"]');
-    if (existingDescription) {
-      existingDescription.setAttribute(
-        'content',
-        'ストロベリーボーイズキャストの日常を綴った写メ日記。あなたの推しキャストの素顔を発見しよう。',
-      );
-    }
+      // storeSlug でフィルタリング
+      const posts =
+        data
+          ?.filter((post: any) => {
+            const memberships = post.casts?.[0]?.cast_store_memberships ?? [];
+            const storeSlugs = memberships.map((m: any) => m.stores?.slug).filter(Boolean);
+            return storeSlugs.includes(storeSlug);
+          })
+          .map((post: any) => ({
+            id: post.id,
+            title: post.title,
+            content: post.content ?? '',
+            excerpt: post.content ? post.content.slice(0, 100) : '',
+            date: post.created_at,
+            tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
+            reactions: { total: 0 }, // TODO: リアクション集計
+            commentCount: 0, // TODO: コメント数集計
+            storeSlug,
+            castName: post.casts?.[0]?.name ?? '不明なキャスト',
+          })) ?? [];
 
-    return () => {
-      const canonical = document.querySelector('link[rel="canonical"]');
-      if (canonical) canonical.remove();
+      setFilteredPosts(posts);
     };
-  }, []);
 
+    fetchPosts();
+  }, [storeSlug]);
+
+  // ✅ フィルタリングとソート
   useEffect(() => {
-    let filtered = mockDiaryPosts;
+    let filtered = [...filteredPosts];
 
     if (selectedHashtags.length > 0) {
       filtered = filtered.filter((post) =>
@@ -51,14 +97,16 @@ const DiaryListPage = () => {
           (hashtag) =>
             post.tags.includes(hashtag) ||
             post.title.includes(hashtag) ||
-            post.excerpt.includes(hashtag),
-        ),
+            post.excerpt.includes(hashtag)
+        )
       );
     }
 
     switch (sortBy) {
       case 'newest':
-        filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+        filtered = filtered.sort(
+          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+        );
         break;
       case 'popular':
         filtered = filtered.sort((a, b) => b.reactions.total - a.reactions.total);
@@ -75,8 +123,9 @@ const DiaryListPage = () => {
     setSelectedHashtags(hashtags);
   };
 
-  const trendingPosts = mockDiaryPosts.slice(0, 3);
-  const recommendedPosts = mockDiaryPosts.slice(3, 6);
+  // おすすめ・トレンドは暫定的に最初の数件から
+  const trendingPosts = filteredPosts.slice(0, 3);
+  const recommendedPosts = filteredPosts.slice(3, 6);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white">
@@ -88,7 +137,7 @@ const DiaryListPage = () => {
               Photo Diary
             </h1>
             <p className="mx-auto max-w-2xl px-4 font-serif text-sm text-gray-600 sm:text-base md:text-lg">
-              キャストが綴る、とびきり甘い"日常"の記録。誰にも言えない想いを、あなたにだけ。
+              キャストが綴る、とびきり甘い&quot;日常&quot;の記録。誰にも言えない想いを、あなたにだけ。
             </p>
           </div>
         </div>
@@ -115,13 +164,17 @@ const DiaryListPage = () => {
               <div className="flex items-center overflow-hidden rounded-lg border border-pink-200 bg-white">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 sm:p-2.5 ${viewMode === 'grid' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'}`}
+                  className={`p-2 sm:p-2.5 ${
+                    viewMode === 'grid' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'
+                  }`}
                 >
                   <Grid size={16} />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 sm:p-2.5 ${viewMode === 'list' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'}`}
+                  className={`p-2 sm:p-2.5 ${
+                    viewMode === 'list' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'
+                  }`}
                 >
                   <List size={16} />
                 </button>
@@ -153,7 +206,7 @@ const DiaryListPage = () => {
             </p>
             <div className="space-y-3">
               {recommendedPosts.map((post) => (
-                <DiaryCard key={post.id} post={{ ...post, storeSlug }} compact />
+                <DiaryCard key={post.id} post={post} compact />
               ))}
             </div>
           </div>
@@ -169,12 +222,7 @@ const DiaryListPage = () => {
             </p>
             <div className="space-y-3">
               {trendingPosts.map((post, index) => (
-                <DiaryCard
-                  key={post.id}
-                  post={{ ...post, storeSlug }}
-                  compact
-                  trending={index + 1}
-                />
+                <DiaryCard key={post.id} post={post} compact trending={index + 1} />
               ))}
             </div>
           </div>
@@ -206,12 +254,16 @@ const DiaryListPage = () => {
 
           {filteredPosts.length > 0 ? (
             <div
-              className={`grid gap-4 sm:gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
+              className={`grid gap-4 sm:gap-6 ${
+                viewMode === 'grid'
+                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
+                  : 'grid-cols-1'
+              }`}
             >
               {filteredPosts.map((post) => (
                 <DiaryCard
                   key={post.id}
-                  post={{ ...post, storeSlug }}
+                  post={post}
                   listView={viewMode === 'list'}
                 />
               ))}
