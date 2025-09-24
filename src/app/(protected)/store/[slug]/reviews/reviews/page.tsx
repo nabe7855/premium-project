@@ -1,37 +1,18 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import Header from '@/components/sections/reviews/Header';
 import ReviewList from '@/components/sections/reviews/ReviewList';
 import FAQ from '@/components/sections/reviews/FAQ';
-import { Review } from '@/types/review';
-import { getReviewsByStore } from '@/lib/getReviewsByStore';
 
 export default function StoreReviewsPage({ params }: { params: { slug: string } }) {
-  const [reviews, setReviews] = useState<Review[]>([]);
-  const [loading, setLoading] = useState(true);
-
-
-
-  useEffect(() => {
-    const fetchReviews = async () => {
-      setLoading(true);
-      console.log('🔎 storeSlug (URLパラメータ):', params.slug);
-      const data = await getReviewsByStore(params.slug);
-      console.log('📄 フロントで受け取った reviews:', data);
-      setReviews(data);
-      setLoading(false);
-    };
-    fetchReviews();
-  }, [params.slug]);
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-pink-50 to-white">
       <Header />
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        {/* ReviewList にデータを渡す */}
-        <ReviewList reviews={reviews} loading={loading} />
+        {/* ✅ storeSlug を渡して ReviewList に任せる */}
+        <ReviewList storeSlug={params.slug} />
 
         <FAQ />
 

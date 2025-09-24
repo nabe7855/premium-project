@@ -1,28 +1,96 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import EmotionFilter from '@/components/sections/reviews/EmotionFilter';
 import ReviewCard from '@/components/sections/reviews/ReviewCard';
 import { Review } from '@/types/review';
+import { getReviewsByStore } from '@/lib/getReviewsByStore';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 interface ReviewListProps {
-  reviews: Review[];
-  loading: boolean;
+  storeSlug: string;
 }
 
-const ReviewList: React.FC<ReviewListProps> = ({ reviews, loading }) => {
+const ReviewList: React.FC<ReviewListProps> = ({ storeSlug }) => {
   const [selectedEmotion, setSelectedEmotion] = useState<string>('');
 
-  const filteredReviews = useMemo(() => {
-    if (!selectedEmotion) return reviews;
-    return reviews.filter((review) => review.tags.includes(selectedEmotion));
-  }, [reviews, selectedEmotion]);
+  // ✅ 無限スクロールでレビュー取得
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['reviews', storeSlug, selectedEmotion],
+    queryFn: ({ pageParam = 0 }) => {
+      console.log('📡 fetch reviews pageParam:', pageParam);
+      return getReviewsByStore(storeSlug, { limit: 20, offset: pageParam });
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      console.log('📄 getNextPageParam lastPage.reviews:', lastPage?.reviews?.length);
+
+      if (!lastPage || lastPage.reviews.length < 20) {
+        console.log('⛔ データが20件未満、次ページなし');
+        return undefined;
+      }
+
+      const nextOffset = allPages.length * 20;
+      console.log('➡️ 次の offset:', nextOffset);
+      return nextOffset;
+    },
+  });
+
+  // ✅ 全レビュー配列に変換
+  const reviews: Review[] = data?.pages.flatMap((p) => p.reviews) ?? [];
+  const totalCount: number = data?.pages[0]?.totalCount ?? 0;
+
+  console.log('📝 reviews 総数:', reviews.length, ' / totalCount:', totalCount);
+
+  // ✅ 無限スクロール用のref
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!loadMoreRef.current) {
+      console.log('⚠️ loadMoreRef が null');
+      return;
+    }
+
+    console.log('👀 IntersectionObserver 設定開始');
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          console.log('🔥 loadMoreRef が画面に入った');
+          if (hasNextPage) {
+            console.log('➡️ fetchNextPage 実行');
+            fetchNextPage();
+          } else {
+            console.log('⛔ hasNextPage が false のため何もしない');
+          }
+        }
+      },
+      {
+        root: null,
+        rootMargin: '0px 0px 200px 0px', // 少し手前で発火
+        threshold: 0.1,
+      }
+    );
+
+    observer.observe(loadMoreRef.current);
+
+    return () => {
+      console.log('🧹 IntersectionObserver クリーンアップ');
+      observer.disconnect();
+    };
+  }, [hasNextPage, fetchNextPage]);
 
   const handleEmotionSelect = (emotion: string) => {
     setSelectedEmotion(emotion === selectedEmotion ? '' : emotion);
   };
 
-  if (loading) {
+  if (status === 'pending') {
     return <p className="text-center text-gray-500 py-12">読み込み中...</p>;
   }
 
@@ -31,27 +99,25 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, loading }) => {
       <EmotionFilter
         onEmotionSelect={handleEmotionSelect}
         selectedEmotion={selectedEmotion}
-        onSortChange={(sort) => console.log("ソート:", sort)}   // とりあえず console.log
-        onTagChange={(tag) => console.log("タグ:", tag)}       // とりあえず console.log
-        tags={[]} 
+        onSortChange={(sort) => console.log('ソート:', sort)}
+        onTagChange={(tag) => console.log('タグ:', tag)}
+        tags={[]} // TODO: APIから取得するならここに渡す
       />
 
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-2xl font-bold text-gray-800">
           口コミ一覧
-          {selectedEmotion && (
-            <span className="ml-2 text-lg font-normal text-gray-600">
-              ({filteredReviews.length}件)
-            </span>
-          )}
+          <span className="ml-2 text-lg font-normal text-gray-600">
+            ({reviews.length} / {totalCount}件)
+          </span>
         </h2>
       </div>
 
       {/* レビュー一覧 */}
-      {filteredReviews.length > 0 ? (
+      {reviews.length > 0 ? (
         <div className="space-y-4">
-          {filteredReviews.map((review) => (
-            <ReviewCard key={review.id} review={review} />
+          {reviews.map((review, idx) => (
+            <ReviewCard key={`${review.id}-${idx}`} review={review} />
           ))}
         </div>
       ) : (
@@ -66,6 +132,12 @@ const ReviewList: React.FC<ReviewListProps> = ({ reviews, loading }) => {
             すべての口コミを表示
           </button>
         </div>
+      )}
+
+      {/* 無限スクロールのトリガー */}
+      <div ref={loadMoreRef} className="h-10 bg-yellow-100" />
+      {isFetchingNextPage && (
+        <p className="text-center text-gray-500 py-4">さらに読み込み中...</p>
       )}
     </section>
   );

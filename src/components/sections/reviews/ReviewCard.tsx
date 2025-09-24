@@ -11,10 +11,11 @@ interface ReviewCardProps {
 const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
+  // ✅ null / undefined の場合に対応
+  const comment = review.comment || '';
+
   const truncatedText =
-    review.comment.length > 150
-      ? review.comment.substring(0, 150) + '...'
-      : review.comment;
+    comment.length > 150 ? comment.substring(0, 150) + '...' : comment;
 
   return (
     <Link
@@ -40,7 +41,9 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
           <div>
             <p className="text-sm font-medium text-pink-600">{review.castName}</p>
             <p className="text-xs text-gray-500">
-              {new Date(review.createdAt).toLocaleDateString()}
+              {review.createdAt
+                ? new Date(review.createdAt).toLocaleDateString()
+                : ''}
             </p>
           </div>
         </div>
@@ -51,39 +54,38 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
             <Star
               key={i}
               className={`h-4 w-4 ${
-                i < review.rating ? 'fill-current text-pink-500' : 'text-gray-300'
+                i < (review.rating || 0)
+                  ? 'fill-current text-pink-500'
+                  : 'text-gray-300'
               }`}
             />
           ))}
           <span className="ml-2 text-sm font-medium text-gray-700">
-            {review.rating.toFixed(1)}
+            {(review.rating || 0).toFixed(1)}
           </span>
         </div>
 
-{/* コメント */}
-<div className="mb-6">
-  <p
-    className="font-serif leading-relaxed text-gray-700 whitespace-pre-line"
-  >
-    {isExpanded ? review.comment : truncatedText}
-  </p>
-  {review.comment.length > 150 && (
-    <button
-      onClick={(e) => {
-        e.preventDefault();     // ✅ リンク遷移防止
-        e.stopPropagation();    // ✅ クリックイベントバブリングを止める
-        setIsExpanded(!isExpanded);
-      }}
-      className="mt-2 text-sm font-medium text-pink-600 hover:text-pink-700"
-    >
-      {isExpanded ? '閉じる' : 'もっと読む'}
-    </button>
-  )}
-</div>
-
+        {/* コメント */}
+        <div className="mb-6">
+          <p className="font-serif leading-relaxed text-gray-700 whitespace-pre-line">
+            {isExpanded ? comment : truncatedText}
+          </p>
+          {comment.length > 150 && (
+            <button
+              onClick={(e) => {
+                e.preventDefault(); // ✅ リンク遷移防止
+                e.stopPropagation(); // ✅ バブリング防止
+                setIsExpanded(!isExpanded);
+              }}
+              className="mt-2 text-sm font-medium text-pink-600 hover:text-pink-700"
+            >
+              {isExpanded ? '閉じる' : 'もっと読む'}
+            </button>
+          )}
+        </div>
 
         {/* タグ */}
-        {review.tags.length > 0 && (
+        {review.tags && review.tags.length > 0 && (
           <div className="mb-3 flex flex-wrap gap-2">
             {review.tags.map((tag, index) => (
               <span
@@ -98,7 +100,7 @@ const ReviewCard: React.FC<ReviewCardProps> = ({ review }) => {
 
         {/* 投稿者名 */}
         <div className="flex justify-end">
-          <p className="text-sm text-gray-500">{review.userName}</p>
+          <p className="text-sm text-gray-500">{review.userName || '匿名'}</p>
         </div>
       </div>
     </Link>

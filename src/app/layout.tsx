@@ -2,8 +2,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
-import FooterGuard from '@/components/sections/layout/FooterGuard'; // 追加
-import Head from 'next/head';
+import FooterGuard from '@/components/sections/layout/FooterGuard';
+import Providers from './providers'; // 👈 React Query 用のラッパー
 import '@/styles/Footer.css';
 
 const inter = Inter({ subsets: ['latin'] });
@@ -32,16 +32,13 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={`${inter.className} antialiased`}>
-      <Head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      </Head>
-
       <body>
-        {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
-        <HeaderGuard>
-          <FooterGuard>{children}</FooterGuard>
-        </HeaderGuard>
+        <Providers>
+          {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
+          <HeaderGuard>
+            <FooterGuard>{children}</FooterGuard>
+          </HeaderGuard>
+        </Providers>
 
         {/* ✅ JSON-LD構造化データ（FAQ） */}
         <script
