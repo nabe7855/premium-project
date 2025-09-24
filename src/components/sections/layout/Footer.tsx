@@ -74,7 +74,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     },
     {
       id: 'cast',
-      label: '推し',
+      label: '推し達',
       icon: Heart,
       href: `/store/${slug}/cast-list?sort=popular`, // ✅ 修正
       ariaLabel: '人気キャスト一覧・お気に入り確認',
