@@ -9,7 +9,7 @@ import { flavorTags } from '@/data/castsmockData';
 
 interface SearchFiltersProps {
   showFilters: boolean;
-  selectedMBTI: string;
+  selectedMBTI: string | null;
   selectedFaceTypes: string[];
   ageRange: [number, number];
   selectedTags: string[];

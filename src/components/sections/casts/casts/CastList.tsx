@@ -1,9 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
-import { useCastSearch } from '@/hooks/useCastSearch';
 import CastCard from './CastCard';
 import SearchFilters from './SearchFilters';
 import SortOptions from './SortOptions';
@@ -16,65 +15,71 @@ interface CastListProps {
 
 const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const [loading, setLoading] = useState(true);
-  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null); // ✅ 追加
+  const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
 
-  const {
-    searchTerm,
-    selectedTags,
-    ageRange,
-    sortBy,
-    selectedMBTI,
-    selectedFaceTypes,
-    showFilters,
-    favorites,
-    filteredAndSortedCasts,
-    isDiagnosisResult,
-    setSearchTerm,
-    setSelectedTags,
-    setAgeRange,
-    setSortBy,
-    setSelectedMBTI,
-    setSelectedFaceTypes,
-    setShowFilters,
-    handleCastSelect,
-    toggleFavorite,
-    resetFilters,
-    setOriginalCasts,
-  } = useCastSearch({ storeSlug });
+  // 🎯 状態管理（useCastSearchを置き換え）
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
+  const [sortBy, setSortBy] = useState<'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'>('default');
+  const [selectedMBTI, setSelectedMBTI] = useState<string | null>(null);
+  const [selectedFaceTypes, setSelectedFaceTypes] = useState<string[]>([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [favorites, setFavorites] = useState<string[]>([]);
+  const [originalCasts, setOriginalCasts] = useState<Cast[]>([]);
+  const [isDiagnosisResult, setIsDiagnosisResult] = useState(false);
 
   // DBからキャスト取得
   useEffect(() => {
     const fetchCasts = async () => {
       setLoading(true);
       const result: Cast[] = await getCastsByStore(storeSlug);
-      setOriginalCasts(result);
+
+      // 🆕 新人フラグを付与
+      const withFlags = result.map((c) => ({
+        ...c,
+        isNewcomer: c.statuses?.some(
+          (s) => s.status_master?.name === '新人' && s.isActive
+        ),
+      }));
+
+      setOriginalCasts(withFlags);
       setLoading(false);
     };
     fetchCasts();
-  }, [storeSlug, setOriginalCasts]);
+  }, [storeSlug]);
 
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
+  useEffect(() => {
+  void setIsDiagnosisResult; // 将来使う予定のダミー参照
+}, []);
 
-  const handleFilterToggle = () => {
-    setShowFilters(!showFilters);
-  };
+  // ✅ ソート & 絞り込みロジック
+  const filteredAndSortedCasts = useMemo(() => {
+    let result = originalCasts.filter((c) => c.isActive); // 在籍中のみ
 
-  const getActiveFilters = () => {
-    const filters = [];
-    if (searchTerm) filters.push({ type: 'search', value: `"${searchTerm}"` });
-    if (selectedMBTI) filters.push({ type: 'mbti', value: selectedMBTI });
-    if (selectedFaceTypes.length > 0)
-      filters.push({ type: 'face', value: `顔タイプ${selectedFaceTypes.length}個` });
-    if (selectedTags.length > 0)
-      filters.push({ type: 'tags', value: `タグ${selectedTags.length}個` });
-    if (ageRange[0] !== 20 || ageRange[1] !== 50)
-      filters.push({ type: 'age', value: `${ageRange[0]}-${ageRange[1]}歳` });
-    return filters;
-  };
+    switch (sortBy) {
+      case 'default': // おすすめ順 (priority大きい順)
+        result = [...result].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+        break;
 
-  const activeFilters = getActiveFilters();
+      case 'reviewCount': // 口コミ数順
+        result = [...result].sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));
+        break;
+
+      case 'newcomerOnly': // 新人のみ
+        result = result.filter((c) => c.isNewcomer === true);
+        break;
+
+      case 'todayAvailable': // 本日出勤
+        const today = new Date().toISOString().split('T')[0];
+        result = result.filter(
+          (c) => c.availability?.[today] && c.availability[today].length > 0
+        );
+        break;
+    }
+
+    return result;
+  }, [originalCasts, sortBy]);
 
   // 🔄 ローディング時
   if (loading) {
@@ -116,12 +121,12 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
                 type="text"
                 placeholder="キャスト名やキャッチフレーズで検索..."
                 value={searchTerm}
-                onChange={handleSearchChange}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
             <button
-              onClick={handleFilterToggle}
+              onClick={() => setShowFilters(!showFilters)}
               className="flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 transition-all duration-200 hover:bg-neutral-50"
               aria-expanded={showFilters}
               aria-controls="filter-panel"
@@ -141,19 +146,27 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
             selectedTags={selectedTags}
             onMBTIChange={setSelectedMBTI}
             onFaceTypeToggle={(faceType) => {
-              const newTypes = selectedFaceTypes.includes(faceType)
-                ? selectedFaceTypes.filter((t) => t !== faceType)
-                : [...selectedFaceTypes, faceType];
-              setSelectedFaceTypes(newTypes);
+              setSelectedFaceTypes((prev) =>
+                prev.includes(faceType)
+                  ? prev.filter((t) => t !== faceType)
+                  : [...prev, faceType]
+              );
             }}
             onAgeRangeChange={setAgeRange}
             onTagToggle={(tag) => {
-              const newTags = selectedTags.includes(tag)
-                ? selectedTags.filter((t) => t !== tag)
-                : [...selectedTags, tag];
-              setSelectedTags(newTags);
+              setSelectedTags((prev) =>
+                prev.includes(tag)
+                  ? prev.filter((t) => t !== tag)
+                  : [...prev, tag]
+              );
             }}
-            onReset={resetFilters}
+            onReset={() => {
+              setSearchTerm('');
+              setSelectedTags([]);
+              setAgeRange([20, 50]);
+              setSelectedMBTI(null);
+              setSelectedFaceTypes([]);
+            }}
           />
         </div>
 
@@ -165,68 +178,43 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
                 ? `相性診断結果: ${filteredAndSortedCasts.length}名のキャストをご紹介`
                 : `${filteredAndSortedCasts.length}名のキャストが見つかりました`}
             </p>
-            {activeFilters.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {activeFilters.map(({ value }, index) => (
-                  <span
-                    key={index}
-                    className="rounded-full bg-primary/10 px-3 py-1 text-sm text-primary"
-                  >
-                    {value}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
         </div>
 
         {/* カードリスト */}
         <div className="grid grid-cols-2 gap-4 sm:gap-6">
-          <AnimatePresence mode="sync">
-            {filteredAndSortedCasts.map((cast, index) => (
-<CastCard
-  key={cast.id}
-  cast={cast}
-  index={index}
-  isFavorite={favorites.includes(cast.id)}
-  onToggleFavorite={() => toggleFavorite(cast.id)}
-  onCastSelect={() => handleCastSelect(cast)}
-  sortBy={sortBy}
-  audioSampleUrl={cast.voiceUrl ?? undefined}
-  currentlyPlayingId={currentlyPlayingId}
-  setCurrentlyPlayingId={setCurrentlyPlayingId}
-  storeSlug={storeSlug}   // ✅ 追加
-/>
+<AnimatePresence mode="sync">
+  {filteredAndSortedCasts.map((cast, index) => (
+    <motion.div
+      key={cast.id}
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3, delay: index * 0.05 }}
+    >
+      <CastCard
+        cast={cast}
+        index={index}
+        isFavorite={favorites.includes(cast.id)}
+        onToggleFavorite={() =>
+          setFavorites((prev) =>
+            prev.includes(cast.id)
+              ? prev.filter((id) => id !== cast.id)
+              : [...prev, cast.id]
+          )
+        }
+        onCastSelect={() => console.log('Cast selected:', cast)}
+        sortBy={sortBy}
+        audioSampleUrl={cast.voiceUrl ?? undefined}
+        currentlyPlayingId={currentlyPlayingId}
+        setCurrentlyPlayingId={setCurrentlyPlayingId}
+        storeSlug={storeSlug}
+      />
+    </motion.div>
+  ))}
+</AnimatePresence>
 
-
-            ))}
-          </AnimatePresence>
         </div>
-
-        {/* 該当なし */}
-        {filteredAndSortedCasts.length === 0 && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="py-12 text-center"
-          >
-            <div className="mb-4">
-              <span className="text-6xl">🍓</span>
-            </div>
-            <h3 className="mb-2 text-xl font-semibold text-neutral-700">
-              {isDiagnosisResult
-                ? '診断結果に合うキャストが見つかりませんでした'
-                : 'お探しの条件に合うキャストが見つかりませんでした'}
-            </h3>
-            <p className="mb-4 text-neutral-600">条件を変更してお試しください</p>
-            <button
-              onClick={resetFilters}
-              className="rounded-full bg-primary px-6 py-2 text-white transition-colors duration-200 hover:bg-primary/90"
-            >
-              検索条件をリセット
-            </button>
-          </motion.div>
-        )}
       </div>
     </section>
   );

@@ -3,7 +3,8 @@
 import React from 'react'
 import { ArrowUpDown, Star, Clock, TrendingUp } from 'lucide-react'
 
-type SortOption = 'default' | 'reviewCount' | 'newest' | 'todayAvailable'
+// ✅ 型を統一
+export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'
 
 interface SortOptionsProps {
   sortBy: SortOption
@@ -11,11 +12,12 @@ interface SortOptionsProps {
 }
 
 const SortOptions: React.FC<SortOptionsProps> = ({ sortBy, onSortChange }) => {
-  const sortOptions = [
+  // ✅ value の型を SortOption にする
+  const sortOptions: { value: SortOption; label: string; icon: React.FC<any> }[] = [
     { value: 'default', label: 'おすすめ順', icon: Star },
     { value: 'reviewCount', label: '口コミ数順', icon: TrendingUp },
-    { value: 'newest', label: '新人順', icon: Clock },
-    { value: 'todayAvailable', label: '本日出勤', icon: Clock }
+    { value: 'newcomerOnly', label: '新人のみ', icon: Clock },
+    { value: 'todayAvailable', label: '本日出勤', icon: Clock },
   ]
 
   return (
@@ -31,7 +33,7 @@ const SortOptions: React.FC<SortOptionsProps> = ({ sortBy, onSortChange }) => {
           return (
             <button
               key={option.value}
-              onClick={() => onSortChange(option.value as SortOption)}
+              onClick={() => onSortChange(option.value)}
               className={`flex items-center px-3 py-2 rounded-full text-sm font-medium transition-all duration-200 whitespace-nowrap ${
                 sortBy === option.value
                   ? 'bg-primary text-white shadow-md'
@@ -47,4 +49,5 @@ const SortOptions: React.FC<SortOptionsProps> = ({ sortBy, onSortChange }) => {
     </div>
   )
 }
+
 export default SortOptions

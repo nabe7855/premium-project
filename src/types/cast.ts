@@ -61,6 +61,9 @@ export interface CastStatus {
 // ==============================
 export type ServiceLevel = 'NG' | '要相談' | '普通' | '得意';
 
+export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'
+
+
 export interface Cast {
   id: string;              // uuid
   slug: string;
@@ -151,6 +154,9 @@ export interface Cast {
 
   // ✅ 店舗が管理するおすすめ順フラグ
   priority?: number;
+
+  // ✅ 新人フラグ（status_master の「新人」で判定）
+  isNewcomer?: boolean;
 
   // ✅ 所属店舗（JOIN用）
   stores?: Store[];

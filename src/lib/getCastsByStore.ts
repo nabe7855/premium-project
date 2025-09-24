@@ -15,10 +15,11 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // キャスト一覧を取得
+  // キャスト一覧を取得（priority を追加）
   const { data, error } = await supabase
     .from('cast_store_memberships')
     .select(`
+      priority,
       casts (
         id,
         slug,
@@ -52,7 +53,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // まず全キャストIDを抽出
+  // 全キャストIDを抽出
   const castIds = (data ?? [])
     .map((item: any) => item.casts?.id)
     .filter((id: string | undefined): id is string => !!id);
@@ -70,7 +71,6 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     if (tweetError) {
       console.error('❌ つぶやき取得エラー:', tweetError.message);
     } else if (tweets) {
-      // cast_id ごとに最新 created_at を持つものを保持
       for (const t of tweets) {
         const existing = tweetsMap[t.cast_id];
         if (!existing) {
@@ -85,7 +85,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       const cast = item.casts;
       if (!cast || !cast.is_active) return null;
 
-      // ✅ Supabase Storage の公開URLを組み立てる
+      // ✅ Supabase Storage の公開URL
       const { data: urlData } = supabase.storage
         .from('cast-voices')
         .getPublicUrl(`voice-${cast.id}.webm`);
@@ -107,6 +107,11 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
             : null,
         })) ?? [];
 
+      // ✅ 新人判定
+      const isNewcomer = statuses.some(
+        (s) => s.isActive && s.status_master?.name === '新人'
+      );
+
       const mapped: Cast = {
         id: cast.id,
         slug: cast.slug,
@@ -122,8 +127,9 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         sexinessLevel: cast.sexiness_level ?? 3,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
         voiceUrl: urlData?.publicUrl ?? undefined,
-        // 🆕 最新つぶやき
         latestTweet: tweetsMap[cast.id] ?? null,
+        priority: item.priority ?? 0, // 🆕 priority
+        isNewcomer,                   // 🆕 新人判定
       };
 
       return mapped;
