@@ -7,12 +7,17 @@ import { Review, ReviewRaw } from '@/types/review';
  * @param storeSlug ストアのスラッグ
  * @param limit 1ページあたりの件数 (デフォルト: 20)
  * @param offset 取得開始位置 (デフォルト: 0)
+ * @param castId 特定キャストの口コミだけ取得したい場合に指定
  */
 export async function getReviewsByStore(
   storeSlug: string,
-  { limit = 20, offset = 0 }: { limit?: number; offset?: number } = {}
+  {
+    limit = 20,
+    offset = 0,
+    castId,
+  }: { limit?: number; offset?: number; castId?: string } = {}
 ): Promise<{ reviews: Review[]; totalCount: number }> {
-  const { data, error, count } = await supabase
+  let query = supabase
     .from('reviews')
     .select(
       `
@@ -44,6 +49,13 @@ export async function getReviewsByStore(
     )
     .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1);
+
+  // ✅ キャストIDで絞り込み
+  if (castId) {
+    query = query.eq('cast_id', castId);
+  }
+
+  const { data, error, count } = await query;
 
   if (error) {
     console.error('❌ レビュー取得エラー:', error.message);
@@ -97,7 +109,7 @@ export async function getReviewsByStore(
   const mapped = filtered.map(mapReview);
 
   console.log(
-    `📊 getReviewsByStore: store=${storeSlug}, offset=${offset}, limit=${limit}, 返却件数=${mapped.length}, 総件数=${count ?? 0}`
+    `📊 getReviewsByStore: store=${storeSlug}, castId=${castId ?? 'ALL'}, offset=${offset}, limit=${limit}, 返却件数=${mapped.length}, 総件数=${count ?? 0}`
   );
 
   return {
