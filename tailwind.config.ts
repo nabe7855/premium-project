@@ -14,9 +14,19 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        // 💎 ダッシュボードのブランドカラー
+        'brand-primary': '#0D0D2B',
+        'brand-secondary': '#1E1E3F',
+        'brand-accent': '#3E7BFA',
+        'brand-light': '#F0F2F5',
+        'brand-text': '#FFFFFF',
+        'brand-text-secondary': '#A0AEC0',
+
+        // 🌹 君の元テーマ
         primary: '#DC143C',
         secondary: '#FFF0F5',
         accent: '#FF69B4',
+
         gold: {
           50: '#FFFBEA',
           100: '#FFF3C4',
@@ -52,15 +62,18 @@ const config: Config = {
           '50%': { boxShadow: '0 0 16px rgba(239,68,68,1)' },
         },
         happy: {
-          '0%, 100%': { backgroundColor: '#FEF9C3' }, // yellow-100
-          '50%': { backgroundColor: '#FACC15' }, // yellow-400
+          '0%, 100%': { backgroundColor: '#FEF9C3' },
+          '50%': { backgroundColor: '#FACC15' },
         },
       },
-animation: {
-  slowBlink: 'blink 3.5s ease-in-out infinite',
-  pulseLampCustom: 'pulseLamp 2.2s ease-in-out infinite',
-  happyCustom: 'happy 4s ease-in-out infinite',
-},
+      animation: {
+        slowBlink: 'blink 3.5s ease-in-out infinite',
+        pulseLampCustom: 'pulseLamp 2.2s ease-in-out infinite',
+        happyCustom: 'happy 4s ease-in-out infinite',
+      },
+      fontFamily: {
+        sans: ['Inter', 'sans-serif'],
+      },
     },
   },
   plugins: [
