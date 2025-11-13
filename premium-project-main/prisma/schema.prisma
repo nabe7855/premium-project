@@ -1,0 +1,246 @@
+// schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") // Supabase の接続 URL
+}
+
+// -------------------- Casts（キャスト） --------------------
+model Cast {
+  id         String      @id @default(uuid())
+  name       String
+  age        Int
+  profile    String
+  image_url  String
+  created_at DateTime    @default(now())
+
+  // リレーション
+  schedules     Schedule[]
+  reviews       Review[]
+  gallery_items GalleryItem[]
+  profiles      CastProfile[]
+  features      CastFeatures?
+  memberships   CastStoreMembership[]
+  video_casts   VideoCast[]
+}
+
+// -------------------- Stores（店舗） --------------------
+model Store {
+  id         String      @id @default(uuid())
+  name       String
+  slug       String      @unique
+  address    String
+  created_at DateTime    @default(now())
+
+  schedules     Schedule[]
+  memberships   CastStoreMembership[]
+  videos        Video[]
+}
+
+// -------------------- Schedules（出勤予定） --------------------
+model Schedule {
+  id         String   @id @default(uuid())
+  cast_id    String
+  store_id   String
+  work_date  DateTime
+  start_time DateTime
+  end_time   DateTime
+
+  cast  Cast  @relation(fields: [cast_id], references: [id])
+  store Store @relation(fields: [store_id], references: [id])
+}
+
+// -------------------- Reviews（口コミ） --------------------
+model Review {
+  id         String         @id @default(uuid())
+  cast_id    String
+  user_name  String
+  rating     Int
+  comment    String
+  created_at DateTime       @default(now())
+
+  cast   Cast         @relation(fields: [cast_id], references: [id])
+  tags   ReviewTag[]  @relation("ReviewTagsOnReviews", references: [id])
+}
+
+// Review 用のタグ（例: イケメン, ユーモア）
+model ReviewTag {
+  id    String   @id @default(uuid())
+  name  String   @unique
+
+  reviews Review[] @relation("ReviewTagsOnReviews")
+}
+
+// 中間テーブル（口コミとタグ 多対多）
+model _ReviewToReviewTag {
+  review_id   String
+  review_tag_id String
+
+  @@id([review_id, review_tag_id])
+}
+
+// -------------------- Gallery Items（ギャラリー画像） --------------------
+model GalleryItem {
+  id         String   @id @default(uuid())
+  cast_id    String
+  image_url  String
+  caption    String?
+  created_at DateTime @default(now())
+
+  cast Cast @relation(fields: [cast_id], references: [id])
+}
+
+// -------------------- Cast Profiles（キャスト紹介文） --------------------
+model CastProfile {
+  id         String   @id @default(uuid())
+  cast_id    String
+  title      String
+  content    String
+  created_at DateTime @default(now())
+
+  cast Cast @relation(fields: [cast_id], references: [id])
+}
+
+// -------------------- Features（特徴） --------------------
+model FeatureMaster {
+  id         String   @id @default(uuid())
+  category   String
+  name       String
+  created_at DateTime @default(now())
+}
+
+model CastFeatures {
+  id             String   @id @default(uuid())
+  cast_id        String   @unique
+  personality_id String?
+  appearance_id  String?
+  mbti_id        String?
+  face_id        String?
+  created_at     DateTime @default(now())
+
+  cast         Cast          @relation(fields: [cast_id], references: [id])
+  personality  FeatureMaster @relation("Personality", fields: [personality_id], references: [id])
+  appearance   FeatureMaster @relation("Appearance", fields: [appearance_id], references: [id])
+  mbti         FeatureMaster @relation("Mbti", fields: [mbti_id], references: [id])
+  face         FeatureMaster @relation("Face", fields: [face_id], references: [id])
+}
+
+// -------------------- Cast-Store Memberships（所属店舗） --------------------
+model CastStoreMembership {
+  id          String   @id @default(uuid())
+  cast_id     String
+  store_id    String
+  is_primary  Boolean  @default(false)
+  start_date  DateTime
+  end_date    DateTime?
+  created_at  DateTime @default(now())
+
+  cast  Cast  @relation(fields: [cast_id], references: [id])
+  store Store @relation(fields: [store_id], references: [id])
+}
+
+// -------------------- Badges（ステータス/バッジ） --------------------
+model Badge {
+  id    String   @id @default(uuid())
+  name  String   @unique
+
+  cast_badges CastBadge[]
+}
+
+model CastBadge {
+  id        String   @id @default(uuid())
+  cast_id   String
+  badge_id  String
+  created_at DateTime @default(now())
+
+  cast  Cast  @relation(fields: [cast_id], references: [id])
+  badge Badge @relation(fields: [badge_id], references: [id])
+}
+
+// -------------------- Blogs（日記/ブログ） --------------------
+model Blog {
+  id         String       @id @default(uuid())
+  cast_id    String
+  title      String
+  content    String
+  created_at DateTime     @default(now())
+
+  cast   Cast       @relation(fields: [cast_id], references: [id])
+  images BlogImage[]
+  tags   BlogTag[]
+}
+
+model BlogImage {
+  id        String   @id @default(uuid())
+  blog_id   String
+  image_url String
+
+  blog Blog @relation(fields: [blog_id], references: [id])
+}
+
+model BlogTag {
+  id    String   @id @default(uuid())
+  name  String
+
+  blogs Blog[] @relation("TagsOnBlogs")
+}
+
+model _BlogToBlogTag {
+  blog_id String
+  tag_id  String
+
+  @@id([blog_id, tag_id])
+}
+
+// -------------------- Videos（YouTube 動画まとめ） --------------------
+model Video {
+  id         String     @id @default(uuid())
+  store_id   String
+  url        String
+  created_at DateTime   @default(now())
+
+  store     Store       @relation(fields: [store_id], references: [id])
+  casts     VideoCast[]
+  tags      VideoTag[]
+  feelings  VideoFeeling[]
+}
+
+model VideoCast {
+  id        String   @id @default(uuid())
+  video_id  String
+  cast_id   String
+
+  video Video @relation(fields: [video_id], references: [id])
+  cast  Cast  @relation(fields: [cast_id], references: [id])
+}
+
+model VideoTag {
+  id    String   @id @default(uuid())
+  name  String
+  videos Video[] @relation("TagsOnVideos")
+}
+
+model _VideoToVideoTag {
+  video_id String
+  tag_id   String
+
+  @@id([video_id, tag_id])
+}
+
+// 「癒されたい」「ときめきたい」など直感タグ
+model VideoFeeling {
+  id    String   @id @default(uuid())
+  name  String
+  videos Video[] @relation("FeelingsOnVideos")
+}
+
+model _VideoToVideoFeeling {
+  video_id   String
+  feeling_id String
+
+  @@id([video_id, feeling_id])
+}
