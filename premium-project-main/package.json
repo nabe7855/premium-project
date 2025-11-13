@@ -11,6 +11,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.cjs"
   },
   "dependencies": {
+    "@google/genai": "latest",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -52,7 +53,7 @@
     "lottie-react": "^2.4.1",
     "lottie-web": "^5.13.0",
     "lucide-react": "^0.525.0",
-    "next": "^14.2.30",
+    "next": "^14.2.33",
     "next-themes": "^0.3.0",
     "qs": "^6.14.0",
     "react": "^18.3.1",
@@ -71,8 +72,7 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^12.0.0",
     "vaul": "^1.1.2",
-    "zod": "^3.23.8",
-    "@google/genai": "latest"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
