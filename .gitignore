@@ -1,0 +1,63 @@
+# ────────────── Logs ──────────────
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# ────────────── Dependencies ──────────────
+node_modules
+/.pnp
+.pnp.js
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# ────────────── Build / Output ──────────────
+dist
+dist-ssr
+.next/
+out/
+build
+
+# ────────────── Editor / IDE ──────────────
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ────────────── Env / Secrets ──────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+.env*
+
+# ────────────── TypeScript ──────────────
+*.tsbuildinfo
+next-env.d.ts
+
+# ────────────── Testing / Coverage ──────────────
+/coverage
+
+# ────────────── Hosting / Deploy ──────────────
+.vercel
+
+# ────────────── CMS / Bolt Plugins ──────────────
+/tmp/
+/.cache/
+
+# ────────────── Misc ──────────────
+*.local
