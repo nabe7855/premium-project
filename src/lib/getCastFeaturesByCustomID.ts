@@ -1,6 +1,6 @@
 // src/lib/getCastFeaturesByCustomID.ts
-import qs from 'qs';
 import { CastFeature } from '@/types/cast';
+import qs from 'qs';
 
 export const getCastFeaturesByCustomID = async (customID: string): Promise<CastFeature[]> => {
   const query = qs.stringify(
@@ -41,7 +41,10 @@ export const getCastFeaturesByCustomID = async (customID: string): Promise<CastF
     },
   });
 
-  if (!res.ok) throw new Error('Cast Feature fetch failed');
+  if (!res.ok) {
+    console.error(`❌ Cast Feature fetch failed [URL: ${url}]`, res.status);
+    throw new Error(`Cast Feature fetch failed with status ${res.status}`);
+  }
 
   const json = await res.json();
   return json.data as CastFeature[];
