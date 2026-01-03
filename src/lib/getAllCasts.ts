@@ -1,4 +1,4 @@
-import { Cast, GalleryItem, CastSNS as CastSNSType } from '@/types/cast';
+import { Cast, CastSNS as CastSNSType, GalleryItem } from '@/types/cast';
 import qs from 'qs';
 
 // StrapiのAPIレスポンス型を定義
@@ -48,8 +48,8 @@ export const getAllCasts = async (): Promise<Cast[]> => {
   });
 
   if (!res.ok) {
-    console.error('❌ Strapi API fetch failed', res.status, res.statusText);
-    throw new Error('Strapi API fetch failed');
+    console.error(`❌ Strapi API fetch failed [URL: ${apiUrl}]`, res.status, res.statusText);
+    throw new Error(`Strapi API fetch failed with status ${res.status}`);
   }
 
   const data: StrapiResponse = await res.json();

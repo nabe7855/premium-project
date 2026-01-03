@@ -11,8 +11,12 @@ export async function fetchFromStrapi(endpoint: string) {
   });
 
   if (!res.ok) {
-    console.error("❌ Strapi API error:", res.status, res.statusText);
-    throw new Error("Strapi API request failed");
+    console.error(
+      `❌ Strapi API error [URL: ${STRAPI_URL}/api/${endpoint}]:`,
+      res.status,
+      res.statusText,
+    );
+    throw new Error(`Strapi API request failed with status ${res.status}`);
   }
 
   return await res.json();

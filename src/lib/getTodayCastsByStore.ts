@@ -24,6 +24,7 @@ function getTodayDateString(): string {
 }
 
 export async function getTodayCastsByStore(storeSlug: string): Promise<TodayCast[]> {
+  console.log(`📡 getTodayCastsByStore start for slug: [${storeSlug}]`);
   // 1. 店舗IDを取得
   const { data: store, error: storeError } = await supabase
     .from('stores')
@@ -32,7 +33,10 @@ export async function getTodayCastsByStore(storeSlug: string): Promise<TodayCast
     .single();
 
   if (storeError || !store) {
-    console.error('❌ store not found:', storeError?.message);
+    console.error(
+      `❌ store not found for slug: [${storeSlug}]. Error:`,
+      storeError?.message || 'No data',
+    );
     return [];
   }
 
@@ -58,7 +62,7 @@ export async function getTodayCastsByStore(storeSlug: string): Promise<TodayCast
         mbti:mbti_id ( name ),
         face:face_id ( name )
       )
-    `
+    `,
     )
     .gte('work_date', today) // ✅ >= 今日
     .lte('work_date', today) // ✅ <= 今日（つまり今日と一致）
