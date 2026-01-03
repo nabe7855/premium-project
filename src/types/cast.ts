@@ -35,10 +35,10 @@ export interface Store {
 // キャスト状態マスタ（DB: status_master）
 // ==============================
 export interface Status {
-  id: string;             // uuid
-  name: string;           // 表示名（例: 新人, 店長おすすめ）
+  id: string; // uuid
+  name: string; // 表示名（例: 新人, 店長おすすめ）
   label_color?: string | null; // バッジ背景色
-  text_color?: string | null;  // バッジ文字色
+  text_color?: string | null; // バッジ文字色
   created_at?: string;
 }
 
@@ -46,10 +46,10 @@ export interface Status {
 // キャストに紐づく状態（DB: cast_statuses）
 // ==============================
 export interface CastStatus {
-  id: string;             // uuid
-  cast_id: string;        // 紐づくキャストID
-  status_id: string;      // 紐づくステータスID
-  isActive: boolean;     // ON/OFF フラグ
+  id: string; // uuid
+  cast_id: string; // 紐づくキャストID
+  status_id: string; // 紐づくステータスID
+  isActive: boolean; // ON/OFF フラグ
   created_at?: string;
 
   // 🔽 リレーションでJOINして取得する
@@ -61,14 +61,13 @@ export interface CastStatus {
 // ==============================
 export type ServiceLevel = 'NG' | '要相談' | '普通' | '得意';
 
-export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'
-
+export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable';
 
 export interface Cast {
-  id: string;              // uuid
+  id: string; // uuid
   slug: string;
-  customID?: string;       // カスタムID
-  storeSlug?: string;      // 店舗slug
+  customID?: string; // カスタムID
+  storeSlug?: string; // 店舗slug
   name: string;
   bloodType?: string;
 
@@ -117,9 +116,9 @@ export interface Cast {
 
   // タグや特徴（UI用）
   tags?: string[];
-  mbtiType?: string;        // MBTI名
-  animalName?: string;      // 動物占い名
-  faceType?: string[];      // 顔型名リスト
+  mbtiType?: string; // MBTI名
+  animalName?: string; // 動物占い名
+  faceType?: string[]; // 顔型名リスト
 
   // ✅ 特徴IDリスト
   personalityIds?: string[];
@@ -168,8 +167,6 @@ export interface Cast {
   castQuestions?: CastQuestion[];
 }
 
-
-
 // ==============================
 // 診断検索用の拡張型
 // ==============================
@@ -202,13 +199,7 @@ export interface CastSummary {
 // ==============================
 // 特徴マスタ（DB: feature_master）
 // ==============================
-export type FeatureCategory =
-  | 'MBTI'
-  | 'animal'
-  | 'face'
-  | 'personality'
-  | 'appearance'
-  | 'service';
+export type FeatureCategory = 'MBTI' | 'animal' | 'face' | 'personality' | 'appearance' | 'service';
 
 export interface FeatureMaster {
   id: string;
@@ -261,22 +252,6 @@ export interface CastProfile {
   };
 
   statuses?: CastStatus[];
-}
-
-// ==============================
-// DBから直接取れるキャストデータ
-// ==============================
-export interface StrapiCastItem {
-  id: string | number;
-  slug: string;
-  name: string;
-  age?: number;
-  height?: number;
-  catchCopy?: string;
-  imageUrl?: string;
-  sexinessLevel?: number;
-  isReception?: boolean;
-  is_active?: boolean;
 }
 
 // ==============================
@@ -350,7 +325,6 @@ export interface VideoItem {
 // レビュー
 // ==============================
 
-
 // ==============================
 // ユーザー表示用キャスト情報
 // ==============================
@@ -369,18 +343,18 @@ export interface CastProfilePublic extends CastProfileBase {
   bloodType?: string;
   services?: Record<string, 'NG' | '要相談' | '普通' | '得意'>;
   statuses?: CastStatus[];
-  catchCopy?: string;        // 👈 追加
+  catchCopy?: string; // 👈 追加
   personalities?: FeatureTag[]; // 👈 FeatureTag 型で明示
-  appearances?: FeatureTag[];   // 👈 FeatureTag 型で明示
+  appearances?: FeatureTag[]; // 👈 FeatureTag 型で明示
 }
 
 // ==============================
 // 管理画面専用キャスト情報
 // ==============================
 export interface CastProfileAdmin extends CastProfilePublic {
-  managerComment?: string;  // 管理者コメント（非公開）
+  managerComment?: string; // 管理者コメント（非公開）
   storeMemberships?: { storeId: string; role: string }[]; // 所属店舗・役割
-  approvalStatus?: 'pending' | 'approved' | 'rejected';   // 承認フラグ
+  approvalStatus?: 'pending' | 'approved' | 'rejected'; // 承認フラグ
 }
 
 // ==============================
@@ -405,6 +379,5 @@ export interface CastSchedule {
   id: string;
   castId: string;
   start: string; // ISO文字列
-  end: string;   // ISO文字列
+  end: string; // ISO文字列
 }
-
