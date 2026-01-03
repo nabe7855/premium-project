@@ -1,14 +1,23 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import type { PostType } from '@/types/diary';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { ArrowLeft, Heart, Share2, Bookmark, Clock, User } from 'lucide-react';
-import { Sparkles, Zap, Clapperboard as Clap } from 'lucide-react';
 import CastCard from '@/components/sections/diary/CastCard';
 import MessageSection from '@/components/sections/diary/MessageSection';
 import RelatedPosts from '@/components/sections/diary/RelatedPosts';
 import { mockDiaryPosts } from '@/data/diarydata';
+import type { PostType } from '@/types/diary';
+import {
+  ArrowLeft,
+  Bookmark,
+  Clapperboard as Clap,
+  Clock,
+  Heart,
+  Share2,
+  Sparkles,
+  User,
+  Zap,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const DiaryDetailPage = () => {
   const { postId, slug } = useParams(); // ← 修正済み
@@ -75,7 +84,7 @@ const DiaryDetailPage = () => {
             </Link>
             <div className="flex items-center gap-1 sm:gap-2">
               <Link
-                href={`/store/${slug}/diary/cast/${encodeURIComponent(post.castName)}`}
+                href={`/store/${slug || ''}/diary/cast/${encodeURIComponent(post.castName || '')}`}
                 className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-xs text-pink-700 transition-colors hover:bg-pink-200 sm:px-3 sm:py-1.5 sm:text-sm"
               >
                 <User size={12} className="sm:h-3.5 sm:w-3.5" />
@@ -104,7 +113,7 @@ const DiaryDetailPage = () => {
           </Link>
           <span className="mx-1 sm:mx-2">{'>'}</span>
           <Link
-            href={`/store/${slug}/diary/cast/${encodeURIComponent(post.castName)}`}
+            href={`/store/${slug || ''}/diary/cast/${encodeURIComponent(post.castName || '')}`}
             className="hover:text-pink-600"
           >
             {post.castName}の日記
@@ -151,7 +160,7 @@ const DiaryDetailPage = () => {
                     />
                     <div>
                       <Link
-                        href={`/store/${slug}/diary/cast/${encodeURIComponent(post.castName)}`}
+                        href={`/store/${slug || ''}/diary/cast/${encodeURIComponent(post.castName || '')}`}
                         className="text-sm font-medium text-gray-800 transition-colors hover:text-pink-600 sm:text-base"
                       >
                         {post.castName}
@@ -188,8 +197,8 @@ const DiaryDetailPage = () => {
 
             <CastCard
               cast={{
-                name: post.castName,
-                avatar: post.castAvatar,
+                name: post.castName || '',
+                avatar: post.castAvatar || '',
                 status: 'available',
                 postsThisMonth: 8,
                 totalLikes: 1234,
@@ -217,7 +226,7 @@ const DiaryDetailPage = () => {
               </div>
               <div className="space-y-2">
                 <Link
-                  href={`/store/${slug}/diary/cast/${encodeURIComponent(post.castName)}`}
+                  href={`/store/${slug || ''}/diary/cast/${encodeURIComponent(post.castName || '')}`}
                   className="block w-full rounded-lg bg-pink-500 px-3 py-2 text-center text-sm text-white hover:bg-pink-600"
                 >
                   {post.castName}の他の日記を見る

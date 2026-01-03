@@ -1,36 +1,26 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
-import {
-  LogOut,
-  Menu,
-  X,
-  Calendar,
-  Camera,
-  BarChart3,
-  User,
-  Image,
-  Mic,
-} from 'lucide-react';
+import { BarChart3, Calendar, Camera, Image, LogOut, Menu, Mic, User, X } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // 各セクションコンポーネント
 import DashboardHome from './sections/DashboardHome';
-import ScheduleSection from './sections/ScheduleSection';
 import DiarySection from './sections/DiarySection';
-import ProfileSection from './sections/ProfileSection';
 import GallerySection from './sections/GallerySection';
+import ProfileSection from './sections/ProfileSection';
+import ScheduleSection from './sections/ScheduleSection';
 import VoiceSection from './sections/VoiceSection';
 
 // 型
-import { CastLevel, Badge } from '@/types/cast-dashboard';
-import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
+import { CastDiary, CastProfile, FeatureMaster, QuestionMaster } from '@/types/cast';
+import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
-import { getFeatureMasters } from '@/lib/getFeatureMasters';
+import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getCastQuestions } from '@/lib/getCastQuestions';
-import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
+import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { supabase } from '@/lib/supabaseClient';
 
 interface DashboardProps {
@@ -49,7 +39,6 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [diaries] = useState<CastDiary[]>([]);
   const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
   const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
-  const [showDiaryEditor, setShowDiaryEditor] = useState(false);
   const [storeName, setStoreName] = useState<string | null>(null);
 
   // ✅ 能力チャート用データ（ダミー削除 → Supabaseから取得）
@@ -66,9 +55,29 @@ export default function Dashboard({ cast }: DashboardProps) {
   };
 
   const badgesData: Badge[] = [
-    { id: '1', name: 'Sweet Royal', description: '最高ランク達成', icon: 'trophy', unlocked: false },
-    { id: '2', name: '日記マスター', description: '30日連続投稿', icon: 'camera', unlocked: true, unlockedAt: '2024-01-15' },
-    { id: '3', name: '人気者', description: '高評価100件', icon: 'heart', unlocked: true, unlockedAt: '2024-02-01' },
+    {
+      id: '1',
+      name: 'Sweet Royal',
+      description: '最高ランク達成',
+      icon: 'trophy',
+      unlocked: false,
+    },
+    {
+      id: '2',
+      name: '日記マスター',
+      description: '30日連続投稿',
+      icon: 'camera',
+      unlocked: true,
+      unlockedAt: '2024-01-15',
+    },
+    {
+      id: '3',
+      name: '人気者',
+      description: '高評価100件',
+      icon: 'heart',
+      unlocked: true,
+      unlockedAt: '2024-02-01',
+    },
   ];
 
   // ✅ 特徴マスターのロード
@@ -159,7 +168,7 @@ export default function Dashboard({ cast }: DashboardProps) {
               <h1 className="ml-2 text-lg font-bold text-gray-900 sm:text-xl">
                 キャストダッシュボード
                 {storeName && (
-                  <span className="ml-2 text-pink-600 text-base font-medium">（{storeName}）</span>
+                  <span className="ml-2 text-base font-medium text-pink-600">（{storeName}）</span>
                 )}
               </h1>
             </div>
@@ -217,14 +226,9 @@ export default function Dashboard({ cast }: DashboardProps) {
         )}
 
         {activeTab === 'schedule' && <ScheduleSection diaries={diaries} />}
-{activeTab === 'diary' && (
-  <DiarySection
-    diaries={diaries}
-    castId={cast.id}
-    onSave={() => {}}
-    onDelete={() => {}}
-  />
-)}
+        {activeTab === 'diary' && (
+          <DiarySection diaries={diaries} castId={cast.id} onSave={() => {}} onDelete={() => {}} />
+        )}
         {activeTab === 'profile' && (
           <ProfileSection
             cast={castState}

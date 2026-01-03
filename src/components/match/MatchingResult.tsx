@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence, useMotionValue, useTransform, animate } from 'framer-motion';
-import { CastMember } from '@/types/match';
-import CastCard from './CastCard';
-import LoadingIndicator from './LoadingIndicator';
-import BackgroundAnimation from './BackgroundAnimation';
-import ConfettiExplosion from './ConfettiExplosion';
-import InitialCardAnimation from './InitialCardAnimation';
 import SummonAnimation from '@/components/match2/SummonAnimation';
+import { CastMember } from '@/types/match';
+import { animate, AnimatePresence, motion, useMotionValue, useTransform } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import BackgroundAnimation from './BackgroundAnimation';
+import CastCard from './CastCard';
+import ConfettiExplosion from './ConfettiExplosion';
+import LoadingIndicator from './LoadingIndicator';
 
 interface MatchingResultProps {
   castMembers: CastMember[];
@@ -44,7 +43,7 @@ const MatchingResult: React.FC<MatchingResultProps> = ({ castMembers }) => {
     const FALL_DURATION = 3000;
     const FLOAT_DURATION = 2000;
     const LOADING_DURATION = 2000;
-    const FADE_OUT_DELAY = 250; 
+    const FADE_OUT_DELAY = 250;
     const CONFETTI_DELAY = 800;
 
     // 1. Trigger whiteout and loading animation after fall and float
@@ -55,20 +54,29 @@ const MatchingResult: React.FC<MatchingResultProps> = ({ castMembers }) => {
     }, FALL_DURATION + FLOAT_DURATION);
 
     // 2. Trigger the switch from loading to results
-    const showResultsTimer = setTimeout(() => {
-      setShowLoading(false);
-      setShowCastCards(true);
-    }, FALL_DURATION + FLOAT_DURATION + LOADING_DURATION);
+    const showResultsTimer = setTimeout(
+      () => {
+        setShowLoading(false);
+        setShowCastCards(true);
+      },
+      FALL_DURATION + FLOAT_DURATION + LOADING_DURATION,
+    );
 
     // 3. Trigger the whiteout fade-out to reveal the results underneath
-    const whiteoutOutTimer = setTimeout(() => {
-      setShowWhiteout(false);
-    }, FALL_DURATION + FLOAT_DURATION + LOADING_DURATION + FADE_OUT_DELAY);
+    const whiteoutOutTimer = setTimeout(
+      () => {
+        setShowWhiteout(false);
+      },
+      FALL_DURATION + FLOAT_DURATION + LOADING_DURATION + FADE_OUT_DELAY,
+    );
 
     // 4. Trigger confetti explosion
-    const confettiTimer = setTimeout(() => {
-      setShowConfetti(true);
-    }, FALL_DURATION + FLOAT_DURATION + LOADING_DURATION + CONFETTI_DELAY);
+    const confettiTimer = setTimeout(
+      () => {
+        setShowConfetti(true);
+      },
+      FALL_DURATION + FLOAT_DURATION + LOADING_DURATION + CONFETTI_DELAY,
+    );
 
     return () => {
       clearTimeout(transitionTimer);
@@ -89,14 +97,16 @@ const MatchingResult: React.FC<MatchingResultProps> = ({ castMembers }) => {
       return controls.stop;
     }
   }, [activeMember, showCastCards, count]);
-  
+
   const handleDragEnd = (info: any) => {
     const { offset, velocity } = info;
     const swipe = Math.abs(offset.x) * velocity.x;
 
-    if (swipe < -5000) { // Swipe left for next
+    if (swipe < -5000) {
+      // Swipe left for next
       setIndex((prev) => (prev + 1) % castMembers.length);
-    } else if (swipe > 5000) { // Swipe right for previous
+    } else if (swipe > 5000) {
+      // Swipe right for previous
       setIndex((prev) => (prev - 1 + castMembers.length) % castMembers.length);
     }
   };
@@ -135,107 +145,112 @@ const MatchingResult: React.FC<MatchingResultProps> = ({ castMembers }) => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col justify-center items-center relative overflow-hidden">
-<AnimatePresence>
-  {showInitialCards && (
-    <motion.div
-      key="initial-cards"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 1 }}
-      className="absolute inset-0 z-50"
-    >
-      <SummonAnimation />
-    </motion.div>
-  )}
-</AnimatePresence>
+    <div className="relative flex h-full w-full flex-col items-center justify-center overflow-hidden">
+      <AnimatePresence>
+        {showInitialCards && (
+          <motion.div
+            key="initial-cards"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1 }}
+            className="absolute inset-0 z-50"
+          >
+            <SummonAnimation />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-        <AnimatePresence>
-            {showWhiteout && (
-                <motion.div
-                    className="absolute inset-0 bg-white z-40"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: 'easeInOut' }}
-                />
-            )}
-        </AnimatePresence>
+      <AnimatePresence>
+        {showWhiteout && (
+          <motion.div
+            className="absolute inset-0 z-40 bg-white"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          />
+        )}
+      </AnimatePresence>
 
-        <AnimatePresence>
-            {showLoading && <LoadingIndicator />}
-        </AnimatePresence>
-        
-        <AnimatePresence>
+      <AnimatePresence>{showLoading && <LoadingIndicator />}</AnimatePresence>
+
+      <AnimatePresence>
         {showCastCards && (
           <>
             <BackgroundAnimation />
             {showConfetti && <ConfettiExplosion />}
-            <motion.div 
-              className="w-full h-full relative z-10"
-              initial={{opacity: 0}}
-              animate={{opacity: 1}}
-              transition={{duration: 1.0, ease: 'easeOut'}}
+            <motion.div
+              className="relative z-10 h-full w-full"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 1.0, ease: 'easeOut' }}
             >
               <motion.div
-                className="absolute top-12 sm:top-16 w-full px-6"
+                className="absolute top-12 w-full px-6 sm:top-16"
                 initial={{ opacity: 0, y: -30 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2, ease: 'easeOut' }}
               >
-                <div className="max-w-md mx-auto flex justify-center items-start relative">
-                  <h2 className="text-4xl sm:text-5xl font-bold text-white drop-shadow-lg mt-4">You've Matched!</h2>
-                  <div className="absolute top-0 right-0 sm:-right-8 flex flex-col items-center">
+                <div className="relative mx-auto flex max-w-md items-start justify-center">
+                  <h2 className="mt-4 text-4xl font-bold text-white drop-shadow-lg sm:text-5xl">
+                    You've Matched!
+                  </h2>
+                  <div className="absolute right-0 top-0 flex flex-col items-center sm:-right-8">
                     <motion.div
-                      className="px-4 py-1.5 bg-pink-500 text-white rounded-full shadow-lg text-lg sm:text-xl font-bold"
+                      className="rounded-full bg-pink-500 px-4 py-1.5 text-lg font-bold text-white shadow-lg sm:text-xl"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ delay: 0.6, type: 'spring', stiffness: 120 }}
                     >
                       <motion.span>{rounded}</motion.span>%
                     </motion.div>
-                    <p className="text-sm text-white/90 mt-1 font-semibold drop-shadow">Compatibility</p>
+                    <p className="mt-1 text-sm font-semibold text-white/90 drop-shadow">
+                      Compatibility
+                    </p>
                   </div>
                 </div>
               </motion.div>
-              
-              <div className="w-full h-full flex items-center justify-center">
-                  <motion.div 
-                      className="relative w-full h-[450px] sm:h-[500px]"
-                      style={{ perspective: isMobile ? '800px' : '1200px', transformStyle: 'preserve-3d' }}
-                  >
-                      <div className="absolute w-full h-full">
-                      {castMembers.map((cast, i) => {
-                          const numMembers = castMembers.length;
-                          let position = i - index;
 
-                          // Handle wrapping for infinite carousel
-                          if (position > numMembers / 2) {
-                            position -= numMembers;
-                          } else if (position < -numMembers / 2) {
-                            position += numMembers;
-                          }
-                          
-                          const isCenter = position === 0;
+              <div className="flex h-full w-full items-center justify-center">
+                <motion.div
+                  className="relative h-[450px] w-full sm:h-[500px]"
+                  style={{
+                    perspective: isMobile ? '800px' : '1200px',
+                    transformStyle: 'preserve-3d',
+                  }}
+                >
+                  <div className="absolute h-full w-full">
+                    {castMembers.map((cast, i) => {
+                      const numMembers = castMembers.length;
+                      let position = i - index;
 
-                          return (
-                          <CastCard
-                              key={cast.id}
-                              castMember={cast}
-                              animate={getCardAnimationProps(position)}
-                              onDragEnd={isCenter ? handleDragEnd : undefined}
-                              onClick={() => handleCardClick(i)}
-                              isActive={isCenter}
-                          />
-                          );
-                      })}
-                      </div>
-                  </motion.div>
+                      // Handle wrapping for infinite carousel
+                      if (position > numMembers / 2) {
+                        position -= numMembers;
+                      } else if (position < -numMembers / 2) {
+                        position += numMembers;
+                      }
+
+                      const isCenter = position === 0;
+
+                      return (
+                        <CastCard
+                          key={cast.id}
+                          castMember={cast}
+                          animate={getCardAnimationProps(position)}
+                          onDragEnd={isCenter ? handleDragEnd : undefined}
+                          onClick={() => handleCardClick(i)}
+                          isActive={isCenter}
+                        />
+                      );
+                    })}
+                  </div>
+                </motion.div>
               </div>
-              
-              <motion.p 
-                className="absolute bottom-8 sm:bottom-10 w-full text-center text-white/80 text-sm sm:text-base drop-shadow"
+
+              <motion.p
+                className="absolute bottom-8 w-full text-center text-sm text-white/80 drop-shadow sm:bottom-10 sm:text-base"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.2 }}
@@ -246,7 +261,6 @@ const MatchingResult: React.FC<MatchingResultProps> = ({ castMembers }) => {
           </>
         )}
       </AnimatePresence>
-
     </div>
   );
 };
