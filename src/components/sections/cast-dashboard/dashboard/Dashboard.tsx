@@ -217,16 +217,14 @@ export default function Dashboard({ cast }: DashboardProps) {
         )}
 
         {activeTab === 'schedule' && <ScheduleSection diaries={diaries} />}
-        {activeTab === 'diary' && (
-          <DiarySection
-            diaries={diaries}
-            showEditor={showDiaryEditor}
-            castId={cast.id}
-            onSave={() => {}}
-            onDelete={() => {}}
-            onToggleEditor={setShowDiaryEditor}
-          />
-        )}
+{activeTab === 'diary' && (
+  <DiarySection
+    diaries={diaries}
+    castId={cast.id}
+    onSave={() => {}}
+    onDelete={() => {}}
+  />
+)}
         {activeTab === 'profile' && (
           <ProfileSection
             cast={castState}

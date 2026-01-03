@@ -11,6 +11,7 @@
     "postbuild": "next-sitemap --config next-sitemap.config.cjs"
   },
   "dependencies": {
+    "@google/genai": "latest",
     "@headlessui/react": "^2.2.7",
     "@hookform/resolvers": "^3.9.0",
     "@radix-ui/react-accordion": "^1.2.11",
@@ -46,7 +47,7 @@
     "clsx": "^2.1.1",
     "cmdk": "^1.0.0",
     "embla-carousel-react": "^8.3.0",
-    "framer-motion": "^12.23.0",
+    "framer-motion": "^12.23.21",
     "input-otp": "^1.2.4",
     "js-cookie": "^3.0.5",
     "lottie-react": "^2.4.1",
@@ -71,8 +72,7 @@
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^12.0.0",
     "vaul": "^1.1.2",
-    "zod": "^3.23.8",
-    "@google/genai": "latest"
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -83,7 +83,7 @@
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "@types/uuid": "^10.0.0",
-    "autoprefixer": "^10.4.21",
+    "autoprefixer": "^10.4.20",
     "eslint": "^9.30.1",
     "eslint-config-next": "15.3.4",
     "eslint-plugin-react-hooks": "^5.2.0",

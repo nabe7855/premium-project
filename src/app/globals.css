@@ -164,32 +164,16 @@
     @apply mb-3 font-bold text-gray-800;
   }
 
-  .prose h1 {
-    @apply text-3xl;
-  }
-
-  .prose h2 {
-    @apply text-2xl;
-  }
-
-  .prose h3 {
-    @apply text-xl;
-  }
+  .prose h1 { @apply text-3xl; }
+  .prose h2 { @apply text-2xl; }
+  .prose h3 { @apply text-xl; }
 }
 
 /* ===== Utilities ===== */
 @layer utilities {
-  .border-border {
-    border: 1px solid hsl(var(--border));
-  }
-
-  .text-foreground {
-    color: hsl(var(--foreground));
-  }
-
-  .bg-background {
-    background-color: hsl(var(--background));
-  }
+  .border-border { border: 1px solid hsl(var(--border)); }
+  .text-foreground { color: hsl(var(--foreground)); }
+  .bg-background { background-color: hsl(var(--background)); }
 
   .line-clamp-2 {
     @apply overflow-hidden;
@@ -219,30 +203,19 @@
     backdrop-filter: blur(10px);
   }
 
-  .text-shadow {
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-  }
+  .text-shadow { text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2); }
 
   .polka-dots::before {
     content: '';
     position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    inset: 0;
     opacity: 0.05;
     background-image:
       radial-gradient(circle at 20% 80%, #e91e63 2px, transparent 2px),
       radial-gradient(circle at 80% 20%, #e91e63 2px, transparent 2px),
       radial-gradient(circle at 40% 40%, #e91e63 1px, transparent 1px);
-    background-size:
-      30px 30px,
-      30px 30px,
-      15px 15px;
-    background-position:
-      0 0,
-      15px 15px,
-      7px 7px;
+    background-size: 30px 30px, 30px 30px, 15px 15px;
+    background-position: 0 0, 15px 15px, 7px 7px;
   }
 
   .strawberry-pattern {
@@ -252,155 +225,52 @@
     background-size: 20px 20px;
   }
 
-  .fade-in {
-    animation: fadeIn 0.4s ease-out both;
-  }
+  .fade-in { animation: fadeIn 0.4s ease-out both; }
+  .slide-in-right { animation: slideInFromRight 0.6s ease-out both; }
+  .slide-in-bottom { animation: slideInFromBottom 0.6s ease-out both; }
+  .float-animation { animation: float 3s ease-in-out infinite; }
+  .pulse-pink { animation: pulse-pink 2s infinite; }
+  .animate-slideIn { animation: slideIn 0.3s ease-out forwards; }
+  .animate-slideOut { animation: slideOut 0.3s ease-in forwards; }
 
-  .slide-in-right {
-    animation: slideInFromRight 0.6s ease-out both;
-  }
-
-  .slide-in-bottom {
-    animation: slideInFromBottom 0.6s ease-out both;
-  }
-
-  .float-animation {
-    animation: float 3s ease-in-out infinite;
-  }
-
-  .pulse-pink {
-    animation: pulse-pink 2s infinite;
-  }
-
-  /* ✅ 追加: 検索パネル用 */
-  .animate-slideIn {
-    animation: slideIn 0.3s ease-out forwards;
-  }
-
-  .animate-slideOut {
-    animation: slideOut 0.3s ease-in forwards;
-  }
+  /* === Gacha Animation Classes === */
+  .animate-descend-rotate { animation: descend-rotate 4s ease-out forwards; }
+  .animate-flip-reveal { animation: flip-reveal 1s ease-in-out forwards; }
+  .animate-card-glow { animation: card-glow 2.5s infinite ease-in-out; }
+  .animate-sparkle-twinkle { animation: sparkle-twinkle 1.5s ease-in-out infinite; }
+  .animate-white-flash { animation: white-flash 0.5s ease-in-out forwards; }
+  .animate-shimmer-effect { animation: shimmer-effect 2.5s ease-in-out infinite; }
 }
 
 /* ===== Keyframes ===== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
+@keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+@keyframes slideInFromRight { from{opacity:0;transform:translateX(60px);} to{opacity:1;transform:translateX(0);} }
+@keyframes slideInFromBottom { from{opacity:0;transform:translateY(40px);} to{opacity:1;transform:translateY(0);} }
+@keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+@keyframes pulse-pink { 0%{box-shadow:0 0 0 0 rgba(233,30,99,0.7);} 70%{box-shadow:0 0 0 10px rgba(233,30,99,0);} 100%{box-shadow:0 0 0 0 rgba(233,30,99,0);} }
+@keyframes slideIn { from{transform:translateX(100%);} to{transform:translateX(0%);} }
+@keyframes slideOut { from{transform:translateX(0%);} to{transform:translateX(100%);} }
 
-@keyframes slideInFromRight {
-  from {
-    opacity: 0;
-    transform: translateX(60px);
-  }
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
+/* ✅ Gacha Card Animations */
+@keyframes descend-rotate {
+  0% { transform: translateY(-120vh) rotateY(0deg) scale(0.8); opacity: 0; }
+  60% { opacity: 1; }
+  100% { transform: translateY(0) rotateY(720deg) scale(1); opacity: 1; }
 }
+@keyframes flip-reveal { from{transform:rotateY(720deg);} to{transform:rotateY(1080deg);} }
+@keyframes shimmer-effect { 0%{transform:translateX(-150%) skewX(-30deg);} 100%{transform:translateX(150%) skewX(-30deg);} }
+@keyframes card-glow { 0%,100%{box-shadow:0 0 20px 7px rgba(236,72,153,0.6),0 0 40px 15px rgba(219,39,119,0.5);} 50%{box-shadow:0 0 30px 10px rgba(236,72,153,0.8),0 0 50px 20px rgba(219,39,119,0.7);} }
+@keyframes sparkle-twinkle { 0%{transform:scale(0);opacity:0;} 50%{opacity:1;} 100%{transform:scale(1.5);opacity:0;} }
+@keyframes white-flash { 0%{opacity:0;} 50%{opacity:1;} 100%{opacity:0;} }
 
-@keyframes slideInFromBottom {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ==== Schedule Badge Animations ==== */
+.schedule-badge { @apply inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-bold; }
+.schedule-available { @apply schedule-badge bg-green-200 text-green-800; animation: blinkEffect 3.5s ease-in-out infinite; }
+.schedule-limited { @apply schedule-badge bg-red-500 text-white; box-shadow: 0 0 12px rgba(239,68,68,0.6),0 0 24px rgba(239,68,68,0.4); animation: pulseLampEffect 2s ease-in-out infinite; }
+.schedule-full { @apply schedule-badge bg-yellow-200 text-yellow-800; animation: happyEffect 4s ease-in-out infinite; }
+.schedule-negotiable { @apply schedule-badge bg-gray-200 text-gray-700; }
+.schedule-default { @apply schedule-badge bg-gray-100 text-gray-500; }
 
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes pulse-pink {
-  0% {
-    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 10px rgba(233, 30, 99, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(233, 30, 99, 0);
-  }
-}
-
-/* ✅ 追加: slideIn/slideOut */
-@keyframes slideIn {
-  from {
-    transform: translateX(100%);
-  }
-  to {
-    transform: translateX(0%);
-  }
-}
-
-@keyframes slideOut {
-  from {
-    transform: translateX(0%);
-  }
-  to {
-    transform: translateX(100%);
-  }
-}
-
-/* 共通スタイル（pill型・フォントなど） */
-.schedule-badge {
-  @apply inline-flex items-center rounded-full px-3.5 py-1.5 text-xs font-bold;
-}
-
-/* 予約可能（緑でゆっくり点滅） */
-.schedule-available {
-  @apply schedule-badge bg-green-200 text-green-800;
-  animation: blinkEffect 3.5s ease-in-out infinite;
-}
-
-/* 残りあとわずか（赤でランプっぽく発光） */
-.schedule-limited {
-  @apply schedule-badge bg-red-500 text-white;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6), 0 0 24px rgba(239, 68, 68, 0.4);
-  animation: pulseLampEffect 2s ease-in-out infinite;
-}
-
-/* 満員御礼（黄色でハッピー感） */
-.schedule-full {
-  @apply schedule-badge bg-yellow-200 text-yellow-800;
-  animation: happyEffect 4s ease-in-out infinite;
-}
-
-/* 応相談（グレー固定） */
-.schedule-negotiable {
-  @apply schedule-badge bg-gray-200 text-gray-700;
-}
-
-/* デフォルト */
-.schedule-default {
-  @apply schedule-badge bg-gray-100 text-gray-500;
-}
-
-/* ==== アニメーション ==== */
-@keyframes blinkEffect {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-@keyframes pulseLampEffect {
-  0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,0.6); }
-  50% { box-shadow: 0 0 20px rgba(239,68,68,1); }
-}
-
-@keyframes happyEffect {
-  0%, 100% { background-color: #FEF9C3; }
-  50% { background-color: #FACC15; }
-}
+@keyframes blinkEffect { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+@keyframes pulseLampEffect { 0%,100%{box-shadow:0 0 8px rgba(239,68,68,0.6);} 50%{box-shadow:0 0 20px rgba(239,68,68,1);} }
+@keyframes happyEffect { 0%,100%{background-color:#FEF9C3;} 50%{background-color:#FACC15;} }

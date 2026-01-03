@@ -1,51 +1,44 @@
+// DiarySection.tsx (切り替え管理)
+'use client';
 import React, { useState } from 'react';
-import DiaryEditor from '../../diary/DiaryEditor';
-import DiaryList from '../../diary/DiaryList';
 import { CastDiary } from '@/types/cast';
+import DiaryList from './DiaryList';
+import DiaryEditor from '../../diary/DiaryEditor';
 
 interface Props {
   diaries: CastDiary[];
-  showEditor: boolean;
   castId: string;
-onSave: (data: Omit<CastDiary, 'createdAt'>) => void;
+  onSave: (data: Omit<CastDiary, 'createdAt'>) => void;
   onDelete: (id: string) => void;
-  onToggleEditor: (value: boolean) => void;
 }
 
-export default function DiarySection({
-  diaries,
-  showEditor,
-  castId,
-  onSave,
-  onDelete,
-  onToggleEditor,
-}: Props) {
-  // 👇 編集中の日記を保持する state を追加
-  const [editingDiary, setEditingDiary] = useState<CastDiary | undefined>(undefined);
+export default function DiarySection({ diaries, castId, onSave, onDelete }: Props) {
+  const [showEditor, setShowEditor] = useState(false);
+  const [editingDiary, setEditingDiary] = useState<CastDiary | undefined>();
 
   return (
     <div>
       {!showEditor ? (
         <DiaryList
           diaries={diaries}
-          onEdit={(diary) => {          // 編集開始
-            setEditingDiary(diary);     // 編集対象をセット
-            onToggleEditor(true);
+          onEdit={(diary) => {
+            setEditingDiary(diary);
+            setShowEditor(true);
           }}
           onDelete={onDelete}
           onCreate={() => {
-            setEditingDiary(undefined); // 新規作成なので初期化
-            onToggleEditor(true);
+            setEditingDiary(undefined);
+            setShowEditor(true);
           }}
         />
       ) : (
         <DiaryEditor
           castId={castId}
-          initialData={editingDiary}   // ✅ ここで渡す
+          initialData={editingDiary}
           onSave={onSave}
           onCancel={() => {
-            setEditingDiary(undefined); // キャンセルしたらクリア
-            onToggleEditor(false);
+            setEditingDiary(undefined);
+            setShowEditor(false);
           }}
         />
       )}

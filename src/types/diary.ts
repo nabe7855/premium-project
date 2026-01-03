@@ -6,8 +6,9 @@ export interface DiaryBase {
   content?: string;   // 本文は optional
   date: string;
   tags: string[];
-  storeSlug: string;
-  castName: string;
+  storeSlug?: string;   // 店舗用に必要なら
+  castName?: string;    // キャスト名（optionalにする）
+  images?: string[];    // ✅ 追加（共通で使えるようにする）
 }
 
 // 店舗用（日記一覧用）
@@ -20,8 +21,8 @@ export interface DiaryPost extends DiaryBase {
 
 // キャスト用（個人マイページ用）
 export interface PostType extends DiaryBase {
-  image: string;
-  castAvatar: string;
+  image?: string;       // ✅ images[0]を使って埋める
+  castAvatar?: string;
   readTime: number;
   reactions: {
     likes: number;

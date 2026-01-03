@@ -17,17 +17,18 @@
     "jsx": "preserve",
     "incremental": true,
 
-    // 🔽 Vite 側から追加
+    // 🔽 AIプロジェクトから追加
     "experimentalDecorators": true,
     "useDefineForClassFields": false,
 
+    // パスエイリアス
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     },
-    "plugins": [
-      { "name": "next" }
-    ]
+
+    // Next.js プラグイン
+    "plugins": [{ "name": "next" }]
   },
   "include": [
     "next-env.d.ts",
