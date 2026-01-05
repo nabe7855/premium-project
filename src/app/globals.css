@@ -369,7 +369,9 @@
 /* 残りあとわずか（赤でランプっぽく発光） */
 .schedule-limited {
   @apply schedule-badge bg-red-500 text-white;
-  box-shadow: 0 0 12px rgba(239, 68, 68, 0.6), 0 0 24px rgba(239, 68, 68, 0.4);
+  box-shadow:
+    0 0 12px rgba(239, 68, 68, 0.6),
+    0 0 24px rgba(239, 68, 68, 0.4);
   animation: pulseLampEffect 2s ease-in-out infinite;
 }
 
@@ -391,205 +393,273 @@
 
 /* ==== アニメーション ==== */
 @keyframes blinkEffect {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes pulseLampEffect {
-  0%, 100% { box-shadow: 0 0 8px rgba(239,68,68,0.6); }
-  50% { box-shadow: 0 0 20px rgba(239,68,68,1); }
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(239, 68, 68, 1);
+  }
 }
 
 @keyframes happyEffect {
-  0%, 100% { background-color: #FEF9C3; }
-  50% { background-color: #FACC15; }
+  0%,
+  100% {
+    background-color: #fef9c3;
+  }
+  50% {
+    background-color: #facc15;
+  }
 }
-<<<<<<< HEAD
-=======
 
 body {
-        font-family: 'Poppins', sans-serif;
-      }
-      .font-lora {
-        font-family: 'Lora', serif;
-      }
-      
-      /* Custom keyframes for animations */
-      @keyframes card-tumble-in-left {
-        from {
-          transform: translateZ(-800px) rotateX(180deg) rotateY(180deg) rotateZ(90deg);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(-8rem) rotateZ(-12deg) rotateY(0deg);
-          opacity: 1;
-        }
-      }
-      @keyframes card-tumble-in-center {
-        from {
-          transform: translateZ(-800px) rotateX(180deg) rotateY(180deg);
-          opacity: 0;
-        }
-        to {
-          transform: scale(1) rotateY(0deg);
-          opacity: 1;
-        }
-      }
-      @keyframes card-tumble-in-right {
-        from {
-          transform: translateZ(-800px) rotateX(180deg) rotateY(180deg) rotateZ(-90deg);
-          opacity: 0;
-        }
-        to {
-          transform: translateX(8rem) rotateZ(12deg) rotateY(0deg);
-          opacity: 1;
-        }
-      }
+  font-family: 'Poppins', sans-serif;
+}
+.font-lora {
+  font-family: 'Lora', serif;
+}
 
-      @keyframes subtle-float {
-        0% { transform: translateY(0px) rotate(0deg); }
-        25% { transform: translateY(-15px) rotate(5deg); }
-        50% { transform: translateY(0px) rotate(0deg); }
-        75% { transform: translateY(15px) rotate(-5deg); }
-        100% { transform: translateY(0px) rotate(0deg); }
-      }
+/* Custom keyframes for animations */
+@keyframes card-tumble-in-left {
+  from {
+    transform: translateZ(-800px) rotateX(180deg) rotateY(180deg) rotateZ(90deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(-8rem) rotateZ(-12deg) rotateY(0deg);
+    opacity: 1;
+  }
+}
+@keyframes card-tumble-in-center {
+  from {
+    transform: translateZ(-800px) rotateX(180deg) rotateY(180deg);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1) rotateY(0deg);
+    opacity: 1;
+  }
+}
+@keyframes card-tumble-in-right {
+  from {
+    transform: translateZ(-800px) rotateX(180deg) rotateY(180deg) rotateZ(-90deg);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(8rem) rotateZ(12deg) rotateY(0deg);
+    opacity: 1;
+  }
+}
 
-      @keyframes strawberry-fill-screen {
-        0% {
-          transform: translateY(100vh) rotate(-90deg);
-          opacity: 0;
-        }
-        20% {
-          opacity: 1;
-        }
-        100% {
-          transform: translateY(0) rotate(360deg);
-          opacity: 1;
-        }
-      }
+@keyframes subtle-float {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-15px) rotate(5deg);
+  }
+  50% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(15px) rotate(-5deg);
+  }
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
 
-      @keyframes strawberry-exit-up {
-        to {
-          transform: translateY(-110vh) rotate(360deg);
-          opacity: 0;
-        }
-      }
+@keyframes strawberry-fill-screen {
+  0% {
+    transform: translateY(100vh) rotate(-90deg);
+    opacity: 0;
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0) rotate(360deg);
+    opacity: 1;
+  }
+}
 
-      @keyframes symbol-glow {
-        0%, 100% {
-          text-shadow: 0 0 8px #fff, 0 0 15px #ff007f, 0 0 25px #ff007f;
-          opacity: 1;
-        }
-        50% {
-          text-shadow: 0 0 15px #fff, 0 0 25px #ff007f, 0 0 40px #ff007f;
-          opacity: 0.9;
-        }
-      }
+@keyframes strawberry-exit-up {
+  to {
+    transform: translateY(-110vh) rotate(360deg);
+    opacity: 0;
+  }
+}
 
-      @keyframes sparkle-magic {
-        0%, 100% { transform: scale(0); opacity: 0; }
-        50% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(0); opacity: 0; }
-      }
-      
-      @keyframes gradient-pan {
-        0% { background-position: 0% 50%; }
-        50% { background-position: 100% 50%; }
-        100% { background-position: 0% 50%; }
-      }
-      
-      @keyframes button-pulse {
-        0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7); }
-        70% { transform: scale(1.05); box-shadow: 0 0 0 10px rgba(236, 72, 153, 0); }
-        100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(236, 72, 153, 0); }
-      }
-      
-      @keyframes card-glow {
-        0%, 100% { box-shadow: 0 10px 25px rgba(236, 72, 153, 0.2), 0 0 20px rgba(255, 105, 180, 0.4); }
-        50% { box-shadow: 0 10px 35px rgba(236, 72, 153, 0.4), 0 0 40px rgba(255, 105, 180, 0.6); }
-      }
-      
-      @keyframes gentle-float-up {
-        0% {
-          transform: translateY(0);
-          opacity: 0;
-        }
-        25%, 75% {
-          opacity: 0.8;
-        }
-        100% {
-          transform: translateY(-110vh);
-          opacity: 0;
-        }
-      }
+@keyframes symbol-glow {
+  0%,
+  100% {
+    text-shadow:
+      0 0 8px #fff,
+      0 0 15px #ff007f,
+      0 0 25px #ff007f;
+    opacity: 1;
+  }
+  50% {
+    text-shadow:
+      0 0 15px #fff,
+      0 0 25px #ff007f,
+      0 0 40px #ff007f;
+    opacity: 0.9;
+  }
+}
 
-      .floating-particle {
-        position: absolute;
-        bottom: -10vh;
-        border-radius: 50%;
-        animation: gentle-float-up ease-in-out infinite;
-        will-change: transform, opacity;
-      }
+@keyframes sparkle-magic {
+  0%,
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
 
-      .animate-gradient-pan {
-        background: linear-gradient(-45deg, #fff0f5, #ffe4e1, #fff5ee, #f0f8ff);
-        background-size: 400% 400%;
-        animation: gradient-pan 15s ease infinite;
-      }
-      .animate-button-pulse {
-        animation: button-pulse 2s infinite;
-      }
-      .animate-card-glow {
-        animation: card-glow 2.5s ease-in-out infinite;
-      }
-      .trump-card-style {
-        background-color: #111;
-        background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-        background-size: 10px 10px;
-        border: 3px solid;
-        border-image-slice: 1;
-        border-image-source: linear-gradient(to bottom right, #ff007f, #ff70b8);
-      }
-      .animate-card-tumble-in-left {
-        animation: card-tumble-in-left 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-      .animate-card-tumble-in-center {
-        animation: card-tumble-in-center 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-      .animate-card-tumble-in-right {
-        animation: card-tumble-in-right 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
-      }
-      .animate-subtle-float {
-        animation: subtle-float 10s ease-in-out infinite;
-      }
-      .animate-strawberry-fill {
-        position: absolute;
-        transform: translateY(100vh);
-        opacity: 0;
-        animation: strawberry-fill-screen ease-out forwards;
-        will-change: transform, opacity;
-      }
-      .animate-strawberry-exit-up {
-        position: absolute;
-        animation: strawberry-exit-up 5s ease-in forwards;
-        will-change: transform, opacity;
-      }
-      .animate-symbol-glow {
-        animation: symbol-glow 2.5s ease-in-out infinite;
-      }
-      .sparkle-heart {
-        position: absolute;
-        font-family: sans-serif;
-        user-select: none;
-        animation: sparkle-magic 1.5s ease-in-out infinite;
-        will-change: transform, opacity;
-      }
-      .sparkle-heart-pink {
-        color: #ff007f;
-        text-shadow: 0 0 5px #ff007f, 0 0 10px #ff007f;
-      }
-      .sparkle-heart-white {
-        color: #ffffff;
-        text-shadow: 0 0 5px #fff, 0 0 10px #fff;
-      }
->>>>>>> animation-test
+@keyframes gradient-pan {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes button-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0.7);
+  }
+  70% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(236, 72, 153, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(236, 72, 153, 0);
+  }
+}
+
+@keyframes card-glow {
+  0%,
+  100% {
+    box-shadow:
+      0 10px 25px rgba(236, 72, 153, 0.2),
+      0 0 20px rgba(255, 105, 180, 0.4);
+  }
+  50% {
+    box-shadow:
+      0 10px 35px rgba(236, 72, 153, 0.4),
+      0 0 40px rgba(255, 105, 180, 0.6);
+  }
+}
+
+@keyframes gentle-float-up {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  25%,
+  75% {
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(-110vh);
+    opacity: 0;
+  }
+}
+
+.floating-particle {
+  position: absolute;
+  bottom: -10vh;
+  border-radius: 50%;
+  animation: gentle-float-up ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-gradient-pan {
+  background: linear-gradient(-45deg, #fff0f5, #ffe4e1, #fff5ee, #f0f8ff);
+  background-size: 400% 400%;
+  animation: gradient-pan 15s ease infinite;
+}
+.animate-button-pulse {
+  animation: button-pulse 2s infinite;
+}
+.animate-card-glow {
+  animation: card-glow 2.5s ease-in-out infinite;
+}
+.trump-card-style {
+  background-color: #111;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 10px 10px;
+  border: 3px solid;
+  border-image-slice: 1;
+  border-image-source: linear-gradient(to bottom right, #ff007f, #ff70b8);
+}
+.animate-card-tumble-in-left {
+  animation: card-tumble-in-left 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-card-tumble-in-center {
+  animation: card-tumble-in-center 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-card-tumble-in-right {
+  animation: card-tumble-in-right 3.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.animate-subtle-float {
+  animation: subtle-float 10s ease-in-out infinite;
+}
+.animate-strawberry-fill {
+  position: absolute;
+  transform: translateY(100vh);
+  opacity: 0;
+  animation: strawberry-fill-screen ease-out forwards;
+  will-change: transform, opacity;
+}
+.animate-strawberry-exit-up {
+  position: absolute;
+  animation: strawberry-exit-up 5s ease-in forwards;
+  will-change: transform, opacity;
+}
+.animate-symbol-glow {
+  animation: symbol-glow 2.5s ease-in-out infinite;
+}
+.sparkle-heart {
+  position: absolute;
+  font-family: sans-serif;
+  user-select: none;
+  animation: sparkle-magic 1.5s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+.sparkle-heart-pink {
+  color: #ff007f;
+  text-shadow:
+    0 0 5px #ff007f,
+    0 0 10px #ff007f;
+}
+.sparkle-heart-white {
+  color: #ffffff;
+  text-shadow:
+    0 0 5px #fff,
+    0 0 10px #fff;
+}

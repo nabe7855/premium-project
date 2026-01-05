@@ -1,17 +1,10 @@
 // store.ts
 
-<<<<<<< HEAD
-export type StoreLocation = 'tokyo' | 'osaka' | 'nagoya';
-
-export interface Store {
-  id: StoreLocation;
-=======
 export type StoreLocation = 'tokyo' | 'osaka' | 'nagoya' | 'fukuoka';
 
 export interface Store {
   id: StoreLocation;
   template: 'common' | 'fukuoka';
->>>>>>> animation-test
   name: string;
   displayName: string;
   catchphrase: string;
@@ -162,7 +155,3 @@ export interface StoreRow {
   tags?: string[];
   created_at?: string;
 }
-<<<<<<< HEAD
-
-=======
->>>>>>> animation-test

@@ -1,31 +1,9 @@
-<<<<<<< HEAD
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
-import HeroSection from '@/components/sections/store/HeroSection';
-import CastSliderSection from '@/components/sections/store/CastSliderSection';
-import NewcomerSection from '@/components/sections/store/NewcomerSection';
-import EventSection from '@/components/sections/store/EventSection';
-import DiarySection from '@/components/sections/store/DiarySection';
-import MediaSection from '@/components/sections/store/MediaSection';
-import VideoSection from '@/components/sections/store/VideoSection';
-import ReviewSection from '@/components/sections/store/ReviewSection';
-import PlanSection from '@/components/sections/store/PlanSection';
-import AIMatchingSection from '@/components/sections/store/AIMatchingSection';
-import ClosingCTA from '@/components/sections/store/ClosingCTA';
-import { getStoreData } from '@/lib/store/store-data';
-import { StoreProvider } from '@/contexts/StoreContext';
-import React from 'react';
-import { BannerSlideSection } from '@/components/sections/BannerSlideSection';
-import { TestimonialSection } from '@/components/sections/TestimonialSection';
-import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore'; // 👈 追加
-=======
 import CommonTopPage from '@/components/templates/store/common/page-templates/TopPage';
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { getStoreData } from '@/lib/store/store-data';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
->>>>>>> animation-test
 
 interface StorePageProps {
   params: {
@@ -42,8 +20,6 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     };
   }
 
-<<<<<<< HEAD
-=======
   // 福岡店の場合は専用のメタデータロジック
   if (store.template === 'fukuoka') {
     return {
@@ -82,7 +58,6 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   }
 
   // その他の店舗は既存のメタデータ
->>>>>>> animation-test
   return {
     title: store.seo.title,
     description: store.seo.description,
@@ -117,16 +92,6 @@ export function generateStaticParams() {
   return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }];
 }
 
-<<<<<<< HEAD
-export default async function StorePage({ params }: StorePageProps) {
-  const store = getStoreData(params.slug);
-
-  if (!store) {
-    notFound();
-  }
-
-  // ✅ Supabaseから今日のキャストを取得
-=======
 export const dynamicParams = true;
 
 export default async function StorePage({ params }: StorePageProps) {
@@ -140,7 +105,6 @@ export default async function StorePage({ params }: StorePageProps) {
   }
 
   // Supabaseから今日のキャストを取得
->>>>>>> animation-test
   const todayCasts = await getTodayCastsByStore(params.slug);
 
   const structuredData = {
@@ -175,41 +139,14 @@ export default async function StorePage({ params }: StorePageProps) {
     })),
   };
 
-<<<<<<< HEAD
-  return (
-    <StoreProvider store={store}>
-      <div className={`min-h-screen ${store.theme.bodyClass}`}>
-=======
   // テンプレート振り分け
   if (store.template === 'fukuoka') {
     return (
       <div>
->>>>>>> animation-test
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-<<<<<<< HEAD
-
-        <main>
-          <HeroSection />
-          <TestimonialSection />
-          <BannerSlideSection />
-          <CastSliderSection casts={todayCasts} /> {/* 👈 propsで渡す */}
-          <NewcomerSection />
-          <EventSection />
-          <DiarySection />
-          <MediaSection />
-          <VideoSection />
-          <ReviewSection />
-          <PlanSection />
-          <AIMatchingSection />
-          <ClosingCTA />
-        </main>
-      </div>
-    </StoreProvider>
-  );
-=======
         <FukuokaTopPage />
       </div>
     );
@@ -217,5 +154,4 @@ export default async function StorePage({ params }: StorePageProps) {
 
   // その他の店舗は共通テンプレートを表示
   return <CommonTopPage store={store} todayCasts={todayCasts} structuredData={structuredData} />;
->>>>>>> animation-test
 }

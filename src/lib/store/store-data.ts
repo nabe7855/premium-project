@@ -1,9 +1,6 @@
 export interface Store {
   slug: string;
-<<<<<<< HEAD
-=======
   template: 'common' | 'fukuoka';
->>>>>>> animation-test
   name: string;
   city: string;
   theme: {
@@ -103,10 +100,7 @@ export interface Store {
 const storeData: Record<string, Store> = {
   tokyo: {
     slug: 'tokyo',
-<<<<<<< HEAD
-=======
     template: 'common',
->>>>>>> animation-test
     name: 'ストロベリーボーイ東京店',
     city: '東京',
     theme: {
@@ -131,12 +125,8 @@ const storeData: Record<string, Store> = {
     },
     seo: {
       title: '【東京店】甘くとろける夢の世界へ｜ストロベリーボーイ',
-<<<<<<< HEAD
-      description: '東京で癒しのひとときを。AIマッチング型イケメン派遣サービス。20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
-=======
       description:
         '東京で癒しのひとときを。AIマッチング型イケメン派遣サービス。20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
->>>>>>> animation-test
       keywords: 'イケメン派遣,東京,癒し,女性向け,マッチング,ホスト,エンターテイメント',
       ogImage: 'https://images.pexels.com/photos/1024248/pexels-photo-1024248.jpeg',
     },
@@ -175,12 +165,8 @@ const storeData: Record<string, Store> = {
         name: '海斗',
         age: 24,
         image: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
-<<<<<<< HEAD
-        introduction: '笑顔が素敵な癒し系新人です。お話するのが大好きで、どんな話題でも楽しくお話しできます。',
-=======
         introduction:
           '笑顔が素敵な癒し系新人です。お話するのが大好きで、どんな話題でも楽しくお話しできます。',
->>>>>>> animation-test
         startDate: '2025-01-15',
       },
     ],
@@ -245,12 +231,8 @@ const storeData: Record<string, Store> = {
         id: '1',
         author: 'M.K様',
         rating: 5,
-<<<<<<< HEAD
-        content: '本当に素敵な時間を過ごせました。スタッフの方々も親切で、また利用したいと思います。',
-=======
         content:
           '本当に素敵な時間を過ごせました。スタッフの方々も親切で、また利用したいと思います。',
->>>>>>> animation-test
         date: '2025-01-09',
         service: 'プレミアムプラン',
       },
@@ -279,9 +261,6 @@ const storeData: Record<string, Store> = {
         price: '¥15,000',
         duration: '90分',
         description: '特別な時間を過ごしたい方におすすめ',
-<<<<<<< HEAD
-        features: ['カウンセリング', 'ドリンクサービス', 'フォトサービス', 'デートプラン', 'お土産付き'],
-=======
         features: [
           'カウンセリング',
           'ドリンクサービス',
@@ -289,17 +268,13 @@ const storeData: Record<string, Store> = {
           'デートプラン',
           'お土産付き',
         ],
->>>>>>> animation-test
         popular: true,
       },
     ],
   },
   osaka: {
     slug: 'osaka',
-<<<<<<< HEAD
-=======
     template: 'common',
->>>>>>> animation-test
     name: 'ストロベリーボーイ大阪店',
     city: '大阪',
     theme: {
@@ -324,12 +299,8 @@ const storeData: Record<string, Store> = {
     },
     seo: {
       title: '【大阪店】情熱的な関西の魅力｜ストロベリーボーイ',
-<<<<<<< HEAD
-      description: '大阪で心温まる癒しの時間を。関西弁で親しみやすいイケメンキャストがあなたをお待ちしています。',
-=======
       description:
         '大阪で心温まる癒しの時間を。関西弁で親しみやすいイケメンキャストがあなたをお待ちしています。',
->>>>>>> animation-test
       keywords: 'イケメン派遣,大阪,関西,癒し,女性向け,マッチング,ホスト',
       ogImage: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg',
     },
@@ -365,10 +336,7 @@ const storeData: Record<string, Store> = {
   },
   nagoya: {
     slug: 'nagoya',
-<<<<<<< HEAD
-=======
     template: 'common',
->>>>>>> animation-test
     name: 'ストロベリーボーイ名古屋店',
     city: '名古屋',
     theme: {
@@ -427,8 +395,6 @@ const storeData: Record<string, Store> = {
       },
     ],
   },
-<<<<<<< HEAD
-=======
   fukuoka: {
     slug: 'fukuoka',
     template: 'fukuoka',
@@ -479,7 +445,6 @@ const storeData: Record<string, Store> = {
       },
     ],
   },
->>>>>>> animation-test
 };
 
 export function getStoreData(slug: string): Store | null {
@@ -488,8 +453,4 @@ export function getStoreData(slug: string): Store | null {
 
 export function getAllStores(): Store[] {
   return Object.values(storeData);
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> animation-test

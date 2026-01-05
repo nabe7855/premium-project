@@ -1,5 +1,5 @@
-import type { Config } from 'tailwindcss'
-import plugin from 'tailwindcss/plugin'
+import type { Config } from 'tailwindcss';
+import plugin from 'tailwindcss/plugin';
 
 const config: Config = {
   darkMode: ['class'],
@@ -70,14 +70,10 @@ const config: Config = {
         slowBlink: 'blink 3.5s ease-in-out infinite',
         pulseLampCustom: 'pulseLamp 2.2s ease-in-out infinite',
         happyCustom: 'happy 4s ease-in-out infinite',
-<<<<<<< HEAD
-=======
         // 🍓 ここから追加
-  cardGlow: 'cardGlow 2.5s ease-in-out infinite',
-  buttonPulse: 'buttonPulse 2.5s ease-in-out infinite',
-  floating: 'floating 20s linear infinite',
-
->>>>>>> animation-test
+        cardGlow: 'cardGlow 2.5s ease-in-out infinite',
+        buttonPulse: 'buttonPulse 2.5s ease-in-out infinite',
+        floating: 'floating 20s linear infinite',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
@@ -94,9 +90,9 @@ const config: Config = {
         '.bg-gold-gradient': {
           background: 'linear-gradient(135deg, #FFD700, #FFA500, #FFD700)',
         },
-      })
+      });
     }),
   ],
-}
+};
 
-export default config
+export default config;
