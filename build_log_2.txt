@@ -1,0 +1,106 @@
+﻿
+> premium-project@0.1.0 build
+> next build
+
+  笆ｲ Next.js 14.2.30
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+node.exe : Browsersli
+st: browsers data (ca
+niuse-lite) is 7 mont
+hs old. Please run:
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Browser   
+ slist: b...ld. P    
+lease run::Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  npx update-browsers
+list-db@latest
+  Why you should do i
+t regularly: https://
+github.com/browsersli
+st/update-db#readme
+
+[1m[33mwarn[39m[2
+2m - The class `durat
+ion-[1500ms]` is ambi
+guous and matches mul
+tiple utilities.
+[1m[33mwarn[39m[2
+2m - If this is conte
+nt and not a class, r
+eplace it with `durat
+ion-&lsqb;1500ms&rsqb
+;` to silence this wa
+rning.
+ 笨・Compiled successfully
+   Linting and checking validity of types ...
+Failed to compile.
+
+./src/data/stores.ts:
+4:3
+Type error: Property 
+'template' is missing
+ in type '{ id: "toky
+o"; name: string; dis
+playName: string; cat
+chphrase: string; her
+oTitle: string; descr
+iption: string; emoji
+: string; subtext: st
+ring; colors: { prima
+ry: string; secondary
+: string; gradient: s
+tring; }; seo: { ...;
+ }; }' but required i
+n type 'Store'.
+
+[0m [90m 2 |[39m[
+0m
+[0m [90m 3 |[39m 
+[36mexport[39m [36m
+const[39m stores[33
+m:[39m [33mRecord[
+39m[33m<[39m[33mst
+ring[39m[33m,[39m 
+[33mStore[39m[33m>
+[39m [33m=[39m {[
+0m
+[0m[31m[1m>[22m[
+39m[90m 4 |[39m   t
+okyo[33m:[39m {[0m
+[0m [90m   |[39m  
+ [31m[1m^[22m[39m
+[0m
+[0m [90m 5 |[39m  
+   id[33m:[39m [32
+m'tokyo'[39m[33m,[
+39m[0m
+[0m [90m 6 |[39m  
+   name[33m:[39m [
+32m'繧ｹ繝医Ο繝吶Μ繝ｼ繝懊・繧､繧ｺ
+譚ｱ莠ｬ'[39m[33m,[39m
+[0m
+[0m [90m 7 |[39m  
+   displayName[33m:
+[39m [32m'譚ｱ莠ｬ蠎・[39
+m[33m,[39m[0m
+Next.js build worker 
+exited with code: 1 a
+nd signal: null

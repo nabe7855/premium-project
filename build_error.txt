@@ -1,0 +1,41 @@
+﻿  笆ｲ Next.js 14.2.30
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+node.exe : Failed to 
+compile.
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Failed    
+ to compile.:Stri    
+ng) [], RemoteEx    c
+eption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+
+./src/app/(protected)
+/store/[slug]/page.ts
+x
+Module not found: Can
+'t resolve '@/compone
+nts/templates/Fukuoka
+Page'
+
+https://nextjs.org/do
+cs/messages/module-no
+t-found
+
+
+> Build failed becaus
+e of webpack errors

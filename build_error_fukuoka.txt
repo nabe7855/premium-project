@@ -1,0 +1,144 @@
+﻿  笆ｲ Next.js 14.2.30
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+node.exe : Browsersli
+st: browsers data (ca
+niuse-lite) is 7 mont
+hs old. Please run:
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (Browser   
+ slist: b...ld. P    
+lease run::Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+  npx update-browsers
+list-db@latest
+  Why you should do i
+t regularly: https://
+github.com/browsersli
+st/update-db#readme
+
+[1m[33mwarn[39m[2
+2m - The class `durat
+ion-[1500ms]` is ambi
+guous and matches mul
+tiple utilities.
+[1m[33mwarn[39m[2
+2m - If this is conte
+nt and not a class, r
+eplace it with `durat
+ion-&lsqb;1500ms&rsqb
+;` to silence this wa
+rning.
+ 笨・Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/30) ...
+   Generating static pages (7/30) 
+藤 getTodayCastsByStore start for slug: [tokyo]
+藤 getTodayCastsByStore start for slug: [tokyo]
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+剥 schedules raw data: []
+剥 schedules raw data: []
+笞・・譛ｬ譌･蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医↑縺・藤 getTodayCastsByStore start for slug: [nagoya]
+藤 getTodayCastsByStore start for slug: [nagoya]
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+剥 schedules raw data: []
+剥 schedules raw data: []
+笞・・譛ｬ譌･蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医↑縺・藤 getTodayCastsByStore start for slug: [osaka]
+藤 getTodayCastsByStore start for slug: [osaka]
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+套 JST 莉頑律縺ｮ譌･莉・ 2026-01-05
+剥 schedules raw data: []
+剥 schedules raw data: []
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+笞・・譛ｬ譌･蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医↑縺・   Generating static pages (14/30) 
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+笞・・莉頑律縺ｮ蜃ｺ蜍､繧ｭ繝｣繧ｹ繝医
+・隕九▽縺九ｊ縺ｾ縺帙ｓ縺ｧ縺励◆
+   Generating static pages (22/30) 
+ 笨・Generating static pages (30/30)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size     First Load JS
+笏・笳・/                                               490 B           170 kB
+笏・笳・/_not-found                                     153 B          87.5 kB
+笏・笳・/admin                                          2 kB           98.5 kB
+笏・笳・/admin/admin                                    274 B           207 kB
+笏・笳・/admin/admin/advertising                        2.93 kB         212 kB
+笏・笳・/admin/admin/advertising/list                   2.04 kB        94.3 kB
+笏・笳・/admin/admin/ai/copywriter                      5.63 kB          93 kB
+笏・笳・/admin/admin/ai/generate-intro                  7.7 kB         95.1 kB
+笏・笳・/admin/admin/all-cast                           3.02 kB         202 kB
+笏・笳・/admin/admin/dashboard                          269 B           207 kB
+笏・笳・/admin/admin/intro-list                         2.86 kB        95.1 kB
+笏・笳・/admin/admin/stores                             4.36 kB        91.7 kB
+笏・笳・/admin/admin/stores/casts                       5.74 kB        93.1 kB
+笏・笳・/admin/casts                                    3.37 kB         131 kB
+笏・笳・/admin/stores                                   2.86 kB         130 kB
+笏・ﾆ・/admin/stores/[id]/casts                        4.55 kB         132 kB
+笏・ﾆ・/admin/stores/[id]/edit                         2.1 kB          130 kB
+笏・笳・/admin/stores/new                               1.46 kB         129 kB
+笏・笳・/age-check                                      16.2 kB         181 kB
+笏・笳・/api/set-age-cookie                             0 B                0 B
+笏・笳・/cast-list                                      919 B           103 kB
+笏・笳・/cast/cast-dashboard                            28.9 kB         228 kB
+笏・笳・/cast/signup                                    2.77 kB         130 kB
+笏・笳・/login                                          2.89 kB         130 kB
+笏・笳・/store/[slug]                                   21.9 kB         117 kB
+笏・  笏・/store/tokyo
+笏・  笏・/store/osaka
+笏・  笏・/store/nagoya
+笏・ﾆ・/store/[slug]/[cast]                            8.17 kB         141 kB
+笏・ﾆ・/store/[slug]/aaaa                              490 B           170 kB
+笏・ﾆ・/store/[slug]/Announcement-information/policy   7.17 kB        94.5 kB
+笏・ﾆ・/store/[slug]/Announcement-information/recruit  22.6 kB         110 kB
+笏・ﾆ・/store/[slug]/cast                              23.9 kB         156 kB
+笏・ﾆ・/store/[slug]/cast-list                         3.72 kB         189 kB
+笏・ﾆ・/store/[slug]/cast-list/search                  206 B           186 kB
+笏・ﾆ・/store/[slug]/cast/[cast]                       14.5 kB         192 kB
+笏・ﾆ・/store/[slug]/diary/cast/[castName]             3.25 kB         105 kB
+笏・ﾆ・/store/[slug]/diary/diary-list                  5.21 kB         147 kB
+笏・ﾆ・/store/[slug]/diary/post/[postId]               8.43 kB         105 kB
+笏・ﾆ・/store/[slug]/guide/guide                       13.3 kB         101 kB
+笏・ﾆ・/store/[slug]/reviews/reviews                   10.1 kB         153 kB
+笏・ﾆ・/store/[slug]/schedule/schedule                 5.2 kB          179 kB
+笏・ﾆ・/store/[slug]/videos/videos                     9.65 kB          97 kB
+笏・笳・/test                                           3.64 kB          91 kB
+笏・笳・/test2                                          1.79 kB        96.6 kB
++ First Load JS shared by all                       87.4 kB
+  笏・chunks/2117-6b0851803407bfff.js                 31.8 kB
+  笏・chunks/fd9d1056-9787dd79a706633f.js             53.6 kB
+  笏・other shared chunks (total)                     1.98 kB
+
+
+笳・ (Static)   prerendered as static content
+笳・ (SSG)      prerendered as static HTML (uses getStaticProps)
+ﾆ・ (Dynamic)  server-rendered on demand
+

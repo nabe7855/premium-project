@@ -1,5 +1,6 @@
 export interface Store {
   slug: string;
+  template: 'common' | 'fukuoka';
   name: string;
   city: string;
   theme: {
@@ -99,6 +100,7 @@ export interface Store {
 const storeData: Record<string, Store> = {
   tokyo: {
     slug: 'tokyo',
+    template: 'common',
     name: 'ストロベリーボーイ東京店',
     city: '東京',
     theme: {
@@ -123,7 +125,8 @@ const storeData: Record<string, Store> = {
     },
     seo: {
       title: '【東京店】甘くとろける夢の世界へ｜ストロベリーボーイ',
-      description: '東京で癒しのひとときを。AIマッチング型イケメン派遣サービス。20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
+      description:
+        '東京で癒しのひとときを。AIマッチング型イケメン派遣サービス。20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
       keywords: 'イケメン派遣,東京,癒し,女性向け,マッチング,ホスト,エンターテイメント',
       ogImage: 'https://images.pexels.com/photos/1024248/pexels-photo-1024248.jpeg',
     },
@@ -162,7 +165,8 @@ const storeData: Record<string, Store> = {
         name: '海斗',
         age: 24,
         image: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
-        introduction: '笑顔が素敵な癒し系新人です。お話するのが大好きで、どんな話題でも楽しくお話しできます。',
+        introduction:
+          '笑顔が素敵な癒し系新人です。お話するのが大好きで、どんな話題でも楽しくお話しできます。',
         startDate: '2025-01-15',
       },
     ],
@@ -227,7 +231,8 @@ const storeData: Record<string, Store> = {
         id: '1',
         author: 'M.K様',
         rating: 5,
-        content: '本当に素敵な時間を過ごせました。スタッフの方々も親切で、また利用したいと思います。',
+        content:
+          '本当に素敵な時間を過ごせました。スタッフの方々も親切で、また利用したいと思います。',
         date: '2025-01-09',
         service: 'プレミアムプラン',
       },
@@ -256,13 +261,20 @@ const storeData: Record<string, Store> = {
         price: '¥15,000',
         duration: '90分',
         description: '特別な時間を過ごしたい方におすすめ',
-        features: ['カウンセリング', 'ドリンクサービス', 'フォトサービス', 'デートプラン', 'お土産付き'],
+        features: [
+          'カウンセリング',
+          'ドリンクサービス',
+          'フォトサービス',
+          'デートプラン',
+          'お土産付き',
+        ],
         popular: true,
       },
     ],
   },
   osaka: {
     slug: 'osaka',
+    template: 'common',
     name: 'ストロベリーボーイ大阪店',
     city: '大阪',
     theme: {
@@ -287,7 +299,8 @@ const storeData: Record<string, Store> = {
     },
     seo: {
       title: '【大阪店】情熱的な関西の魅力｜ストロベリーボーイ',
-      description: '大阪で心温まる癒しの時間を。関西弁で親しみやすいイケメンキャストがあなたをお待ちしています。',
+      description:
+        '大阪で心温まる癒しの時間を。関西弁で親しみやすいイケメンキャストがあなたをお待ちしています。',
       keywords: 'イケメン派遣,大阪,関西,癒し,女性向け,マッチング,ホスト',
       ogImage: 'https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg',
     },
@@ -323,6 +336,7 @@ const storeData: Record<string, Store> = {
   },
   nagoya: {
     slug: 'nagoya',
+    template: 'common',
     name: 'ストロベリーボーイ名古屋店',
     city: '名古屋',
     theme: {
@@ -378,6 +392,56 @@ const storeData: Record<string, Store> = {
         description: '上品で洗練された時間をお過ごしください',
         features: ['カウンセリング', 'プレミアムドリンク', 'フォトサービス'],
         popular: true,
+      },
+    ],
+  },
+  fukuoka: {
+    slug: 'fukuoka',
+    template: 'fukuoka',
+    name: 'ストロベリーボーイズ福岡',
+    city: '福岡',
+    theme: {
+      primary: 'rgb(239, 68, 68)',
+      primaryLight: 'rgb(254, 202, 202)',
+      primaryDark: 'rgb(185, 28, 28)',
+      accent: 'rgb(248, 113, 113)',
+      bodyClass: 'bg-gradient-to-br from-red-50 to-rose-100',
+      gradient: 'from-red-500 to-rose-600',
+      gradientHover: 'from-red-600 to-rose-700',
+    },
+    hero: {
+      title: '博多の夜に咲く一輪の花',
+      subtitle: '福岡で過ごす極上のひととき',
+      catchphrase: '情熱的な夜をあなたに',
+      backgroundImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
+    },
+    contact: {
+      phone: '092-1234-5678',
+      line: '@strawberry-fukuoka',
+      email: 'fukuoka@strawberry-boy.com',
+    },
+    seo: {
+      title: '【福岡店】博多の夜に咲く一輪の花｜ストロベリーボーイズ',
+      description: '福岡で極上の癒し体験を。厳選されたキャストがあなたをお待ちしています。',
+      keywords: 'イケメン派遣,福岡,博多,中洲,癒し,女性向け,マッチング',
+      ogImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
+    },
+    casts: [],
+    newcomers: [],
+    events: [],
+    diaries: [],
+    media: [],
+    videos: [],
+    reviews: [],
+    plans: [
+      {
+        id: '1',
+        name: '博多スペシャルプラン',
+        price: '¥8,000',
+        duration: '60分',
+        description: '初めての方におすすめの基本プラン',
+        features: ['カウンセリング', 'ドリンクサービス'],
+        popular: false,
       },
     ],
   },
