@@ -1,0 +1,2 @@
+﻿src/components/templates/fukuoka/sections/CampaignSection.tsx(1,26): error TS2307: Cannot find module '@/types/fukuoka' or its corresponding type declarations.
+src/components/templates/fukuoka/sections/CastSection.tsx(1,22): error TS2307: Cannot find module '@/types/fukuoka' or its corresponding type declarations.

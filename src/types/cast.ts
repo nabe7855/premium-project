@@ -35,10 +35,17 @@ export interface Store {
 // キャスト状態マスタ（DB: status_master）
 // ==============================
 export interface Status {
+<<<<<<< HEAD
   id: string;             // uuid
   name: string;           // 表示名（例: 新人, 店長おすすめ）
   label_color?: string | null; // バッジ背景色
   text_color?: string | null;  // バッジ文字色
+=======
+  id: string; // uuid
+  name: string; // 表示名（例: 新人, 店長おすすめ）
+  label_color?: string | null; // バッジ背景色
+  text_color?: string | null; // バッジ文字色
+>>>>>>> animation-test
   created_at?: string;
 }
 
@@ -46,10 +53,17 @@ export interface Status {
 // キャストに紐づく状態（DB: cast_statuses）
 // ==============================
 export interface CastStatus {
+<<<<<<< HEAD
   id: string;             // uuid
   cast_id: string;        // 紐づくキャストID
   status_id: string;      // 紐づくステータスID
   isActive: boolean;     // ON/OFF フラグ
+=======
+  id: string; // uuid
+  cast_id: string; // 紐づくキャストID
+  status_id: string; // 紐づくステータスID
+  isActive: boolean; // ON/OFF フラグ
+>>>>>>> animation-test
   created_at?: string;
 
   // 🔽 リレーションでJOINして取得する
@@ -61,6 +75,7 @@ export interface CastStatus {
 // ==============================
 export type ServiceLevel = 'NG' | '要相談' | '普通' | '得意';
 
+<<<<<<< HEAD
 export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'
 
 
@@ -69,6 +84,15 @@ export interface Cast {
   slug: string;
   customID?: string;       // カスタムID
   storeSlug?: string;      // 店舗slug
+=======
+export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable';
+
+export interface Cast {
+  id: string; // uuid
+  slug: string;
+  customID?: string; // カスタムID
+  storeSlug?: string; // 店舗slug
+>>>>>>> animation-test
   name: string;
   bloodType?: string;
 
@@ -117,9 +141,15 @@ export interface Cast {
 
   // タグや特徴（UI用）
   tags?: string[];
+<<<<<<< HEAD
   mbtiType?: string;        // MBTI名
   animalName?: string;      // 動物占い名
   faceType?: string[];      // 顔型名リスト
+=======
+  mbtiType?: string; // MBTI名
+  animalName?: string; // 動物占い名
+  faceType?: string[]; // 顔型名リスト
+>>>>>>> animation-test
 
   // ✅ 特徴IDリスト
   personalityIds?: string[];
@@ -168,8 +198,11 @@ export interface Cast {
   castQuestions?: CastQuestion[];
 }
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> animation-test
 // ==============================
 // 診断検索用の拡張型
 // ==============================
@@ -202,6 +235,7 @@ export interface CastSummary {
 // ==============================
 // 特徴マスタ（DB: feature_master）
 // ==============================
+<<<<<<< HEAD
 export type FeatureCategory =
   | 'MBTI'
   | 'animal'
@@ -209,6 +243,9 @@ export type FeatureCategory =
   | 'personality'
   | 'appearance'
   | 'service';
+=======
+export type FeatureCategory = 'MBTI' | 'animal' | 'face' | 'personality' | 'appearance' | 'service';
+>>>>>>> animation-test
 
 export interface FeatureMaster {
   id: string;
@@ -264,6 +301,7 @@ export interface CastProfile {
 }
 
 // ==============================
+<<<<<<< HEAD
 // DBから直接取れるキャストデータ
 // ==============================
 export interface StrapiCastItem {
@@ -280,6 +318,8 @@ export interface StrapiCastItem {
 }
 
 // ==============================
+=======
+>>>>>>> animation-test
 // 質問関連
 // ==============================
 export interface QuestionMaster {
@@ -350,7 +390,10 @@ export interface VideoItem {
 // レビュー
 // ==============================
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> animation-test
 // ==============================
 // ユーザー表示用キャスト情報
 // ==============================
@@ -369,18 +412,30 @@ export interface CastProfilePublic extends CastProfileBase {
   bloodType?: string;
   services?: Record<string, 'NG' | '要相談' | '普通' | '得意'>;
   statuses?: CastStatus[];
+<<<<<<< HEAD
   catchCopy?: string;        // 👈 追加
   personalities?: FeatureTag[]; // 👈 FeatureTag 型で明示
   appearances?: FeatureTag[];   // 👈 FeatureTag 型で明示
+=======
+  catchCopy?: string; // 👈 追加
+  personalities?: FeatureTag[]; // 👈 FeatureTag 型で明示
+  appearances?: FeatureTag[]; // 👈 FeatureTag 型で明示
+>>>>>>> animation-test
 }
 
 // ==============================
 // 管理画面専用キャスト情報
 // ==============================
 export interface CastProfileAdmin extends CastProfilePublic {
+<<<<<<< HEAD
   managerComment?: string;  // 管理者コメント（非公開）
   storeMemberships?: { storeId: string; role: string }[]; // 所属店舗・役割
   approvalStatus?: 'pending' | 'approved' | 'rejected';   // 承認フラグ
+=======
+  managerComment?: string; // 管理者コメント（非公開）
+  storeMemberships?: { storeId: string; role: string }[]; // 所属店舗・役割
+  approvalStatus?: 'pending' | 'approved' | 'rejected'; // 承認フラグ
+>>>>>>> animation-test
 }
 
 // ==============================
@@ -405,6 +460,11 @@ export interface CastSchedule {
   id: string;
   castId: string;
   start: string; // ISO文字列
+<<<<<<< HEAD
   end: string;   // ISO文字列
 }
 
+=======
+  end: string; // ISO文字列
+}
+>>>>>>> animation-test

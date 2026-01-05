@@ -1,9 +1,16 @@
 'use client';
 
+<<<<<<< HEAD
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { Menu, X, ChevronDown, MapPin } from 'lucide-react';
+=======
+import { ChevronDown, MapPin, Menu, X } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+>>>>>>> animation-test
 import { createPortal } from 'react-dom';
 
 import { primaryNavItems, secondaryNavItems } from '@/components/sections/layout/NavItems';
@@ -73,7 +80,11 @@ export default function Header() {
         >
           <span>🍓 Strawberry Boys</span>
           <span className="text-sm font-normal text-gray-500">
+<<<<<<< HEAD
             | {currentStore?.displayName ?? '未選択'} {currentStore?.emoji ?? ''}
+=======
+            | {currentStore?.displayName ?? '店舗を選択'} {currentStore?.emoji ?? ''}
+>>>>>>> animation-test
           </span>
         </Link>
 
@@ -99,11 +110,19 @@ export default function Header() {
               aria-expanded={isStoreDropdownOpen}
             >
               <MapPin size={18} />
+<<<<<<< HEAD
               {currentStore.displayName} <ChevronDown size={16} />
             </button>
 
             {isStoreDropdownOpen && (
               <div className="absolute right-0 z-50 mt-2 w-48 animate-fadeIn rounded-md border bg-white shadow-lg">
+=======
+              {currentStore?.displayName ?? '店舗を選択'} <ChevronDown size={16} />
+            </button>
+
+            {isStoreDropdownOpen && (
+              <div className="animate-fadeIn absolute right-0 z-50 mt-2 w-48 rounded-md border bg-white shadow-lg">
+>>>>>>> animation-test
                 {Object.values(stores).map((store) => (
                   <button
                     key={store.id}
@@ -127,11 +146,16 @@ export default function Header() {
             {/* 背景オーバーレイ */}
             <div
               onClick={closeMenu}
+<<<<<<< HEAD
               className={`fixed inset-0 bg-black/40 backdrop-blur-sm z-[9998] transition-opacity ${
+=======
+              className={`fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm transition-opacity ${
+>>>>>>> animation-test
                 isAnimating ? 'opacity-0' : 'opacity-100'
               }`}
             />
 
+<<<<<<< HEAD
 {/* メニュー本体 */}
 <div
   className={`fixed top-0 right-0 h-full w-[40%] max-w-xs bg-white shadow-xl transition-all will-change-transform z-[9999]
@@ -172,6 +196,45 @@ export default function Header() {
 
           </>,
           document.body
+=======
+            {/* メニュー本体 */}
+            <div
+              className={`fixed right-0 top-0 z-[9999] h-full w-[40%] max-w-xs bg-white shadow-xl transition-all will-change-transform ${isAnimating ? 'animate-floatFadeOutRight' : 'animate-floatFadeInRight'} `}
+            >
+              <button
+                onClick={closeMenu}
+                className="absolute right-4 top-4 text-gray-600 hover:text-pink-500"
+                aria-label="メニューを閉じる"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="h-full overflow-y-auto p-4">
+                <div className="mb-4 border-b pb-2">
+                  <div className="mb-1 text-sm text-gray-500">店舗を選ぶ</div>
+                  {Object.values(stores).map((store) => (
+                    <button
+                      key={store.id}
+                      onClick={() => handleStoreChange(store.id)}
+                      className="block w-full px-2 py-1 text-left text-sm hover:bg-pink-100"
+                    >
+                      {store.emoji} {store.displayName}
+                    </button>
+                  ))}
+                </div>
+
+                <div className="space-y-2 border-b pb-2">
+                  {primaryNavItems.map((item, index) => renderNavItem(item, index))}
+                </div>
+
+                <div className="mt-2 pt-2">
+                  {secondaryNavItems.map((item, index) => renderNavItem(item, index + 5))}
+                </div>
+              </div>
+            </div>
+          </>,
+          document.body,
+>>>>>>> animation-test
         )}
     </header>
   );

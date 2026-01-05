@@ -70,6 +70,14 @@ const config: Config = {
         slowBlink: 'blink 3.5s ease-in-out infinite',
         pulseLampCustom: 'pulseLamp 2.2s ease-in-out infinite',
         happyCustom: 'happy 4s ease-in-out infinite',
+<<<<<<< HEAD
+=======
+        // 🍓 ここから追加
+  cardGlow: 'cardGlow 2.5s ease-in-out infinite',
+  buttonPulse: 'buttonPulse 2.5s ease-in-out infinite',
+  floating: 'floating 20s linear infinite',
+
+>>>>>>> animation-test
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

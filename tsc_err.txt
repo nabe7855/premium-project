@@ -1,0 +1,2 @@
+﻿src/components/templates/FukuokaPage.tsx(2,49): error TS2307: Cannot find module '@/types/fukuoka' or its corresponding type declarations.
+src/components/templates/FukuokaPage.tsx(18,8): error TS1259: Module '"C:/Users/nabe7/Documents/Projects/premium-project/node_modules/@types/react/index"' can only be default-imported using the 'esModuleInterop' flag

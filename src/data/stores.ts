@@ -3,6 +3,10 @@ import { Store } from '@/types/store';
 export const stores: Record<string, Store> = {
   tokyo: {
     id: 'tokyo',
+<<<<<<< HEAD
+=======
+    template: 'common',
+>>>>>>> animation-test
     name: 'ストロベリーボーイズ東京',
     displayName: '東京店',
     catchphrase: '極上のひと時を',
@@ -24,6 +28,10 @@ export const stores: Record<string, Store> = {
   },
   osaka: {
     id: 'osaka',
+<<<<<<< HEAD
+=======
+    template: 'common',
+>>>>>>> animation-test
     name: 'ストロベリーボーイズ大阪',
     displayName: '大阪店',
     catchphrase: 'え、やばい。こんな楽しいの反則やん',
@@ -45,6 +53,10 @@ export const stores: Record<string, Store> = {
   },
   nagoya: {
     id: 'nagoya',
+<<<<<<< HEAD
+=======
+    template: 'common',
+>>>>>>> animation-test
     name: 'ストロベリーボーイズ名古屋',
     displayName: '名古屋店',
     catchphrase: '誰にも言えない、秘密のご褒美',
@@ -64,4 +76,28 @@ export const stores: Record<string, Store> = {
         '名古屋栄で最高級のエンターテインメント。誰にも言えない特別なご褒美をご用意しています。完全予約制。',
     },
   },
+<<<<<<< HEAD
+=======
+  fukuoka: {
+    id: 'fukuoka',
+    template: 'fukuoka',
+    name: 'ストロベリーボーイズ福岡',
+    displayName: '福岡店',
+    catchphrase: '博多の夜に咲く一輪の花',
+    heroTitle: '博多の夜に咲く一輪の花',
+    description: '福岡で極上の癒し体験を。厳選されたキャストがあなたをお待ちしています。',
+    emoji: '🍜',
+    subtext: '情熱的な夜を',
+    colors: {
+      primary: 'fukuoka-500',
+      secondary: 'fukuoka-300',
+      gradient: 'bg-gradient-fukuoka',
+    },
+    seo: {
+      title: '【ストロベリーボーイズ福岡】博多の夜に咲く一輪の花｜甘くとろける癒しのイケメン派遣',
+      description:
+        '福岡・博多で最高品質のエンターテインメントサービス。本日出勤キャスト多数、ご予約受付中。',
+    },
+  },
+>>>>>>> animation-test
 };
