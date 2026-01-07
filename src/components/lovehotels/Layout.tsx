@@ -1,18 +1,22 @@
 'use client';
 
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { slug } = useParams();
+  const basePath = `/store/${slug}/hotel`;
+
   return (
     <div className="flex min-h-screen flex-col">
       <header className="sticky top-0 z-50 border-b bg-white">
         <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link to="/" className="flex items-center gap-2">
+          <Link href={basePath} className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500">
               <span className="text-xl font-bold text-white">L</span>
             </div>
@@ -21,13 +25,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
             </span>
           </Link>
           <nav className="hidden items-center gap-6 md:flex">
-            <Link to="/" className="text-sm font-medium text-gray-600 hover:text-rose-500">
+            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
               ホーム
             </Link>
-            <Link to="/" className="text-sm font-medium text-gray-600 hover:text-rose-500">
+            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
               エリアから探す
             </Link>
-            <Link to="/" className="text-sm font-medium text-gray-600 hover:text-rose-500">
+            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
               特集
             </Link>
           </nav>
@@ -55,16 +59,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h3 className="mb-4 font-bold text-white">探す</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/">現在地から探す</Link>
+                  <Link href={basePath}>現在地から探す</Link>
                 </li>
                 <li>
-                  <Link to="/">都道府県から探す</Link>
+                  <Link href={basePath}>都道府県から探す</Link>
                 </li>
                 <li>
-                  <Link to="/">駅から探す</Link>
+                  <Link href={basePath}>駅から探す</Link>
                 </li>
                 <li>
-                  <Link to="/">こだわり条件から探す</Link>
+                  <Link href={basePath}>こだわり条件から探す</Link>
                 </li>
               </ul>
             </div>
@@ -72,16 +76,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
               <h3 className="mb-4 font-bold text-white">サポート</h3>
               <ul className="space-y-2 text-sm">
                 <li>
-                  <Link to="/">ヘルプ・お問い合わせ</Link>
+                  <Link href={basePath}>ヘルプ・お問い合わせ</Link>
                 </li>
                 <li>
-                  <Link to="/">掲載希望のオーナー様へ</Link>
+                  <Link href={basePath}>掲載希望のオーナー様へ</Link>
                 </li>
                 <li>
-                  <Link to="/">利用規約</Link>
+                  <Link href={basePath}>利用規約</Link>
                 </li>
                 <li>
-                  <Link to="/">プライバシーポリシー</Link>
+                  <Link href={basePath}>プライバシーポリシー</Link>
                 </li>
               </ul>
             </div>

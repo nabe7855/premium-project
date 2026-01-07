@@ -1,16 +1,17 @@
 // src/components/layout/NavItems.ts
 import {
-  Users,
-  Calendar,
-  MessageCircle,
-  Image,
-  Video,
-  Mail,
+  BookOpenText,
   Briefcase,
+  Calendar,
+  Hotel,
+  Image,
+  Mail,
+  Megaphone,
+  MessageCircle,
   Phone,
   Shield,
-  Megaphone,
-  BookOpenText,
+  Users,
+  Video,
 } from 'lucide-react';
 
 export const primaryNavItems = [
@@ -44,6 +45,12 @@ export const primaryNavItems = [
     name: '動画',
     href: '/videos/videos',
     icon: Video,
+  },
+  {
+    name: 'おすすめホテル一覧',
+    href: '/hotel',
+    icon: Hotel,
+    isAbsolute: false,
   },
 ];
 

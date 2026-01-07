@@ -1,9 +1,26 @@
 'use client';
 
+import { useParams, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const SearchHero: React.FC = () => {
   const [keyword, setKeyword] = useState('');
+  const router = useRouter();
+  const { slug } = useParams();
+
+  const handleSearch = () => {
+    if (keyword.trim()) {
+      router.push(`/store/${slug}/hotel/search?q=${encodeURIComponent(keyword)}`);
+    } else {
+      router.push(`/store/${slug}/hotel`);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch();
+    }
+  };
 
   return (
     <div className="relative overflow-hidden bg-rose-600">
@@ -34,6 +51,7 @@ const SearchHero: React.FC = () => {
                 className="h-14 w-full rounded-xl border-none bg-gray-50 pl-12 pr-4 text-gray-800 outline-none focus:ring-2 focus:ring-rose-500"
                 value={keyword}
                 onChange={(e) => setKeyword(e.target.value)}
+                onKeyDown={handleKeyDown}
               />
               <svg
                 className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
@@ -49,7 +67,10 @@ const SearchHero: React.FC = () => {
                 />
               </svg>
             </div>
-            <button className="h-14 rounded-xl bg-rose-500 px-8 font-bold text-white shadow-lg transition-colors hover:bg-rose-600 md:px-12">
+            <button
+              onClick={handleSearch}
+              className="h-14 rounded-xl bg-rose-500 px-8 font-bold text-white shadow-lg transition-colors hover:bg-rose-600 md:px-12"
+            >
               検索
             </button>
           </div>

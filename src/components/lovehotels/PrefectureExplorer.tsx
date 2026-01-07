@@ -1,16 +1,10 @@
 'use client';
 
 import { PREFECTURES } from '@/data/lovehotels';
+import Link from 'next/link';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const PrefectureExplorer: React.FC = () => {
-  const navigate = useNavigate();
-
-  const handlePrefClick = (id: string) => {
-    navigate(`/prefecture/${id}`);
-  };
-
   return (
     <section className="bg-white py-20">
       <div className="container mx-auto px-4">
@@ -28,9 +22,9 @@ const PrefectureExplorer: React.FC = () => {
 
         <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">
           {PREFECTURES.map((pref) => (
-            <button
+            <Link
               key={pref.id}
-              onClick={() => handlePrefClick(pref.id)}
+              href={`/store/${pref.id === 'tokyo' ? 'tokyo' : pref.id === 'osaka' ? 'osaka' : pref.id === 'aichi' ? 'nagoya' : 'fukuoka'}/hotel`}
               className="group relative overflow-hidden rounded-[2rem] border-2 border-gray-50 bg-white p-8 text-center transition-all hover:-translate-y-2 hover:border-rose-500 hover:shadow-2xl hover:shadow-rose-100"
             >
               <div className="absolute right-0 top-0 -mr-8 -mt-8 h-16 w-16 rounded-full bg-rose-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
@@ -55,7 +49,7 @@ const PrefectureExplorer: React.FC = () => {
                   />
                 </svg>
               </div>
-            </button>
+            </Link>
           ))}
         </div>
       </div>

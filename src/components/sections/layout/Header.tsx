@@ -42,23 +42,26 @@ export default function Header() {
     }, 400); // アニメーション時間に合わせる
   };
 
-  const renderNavItem = (item: any, index: number) => (
-    <Link
-      key={item.href}
-      href={`/store/${currentStoreId}${item.href}`}
-      onClick={closeMenu}
-      className={`fade-slide-in-x flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 fade-slide-in-x-delayed-${index + 1} ${
-        pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
-      }`}
-      aria-label={item.name}
-    >
-      <item.icon size={18} />
-      <span className="text-sm">{item.name}</span>
-      {item.hasUpdate && (
-        <span className="ml-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-500" />
-      )}
-    </Link>
-  );
+  const renderNavItem = (item: any, index: number) => {
+    const href = item.isAbsolute ? item.href : `/store/${currentStoreId}${item.href}`;
+    return (
+      <Link
+        key={item.href}
+        href={href}
+        onClick={closeMenu}
+        className={`fade-slide-in-x flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 fade-slide-in-x-delayed-${index + 1} ${
+          pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
+        }`}
+        aria-label={item.name}
+      >
+        <item.icon size={18} />
+        <span className="text-sm">{item.name}</span>
+        {item.hasUpdate && (
+          <span className="ml-1 inline-block h-2 w-2 animate-pulse rounded-full bg-red-500" />
+        )}
+      </Link>
+    );
+  };
 
   return (
     <header

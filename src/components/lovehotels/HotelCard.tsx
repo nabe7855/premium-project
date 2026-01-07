@@ -1,17 +1,26 @@
 'use client';
 
+import { PREFECTURES } from '@/data/lovehotels';
 import { Hotel } from '@/types/lovehotels';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import React from 'react';
-import { Link } from 'react-router-dom';
 
 interface HotelCardProps {
   hotel: Hotel;
 }
 
 const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
+  const { slug } = useParams();
+  // エリア名（または市区町村ID）を取得
+  const city = PREFECTURES.find((p) => p.name === hotel.prefecture)?.cities.find(
+    (c) => c.name === hotel.city,
+  );
+  const areaId = city?.id || 'area';
+
   return (
     <Link
-      to={`/hotel/${hotel.id}`}
+      href={`/store/${slug}/hotel/${areaId}/${hotel.id}`}
       className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
