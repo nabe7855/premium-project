@@ -1,4 +1,5 @@
 import AreaExplorer from '@/components/lovehotels/AreaExplorer';
+import FeatureArticleCarousel from '@/components/lovehotels/FeatureArticleCarousel';
 import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
 import SearchHero from '@/components/lovehotels/SearchHero';
@@ -45,6 +46,10 @@ export default function StoreHotelRootPage({ params }: Props) {
     <Layout>
       <div className="duration-500 animate-in fade-in">
         <SearchHero />
+
+        {/* Feature Articles Link */}
+        {/* Feature Articles Carousel */}
+        <FeatureArticleCarousel slug={params.slug} />
 
         <AreaExplorer prefecture={prefecture} />
 
