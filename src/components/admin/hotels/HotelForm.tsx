@@ -46,6 +46,7 @@ export default function HotelForm({ id }: HotelFormProps) {
     description: '',
     distance_from_station: '',
     room_count: '',
+    place_id: '',
   });
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -121,6 +122,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         description: hotel.description || '',
         distance_from_station: hotel.distance_from_station || '',
         room_count: hotel.room_count || '',
+        place_id: hotel.place_id || '',
       });
       setSelectedAmenities(hotel.lh_hotel_amenities.map((a: any) => a.amenity_id));
       setSelectedServices(hotel.lh_hotel_services.map((s: any) => s.service_id));
@@ -297,6 +299,19 @@ export default function HotelForm({ id }: HotelFormProps) {
               className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+            />
+          </div>
+
+          <div className="md:col-span-2">
+            <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
+              Google Place ID
+            </label>
+            <input
+              type="text"
+              placeholder="例: ChIJN1t_tDeuEmsRUsoyG83VY2o"
+              className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              value={formData.place_id}
+              onChange={(e) => setFormData({ ...formData, place_id: e.target.value })}
             />
           </div>
 
