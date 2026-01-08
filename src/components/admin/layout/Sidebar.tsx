@@ -1,18 +1,19 @@
 'use client';
 
-import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React from 'react';
 import {
-  ChartBarIcon,
-  UsersIcon,
-  StorefrontIcon,
+  BuildingOfficeIcon,
   BuildingStorefrontIcon,
-  XMarkIcon,
-  PresentationChartLineIcon,
-  PencilIcon,
-  SparklesIcon,
+  ChartBarIcon,
   DocumentTextIcon,
+  PencilIcon,
+  PresentationChartLineIcon,
+  SparklesIcon,
+  StorefrontIcon,
+  UsersIcon,
+  XMarkIcon,
 } from '../admin-assets/Icons';
 
 interface SidebarProps {
@@ -31,7 +32,7 @@ const NavItem: React.FC<{
   <Link
     href={href}
     onClick={() => setOpen(false)} // モバイル時は閉じる
-    className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg transition-all duration-200 ${
+    className={`flex w-full items-center rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
       isActive
         ? 'bg-brand-accent text-white shadow-lg'
         : 'text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
@@ -56,30 +57,33 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     { href: '/admin/admin/advertising/list', icon: <DocumentTextIcon />, label: '投稿済み広告' },
     { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
     { href: '/admin/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
+    { href: '/admin/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
+    {
+      href: '/admin/admin/hotels/masters',
+      icon: <PresentationChartLineIcon />,
+      label: 'ホテルマスタ管理',
+    },
   ];
 
   return (
     <>
       {/* モバイル用オーバーレイ */}
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden transition-opacity ${
-          isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        className={`fixed inset-0 z-30 bg-black bg-opacity-50 transition-opacity md:hidden ${
+          isOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
         }`}
         onClick={() => setOpen(false)}
       />
 
       {/* サイドバー */}
       <aside
-        className={`absolute md:relative z-40 flex-shrink-0 w-64 bg-brand-secondary h-full flex flex-col p-4 transition-transform duration-300 ease-in-out ${
+        className={`absolute z-40 flex h-full w-64 flex-shrink-0 flex-col bg-brand-secondary p-4 transition-transform duration-300 ease-in-out md:relative ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         } md:translate-x-0`}
       >
-        <div className="flex items-center justify-between h-16 mb-4">
+        <div className="mb-4 flex h-16 items-center justify-between">
           <h1 className="text-2xl font-bold text-white">OVERLORD</h1>
-          <button
-            onClick={() => setOpen(false)}
-            className="md:hidden text-brand-text-secondary"
-          >
+          <button onClick={() => setOpen(false)} className="text-brand-text-secondary md:hidden">
             <XMarkIcon />
           </button>
         </div>

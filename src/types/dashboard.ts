@@ -1,5 +1,16 @@
 // Defines the available pages for navigation
-export type Page = 'dashboard' | 'all-cast' | 'store-cast' | 'stores' | 'advertising' | 'ai-copywriter' | 'ai-generate-intro' | 'intro-list' | 'advertising-list';
+export type Page =
+  | 'dashboard'
+  | 'all-cast'
+  | 'store-cast'
+  | 'stores'
+  | 'advertising'
+  | 'ai-copywriter'
+  | 'ai-generate-intro'
+  | 'intro-list'
+  | 'advertising-list'
+  | 'hotels'
+  | 'hotel-masters';
 
 // Represents a cast member
 export interface Cast {
@@ -27,7 +38,7 @@ export interface Cast {
 // Represents a store
 export interface Store {
   id: string;
-  name:string;
+  name: string;
   catchphrase: string;
   overview: string;
   address: string;
@@ -66,7 +77,7 @@ export interface GeneratedIntroContent {
 
 // Represents a posted and saved introduction page
 export interface GeneratedIntroPage {
-  id:string;
+  id: string;
   storeId: string;
   castIds: string[];
   createdAt: string; // ISO string date

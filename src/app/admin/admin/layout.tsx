@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
-import Sidebar from '@/components/admin/layout/Sidebar';
 import Header from '@/components/admin/layout/Header';
+import Sidebar from '@/components/admin/layout/Sidebar';
 import { Page } from '@/types/dashboard';
+import React, { useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [currentPage] = useState<Page>('dashboard');
@@ -30,27 +30,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return '投稿済み紹介';
       case 'advertising-list':
         return '投稿済み広告';
+      case 'hotels':
+        return 'ホテル管理';
+      case 'hotel-masters':
+        return 'ホテルマスタ管理';
       default:
         return 'ダッシュボード';
     }
   };
 
   return (
-    <div className="flex h-screen bg-brand-primary text-brand-text font-sans">
+    <div className="flex h-screen bg-brand-primary font-sans text-brand-text">
       {/* サイドバー */}
-      <Sidebar
-
-        isOpen={isSidebarOpen}
-        setOpen={setSidebarOpen}
-      />
+      <Sidebar isOpen={isSidebarOpen} setOpen={setSidebarOpen} />
 
       {/* メイン領域 */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <Header
-          title={getPageTitle()}
-          onMenuClick={() => setSidebarOpen(!isSidebarOpen)}
-        />
-        <main className="flex-1 overflow-x-hidden overflow-y-auto bg-brand-primary p-4 md:p-6 lg:p-8">
+      <div className="flex flex-1 flex-col overflow-hidden">
+        <Header title={getPageTitle()} onMenuClick={() => setSidebarOpen(!isSidebarOpen)} />
+        <main className="flex-1 overflow-y-auto overflow-x-hidden bg-brand-primary p-4 md:p-6 lg:p-8">
           {children}
         </main>
       </div>
