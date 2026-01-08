@@ -14,42 +14,6 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-50 border-b bg-white">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <Link href={basePath} className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-rose-500">
-              <span className="text-xl font-bold text-white">L</span>
-            </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900">
-              LoveStay <span className="text-rose-500">Japan</span>
-            </span>
-          </Link>
-          <nav className="hidden items-center gap-6 md:flex">
-            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
-              ホーム
-            </Link>
-            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
-              エリアから探す
-            </Link>
-            <Link href={basePath} className="text-sm font-medium text-gray-600 hover:text-rose-500">
-              特集
-            </Link>
-          </nav>
-          <div className="flex items-center gap-3">
-            <button className="px-4 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-rose-500 md:hidden">
-              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M4 6h16M4 12h16m-7 6h7"
-                />
-              </svg>
-            </button>
-          </div>
-        </div>
-      </header>
-
       <main className="flex-grow">{children}</main>
 
       <footer className="bg-gray-900 py-12 text-gray-400">
