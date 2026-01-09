@@ -1,7 +1,7 @@
 import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
-import { MOCK_HOTELS, PREFECTURES } from '@/data/lovehotels';
 import { stores } from '@/data/stores';
+import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -13,45 +13,42 @@ interface Props {
   };
 }
 
-const SLUG_TO_PREF: Record<string, string> = {
-  tokyo: '東京都',
-  osaka: '大阪府',
-  nagoya: '愛知県',
-  fukuoka: '福岡県',
+const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> = {
+  tokyo: { prefectureId: 'tokyo' },
+  osaka: { prefectureId: 'osaka' },
+  nagoya: { prefectureId: 'aichi' },
+  fukuoka: { prefectureId: 'Fukuoka' },
+  yokohama: { prefectureId: 'kanagawa', cityId: 'yokohama' },
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const store = stores[params.slug];
   if (!store) return { title: 'Not Found' };
 
-  // Area ID から表示名を取得
-  const prefName = SLUG_TO_PREF[params.slug];
-  const prefecture = PREFECTURES.find((p) => p.name === prefName);
-  const city = prefecture?.cities.find((c) => c.id === params.area);
-  const displayName = city?.name || params.area;
+  const areaName = decodeURIComponent(params.area);
 
   return {
-    title: `${store.displayName}周辺のおすすめホテル（${displayName}エリア） | Strawberry Boys`,
-    description: `${store.displayName}の${displayName}エリア周辺で厳選されたブティックホテルをご紹介します。`,
+    title: `${store.displayName}周辺のおすすめホテル（${areaName}エリア） | Strawberry Boys`,
+    description: `${store.displayName}の${areaName}エリア周辺で厳選されたブティックホテルをご紹介します。`,
   };
 }
 
-export default function StoreAreaHotelPage({ params }: Props) {
+export default async function StoreAreaHotelPage({ params }: Props) {
   const store = stores[params.slug];
-  const prefName = SLUG_TO_PREF[params.slug];
+  const location = STORE_LOCATION[params.slug];
 
-  if (!store || !prefName) notFound();
+  if (!store || !location) notFound();
 
-  const prefecture = PREFECTURES.find((p) => p.name === prefName);
-  const city = prefecture?.cities.find((c) => c.id === params.area);
-  const areaName = city?.name || decodeURIComponent(params.area);
+  const areaId = decodeURIComponent(params.area);
 
-  // 該当する県内 かつ エリア内のホテルを抽出
-  const hotels = MOCK_HOTELS.filter((h) => {
-    const matchPref = h.prefecture === prefName;
-    const matchArea = city ? h.city === city.name : h.area === areaName;
-    return matchPref && matchArea;
+  // Fetch real hotels from DB
+  const dbHotels = await getHotels({
+    prefectureId: location.prefectureId,
+    cityId: areaId, // params.area fits cityId for cities select
   });
+
+  const hotels = dbHotels.map(mapDbHotelToHotel);
+  const displayName = hotels.length > 0 ? (hotels[0] as any).city : areaId;
 
   return (
     <Layout>
@@ -66,7 +63,7 @@ export default function StoreAreaHotelPage({ params }: Props) {
 
           <div className="mb-12">
             <div className="flex items-baseline gap-4">
-              <h1 className="text-4xl font-black text-gray-900">{areaName}</h1>
+              <h1 className="text-4xl font-black text-gray-900">{displayName}</h1>
               <span className="font-bold text-gray-400">エリアのホテル</span>
             </div>
           </div>

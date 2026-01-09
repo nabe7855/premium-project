@@ -29,12 +29,18 @@ const AreaExplorer: React.FC<AreaExplorerProps> = ({ prefecture }) => {
 
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {prefecture.cities.map((city) => (
-            <Link
+            <div
               key={city.id}
-              href={`/store/${slug}/hotel/${city.id}`}
               className="group relative overflow-hidden rounded-[2.5rem] border-2 border-gray-50 bg-white p-8 transition-all hover:-translate-y-2 hover:border-rose-500 hover:shadow-2xl hover:shadow-rose-100"
             >
-              <div className="flex items-center justify-between">
+              {/* カード全体へのリンク（オーバーレイ） */}
+              <Link
+                href={`/store/${slug}/hotel/${city.id}`}
+                className="absolute inset-0 z-0"
+                aria-label={`${city.name}のホテルを見る`}
+              />
+
+              <div className="pointer-events-none relative z-10 flex items-center justify-between">
                 <div>
                   <h3 className="mb-1 text-2xl font-black text-gray-900 transition-colors group-hover:text-rose-500">
                     {city.name}
@@ -60,17 +66,18 @@ const AreaExplorer: React.FC<AreaExplorerProps> = ({ prefecture }) => {
                 </div>
               </div>
 
-              <div className="mt-6 flex flex-wrap gap-2">
+              <div className="relative z-20 mt-6 flex flex-wrap gap-2">
                 {city.areas?.map((area) => (
-                  <span
+                  <Link
                     key={area}
-                    className="rounded-full bg-gray-50 px-3 py-1 text-[10px] font-bold text-gray-400 transition-colors group-hover:bg-rose-100 group-hover:text-rose-600"
+                    href={`/store/${slug}/hotel/search?q=${area}`}
+                    className="rounded-full bg-gray-50 px-3 py-1 text-[10px] font-bold text-gray-400 transition-all hover:bg-rose-500 hover:text-white hover:shadow-lg hover:shadow-rose-100"
                   >
                     #{area}
-                  </span>
+                  </Link>
                 ))}
               </div>
-            </Link>
+            </div>
           ))}
         </div>
       </div>

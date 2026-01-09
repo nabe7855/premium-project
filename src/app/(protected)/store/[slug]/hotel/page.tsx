@@ -3,12 +3,13 @@ import FeatureArticleCarousel from '@/components/lovehotels/FeatureArticleCarous
 import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
 import SearchHero from '@/components/lovehotels/SearchHero';
-import { PREFECTURES } from '@/data/lovehotels';
 import { stores } from '@/data/stores';
-import { getHotels } from '@/lib/lovehotelApi';
+import { getHotels, getPrefectureDetails } from '@/lib/lovehotelApi';
 import { Hotel } from '@/types/lovehotels';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export const revalidate = 0;
 
 interface Props {
   params: {
@@ -21,7 +22,7 @@ const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> 
   tokyo: { prefectureId: 'tokyo' },
   osaka: { prefectureId: 'osaka' },
   nagoya: { prefectureId: 'aichi' },
-  fukuoka: { prefectureId: 'fukuoka' },
+  fukuoka: { prefectureId: 'Fukuoka' },
   yokohama: { prefectureId: 'kanagawa', cityId: 'yokohama' },
 };
 
@@ -81,11 +82,16 @@ export default async function StoreHotelRootPage({ params }: Props) {
 
   if (!store || !location) notFound();
 
-  // Find the prefecture object for AreaExplorer (using mock master data for explorer structure if needed, or DB if consistent)
-  // Currently AreaExplorer uses PREFECTURES constant. We need to match the prefectureId.
-  const prefecture = PREFECTURES.find((p) => p.id === location.prefectureId);
+  // Fetch dynamic city/area data for AreaExplorer
+  const dbCities = await getPrefectureDetails(location.prefectureId);
 
-  if (!prefecture) notFound();
+  const dynamicPrefecture = {
+    // Keep basic structure, but data comes from DB
+    id: location.prefectureId,
+    name: store.displayName.replace('周辺', ''),
+    count: 0, // Not strictly needed for UI display here
+    cities: dbCities,
+  };
 
   // Fetch hotels from DB
   // Make sure getHotels is called dynamically to avoid static build scaling issues if data changes often
@@ -106,7 +112,7 @@ export default async function StoreHotelRootPage({ params }: Props) {
         {/* Feature Articles Carousel */}
         <FeatureArticleCarousel slug={params.slug} />
 
-        <AreaExplorer prefecture={prefecture} />
+        <AreaExplorer prefecture={dynamicPrefecture} />
 
         <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
@@ -116,7 +122,7 @@ export default async function StoreHotelRootPage({ params }: Props) {
                 <span className="font-bold text-gray-400">のホテルを探す</span>
               </div>
               <p className="mt-2 font-medium text-gray-500">
-                {prefecture.name}内の人気ホテルをピックアップ
+                {dynamicPrefecture.name}内の人気ホテルをピックアップ
               </p>
             </div>
 

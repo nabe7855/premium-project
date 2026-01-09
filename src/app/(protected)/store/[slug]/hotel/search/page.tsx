@@ -1,8 +1,7 @@
-import FilterSidebar from '@/components/lovehotels/FilterSidebar';
-import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
-import { MOCK_HOTELS } from '@/data/lovehotels';
+import SearchPageContent from '@/components/lovehotels/SearchPageContent';
 import { stores } from '@/data/stores';
+import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -16,11 +15,12 @@ interface Props {
   };
 }
 
-const SLUG_TO_PREF: Record<string, string> = {
-  tokyo: '東京都',
-  osaka: '大阪府',
-  nagoya: '愛知県',
-  fukuoka: '福岡県',
+const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> = {
+  tokyo: { prefectureId: 'tokyo' },
+  osaka: { prefectureId: 'osaka' },
+  nagoya: { prefectureId: 'aichi' },
+  fukuoka: { prefectureId: 'Fukuoka' },
+  yokohama: { prefectureId: 'kanagawa', cityId: 'yokohama' },
 };
 
 export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
@@ -34,20 +34,22 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   };
 }
 
-export default function StoreHotelSearchPage({ params, searchParams }: Props) {
+export default async function StoreHotelSearchPage({ params, searchParams }: Props) {
   const store = stores[params.slug];
-  const prefName = SLUG_TO_PREF[params.slug];
+  const location = STORE_LOCATION[params.slug];
 
-  if (!store || !prefName) notFound();
+  if (!store || !location) notFound();
 
   const query = searchParams.q || '';
 
-  const hotels = MOCK_HOTELS.filter((h) => {
-    const isTargetPref = h.prefecture === prefName;
-    const searchString =
-      `${h.name} ${h.prefecture} ${h.city} ${h.area} ${h.description}`.toLowerCase();
-    return isTargetPref && searchString.includes(query.toLowerCase());
+  // Fetch real hotels from DB based on keyword
+  const dbHotels = await getHotels({
+    prefectureId: location.prefectureId,
+    cityId: location.cityId,
+    keyword: query,
   });
+
+  const hotels = dbHotels.map(mapDbHotelToHotel);
 
   return (
     <Layout>
@@ -65,27 +67,7 @@ export default function StoreHotelSearchPage({ params, searchParams }: Props) {
             <p className="mt-2 font-bold text-gray-400">{store.displayName}周辺のホテルから検索</p>
           </section>
 
-          <FilterSidebar onFilterChange={() => {}} />
-
-          <div className="mb-8 mt-8 flex flex-col items-start justify-between gap-4 rounded-[2rem] border border-gray-100 bg-white px-8 py-5 shadow-sm md:flex-row md:items-center">
-            <p className="text-sm font-bold uppercase tracking-widest text-gray-400">
-              <span className="mr-2 font-black text-gray-900">{hotels.length} 件</span>
-              のホテルが見つかりました
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {hotels.map((hotel) => (
-              <HotelCard key={hotel.id} hotel={hotel} />
-            ))}
-            {hotels.length === 0 && (
-              <div className="col-span-full rounded-3xl border-2 border-dashed border-gray-200 bg-white py-20 text-center">
-                <p className="font-bold italic text-gray-400">
-                  一致するホテルが見つかりませんでした。別のキーワードでお試しください。
-                </p>
-              </div>
-            )}
-          </div>
+          <SearchPageContent initialHotels={hotels} query={query} storeName={store.displayName} />
         </div>
       </div>
     </Layout>

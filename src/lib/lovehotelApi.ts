@@ -1,3 +1,4 @@
+import { Hotel } from '@/types/lovehotels';
 import { supabase } from './supabaseClient';
 
 // --- Master Data ---
@@ -46,6 +47,7 @@ export const getHotels = async (filters?: {
   prefectureId?: string;
   cityId?: string;
   areaId?: string;
+  keyword?: string;
 }) => {
   let query = supabase.from('lh_hotels').select(`
       *,
@@ -57,9 +59,23 @@ export const getHotels = async (filters?: {
       lh_hotel_images(*)
     `);
 
-  if (filters?.prefectureId) query = query.eq('prefecture_id', filters.prefectureId);
-  if (filters?.cityId) query = query.eq('city_id', filters.cityId);
-  if (filters?.areaId) query = query.eq('area_id', filters.areaId);
+  if (filters?.prefectureId) {
+    const cleanId = filters.prefectureId.trim();
+    query = query.in('prefecture_id', [cleanId, ` ${cleanId}`]);
+  }
+  if (filters?.cityId) {
+    const cleanId = filters.cityId.trim();
+    query = query.in('city_id', [cleanId, ` ${cleanId}`]);
+  }
+  if (filters?.areaId) {
+    const cleanId = filters.areaId.trim();
+    query = query.in('area_id', [cleanId, ` ${cleanId}`]);
+  }
+  if (filters?.keyword) {
+    query = query.or(
+      `name.ilike.%${filters.keyword}%,address.ilike.%${filters.keyword}%,description.ilike.%${filters.keyword}%`,
+    );
+  }
 
   const { data, error } = await query.order('created_at', { ascending: false });
   if (error) throw error;
@@ -220,4 +236,102 @@ export const upsertMaster = async (table: string, data: any) => {
 export const deleteMaster = async (table: string, id: string | number) => {
   const { error } = await supabase.from(table).delete().eq('id', id);
   if (error) throw error;
+};
+
+export const getPrefectureDetails = async (prefectureId: string) => {
+  const cleanId = prefectureId.trim();
+  console.log(`[API] getPrefectureDetails start: ${cleanId}`);
+  // 1. 都道府県情報を取得（IDまたは名前で検索）
+  const { data: prefData, error: prefError } = await supabase
+    .from('lh_prefectures')
+    .select('id, name')
+    .or(`id.eq.${cleanId},id.eq." ${cleanId}",name.ilike.%${cleanId}%`)
+    .single();
+
+  if (prefError) {
+    console.error(`[API] Error fetching prefecture:`, prefError);
+  }
+  console.log(`[API] prefData matched:`, prefData);
+
+  const targetPrefId = prefData?.id || cleanId;
+  console.log(`[API] targetPrefId using: ${targetPrefId}`);
+
+  // 2. 市区町村とエリアを取得
+  const { data, error } = await supabase
+    .from('lh_cities')
+    .select(
+      `
+      id,
+      name,
+      lh_areas (
+        id,
+        name
+      )
+    `,
+    )
+    .eq('prefecture_id', targetPrefId)
+    .order('name');
+
+  if (error) {
+    console.error(`[API] Error fetching cities:`, error);
+    throw error;
+  }
+  console.log(`[API] Raw cities data count: ${data?.length || 0}`);
+
+  // 3. 各市区町村のホテル数を取得
+  const { data: hotels } = await supabase
+    .from('lh_hotels')
+    .select('city_id')
+    .eq('prefecture_id', targetPrefId);
+
+  console.log(`[API] Raw hotels data count: ${hotels?.length || 0}`);
+
+  const results = data.map((city: any) => ({
+    ...city,
+    count: hotels?.filter((h: any) => h.city_id === city.id).length || 0,
+    areas: city.lh_areas?.map((a: any) => a.name) || [],
+  }));
+
+  console.log(`[API] Final results count: ${results.length}`);
+  return results;
+};
+
+// Map DB hotel data to frontend Hotel interface
+export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
+  // Use the first exterior image or legacy image_url
+  const exteriorImages =
+    dbHotel.lh_hotel_images?.filter((img: any) => img.category === 'exterior') || [];
+  const mainImage = exteriorImages.length > 0 ? exteriorImages[0].url : dbHotel.image_url || '';
+
+  return {
+    id: dbHotel.id,
+    name: dbHotel.name,
+    prefecture: dbHotel.lh_prefectures?.name || '',
+    city: dbHotel.lh_cities?.name || '',
+    area: dbHotel.lh_areas?.name || '',
+    address: dbHotel.address || '',
+    phone: dbHotel.phone || '',
+    website: dbHotel.website || '',
+    imageUrl: mainImage,
+    // Legacy price support (fallback)
+    minPriceRest: dbHotel.min_price_rest,
+    minPriceStay: dbHotel.min_price_stay,
+    // New pricing structure
+    restPriceMinWeekday: dbHotel.rest_price_min_weekday,
+    restPriceMaxWeekday: dbHotel.rest_price_max_weekday,
+    restPriceMinWeekend: dbHotel.rest_price_min_weekend,
+    restPriceMaxWeekend: dbHotel.rest_price_max_weekend,
+    stayPriceMinWeekday: dbHotel.stay_price_min_weekday,
+    stayPriceMaxWeekday: dbHotel.stay_price_max_weekday,
+    stayPriceMinWeekend: dbHotel.stay_price_min_weekend,
+    stayPriceMaxWeekend: dbHotel.stay_price_max_weekend,
+    rating: dbHotel.rating || 0,
+    reviewCount: dbHotel.review_count || 0,
+    amenities:
+      dbHotel.lh_hotel_amenities?.map((a: any) => a.lh_amenities?.name).filter(Boolean) || [],
+    services: dbHotel.lh_hotel_services?.map((s: any) => s.lh_services?.name).filter(Boolean) || [],
+    distanceFromStation: dbHotel.distance_from_station || '',
+    roomCount: dbHotel.room_count || 0,
+    description: dbHotel.description || '',
+  };
 };
