@@ -2,6 +2,7 @@
 
 import {
   createHotel,
+  deleteStorageImages,
   getAmenities,
   getAreas,
   getCities,

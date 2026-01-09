@@ -131,7 +131,10 @@ export default function MasterManagement() {
         initial.id = '';
         initial.prefecture_id = '';
       }
-      if (activeTab === 'areas') initial.city_id = '';
+      if (activeTab === 'areas') {
+        initial.id = '';
+        initial.city_id = '';
+      }
       setFormData(initial);
     }
     setShowModal(true);
@@ -181,7 +184,10 @@ export default function MasterManagement() {
           <thead>
             <tr className="border-b border-white/10 bg-white/5 text-brand-text-secondary">
               <th className="px-6 py-4 font-semibold">
-                {activeTab === 'prefectures' || activeTab === 'cities' ? 'ID / ' : ''}名前
+                {activeTab === 'prefectures' || activeTab === 'cities' || activeTab === 'areas'
+                  ? 'ID / '
+                  : ''}
+                名前
               </th>
               {(activeTab === 'cities' || activeTab === 'areas') && (
                 <th className="px-6 py-4 font-semibold">所属</th>
@@ -200,7 +206,9 @@ export default function MasterManagement() {
               items.map((item) => (
                 <tr key={item.id} className="text-white transition-colors hover:bg-white/5">
                   <td className="px-6 py-4">
-                    {(activeTab === 'prefectures' || activeTab === 'cities') && (
+                    {(activeTab === 'prefectures' ||
+                      activeTab === 'cities' ||
+                      activeTab === 'areas') && (
                       <span className="mr-2 font-mono text-xs text-brand-text-secondary">
                         [{item.id}]
                       </span>
@@ -243,7 +251,7 @@ export default function MasterManagement() {
           <div className="w-full max-w-md rounded-2xl border border-white/10 bg-brand-secondary p-6 shadow-2xl">
             <h3 className="mb-6 text-xl font-bold text-white">{editItem ? '編集' : '新規追加'}</h3>
             <form onSubmit={handleSave} className="space-y-4">
-              {(activeTab === 'prefectures' || activeTab === 'cities') && (
+              {(activeTab === 'prefectures' || activeTab === 'cities' || activeTab === 'areas') && (
                 <div>
                   <label className="mb-1 block text-sm font-medium text-brand-text-secondary">
                     ID (英名)

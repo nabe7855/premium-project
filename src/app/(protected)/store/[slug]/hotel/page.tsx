@@ -3,8 +3,10 @@ import FeatureArticleCarousel from '@/components/lovehotels/FeatureArticleCarous
 import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
 import SearchHero from '@/components/lovehotels/SearchHero';
-import { MOCK_HOTELS, PREFECTURES } from '@/data/lovehotels';
+import { PREFECTURES } from '@/data/lovehotels';
 import { stores } from '@/data/stores';
+import { getHotels } from '@/lib/lovehotelApi';
+import { Hotel } from '@/types/lovehotels';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -14,11 +16,13 @@ interface Props {
   };
 }
 
-const SLUG_TO_PREF: Record<string, string> = {
-  tokyo: '東京都',
-  osaka: '大阪府',
-  nagoya: '愛知県',
-  fukuoka: '福岡県',
+// Store slug to location filter mapping
+const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> = {
+  tokyo: { prefectureId: 'tokyo' },
+  osaka: { prefectureId: 'osaka' },
+  nagoya: { prefectureId: 'aichi' },
+  fukuoka: { prefectureId: 'fukuoka' },
+  yokohama: { prefectureId: 'kanagawa', cityId: 'yokohama' },
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -31,23 +35,74 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function StoreHotelRootPage({ params }: Props) {
+// Map DB hotel data to frontend Hotel interface
+const mapDbHotelToHotel = (dbHotel: any): Hotel => {
+  // Use the first exterior image or legacy image_url
+  const exteriorImages =
+    dbHotel.lh_hotel_images?.filter((img: any) => img.category === 'exterior') || [];
+  const mainImage = exteriorImages.length > 0 ? exteriorImages[0].url : dbHotel.image_url || '';
+
+  return {
+    id: dbHotel.id,
+    name: dbHotel.name,
+    prefecture: dbHotel.lh_prefectures?.name || '',
+    city: dbHotel.lh_cities?.name || '',
+    area: dbHotel.lh_areas?.name || '',
+    address: dbHotel.address || '',
+    phone: dbHotel.phone || '',
+    website: dbHotel.website || '',
+    imageUrl: mainImage,
+    // Legacy price support (fallback)
+    minPriceRest: dbHotel.min_price_rest,
+    minPriceStay: dbHotel.min_price_stay,
+    // New pricing structure
+    restPriceMinWeekday: dbHotel.rest_price_min_weekday,
+    restPriceMaxWeekday: dbHotel.rest_price_max_weekday,
+    restPriceMinWeekend: dbHotel.rest_price_min_weekend,
+    restPriceMaxWeekend: dbHotel.rest_price_max_weekend,
+    stayPriceMinWeekday: dbHotel.stay_price_min_weekday,
+    stayPriceMaxWeekday: dbHotel.stay_price_max_weekday,
+    stayPriceMinWeekend: dbHotel.stay_price_min_weekend,
+    stayPriceMaxWeekend: dbHotel.stay_price_max_weekday,
+    rating: dbHotel.rating || 0,
+    reviewCount: dbHotel.review_count || 0,
+    amenities:
+      dbHotel.lh_hotel_amenities?.map((a: any) => a.lh_amenities?.name).filter(Boolean) || [],
+    services: dbHotel.lh_hotel_services?.map((s: any) => s.lh_services?.name).filter(Boolean) || [],
+    distanceFromStation: dbHotel.distance_from_station || '',
+    roomCount: dbHotel.room_count || 0,
+    description: dbHotel.description || '',
+  };
+};
+
+export default async function StoreHotelRootPage({ params }: Props) {
   const store = stores[params.slug];
-  const prefName = SLUG_TO_PREF[params.slug];
+  const location = STORE_LOCATION[params.slug];
 
-  const prefecture = PREFECTURES.find((p) => p.name === prefName);
+  if (!store || !location) notFound();
 
-  if (!store || !prefName || !prefecture) notFound();
+  // Find the prefecture object for AreaExplorer (using mock master data for explorer structure if needed, or DB if consistent)
+  // Currently AreaExplorer uses PREFECTURES constant. We need to match the prefectureId.
+  const prefecture = PREFECTURES.find((p) => p.id === location.prefectureId);
 
-  // 該当する県内のホテルのみを抽出
-  const hotels = MOCK_HOTELS.filter((h) => h.prefecture === prefName);
+  if (!prefecture) notFound();
+
+  // Fetch hotels from DB
+  // Make sure getHotels is called dynamically to avoid static build scaling issues if data changes often
+  // Next.js might cache this, user can add `export const revalidate = 0;` if they want real-time.
+  // For now, let's assume default caching is fine or add specific revalidation if requested.
+  const dbHotels = await getHotels({
+    prefectureId: location.prefectureId,
+    cityId: location.cityId, // Optional, works if defined (e.g. yokohama)
+  });
+
+  const hotels = dbHotels.map(mapDbHotelToHotel);
 
   return (
     <Layout>
       <div className="duration-500 animate-in fade-in">
         <SearchHero />
 
-        {/* Feature Articles Link */}
         {/* Feature Articles Carousel */}
         <FeatureArticleCarousel slug={params.slug} />
 
@@ -61,7 +116,7 @@ export default function StoreHotelRootPage({ params }: Props) {
                 <span className="font-bold text-gray-400">のホテルを探す</span>
               </div>
               <p className="mt-2 font-medium text-gray-500">
-                {prefName}内の人気ホテルをピックアップ
+                {prefecture.name}内の人気ホテルをピックアップ
               </p>
             </div>
 
