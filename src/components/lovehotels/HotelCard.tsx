@@ -55,16 +55,42 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
 
         <div className="mb-4 grid grid-cols-2 gap-2">
           <div className="rounded-lg bg-gray-50 p-2">
-            <div className="text-[10px] font-medium text-gray-400">休憩最低料金</div>
+            <div className="text-[10px] font-medium text-gray-400">休憩</div>
             <div className="text-sm font-bold text-gray-800">
-              ¥{hotel.minPriceRest.toLocaleString()}〜
+              {hotel.restPriceMinWeekday ? (
+                <>
+                  <span className="mr-1 text-[10px] text-gray-500">平日</span>¥
+                  {hotel.restPriceMinWeekday.toLocaleString()}~
+                </>
+              ) : (
+                `¥${hotel.minPriceRest?.toLocaleString() ?? 0}〜`
+              )}
             </div>
+            {hotel.restPriceMinWeekend && (
+              <div className="mt-1 border-t border-gray-200 pt-1 text-xs font-bold text-gray-600">
+                <span className="mr-1 text-[10px] text-gray-400">休日</span>¥
+                {hotel.restPriceMinWeekend.toLocaleString()}~
+              </div>
+            )}
           </div>
           <div className="rounded-lg bg-gray-50 p-2">
-            <div className="text-[10px] font-medium text-gray-400">宿泊最低料金</div>
+            <div className="text-[10px] font-medium text-gray-400">宿泊</div>
             <div className="text-sm font-bold text-rose-600">
-              ¥{hotel.minPriceStay.toLocaleString()}〜
+              {hotel.stayPriceMinWeekday ? (
+                <>
+                  <span className="mr-1 text-[10px] text-rose-400">平日</span>¥
+                  {hotel.stayPriceMinWeekday.toLocaleString()}~
+                </>
+              ) : (
+                `¥${hotel.minPriceStay?.toLocaleString() ?? 0}〜`
+              )}
             </div>
+            {hotel.stayPriceMinWeekend && (
+              <div className="mt-1 border-t border-rose-100 pt-1 text-xs font-bold text-rose-500">
+                <span className="mr-1 text-[10px] text-rose-300">休日</span>¥
+                {hotel.stayPriceMinWeekend.toLocaleString()}~
+              </div>
+            )}
           </div>
         </div>
 

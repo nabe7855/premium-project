@@ -1,5 +1,6 @@
 import CommonTopPage from '@/components/templates/store/common/page-templates/TopPage';
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
+import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { getStoreData } from '@/lib/store/store-data';
 import { Metadata } from 'next';
@@ -57,6 +58,43 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     };
   }
 
+  // 横浜店の場合は専用のメタデータロジック
+  if (store.template === 'yokohama') {
+    return {
+      title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
+      description:
+        '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
+      keywords: '横浜,リラクゼーション,女性専用,メンズセラピスト,癒し',
+      openGraph: {
+        title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
+        description:
+          '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
+        images: [
+          {
+            url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
+            width: 1200,
+            height: 630,
+            alt: 'LUMIÈRE 横浜',
+          },
+        ],
+        type: 'website',
+        locale: 'ja_JP',
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
+        description:
+          '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
+        images: [
+          'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
+        ],
+      },
+      alternates: {
+        canonical: `https://strawberry-boy.com/${params.slug}`,
+      },
+    };
+  }
+
   // その他の店舗は既存のメタデータ
   return {
     title: store.seo.title,
@@ -89,7 +127,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
 }
 
 export function generateStaticParams() {
-  return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }];
+  return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }, { slug: 'yokohama' }];
 }
 
 export const dynamicParams = true;
@@ -148,6 +186,18 @@ export default async function StorePage({ params }: StorePageProps) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
         <FukuokaTopPage />
+      </div>
+    );
+  }
+
+  if (store.template === 'yokohama') {
+    return (
+      <div>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+        <YokohamaTopPage />
       </div>
     );
   }

@@ -114,10 +114,10 @@ export default function FeatureArticleDetailPage() {
                     </div>
                     <div className="flex gap-4 text-sm">
                       <span className="text-stone-300">
-                        休憩: ¥{hotel.minPriceRest.toLocaleString()}〜
+                        休憩: ¥{hotel.minPriceRest?.toLocaleString() ?? '---'}〜
                       </span>
                       <span className="text-stone-300">
-                        宿泊: ¥{hotel.minPriceStay.toLocaleString()}〜
+                        宿泊: ¥{hotel.minPriceStay?.toLocaleString() ?? '---'}〜
                       </span>
                     </div>
                   </div>

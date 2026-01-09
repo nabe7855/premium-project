@@ -1,6 +1,6 @@
 export interface Store {
   slug: string;
-  template: 'common' | 'fukuoka';
+  template: 'common' | 'fukuoka' | 'yokohama';
   name: string;
   city: string;
   theme: {
@@ -440,6 +440,56 @@ const storeData: Record<string, Store> = {
         price: '¥8,000',
         duration: '60分',
         description: '初めての方におすすめの基本プラン',
+        features: ['カウンセリング', 'ドリンクサービス'],
+        popular: false,
+      },
+    ],
+  },
+  yokohama: {
+    slug: 'yokohama',
+    template: 'yokohama',
+    name: 'ストロベリーボーイズ横浜',
+    city: '横浜',
+    theme: {
+      primary: 'rgb(59, 130, 246)',
+      primaryLight: 'rgb(219, 234, 254)',
+      primaryDark: 'rgb(29, 78, 216)',
+      accent: 'rgb(96, 165, 250)',
+      bodyClass: 'bg-gradient-to-br from-blue-50 to-indigo-100',
+      gradient: 'from-blue-500 to-indigo-600',
+      gradientHover: 'from-blue-600 to-indigo-700',
+    },
+    hero: {
+      title: '港町横浜で叶える大人の恋',
+      subtitle: '横浜だけで味わえる特別な物語',
+      catchphrase: '洗練された夜景と共に',
+      backgroundImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
+    },
+    contact: {
+      phone: '045-1234-5678',
+      line: '@strawberry-yokohama',
+      email: 'yokohama@strawberry-boy.com',
+    },
+    seo: {
+      title: '【横浜店】港町横浜で叶える大人の恋｜ストロベリーボーイズ',
+      description: '横浜で大人のための上質な癒しを。洗練されたキャストがあなたをお待ちしています。',
+      keywords: 'イケメン派遣,横浜,みなとみらい,関内,癒し,女性向け,マッチング',
+      ogImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
+    },
+    casts: [],
+    newcomers: [],
+    events: [],
+    diaries: [],
+    media: [],
+    videos: [],
+    reviews: [],
+    plans: [
+      {
+        id: '1',
+        name: '横浜デートプラン',
+        price: '¥9,000',
+        duration: '70分',
+        description: '夜景スポット巡りにもおすすめ',
         features: ['カウンセリング', 'ドリンクサービス'],
         popular: false,
       },

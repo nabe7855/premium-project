@@ -41,8 +41,14 @@ export default function HotelForm({ id }: HotelFormProps) {
     phone: '',
     website: '',
     image_url: '', // Legacy single image
-    min_price_rest: '',
-    min_price_stay: '',
+    rest_price_min_weekday: '',
+    rest_price_max_weekday: '',
+    rest_price_min_weekend: '',
+    rest_price_max_weekend: '',
+    stay_price_min_weekday: '',
+    stay_price_max_weekday: '',
+    stay_price_min_weekend: '',
+    stay_price_max_weekend: '',
     description: '',
     distance_from_station: '',
     room_count: '',
@@ -117,8 +123,14 @@ export default function HotelForm({ id }: HotelFormProps) {
         phone: hotel.phone || '',
         website: hotel.website || '',
         image_url: hotel.image_url || '',
-        min_price_rest: hotel.min_price_rest || '',
-        min_price_stay: hotel.min_price_stay || '',
+        rest_price_min_weekday: hotel.rest_price_min_weekday || '',
+        rest_price_max_weekday: hotel.rest_price_max_weekday || '',
+        rest_price_min_weekend: hotel.rest_price_min_weekend || '',
+        rest_price_max_weekend: hotel.rest_price_max_weekend || '',
+        stay_price_min_weekday: hotel.stay_price_min_weekday || '',
+        stay_price_max_weekday: hotel.stay_price_max_weekday || '',
+        stay_price_min_weekend: hotel.stay_price_min_weekend || '',
+        stay_price_max_weekend: hotel.stay_price_max_weekend || '',
         description: hotel.description || '',
         distance_from_station: hotel.distance_from_station || '',
         room_count: hotel.room_count || '',
@@ -179,6 +191,15 @@ export default function HotelForm({ id }: HotelFormProps) {
       }
 
       const submitData = { ...formData };
+
+      // Legacy price support: populate from Weekday Min
+      if (submitData.rest_price_min_weekday) {
+        submitData.min_price_rest = submitData.rest_price_min_weekday;
+      }
+      if (submitData.stay_price_min_weekday) {
+        submitData.min_price_stay = submitData.stay_price_min_weekday;
+      }
+
       if (!submitData.area_id) delete submitData.area_id;
 
       // Update legacy single image url to the first exterior image if exists
@@ -353,7 +374,7 @@ export default function HotelForm({ id }: HotelFormProps) {
 
           <div>
             <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
-              最寄り駅からの距離
+              アクセス
             </label>
             <input
               type="text"
@@ -415,29 +436,115 @@ export default function HotelForm({ id }: HotelFormProps) {
       <div className="space-y-6 rounded-xl border border-white/10 bg-brand-secondary p-6">
         <h2 className="mb-4 text-xl font-bold text-white">詳細・料金</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-          <div>
-            <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
-              価格 (休憩) *
-            </label>
-            <input
-              type="number"
-              required
-              className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
-              value={formData.min_price_rest}
-              onChange={(e) => setFormData({ ...formData, min_price_rest: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
-              価格 (宿泊) *
-            </label>
-            <input
-              type="number"
-              required
-              className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
-              value={formData.min_price_stay}
-              onChange={(e) => setFormData({ ...formData, min_price_stay: e.target.value })}
-            />
+          {/* 休憩・宿泊区分け - 平日・休日・最安・最高 */}
+          <div className="grid grid-cols-1 gap-6 md:col-span-3 md:grid-cols-2 lg:grid-cols-4">
+            {/* 休憩 - 平日 */}
+            <div className="space-y-4 rounded-lg bg-white/5 p-4">
+              <h3 className="mb-2 text-sm font-bold text-white">休憩 (平日)</h3>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最安値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.rest_price_min_weekday || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rest_price_min_weekday: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最高値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.rest_price_max_weekday || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rest_price_max_weekday: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* 休憩 - 休日 */}
+            <div className="space-y-4 rounded-lg bg-white/5 p-4">
+              <h3 className="mb-2 text-sm font-bold text-white">休憩 (休日)</h3>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最安値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.rest_price_min_weekend || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rest_price_min_weekend: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最高値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.rest_price_max_weekend || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, rest_price_max_weekend: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* 宿泊 - 平日 */}
+            <div className="space-y-4 rounded-lg bg-white/5 p-4">
+              <h3 className="mb-2 text-sm font-bold text-white">宿泊 (平日)</h3>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最安値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.stay_price_min_weekday || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, stay_price_min_weekday: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最高値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.stay_price_max_weekday || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, stay_price_max_weekday: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+
+            {/* 宿泊 - 休日 */}
+            <div className="space-y-4 rounded-lg bg-white/5 p-4">
+              <h3 className="mb-2 text-sm font-bold text-white">宿泊 (休日)</h3>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最安値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.stay_price_min_weekend || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, stay_price_min_weekend: e.target.value })
+                  }
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-xs text-brand-text-secondary">最高値</label>
+                <input
+                  type="number"
+                  className="w-full rounded border border-white/10 bg-brand-primary px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={formData.stay_price_max_weekend || ''}
+                  onChange={(e) =>
+                    setFormData({ ...formData, stay_price_max_weekend: e.target.value })
+                  }
+                />
+              </div>
+            </div>
           </div>
           <div>
             <label className="mb-2 block text-sm font-medium text-brand-text-secondary">

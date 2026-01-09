@@ -1,4 +1,3 @@
-
 export interface Hotel {
   id: string;
   name: string;
@@ -9,8 +8,16 @@ export interface Hotel {
   phone: string;
   website: string;
   imageUrl: string;
-  minPriceRest: number;
-  minPriceStay: number;
+  minPriceRest?: number; // Legacy
+  minPriceStay?: number; // Legacy
+  restPriceMinWeekday?: number;
+  restPriceMaxWeekday?: number;
+  restPriceMinWeekend?: number;
+  restPriceMaxWeekend?: number;
+  stayPriceMinWeekday?: number;
+  stayPriceMaxWeekday?: number;
+  stayPriceMinWeekend?: number;
+  stayPriceMaxWeekend?: number;
   rating: number;
   reviewCount: number;
   amenities: string[];
