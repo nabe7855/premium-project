@@ -159,8 +159,23 @@ export const updateHotel = async (
 };
 
 export const deleteHotel = async (id: string) => {
+  // 1. Get images before deleting
+  const { data: hotel } = await supabase
+    .from('lh_hotels')
+    .select('lh_hotel_images(url)')
+    .eq('id', id)
+    .single();
+
+  const imageUrls = hotel?.lh_hotel_images?.map((img: any) => img.url) || [];
+
+  // 2. Delete DB record
   const { error } = await supabase.from('lh_hotels').delete().eq('id', id);
   if (error) throw error;
+
+  // 3. Delete from Storage
+  if (imageUrls.length > 0) {
+    await deleteStorageImages(imageUrls);
+  }
 };
 
 // --- Storage ---
@@ -176,6 +191,23 @@ export const uploadHotelImage = async (file: File) => {
 
   const { data } = supabase.storage.from('hotel-images').getPublicUrl(filePath);
   return data.publicUrl;
+};
+
+export const deleteStorageImages = async (urls: string[]) => {
+  if (urls.length === 0) return;
+
+  const paths = urls
+    .map((url) => {
+      // URLからパス部分を抽出 (例: .../hotel-images/hotels/xxx.jpg -> hotels/xxx.jpg)
+      const urlParts = url.split('/hotel-images/');
+      return urlParts.length > 1 ? urlParts[1] : null;
+    })
+    .filter((path): path is string => path !== null);
+
+  if (paths.length > 0) {
+    const { error } = await supabase.storage.from('hotel-images').remove(paths);
+    if (error) console.error('Failed to delete images from storage:', error);
+  }
 };
 
 // --- Master Management helpers ---

@@ -61,6 +61,7 @@ export default function HotelForm({ id }: HotelFormProps) {
   const [images, setImages] = useState<
     { id?: string; url?: string; file?: File; category: string; previewUrl?: string }[]
   >([]);
+  const [imagesToDelete, setImagesToDelete] = useState<string[]>([]);
 
   useEffect(() => {
     loadMasters();
@@ -165,6 +166,9 @@ export default function HotelForm({ id }: HotelFormProps) {
 
   const removeImage = (index: number) => {
     const target = images[index];
+    if (target.url) {
+      setImagesToDelete([...imagesToDelete, target.url]);
+    }
     if (target.previewUrl && !target.url) URL.revokeObjectURL(target.previewUrl);
     setImages(images.filter((_, i) => i !== index));
   };
@@ -179,6 +183,16 @@ export default function HotelForm({ id }: HotelFormProps) {
     e.preventDefault();
     setLoading(true);
     try {
+      console.log('Current form data:', formData);
+
+      // 0. Delete removed images from storage
+      if (imagesToDelete.length > 0) {
+        console.log('Deleting images from storage:', imagesToDelete);
+        await deleteStorageImages(imagesToDelete);
+      }
+
+      console.log('Processing images...');
+
       // 1. Upload new files
       const finalImages: { url: string; category: string }[] = [];
       for (const img of images) {
