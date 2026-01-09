@@ -1,4 +1,4 @@
-import { Hotel } from '@/types/lovehotels';
+import { Hotel, Review } from '@/types/lovehotels';
 import { supabase } from './supabaseClient';
 
 // --- Master Data ---
@@ -88,13 +88,17 @@ export const getHotelById = async (id: string) => {
     .select(
       `
       *,
-      lh_hotel_amenities(amenity_id),
-      lh_hotel_services(service_id),
+      lh_prefectures(name),
+      lh_cities(name),
+      lh_areas(name),
+      lh_hotel_amenities(lh_amenities(*)),
+      lh_hotel_services(lh_services(*)),
       lh_hotel_images(*)
     `,
     )
     .eq('id', id)
     .single();
+
   if (error) throw error;
   return data;
 };
@@ -240,21 +244,14 @@ export const deleteMaster = async (table: string, id: string | number) => {
 
 export const getPrefectureDetails = async (prefectureId: string) => {
   const cleanId = prefectureId.trim();
-  console.log(`[API] getPrefectureDetails start: ${cleanId}`);
   // 1. 都道府県情報を取得（IDまたは名前で検索）
-  const { data: prefData, error: prefError } = await supabase
+  const { data: prefData } = await supabase
     .from('lh_prefectures')
     .select('id, name')
     .or(`id.eq.${cleanId},id.eq." ${cleanId}",name.ilike.%${cleanId}%`)
     .single();
 
-  if (prefError) {
-    console.error(`[API] Error fetching prefecture:`, prefError);
-  }
-  console.log(`[API] prefData matched:`, prefData);
-
   const targetPrefId = prefData?.id || cleanId;
-  console.log(`[API] targetPrefId using: ${targetPrefId}`);
 
   // 2. 市区町村とエリアを取得
   const { data, error } = await supabase
@@ -273,10 +270,8 @@ export const getPrefectureDetails = async (prefectureId: string) => {
     .order('name');
 
   if (error) {
-    console.error(`[API] Error fetching cities:`, error);
     throw error;
   }
-  console.log(`[API] Raw cities data count: ${data?.length || 0}`);
 
   // 3. 各市区町村のホテル数を取得
   const { data: hotels } = await supabase
@@ -284,15 +279,12 @@ export const getPrefectureDetails = async (prefectureId: string) => {
     .select('city_id')
     .eq('prefecture_id', targetPrefId);
 
-  console.log(`[API] Raw hotels data count: ${hotels?.length || 0}`);
-
   const results = data.map((city: any) => ({
     ...city,
     count: hotels?.filter((h: any) => h.city_id === city.id).length || 0,
     areas: city.lh_areas?.map((a: any) => a.name) || [],
   }));
 
-  console.log(`[API] Final results count: ${results.length}`);
   return results;
 };
 
@@ -308,11 +300,14 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     name: dbHotel.name,
     prefecture: dbHotel.lh_prefectures?.name || '',
     city: dbHotel.lh_cities?.name || '',
+    cityId: dbHotel.city_id || '',
     area: dbHotel.lh_areas?.name || '',
     address: dbHotel.address || '',
     phone: dbHotel.phone || '',
     website: dbHotel.website || '',
     imageUrl: mainImage,
+    images:
+      dbHotel.lh_hotel_images?.map((img: any) => ({ url: img.url, category: img.category })) || [],
     // Legacy price support (fallback)
     minPriceRest: dbHotel.min_price_rest,
     minPriceStay: dbHotel.min_price_stay,
@@ -334,4 +329,124 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
   };
+};
+
+// --- Reviews ---
+
+export const getReviews = async (hotelId: string): Promise<Review[]> => {
+  const { data, error } = await supabase
+    .from('lh_reviews')
+    .select(
+      `
+      *,
+      lh_review_photos(*)
+    `,
+    )
+    .eq('hotel_id', hotelId)
+    .order('created_at', { ascending: false });
+
+  if (error) throw error;
+  return data.map(mapDbReviewToReview);
+};
+
+export const mapDbReviewToReview = (dbReview: any): Review => {
+  return {
+    id: dbReview.id,
+    hotelId: dbReview.hotel_id,
+    userName: dbReview.user_name,
+    rating: dbReview.rating,
+    cleanliness: dbReview.cleanliness,
+    service: dbReview.service,
+    rooms: dbReview.rooms,
+    value: dbReview.value,
+    content: dbReview.content,
+    date: dbReview.created_at ? new Date(dbReview.created_at).toISOString().split('T')[0] : '',
+    roomNumber: dbReview.room_number,
+    stayType: dbReview.stay_type,
+    cost: dbReview.cost,
+    photos: dbReview.lh_review_photos?.map((p: any) => ({
+      url: p.url,
+      category: p.category,
+    })),
+  };
+};
+
+export const uploadReviewImage = async (file: File) => {
+  const fileExt = file.name.split('.').pop();
+  const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`;
+  const filePath = `reviews/${fileName}`;
+
+  // Using 'review-images' bucket (ensure it exists or use hotel-images if necessary)
+  const { error: uploadError } = await supabase.storage.from('hotel-images').upload(filePath, file);
+
+  if (uploadError) throw uploadError;
+
+  const { data } = supabase.storage.from('hotel-images').getPublicUrl(filePath);
+  return data.publicUrl;
+};
+
+export const submitReview = async (
+  reviewData: Omit<Review, 'id' | 'photos' | 'date'>,
+  photoFiles: { file: File; category: string }[],
+) => {
+  // 1. Insert Review
+  const { data: review, error: reviewError } = await supabase
+    .from('lh_reviews')
+    .insert([
+      {
+        hotel_id: reviewData.hotelId,
+        user_name: reviewData.userName,
+        rating: reviewData.rating,
+        cleanliness: reviewData.cleanliness,
+        service: reviewData.service,
+        rooms: reviewData.rooms,
+        value: reviewData.value,
+        content: reviewData.content,
+        stay_type: reviewData.stayType,
+        room_number: reviewData.roomNumber,
+        cost: reviewData.cost,
+      },
+    ])
+    .select()
+    .single();
+
+  if (reviewError) throw reviewError;
+
+  // 2. Upload Photos & Link
+  if (photoFiles.length > 0) {
+    const photoInserts = await Promise.all(
+      photoFiles.map(async (p) => {
+        const url = await uploadReviewImage(p.file);
+        return {
+          review_id: review.id,
+          url: url,
+          category: p.category,
+        };
+      }),
+    );
+
+    const { error: photoError } = await supabase.from('lh_review_photos').insert(photoInserts);
+    if (photoError) throw photoError;
+  }
+
+  return review;
+};
+
+export const deleteReview = async (reviewId: string) => {
+  // 1. Get photo URLs before deleting
+  const { data: photos } = await supabase
+    .from('lh_review_photos')
+    .select('url')
+    .eq('review_id', reviewId);
+
+  const photoUrls = photos?.map((p: any) => p.url) || [];
+
+  // 2. Delete DB record (lh_review_photos will be cascaded if foreign key is set up with ON DELETE CASCADE)
+  const { error } = await supabase.from('lh_reviews').delete().eq('id', reviewId);
+  if (error) throw error;
+
+  // 3. Delete from Storage
+  if (photoUrls.length > 0) {
+    await deleteStorageImages(photoUrls);
+  }
 };

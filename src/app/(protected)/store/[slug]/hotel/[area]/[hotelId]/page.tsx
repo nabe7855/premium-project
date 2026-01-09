@@ -1,9 +1,11 @@
 import HotelDetailClient from '@/components/lovehotels/HotelDetailClient';
 import Layout from '@/components/lovehotels/Layout';
-import { MOCK_HOTELS } from '@/data/lovehotels';
 import { stores } from '@/data/stores';
+import { getHotelById, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+
+export const revalidate = 0;
 
 interface Props {
   params: {
@@ -14,49 +16,37 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const hotel = MOCK_HOTELS.find((h) => h.id === params.hotelId);
-  if (!hotel) return { title: 'Hotel Not Found' };
+  try {
+    const dbHotel = await getHotelById(params.hotelId);
+    if (!dbHotel) return { title: 'Hotel Not Found' };
+    const hotel = mapDbHotelToHotel(dbHotel);
 
-  return {
-    title: `${hotel.name} | ${hotel.area}のおすすめホテル | Strawberry Boys`,
-    description: `${hotel.name}をご利用の際におすすめな、${hotel.area}のホテル情報をご紹介します。`,
-  };
+    return {
+      title: `${hotel.name} | ${hotel.area}のおすすめホテル | Strawberry Boys`,
+      description: `${hotel.name}をご利用の際におすすめな、${hotel.area}のホテル情報をご紹介します。`,
+    };
+  } catch (error) {
+    return { title: 'Hotel Details' };
+  }
 }
 
-export async function generateStaticParams() {
-  const paths: { slug: string; area: string; hotelId: string }[] = [];
+export default async function StoreHotelDetailPage({ params }: Props) {
+  const store = stores[params.slug];
+  if (!store) notFound();
 
-  Object.keys(stores).forEach((slug) => {
-    // 実際にはその店舗に対応する県内のホテルのみを生成するのが効率的ですが
-    // ここでは網羅的に生成します
-    MOCK_HOTELS.forEach((hotel) => {
-      // エリアIDを逆引き（簡易）
-      const areaId =
-        hotel.city === '新宿区'
-          ? 'shinjuku'
-          : hotel.city === '名古屋市中区'
-            ? 'nagoya-naka'
-            : hotel.city === '福岡市博多区'
-              ? 'fukuoka-hakata'
-              : 'area';
+  try {
+    const dbHotel = await getHotelById(params.hotelId);
+    if (!dbHotel) notFound();
 
-      paths.push({
-        slug,
-        area: areaId,
-        hotelId: hotel.id,
-      });
-    });
-  });
-  return paths;
-}
+    const hotel = mapDbHotelToHotel(dbHotel);
 
-export default function StoreHotelDetailPage({ params }: Props) {
-  const hotel = MOCK_HOTELS.find((h) => h.id === params.hotelId);
-  if (!hotel) notFound();
-
-  return (
-    <Layout>
-      <HotelDetailClient hotel={hotel} />
-    </Layout>
-  );
+    return (
+      <Layout>
+        <HotelDetailClient hotel={hotel} />
+      </Layout>
+    );
+  } catch (error) {
+    console.error('[Page] Error fetching hotel:', error);
+    notFound();
+  }
 }

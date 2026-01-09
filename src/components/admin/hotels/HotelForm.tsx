@@ -2,16 +2,19 @@
 
 import {
   createHotel,
+  deleteReview,
   deleteStorageImages,
   getAmenities,
   getAreas,
   getCities,
   getHotelById,
   getPrefectures,
+  getReviews,
   getServices,
   updateHotel,
   uploadHotelImage,
 } from '@/lib/lovehotelApi';
+import { Review } from '@/types/lovehotels';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -31,6 +34,8 @@ export default function HotelForm({ id }: HotelFormProps) {
   const [areas, setAreas] = useState<any[]>([]);
   const [allAmenities, setAllAmenities] = useState<any[]>([]);
   const [allServices, setAllServices] = useState<any[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [loadingReviews, setLoadingReviews] = useState(false);
 
   // Form state
   const [formData, setFormData] = useState<any>({
@@ -66,7 +71,10 @@ export default function HotelForm({ id }: HotelFormProps) {
 
   useEffect(() => {
     loadMasters();
-    if (id) loadHotel();
+    if (id) {
+      loadHotel();
+      loadReviews();
+    }
   }, [id]);
 
   useEffect(() => {
@@ -151,6 +159,31 @@ export default function HotelForm({ id }: HotelFormProps) {
     } catch (error) {
       console.error(error);
       toast.error('ホテル情報の読み込みに失敗しました');
+    }
+  };
+
+  const loadReviews = async () => {
+    if (!id) return;
+    setLoadingReviews(true);
+    try {
+      const data = await getReviews(id);
+      setReviews(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!confirm('この口コミを削除してもよろしいですか？画像も削除されます。')) return;
+    try {
+      await deleteReview(reviewId);
+      toast.success('口コミを削除しました');
+      loadReviews();
+    } catch (error) {
+      console.error(error);
+      toast.error('削除に失敗しました');
     }
   };
 
@@ -631,6 +664,75 @@ export default function HotelForm({ id }: HotelFormProps) {
           </div>
         </div>
       </div>
+
+      {id && (
+        <div className="space-y-6 rounded-xl border border-white/10 bg-brand-secondary p-6">
+          <div className="flex items-center justify-between border-b border-white/5 pb-4">
+            <h2 className="text-xl font-bold text-white">口コミ管理</h2>
+            <span className="text-xs text-brand-text-secondary">{reviews.length} 件の口コミ</span>
+          </div>
+
+          <div className="space-y-4">
+            {loadingReviews ? (
+              <div className="py-4 text-center text-sm text-brand-text-secondary">
+                読み込み中...
+              </div>
+            ) : reviews.length > 0 ? (
+              reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-lg border border-white/5 bg-brand-primary p-4"
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white">{review.userName}</span>
+                        <span className="text-[10px] text-brand-text-secondary">{review.date}</span>
+                      </div>
+                      <div className="mt-1 flex text-[10px] text-yellow-400">
+                        {'★★★★★'.split('').map((_, i) => (
+                          <span
+                            key={i}
+                            className={i < review.rating ? 'opacity-100' : 'opacity-20'}
+                          >
+                            ★
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteReview(review.id)}
+                      className="rounded bg-red-400/10 px-3 py-1 text-[10px] font-bold text-red-400 transition-colors hover:bg-red-400/20"
+                    >
+                      削除
+                    </button>
+                  </div>
+                  <p className="text-sm leading-relaxed text-brand-text-secondary">
+                    {review.content}
+                  </p>
+                  {review.photos && review.photos.length > 0 && (
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {review.photos.map((photo, idx) => (
+                        <div
+                          key={idx}
+                          className="relative h-12 w-12 overflow-hidden rounded border border-white/10"
+                        >
+                          <img src={photo.url} alt="" className="h-full w-full object-cover" />
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            ) : (
+              <div className="py-4 text-center text-sm text-brand-text-secondary">
+                まだ口コミはありません。
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       <div className="flex justify-end gap-4">
         <button

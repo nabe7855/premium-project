@@ -3,11 +3,13 @@ export interface Hotel {
   name: string;
   prefecture: string;
   city: string;
+  cityId?: string; // Added for correct routing
   area: string;
   address: string;
   phone: string;
   website: string;
   imageUrl: string;
+  images?: { url: string; category: string }[];
   minPriceRest?: number; // Legacy
   minPriceStay?: number; // Legacy
   restPriceMinWeekday?: number;
@@ -24,7 +26,7 @@ export interface Hotel {
   services: string[];
   distanceFromStation: string;
   roomCount: number;
-  description: string;
+  description?: string;
 }
 
 export interface FeatureArticle {

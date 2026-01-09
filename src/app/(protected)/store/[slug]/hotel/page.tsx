@@ -4,8 +4,7 @@ import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
 import SearchHero from '@/components/lovehotels/SearchHero';
 import { stores } from '@/data/stores';
-import { getHotels, getPrefectureDetails } from '@/lib/lovehotelApi';
-import { Hotel } from '@/types/lovehotels';
+import { getHotels, getPrefectureDetails, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -35,46 +34,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     description: `${store.displayName}周辺で厳選されたブティックホテルをご紹介します。エリアやこだわり条件から簡単に検索できます。`,
   };
 }
-
-// Map DB hotel data to frontend Hotel interface
-const mapDbHotelToHotel = (dbHotel: any): Hotel => {
-  // Use the first exterior image or legacy image_url
-  const exteriorImages =
-    dbHotel.lh_hotel_images?.filter((img: any) => img.category === 'exterior') || [];
-  const mainImage = exteriorImages.length > 0 ? exteriorImages[0].url : dbHotel.image_url || '';
-
-  return {
-    id: dbHotel.id,
-    name: dbHotel.name,
-    prefecture: dbHotel.lh_prefectures?.name || '',
-    city: dbHotel.lh_cities?.name || '',
-    area: dbHotel.lh_areas?.name || '',
-    address: dbHotel.address || '',
-    phone: dbHotel.phone || '',
-    website: dbHotel.website || '',
-    imageUrl: mainImage,
-    // Legacy price support (fallback)
-    minPriceRest: dbHotel.min_price_rest,
-    minPriceStay: dbHotel.min_price_stay,
-    // New pricing structure
-    restPriceMinWeekday: dbHotel.rest_price_min_weekday,
-    restPriceMaxWeekday: dbHotel.rest_price_max_weekday,
-    restPriceMinWeekend: dbHotel.rest_price_min_weekend,
-    restPriceMaxWeekend: dbHotel.rest_price_max_weekend,
-    stayPriceMinWeekday: dbHotel.stay_price_min_weekday,
-    stayPriceMaxWeekday: dbHotel.stay_price_max_weekday,
-    stayPriceMinWeekend: dbHotel.stay_price_min_weekend,
-    stayPriceMaxWeekend: dbHotel.stay_price_max_weekday,
-    rating: dbHotel.rating || 0,
-    reviewCount: dbHotel.review_count || 0,
-    amenities:
-      dbHotel.lh_hotel_amenities?.map((a: any) => a.lh_amenities?.name).filter(Boolean) || [],
-    services: dbHotel.lh_hotel_services?.map((s: any) => s.lh_services?.name).filter(Boolean) || [],
-    distanceFromStation: dbHotel.distance_from_station || '',
-    roomCount: dbHotel.room_count || 0,
-    description: dbHotel.description || '',
-  };
-};
 
 export default async function StoreHotelRootPage({ params }: Props) {
   const store = stores[params.slug];

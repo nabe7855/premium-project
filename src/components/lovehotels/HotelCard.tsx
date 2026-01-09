@@ -1,6 +1,5 @@
 'use client';
 
-import { PREFECTURES } from '@/data/lovehotels';
 import { Hotel } from '@/types/lovehotels';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -12,11 +11,7 @@ interface HotelCardProps {
 
 const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
   const { slug } = useParams();
-  // エリア名（または市区町村ID）を取得
-  const city = PREFECTURES.find((p) => p.name === hotel.prefecture)?.cities.find(
-    (c) => c.name === hotel.city,
-  );
-  const areaId = city?.id || 'area';
+  const areaId = hotel.cityId || 'area';
 
   return (
     <Link
