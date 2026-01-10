@@ -1,36 +1,37 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import {
-  LogOut,
-  Menu,
-  X,
+  BarChart3,
   Calendar,
   Camera,
-  BarChart3,
-  User,
+  ClipboardList,
   Image,
+  LogOut,
+  Menu,
   Mic,
+  User,
+  X,
 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 // 各セクションコンポーネント
 import DashboardHome from './sections/DashboardHome';
-import ScheduleSection from './sections/ScheduleSection';
 import DiarySection from './sections/DiarySection';
-import ProfileSection from './sections/ProfileSection';
 import GallerySection from './sections/GallerySection';
+import ProfileSection from './sections/ProfileSection';
+import ScheduleSection from './sections/ScheduleSection';
 import VoiceSection from './sections/VoiceSection';
 
 // 型
-import { CastLevel, Badge } from '@/types/cast-dashboard';
-import { CastProfile, FeatureMaster, QuestionMaster, CastDiary } from '@/types/cast';
+import { CastDiary, CastProfile, FeatureMaster, QuestionMaster } from '@/types/cast';
+import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
-import { getFeatureMasters } from '@/lib/getFeatureMasters';
+import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getCastQuestions } from '@/lib/getCastQuestions';
-import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
+import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { supabase } from '@/lib/supabaseClient';
 
 interface DashboardProps {
@@ -42,7 +43,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery' | 'voice'
+    'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery' | 'voice' | 'reservation'
   >('dashboard');
 
   const [castState, setCastState] = useState<CastProfile>(cast);
@@ -66,9 +67,29 @@ export default function Dashboard({ cast }: DashboardProps) {
   };
 
   const badgesData: Badge[] = [
-    { id: '1', name: 'Sweet Royal', description: '最高ランク達成', icon: 'trophy', unlocked: false },
-    { id: '2', name: '日記マスター', description: '30日連続投稿', icon: 'camera', unlocked: true, unlockedAt: '2024-01-15' },
-    { id: '3', name: '人気者', description: '高評価100件', icon: 'heart', unlocked: true, unlockedAt: '2024-02-01' },
+    {
+      id: '1',
+      name: 'Sweet Royal',
+      description: '最高ランク達成',
+      icon: 'trophy',
+      unlocked: false,
+    },
+    {
+      id: '2',
+      name: '日記マスター',
+      description: '30日連続投稿',
+      icon: 'camera',
+      unlocked: true,
+      unlockedAt: '2024-01-15',
+    },
+    {
+      id: '3',
+      name: '人気者',
+      description: '高評価100件',
+      icon: 'heart',
+      unlocked: true,
+      unlockedAt: '2024-02-01',
+    },
   ];
 
   // ✅ 特徴マスターのロード
@@ -141,6 +162,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: 'profile', name: 'マイプロフィール', icon: User },
     { id: 'gallery', name: 'ギャラリー', icon: Image },
     { id: 'voice', name: '音声データ', icon: Mic },
+    { id: 'reservation', name: '予約', icon: ClipboardList },
   ];
 
   return (
@@ -159,7 +181,7 @@ export default function Dashboard({ cast }: DashboardProps) {
               <h1 className="ml-2 text-lg font-bold text-gray-900 sm:text-xl">
                 キャストダッシュボード
                 {storeName && (
-                  <span className="ml-2 text-pink-600 text-base font-medium">（{storeName}）</span>
+                  <span className="ml-2 text-base font-medium text-pink-600">（{storeName}）</span>
                 )}
               </h1>
             </div>
@@ -238,6 +260,17 @@ export default function Dashboard({ cast }: DashboardProps) {
         {activeTab === 'gallery' && <GallerySection castId={castState.id} />}
         {activeTab === 'voice' && (
           <VoiceSection cast={castState} setCastState={setCastState} activeTab={activeTab} />
+        )}
+        {activeTab === 'reservation' && (
+          <div className="rounded-3xl border border-pink-100 bg-white p-12 text-center shadow-sm duration-500 animate-in fade-in zoom-in">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-pink-50">
+              <ClipboardList className="h-10 w-10 text-pink-400" />
+            </div>
+            <h3 className="mb-2 text-xl font-bold text-gray-800">予約・カウンセリング管理</h3>
+            <p className="mx-auto max-w-sm leading-relaxed text-gray-500">
+              お客様のカルテ確認や、予約情報の詳細管理機能がここに統合されます。
+            </p>
+          </div>
         )}
       </main>
     </div>
