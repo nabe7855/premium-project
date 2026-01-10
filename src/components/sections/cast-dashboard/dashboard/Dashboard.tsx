@@ -20,6 +20,7 @@ import DashboardHome from './sections/DashboardHome';
 import DiarySection from './sections/DiarySection';
 import GallerySection from './sections/GallerySection';
 import ProfileSection from './sections/ProfileSection';
+import ReservationSection from './sections/ReservationSection';
 import ScheduleSection from './sections/ScheduleSection';
 import VoiceSection from './sections/VoiceSection';
 
@@ -261,17 +262,7 @@ export default function Dashboard({ cast }: DashboardProps) {
         {activeTab === 'voice' && (
           <VoiceSection cast={castState} setCastState={setCastState} activeTab={activeTab} />
         )}
-        {activeTab === 'reservation' && (
-          <div className="rounded-3xl border border-pink-100 bg-white p-12 text-center shadow-sm duration-500 animate-in fade-in zoom-in">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-pink-50">
-              <ClipboardList className="h-10 w-10 text-pink-400" />
-            </div>
-            <h3 className="mb-2 text-xl font-bold text-gray-800">予約・カウンセリング管理</h3>
-            <p className="mx-auto max-w-sm leading-relaxed text-gray-500">
-              お客様のカルテ確認や、予約情報の詳細管理機能がここに統合されます。
-            </p>
-          </div>
-        )}
+        {activeTab === 'reservation' && <ReservationSection />}
       </main>
     </div>
   );
