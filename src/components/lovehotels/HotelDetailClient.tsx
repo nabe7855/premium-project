@@ -86,6 +86,13 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate character count
+    if (formData.content.length < 250) {
+      alert(`感想文は250文字以上入力してください。（現在: ${formData.content.length}文字）`);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -419,6 +426,15 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                         value={formData.content}
                         onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                       />
+                      <div className="flex justify-end px-4">
+                        <span
+                          className={`text-[10px] font-black tracking-widest ${
+                            formData.content.length < 250 ? 'text-rose-500' : 'text-green-500'
+                          }`}
+                        >
+                          {formData.content.length} / 250文字以上
+                        </span>
+                      </div>
                     </div>
 
                     <button
