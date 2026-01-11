@@ -1,31 +1,30 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
+import { mockReviews } from '@/data/castdata';
+import { Cast } from '@/types/casts';
+import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
-  Heart,
-  Star,
-  User,
-  Clock,
   Calendar,
-  MessageCircle,
-  Edit3,
   Camera,
-  Instagram,
-  Twitter,
-  Play,
+  Clock,
   Download,
-  Share2,
+  Edit3,
   Eye,
   Headphones,
+  Heart,
+  Instagram,
+  MessageCircle,
+  Play,
+  Share2,
+  Star,
+  Twitter,
+  User,
   X,
 } from 'lucide-react';
-import { Cast } from '@/types/casts';
-import { mockReviews } from '@/data/castdata';
+import React, { useEffect, useState } from 'react';
 import BookingModal from './BookingModal';
-import ReviewModal from './ReviewModal';
 import RadarChart from './RadarChart';
+import ReviewModal from './ReviewModal';
 
 interface CastDetailProps {
   cast: Cast;
@@ -646,6 +645,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
         isOpen={isBookingModalOpen}
         onClose={() => setIsBookingModalOpen(false)}
         castName={cast.name}
+        castId={cast.id}
       />
 
       {/* Review Modal */}

@@ -1,5 +1,7 @@
 'use client';
 
+import { getReservations } from '@/lib/actions/reservation';
+import { supabase } from '@/lib/supabaseClient';
 import { Reservation, WorkflowStep, WorkflowStepId } from '@/types/reservation';
 import {
   ArrowLeft,
@@ -7,59 +9,42 @@ import {
   CheckCircle,
   ChevronRight,
   ClipboardCheck,
+  Copy,
   FileText,
+  LucideIcon,
   MessageSquare,
+  RotateCcw,
   Search,
   ShieldCheck,
   User,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-const INITIAL_STEPS: WorkflowStep[] = [
-  { id: 'counseling', label: 'カウンセリングシート＋アンケート', isCompleted: false, type: 'pre' },
-  { id: 'consent', label: '性的同意画面', isCompleted: false, type: 'pre' },
-  { id: 'review', label: '口コミ', isCompleted: false, type: 'post' },
-  { id: 'survey', label: '事後アンケート', isCompleted: false, type: 'post' },
-  { id: 'reflection', label: '振り返りシート', isCompleted: false, type: 'post' },
-];
-
-const MOCK_RESERVATIONS: Reservation[] = [
-  {
-    id: '1',
-    customerName: '佐藤 健太郎',
-    visitCount: 1,
-    dateTime: '2024-03-25 14:00',
-    status: 'pending',
-    steps: [...INITIAL_STEPS],
-  },
-  {
-    id: '2',
-    customerName: '田中 裕一郎',
-    visitCount: 3,
-    dateTime: '2024-03-25 16:30',
-    status: 'pending',
-    steps: [
-      { ...INITIAL_STEPS[0], isCompleted: true },
-      { ...INITIAL_STEPS[1], isCompleted: true },
-      { ...INITIAL_STEPS[2], isCompleted: false },
-      { ...INITIAL_STEPS[3], isCompleted: false },
-      { ...INITIAL_STEPS[4], isCompleted: false },
-    ],
-  },
-  {
-    id: '3',
-    customerName: '鈴木 二郎',
-    visitCount: 1,
-    dateTime: '2024-03-24 19:00',
-    status: 'completed',
-    steps: INITIAL_STEPS.map((s) => ({ ...s, isCompleted: true })),
-  },
-];
+const STEP_ICONS: Record<WorkflowStepId, LucideIcon> = {
+  counseling: FileText,
+  consent: ShieldCheck,
+  review: MessageSquare,
+  survey: ClipboardCheck,
+  reflection: User,
+};
 
 export default function ReservationSection() {
   const [activeSubTab, setActiveSubTab] = useState<'pending' | 'completed'>('pending');
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
-  const [reservations, setReservations] = useState<Reservation[]>(MOCK_RESERVATIONS);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const fetchReservations = async () => {
+    setIsLoading(true);
+    const data = await getReservations();
+    setReservations(data);
+    setIsLoading(false);
+  };
+
+  useEffect(() => {
+    fetchReservations();
+  }, []);
 
   const filteredReservations = reservations.filter((r) => r.status === activeSubTab);
 
@@ -74,6 +59,7 @@ export default function ReservationSection() {
 
         const allDone = newSteps.every((s) => s.isCompleted);
         const status: 'pending' | 'completed' = allDone ? 'completed' : 'pending';
+
         return {
           ...res,
           steps: newSteps,
@@ -81,17 +67,40 @@ export default function ReservationSection() {
         };
       });
 
-      // Update selected reference if it's the one we're changing
       const currentSelected = updated.find((r) => r.id === resId);
       if (currentSelected) {
         setSelectedReservation(currentSelected);
-        if (currentSelected.status === 'completed' && activeSubTab === 'pending') {
-          // Keep it open even if it moved to completed, so they see the result
-        }
       }
 
       return updated;
     });
+  };
+
+  useEffect(() => {
+    if (selectedReservation) {
+      const checkCounselingStatus = async () => {
+        const { data } = await supabase
+          .from('workflow_counseling')
+          .select('id')
+          .eq('reservation_id', selectedReservation.id)
+          .maybeSingle();
+
+        if (
+          data &&
+          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'counseling')?.isCompleted
+        ) {
+          toggleStep(selectedReservation.id, 'counseling' as WorkflowStepId);
+        }
+      };
+
+      checkCounselingStatus();
+    }
+  }, [selectedReservation?.id]);
+
+  const copyCounselingLink = (resId: string) => {
+    const url = `${window.location.origin}/counseling/${resId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('カウンセリングURLをコピーしました！');
   };
 
   if (selectedReservation) {
@@ -144,16 +153,9 @@ export default function ReservationSection() {
               アクションフロー
             </h3>
 
-            {/* Workflow Steps */}
             <div className="space-y-3">
-              {selectedReservation.steps.map((step, idx) => {
-                const Icon = {
-                  counseling: FileText,
-                  consent: ShieldCheck,
-                  review: MessageSquare,
-                  survey: ClipboardCheck,
-                  reflection: User,
-                }[step.id];
+              {selectedReservation.steps.map((step: WorkflowStep, idx: number) => {
+                const Icon = STEP_ICONS[step.id];
 
                 return (
                   <div
@@ -185,16 +187,28 @@ export default function ReservationSection() {
                         </p>
                       </div>
                     </div>
-                    <button
-                      onClick={() => toggleStep(selectedReservation.id, step.id)}
-                      className={`rounded-xl px-4 py-2 text-xs font-bold transition-all ${
-                        step.isCompleted
-                          ? 'border border-emerald-200 bg-white text-emerald-600 hover:bg-emerald-100'
-                          : 'bg-indigo-600 text-white shadow-md shadow-indigo-100 hover:bg-indigo-700'
-                      }`}
-                    >
-                      {step.isCompleted ? '完了済み' : '完了にする'}
-                    </button>
+                    <div className="flex shrink-0 flex-col gap-2">
+                      <button
+                        onClick={() => toggleStep(selectedReservation.id, step.id)}
+                        className={`rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                          step.isCompleted
+                            ? 'border border-emerald-200 bg-white text-emerald-600 hover:bg-emerald-100'
+                            : 'bg-indigo-600 text-white shadow-md shadow-indigo-100 hover:bg-indigo-700'
+                        }`}
+                      >
+                        {step.isCompleted ? '完了済み' : '完了にする'}
+                      </button>
+
+                      {step.id === 'counseling' && !step.isCompleted && (
+                        <button
+                          onClick={() => copyCounselingLink(selectedReservation.id)}
+                          className="flex items-center justify-center gap-1.5 rounded-xl border border-pink-200 bg-white px-4 py-2 text-xs font-bold text-pink-500 hover:bg-pink-50"
+                        >
+                          <Copy className="h-3 w-3" />
+                          URLをコピー
+                        </button>
+                      )}
+                    </div>
                   </div>
                 );
               })}
@@ -233,42 +247,49 @@ export default function ReservationSection() {
 
   return (
     <div className="space-y-6 duration-500 animate-in fade-in">
-      {/* Sub Tabs */}
-      <div className="flex w-fit rounded-2xl border border-pink-100 bg-white p-1">
-        {[
-          {
-            id: 'pending',
-            label: '未完了',
-            count: reservations.filter((r) => r.status === 'pending').length,
-          },
-          {
-            id: 'completed',
-            label: '完了',
-            count: reservations.filter((r) => r.status === 'completed').length,
-          },
-        ].map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveSubTab(tab.id as any)}
-            className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
-              activeSubTab === tab.id
-                ? 'bg-pink-500 text-white shadow-lg shadow-pink-100'
-                : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
-            }`}
-          >
-            {tab.label}
-            <span
-              className={`rounded-full px-1.5 py-0.5 text-[10px] ${
-                activeSubTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+      <div className="flex items-center justify-between">
+        <div className="flex w-fit rounded-2xl border border-pink-100 bg-white p-1">
+          {[
+            {
+              id: 'pending',
+              label: '未完了',
+              count: reservations.filter((r) => r.status === 'pending').length,
+            },
+            {
+              id: 'completed',
+              label: '完了',
+              count: reservations.filter((r) => r.status === 'completed').length,
+            },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveSubTab(tab.id as 'pending' | 'completed')}
+              className={`flex items-center gap-2 rounded-xl px-6 py-2.5 text-sm font-bold transition-all ${
+                activeSubTab === tab.id
+                  ? 'bg-pink-500 text-white shadow-lg shadow-pink-100'
+                  : 'text-slate-400 hover:bg-slate-50 hover:text-slate-600'
               }`}
             >
-              {tab.count}
-            </span>
-          </button>
-        ))}
+              {tab.label}
+              <span
+                className={`rounded-full px-1.5 py-0.5 text-[10px] ${
+                  activeSubTab === tab.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-400'
+                }`}
+              >
+                {tab.count}
+              </span>
+            </button>
+          ))}
+        </div>
+
+        <button
+          onClick={fetchReservations}
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-pink-100 bg-white text-pink-500 shadow-sm transition-all hover:bg-pink-50 active:rotate-180"
+        >
+          <RotateCcw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+        </button>
       </div>
 
-      {/* Search Bar */}
       <div className="relative">
         <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
         <input
@@ -278,10 +299,14 @@ export default function ReservationSection() {
         />
       </div>
 
-      {/* Reservation List */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-        {filteredReservations.length > 0 ? (
-          filteredReservations.map((res) => {
+        {isLoading ? (
+          <div className="col-span-full py-12 text-center">
+            <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-pink-500 border-t-transparent" />
+            <p className="mt-4 text-xs font-bold text-slate-400">Loading Reservations...</p>
+          </div>
+        ) : filteredReservations.length > 0 ? (
+          filteredReservations.map((res: Reservation) => {
             const completedSteps = res.steps.filter((s) => s.isCompleted).length;
             const progress = (completedSteps / res.steps.length) * 100;
 

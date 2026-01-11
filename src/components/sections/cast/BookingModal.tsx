@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import { createReservation } from '@/lib/actions/reservation';
 import { X } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   castName?: string;
+  castId?: string;
 }
 
 interface FormData {
@@ -23,7 +26,7 @@ interface FormData {
   notes: string;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, castId }) => {
   const [formData, setFormData] = useState<FormData>({
     name: '',
     email: '',
@@ -64,17 +67,36 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName }
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateForm()) return;
     setIsSubmitting(true);
 
-    // TODO: Submit API連携
+    try {
+      const result = await createReservation({
+        customerName: formData.name,
+        dateTime: formData.datetime,
+        visitCount: formData.usageStatus === 'repeat' ? 2 : 1,
+        email: formData.email,
+        phone: formData.phone,
+        notes: `${formData.course} / ${formData.nomination} / ${formData.outfit} / ${formData.notes}`,
+        castId: castId,
+      });
 
-    setTimeout(() => {
+      if (result.success) {
+        toast.success('予約を送信しました');
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      } else {
+        toast.error('予約に失敗しました: ' + result.error);
+      }
+    } catch (error) {
+      console.error('Booking submission error:', error);
+      toast.error('予期せぬエラーが発生しました');
+    } finally {
       setIsSubmitting(false);
-      onClose();
-    }, 1000);
+    }
   };
 
   if (!isOpen) return null;

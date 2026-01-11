@@ -1,16 +1,19 @@
 'use client';
 
+import { createReservation } from '@/lib/actions/reservation';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Calendar, Clock, CreditCard, Mail, User, X } from 'lucide-react';
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, User, Mail, Calendar, Clock, CreditCard } from 'lucide-react';
+import { toast } from 'sonner';
 
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
   castName?: string;
+  castId?: string;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName }) => {
+const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, castId }) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -29,27 +32,51 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('>>> [BookingModal] Form Submit Start');
     setIsSubmitting(true);
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 2000));
+    try {
+      const payload = {
+        customerName: formData.name,
+        dateTime: formData.datetime,
+        visitCount: formData.usageStatus === '初回利用' ? 1 : 2,
+        email: formData.email,
+        phone: formData.phone,
+        notes: `コース: ${formData.course}\n合流場所: ${formData.meetingPlace}\n指名: ${formData.nomination}\n衣装: ${formData.outfit}\n割引: ${formData.discount}\n備考: ${formData.notes}`,
+        castId: castId,
+      };
+      console.log('>>> [BookingModal] Calling createReservation with:', payload);
 
-    alert('予約申し込みを受け付けました。確認メールをお送りしますので、しばらくお待ちください。');
-    onClose();
-    setIsSubmitting(false);
-    setFormData({
-      name: '',
-      email: '',
-      phone: '',
-      datetime: '',
-      usageStatus: '',
-      meetingPlace: '',
-      course: '',
-      nomination: '',
-      outfit: '',
-      discount: '',
-      notes: '',
-    });
+      const result = await createReservation(payload);
+      console.log('>>> [BookingModal] createReservation Result:', result);
+
+      if (result.success) {
+        toast.success('予約申し込みを受け付けました。');
+        onClose();
+        setFormData({
+          name: '',
+          email: '',
+          phone: '',
+          datetime: '',
+          usageStatus: '',
+          meetingPlace: '',
+          course: '',
+          nomination: '',
+          outfit: '',
+          discount: '',
+          notes: '',
+        });
+      } else {
+        console.error('>>> [BookingModal] createReservation ERROR:', result.error);
+        toast.error('予約に失敗しました: ' + result.error);
+      }
+    } catch (error) {
+      console.error('>>> [BookingModal] Unexpected ERROR:', error);
+      toast.error('予期せぬエラーが発生しました');
+    } finally {
+      setIsSubmitting(false);
+      console.log('>>> [BookingModal] Form Submit End');
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {

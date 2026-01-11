@@ -1,36 +1,36 @@
 'use client';
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
 import {
   ArrowLeft,
-  Heart,
-  Share2,
-  User,
   BookOpen,
   Calendar,
+  Heart,
   MessageCircle,
   Play,
+  Share2,
+  User,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React from 'react';
 
-import { Cast } from '@/types/cast';
 import { useCastDetail } from '@/hooks/useCastDetail';
+import { Cast } from '@/types/cast';
 
 import BookingModal from '../modals/BookingModal';
 import CastGallery from './detail/CastGallery';
 import CastProfile from './detail/CastProfile';
 import CastStickyActionBar, { TabType } from './detail/CastStickyActionBar';
 import CastTabBasicInformation from './detail/CastTabBasicInformation';
-import CastTabStory from './detail/CastTabStory';
-import CastTabSchedule from './detail/CastTabSchedule';
 import CastTabMovie from './detail/CastTabMovie';
+import CastTabSchedule from './detail/CastTabSchedule';
+import CastTabStory from './detail/CastTabStory';
 
 // 👇 口コミ投稿フォームを直 import
 import CastTabReviewPage from './detail/CastTabReviews';
 
 interface CastDetailProps {
   cast: Cast;
-  storeSlug: string;   // ✅ 追加
+  storeSlug: string; // ✅ 追加
 }
 
 const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
@@ -70,22 +70,22 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* ヘッダー */}
-      <div className="bg-white border-b border-neutral-200 sticky top-0 z-40">
+      <div className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <button
               onClick={handleBack}
-              className="flex items-center text-neutral-600 hover:text-neutral-800 transition-colors duration-200"
+              className="flex items-center text-neutral-600 transition-colors duration-200 hover:text-neutral-800"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
+              <ArrowLeft className="mr-2 h-5 w-5" />
               <span className="text-sm">戻る</span>
             </button>
             <div className="flex items-center space-x-2">
               <button className="p-2 text-neutral-600 hover:text-red-500">
-                <Heart className="w-5 h-5" />
+                <Heart className="h-5 w-5" />
               </button>
               <button className="p-2 text-neutral-600 hover:text-neutral-800">
-                <Share2 className="w-5 h-5" />
+                <Share2 className="h-5 w-5" />
               </button>
             </div>
           </div>
@@ -124,11 +124,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
           <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />
         )}
         {activeTab === 'reviews' && (
-          <CastTabReviewPage
-            castId={cast.id}
-            castName={cast.name}
-            storeSlug={storeSlug}  
-          />
+          <CastTabReviewPage castId={cast.id} castName={cast.name} storeSlug={storeSlug} />
         )}
         {activeTab === 'videos' && <CastTabMovie cast={cast} />}
       </div>
@@ -138,6 +134,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
         <BookingModal
           isOpen={isBookingModalOpen}
           castName={cast.name}
+          castId={cast.id}
           onClose={handleBookingModalClose}
         />
       )}
