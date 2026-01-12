@@ -123,9 +123,25 @@ export default function ReservationSection() {
         }
       };
 
+      const checkReflectionStatus = async () => {
+        const { data } = await supabase
+          .from('workflow_reflection')
+          .select('id')
+          .eq('reservation_id', selectedReservation.id)
+          .maybeSingle();
+
+        if (
+          data &&
+          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'reflection')?.isCompleted
+        ) {
+          toggleStep(selectedReservation.id, 'reflection' as WorkflowStepId);
+        }
+      };
+
       checkCounselingStatus();
       checkConsentStatus();
       checkSurveyStatus();
+      checkReflectionStatus();
     }
   }, [selectedReservation?.id]);
 
@@ -145,6 +161,10 @@ export default function ReservationSection() {
     const url = `${window.location.origin}/survey/${resId}`;
     navigator.clipboard.writeText(url);
     toast.success('事後アンケートURLをコピーしました！');
+  };
+
+  const openReflectionForm = (resId: string) => {
+    window.open(`/reflection/${resId}`, '_blank');
   };
 
   if (selectedReservation) {
@@ -270,6 +290,16 @@ export default function ReservationSection() {
                         >
                           <Copy className="h-3 w-3" />
                           URLをコピー
+                        </button>
+                      )}
+
+                      {step.id === 'reflection' && !step.isCompleted && (
+                        <button
+                          onClick={() => openReflectionForm(selectedReservation.id)}
+                          className="flex items-center justify-center gap-1.5 rounded-xl border border-indigo-200 bg-white px-4 py-2 text-xs font-bold text-indigo-500 hover:bg-indigo-50"
+                        >
+                          <FileText className="h-3 w-3" />
+                          シートを開く
                         </button>
                       )}
                     </div>
