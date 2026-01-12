@@ -108,8 +108,24 @@ export default function ReservationSection() {
         }
       };
 
+      const checkSurveyStatus = async () => {
+        const { data } = await supabase
+          .from('workflow_survey')
+          .select('id')
+          .eq('reservation_id', selectedReservation.id)
+          .maybeSingle();
+
+        if (
+          data &&
+          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'survey')?.isCompleted
+        ) {
+          toggleStep(selectedReservation.id, 'survey' as WorkflowStepId);
+        }
+      };
+
       checkCounselingStatus();
       checkConsentStatus();
+      checkSurveyStatus();
     }
   }, [selectedReservation?.id]);
 
@@ -123,6 +139,12 @@ export default function ReservationSection() {
     const url = `${window.location.origin}/consent/${resId}`;
     navigator.clipboard.writeText(url);
     toast.success('性的同意URLをコピーしました！');
+  };
+
+  const copySurveyLink = (resId: string) => {
+    const url = `${window.location.origin}/survey/${resId}`;
+    navigator.clipboard.writeText(url);
+    toast.success('事後アンケートURLをコピーしました！');
   };
 
   if (selectedReservation) {
@@ -234,6 +256,16 @@ export default function ReservationSection() {
                       {step.id === 'consent' && !step.isCompleted && (
                         <button
                           onClick={() => copyConsentLink(selectedReservation.id)}
+                          className="flex items-center justify-center gap-1.5 rounded-xl border border-pink-200 bg-white px-4 py-2 text-xs font-bold text-pink-500 hover:bg-pink-50"
+                        >
+                          <Copy className="h-3 w-3" />
+                          URLをコピー
+                        </button>
+                      )}
+
+                      {step.id === 'survey' && !step.isCompleted && (
+                        <button
+                          onClick={() => copySurveyLink(selectedReservation.id)}
                           className="flex items-center justify-center gap-1.5 rounded-xl border border-pink-200 bg-white px-4 py-2 text-xs font-bold text-pink-500 hover:bg-pink-50"
                         >
                           <Copy className="h-3 w-3" />
