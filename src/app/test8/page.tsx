@@ -1,19 +1,19 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
+import Chatbot from '@/components/recruit2/Chatbot';
+import FloatingCTA from '@/components/recruit2/FloatingCTA';
+import Footer from '@/components/recruit2/Footer';
+import FullForm from '@/components/recruit2/FullForm';
+import Header from '@/components/recruit2/Header';
 import LandingPage from '@/components/recruit2/LandingPage';
 import QuickForm from '@/components/recruit2/QuickForm';
-import FullForm from '@/components/recruit2/FullForm';
 import ThanksPage from '@/components/recruit2/ThanksPage';
-import Header from '@/components/recruit2/Header';
-import Footer from '@/components/recruit2/Footer';
-import FloatingCTA from '@/components/recruit2/FloatingCTA';
-import Chatbot from '@/components/recruit2/Chatbot';
+import React, { useEffect, useState } from 'react';
+import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
-  
+
   // Scroll to top on route change
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -23,7 +23,7 @@ const AppContent: React.FC = () => {
   const closeChat = () => setIsChatOpen(false);
 
   return (
-    <div className={`flex flex-col min-h-screen ${isChatOpen ? 'overflow-hidden' : ''}`}>
+    <div className={`flex min-h-screen flex-col ${isChatOpen ? 'overflow-hidden' : ''}`}>
       <Header onOpenChat={openChat} />
       <main className="flex-grow pt-16">
         <Routes>
@@ -35,13 +35,23 @@ const AppContent: React.FC = () => {
       </main>
       <Footer />
       {location.pathname === '/' && <FloatingCTA onOpenChat={openChat} />}
-      
+
       <Chatbot isOpen={isChatOpen} onClose={closeChat} />
     </div>
   );
 };
 
 const App: React.FC = () => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <div className="min-h-screen bg-slate-950" />;
+  }
+
   return (
     <HashRouter>
       <AppContent />
