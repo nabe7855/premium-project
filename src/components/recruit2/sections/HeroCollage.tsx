@@ -1,17 +1,41 @@
 import React, { useEffect, useState } from 'react';
 
+// Define AnimationState locally for this component
+enum AnimationState {
+  IDLE = 'IDLE',
+  ASSEMBLED = 'ASSEMBLED',
+}
+
 interface HeroCollageProps {
   onOpenChat: () => void;
 }
 
 const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   const [timeLeft, setTimeLeft] = useState(24 * 3600);
+  const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
+  const [loaded, setLoaded] = useState(false);
+  const imageUrl = '/ファーストビュー４.png';
 
   useEffect(() => {
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     return () => clearInterval(timer);
+  }, []);
+
+  // Trigger animation after mount/load
+  useEffect(() => {
+    const img = new Image();
+    img.src = imageUrl;
+    img.onload = () => {
+      setLoaded(true);
+      setLoaded(true);
+      // Small delay before starting animation
+      // アニメーション開始までの待機時間（ミリ秒）
+      // この数値を変更すると、画像が表示されてから動き出すまでの時間を調整できます
+      // 例: 100 => 0.1秒待機, 500 => 0.5秒待機
+      setTimeout(() => setAnimationState(AnimationState.ASSEMBLED), 500);
+    };
   }, []);
 
   const formatTime = (seconds: number) => {
@@ -21,26 +45,109 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
+  const isAssembled = animationState === AnimationState.ASSEMBLED;
+
+  // 画像の分割位置（クリップパス）の設定
+  // polygon(...) の中の数値を変更すると、切れ目の位置や角度が変わります
+  // 形式: polygon(x1 y1, x2 y2, x3 y3, ...)
+  // x = 横の位置（0%が左端、100%が右端）, y = 縦の位置（0%が上端、100%が下端）
+  const clips = {
+    // 左側のパーツ
+    left: 'polygon(0 0, 45% 0, 30% 100%, 0 100%)',
+    // 中央のパーツ
+    middle: 'polygon(45% 0, 75% 0, 60% 100%, 30% 100%)',
+    // 右側のパーツ
+    right: 'polygon(75% 0, 100% 0, 100% 100%, 60% 100%)',
+  };
+  // duration: アニメーションにかかる時間。2000ms程度が推奨です。
+  // ease: ふわっと動き出し、中間で加速し、最後にゆっくり結合するカーブ (cubic-bezier)
+  const duration = '2000ms';
+  const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+  const shardBaseClass = 'absolute inset-0 transition-all';
+
   return (
     <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 font-sans">
       {/* Background/Collage Area - Top 60% */}
       <div className="relative h-[65vh] w-full overflow-hidden">
-        {/* Slanted 3-Column Layout */}
-        {/* Single Main Hero Image */}
-        <div className="absolute inset-0">
-          <img
-            src="/ファーストビュー４.png"
-            alt="Hero Background"
-            className="h-full w-full object-cover object-[75%_center] sm:object-center"
-          />
-        </div>
+        {/* Animated Split Image Container */}
+        {loaded ? (
+          <div className="relative h-full w-full">
+            {/* Shard 1 (Left) - Slides from Top-Left */}
+            <div
+              className={`${shardBaseClass} ${
+                isAssembled
+                  ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
+                  : '-translate-x-full -translate-y-1/4 scale-110 opacity-0'
+              }`}
+              style={{
+                backgroundImage: `url(${imageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center', // Using center as requested for general view
+                clipPath: clips.left,
+                zIndex: 10,
+                transitionDuration: duration,
+                transitionTimingFunction: ease,
+              }}
+            />
+
+            {/* Shard 2 (Middle) - Slides from Bottom */}
+            <div
+              className={`${shardBaseClass} ${
+                isAssembled
+                  ? 'translate-y-0 scale-100 opacity-100'
+                  : 'translate-y-full scale-95 opacity-0'
+              }`}
+              style={{
+                backgroundImage: `url(${imageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                clipPath: clips.middle,
+                zIndex: 20,
+                transitionDuration: duration,
+                transitionTimingFunction: ease,
+              }}
+            />
+
+            {/* Shard 3 (Right) - Slides from Top-Right */}
+            <div
+              className={`${shardBaseClass} ${
+                isAssembled
+                  ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
+                  : '-translate-y-1/4 translate-x-full scale-110 opacity-0'
+              }`}
+              style={{
+                backgroundImage: `url(${imageUrl})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                clipPath: clips.right,
+                zIndex: 10,
+                transitionDuration: duration,
+                transitionTimingFunction: ease,
+              }}
+            />
+
+            {/* Subtle separator lines when assembled */}
+            {isAssembled && (
+              <div className="pointer-events-none absolute inset-0 opacity-20 transition-opacity delay-1000 duration-1000">
+                <div className="absolute left-[37.5%] top-0 h-full w-[2px] -translate-x-1/2 rotate-[8deg] bg-white/50 blur-[1px]" />
+                <div className="absolute left-[67.5%] top-0 h-full w-[2px] -translate-x-1/2 rotate-[8deg] bg-white/50 blur-[1px]" />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="h-full w-full animate-pulse bg-slate-900" />
+        )}
 
         {/* Gradient Overlay for smooth transition to text area */}
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"></div>
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"
+          style={{ zIndex: 30 }}
+        ></div>
       </div>
 
       {/* Text Content Area - Bottom 35-40% */}
-      <div className="relative z-10 -mt-12 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
+      <div className="relative z-40 -mt-12 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
         {/* Gold Banner */}
         <div className="animate-fade-in-up relative mb-6">
           <div className="absolute -inset-1 rounded-full bg-amber-600/20 blur-sm"></div>
