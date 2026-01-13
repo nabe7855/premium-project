@@ -179,33 +179,36 @@ const Trust: React.FC = () => {
               個人の才能 × 組織の仕組み = 圧倒的な成長エンジン
             </p>
           </div>
-          <div className="space-y-8">
+          <div className="grid gap-6 md:grid-cols-3">
             {systemPillars.map((pillar, idx) => (
               <motion.div
                 key={idx}
-                initial={{ opacity: 0, x: idx % 2 === 0 ? -40 : 40 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: idx * 0.2 }}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: idx * 0.15 }}
                 viewport={{ once: true }}
-                className={`flex flex-col gap-6 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-lg lg:flex-row ${
-                  idx % 2 === 1 ? 'lg:flex-row-reverse' : ''
-                }`}
+                className="group relative overflow-hidden rounded-2xl shadow-xl"
               >
-                <div className="lg:w-2/5">
-                  <div className="aspect-[3/2] overflow-hidden lg:h-full">
-                    <img
-                      src={pillar.image}
-                      alt={pillar.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+                {/* Background Image */}
+                <div className="aspect-[4/3]">
+                  <img
+                    src={pillar.image}
+                    alt={pillar.title}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent"></div>
                 </div>
-                <div className="flex flex-col justify-center p-8 lg:w-3/5 lg:p-12">
-                  <div className="mb-4 text-4xl">{pillar.icon}</div>
-                  <h4 className="mb-4 font-serif text-xl font-bold text-slate-900 sm:text-2xl">
-                    {pillar.title}
-                  </h4>
-                  <p className="leading-relaxed text-slate-600">{pillar.desc}</p>
+
+                {/* Text Overlay */}
+                <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
+                  <div className="mb-3 text-3xl">{pillar.icon}</div>
+                  <div className="mb-4 inline-block bg-white/90 px-4 py-2 backdrop-blur-sm">
+                    <h4 className="font-serif text-lg font-bold text-slate-900 sm:text-xl">
+                      {pillar.title}
+                    </h4>
+                  </div>
+                  <p className="leading-relaxed text-white/90">{pillar.desc}</p>
                 </div>
               </motion.div>
             ))}
