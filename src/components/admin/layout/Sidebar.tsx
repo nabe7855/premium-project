@@ -54,6 +54,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
     { href: '/admin/admin/reservations', icon: <ChartBarIcon />, label: '予約管理' },
     { href: '/admin/admin/advertising', icon: <PresentationChartLineIcon />, label: '広告・集客' },
+    { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
     { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
     { href: '/admin/admin/advertising/list', icon: <DocumentTextIcon />, label: '投稿済み広告' },
     { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },

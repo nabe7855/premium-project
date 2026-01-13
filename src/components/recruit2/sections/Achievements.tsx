@@ -25,7 +25,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: '副業でのパターン',
     subtitle: 'Mainly Weekends',
     image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop',
+      '/キャストモデル１.png',
     workPattern: {
       frequency: '月に5回',
       hours: '19:00〜26:00迄の勤務',
@@ -40,7 +40,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: 'フルタイム並行パターン',
     subtitle: 'Evenings Only',
     image:
-      'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=800&auto=format&fit=crop',
+      '/キャストモデル２.png',
     workPattern: {
       frequency: '月に12回',
       hours: '20:00〜24:00迄の勤務',
@@ -55,7 +55,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: '週末集中パターン',
     subtitle: 'Weekend Warrior',
     image:
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop',
+      '/キャストモデル３.png',
     workPattern: {
       frequency: '月に8回',
       hours: '15:00〜23:00迄の勤務',

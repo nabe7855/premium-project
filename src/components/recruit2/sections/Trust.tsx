@@ -119,7 +119,7 @@ const Trust: React.FC = () => {
           ))}
         </motion.div>
 
-        {/* Locations Section */}
+        {/* Locations Section - Strategic Positioning */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -127,40 +127,242 @@ const Trust: React.FC = () => {
           viewport={{ once: true }}
           className="mb-24"
         >
-          <div className="mb-12 text-center">
-            <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
-              全国主要都市で展開
-            </h3>
-            <p className="text-sm text-slate-600">激戦区で磨かれた、再現性の高い成功メソッド</p>
-          </div>
-          <div className="grid gap-6 md:grid-cols-3">
-            {locations.map((location, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                viewport={{ once: true }}
-                className="group relative overflow-hidden rounded-2xl bg-slate-900 shadow-xl"
-              >
-                <div className="aspect-[4/3] overflow-hidden">
-                  <img
-                    src={location.image}
-                    alt={location.city}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent"></div>
+          <div className="mb-16 text-center">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="mb-6 inline-block"
+            >
+              <div className="relative">
+                <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl"></div>
+                <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-amber-500/30 bg-gradient-to-br from-slate-900 to-indigo-950 shadow-xl">
+                  <span className="font-serif text-2xl font-bold text-amber-400">Un</span>
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <div className="mb-2 flex items-baseline gap-2">
-                    <h4 className="font-serif text-2xl font-bold text-white">{location.city}</h4>
-                    <span className="text-sm text-amber-400">{location.stores}店舗</span>
+              </div>
+            </motion.div>
+            <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
+              全国主要都市を制圧した、
+              <br className="sm:hidden" />
+              勝ち続ける組織の布陣
+            </h3>
+            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-600">
+              東京・大阪・名古屋。日本の激戦区で長年戦い続けてきた実績。
+              <br className="hidden sm:block" />
+              三大都市を束ねるひとつの成長エンジンが、あなたの成功を支えます。
+            </p>
+          </div>
+
+          {/* Strategic Triangle Layout */}
+          <div className="relative mx-auto max-w-5xl">
+            {/* Connecting Lines */}
+            <svg
+              className="absolute inset-0 h-full w-full"
+              style={{ zIndex: 0 }}
+              viewBox="0 0 1000 800"
+              preserveAspectRatio="xMidYMid meet"
+            >
+              <defs>
+                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#d97706" stopOpacity="0.2" />
+                  <stop offset="50%" stopColor="#d97706" stopOpacity="0.5" />
+                  <stop offset="100%" stopColor="#d97706" stopOpacity="0.2" />
+                </linearGradient>
+              </defs>
+              {/* Tokyo to Osaka */}
+              <motion.line
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.5, delay: 0.5 }}
+                viewport={{ once: true }}
+                x1="250"
+                y1="200"
+                x2="750"
+                y2="200"
+                stroke="url(#lineGradient)"
+                strokeWidth="2"
+                strokeDasharray="5,5"
+              />
+              {/* Osaka to Nagoya */}
+              <motion.line
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.5, delay: 0.7 }}
+                viewport={{ once: true }}
+                x1="750"
+                y1="200"
+                x2="500"
+                y2="600"
+                stroke="url(#lineGradient)"
+                strokeWidth="2"
+                strokeDasharray="5,5"
+              />
+              {/* Nagoya to Tokyo */}
+              <motion.line
+                initial={{ pathLength: 0, opacity: 0 }}
+                whileInView={{ pathLength: 1, opacity: 1 }}
+                transition={{ duration: 1.5, delay: 0.9 }}
+                viewport={{ once: true }}
+                x1="500"
+                y1="600"
+                x2="250"
+                y2="200"
+                stroke="url(#lineGradient)"
+                strokeWidth="2"
+                strokeDasharray="5,5"
+              />
+            </svg>
+
+            {/* City Cards in Triangle Formation */}
+            <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2">
+              {/* Tokyo - Top Left */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
+                viewport={{ once: true }}
+                className="group relative z-10 md:col-span-1"
+              >
+                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={locations[0].image}
+                      alt="東京"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                    {/* City Badge */}
+                    <div className="absolute left-6 top-6">
+                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                          Capital
+                        </span>
+                      </div>
+                    </div>
                   </div>
-                  <div className="h-1 w-12 rounded-full bg-amber-500"></div>
+                  <div className="p-6">
+                    <div className="mb-3 flex items-baseline gap-3">
+                      <h4 className="font-serif text-3xl font-bold text-slate-900">東京</h4>
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                        {locations[0].stores}店舗
+                      </span>
+                    </div>
+                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
+                  </div>
                 </div>
               </motion.div>
-            ))}
+
+              {/* Osaka - Top Right */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: -30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
+                viewport={{ once: true }}
+                className="group relative z-10 md:col-span-1"
+              >
+                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={locations[1].image}
+                      alt="大阪"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                    {/* City Badge */}
+                    <div className="absolute left-6 top-6">
+                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                          West Hub
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="mb-3 flex items-baseline gap-3">
+                      <h4 className="font-serif text-3xl font-bold text-slate-900">大阪</h4>
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                        {locations[1].stores}店舗
+                      </span>
+                    </div>
+                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* Nagoya - Bottom Center */}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8, y: 30 }}
+                whileInView={{ opacity: 1, scale: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: 0.7 }}
+                viewport={{ once: true }}
+                className="group relative z-10 md:col-span-2 md:mx-auto md:w-1/2"
+              >
+                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={locations[2].image}
+                      alt="名古屋"
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                    {/* City Badge */}
+                    <div className="absolute left-6 top-6">
+                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                          Central
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="mb-3 flex items-baseline gap-3">
+                      <h4 className="font-serif text-3xl font-bold text-slate-900">名古屋</h4>
+                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                        {locations[2].stores}店舗
+                      </span>
+                    </div>
+                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Central Brand Symbol */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.5 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 1, delay: 1.2 }}
+              viewport={{ once: true }}
+              className="absolute left-1/2 top-1/2 z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block"
+            >
+              <div className="relative">
+                <div className="absolute -inset-8 animate-pulse rounded-full bg-amber-500/20 blur-2xl"></div>
+                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-amber-500/50 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 shadow-2xl">
+                  <div className="text-center">
+                    <div className="font-serif text-xs font-bold text-amber-400">Un moment</div>
+                    <div className="text-[10px] text-slate-400">pour toi</div>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
           </div>
+
+          {/* Bottom Stats */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 1.4 }}
+            viewport={{ once: true }}
+            className="mt-16 text-center"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-50 px-6 py-3">
+              <span className="text-amber-600">⚡</span>
+              <p className="text-sm font-bold text-slate-800">
+                三大都市を束ねる、ひとつの成長エンジン
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* System Pillars */}

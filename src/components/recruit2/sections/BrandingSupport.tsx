@@ -80,15 +80,15 @@ const BrandingSupport: React.FC = () => {
               <div className="relative z-10 grid grid-cols-2 gap-4">
                 <div className="space-y-4 pt-12">
                   <div className="rounded-3xl overflow-hidden aspect-[3/4] shadow-2xl border border-slate-800">
-                    <img src="https://images.unsplash.com/photo-1492681290082-e932832941e6?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 1" />
+                    <img src="/キャストモデル１.png" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 1" />
                   </div>
                   <div className="rounded-3xl overflow-hidden aspect-square shadow-2xl border border-slate-800">
-                    <img src="https://images.unsplash.com/photo-1522071823991-b9671f30c46f?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 2" />
+                    <img src="/キャストモデル２.png" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 2" />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="rounded-3xl overflow-hidden aspect-square shadow-2xl border border-slate-800">
-                    <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 3" />
+                    <img src="/キャストモデル３.png" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 3" />
                   </div>
                   <div className="rounded-3xl overflow-hidden aspect-[3/4] shadow-2xl border border-slate-800">
                     <img src="https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600" className="w-full h-full object-cover filter brightness-75 hover:brightness-100 transition-all duration-700" alt="Professional 4" />
