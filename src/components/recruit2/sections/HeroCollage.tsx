@@ -21,81 +21,22 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
     return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  // Placeholder images - using stylish/cool portraits
-  const images = [
-    'https://images.unsplash.com/photo-1618077360395-f3068be8e001?q=80&w=800&auto=format&fit=crop', // Model 1
-    'https://images.unsplash.com/photo-1541339907198-e08756ebafe3?q=80&w=800&auto=format&fit=crop', // Club vibes
-    'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=800&auto=format&fit=crop', // Model 2
-    'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?q=80&w=800&auto=format&fit=crop', // Model 3
-  ];
-
   return (
     <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 font-sans">
       {/* Background/Collage Area - Top 60% */}
       <div className="relative h-[65vh] w-full overflow-hidden">
-        {/* Dynamic angled collage */}
-        <div className="absolute inset-0 flex -rotate-3 scale-110 transform items-center justify-center">
-          <div className="-ml-[10%] grid w-[120%] grid-cols-4 gap-2 opacity-80 sm:gap-4">
-            {/* Column 1 */}
-            <div className="mt-12 flex flex-col gap-4">
-              <img
-                src={images[0]}
-                alt="Cast 1"
-                className="h-64 w-full rounded-xl object-cover shadow-2xl brightness-75 transition-all duration-700 hover:brightness-100"
-              />
-              <img
-                src={images[1]}
-                alt="Interior"
-                className="h-48 w-full rounded-xl object-cover shadow-2xl brightness-50 transition-all duration-700 hover:brightness-100"
-              />
-            </div>
-
-            {/* Column 2 - Main Focus */}
-            <div className="-mt-8 flex flex-col gap-4">
-              <img
-                src={images[2]}
-                alt="Cast 2"
-                className="h-80 w-full rounded-xl border border-slate-700 object-cover shadow-2xl brightness-90 transition-all duration-700 hover:brightness-110"
-              />
-              <img
-                src={images[3]}
-                alt="Cast 3"
-                className="h-56 w-full rounded-xl object-cover shadow-2xl brightness-50 transition-all duration-700 hover:brightness-100"
-              />
-            </div>
-
-            {/* Column 3 */}
-            <div className="mt-20 flex flex-col gap-4">
-              <img
-                src={images[1]}
-                alt="Cast 4"
-                className="h-56 w-full rounded-xl object-cover shadow-2xl brightness-75 transition-all duration-700 hover:brightness-100"
-              />
-              <img
-                src={images[0]}
-                alt="Cast 5"
-                className="h-72 w-full rounded-xl object-cover shadow-2xl brightness-50 transition-all duration-700 hover:brightness-100"
-              />
-            </div>
-
-            {/* Column 4 */}
-            <div className="-mt-4 flex hidden flex-col gap-4 sm:flex">
-              <img
-                src={images[3]}
-                alt="Cast 6"
-                className="h-64 w-full rounded-xl object-cover shadow-2xl brightness-50 transition-all duration-700 hover:brightness-100"
-              />
-              <img
-                src={images[2]}
-                alt="Cast 7"
-                className="h-64 w-full rounded-xl object-cover shadow-2xl brightness-50 transition-all duration-700 hover:brightness-100"
-              />
-            </div>
-          </div>
+        {/* Slanted 3-Column Layout */}
+        {/* Single Main Hero Image */}
+        <div className="absolute inset-0">
+          <img
+            src="/ファーストビュー４.png"
+            alt="Hero Background"
+            className="h-full w-full object-cover object-top brightness-[0.7]"
+          />
         </div>
 
         {/* Gradient Overlay for smooth transition to text area */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-slate-950/60 to-slate-950"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/10 via-slate-950/40 to-slate-950"></div>
       </div>
 
       {/* Text Content Area - Bottom 35-40% */}
