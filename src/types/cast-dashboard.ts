@@ -16,12 +16,11 @@ export interface CastLevel {
   maxExperience: number;
 }
 
-
-
 export interface AuthUser {
-  id: string;              // SupabaseのユーザーID
-  email: string;           // Supabaseのメールアドレス
+  id: string; // SupabaseのユーザーID
+  email: string; // Supabaseのメールアドレス
   isAuthenticated: boolean;
+  role?: string; // ユーザーロール (admin, cast, etc.)
 }
 
 export interface Badge {
@@ -40,9 +39,9 @@ export interface CastSchedule {
   id: string;
   cast_id: string;
   store_id: string;
-  work_date: string;        // YYYY-MM-DD
-  start_datetime: string;   // ISO形式
-  end_datetime: string;     // ISO形式
+  work_date: string; // YYYY-MM-DD
+  start_datetime: string; // ISO形式
+  end_datetime: string; // ISO形式
   status: ScheduleStatus;
 }
 

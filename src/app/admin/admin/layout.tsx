@@ -2,12 +2,36 @@
 
 import Header from '@/components/admin/layout/Header';
 import Sidebar from '@/components/admin/layout/Sidebar';
+import { useAuth } from '@/hooks/useAuth';
 import { Page } from '@/types/dashboard';
-import React, { useState } from 'react';
+import { Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [currentPage] = useState<Page>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || !user.isAuthenticated || user.role !== 'admin') {
+        router.push('/admin/login');
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading || !user || !user.isAuthenticated || user.role !== 'admin') {
+    return (
+      <div className="flex h-screen items-center justify-center bg-brand-primary">
+        <div className="text-center">
+          <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-accent" />
+          <p className="mt-4 text-brand-text-secondary">認証中...</p>
+        </div>
+      </div>
+    );
+  }
 
   // 現在のページタイトルを算出
   const getPageTitle = () => {

@@ -100,6 +100,17 @@ export default function BannerManagementPage() {
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
 
+    // Debug logging
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    console.log('--- Upload Debug Info ---');
+    console.log('User:', session?.user?.id || 'Not Logged In');
+    console.log('Bucket:', 'banners');
+    console.log('FilePath:', filePath);
+    console.log('File:', file.name, file.type, file.size);
+    console.log('-------------------------');
+
     const { error: uploadError } = await supabase.storage.from('banners').upload(filePath, file);
 
     if (uploadError) {
@@ -133,6 +144,11 @@ export default function BannerManagementPage() {
 
     setIsSaving(true);
     try {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      console.log('Current Session:', session);
+
       let finalImageUrl = formData.imageUrl;
 
       // 1. Upload new image if selected

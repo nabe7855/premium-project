@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { supabase } from "@/lib/supabaseClient";
-import { AuthUser } from "@/types/cast-dashboard";
+import { supabase } from '@/lib/supabaseClient';
+import { AuthUser } from '@/types/cast-dashboard';
+import { useEffect, useState } from 'react';
 
 export function useAuth() {
   const [user, setUser] = useState<AuthUser | null>(null);
@@ -16,10 +16,18 @@ export function useAuth() {
       } = await supabase.auth.getUser();
 
       if (user) {
+        // ロールを取得
+        const { data: roleData } = await supabase
+          .from('roles')
+          .select('role')
+          .eq('user_id', user.id)
+          .single();
+
         setUser({
           id: user.id,
           email: user.email!,
           isAuthenticated: true,
+          role: roleData?.role,
         });
       }
       setLoading(false);
@@ -28,19 +36,25 @@ export function useAuth() {
     getUser();
 
     // 🔹 ログイン/ログアウトイベントを監視
-    const { data: listener } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        if (session?.user) {
-          setUser({
-            id: session.user.id,
-            email: session.user.email!,
-            isAuthenticated: true,
-          });
-        } else {
-          setUser(null);
-        }
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (session?.user) {
+        // ロールを取得
+        const { data: roleData } = await supabase
+          .from('roles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single();
+
+        setUser({
+          id: session.user.id,
+          email: session.user.email!,
+          isAuthenticated: true,
+          role: roleData?.role,
+        });
+      } else {
+        setUser(null);
       }
-    );
+    });
 
     return () => {
       listener.subscription.unsubscribe();
@@ -55,15 +69,23 @@ export function useAuth() {
     });
 
     if (error) {
-      console.error("ログインエラー:", error.message);
+      console.error('ログインエラー:', error.message);
       return false;
     }
 
     if (data.user) {
+      // ロールを取得
+      const { data: roleData } = await supabase
+        .from('roles')
+        .select('role')
+        .eq('user_id', data.user.id)
+        .single();
+
       setUser({
         id: data.user.id,
         email: data.user.email!,
         isAuthenticated: true,
+        role: roleData?.role,
       });
       return true;
     }
