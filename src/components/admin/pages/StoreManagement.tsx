@@ -110,21 +110,36 @@ export default function StoreManagement() {
   };
 
   const handleFileUpload = async (file: File): Promise<string> => {
+    // ファイル名のサニタイズ（日本語などのマルチバイト文字を排除）
+    const fileExt = file.name.split('.').pop() || 'png';
+    const fileName = `${Date.now()}.${fileExt}`;
+
     setUploading(true);
     try {
-      const fileName = `${Date.now()}-${file.name}`;
       const { error: uploadError } = await supabase.storage
         .from('store-images')
         .upload(fileName, file);
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        // エラー内容に応じた日本語メッセージ
+        let message = '画像のアップロードに失敗しました。';
+        if (uploadError.message.includes('row-level security')) {
+          message =
+            '画像のアップロード権限がありません（RLSポリシーエラー）。管理者に問い合わせてください。';
+        } else if (uploadError.message.includes('bucket not found')) {
+          message = '保存先のバケットが見つかりません。';
+        }
+        throw new Error(message);
+      }
 
       const { data } = supabase.storage.from('store-images').getPublicUrl(fileName);
 
       return data.publicUrl;
-    } catch (err) {
-      console.error('Upload error:', err);
-      throw new Error('画像のアップロードに失敗しました');
+    } catch (err: any) {
+      console.error('Upload error details:', err);
+      // ダイアログを表示して通知
+      alert(err.message || 'アップロード中に予期せぬエラーが発生しました。');
+      throw err;
     } finally {
       setUploading(false);
     }
