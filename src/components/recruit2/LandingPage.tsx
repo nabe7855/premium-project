@@ -1,4 +1,5 @@
 import React from 'react';
+import Achievements from './sections/Achievements';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
 import ComicSlider from './sections/ComicSlider';
@@ -19,6 +20,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat }) => {
       <HeroCollage onOpenChat={onOpenChat} />
       <div id="trust">
         <Trust />
+      </div>
+      <div id="achievements">
+        <Achievements />
       </div>
       <div id="comic">
         <ComicSlider />
