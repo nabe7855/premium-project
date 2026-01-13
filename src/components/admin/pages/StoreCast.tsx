@@ -14,14 +14,28 @@ interface UnifiedTag {
 }
 
 // Component for displaying a single tag
+const PRESET_COLORS = [
+  '#ef4444', // Red
+  '#f97316', // Orange
+  '#eab308', // Yellow
+  '#22c55e', // Green
+  '#06b6d4', // Cyan
+  '#3b82f6', // Blue
+  '#8b5cf6', // Violet
+  '#ec4899', // Pink
+  '#6b7280', // Gray
+];
+
 // Component for displaying a single tag
 const Tag: React.FC<{ tag: UnifiedTag; onRemove: () => void }> = ({ tag, onRemove }) => (
   <span
     className="mr-2 flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-sm"
     style={{
       backgroundColor:
-        tag.type === 'status' ? tag.color || 'rgba(6, 182, 212, 0.2)' : 'rgba(107, 114, 128, 0.2)',
-      color: tag.type === 'status' ? tag.textColor || '#22d3ee' : '#9ca3af',
+        tag.color ||
+        (tag.type === 'status' ? 'rgba(6, 182, 212, 0.2)' : 'rgba(107, 114, 128, 0.2)'),
+      color: tag.textColor || (tag.type === 'status' ? '#22d3ee' : '#e5e7eb'),
+      border: `1px solid ${tag.color || 'transparent'}`,
     }}
   >
     {tag.name}
@@ -121,41 +135,63 @@ const StoreCastCard: React.FC<{
 // Tag Management UI
 const TagManagement: React.FC<{
   tags: UnifiedTag[];
-  onAdd: (name: string, type: 'status' | 'feature') => void;
+  onAdd: (name: string, type: 'status' | 'feature', color: string) => void;
   onDelete: (id: string, type: 'status' | 'feature') => void;
 }> = ({ tags, onAdd, onDelete }) => {
   const [newName, setNewName] = useState('');
   const [newType, setNewType] = useState<'status' | 'feature'>('status');
+  const [selectedColor, setSelectedColor] = useState(PRESET_COLORS[4]); // Default to Cyan
 
   return (
     <Card title="タグ・ステータス管理" className="mb-8">
-      <div className="mb-6 flex flex-col gap-4 rounded-lg border border-gray-800 bg-brand-primary/50 p-4 md:flex-row">
-        <div className="flex-1">
-          <label className="mb-1 block text-xs text-brand-text-secondary">新規タグ名</label>
-          <input
-            type="text"
-            value={newName}
-            onChange={(e) => setNewName(e.target.value)}
-            placeholder="例: 新人, セクシー系"
-            className="w-full rounded border border-gray-700 bg-brand-primary px-3 py-2 text-sm text-white transition-all focus:ring-2 focus:ring-brand-accent"
-          />
+      <div className="mb-6 flex flex-col gap-4 rounded-lg border border-gray-800 bg-brand-primary/50 p-4">
+        <div className="flex flex-col gap-4 md:flex-row">
+          <div className="flex-1">
+            <label className="mb-1 block text-xs text-brand-text-secondary">新規タグ名</label>
+            <input
+              type="text"
+              value={newName}
+              onChange={(e) => setNewName(e.target.value)}
+              placeholder="例: 新人, セクシー系"
+              className="w-full rounded border border-gray-700 bg-brand-primary px-3 py-2 text-sm text-white transition-all focus:ring-2 focus:ring-brand-accent"
+            />
+          </div>
+          <div className="w-full md:w-40">
+            <label className="mb-1 block text-xs text-brand-text-secondary">種類</label>
+            <select
+              value={newType}
+              onChange={(e) => setNewType(e.target.value as 'status' | 'feature')}
+              className="w-full rounded border border-gray-700 bg-brand-primary px-3 py-2 text-sm text-white focus:ring-2 focus:ring-brand-accent"
+            >
+              <option value="status">ステータス (強調)</option>
+              <option value="feature">一般タグ</option>
+            </select>
+          </div>
         </div>
-        <div className="w-full md:w-40">
-          <label className="mb-1 block text-xs text-brand-text-secondary">種類</label>
-          <select
-            value={newType}
-            onChange={(e) => setNewType(e.target.value as 'status' | 'feature')}
-            className="w-full rounded border border-gray-700 bg-brand-primary px-3 py-2 text-sm text-white focus:ring-2 focus:ring-brand-accent"
-          >
-            <option value="status">ステータス (強調)</option>
-            <option value="feature">一般タグ</option>
-          </select>
+
+        {/* Color Picker */}
+        <div>
+          <label className="mb-2 block text-xs text-brand-text-secondary">タグの色を選択</label>
+          <div className="flex flex-wrap gap-2">
+            {PRESET_COLORS.map((color) => (
+              <button
+                key={color}
+                onClick={() => setSelectedColor(color)}
+                className={`h-8 w-8 rounded-full border-2 transition-transform hover:scale-110 ${
+                  selectedColor === color ? 'scale-110 border-white' : 'border-transparent'
+                }`}
+                style={{ backgroundColor: color }}
+                aria-label={`Select color ${color}`}
+              />
+            ))}
+          </div>
         </div>
-        <div className="flex items-end">
+
+        <div className="flex justify-end">
           <button
             onClick={() => {
               if (newName.trim()) {
-                onAdd(newName, newType);
+                onAdd(newName, newType, selectedColor);
                 setNewName('');
               }
             }}
@@ -175,7 +211,7 @@ const TagManagement: React.FC<{
             <span
               className="mr-2 inline-block h-2.5 w-2.5 rounded-full shadow-sm"
               style={{
-                backgroundColor: tag.type === 'status' ? tag.color || '#06b6d4' : '#6b7280',
+                backgroundColor: tag.color || (tag.type === 'status' ? '#06b6d4' : '#6b7280'),
               }}
             ></span>
             <span className="mr-3 text-sm font-medium">{tag.name}</span>
@@ -348,20 +384,29 @@ export default function StoreCast() {
   }, [selectedStore]);
 
   // Master Management Actions
-  const handleAddMasterTag = async (name: string, type: 'status' | 'feature') => {
-    console.log('Adding tag:', { name, type });
+  const handleAddMasterTag = async (name: string, type: 'status' | 'feature', color: string) => {
+    console.log('Adding tag:', { name, type, color });
     try {
       if (type === 'status') {
         const { data, error } = await supabase
           .from('status_master')
-          .insert([{ name }])
+          .insert([{ name, label_color: color, text_color: '#ffffff' }])
           .select()
           .single();
         if (error) {
           console.error('Status insert error:', error);
           throw error;
         }
-        setAvailableTags((prev) => [...prev, { id: data.id, name: data.name, type: 'status' }]);
+        setAvailableTags((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            name: data.name,
+            type: 'status',
+            color: data.label_color,
+            textColor: data.text_color,
+          },
+        ]);
         alert('ステータスを追加しました');
       } else {
         const { data, error } = await supabase
@@ -373,7 +418,12 @@ export default function StoreCast() {
           console.error('Feature insert error:', error);
           throw error;
         }
-        setAvailableTags((prev) => [...prev, { id: data.id, name: data.name, type: 'feature' }]);
+        // Local update with selected color (persistence depends on feature_master capabilities, usually features don't store color in older schema)
+        // If we want features to have colors, we'd need to migrate DB. For now, we update local state so it appears colored in this session.
+        setAvailableTags((prev) => [
+          ...prev,
+          { id: data.id, name: data.name, type: 'feature', color: color },
+        ]);
         alert('タグを追加しました');
       }
     } catch (err: any) {
