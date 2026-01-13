@@ -1,85 +1,79 @@
 'use client';
 
+import { supabase } from '@/lib/supabaseClient';
 import {
   Edit2,
   Eye,
   EyeOff,
   Image as ImageIcon,
   Link as LinkIcon,
+  Loader2,
   Plus,
   Trash2,
   X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface Banner {
   id: string;
   title: string;
   description: string;
-  imageUrl: string;
-  linkUrl: string;
-  isActive: boolean;
-  displayOrder: number;
-  createdAt: string;
+  image_url: string; // Database column name snake_case
+  link_url: string; // Database column name snake_case
+  is_active: boolean; // Database column name snake_case
+  display_order: number; // Database column name snake_case
+  created_at: string;
 }
 
-// Mock data
-const MOCK_BANNERS: Banner[] = [
-  {
-    id: '1',
-    title: '新人キャスト募集中',
-    description: '未経験者大歓迎！充実の研修制度で安心スタート',
-    imageUrl: '/banner-recruit.jpg',
-    linkUrl: '/recruit',
-    isActive: true,
-    displayOrder: 1,
-    createdAt: '2024-01-10',
-  },
-  {
-    id: '2',
-    title: '限定キャンペーン実施中',
-    description: '今月限定の特別オファー',
-    imageUrl: '/banner-campaign.jpg',
-    linkUrl: '/campaign',
-    isActive: true,
-    displayOrder: 2,
-    createdAt: '2024-01-08',
-  },
-  {
-    id: '3',
-    title: 'イベント情報',
-    description: '次回イベントのお知らせ',
-    imageUrl: '/banner-event.jpg',
-    linkUrl: '/events',
-    isActive: false,
-    displayOrder: 3,
-    createdAt: '2024-01-05',
-  },
-];
-
 export default function BannerManagementPage() {
-  const [banners, setBanners] = useState<Banner[]>(MOCK_BANNERS);
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const [editingBanner, setEditingBanner] = useState<Banner | null>(null);
+
+  // Form State
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    imageUrl: '',
+    imageUrl: '', // For preview
     linkUrl: '',
     isActive: true,
     displayOrder: 1,
   });
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
+
+  const fetchBanners = async () => {
+    setIsLoading(true);
+    const { data, error } = await supabase
+      .from('banners')
+      .select('*')
+      .order('display_order', { ascending: true });
+
+    if (error) {
+      console.error('Error fetching banners:', error);
+      alert('バナー情報の取得に失敗しました');
+    } else {
+      setBanners(data || []);
+    }
+    setIsLoading(false);
+  };
 
   const handleOpenModal = (banner?: Banner) => {
+    setSelectedFile(null);
     if (banner) {
       setEditingBanner(banner);
       setFormData({
         title: banner.title,
         description: banner.description,
-        imageUrl: banner.imageUrl,
-        linkUrl: banner.linkUrl,
-        isActive: banner.isActive,
-        displayOrder: banner.displayOrder,
+        imageUrl: banner.image_url,
+        linkUrl: banner.link_url,
+        isActive: banner.is_active,
+        displayOrder: banner.display_order,
       });
     } else {
       setEditingBanner(null);
@@ -89,7 +83,7 @@ export default function BannerManagementPage() {
         imageUrl: '',
         linkUrl: '',
         isActive: true,
-        displayOrder: banners.length + 1,
+        displayOrder: banners.length > 0 ? Math.max(...banners.map((b) => b.display_order)) + 1 : 1,
       });
     }
     setIsModalOpen(true);
@@ -98,30 +92,131 @@ export default function BannerManagementPage() {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setEditingBanner(null);
+    setSelectedFile(null);
   };
 
-  const handleSave = () => {
-    if (editingBanner) {
-      setBanners(banners.map((b) => (b.id === editingBanner.id ? { ...b, ...formData } : b)));
-    } else {
-      const newBanner: Banner = {
-        id: Date.now().toString(),
-        ...formData,
-        createdAt: new Date().toISOString().split('T')[0],
+  const uploadImage = async (file: File): Promise<string | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+    const filePath = `${fileName}`;
+
+    const { error: uploadError } = await supabase.storage.from('banners').upload(filePath, file);
+
+    if (uploadError) {
+      console.error('Error uploading image:', uploadError);
+      return null;
+    }
+
+    const { data } = supabase.storage.from('banners').getPublicUrl(filePath);
+    return data.publicUrl;
+  };
+
+  const deleteStorageImage = async (imageUrl: string) => {
+    try {
+      // Extract file path from URL
+      // Expected URL format: .../storage/v1/object/public/banners/filename.jpg
+      const urlObj = new URL(imageUrl);
+      const pathParts = urlObj.pathname.split('/banners/');
+      if (pathParts.length > 1) {
+        const filePath = pathParts[1]; // "filename.jpg"
+        const { error } = await supabase.storage.from('banners').remove([filePath]);
+        if (error) console.error('Error deleting storage image:', error);
+      }
+    } catch (e) {
+      console.error('Error parsing image URL for deletion:', e);
+    }
+  };
+
+  const handleSave = async () => {
+    if (!formData.title) return alert('タイトルを入力してください');
+    if (!selectedFile && !formData.imageUrl) return alert('画像を設定してください');
+
+    setIsSaving(true);
+    try {
+      let finalImageUrl = formData.imageUrl;
+
+      // 1. Upload new image if selected
+      if (selectedFile) {
+        const uploadedUrl = await uploadImage(selectedFile);
+        if (!uploadedUrl) throw new Error('画像のアップロードに失敗しました');
+
+        // Delete old image if updating and image changed
+        if (editingBanner && editingBanner.image_url && editingBanner.image_url !== uploadedUrl) {
+          await deleteStorageImage(editingBanner.image_url);
+        }
+
+        finalImageUrl = uploadedUrl;
+      }
+
+      const bannerData = {
+        title: formData.title,
+        description: formData.description,
+        image_url: finalImageUrl,
+        link_url: formData.linkUrl,
+        is_active: formData.isActive,
+        display_order: formData.displayOrder,
+        updated_at: new Date().toISOString(),
       };
-      setBanners([...banners, newBanner]);
+
+      if (editingBanner) {
+        // Update
+        const { error } = await supabase
+          .from('banners')
+          .update(bannerData)
+          .eq('id', editingBanner.id);
+
+        if (error) throw error;
+      } else {
+        // Create
+        const { error } = await supabase.from('banners').insert([bannerData]);
+        if (error) throw error;
+      }
+
+      await fetchBanners();
+      handleCloseModal();
+    } catch (error: any) {
+      console.error('Error saving banner:', error);
+      alert(`保存に失敗しました: ${error.message}`);
+    } finally {
+      setIsSaving(false);
     }
-    handleCloseModal();
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('このバナーを削除してもよろしいですか？')) {
-      setBanners(banners.filter((b) => b.id !== id));
+  const handleDelete = async (banner: Banner) => {
+    if (!confirm('本当にこのバナーを削除してもよろしいですか？')) return;
+
+    try {
+      // 1. Delete image from storage
+      if (banner.image_url) {
+        await deleteStorageImage(banner.image_url);
+      }
+
+      // 2. Delete record
+      const { error } = await supabase.from('banners').delete().eq('id', banner.id);
+      if (error) throw error;
+
+      setBanners(banners.filter((b) => b.id !== banner.id));
+    } catch (error: any) {
+      console.error('Error deleting banner:', error);
+      alert('削除に失敗しました');
     }
   };
 
-  const handleToggleActive = (id: string) => {
-    setBanners(banners.map((b) => (b.id === id ? { ...b, isActive: !b.isActive } : b)));
+  const handleToggleActive = async (banner: Banner) => {
+    try {
+      const { error } = await supabase
+        .from('banners')
+        .update({ is_active: !banner.is_active })
+        .eq('id', banner.id);
+
+      if (error) throw error;
+
+      // Optimistic update
+      setBanners(banners.map((b) => (b.id === banner.id ? { ...b, is_active: !b.is_active } : b)));
+    } catch (error) {
+      console.error('Error updating status:', error);
+      alert('ステータス更新に失敗しました');
+    }
   };
 
   return (
@@ -153,22 +248,25 @@ export default function BannerManagementPage() {
           <div className="rounded-2xl border border-gray-700/50 bg-brand-secondary p-6 shadow-lg">
             <div className="text-sm font-medium text-brand-text-secondary">公開中</div>
             <div className="mt-2 text-3xl font-bold text-emerald-400">
-              {banners.filter((b) => b.isActive).length}
+              {banners.filter((b) => b.is_active).length}
             </div>
           </div>
           <div className="rounded-2xl border border-gray-700/50 bg-brand-secondary p-6 shadow-lg">
             <div className="text-sm font-medium text-brand-text-secondary">非公開</div>
             <div className="mt-2 text-3xl font-bold text-gray-500">
-              {banners.filter((b) => !b.isActive).length}
+              {banners.filter((b) => !b.is_active).length}
             </div>
           </div>
         </div>
 
         {/* Banner List */}
-        <div className="space-y-4">
-          {banners
-            .sort((a, b) => a.displayOrder - b.displayOrder)
-            .map((banner) => (
+        {isLoading ? (
+          <div className="flex justify-center py-20">
+            <Loader2 className="h-10 w-10 animate-spin text-brand-accent" />
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {banners.map((banner) => (
               <div
                 key={banner.id}
                 className="overflow-hidden rounded-2xl border border-gray-700/50 bg-brand-secondary shadow-lg transition-all hover:border-gray-600"
@@ -176,9 +274,9 @@ export default function BannerManagementPage() {
                 <div className="flex flex-col gap-6 p-6 md:flex-row md:items-center">
                   {/* Banner Preview */}
                   <div className="relative h-32 w-full flex-shrink-0 overflow-hidden rounded-xl bg-gray-800 md:w-48">
-                    {banner.imageUrl ? (
+                    {banner.image_url ? (
                       <img
-                        src={banner.imageUrl}
+                        src={banner.image_url}
                         alt={banner.title}
                         className="h-full w-full object-cover"
                       />
@@ -187,7 +285,7 @@ export default function BannerManagementPage() {
                         <ImageIcon className="h-12 w-12 text-gray-600" />
                       </div>
                     )}
-                    {!banner.isActive && (
+                    {!banner.is_active && (
                       <div className="absolute inset-0 flex items-center justify-center bg-black/60">
                         <span className="rounded-full border border-slate-600 bg-slate-800 px-3 py-1 text-xs font-bold text-gray-300">
                           非公開
@@ -206,29 +304,29 @@ export default function BannerManagementPage() {
                         </p>
                       </div>
                       <span className="ml-4 rounded-full border border-gray-700 bg-brand-primary px-3 py-1 text-xs font-semibold text-brand-text-secondary">
-                        表示順: {banner.displayOrder}
+                        表示順: {banner.display_order}
                       </span>
                     </div>
                     <div className="mt-3 flex items-center gap-4 text-sm text-gray-500">
                       <div className="flex items-center gap-1">
                         <LinkIcon className="h-4 w-4" />
-                        <span className="max-w-[200px] truncate">{banner.linkUrl}</span>
+                        <span className="max-w-[200px] truncate">{banner.link_url}</span>
                       </div>
-                      <div>作成日: {banner.createdAt}</div>
+                      <div>作成日: {new Date(banner.created_at).toLocaleDateString()}</div>
                     </div>
                   </div>
 
                   {/* Actions */}
                   <div className="flex flex-row gap-2 md:flex-col">
                     <button
-                      onClick={() => handleToggleActive(banner.id)}
+                      onClick={() => handleToggleActive(banner)}
                       className={`flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-semibold transition-all ${
-                        banner.isActive
+                        banner.is_active
                           ? 'border border-emerald-900 bg-emerald-900/30 text-emerald-400 hover:bg-emerald-900/50'
                           : 'border border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700'
                       }`}
                     >
-                      {banner.isActive ? (
+                      {banner.is_active ? (
                         <>
                           <Eye className="h-4 w-4" />
                           公開中
@@ -248,7 +346,7 @@ export default function BannerManagementPage() {
                       編集
                     </button>
                     <button
-                      onClick={() => handleDelete(banner.id)}
+                      onClick={() => handleDelete(banner)}
                       className="flex items-center gap-2 rounded-lg border border-red-900 bg-red-900/30 px-4 py-2 text-sm font-semibold text-red-400 transition-all hover:bg-red-900/50"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -258,13 +356,13 @@ export default function BannerManagementPage() {
                 </div>
               </div>
             ))}
-        </div>
-
-        {banners.length === 0 && (
-          <div className="rounded-2xl border-2 border-dashed border-gray-700 bg-brand-secondary p-12 text-center">
-            <ImageIcon className="mx-auto h-16 w-16 text-gray-600" />
-            <h3 className="mt-4 text-lg font-semibold text-white">バナーがありません</h3>
-            <p className="mt-2 text-sm text-gray-500">新規バナーを追加してください</p>
+            {banners.length === 0 && (
+              <div className="rounded-2xl border-2 border-dashed border-gray-700 bg-brand-secondary p-12 text-center">
+                <ImageIcon className="mx-auto h-16 w-16 text-gray-600" />
+                <h3 className="mt-4 text-lg font-semibold text-white">バナーがありません</h3>
+                <p className="mt-2 text-sm text-gray-500">新規バナーを追加してください</p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -321,7 +419,10 @@ export default function BannerManagementPage() {
                         />
                       </div>
                       <button
-                        onClick={() => setFormData({ ...formData, imageUrl: '' })}
+                        onClick={() => {
+                          setFormData({ ...formData, imageUrl: '' });
+                          setSelectedFile(null);
+                        }}
                         className="inline-flex items-center gap-2 rounded-md border border-red-900 bg-red-900/30 px-4 py-2 text-sm font-semibold text-red-400 transition-colors hover:bg-red-900/50"
                       >
                         <Trash2 className="h-4 w-4" />
@@ -346,7 +447,7 @@ export default function BannerManagementPage() {
                             onChange={(e) => {
                               const file = e.target.files?.[0];
                               if (file) {
-                                // Create a fake local URL for preview
+                                setSelectedFile(file);
                                 const url = URL.createObjectURL(file);
                                 setFormData({ ...formData, imageUrl: url });
                               }
@@ -415,15 +516,26 @@ export default function BannerManagementPage() {
             <div className="mt-8 flex gap-4">
               <button
                 onClick={handleCloseModal}
-                className="flex-1 rounded-lg border border-gray-600 px-6 py-3 font-semibold text-gray-300 transition-all hover:bg-gray-800"
+                disabled={isSaving}
+                className="flex-1 rounded-lg border border-gray-600 px-6 py-3 font-semibold text-gray-300 transition-all hover:bg-gray-800 disabled:opacity-50"
               >
                 キャンセル
               </button>
               <button
                 onClick={handleSave}
-                className="flex-1 rounded-lg bg-brand-accent px-6 py-3 font-semibold text-white transition-all hover:bg-opacity-90 active:scale-95"
+                disabled={isSaving}
+                className="flex flex-1 items-center justify-center rounded-lg bg-brand-accent px-6 py-3 font-semibold text-white transition-all hover:bg-opacity-90 active:scale-95 disabled:opacity-50"
               >
-                {editingBanner ? '更新' : '追加'}
+                {isSaving ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    保存中...
+                  </>
+                ) : editingBanner ? (
+                  '更新'
+                ) : (
+                  '追加'
+                )}
               </button>
             </div>
           </div>
