@@ -174,14 +174,14 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
 
         {/* Main Heading */}
         <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
-          ここは、<span className="text-amber-500">「稼ぐ場所」</span>ではなく
+          ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
           <br className="hidden sm:block" />
           <span className="italic text-white underline decoration-amber-500 decoration-2 underline-offset-4">
-            “必要とされる自分”
+            “価値ある男”
           </span>
           に
           <br className="sm:hidden" />
-          なれる場所。
+          としてゼロから稼げる場所。
         </h1>
 
         {/* Subtext */}
@@ -228,22 +228,129 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
           </a>
         </div>
 
-        {/* Countdown */}
-        <div className="animate-fade-in-up mt-8 flex flex-col items-center delay-300">
-          <div className="mb-2 text-xs text-slate-400 sm:text-sm">
-            残り <span className="font-bold text-white">4</span> 名で募集終了
-          </div>
-          <div className="rounded-full border border-amber-500/20 bg-amber-500/10 px-3 py-1 font-mono text-[10px] text-amber-500/80 sm:text-sm">
-            タイムリミット: {formatTime(timeLeft)}
-          </div>
+        {/* Open Cast Recruitment Heading */}
+        <div className="animate-fade-in-up delay-250 mt-10 flex flex-col items-center">
+          <h2 className="mb-2 text-3xl font-black text-white sm:text-4xl md:text-5xl">
+            オープンキャスト募集！！
+          </h2>
+          <p className="text-lg font-bold text-slate-300 sm:text-xl">
+            10名限定で超好待遇であなたをプロデュースします。
+          </p>
         </div>
 
-        {/* Bottom Brand */}
-        <div className="mt-12 opacity-60">
-          <p className="font-serif text-xl italic tracking-widest text-amber-600/50 sm:text-2xl">
-            Un moment pour toi
-          </p>
-          <p className="mt-1 text-center text-[10px] text-slate-600">アン モモン プートア</p>
+        {/* Countdown - Urgent Design */}
+        <div className="animate-fade-in-up mt-8 flex flex-col items-center delay-300">
+          {/* Remaining Spots - Large and Urgent */}
+          <div className="mb-6 flex items-center gap-3">
+            <div className="h-3 w-3 animate-pulse rounded-full bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]"></div>
+            <p className="text-lg font-bold text-slate-300 sm:text-xl">
+              残り{' '}
+              <span className="animate-pulse text-4xl font-black text-red-500 sm:text-5xl">4</span>{' '}
+              名で募集終了
+            </p>
+            <div className="h-3 w-3 animate-pulse rounded-full bg-red-500 shadow-[0_0_20px_rgba(239,68,68,0.8)]"></div>
+          </div>
+
+          {/* Timer - Bold and Prominent */}
+          <div className="relative mb-8">
+            {/* Glow effect */}
+            <div className="absolute -inset-4 animate-pulse rounded-2xl bg-red-500/20 blur-xl"></div>
+
+            {/* Timer container */}
+            <div className="relative rounded-2xl border-2 border-red-500 bg-gradient-to-br from-red-950/80 to-slate-950/80 px-8 py-6 shadow-[0_0_40px_rgba(239,68,68,0.4)] backdrop-blur-sm sm:px-12 sm:py-8">
+              <div className="mb-2 text-center text-xs font-bold uppercase tracking-widest text-red-400 sm:text-sm">
+                ⚠️ タイムリミット ⚠️
+              </div>
+              <div className="font-mono text-5xl font-black tabular-nums text-red-500 drop-shadow-[0_0_10px_rgba(239,68,68,0.8)] sm:text-6xl md:text-7xl">
+                {formatTime(timeLeft)}
+              </div>
+              <div className="mt-3 text-center text-sm font-bold text-red-200 sm:text-base">
+                本日23:59までにエントリーされた方のみ
+                <br />
+                オープンキャスト枠として選考対象となります
+              </div>
+              <div className="mt-2 text-center text-xs text-red-300/80 sm:text-sm">
+                育成体制の都合上、今回の採用は10名までとさせていただいています
+              </div>
+            </div>
+          </div>
+
+          {/* Benefits Section */}
+          <div className="mb-8 w-full max-w-2xl rounded-2xl border border-amber-500/30 bg-gradient-to-br from-amber-950/20 to-slate-950/40 p-6 backdrop-blur-sm sm:p-8">
+            <h3 className="mb-4 text-center text-xl font-bold text-amber-400 sm:text-2xl">
+              🌟 今回のオープンキャスト限定特典
+            </h3>
+            <ul className="space-y-3 text-slate-200">
+              <li className="flex items-start gap-3">
+                <span className="mt-1 text-amber-500">✓</span>
+                <span className="text-sm sm:text-base">
+                  <strong className="text-amber-400">専属プロデューサー制度</strong> -
+                  あなた専任の担当者が徹底サポート
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-1 text-amber-500">✓</span>
+                <span className="text-sm sm:text-base">
+                  <strong className="text-amber-400">最短1ヶ月でデビュー可能</strong> -
+                  独自の育成プログラムで即戦力化
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-1 text-amber-500">✓</span>
+                <span className="text-sm sm:text-base">
+                  <strong className="text-amber-400">未経験者専用の研修カリキュラム</strong> -
+                  ゼロからプロへ
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-1 text-amber-500">✓</span>
+                <span className="text-sm sm:text-base">
+                  <strong className="text-amber-400">デビュー後3ヶ月間の最低保証制度</strong> -
+                  収入面も安心
+                </span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="mt-1 text-amber-500">✓</span>
+                <span className="text-sm sm:text-base">
+                  <strong className="text-amber-400">初期費用完全無料</strong> -
+                  リスクゼロでスタート
+                </span>
+              </li>
+            </ul>
+          </div>
+
+          {/* CTA Buttons */}
+          <div className="mb-6 flex w-full max-w-md flex-col gap-4 sm:flex-row">
+            <button
+              onClick={onOpenChat}
+              className="group relative flex-1 overflow-hidden rounded-2xl bg-gradient-to-r from-red-600 to-red-500 px-8 py-5 text-lg font-black text-white shadow-[0_0_40px_rgba(239,68,68,0.5)] transition-all hover:scale-105 hover:shadow-[0_0_60px_rgba(239,68,68,0.7)] active:scale-95"
+            >
+              <span className="relative z-10">今すぐオープンキャストに応募する</span>
+              <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/20 to-transparent duration-1000 ease-in-out group-hover:translate-x-full"></div>
+            </button>
+            <button
+              onClick={onOpenChat}
+              className="flex-1 rounded-2xl border-2 border-slate-600 bg-slate-800/80 px-8 py-5 text-lg font-bold text-white transition-all hover:border-slate-500 hover:bg-slate-700 active:scale-95"
+            >
+              まずは話を聞いてみる
+            </button>
+          </div>
+
+          {/* Reassurance Text */}
+          <div className="mb-6 text-center text-sm text-slate-400">
+            <p>※応募は30秒で完了します</p>
+            <p>※面接ではありません。まずはお気軽にご相談ください</p>
+          </div>
+
+          {/* Warning message */}
+          <div className="max-w-md rounded-lg border border-red-500/30 bg-red-950/30 px-4 py-3 text-center backdrop-blur-sm">
+            <p className="text-sm font-medium text-red-300 sm:text-base">
+              ⏰ 研修リソースの関係上、定員に達し次第、次回募集は未定となります
+            </p>
+            <p className="mt-2 text-xs text-red-400/80">
+              ※定員に達した場合、タイマー終了前でも受付終了となります
+            </p>
+          </div>
         </div>
       </div>
     </section>
