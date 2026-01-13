@@ -25,7 +25,7 @@ const AppContent: React.FC = () => {
   return (
     <div className={`flex min-h-screen flex-col ${isChatOpen ? 'overflow-hidden' : ''}`}>
       <Header onOpenChat={openChat} />
-      <main className="flex-grow pt-16">
+      <main className="flex-grow">
         <Routes>
           <Route path="/" element={<LandingPage onOpenChat={openChat} />} />
           <Route path="/form-quick" element={<QuickForm />} />

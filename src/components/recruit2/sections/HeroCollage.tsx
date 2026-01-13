@@ -31,16 +31,16 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
           <img
             src="/ファーストビュー４.png"
             alt="Hero Background"
-            className="h-full w-full object-cover object-top brightness-[0.7]"
+            className="h-full w-full object-cover object-[75%_center] sm:object-center"
           />
         </div>
 
         {/* Gradient Overlay for smooth transition to text area */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/10 via-slate-950/40 to-slate-950"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"></div>
       </div>
 
       {/* Text Content Area - Bottom 35-40% */}
-      <div className="relative z-10 -mt-20 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-32">
+      <div className="relative z-10 -mt-12 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
         {/* Gold Banner */}
         <div className="animate-fade-in-up relative mb-6">
           <div className="absolute -inset-1 rounded-full bg-amber-600/20 blur-sm"></div>
