@@ -14,7 +14,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   const [timeLeft, setTimeLeft] = useState(24 * 3600);
   const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
   const [loaded, setLoaded] = useState(false);
-  const imageUrl = '/ファーストビュー４.png';
+  const imageUrl = '/ファーストビュー.png';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,18 +47,34 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
 
   const isAssembled = animationState === AnimationState.ASSEMBLED;
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
   // 画像の分割位置（クリップパス）の設定
-  // polygon(...) の中の数値を変更すると、切れ目の位置や角度が変わります
-  // 形式: polygon(x1 y1, x2 y2, x3 y3, ...)
-  // x = 横の位置（0%が左端、100%が右端）, y = 縦の位置（0%が上端、100%が下端）
-  const clips = {
-    // 左側のパーツ
-    left: 'polygon(0 0, 45% 0, 30% 100%, 0 100%)',
-    // 中央のパーツ
-    middle: 'polygon(45% 0, 75% 0, 60% 100%, 30% 100%)',
-    // 右側のパーツ
-    right: 'polygon(75% 0, 100% 0, 100% 100%, 60% 100%)',
+  // PC用 (横長画面用) - 黒い車線に合わせた調整
+  const desktopClips = {
+    left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
+    middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
+    right: 'polygon(66% 0, 100% 0, 100% 100%, 53% 100%)',
   };
+
+  // モバイル用 (縦長画面用) - 画面幅に合わせて比率を維持しつつ調整
+  // モバイルでも黒い線に合わせるため、PCと近い比率または画像を考慮した値を設定
+  const mobileClips = {
+    left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
+    middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
+    right: 'polygon(66% 0, 100% 0, 100% 100%, 53% 100%)',
+  };
+
+  const clips = isMobile ? mobileClips : desktopClips;
   // duration: アニメーションにかかる時間。2000ms程度が推奨です。
   // ease: ふわっと動き出し、中間で加速し、最後にゆっくり結合するカーブ (cubic-bezier)
   const duration = '2000ms';
