@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { useEffect, useState } from 'react';
 
 interface Status {
   id: string;
@@ -27,7 +27,8 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
       // 在籍中キャスト＋priority
       const { data: castData, error: castError } = await supabase
         .from('casts')
-        .select(`
+        .select(
+          `
           id,
           name,
           is_active,
@@ -36,7 +37,8 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
             store_id,
             priority
           )
-        `)
+        `,
+        )
         .eq('cast_store_memberships.store_id', storeId)
         .eq('is_active', true);
 
@@ -54,17 +56,28 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
           name: c.name,
           statuses: c.cast_statuses?.map((cs: any) => cs.status_master) || [],
           priority: c.cast_store_memberships?.[0]?.priority ?? null,
-        })) ?? []
+        })) ?? [],
       );
     };
     load();
   }, [storeId]);
 
+  const [priorityErrors, setPriorityErrors] = useState<Record<string, string>>({});
+
   // ✅ おすすめ順位更新
   const handlePriorityChange = async (castId: string, value: number) => {
-    setCasts((prev) =>
-      prev.map((c) => (c.id === castId ? { ...c, priority: value } : c))
-    );
+    // UI-side duplicate check
+    const isDuplicate = casts.some((c) => c.id !== castId && c.priority === value);
+
+    const newErrors = { ...priorityErrors };
+    if (isDuplicate && value > 0) {
+      newErrors[castId] = '同じ順位のキャストが既に存在します';
+    } else {
+      delete newErrors[castId];
+    }
+    setPriorityErrors(newErrors);
+
+    setCasts((prev) => prev.map((c) => (c.id === castId ? { ...c, priority: value } : c)));
 
     const { error } = await supabase
       .from('cast_store_memberships')
@@ -79,11 +92,7 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
   };
 
   // ✅ タグ更新
-  const handleToggleStatus = async (
-    castId: string,
-    status: Status,
-    checked: boolean
-  ) => {
+  const handleToggleStatus = async (castId: string, status: Status, checked: boolean) => {
     if (checked) {
       await supabase.from('cast_statuses').insert({
         cast_id: castId,
@@ -107,8 +116,8 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
                 ? [...c.statuses, status]
                 : c.statuses.filter((s) => s.id !== status.id),
             }
-          : c
-      )
+          : c,
+      ),
     );
   };
 
@@ -118,28 +127,29 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
         {casts.map((cast) => (
           <li
             key={cast.id}
-            className="rounded-xl border border-cyan-600/40 bg-gray-900 shadow-lg shadow-cyan-500/20 p-4 transition hover:shadow-cyan-400/40 hover:border-cyan-400/60"
+            className="rounded-xl border border-cyan-600/40 bg-gray-900 p-4 shadow-lg shadow-cyan-500/20 transition hover:border-cyan-400/60 hover:shadow-cyan-400/40"
           >
             {/* キャスト名 */}
-            <h2 className="font-bold text-lg sm:text-xl mb-3 text-cyan-300 tracking-wide">
+            <h2 className="mb-3 text-lg font-bold tracking-wide text-cyan-300 sm:text-xl">
               {cast.name}
             </h2>
 
             {/* おすすめ順位 */}
             <div className="mb-3">
-              <label className="block text-sm font-medium mb-1 text-cyan-200">
-                おすすめ順位
-              </label>
+              <label className="mb-1 block text-sm font-medium text-cyan-200">おすすめ順位</label>
               <input
                 type="number"
                 min={1}
                 value={cast.priority ?? ''}
-                onChange={(e) =>
-                  handlePriorityChange(cast.id, parseInt(e.target.value) || 0)
-                }
-                className="w-24 rounded bg-gray-800 border border-cyan-600/50 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-cyan-400"
+                onChange={(e) => handlePriorityChange(cast.id, parseInt(e.target.value) || 0)}
+                className={`w-24 rounded border ${
+                  priorityErrors[cast.id] ? 'border-red-500' : 'border-cyan-600/50'
+                } bg-gray-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-cyan-400`}
                 placeholder="例: 1"
               />
+              {priorityErrors[cast.id] && (
+                <p className="mt-1 text-[10px] text-red-500">{priorityErrors[cast.id]}</p>
+              )}
             </div>
 
             {/* ステータス（タグ） */}
@@ -149,19 +159,16 @@ export default function StoreCastList({ storeId }: { storeId: string }) {
                 return (
                   <label
                     key={status.id}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-lg text-sm cursor-pointer border transition-all
-                      ${
-                        checked
-                          ? 'bg-gradient-to-r from-cyan-600 to-purple-600 text-white border-cyan-400 shadow shadow-cyan-400/40'
-                          : 'bg-gray-800 text-gray-300 border-gray-600 hover:bg-gray-700'
-                      }`}
+                    className={`flex cursor-pointer items-center gap-1 rounded-lg border px-3 py-1 text-sm transition-all ${
+                      checked
+                        ? 'border-cyan-400 bg-gradient-to-r from-cyan-600 to-purple-600 text-white shadow shadow-cyan-400/40'
+                        : 'border-gray-600 bg-gray-800 text-gray-300 hover:bg-gray-700'
+                    }`}
                   >
                     <input
                       type="checkbox"
                       checked={checked}
-                      onChange={(e) =>
-                        handleToggleStatus(cast.id, status, e.target.checked)
-                      }
+                      onChange={(e) => handleToggleStatus(cast.id, status, e.target.checked)}
                       className="hidden"
                     />
                     {status.name}

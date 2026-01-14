@@ -50,19 +50,23 @@ const Tag: React.FC<{ tag: UnifiedTag; onRemove: () => void }> = ({ tag, onRemov
 const StoreCastCard: React.FC<{
   cast: Cast;
   availableTags: UnifiedTag[];
+  currentStoreId: string;
   onAddTag: (castId: string, tag: UnifiedTag) => void;
   onRemoveTag: (castId: string, tag: UnifiedTag) => void;
-}> = ({ cast, availableTags, onAddTag, onRemoveTag }) => {
+  onPriorityChange: (castId: string, priority: number) => void;
+  error?: string;
+}> = ({ cast, availableTags, currentStoreId, onAddTag, onRemoveTag, onPriorityChange, error }) => {
   const [isTagSelectorOpen, setIsTagSelectorOpen] = useState(false);
 
   // Filter available tags to only show ones the cast doesn't have
-  // We need to map cast.tags (strings) and cast statuses to tags
-  const currentTagNames = [...cast.tags, ...(cast.storeStatus ? [cast.storeStatus] : [])];
+  const currentTagNames = [...(cast.tags || []), ...(cast.storeStatus ? [cast.storeStatus] : [])];
 
-  const unpickedTags = availableTags.filter((t) => !currentTagNames.includes(t.name));
+  const unpickedTags = (availableTags || []).filter((t) => !currentTagNames.includes(t.name));
 
   // Combine current tags for display
-  const displayTags: UnifiedTag[] = availableTags.filter((t) => currentTagNames.includes(t.name));
+  const displayTags: UnifiedTag[] = (availableTags || []).filter((t) =>
+    currentTagNames.includes(t.name),
+  );
 
   return (
     <Card
@@ -81,6 +85,19 @@ const StoreCastCard: React.FC<{
         <div className="flex-1 overflow-hidden">
           <p className="truncate text-lg font-bold text-white">{cast.name}</p>
           <p className="truncate text-sm text-brand-text-secondary">{cast.catchphrase}</p>
+          <div className="mt-2 flex items-center space-x-2">
+            <span className="text-xs text-brand-text-secondary">表示順:</span>
+            <input
+              type="number"
+              min="1"
+              value={cast.storePriorities?.[currentStoreId] || ''}
+              onChange={(e) => onPriorityChange(cast.id, parseInt(e.target.value) || 0)}
+              className={`w-16 rounded border ${
+                error ? 'border-red-500' : 'border-gray-700'
+              } bg-brand-primary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
+            />
+          </div>
+          {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
         </div>
       </div>
 
@@ -239,6 +256,48 @@ export default function StoreCast() {
   const [casts, setCasts] = useState<Cast[]>([]);
   const [availableTags, setAvailableTags] = useState<UnifiedTag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [priorityErrors, setPriorityErrors] = useState<Record<string, string>>({});
+
+  const handlePriorityChange = async (castId: string, value: number) => {
+    // UI-side duplicate check
+    const isDuplicate = casts.some(
+      (c) => c.id !== castId && c.storePriorities[selectedStore] === value,
+    );
+
+    const newErrors = { ...priorityErrors };
+    if (isDuplicate && value > 0) {
+      newErrors[castId] = '重複する順位です';
+    } else {
+      delete newErrors[castId];
+    }
+    setPriorityErrors(newErrors);
+
+    // Update local state
+    setCasts((prev) =>
+      prev.map((c) =>
+        c.id === castId
+          ? { ...c, storePriorities: { ...c.storePriorities, [selectedStore]: value } }
+          : c,
+      ),
+    );
+
+    // Only save to DB if it's not a duplicate (to avoid 409) or if user wants to force it
+    // But usually we should try to save if the user really wants to, DB will handle constraint.
+    // For now, let's just update DB.
+    try {
+      const { error } = await supabase
+        .from('cast_store_memberships')
+        .update({ priority: value })
+        .eq('cast_id', castId)
+        .eq('store_id', selectedStore);
+
+      if (error) {
+        console.error('Update priority error:', error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   // Initial Load: Stores and Masters
   useEffect(() => {
@@ -304,6 +363,7 @@ export default function StoreCast() {
           .from('cast_store_memberships')
           .select(
             `
+            priority,
             cast:casts (
               id, name, main_image_url, catch_copy, is_active
             )
@@ -343,7 +403,10 @@ export default function StoreCast() {
 
         // 3. Map and Merge
         const mappedCasts: Cast[] = memberData
-          .map((item: any) => item.cast)
+          .map((item: any) => ({
+            ...item.cast,
+            priority: item.priority,
+          }))
           .filter((c: any) => c && c.is_active)
           .map((c: any) => {
             // Find statuses for this cast
@@ -355,6 +418,7 @@ export default function StoreCast() {
               id: c.id,
               name: c.name,
               storeIds: [selectedStore],
+              storePriorities: { [selectedStore]: c.priority || 0 },
               status: '在籍中',
               storeStatus: (cStatuses[0]?.status_master as any)?.name || 'レギュラー',
               tags: cFeatures
@@ -530,8 +594,11 @@ export default function StoreCast() {
               key={cast.id}
               cast={cast}
               availableTags={availableTags}
+              currentStoreId={selectedStore}
               onAddTag={handleAddTagToCast}
               onRemoveTag={handleRemoveTagFromCast}
+              onPriorityChange={handlePriorityChange}
+              error={priorityErrors[cast.id]}
             />
           ))
         ) : (

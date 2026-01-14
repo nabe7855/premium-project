@@ -55,26 +55,64 @@ const CastCard: React.FC<{ cast: Cast; stores: Store[]; onSelect: (cast: Cast) =
 const CastDetailModal: React.FC<{
   cast: Cast;
   stores: Store[];
+  allCasts: Cast[]; // Added to check for duplicates
   onClose: () => void;
   onSave: (cast: Cast) => void;
-}> = ({ cast: initialCast, stores, onClose, onSave }) => {
-  const [cast, setCast] = useState<Cast>(initialCast);
+}> = ({ cast: initialCast, stores, allCasts, onClose, onSave }) => {
+  const [cast, setCast] = useState<Cast | null>(initialCast);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  if (!cast) return null;
+
+  const handlePriorityChange = (storeId: string, priority: number) => {
+    // Duplicate check
+    const isDuplicate = allCasts.some(
+      (c) => c.id !== cast.id && c.storePriorities?.[storeId] === priority,
+    );
+
+    const newErrors = { ...errors };
+    if (isDuplicate && priority > 0) {
+      newErrors[storeId] = '同じ順位のキャストが既に存在します';
+    } else {
+      delete newErrors[storeId];
+    }
+    setErrors(newErrors);
+
+    setCast({
+      ...cast,
+      storePriorities: {
+        ...cast.storePriorities,
+        [storeId]: priority,
+      },
+    });
+  };
 
   const handleStoreChange = (storeId: string, checked: boolean) => {
     const currentStoreIds = cast.storeIds;
     let newStoreIds: string[];
+    let newStorePriorities = { ...cast.storePriorities };
+
     if (checked) {
       newStoreIds = [...currentStoreIds, storeId];
+      // Assign next available priority if not already set
+      if (!newStorePriorities[storeId]) {
+        const storeCasts = allCasts.filter((c) => c.storeIds?.includes(storeId));
+        const maxPriority = Math.max(
+          0,
+          ...storeCasts.map((c) => c.storePriorities?.[storeId] || 0),
+        );
+        newStorePriorities[storeId] = maxPriority + 1;
+      }
     } else {
       // Keep at least one store selected
       if (currentStoreIds.length > 1) {
         newStoreIds = currentStoreIds.filter((id) => id !== storeId);
+        delete newStorePriorities[storeId];
       } else {
-        // Prevent unchecking the last store
         return;
       }
     }
-    setCast({ ...cast, storeIds: newStoreIds });
+    setCast({ ...cast, storeIds: newStoreIds, storePriorities: newStorePriorities });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -83,9 +121,9 @@ const CastDetailModal: React.FC<{
   };
 
   const breakdownData = [
-    { name: '新規', value: cast.stats.breakdown.new },
-    { name: 'リピート', value: cast.stats.breakdown.repeat },
-    { name: 'フリー', value: cast.stats.breakdown.free },
+    { name: '新規', value: cast.stats?.breakdown?.new || 0 },
+    { name: 'リピート', value: cast.stats?.breakdown?.repeat || 0 },
+    { name: 'フリー', value: cast.stats?.breakdown?.free || 0 },
   ];
   const COLORS = ['#3E7BFA', '#10B981', '#F59E0B'];
 
@@ -151,7 +189,7 @@ const CastDetailModal: React.FC<{
                       </ResponsiveContainer>
                       <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
                         <span className="text-3xl font-bold text-white">
-                          {cast.stats.designations}
+                          {cast.stats?.designations || 0}
                         </span>
                         <span className="text-sm text-brand-text-secondary">総指名</span>
                       </div>
@@ -179,7 +217,7 @@ const CastDetailModal: React.FC<{
                     <div className="h-40 w-full">
                       <ResponsiveContainer>
                         <BarChart
-                          data={cast.stats.monthlyPerformance}
+                          data={cast.stats?.monthlyPerformance || []}
                           margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
                         >
                           <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
@@ -230,22 +268,51 @@ const CastDetailModal: React.FC<{
                 </select>
               </div>
               <div>
-                <label className="text-sm text-brand-text-secondary">所属店舗（複数選択可）</label>
-                <div className="mt-2 grid grid-cols-2 gap-2 rounded-md border border-gray-700 bg-brand-primary p-2 sm:grid-cols-3">
-                  {stores.map((store) => (
-                    <label
-                      key={store.id}
-                      className="flex cursor-pointer items-center space-x-2 text-sm"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={cast.storeIds.includes(store.id)}
-                        onChange={(e) => handleStoreChange(store.id, e.target.checked)}
-                        className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
-                      />
-                      <span>{store.name}</span>
-                    </label>
-                  ))}
+                <label className="text-sm text-brand-text-secondary">
+                  所属店舗と表示順位（1〜）
+                </label>
+                <div className="mt-2 space-y-2 rounded-md border border-gray-700 bg-brand-primary p-3">
+                  {stores.map((store) => {
+                    const isChecked = cast.storeIds.includes(store.id);
+                    return (
+                      <div key={store.id} className="flex flex-col space-y-1">
+                        <div className="flex items-center justify-between">
+                          <label className="flex cursor-pointer items-center space-x-2 text-sm">
+                            <input
+                              type="checkbox"
+                              checked={isChecked}
+                              onChange={(e) => handleStoreChange(store.id, e.target.checked)}
+                              className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
+                            />
+                            <span className={isChecked ? 'text-white' : 'text-gray-500'}>
+                              {store.name}
+                            </span>
+                          </label>
+                          {isChecked && (
+                            <div className="flex items-center space-x-2">
+                              <span className="mt-1 text-xs text-brand-text-secondary">
+                                表示順:
+                              </span>
+                              <input
+                                type="number"
+                                min="1"
+                                value={cast.storePriorities[store.id] || ''}
+                                onChange={(e) =>
+                                  handlePriorityChange(store.id, parseInt(e.target.value) || 0)
+                                }
+                                className={`w-16 rounded border ${
+                                  errors[store.id] ? 'border-red-500' : 'border-gray-700'
+                                } bg-brand-secondary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
+                              />
+                            </div>
+                          )}
+                        </div>
+                        {isChecked && errors[store.id] && (
+                          <p className="text-[10px] text-red-500">{errors[store.id]}</p>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
               <div>
@@ -321,7 +388,8 @@ export default function AllCast() {
             catch_copy,
             main_image_url,
             cast_store_memberships (
-              store_id
+              store_id,
+              priority
             ),
             cast_statuses (
               status_master (
@@ -349,6 +417,10 @@ export default function AllCast() {
             id: c.id,
             name: c.name,
             storeIds: c.cast_store_memberships?.map((m: any) => m.store_id) || [],
+            storePriorities: (c.cast_store_memberships || []).reduce((acc: any, m: any) => {
+              acc[m.store_id] = m.priority || 0;
+              return acc;
+            }, {}),
             status: c.is_active ? '在籍中' : '離籍',
             storeStatus: storeStatus as '新人' | '店長おすすめ' | 'レギュラー',
             tags: [], // Tags can be added if needed
@@ -381,9 +453,65 @@ export default function AllCast() {
     fetchData();
   }, []);
 
-  const handleSave = (updatedCast: Cast) => {
-    setCasts(casts.map((c) => (c.id === updatedCast.id ? updatedCast : c)));
-    setSelectedCast(null);
+  const handleSave = async (updatedCast: Cast) => {
+    console.log('--- Start Saving Cast Details (Priority Aware) ---');
+    console.log('Target Cast ID:', updatedCast.id);
+    console.log('Requested Store IDs:', updatedCast.storeIds);
+
+    try {
+      // 1. Update basic cast information
+      const { error: castError } = await supabase
+        .from('casts')
+        .update({
+          name: updatedCast.name,
+          catch_copy: updatedCast.catchphrase,
+          manager_comment: updatedCast.managerComment,
+          is_active: updatedCast.status === '在籍中',
+        })
+        .eq('id', updatedCast.id);
+
+      if (castError) {
+        console.error('Error updating cast profile:', castError);
+        throw new Error(`プロフィールの更新に失敗しました: ${castError.message}`);
+      }
+      console.log('Cast profile updated successfully.');
+
+      // 2. Sync store memberships
+      console.log('Clearing old memberships...');
+      const { error: deleteError } = await supabase
+        .from('cast_store_memberships')
+        .delete()
+        .eq('cast_id', updatedCast.id);
+      if (deleteError) throw new Error(`削除失敗: ${deleteError.message}`);
+
+      // Then, insert new memberships with priority handling
+      if (updatedCast.storeIds.length > 0) {
+        const membershipData = updatedCast.storeIds.map((storeId) => ({
+          cast_id: updatedCast.id,
+          store_id: storeId,
+          priority: updatedCast.storePriorities[storeId] ?? 0,
+        }));
+
+        const { error: insertError } = await supabase
+          .from('cast_store_memberships')
+          .insert(membershipData);
+
+        if (insertError) {
+          console.error('Error inserting new memberships:', insertError);
+          throw new Error(`新しい店舗所属情報の保存に失敗しました: ${insertError.message}`);
+        }
+        console.log('New memberships inserted successfully.');
+      }
+
+      // Update local state and close modal
+      setCasts(casts.map((c) => (c.id === updatedCast.id ? updatedCast : c)));
+      setSelectedCast(null);
+      alert('キャスト情報を保存しました');
+      console.log('--- Save Process Completed Successfully ---');
+    } catch (error: any) {
+      console.error('Save failed:', error);
+      alert(error.message || '保存中にエラーが発生しました');
+    }
   };
 
   const filteredCasts = useMemo(() => {
@@ -470,8 +598,10 @@ export default function AllCast() {
 
       {selectedCast && (
         <CastDetailModal
+          key={selectedCast.id}
           cast={selectedCast}
           stores={stores}
+          allCasts={casts}
           onClose={() => setSelectedCast(null)}
           onSave={handleSave}
         />

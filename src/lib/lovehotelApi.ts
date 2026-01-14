@@ -233,13 +233,21 @@ export const deleteStorageImages = async (urls: string[]) => {
 // --- Master Management helpers ---
 
 export const upsertMaster = async (table: string, data: any) => {
+  console.log(`[upsertMaster] table: ${table}, data:`, data);
   const { error } = await supabase.from(table).upsert([data]);
-  if (error) throw error;
+  if (error) {
+    console.error(`[upsertMaster] Error updating ${table}:`, error);
+    throw error;
+  }
 };
 
 export const deleteMaster = async (table: string, id: string | number) => {
+  console.log(`[deleteMaster] table: ${table}, id: ${id}`);
   const { error } = await supabase.from(table).delete().eq('id', id);
-  if (error) throw error;
+  if (error) {
+    console.error(`[deleteMaster] Error deleting from ${table}:`, error);
+    throw error;
+  }
 };
 
 export const getPrefectureDetails = async (prefectureId: string) => {

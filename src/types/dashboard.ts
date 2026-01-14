@@ -16,7 +16,8 @@ export type Page =
 export interface Cast {
   id: string;
   name: string;
-  storeIds: string[]; // Changed from storeId: string
+  storeIds: string[];
+  storePriorities: Record<string, number>; // Added to track rank per store
   status: '在籍中' | '離籍';
   storeStatus: '新人' | '店長おすすめ' | 'レギュラー';
   tags: string[];

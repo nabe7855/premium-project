@@ -90,12 +90,21 @@ export default function MasterManagement() {
     };
 
     try {
-      await upsertMaster(tableMap[activeTab], formData);
+      // Clean up formData to remove joined data that shouldn't be sent to Supabase
+      const submissionData = { ...formData };
+      Object.keys(submissionData).forEach((key) => {
+        if (key.startsWith('lh_') || typeof submissionData[key] === 'object') {
+          delete submissionData[key];
+        }
+      });
+
+      console.log(`[handleSave] Saving to ${tableMap[activeTab]}:`, submissionData);
+      await upsertMaster(tableMap[activeTab], submissionData);
       toast.success('保存しました');
       setShowModal(false);
       loadItems();
     } catch (error) {
-      console.error(error);
+      console.error('[handleSave] Error:', error);
       toast.error('保存に失敗しました');
     }
   };
