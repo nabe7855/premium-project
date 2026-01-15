@@ -8,6 +8,7 @@ import Flow from './sections/Flow';
 import HeroCollage from './sections/HeroCollage';
 import IdealCandidate from './sections/IdealCandidate';
 import Income from './sections/Income';
+import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
 interface LandingPageProps {
@@ -19,6 +20,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => 
   return (
     <div className="overflow-hidden bg-slate-50">
       <HeroCollage onOpenChat={onOpenChat} />
+      <Philosophy />
       <div id="trust">
         <Trust />
       </div>

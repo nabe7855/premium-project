@@ -1,86 +1,45 @@
-'use client';
-import { MessageCircle, Phone } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
-
-// Components
-import ApplicationForm from '@/components/templates/store/fukuoka/page-templates/recruit/ApplicationForm';
-import Benefits from '@/components/templates/store/fukuoka/page-templates/recruit/Benefits';
-import CustomerProfiles from '@/components/templates/store/fukuoka/page-templates/recruit/CustomerProfiles';
-import FAQ from '@/components/templates/store/fukuoka/page-templates/recruit/FAQ';
-import Features from '@/components/templates/store/fukuoka/page-templates/recruit/Features';
-import Footer from '@/components/templates/store/fukuoka/page-templates/recruit/Footer';
-import Header from '@/components/templates/store/fukuoka/page-templates/recruit/Header';
-import Hero from '@/components/templates/store/fukuoka/page-templates/recruit/Hero';
-import JobDetails from '@/components/templates/store/fukuoka/page-templates/recruit/JobDetails';
-import SalarySimulation from '@/components/templates/store/fukuoka/page-templates/recruit/SalarySimulation';
+"use client";
+import React, { useState, useEffect } from 'react';
+import Header from '@/components/test2/Header';
+import MenuOverlay from '@/components/test2/MenuOverlay';
+import { COLORS } from '@/data/test2';
 
 const App: React.FC = () => {
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+  }, [isMenuOpen]);
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <Header isScrolled={isScrolled} />
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: COLORS.pastelPink }}>
+      <Header isMenuOpen={isMenuOpen} toggleMenu={toggleMenu} />
+      
+      <MenuOverlay isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
 
-      <main className="flex-grow">
-        <Hero />
-
-        <section id="features" className="bg-white py-20">
-          <Features />
-        </section>
-
-        <section id="customer-profiles" className="bg-slate-100 py-20">
-          <CustomerProfiles />
-        </section>
-
-        <section id="details" className="bg-white py-20">
-          <JobDetails />
-        </section>
-
-        <section id="salary" className="overflow-hidden bg-slate-900 py-20 text-white">
-          <SalarySimulation />
-        </section>
-
-        <section id="benefits" className="bg-white py-20">
-          <Benefits />
-        </section>
-
-        <section id="faq" className="bg-slate-50 py-20">
-          <FAQ />
-        </section>
-
-        <section id="apply" className="relative bg-white py-24">
-          <ApplicationForm />
-        </section>
-      </main>
-
-      <Footer />
-
-      {/* Floating Action Buttons for Mobile */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-gradient-to-t from-white via-white/80 to-transparent p-4 md:hidden">
-        <div className="flex gap-2">
-          <a
-            href="#apply"
-            className="flex flex-1 items-center justify-center rounded-full bg-[#06C755] px-4 py-3 font-bold text-white shadow-lg transition-transform active:scale-95"
-          >
-            <MessageCircle className="mr-2 h-5 w-5" />
-            LINEで応募
-          </a>
-          <a
-            href="tel:000-000-0000"
-            className="rounded-full bg-amber-500 p-3 text-white shadow-lg transition-transform active:scale-95"
-          >
-            <Phone className="h-6 w-6" />
-          </a>
+      <main className={`flex-1 transition-opacity duration-300 ${isMenuOpen ? 'opacity-30 pointer-events-none' : 'opacity-100'}`}>
+        <div className="flex flex-col items-center justify-center h-[calc(100vh-64px)] p-6 text-center">
+          <div className="mb-6 opacity-20">
+             <div className="w-16 h-16 border-4 border-[#D14D72] rounded-full flex items-center justify-center">
+                <span className="text-4xl">🍓</span>
+             </div>
+          </div>
+          <p className="text-[#4A2B2F] text-sm font-medium tracking-wide">
+            メニューからサービスを選択してください。
+          </p>
+          <p className="text-[#C5A059] text-[10px] mt-2 font-bold uppercase tracking-widest">
+            Strawberry Boys Premium
+          </p>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
