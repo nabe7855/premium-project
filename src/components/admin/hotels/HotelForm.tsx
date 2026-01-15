@@ -264,6 +264,27 @@ export default function HotelForm({ id }: HotelFormProps) {
         submitData.status = submitter.value;
       }
 
+      // Convert empty strings to null for numeric fields
+      const numericFields = [
+        'room_count',
+        'rest_price_min_weekday',
+        'rest_price_max_weekday',
+        'rest_price_min_weekend',
+        'rest_price_max_weekend',
+        'stay_price_min_weekday',
+        'stay_price_max_weekday',
+        'stay_price_min_weekend',
+        'stay_price_max_weekend',
+        'min_price_rest',
+        'min_price_stay',
+      ];
+
+      numericFields.forEach((field) => {
+        if (submitData[field] === '') {
+          submitData[field] = null;
+        }
+      });
+
       if (id) {
         await updateHotel(id, submitData, selectedAmenities, selectedServices, finalImages);
         toast.success('更新しました');
