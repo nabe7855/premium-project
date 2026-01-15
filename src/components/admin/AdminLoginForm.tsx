@@ -18,15 +18,19 @@ export default function AdminLoginForm() {
     setError('');
 
     try {
+      console.log('Attempting login for:', email);
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (authError) {
-        setError('認証に失敗しました。認証情報を確認してください。');
+        console.error('Auth error:', authError);
+        setError(`認証に失敗しました: ${authError.message}`);
         return;
       }
+
+      console.log('User authenticated:', data.user?.id);
 
       if (!data.user) {
         setError('ユーザー情報を取得できませんでした。');
@@ -40,7 +44,10 @@ export default function AdminLoginForm() {
         .eq('user_id', data.user.id)
         .single();
 
+      console.log('Role check:', { roleData, roleError });
+
       if (roleError || !roleData) {
+        console.error('Role fetch error:', roleError);
         setError('アクセス権限を確認できませんでした。');
         return;
       }
@@ -48,11 +55,13 @@ export default function AdminLoginForm() {
       if (roleData.role === 'admin') {
         router.push('/admin/admin');
       } else {
+        console.warn('User is not admin. Role:', roleData.role);
         setError('管理者権限がありません。');
         // Optional: sign out if they aren't admin to be safe
         await supabase.auth.signOut();
       }
     } catch (err) {
+      console.error('Unexpected error:', err);
       setError('システムエラーが発生しました。');
     } finally {
       setLoading(false);
