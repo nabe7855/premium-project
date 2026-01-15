@@ -1,4 +1,5 @@
 'use client';
+import ApplicationModal from '@/components/recruit2/ApplicationModal';
 import Chatbot from '@/components/recruit2/Chatbot';
 import FloatingCTA from '@/components/recruit2/FloatingCTA';
 import Footer from '@/components/recruit2/Footer';
@@ -13,6 +14,7 @@ import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 const AppContent: React.FC = () => {
   const location = useLocation();
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -22,21 +24,27 @@ const AppContent: React.FC = () => {
   const openChat = () => setIsChatOpen(true);
   const closeChat = () => setIsChatOpen(false);
 
+  const openForm = () => setIsFormOpen(true);
+  const closeForm = () => setIsFormOpen(false);
+
   return (
-    <div className={`flex min-h-screen flex-col ${isChatOpen ? 'overflow-hidden' : ''}`}>
-      <Header onOpenChat={openChat} />
+    <div
+      className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen ? 'overflow-hidden' : ''}`}
+    >
+      <Header onOpenForm={openForm} />
       <main className="flex-grow">
         <Routes>
-          <Route path="/" element={<LandingPage onOpenChat={openChat} />} />
+          <Route path="/" element={<LandingPage onOpenChat={openChat} onOpenForm={openForm} />} />
           <Route path="/form-quick" element={<QuickForm />} />
           <Route path="/form-full" element={<FullForm />} />
           <Route path="/thanks" element={<ThanksPage />} />
         </Routes>
       </main>
       <Footer />
-      {location.pathname === '/' && <FloatingCTA onOpenChat={openChat} />}
+      {location.pathname === '/' && <FloatingCTA onOpenChat={openChat} onOpenForm={openForm} />}
 
       <Chatbot isOpen={isChatOpen} onClose={closeChat} />
+      <ApplicationModal isOpen={isFormOpen} onClose={closeForm} />
     </div>
   );
 };

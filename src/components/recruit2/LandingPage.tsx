@@ -12,9 +12,10 @@ import Trust from './sections/Trust';
 
 interface LandingPageProps {
   onOpenChat: () => void;
+  onOpenForm: () => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat }) => {
+const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => {
   return (
     <div className="overflow-hidden bg-slate-50">
       <HeroCollage onOpenChat={onOpenChat} />
@@ -47,30 +48,43 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat }) => {
       </div>
 
       {/* Final CTA Section */}
-      <section className="bg-slate-900 py-20 text-center text-white">
-        <div className="container mx-auto max-w-3xl px-4">
-          <h2 className="mb-6 font-serif text-3xl font-bold leading-tight md:text-4xl">
+      <section className="bg-slate-900 py-24 text-center text-white">
+        <div className="container mx-auto max-w-4xl px-4">
+          <h2 className="mb-8 font-serif text-3xl font-bold leading-tight md:text-5xl">
             あなたの人生を変える一歩を、
             <br className="hidden md:block" />
             ここから始めませんか？
           </h2>
-          <p className="mb-10 text-lg text-slate-400">
+          <p className="mb-12 text-lg text-slate-400">
             私たちは、あなたの可能性を信じています。
             <br />
             誠実な一歩が、想像もしなかった未来を創り出します。
           </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+
+          <div className="flex flex-col gap-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <button
+                onClick={onOpenChat}
+                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-green-600 py-6 text-lg font-bold text-white shadow-xl transition-all hover:bg-green-700 hover:shadow-green-900/40 active:scale-95"
+              >
+                <span className="text-2xl transition-transform group-hover:scale-110">💬</span>
+                <span>チャットでまずは話を聞いてみる</span>
+              </button>
+              <button
+                onClick={onOpenChat}
+                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-amber-600 py-6 text-lg font-bold text-white shadow-xl transition-all hover:bg-amber-700 hover:shadow-amber-900/40 active:scale-95"
+              >
+                <span className="text-2xl transition-transform group-hover:scale-110">⚡</span>
+                <span>30秒でカンタン応募してみる</span>
+              </button>
+            </div>
+
             <button
-              onClick={onOpenChat}
-              className="flex items-center justify-center space-x-2 rounded-2xl bg-green-600 py-5 text-lg font-bold text-white shadow-xl transition-all hover:bg-green-700"
+              onClick={onOpenForm}
+              className="mx-auto flex w-full max-w-md items-center justify-center space-x-3 rounded-2xl border-2 border-slate-700 bg-transparent py-5 text-lg font-bold text-white transition-all hover:border-amber-500 hover:bg-amber-500/10 active:scale-95"
             >
-              <span>チャットでまずは話を聞いてみる</span>
-            </button>
-            <button
-              onClick={onOpenChat}
-              className="flex items-center justify-center rounded-2xl bg-amber-600 py-5 text-lg font-bold text-white shadow-xl transition-all hover:bg-amber-700"
-            >
-              <span>30秒でカンタン応募してみる</span>
+              <span className="text-xl">📝</span>
+              <span>応募フォームから応募する</span>
             </button>
           </div>
         </div>
