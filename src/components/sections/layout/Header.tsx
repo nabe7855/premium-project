@@ -78,9 +78,43 @@ export default function Header() {
           onClick={closeMenu}
           className="group relative flex flex-col items-center justify-center gap-5 rounded-[48px] border border-transparent bg-white px-2 py-9 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
         >
-          <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#FCF0F2] text-[#B1354E] transition-transform group-hover:scale-110">
-            <item.icon size={28} strokeWidth={1.5} />
-          </div>
+          {item.name === 'はじめての方へ' && currentStoreId === 'fukuoka' ? (
+            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
+              <img
+                src="/福岡初めての方へ.png"
+                alt={item.name}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : item.name === 'セラピスト一覧' && currentStoreId === 'fukuoka' ? (
+            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
+              <img
+                src="/福岡セラピスト一覧.png"
+                alt={item.name}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : item.name === '本日の出勤情報' && currentStoreId === 'fukuoka' ? (
+            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
+              <img
+                src="/福岡出勤情報.png"
+                alt={item.name}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : item.name === 'おすすめホテル一覧' && currentStoreId === 'fukuoka' ? (
+            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
+              <img
+                src="/福岡おすすめホテル一覧.png"
+                alt={item.name}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#FCF0F2] text-[#B1354E] transition-transform group-hover:scale-110">
+              <item.icon size={28} strokeWidth={1.5} />
+            </div>
+          )}
           <span className="px-1 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A]">
             {item.name}
           </span>
@@ -289,9 +323,19 @@ export default function Header() {
                       onClick={closeMenu}
                       className="group relative flex items-center gap-6 overflow-hidden rounded-[48px] border border-pink-100 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-lg active:scale-[0.98]"
                     >
-                      <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F5] text-[#D43D6F] transition-transform group-hover:scale-110">
-                        <newsItem.icon size={28} strokeWidth={1.5} />
-                      </div>
+                      {currentStoreId === 'fukuoka' ? (
+                        <div className="flex h-20 w-20 items-center justify-center transition-transform group-hover:scale-110">
+                          <img
+                            src="/福岡お知らせ.png"
+                            alt="News"
+                            className="h-full w-full object-contain"
+                          />
+                        </div>
+                      ) : (
+                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F5] text-[#D43D6F] transition-transform group-hover:scale-110">
+                          <newsItem.icon size={28} strokeWidth={1.5} />
+                        </div>
+                      )}
                       <div className="flex items-center gap-3">
                         <span className="text-[17px] font-black tracking-tight text-[#4A2B2F]">
                           {newsItem.name}
