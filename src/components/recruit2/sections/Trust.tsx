@@ -217,9 +217,7 @@ const Trust: React.FC = () => {
             >
               <div className="relative">
                 <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl"></div>
-                <div className="relative flex h-20 w-20 items-center justify-center rounded-full border-2 border-amber-500/30 bg-gradient-to-br from-slate-900 to-indigo-950 shadow-xl">
-                  <span className="font-serif text-2xl font-bold text-amber-400">Un</span>
-                </div>
+
               </div>
             </motion.div>
             <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
