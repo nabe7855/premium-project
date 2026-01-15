@@ -249,7 +249,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         <div className="animate-fade-in-up delay-250 mt-10 flex w-full max-w-5xl flex-col items-center px-4">
           <div className="w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
             <img
-              src="/recruit_banner_wide.png"
+              src="/オープンキャスト募集.png"
               alt="オープンキャスト募集 - 10名限定超好待遇"
               className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
             />
@@ -318,53 +318,46 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
 
               {/* Benefits Section */}
               <div className="mb-10">
-                <h3 className="mb-6 text-center text-2xl font-bold text-amber-300 sm:text-3xl">
-                  <span className="mr-2">👑</span>
+                <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-amber-300 sm:text-3xl">
                   オープンキャスト限定特典
-                  <span className="ml-2">👑</span>
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   {[
                     {
-                      icon: '🎯',
                       title: '専属プロデューサー制度',
-                      desc: 'あなた専任の担当者が徹底サポート',
+                      desc: '業界経験豊富な専任担当者が、あなたの個性を見極め、最短ルートでの成功をマンツーマンで徹底サポートします。',
                     },
                     {
-                      icon: '⚡',
                       title: '最短1ヶ月でデビュー',
-                      desc: '独自の育成プログラムで即戦力化',
+                      desc: '実践重視の独自プログラムにより、未経験からでも短期間でプロとしての自信と実力を身につけられます。',
                     },
                     {
-                      icon: '📚',
                       title: '未経験者専用カリキュラム',
-                      desc: 'ゼロからプロフェッショナルへ',
+                      desc: '接客の基礎から心理学まで、ゼロからプロフェッショナルを目指すための体系化された研修をご用意しています。',
                     },
                     {
-                      icon: '💎',
                       title: '3ヶ月間の最低保証',
-                      desc: '収入面も安心のサポート体制',
+                      desc: 'デビュー直後でも安心して働けるよう、安定した収入を保証。焦らずじっくりと実力を磨ける環境です。',
                     },
                     {
-                      icon: '🎁',
                       title: '初期費用完全無料',
-                      desc: 'リスクゼロでスタート可能',
+                      desc: '宣材写真撮影やレッスン費用など、スタートにかかる費用はすべて店舗が負担。リスクゼロで挑戦できます。',
                     },
                     {
-                      icon: '🏆',
                       title: 'プロフェッショナル育成',
-                      desc: '業界トップクラスの教育環境',
+                      desc: '業界トップクラスの教育環境で、一流のホストとして必要なマインドとスキルを余すことなく伝授します。',
                     },
                   ].map((benefit, idx) => (
                     <div
                       key={idx}
                       className="group rounded-xl border border-amber-400/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-4 backdrop-blur-sm transition-all hover:border-amber-400/40 hover:shadow-[0_0_20px_rgba(251,191,36,0.1)]"
                     >
-                      <div className="mb-2 text-2xl">{benefit.icon}</div>
-                      <h4 className="mb-1 text-sm font-bold text-amber-300 sm:text-base">
+                      <h4 className="mb-2 text-base font-bold text-amber-300 sm:text-lg">
                         {benefit.title}
                       </h4>
-                      <p className="text-xs text-slate-400 sm:text-sm">{benefit.desc}</p>
+                      <p className="text-xs leading-relaxed text-slate-400 sm:text-sm">
+                        {benefit.desc}
+                      </p>
                     </div>
                   ))}
                 </div>

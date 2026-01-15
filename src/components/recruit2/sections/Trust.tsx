@@ -65,11 +65,6 @@ const Trust: React.FC = () => {
           viewport={{ once: true }}
           className="mb-20 text-center"
         >
-          <div className="mb-6 inline-block">
-            <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text font-serif text-sm font-medium uppercase tracking-[0.3em] text-transparent">
-              Trust & Achievement
-            </span>
-          </div>
           <h2 className="mb-6 font-serif text-3xl font-bold leading-tight text-slate-900 sm:text-5xl md:text-6xl">
             なぜ、私たちは8年も
             <br />
@@ -89,34 +84,119 @@ const Trust: React.FC = () => {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-24 grid grid-cols-2 gap-6 lg:grid-cols-4"
+          className="mb-24 grid grid-cols-1 gap-6 md:grid-cols-2"
         >
-          {metrics.map((metric, idx) => (
-            <motion.div
-              key={idx}
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.6, delay: idx * 0.1 }}
-              viewport={{ once: true }}
-              className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
-            >
-              <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-              <div className="relative">
-                <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                  {metric.label}
-                </div>
-                <div className="mb-1 flex items-baseline gap-1">
-                  <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
-                    {metric.value}
-                  </span>
-                  <span className="font-serif text-lg font-semibold text-amber-600">
-                    {metric.unit}
-                  </span>
-                </div>
-                <p className="text-xs leading-relaxed text-slate-600">{metric.desc}</p>
+          {/* Item 1 */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0 }}
+            viewport={{ once: true }}
+            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="relative">
+              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                継続年数
               </div>
-            </motion.div>
-          ))}
+              <div className="mb-3 flex items-baseline gap-1">
+                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
+                  8
+                </span>
+                <span className="font-serif text-lg font-semibold text-amber-600">年</span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                女風業界の店舗生存率は、3年で0.8％程度です。
+                <br />
+                ほとんどの店が消えていく世界で、私たちは8年間、第一線に立ち続けています。
+                <br />
+                生き残る店には、理由がある。集まる男にも、理由がある。
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Item 2 */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="relative">
+              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                育成実績
+              </div>
+              <div className="mb-3 flex items-baseline gap-1">
+                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
+                  200
+                </span>
+                <span className="font-serif text-lg font-semibold text-amber-600">名以上</span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                ほとんどが未経験スタート。
+                <br />
+                0から育てた実績は200名以上。
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Item 3 */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="relative">
+              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                定着率
+              </div>
+              <div className="mb-3 flex items-baseline gap-1">
+                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
+                  92
+                </span>
+                <span className="font-serif text-lg font-semibold text-amber-600">%</span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                稼げるから、続く。
+                <br />
+                1年以上継続率92％。
+              </p>
+            </div>
+          </motion.div>
+
+          {/* Item 4 */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
+          >
+            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
+            <div className="relative">
+              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
+                平均月収
+              </div>
+              <div className="mb-3 flex items-baseline gap-1">
+                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
+                  85
+                </span>
+                <span className="font-serif text-lg font-semibold text-amber-600">万円</span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-600">
+                在籍キャスト平均実績→ 平均在籍年数 ３年以上
+                <br />
+                多くのキャストが3年以上在籍。
+                <br />
+                続けられる＝稼げる証拠です。
+              </p>
+            </div>
+          </motion.div>
         </motion.div>
 
         {/* Locations Section - Strategic Positioning */}
