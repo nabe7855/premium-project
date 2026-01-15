@@ -1,6 +1,16 @@
 'use client';
 
-import { ChevronDown, MapPin, Menu, MessageCircle, Phone, Users, X } from 'lucide-react';
+import {
+  ChevronDown,
+  Mail,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  Shield,
+  Users,
+  X,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -116,7 +126,12 @@ export default function Header() {
     (i) => !orderedItems.includes(i) && i.name !== '動画',
   );
   const filteredSecondaryItems = secondaryNavItems.filter(
-    (i) => i.name !== '求人・採用情報' && i.name !== 'お問い合わせ' && i.name !== '最新のお知らせ',
+    (i) =>
+      i.name !== '求人・採用情報' &&
+      i.name !== 'お問い合わせ' &&
+      i.name !== '最新のお知らせ' &&
+      i.name !== 'メディア取材のご連絡' &&
+      i.name !== 'プライバシーポリシー',
   );
 
   const newsItem = secondaryNavItems.find((i) => i.name === '最新のお知らせ');
@@ -309,6 +324,32 @@ export default function Header() {
 
                 {/* CTA セクション */}
                 <section className="space-y-4 pt-6">
+                  {/* プライバシーポリシー */}
+                  <a
+                    href="/Announcement-information/policy"
+                    className="flex w-full items-center gap-4 rounded-lg bg-[#9CA3AF] px-6 py-4 text-white shadow-md transition-all active:scale-95"
+                  >
+                    <div className="rounded-lg bg-white/20 p-1.5">
+                      <Shield size={24} />
+                    </div>
+                    <span className="flex-1 text-center text-lg font-black tracking-widest">
+                      プライバシーポリシー
+                    </span>
+                  </a>
+
+                  {/* メディア取材のご連絡 */}
+                  <a
+                    href="/media-contact"
+                    className="flex w-full items-center gap-4 rounded-lg bg-[#C5A059] px-6 py-4 text-white shadow-md transition-all active:scale-95"
+                  >
+                    <div className="rounded-lg bg-white/20 p-1.5">
+                      <Mail size={24} />
+                    </div>
+                    <span className="flex-1 text-center text-lg font-black tracking-widest">
+                      メディア取材のご連絡
+                    </span>
+                  </a>
+
                   <a
                     href="#"
                     className="flex w-full items-center gap-4 rounded-xl border-b-4 border-[#C8A811] bg-[#FAD231] px-6 py-4 text-black shadow-lg transition-all hover:brightness-105 active:translate-y-[4px] active:border-b-0"
