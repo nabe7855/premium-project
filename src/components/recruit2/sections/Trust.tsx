@@ -6,17 +6,17 @@ import React from 'react';
 const Trust: React.FC = () => {
   const locations = [
     {
-      city: '東京',
+      city: '東京本店',
       stores: 3,
       image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
     },
     {
-      city: '大阪',
+      city: '大阪店',
       stores: 2,
       image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=800&h=600&fit=crop',
     },
     {
-      city: '名古屋',
+      city: '名古屋店',
       stores: 1,
       image: 'https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop',
     },
@@ -235,22 +235,12 @@ const Trust: React.FC = () => {
                         className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                      <div className="absolute left-6 top-6">
-                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
-                          </span>
-                        </div>
-                      </div>
                     </div>
                     <div className="p-6">
                       <div className="mb-3 flex items-baseline gap-3">
                         <h4 className="font-serif text-3xl font-bold text-slate-900">
                           {location.city}
                         </h4>
-                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                          {location.stores}店舗
-                        </span>
                       </div>
                       <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                     </div>
@@ -272,22 +262,12 @@ const Trust: React.FC = () => {
                         className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                      <div className="absolute left-6 top-6">
-                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
-                          </span>
-                        </div>
-                      </div>
                     </div>
                     <div className="p-6">
                       <div className="mb-3 flex items-baseline gap-3">
                         <h4 className="font-serif text-3xl font-bold text-slate-900">
                           {location.city}
                         </h4>
-                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                          {location.stores}店舗
-                        </span>
                       </div>
                       <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                     </div>
@@ -309,22 +289,12 @@ const Trust: React.FC = () => {
                         className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                      <div className="absolute left-6 top-6">
-                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
-                          </span>
-                        </div>
-                      </div>
                     </div>
                     <div className="p-6">
                       <div className="mb-3 flex items-baseline gap-3">
                         <h4 className="font-serif text-3xl font-bold text-slate-900">
                           {location.city}
                         </h4>
-                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                          {location.stores}店舗
-                        </span>
                       </div>
                       <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                     </div>
