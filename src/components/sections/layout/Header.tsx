@@ -149,9 +149,9 @@ export default function Header() {
             <span className="text-2xl font-black leading-none tracking-tight text-[#D43D6F]">
               Strawberry Boys
             </span>
-            <div className="hidden items-center gap-3 font-light text-gray-400 sm:flex">
-              <span className="text-xl">|</span>
-              <span className="text-xl font-medium text-[#4A5568]">
+            <div className="flex items-center gap-2 font-light text-gray-400 sm:gap-3">
+              <span className="text-sm sm:text-xl">|</span>
+              <span className="text-sm font-medium text-[#4A5568] sm:text-xl">
                 {currentStore?.displayName ?? '店舗を選択'} {currentStore?.emoji ?? ''}
               </span>
             </div>
