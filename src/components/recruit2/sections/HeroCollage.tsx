@@ -11,15 +11,39 @@ interface HeroCollageProps {
 }
 
 const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
-  const [timeLeft, setTimeLeft] = useState(24 * 3600);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
   const [loaded, setLoaded] = useState(false);
   const imageUrl = '/ファーストビュー.png';
 
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+    // Target date: February 1st
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    // If current date is after Feb 1st, target next year's Feb 1st
+    // Note: Month is 0-indexed (1 is Feb)
+    let targetYear = currentYear;
+    const testDate = new Date(currentYear, 1, 1);
+    if (now > testDate) {
+      targetYear = currentYear + 1;
+    }
+
+    // Set target to Feb 1st 00:00:00
+    const targetDate = new Date(targetYear, 1, 1);
+
+    const updateTimer = () => {
+      const currentTime = new Date();
+      const difference = targetDate.getTime() - currentTime.getTime();
+
+      if (difference > 0) {
+        setTimeLeft(Math.floor(difference / 1000));
+      } else {
+        setTimeLeft(0);
+      }
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
   }, []);
 
@@ -29,20 +53,17 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
     img.src = imageUrl;
     img.onload = () => {
       setLoaded(true);
-      setLoaded(true);
       // Small delay before starting animation
-      // アニメーション開始までの待機時間（ミリ秒）
-      // この数値を変更すると、画像が表示されてから動き出すまでの時間を調整できます
-      // 例: 100 => 0.1秒待機, 500 => 0.5秒待機
       setTimeout(() => setAnimationState(AnimationState.ASSEMBLED), 500);
     };
   }, []);
 
   const formatTime = (seconds: number) => {
-    const h = Math.floor(seconds / 3600);
+    const d = Math.floor(seconds / (3600 * 24));
+    const h = Math.floor((seconds % (3600 * 24)) / 3600);
     const m = Math.floor((seconds % 3600) / 60);
     const s = seconds % 60;
-    return `${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+    return `${d}日 ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
   const isAssembled = animationState === AnimationState.ASSEMBLED;
@@ -59,15 +80,12 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   }, []);
 
   // 画像の分割位置（クリップパス）の設定
-  // PC用 (横長画面用) - 黒い車線に合わせた調整
   const desktopClips = {
     left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
     middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
     right: 'polygon(66% 0, 100% 0, 100% 100%, 53% 100%)',
   };
 
-  // モバイル用 (縦長画面用) - 画面幅に合わせて比率を維持しつつ調整
-  // モバイルでも黒い線に合わせるため、PCと近い比率または画像を考慮した値を設定
   const mobileClips = {
     left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
     middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
@@ -75,11 +93,8 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   };
 
   const clips = isMobile ? mobileClips : desktopClips;
-  // duration: アニメーションにかかる時間。2000ms程度が推奨です。
-  // ease: ふわっと動き出し、中間で加速し、最後にゆっくり結合するカーブ (cubic-bezier)
   const duration = '2000ms';
   const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
-
   const shardBaseClass = 'absolute inset-0 transition-all';
 
   return (
@@ -89,7 +104,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         {/* Animated Split Image Container */}
         {loaded ? (
           <div className="relative h-full w-full">
-            {/* Shard 1 (Left) - Slides from Top-Left */}
+            {/* Shard 1 (Left) */}
             <div
               className={`${shardBaseClass} ${
                 isAssembled
@@ -99,7 +114,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center', // Using center as requested for general view
+                backgroundPosition: 'center',
                 clipPath: clips.left,
                 zIndex: 10,
                 transitionDuration: duration,
@@ -107,7 +122,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               }}
             />
 
-            {/* Shard 2 (Middle) - Slides from Bottom */}
+            {/* Shard 2 (Middle) */}
             <div
               className={`${shardBaseClass} ${
                 isAssembled
@@ -125,7 +140,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               }}
             />
 
-            {/* Shard 3 (Right) - Slides from Top-Right */}
+            {/* Shard 3 (Right) */}
             <div
               className={`${shardBaseClass} ${
                 isAssembled
@@ -155,14 +170,14 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
           <div className="h-full w-full animate-pulse bg-slate-900" />
         )}
 
-        {/* Gradient Overlay for smooth transition to text area */}
+        {/* Gradient Overlay */}
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"
           style={{ zIndex: 30 }}
         ></div>
       </div>
 
-      {/* Text Content Area - Bottom 35-40% */}
+      {/* Text Content Area */}
       <div className="relative z-40 -mt-12 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
         {/* Gold Banner */}
         <div className="animate-fade-in-up relative mb-6">
@@ -192,19 +207,21 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         </p>
 
         {/* Stats Grid */}
-        <div className="animate-fade-in-up mx-auto mb-10 grid max-w-4xl grid-cols-2 gap-3 delay-200 sm:gap-4 md:grid-cols-4">
+        <div className="animate-fade-in-up mx-auto mb-10 grid max-w-5xl grid-cols-2 gap-4 delay-200 sm:gap-6 md:grid-cols-3">
           {[
-            { label: '未経験月収', val: '60万円〜' },
-            { label: '勤務時間', val: '3h/日〜' },
+            { label: '割引', val: '全て店舗負担' },
+            { label: '勤務時間', val: '自由出勤' },
             { label: 'お酒/ノルマ', val: '一切なし' },
             { label: '全額日払い', val: '当日OK' },
+            { label: '副業・兼業', val: '大歓迎' },
+            { label: '移籍・掛け持ちOK', val: '経験者優遇' },
           ].map((item, idx) => (
             <div
               key={idx}
-              className="rounded-xl border border-slate-700/50 bg-slate-900/60 p-3 backdrop-blur-md sm:p-4"
+              className="rounded-xl border border-slate-700/50 bg-slate-900/60 p-4 backdrop-blur-md sm:p-6"
             >
-              <div className="mb-1 text-[10px] text-slate-400 sm:text-xs">{item.label}</div>
-              <div className="whitespace-nowrap text-base font-bold text-amber-500 sm:text-lg md:text-xl">
+              <div className="mb-2 text-xs text-slate-400 sm:text-sm">{item.label}</div>
+              <div className="whitespace-nowrap text-xl font-bold text-amber-500 sm:text-2xl md:text-3xl">
                 {item.val}
               </div>
             </div>
@@ -228,27 +245,19 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
           </a>
         </div>
 
-        {/* Open Cast Recruitment Heading */}
-        <div className="animate-fade-in-up delay-250 mt-10 flex flex-col items-center">
-          <h2 className="mb-2 text-3xl font-black text-white sm:text-4xl md:text-5xl">
-            オープンキャスト募集！！
-          </h2>
-          <p className="text-lg font-bold text-slate-300 sm:text-xl">
-            10名限定で超好待遇であなたをプロデュースします。
-          </p>
+        {/* Open Cast Recruitment Heading Image */}
+        <div className="animate-fade-in-up delay-250 mt-10 flex w-full max-w-5xl flex-col items-center px-4">
+          <div className="w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
+            <img
+              src="/recruit_banner_wide.png"
+              alt="オープンキャスト募集 - 10名限定超好待遇"
+              className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+            />
+          </div>
         </div>
 
         {/* Premium Recruitment Section - Luxury Design */}
-        <div className="animate-fade-in-up mt-12 flex w-full max-w-5xl flex-col items-center px-4 delay-300">
-          {/* Exclusive Offer Badge */}
-          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-gradient-to-r from-amber-900/20 to-amber-800/10 px-6 py-2 backdrop-blur-sm">
-            <span className="text-2xl">✨</span>
-            <span className="bg-gradient-to-r from-amber-200 to-amber-400 bg-clip-text text-sm font-bold tracking-wider text-transparent sm:text-base">
-              EXCLUSIVE OPPORTUNITY
-            </span>
-            <span className="text-2xl">✨</span>
-          </div>
-
+        <div className="animate-fade-in-up mt-8 flex w-full max-w-5xl flex-col items-center px-4 delay-300">
           {/* Main Card Container */}
           <div className="relative w-full overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-slate-900 via-indigo-950/50 to-slate-900 p-1 shadow-2xl">
             {/* Gold accent corners */}
@@ -261,38 +270,40 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
             <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
               {/* Limited Slots Indicator */}
               <div className="mb-8 flex items-center justify-center gap-4">
-                <div className="h-px w-12 bg-gradient-to-r from-transparent to-amber-400/50"></div>
-                <div className="flex items-center gap-3">
+                <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                   <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
-                  <p className="text-lg font-medium text-slate-300 sm:text-xl">
-                    残り{' '}
-                    <span className="mx-1 text-4xl font-bold text-amber-400 sm:text-5xl">4</span>{' '}
+                  <p className="text-center text-lg font-medium text-amber-200 sm:text-2xl">
+                    超好待遇残り{' '}
+                    <span className="mx-1 text-4xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:text-6xl">
+                      4
+                    </span>{' '}
                     名様限定
                   </p>
                   <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
                 </div>
-                <div className="h-px w-12 bg-gradient-to-l from-transparent to-amber-400/50"></div>
+                <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/50 sm:w-12"></div>
               </div>
 
               {/* Timer Section */}
               <div className="mb-10">
                 <div className="mb-4 text-center">
-                  <p className="mb-2 text-sm font-medium uppercase tracking-widest text-amber-400/80 sm:text-base">
-                    Application Deadline
+                  <p className="mb-2 text-base font-bold tracking-widest text-amber-100 sm:text-lg">
+                    2月1日 グランドオープンまで
                   </p>
                   <div className="mx-auto mb-2 h-px w-24 bg-gradient-to-r from-transparent via-amber-400/50 to-transparent"></div>
                 </div>
 
                 {/* Timer Display */}
-                <div className="relative mx-auto max-w-2xl">
+                <div className="relative mx-auto max-w-3xl">
                   <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-400/20 via-indigo-400/20 to-amber-400/20 blur-xl"></div>
-                  <div className="relative rounded-2xl border border-amber-400/30 bg-gradient-to-br from-indigo-950/60 to-slate-900/60 px-8 py-8 backdrop-blur-sm sm:px-12 sm:py-10">
-                    <div className="mb-6 font-mono text-5xl font-bold tabular-nums text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] sm:text-6xl md:text-7xl">
+                  <div className="relative rounded-2xl border border-amber-400/30 bg-gradient-to-br from-indigo-950/60 to-slate-900/60 px-4 py-8 backdrop-blur-sm sm:px-12 sm:py-10">
+                    <div className="mb-2 text-center font-mono text-4xl font-bold tabular-nums tracking-tight text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] sm:text-6xl md:text-7xl">
                       {formatTime(timeLeft)}
                     </div>
                     <div className="space-y-2 text-center">
                       <p className="text-sm font-medium text-indigo-200 sm:text-base">
-                        本日23:59までにエントリーされた方のみ
+                        2月1日 23:59までにエントリーされた方のみ
                       </p>
                       <p className="text-sm font-medium text-indigo-200 sm:text-base">
                         オープンキャスト枠として選考対象となります
