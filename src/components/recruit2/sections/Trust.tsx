@@ -22,13 +22,6 @@ const Trust: React.FC = () => {
     },
   ];
 
-  const metrics = [
-    { label: '継続年数', value: '8', unit: 'YEARS', desc: '創業から選ばれ続ける信頼' },
-    { label: '育成実績', value: '200', unit: '+', desc: '未経験から成功へ導いた人数' },
-    { label: '平均月収', value: '85', unit: '万円', desc: '在籍キャスト平均実績' },
-    { label: '定着率', value: '92', unit: '%', desc: '1年以上継続率' },
-  ];
-
   const systemPillars = [
     {
       icon: '🎯',
@@ -199,7 +192,7 @@ const Trust: React.FC = () => {
           </motion.div>
         </motion.div>
 
-        {/* Locations Section - Strategic Positioning */}
+        {/* Locations Section - Infinite Slider */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -207,19 +200,7 @@ const Trust: React.FC = () => {
           viewport={{ once: true }}
           className="mb-24"
         >
-          <div className="mb-16 text-center">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="mb-6 inline-block"
-            >
-              <div className="relative">
-                <div className="absolute -inset-4 rounded-full bg-amber-500/10 blur-2xl"></div>
-
-              </div>
-            </motion.div>
+          <div className="mb-12 text-center">
             <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
               全国主要都市を制圧した、
               <br className="sm:hidden" />
@@ -232,207 +213,152 @@ const Trust: React.FC = () => {
             </p>
           </div>
 
-          {/* Strategic Triangle Layout */}
-          <div className="relative mx-auto max-w-5xl">
-            {/* Connecting Lines */}
-            <svg
-              className="absolute inset-0 h-full w-full"
-              style={{ zIndex: 0 }}
-              viewBox="0 0 1000 800"
-              preserveAspectRatio="xMidYMid meet"
-            >
-              <defs>
-                <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="#d97706" stopOpacity="0.2" />
-                  <stop offset="50%" stopColor="#d97706" stopOpacity="0.5" />
-                  <stop offset="100%" stopColor="#d97706" stopOpacity="0.2" />
-                </linearGradient>
-              </defs>
-              {/* Tokyo to Osaka */}
-              <motion.line
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.5, delay: 0.5 }}
-                viewport={{ once: true }}
-                x1="250"
-                y1="200"
-                x2="750"
-                y2="200"
-                stroke="url(#lineGradient)"
-                strokeWidth="2"
-                strokeDasharray="5,5"
-              />
-              {/* Osaka to Nagoya */}
-              <motion.line
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.5, delay: 0.7 }}
-                viewport={{ once: true }}
-                x1="750"
-                y1="200"
-                x2="500"
-                y2="600"
-                stroke="url(#lineGradient)"
-                strokeWidth="2"
-                strokeDasharray="5,5"
-              />
-              {/* Nagoya to Tokyo */}
-              <motion.line
-                initial={{ pathLength: 0, opacity: 0 }}
-                whileInView={{ pathLength: 1, opacity: 1 }}
-                transition={{ duration: 1.5, delay: 0.9 }}
-                viewport={{ once: true }}
-                x1="500"
-                y1="600"
-                x2="250"
-                y2="200"
-                stroke="url(#lineGradient)"
-                strokeWidth="2"
-                strokeDasharray="5,5"
-              />
-            </svg>
+          {/* Infinite Slider Container */}
+          <div className="relative w-full overflow-hidden py-4">
+            {/* Gradient Masks for Fade Effeect */}
+            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent sm:w-24"></div>
+            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent sm:w-24"></div>
 
-            {/* City Cards in Triangle Formation */}
-            <div className="relative grid grid-cols-1 gap-8 md:grid-cols-2">
-              {/* Tokyo - Top Left */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: -30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-                viewport={{ once: true }}
-                className="group relative z-10 md:col-span-1"
-              >
-                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                      src={locations[0].image}
-                      alt="東京"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    {/* City Badge */}
-                    <div className="absolute left-6 top-6">
-                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                          Capital
-                        </span>
+            {/* Slider Track */}
+            <div className="animate-infinite-scroll hover:pause flex w-max">
+              {/* First Set */}
+              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
+                {locations.map((location, idx) => (
+                  <div
+                    key={`loc-1-${idx}`}
+                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <img
+                        src={location.image}
+                        alt={location.city}
+                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                      <div className="absolute left-6 top-6">
+                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="mb-3 flex items-baseline gap-3">
-                      <h4 className="font-serif text-3xl font-bold text-slate-900">東京</h4>
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                        {locations[0].stores}店舗
-                      </span>
-                    </div>
-                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Osaka - Top Right */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: -30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-                viewport={{ once: true }}
-                className="group relative z-10 md:col-span-1"
-              >
-                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                      src={locations[1].image}
-                      alt="大阪"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    {/* City Badge */}
-                    <div className="absolute left-6 top-6">
-                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                          West Hub
+                    <div className="p-6">
+                      <div className="mb-3 flex items-baseline gap-3">
+                        <h4 className="font-serif text-3xl font-bold text-slate-900">
+                          {location.city}
+                        </h4>
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                          {location.stores}店舗
                         </span>
                       </div>
+                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                     </div>
                   </div>
-                  <div className="p-6">
-                    <div className="mb-3 flex items-baseline gap-3">
-                      <h4 className="font-serif text-3xl font-bold text-slate-900">大阪</h4>
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                        {locations[1].stores}店舗
-                      </span>
-                    </div>
-                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
-                  </div>
-                </div>
-              </motion.div>
+                ))}
+              </div>
 
-              {/* Nagoya - Bottom Center */}
-              <motion.div
-                initial={{ opacity: 0, scale: 0.8, y: 30 }}
-                whileInView={{ opacity: 1, scale: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.7 }}
-                viewport={{ once: true }}
-                className="group relative z-10 md:col-span-2 md:mx-auto md:w-1/2"
-              >
-                <div className="overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-2xl transition-all hover:border-amber-300 hover:shadow-amber-500/20">
-                  <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
-                      src={locations[2].image}
-                      alt="名古屋"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    {/* City Badge */}
-                    <div className="absolute left-6 top-6">
-                      <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
-                        <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
-                          Central
-                        </span>
+              {/* Duplicate Set for Loop */}
+              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
+                {locations.map((location, idx) => (
+                  <div
+                    key={`loc-2-${idx}`}
+                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <img
+                        src={location.image}
+                        alt={location.city}
+                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                      <div className="absolute left-6 top-6">
+                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
+                          </span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-6">
-                    <div className="mb-3 flex items-baseline gap-3">
-                      <h4 className="font-serif text-3xl font-bold text-slate-900">名古屋</h4>
-                      <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
-                        {locations[2].stores}店舗
-                      </span>
+                    <div className="p-6">
+                      <div className="mb-3 flex items-baseline gap-3">
+                        <h4 className="font-serif text-3xl font-bold text-slate-900">
+                          {location.city}
+                        </h4>
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                          {location.stores}店舗
+                        </span>
+                      </div>
+                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                     </div>
-                    <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
                   </div>
-                </div>
-              </motion.div>
+                ))}
+              </div>
+
+              {/* 3rd Set for Loop (Ensure coverage) */}
+              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
+                {locations.map((location, idx) => (
+                  <div
+                    key={`loc-3-${idx}`}
+                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <img
+                        src={location.image}
+                        alt={location.city}
+                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
+                      <div className="absolute left-6 top-6">
+                        <div className="rounded-full border border-amber-400/50 bg-slate-900/80 px-4 py-1 backdrop-blur-sm">
+                          <span className="text-xs font-bold uppercase tracking-wider text-amber-400">
+                            {idx === 0 ? 'Capital' : idx === 1 ? 'West Hub' : 'Central'}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <div className="mb-3 flex items-baseline gap-3">
+                        <h4 className="font-serif text-3xl font-bold text-slate-900">
+                          {location.city}
+                        </h4>
+                        <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700">
+                          {location.stores}店舗
+                        </span>
+                      </div>
+                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            {/* Central Brand Symbol */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.5 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 1, delay: 1.2 }}
-              viewport={{ once: true }}
-              className="absolute left-1/2 top-1/2 z-20 hidden -translate-x-1/2 -translate-y-1/2 md:block"
-            >
-              <div className="relative">
-                <div className="absolute -inset-8 animate-pulse rounded-full bg-amber-500/20 blur-2xl"></div>
-                <div className="relative flex h-24 w-24 items-center justify-center rounded-full border-4 border-amber-500/50 bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 shadow-2xl">
-                  <div className="text-center">
-                    <div className="font-serif text-xs font-bold text-amber-400">Un moment</div>
-                    <div className="text-[10px] text-slate-400">pour toi</div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
+            {/* Custom Styles for Animation */}
+            <style jsx>{`
+              @keyframes infinite-scroll {
+                from {
+                  transform: translateX(0);
+                }
+                to {
+                  transform: translateX(-33.33%);
+                }
+              }
+              .animate-infinite-scroll {
+                animation: infinite-scroll 40s linear infinite;
+              }
+              .hover\\:pause:hover {
+                animation-play-state: paused;
+              }
+            `}</style>
           </div>
 
           {/* Bottom Stats */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 1.4 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
             viewport={{ once: true }}
-            className="mt-16 text-center"
+            className="mt-8 text-center"
           >
             <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-50 px-6 py-3">
               <span className="text-amber-600">⚡</span>
