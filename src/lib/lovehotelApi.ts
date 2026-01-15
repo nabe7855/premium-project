@@ -48,6 +48,13 @@ export const getHotels = async (filters?: {
   cityId?: string;
   areaId?: string;
   keyword?: string;
+  status?: string[];
+  minRestPrice?: number;
+  maxRestPrice?: number;
+  minStayPrice?: number;
+  maxStayPrice?: number;
+  minRating?: number;
+  sort?: { column: string; ascending: boolean };
 }) => {
   let query = supabase.from('lh_hotels').select(`
       *,
@@ -76,8 +83,29 @@ export const getHotels = async (filters?: {
       `name.ilike.%${filters.keyword}%,address.ilike.%${filters.keyword}%,description.ilike.%${filters.keyword}%`,
     );
   }
+  if (filters?.status && filters.status.length > 0) {
+    query = query.in('status', filters.status);
+  }
+  if (filters?.minRestPrice) {
+    query = query.gte('min_price_rest', filters.minRestPrice);
+  }
+  if (filters?.maxRestPrice) {
+    query = query.lte('min_price_rest', filters.maxRestPrice);
+  }
+  if (filters?.minStayPrice) {
+    query = query.gte('min_price_stay', filters.minStayPrice);
+  }
+  if (filters?.maxStayPrice) {
+    query = query.lte('min_price_stay', filters.maxStayPrice);
+  }
+  if (filters?.minRating) {
+    query = query.gte('rating', filters.minRating);
+  }
 
-  const { data, error } = await query.order('created_at', { ascending: false });
+  const sortCol = filters?.sort?.column || 'created_at';
+  const sortAsc = filters?.sort?.ascending ?? false;
+
+  const { data, error } = await query.order(sortCol, { ascending: sortAsc });
   if (error) throw error;
   return data;
 };
@@ -336,6 +364,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     distanceFromStation: dbHotel.distance_from_station || '',
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
+    status: dbHotel.status || 'draft',
   };
 };
 

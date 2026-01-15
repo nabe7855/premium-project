@@ -59,6 +59,7 @@ export default function HotelForm({ id }: HotelFormProps) {
     distance_from_station: '',
     room_count: '',
     place_id: '',
+    status: 'draft',
   });
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -145,6 +146,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         distance_from_station: hotel.distance_from_station || '',
         room_count: hotel.room_count || '',
         place_id: hotel.place_id || '',
+        status: hotel.status || 'draft',
       });
       setSelectedAmenities(hotel.lh_hotel_amenities.map((a: any) => a.amenity_id));
       setSelectedServices(hotel.lh_hotel_services.map((s: any) => s.service_id));
@@ -254,6 +256,12 @@ export default function HotelForm({ id }: HotelFormProps) {
       if (finalImages.length > 0 && !submitData.image_url) {
         const exterior = finalImages.find((i) => i.category === 'exterior') || finalImages[0];
         submitData.image_url = exterior.url;
+      }
+
+      // Determine status from button value
+      const submitter = (e.nativeEvent as any).submitter as HTMLButtonElement;
+      if (submitter?.value) {
+        submitData.status = submitter.value;
       }
 
       if (id) {
@@ -744,10 +752,22 @@ export default function HotelForm({ id }: HotelFormProps) {
         </button>
         <button
           type="submit"
+          name="status"
+          value="draft"
+          formNoValidate
+          disabled={loading}
+          className="rounded-lg border border-brand-accent bg-brand-primary px-6 py-2 font-bold text-brand-accent transition-all hover:bg-brand-accent/10 disabled:opacity-50"
+        >
+          {loading ? '保存中...' : '下書き保存'}
+        </button>
+        <button
+          type="submit"
+          name="status"
+          value="published"
           disabled={loading}
           className="rounded-lg bg-brand-accent px-8 py-2 font-bold text-white shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? '保存中...' : id ? '更新する' : '登録する'}
+          {loading ? '保存中...' : '公開する'}
         </button>
       </div>
     </form>
