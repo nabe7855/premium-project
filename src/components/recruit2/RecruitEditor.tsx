@@ -22,6 +22,9 @@ export default function RecruitEditor() {
     hero: {
       isVisible: true,
     },
+    openCast: {
+      isVisible: true,
+    },
   });
 
   const handleUpdate = (section: string, key: string, value: any) => {

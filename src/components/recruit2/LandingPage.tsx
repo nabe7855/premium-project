@@ -9,6 +9,7 @@ import Flow from './sections/Flow';
 import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
 import IdealCandidate from './sections/IdealCandidate';
+import OpenCastRecruitment from './sections/OpenCastRecruitment';
 import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
@@ -18,23 +19,50 @@ export interface LandingPageConfig {
     subHeading?: string;
     isVisible: boolean;
     heroImage?: string;
+  };
+  openCast?: {
+    isVisible?: boolean;
     openCastImage?: string;
+  };
+  philosophy?: {
+    isVisible?: boolean;
   };
   fukuoka?: {
     backgroundImage?: string;
+    isVisible?: boolean;
   };
-  branding?: {
-    images?: Record<string, string>;
+  trust?: {
+    isVisible?: boolean;
   };
   achievements?: {
     castImages?: Record<string, string>;
+    isVisible?: boolean;
   };
   comic?: {
     slides?: any[];
+    isVisible?: boolean;
+  };
+  benefits?: {
+    isVisible?: boolean;
+  };
+  comparison?: {
+    isVisible?: boolean;
+  };
+  branding?: {
+    images?: Record<string, string>;
+    isVisible?: boolean;
+  };
+  ideal?: {
+    isVisible?: boolean;
+  };
+  flow?: {
+    isVisible?: boolean;
+  };
+  faq?: {
+    isVisible?: boolean;
   };
   [key: string]: any;
 }
-
 interface LandingPageProps {
   onOpenChat: () => void;
   onOpenForm: () => void;
@@ -72,55 +100,331 @@ const LandingPage: React.FC<LandingPageProps> = ({
             mainHeading={config?.hero?.mainHeading}
             subHeading={config?.hero?.subHeading}
             heroImage={config?.hero?.heroImage}
-            openCastImage={config?.hero?.openCastImage}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('hero', key, value)}
           />
         </div>
       )}
-      <Philosophy />
-      <FukuokaReason
-        isEditing={isEditing}
-        onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
-        backgroundImage={config?.fukuoka?.backgroundImage}
-      />
-      <div id="trust">
+
+      {/* Open Cast Recruitment Section */}
+      {(config?.openCast?.isVisible !== false || isEditing) && (
+        <div
+          className={`group relative transition-opacity duration-300 ${
+            config?.openCast?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('openCast', 'isVisible', config?.openCast?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.openCast?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.openCast?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <OpenCastRecruitment
+            onOpenChat={onOpenChat}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('openCast', key, value)}
+            openCastImage={config?.openCast?.openCastImage}
+          />
+        </div>
+      )}
+
+      {/* Philosophy Section */}
+      <div
+        className={`group relative transition-opacity duration-300 ${
+          config?.philosophy?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('philosophy', 'isVisible', config?.philosophy?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.philosophy?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.philosophy?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
+        <Philosophy />
+      </div>
+
+      {/* Fukuoka Reason Section */}
+      <div
+        className={`group relative transition-opacity duration-300 ${
+          config?.fukuoka?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('fukuoka', 'isVisible', config?.fukuoka?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.fukuoka?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.fukuoka?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
+        <FukuokaReason
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
+          backgroundImage={config?.fukuoka?.backgroundImage}
+        />
+      </div>
+
+      {/* Trust Section */}
+      <div
+        id="trust"
+        className={`group relative transition-opacity duration-300 ${
+          config?.trust?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('trust', 'isVisible', config?.trust?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.trust?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.trust?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <Trust />
       </div>
-      <div id="achievements">
+
+      {/* Achievements Section */}
+      <div
+        id="achievements"
+        className={`group relative transition-opacity duration-300 ${
+          config?.achievements?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('achievements', 'isVisible', config?.achievements?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.achievements?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.achievements?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <AchievementsAndLifestyle
           isEditing={isEditing}
           onUpdate={(key, value) => onUpdate?.('achievements', key, value)}
           castImages={config?.achievements?.castImages}
         />
       </div>
-      <div id="comic">
+
+      {/* Comic Section */}
+      <div
+        id="comic"
+        className={`group relative transition-opacity duration-300 ${
+          config?.comic?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('comic', 'isVisible', config?.comic?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.comic?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.comic?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <ComicSlider
           isEditing={isEditing}
           onUpdate={(key, value) => onUpdate?.('comic', key, value)}
           slides={config?.comic?.slides}
         />
       </div>
-      <div id="benefits">
+
+      {/* Benefits Section */}
+      <div
+        id="benefits"
+        className={`group relative transition-opacity duration-300 ${
+          config?.benefits?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('benefits', 'isVisible', config?.benefits?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.benefits?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.benefits?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <Benefits />
       </div>
-      <div id="comparison">
+
+      {/* Comparison Section */}
+      <div
+        id="comparison"
+        className={`group relative transition-opacity duration-300 ${
+          config?.comparison?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('comparison', 'isVisible', config?.comparison?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.comparison?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.comparison?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <Comparison />
       </div>
-      <div id="special">
+
+      {/* Branding Support Section */}
+      <div
+        id="special"
+        className={`group relative transition-opacity duration-300 ${
+          config?.branding?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('branding', 'isVisible', config?.branding?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.branding?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.branding?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <BrandingSupport
           isEditing={isEditing}
           onUpdate={(key, value) => onUpdate?.('branding', key, value)}
           brandingImages={config?.branding?.images}
         />
       </div>
-      <div id="ideal">
+
+      {/* Ideal Candidate Section */}
+      <div
+        id="ideal"
+        className={`group relative transition-opacity duration-300 ${
+          config?.ideal?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('ideal', 'isVisible', config?.ideal?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.ideal?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.ideal?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <IdealCandidate />
       </div>
-      <div id="flow">
+
+      {/* Flow Section */}
+      <div
+        id="flow"
+        className={`group relative transition-opacity duration-300 ${
+          config?.flow?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('flow', 'isVisible', config?.flow?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.flow?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.flow?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <Flow />
       </div>
-      <div id="qa">
+
+      {/* FAQ Section */}
+      <div
+        id="qa"
+        className={`group relative transition-opacity duration-300 ${
+          config?.faq?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('faq', 'isVisible', config?.faq?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.faq?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.faq?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
         <FAQ />
       </div>
 
