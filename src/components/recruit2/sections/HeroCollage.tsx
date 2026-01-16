@@ -98,9 +98,9 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   const shardBaseClass = 'absolute inset-0 transition-all';
 
   return (
-    <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 font-sans">
+    <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 pt-20 font-sans md:pt-0">
       {/* Background/Collage Area - Top 60% */}
-      <div className="relative h-[65vh] w-full overflow-hidden">
+      <div className="relative h-[50vh] w-full overflow-hidden md:h-[65vh]">
         {/* Animated Split Image Container */}
         {loaded ? (
           <div className="relative h-full w-full">
@@ -114,7 +114,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'top center',
                 clipPath: clips.left,
                 zIndex: 10,
                 transitionDuration: duration,
@@ -132,7 +132,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'top center',
                 clipPath: clips.middle,
                 zIndex: 20,
                 transitionDuration: duration,
@@ -150,7 +150,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
               style={{
                 backgroundImage: `url(${imageUrl})`,
                 backgroundSize: 'cover',
-                backgroundPosition: 'center',
+                backgroundPosition: 'top center',
                 clipPath: clips.right,
                 zIndex: 10,
                 transitionDuration: duration,
@@ -178,15 +178,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
       </div>
 
       {/* Text Content Area */}
-      <div className="relative z-40 -mt-12 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
-        {/* Gold Banner */}
-        <div className="animate-fade-in-up relative mb-6">
-          <div className="absolute -inset-1 rounded-full bg-amber-600/20 blur-sm"></div>
-          <div className="relative inline-block rounded-full border border-amber-600/50 bg-amber-600/20 px-3 py-1 text-[10px] font-bold tracking-widest text-amber-500 sm:text-xs">
-            FUKUOKA OPENING SPECIAL
-          </div>
-        </div>
-
+      <div className="relative z-40 mt-4 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
         {/* Main Heading */}
         <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
           ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
