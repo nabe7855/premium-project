@@ -1,3 +1,5 @@
+import { saveRecruitPageConfig } from '@/actions/recruit';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -8,10 +10,12 @@ import {
 import { stores } from '@/data/stores';
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
+import { toast } from 'sonner';
 import LandingPage, { LandingPageConfig } from './LandingPage';
 
 export default function RecruitEditor() {
   const [selectedStore, setSelectedStore] = React.useState('tokyo');
+  const [isSaving, setIsSaving] = React.useState(false);
 
   // Currently static, but prepared for dynamic config per store
   const [config, setConfig] = React.useState<LandingPageConfig>({
@@ -21,13 +25,27 @@ export default function RecruitEditor() {
   });
 
   const handleUpdate = (section: string, key: string, value: any) => {
-    // Mock update: log to console or update local state for preview
-    console.log(`Update ${section}.${key}:`, value);
-    // In a real app, this would update Supabase or local state
     setConfig((prev) => ({
       ...prev,
       [section]: { ...prev[section], [key]: value },
     }));
+  };
+
+  const handleSave = async () => {
+    setIsSaving(true);
+    try {
+      const result = await saveRecruitPageConfig(selectedStore, config);
+      if (result.success) {
+        toast.success('変更を保存しました');
+      } else {
+        toast.error(`保存に失敗しました: ${result.error}`);
+      }
+    } catch (e) {
+      toast.error('保存中にエラーが発生しました');
+      console.error(e);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -49,7 +67,16 @@ export default function RecruitEditor() {
             </SelectContent>
           </Select>
         </div>
-        <div className="text-sm text-gray-500">※ 画像をクリックして変更できます</div>
+        <div className="flex items-center gap-4">
+          <div className="text-sm text-gray-500">※ 画像をクリックして変更できます</div>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving}
+            className="bg-primary text-white hover:bg-primary/90"
+          >
+            {isSaving ? '保存中...' : '変更を保存'}
+          </Button>
+        </div>
       </div>
 
       {/* Main Content Preview */}

@@ -43,6 +43,7 @@ model Store {
 }
 
 // -------------------- Recruit Pages（採用ページ設定） --------------------
+// -------------------- Recruit Pages（採用ページ設定） --------------------
 model RecruitPage {
   id          String   @id @default(uuid())
   store_id    String
