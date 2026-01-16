@@ -1,16 +1,6 @@
 'use client';
 
-import {
-  ChevronDown,
-  Mail,
-  MapPin,
-  Menu,
-  MessageCircle,
-  Phone,
-  Shield,
-  Users,
-  X,
-} from 'lucide-react';
+import { ChevronDown, Mail, MapPin, Menu, MessageCircle, Phone, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -373,8 +363,12 @@ export default function Header() {
                     href="/Announcement-information/policy"
                     className="flex w-full items-center gap-4 rounded-lg bg-[#9CA3AF] px-6 py-4 text-white shadow-md transition-all active:scale-95"
                   >
-                    <div className="rounded-lg bg-white/20 p-1.5">
-                      <Shield size={24} />
+                    <div className="flex h-12 w-12 items-center justify-center transition-transform group-hover:scale-110">
+                      <img
+                        src="/プライバシーポリシー.png"
+                        alt="Privacy Policy"
+                        className="h-full w-full object-contain"
+                      />
                     </div>
                     <span className="flex-1 text-center text-lg font-black tracking-widest">
                       プライバシーポリシー

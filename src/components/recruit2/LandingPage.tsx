@@ -5,6 +5,7 @@ import BrandingSupport from './sections/BrandingSupport';
 import ComicSlider from './sections/ComicSlider';
 import FAQ from './sections/FAQ';
 import Flow from './sections/Flow';
+import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
 import IdealCandidate from './sections/IdealCandidate';
 import Income from './sections/Income';
@@ -21,6 +22,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => 
     <div className="overflow-hidden bg-slate-50">
       <HeroCollage onOpenChat={onOpenChat} />
       <Philosophy />
+      <FukuokaReason />
       <div id="trust">
         <Trust />
       </div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const IdealCandidate: React.FC = () => {
@@ -16,59 +15,45 @@ const IdealCandidate: React.FC = () => {
   ];
 
   return (
-    <section className="py-24 bg-slate-950 text-white overflow-hidden relative">
+    <section className="relative overflow-hidden bg-slate-950 py-24 text-white">
       {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-600/5 rounded-full blur-[150px] -mr-64 -mt-64 pointer-events-none"></div>
+      <div className="pointer-events-none absolute right-0 top-0 -mr-64 -mt-64 h-[600px] w-[600px] rounded-full bg-amber-600/5 blur-[150px]"></div>
 
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="max-w-5xl mx-auto">
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="mx-auto max-w-5xl">
           {/* Fukuoka Vision Part */}
-          <div className="mb-24 text-center">
-            <h2 className="text-amber-600 font-bold tracking-widest uppercase text-sm mb-6">Fukuoka Expansion</h2>
-            <h3 className="text-3xl md:text-5xl font-serif font-bold mb-10 leading-tight">
-              なぜ、いま福岡なのか。
-            </h3>
-            <div className="max-w-3xl mx-auto space-y-6 text-slate-400 text-lg leading-relaxed">
-              <p>
-                数ある都市の中で、私たちが福岡を選んだのは、この街に「自分を変えたい」と強く願う熱量を感じたからです。
-              </p>
-              <p>
-                私たちは、あなたのための場所を創るためにここに来ました。<br/>
-                東京で磨き上げたクオリティと、福岡の情熱を掛け合わせ、新しい時代の働き方を定義します。
-              </p>
-              <p className="pt-4 font-serif text-2xl text-amber-500 font-bold italic">
-                "あなたの挑戦を、私たちは全力で肯定します。"
-              </p>
-            </div>
-          </div>
 
           {/* Profile Section */}
-          <div className="text-center mb-16">
-            <div className="text-amber-500/80 font-serif text-sm italic tracking-widest mb-2">Profile</div>
-            <h3 className="text-3xl md:text-5xl font-serif font-bold text-white tracking-tighter">求める人物像</h3>
+          <div className="mb-16 text-center">
+            <div className="mb-2 font-serif text-sm italic tracking-widest text-amber-500/80">
+              Profile
+            </div>
+            <h3 className="font-serif text-3xl font-bold tracking-tighter text-white md:text-5xl">
+              求める人物像
+            </h3>
           </div>
 
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-y-12 gap-x-6 md:gap-x-8">
+          <div className="grid grid-cols-2 gap-x-6 gap-y-12 md:grid-cols-5 md:gap-x-8">
             {profiles.map((profile) => (
-              <div key={profile.id} className="flex flex-col items-center group">
+              <div key={profile.id} className="group flex flex-col items-center">
                 <div className="relative mb-6">
                   {/* Number label */}
-                  <div className="absolute -top-4 left-0 text-amber-500/60 font-serif">
-                    <div className="text-[10px] uppercase tracking-tighter mb-0">Profile</div>
+                  <div className="absolute -top-4 left-0 font-serif text-amber-500/60">
+                    <div className="mb-0 text-[10px] uppercase tracking-tighter">Profile</div>
                     <div className="text-xl font-bold leading-none">{profile.id}</div>
                   </div>
-                  
+
                   {/* Circle container */}
-                  <div className="w-24 h-24 md:w-28 md:h-28 rounded-full border border-slate-700 bg-slate-900/40 flex items-center justify-center transition-all duration-500 group-hover:border-amber-500/50 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.1)] group-hover:scale-105">
+                  <div className="flex h-24 w-24 items-center justify-center rounded-full border border-slate-700 bg-slate-900/40 transition-all duration-500 group-hover:scale-105 group-hover:border-amber-500/50 group-hover:shadow-[0_0_30px_rgba(245,158,11,0.1)] md:h-28 md:w-28">
                     {/* SVG/Emoji Icon container */}
-                    <div className="text-3xl md:text-4xl filter drop-shadow-[0_0_10px_rgba(245,158,11,0.3)]">
+                    <div className="text-3xl drop-shadow-[0_0_10px_rgba(245,158,11,0.3)] filter md:text-4xl">
                       {profile.icon}
                     </div>
                   </div>
                 </div>
-                
-                <div className="text-center px-2">
-                  <p className="text-xs md:text-sm font-bold text-slate-200 leading-relaxed min-h-[3em] flex items-center justify-center">
+
+                <div className="px-2 text-center">
+                  <p className="flex min-h-[3em] items-center justify-center text-xs font-bold leading-relaxed text-slate-200 md:text-sm">
                     {profile.title}
                   </p>
                 </div>
@@ -77,10 +62,11 @@ const IdealCandidate: React.FC = () => {
           </div>
 
           <div className="mt-20 text-center">
-            <div className="inline-flex items-center gap-4 p-6 bg-slate-900/50 border border-slate-800 rounded-3xl">
+            <div className="inline-flex items-center gap-4 rounded-3xl border border-slate-800 bg-slate-900/50 p-6">
               <span className="text-2xl">✨</span>
-              <p className="text-sm text-slate-400 leading-relaxed text-left">
-                「今の自分」が完璧である必要はありません。<br className="hidden md:block"/>
+              <p className="text-left text-sm leading-relaxed text-slate-400">
+                「今の自分」が完璧である必要はありません。
+                <br className="hidden md:block" />
                 誠実に自分と向き合い、約束を守れる方であれば、私たちが全力で育て上げます。
               </p>
             </div>
