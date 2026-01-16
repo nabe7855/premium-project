@@ -388,15 +388,16 @@ export default function Header() {
                     </span>
                   </a>
 
-                  <a
-                    href="#"
+                  <Link
+                    href={`/store/${currentStoreId}/recruit`}
+                    onClick={closeMenu}
                     className="flex w-full items-center gap-4 rounded-xl border-b-4 border-[#C8A811] bg-[#FAD231] px-6 py-4 text-black shadow-lg transition-all hover:brightness-105 active:translate-y-[4px] active:border-b-0"
                   >
                     <Users size={32} strokeWidth={1.5} className="text-black" />
                     <span className="flex-1 pr-8 text-center text-[17px] font-black tracking-widest">
                       女風求人情報
                     </span>
-                  </a>
+                  </Link>
 
                   <a
                     href="#"
