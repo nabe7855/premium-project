@@ -10,6 +10,21 @@ interface HeroCollageProps {
   onOpenChat: () => void;
 }
 
+// ==========================================
+// 【設定】テキストの重なり具合の調整
+// ==========================================
+// マイナスの数値を大きくすると（例: -10vh → -15vh）、
+// テキストがより上に（画像に重なるように）移動します。
+const LAYOUT_CONFIG = {
+  // スマホ用（画像高さ50vhに対する重なり）
+  // 例: -7.5vh = 15%の重なり
+  MOBILE_OVERLAP: '-3.5vh',
+
+  // PC用（画像高さ65vhに対する重なり）
+  // 例: -9.75vh = 15%の重なり
+  DESKTOP_OVERLAP: '-2.75vh',
+};
+
 const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
@@ -178,7 +193,15 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
       </div>
 
       {/* Text Content Area */}
-      <div className="relative z-40 mt-4 flex flex-1 flex-col items-center justify-start px-4 pb-12 sm:-mt-20">
+      <div
+        className="relative z-40 mt-[var(--mobile-margin)] flex flex-1 flex-col items-center justify-start px-4 pb-12 md:mt-[var(--desktop-margin)]"
+        style={
+          {
+            '--mobile-margin': LAYOUT_CONFIG.MOBILE_OVERLAP,
+            '--desktop-margin': LAYOUT_CONFIG.DESKTOP_OVERLAP,
+          } as React.CSSProperties
+        }
+      >
         {/* Main Heading */}
         <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
           ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
