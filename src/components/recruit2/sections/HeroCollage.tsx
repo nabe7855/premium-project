@@ -16,12 +16,30 @@ interface HeroCollageProps {
 // マイナスの数値を大きくすると（例: -10vh → -15vh）、
 // テキストがより上に（画像に重なるように）移動します。
 const LAYOUT_CONFIG = {
-  // スマホ用（画像高さ50vhに対する重なり）
-  // 例: -7.5vh = 15%の重なり
+  // ==========================================
+  // 【画像 (上部) のサイズ調整】
+  // ==========================================
+
+  // スマホ用: 画像の高さ
+  MOBILE_IMAGE_HEIGHT: '50vh',
+  // スマホ用: 画像の幅 (通常は 100% または 100vw)
+  MOBILE_IMAGE_WIDTH: '100%',
+
+  // PC用: 画像の高さ
+  DESKTOP_IMAGE_HEIGHT: '95vh',
+  // PC用: 画像の幅 (通常は 100% または 100vw)
+  DESKTOP_IMAGE_WIDTH: '100%',
+
+  // ==========================================
+  // 【テキスト (下部) の位置調整】
+  // ==========================================
+  // マイナスの数値を大きくすると（例: -10vh → -15vh）、
+  // テキストがより上に（画像に重なるように）移動します。
+
+  // スマホ用（画像高さに対する重なり）
   MOBILE_OVERLAP: '-3.5vh',
 
-  // PC用（画像高さ65vhに対する重なり）
-  // 例: -9.75vh = 15%の重なり
+  // PC用（画像高さに対する重なり）
   DESKTOP_OVERLAP: '-2.75vh',
 };
 
@@ -114,8 +132,18 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
 
   return (
     <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 pt-20 font-sans md:pt-0">
-      {/* Background/Collage Area - Top 60% */}
-      <div className="relative h-[50vh] w-full overflow-hidden md:h-[65vh]">
+      {/* Background/Collage Area */}
+      <div
+        className="relative mx-auto h-[var(--mobile-h)] w-[var(--mobile-w)] overflow-hidden md:h-[var(--desktop-h)] md:w-[var(--desktop-w)]"
+        style={
+          {
+            '--mobile-h': LAYOUT_CONFIG.MOBILE_IMAGE_HEIGHT,
+            '--mobile-w': LAYOUT_CONFIG.MOBILE_IMAGE_WIDTH,
+            '--desktop-h': LAYOUT_CONFIG.DESKTOP_IMAGE_HEIGHT,
+            '--desktop-w': LAYOUT_CONFIG.DESKTOP_IMAGE_WIDTH,
+          } as React.CSSProperties
+        }
+      >
         {/* Animated Split Image Container */}
         {loaded ? (
           <div className="relative h-full w-full">
