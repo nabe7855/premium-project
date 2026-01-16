@@ -1,3 +1,7 @@
+// TEMPORARY: Commented out until Prisma Client is properly generated
+// Run `npx prisma generate` after configuring DATABASE_URL to enable this
+
+/*
 import { PrismaClient } from '@prisma/client';
 
 const prismaClientSingleton = () => {
@@ -13,3 +17,7 @@ const globalForPrisma = globalThis as unknown as {
 export const prisma = globalForPrisma.prisma ?? prismaClientSingleton();
 
 if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+*/
+
+// Temporary stub - will throw error if used
+export const prisma = null as any;

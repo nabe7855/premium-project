@@ -26,6 +26,8 @@ model Cast {
   features      CastFeatures?
   memberships   CastStoreMembership[]
   video_casts   VideoCast[]
+  badges        CastBadge[]
+  blogs         Blog[]
 }
 
 // -------------------- Stores（店舗） --------------------

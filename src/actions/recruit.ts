@@ -1,5 +1,9 @@
 'use server';
 
+// TEMPORARY: Commented out until DATABASE_URL is properly configured
+// Uncomment this file when you're ready to set up the database
+
+/*
 import { extractImageUrls } from '@/lib/image-cleanup';
 import { prisma } from '@/lib/prisma';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
@@ -90,4 +94,11 @@ export async function saveRecruitPageConfig(storeSlug: string, fullConfig: any) 
     console.error('Error saving recruit config:', error);
     return { success: false, error: String(error) };
   }
+}
+*/
+
+// Temporary stub function
+export async function saveRecruitPageConfig(_storeSlug: string, _fullConfig: any) {
+  console.warn('saveRecruitPageConfig is currently disabled. Configure DATABASE_URL to enable.');
+  return { success: false, error: 'Database not configured' };
 }
