@@ -38,6 +38,11 @@ const Trust: React.FC = () => {
       desc: '8年間にわたり蓄積したデータ分析に基づいた運営だから、“なんとなく売れる”ではなく、実際にお客様からの問い合わせが集まる仕組みができています。',
       image: 'https://images.unsplash.com/photo-1551288049-bbda3865c17d?w=800&q=80',
     },
+    {
+      title: '戦略的SNSマネジメント',
+      desc: 'SNS運用を個人のセンス任せにしません。専任チームがトレンド分析からコンテンツ制作まで戦略的にサポートし、あなたのファンを確実に増やします。',
+      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
+    },
   ];
 
   return (
@@ -352,7 +357,7 @@ const Trust: React.FC = () => {
               個人の才能 × 組織の仕組み = 圧倒的な成長エンジン
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
             {systemPillars.map((pillar, idx) => (
               <motion.div
                 key={idx}

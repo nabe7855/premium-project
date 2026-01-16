@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import {
   BookOpen,
   Dumbbell,
@@ -52,9 +53,18 @@ const IdealCandidate: React.FC = () => {
           </div>
 
           {/* Grid Section */}
-          <div className="grid grid-cols-2 gap-x-6 gap-y-16 md:grid-cols-5 md:gap-x-10">
-            {profiles.map((profile) => (
-              <div key={profile.id} className="group flex flex-col items-center">
+          <div className="mx-auto flex w-full max-w-[340px] flex-col gap-y-12 px-4 md:grid md:max-w-none md:grid-cols-5 md:gap-x-10 md:gap-y-16 md:p-0">
+            {profiles.map((profile, index) => (
+              <motion.div
+                key={profile.id}
+                initial={{ opacity: 0, y: 50, scale: 0.9 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: false, amount: 0.4 }}
+                transition={{ duration: 0.5, delay: index % 2 === 0 ? 0 : 0.2 }}
+                className={`group flex flex-col items-center md:mx-0 md:w-auto ${
+                  index % 2 === 0 ? 'mr-auto' : 'ml-auto'
+                }`}
+              >
                 <div className="relative mb-6">
                   {/* Number Label */}
                   <div className="absolute -top-10 left-1/2 -translate-x-1/2 text-center font-serif text-[#D4AF37]/80">
@@ -81,7 +91,7 @@ const IdealCandidate: React.FC = () => {
                     {profile.title}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
 

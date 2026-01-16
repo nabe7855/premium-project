@@ -14,7 +14,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
   const [timeLeft, setTimeLeft] = useState(0);
   const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
   const [loaded, setLoaded] = useState(false);
-  const imageUrl = '/ファーストビュー.png';
+  const imageUrl = '/バナーデザインLP用.png';
 
   useEffect(() => {
     // Target date: February 1st
