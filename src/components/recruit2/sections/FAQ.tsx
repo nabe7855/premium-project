@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 const FAQ: React.FC = () => {
@@ -6,53 +5,143 @@ const FAQ: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'beginner' | 'expert'>('all');
 
   const faqs = [
-    // Existing Items
-    { cat: 'beginner', q: '全くの未経験ですが大丈夫ですか？', a: 'もちろんです。現在活躍中のキャストの9割が未経験からのスタートです。充実した研修制度があるのでご安心ください。' },
-    { cat: 'beginner', q: '週に何回くらい働く必要がありますか？', a: '週1回、3時間からでもOKです。本業や学業の合間に無理なく働ける完全自由シフト制を採用しています。' },
-    { cat: 'general', q: '身バレが怖いのですが対策はありますか？', a: '業界最高水準のプライバシー対策を行っています。SNSの露出制限や、特定エリア外での活動など、個別の事情に合わせた柔軟な運用が可能です。' },
-    { cat: 'expert', q: '経験者ですが、バック率の交渉は可能ですか？', a: 'はい。過去の実績や現在の知名度に応じて、個別に優遇条件を提示させていただきます。面接時に詳しくお聞かせください。' },
-    { cat: 'general', q: '年齢制限はありますか？', a: '20歳〜45歳までの方を幅広く募集しています。年齢を重ねたからこそ出せる落ち着きや包容力も、私たちは高く評価しています。' },
-    { cat: 'beginner', q: 'お酒が飲めないのですが…', a: '当店はお酒を飲むことを目的とした店舗ではありません。接客スキルそのものを重視しているため、お酒が苦手な方も大歓迎です。' },
-    
-    // New Items Added Based on Request
-    { cat: 'general', q: '問い合せたその日に面接はできますか？', a: 'はい、スケジュールの空き状況によりますが、即日面接も可能です。お急ぎの場合はLINE相談窓口よりその旨をお伝えいただければスムーズに調整いたします。' },
-    { cat: 'general', q: '反社会勢力との繋がりはありますか？', a: '一切ございません。私たちは創業8年の実績を持つ、法令を遵守したクリーンな運営を行っている企業です。健全な環境で安心して働いていただけます。' },
-    { cat: 'beginner', q: '希望する日に休むことはできますか？', a: 'はい、完全自由シフト制ですので、ご自身の都合に合わせて自由に休日を設定いただけます。プライベートや他のお仕事との両立も万全です。' },
-    { cat: 'general', q: '車での通勤は可能ですか？', a: '可能です。近隣の提携駐車場やコインパーキングをご案内いたします。ガソリン代や駐車料金の補助についても面談時に詳しくご説明いたします。' },
-    { cat: 'general', q: '辞める時に違約金等の支払いはありますか？', a: '違約金やペナルティなどは一切ございません。辞める際もスムーズに手続きを行えるよう、キャストの権利を尊重した運営を行っております。' },
-    { cat: 'general', q: '顔出しの強要はないですか？', a: '一切ございません。本名や顔を公開せずに活躍しているキャストも多数在籍しています。プライバシーを最優先に考えた活動プランを提案いたします。' },
-    { cat: 'beginner', q: '１日どれぐらい稼げますか？', a: '働き方やご予約状況によりますが、未経験の方でも1日3〜5時間の稼働で2〜5万円程度の報酬を得られるケースが多いです。トップキャストになるとさらに高額な報酬が可能です。' },
-    { cat: 'beginner', q: '女性経験が少なくても働けますか？', a: '全く問題ありません。独自の研修プログラムでは、技術だけでなく女性心理に基づいた接客マナーから丁寧にお教えしますので、自信を持ってデビューいただけます。' },
-    { cat: 'general', q: 'どんな客層ですか？', a: '30代〜50代の、心身の癒やしを求める落ち着いた女性のお客様が中心です。マナーの良いお客様ばかりですので、安心して接客に集中いただけます。' },
-    { cat: 'general', q: 'どの時間帯が稼げますか？', a: '平日の夕方から深夜にかけて、および土日祝日は特にご予約が集中します。効率よく稼ぎたい方はこれらの時間帯の出勤がおすすめです。' },
-    { cat: 'general', q: '待機場の雰囲気はどんな感じですか？', a: '清潔感のある落ち着いたラウンジ形式の待機スペースを用意しています。Wi-Fi完備、ドリンク無料など、空き時間もリラックスして過ごせる環境です。' },
-    { cat: 'general', q: '男性セラピスト同士揉める事はありますか？', a: 'キャスト同士が互いをプロとして尊重し合える社風を大切にしています。トラブルが起きないようスタッフが常に適切な管理を行っており、非常に良好な人間関係が築かれています。' },
-    { cat: 'beginner', q: '仕事の時の服装はどのようなものが好ましいですか？', a: '清潔感のある「キレイめカジュアル」を推奨しています。具体的にはシャツやスラックスなど、お客様に安心感を与える服装です。貸出衣装の用意もございます。' },
-    { cat: 'general', q: '自宅で待機するのでしょうか？', a: '基本的には店舗の待機スペースにてお待ちいただきますが、お住まいの場所やご経験によっては「自宅待機」からの出動も相談可能です。' },
-    { cat: 'general', q: '頂く報酬は振込ですか？', a: '基本的には当日全額日払い（現金）にてお渡ししております。もちろん、ご希望に応じて銀行振込での対応も可能です。' },
+    // System & Rules
+    {
+      cat: 'general',
+      q: '風営法の届け出はありますか？',
+      a: 'はい、管轄警察署への届出を完了しており、法令を遵守して運営しております。安心してお仕事ができる環境を整えています。',
+    },
+    {
+      cat: 'general',
+      q: '入会金・月会費・解約料・ノルマなどはありますか？',
+      a: '一切ございません。登録や活動にあたって金銭を請求することは決してありません。ノルマもなく、ご自身のペースで働けます。',
+    },
+    {
+      cat: 'general',
+      q: '辞める時に違約金等の支払いはありますか？',
+      a: 'ございません。退店の際もスムーズに手続きを行い、ご本人の意思を尊重いたします。',
+    },
+    {
+      cat: 'general',
+      q: '事務局でスタッフとして働くことは可能ですか？',
+      a: 'はい、店舗運営スタッフも随時募集しております。興味がございましたら面接時にお気軽にお申し出ください。',
+    },
+    {
+      cat: 'general',
+      q: '18歳ですが応募できますか？',
+      a: '申し訳ございませんが、当サロンでは防犯および健全な運営の観点から、20歳以上の方のみを採用対象としております。',
+    },
+    {
+      cat: 'expert',
+      q: '現在他店舗に在籍をしていますが働けますか？',
+      a: 'はい、掛け持ちも可能です。秘密厳守を徹底しておりますので、他店様に知られることなく活動いただけます。',
+    },
+
+    // Experience & Confidence
+    {
+      cat: 'beginner',
+      q: 'マッサージ経験がなく、女性慣れもしていませんが大丈夫ですか？',
+      a: '全く問題ありません。現在活躍中のキャストの多くが未経験スタートです。技術だけでなく、女性心理や会話のコツまで学べる丁寧なプロ講習をご用意しています。',
+    },
+    {
+      cat: 'expert',
+      q: '私自身ドMですが大丈夫ですか？ / 女性経験が非常に豊富ですが有利ですか？',
+      a: 'あなたの個性や経験は強力な武器になります。多様なニーズを持つお客様がいらっしゃいますので、ぜひそのキャラクターを活かしてください。',
+    },
+    {
+      cat: 'general',
+      q: 'AV男優さん並みの絶倫である必要はありますか？',
+      a: 'いいえ。当店はリラクゼーションと癒やしを提供するサロンであり、性的サービスのお店ではありませんので、そういった能力は一切必要ありません。',
+    },
+
+    // Work Style & Privacy
+    {
+      cat: 'general',
+      q: '副業や本業持ちでも働けますか？会社や家族にバレませんか？',
+      a: 'はい、多くのキャストが副業として活躍中です。ご自宅への郵送物はなく、連絡もLINEで行うため、周囲に知られることなく活動可能です。',
+    },
+    {
+      cat: 'general',
+      q: '出勤を増やしたいですが、常に特定の場所で待機するのは難しいです。',
+      a: 'ライフスタイルに合わせて、ご自宅や外出先からの「自由出勤（待機）」も可能です。無理なく効率的に稼げるスタイルをご提案します。',
+    },
+    {
+      cat: 'beginner',
+      q: '宣材写真で顔を出さなくても人気は出ますか？',
+      a: 'はい、雰囲気写真や口元を隠した写真でも、プロフィール文章や丁寧な対応で十分に人気を得ることが可能です。顔出しの強要は一切ありません。',
+    },
+    {
+      cat: 'beginner',
+      q: '写メ日記やTwitter(X)を使った事がなく不安です。',
+      a: '専属スタッフがアカウント作成から投稿のコツ、画像加工まで丁寧にサポートしますので、初めての方でもご安心ください。',
+    },
+
+    // Service & Earnings
+    {
+      cat: 'general',
+      q: 'どれくらい稼げますか？',
+      a: '完全歩合制で、頑張った分だけ収入になります。未経験の方でも日給3〜5万円以上を目指せる環境です。全額日払いも可能です。',
+    },
+    {
+      cat: 'general',
+      q: '本番行為はできますか？',
+      a: '一切できません。当店は風営法に基づく健全なメンズエステ店であり、本番行為や違法なサービスは固く禁じています。法令順守がキャスト全員の安全を守ります。',
+    },
+    {
+      cat: 'beginner',
+      q: 'どんなお客さんが多いですか？',
+      a: '30代〜50代の大人の女性のお客様が中心です。お仕事や家事の疲れを癒やしに来られる、マナーの良い優しいお客様ばかりです。',
+    },
+
+    // Interview
+    {
+      cat: 'beginner',
+      q: '面接に必要な持ち物や服装、場所は？',
+      a: '顔写真付きの身分証明書のみご持参ください（履歴書不要）。服装は清潔感のあるカジュアルな私服でOKです。場所は弊社オフィス等の個室で行います。',
+    },
+    {
+      cat: 'general',
+      q: 'どんな内容の面接ですか？女性性癖を言わないといけませんか？',
+      a: '雑談形式のラフな面談で、条件確認やシステムの質問がメインです。無理に性癖を聞き出すような圧迫面接は一切ありませんのでご安心ください。',
+    },
+    {
+      cat: 'general',
+      q: 'その日のうちに面接や実技講習は可能ですか？',
+      a: 'はい、スケジュールが空いていれば即日対応可能です。まずはお話や相談だけ、という方も大歓迎です。',
+    },
   ];
 
-  const filteredFaqs = activeTab === 'all' ? faqs : faqs.filter(f => f.cat === activeTab || f.cat === 'general');
+  const filteredFaqs =
+    activeTab === 'all' ? faqs : faqs.filter((f) => f.cat === activeTab || f.cat === 'general');
 
   return (
-    <section className="py-16 sm:py-24 bg-white">
-      <div className="container mx-auto px-4 max-w-3xl">
-        <div className="text-center mb-10 sm:mb-16">
-          <h3 className="text-2xl sm:text-4xl font-serif font-bold text-slate-900 mb-4 sm:mb-6 tracking-tight">よくあるご質問</h3>
-          <p className="text-slate-500 text-sm sm:text-base px-4">疑問を解消して、安心してお申し込みください。</p>
+    <section className="bg-white py-16 sm:py-24">
+      <div className="container mx-auto max-w-3xl px-4">
+        <div className="mb-10 text-center sm:mb-16">
+          <h3 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
+            よくあるご質問
+          </h3>
+          <p className="px-4 text-sm text-slate-500 sm:text-base">
+            疑問を解消して、安心してお申し込みください。
+          </p>
         </div>
 
-        <div className="flex flex-wrap justify-center gap-2 sm:gap-4 mb-8 sm:mb-12 px-2">
+        <div className="mb-8 flex flex-wrap justify-center gap-2 px-2 sm:mb-12 sm:gap-4">
           {[
             { id: 'all', label: 'すべて' },
             { id: 'beginner', label: '未経験の方' },
             { id: 'expert', label: '経験者の方' },
-          ].map(tab => (
+          ].map((tab) => (
             <button
               key={tab.id}
-              onClick={() => { setActiveTab(tab.id as any); setOpenIdx(null); }}
-              className={`px-5 sm:px-8 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all ${
-                activeTab === tab.id ? 'bg-slate-900 text-white shadow-xl scale-105' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+              onClick={() => {
+                setActiveTab(tab.id as any);
+                setOpenIdx(null);
+              }}
+              className={`rounded-full px-5 py-2.5 text-xs font-bold transition-all sm:px-8 sm:text-sm ${
+                activeTab === tab.id
+                  ? 'scale-105 bg-slate-900 text-white shadow-xl'
+                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
               }`}
             >
               {tab.label}
@@ -62,27 +151,38 @@ const FAQ: React.FC = () => {
 
         <div className="space-y-4">
           {filteredFaqs.map((faq, idx) => (
-            <div key={idx} className="border border-slate-200 rounded-2xl overflow-hidden transition-all duration-300 group">
+            <div
+              key={idx}
+              className="group overflow-hidden rounded-2xl border border-slate-200 transition-all duration-300"
+            >
               <button
                 onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                className={`w-full flex items-center justify-between p-5 sm:p-7 text-left transition-colors ${openIdx === idx ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
+                className={`flex w-full items-center justify-between p-5 text-left transition-colors sm:p-7 ${openIdx === idx ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
               >
                 <div className="flex items-start gap-4">
-                  <span className={`text-amber-600 font-serif text-lg font-bold transition-opacity ${openIdx === idx ? 'opacity-100' : 'opacity-40'}`}>Q.</span>
-                  <span className="font-bold text-slate-900 text-sm sm:text-base leading-relaxed">{faq.q}</span>
+                  <span
+                    className={`font-serif text-lg font-bold text-amber-600 transition-opacity ${openIdx === idx ? 'opacity-100' : 'opacity-40'}`}
+                  >
+                    Q.
+                  </span>
+                  <span className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base">
+                    {faq.q}
+                  </span>
                 </div>
-                <span className={`shrink-0 transform transition-transform duration-500 text-amber-600 text-[10px] ${openIdx === idx ? 'rotate-180' : ''}`}>
+                <span
+                  className={`shrink-0 transform text-[10px] text-amber-600 transition-transform duration-500 ${openIdx === idx ? 'rotate-180' : ''}`}
+                >
                   ▼
                 </span>
               </button>
-              <div 
+              <div
                 className={`overflow-hidden transition-all duration-500 ease-in-out ${
                   openIdx === idx ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
-                <div className="p-5 sm:p-7 bg-slate-50 text-slate-600 text-sm sm:text-base leading-relaxed border-t border-slate-200/50 flex gap-4">
-                   <span className="text-slate-300 font-serif text-lg font-bold">A.</span>
-                   <div>{faq.a}</div>
+                <div className="flex gap-4 border-t border-slate-200/50 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600 sm:p-7 sm:text-base">
+                  <span className="font-serif text-lg font-bold text-slate-300">A.</span>
+                  <div>{faq.a}</div>
                 </div>
               </div>
             </div>
@@ -90,12 +190,12 @@ const FAQ: React.FC = () => {
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-slate-400 text-sm mb-6">解決しない疑問はございますか？</p>
-          <a 
-            href="https://line.me" 
-            target="_blank" 
+          <p className="mb-6 text-sm text-slate-400">解決しない疑問はございますか？</p>
+          <a
+            href="https://line.me"
+            target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-full font-bold transition-all shadow-lg active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
           >
             <span>LINEで直接質問してみる</span>
           </a>
