@@ -46,11 +46,11 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             className="pointer-events-none fixed inset-0 z-[60] flex items-center justify-center p-4"
           >
-            <div className="pointer-events-auto relative max-h-[90vh] w-full max-w-2xl overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-2xl">
+            <div className="pointer-events-auto relative flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white shadow-2xl">
               {/* Close Button */}
               <button
                 onClick={onClose}
-                className="absolute right-6 top-6 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                className="absolute right-6 top-6 z-20 flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
               >
                 <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path
@@ -62,7 +62,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                 </svg>
               </button>
 
-              <div className="h-full overflow-y-auto p-8 md:p-12">
+              <div className="flex-1 overflow-y-auto overscroll-contain p-8 md:p-12">
                 {submitted ? (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-100 text-4xl">
@@ -85,138 +85,297 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                       <h2 className="mb-3 font-serif text-3xl font-bold text-slate-900">
                         WEB応募フォーム
                       </h2>
-                      <p className="text-sm text-slate-500">まずは以下の項目をご入力ください。</p>
+                      <p className="text-sm text-slate-500">
+                        以下の項目をご入力の上、送信してください。
+                      </p>
                     </div>
 
                     <form onSubmit={handleSubmit} className="space-y-8 pb-4">
-                      {/* Basic Info */}
+                      {/* 1. 基本情報 */}
                       <section className="space-y-4">
                         <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
-                          <h3 className="font-bold text-slate-900">基本情報</h3>
+                          <h3 className="font-bold text-slate-900">1. 基本情報</h3>
                         </div>
-                        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                        <div className="space-y-4">
                           <div className="group">
                             <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                              お名前 (氏名)
+                              お名前 (必須)
                             </label>
                             <input
                               required
                               type="text"
                               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                              placeholder="山田 太郎"
+                              placeholder="例：山田 一郎"
                             />
                           </div>
+
                           <div className="group">
                             <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                              年齢
+                              お電話番号 (必須)
                             </label>
-                            <select className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20">
-                              <option>20代</option>
-                              <option>30代</option>
-                              <option>40代</option>
-                            </select>
+                            <input
+                              required
+                              type="tel"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                              placeholder="例：080-1234-5678"
+                            />
+                          </div>
+
+                          <div className="group">
+                            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                              メールアドレス (必須)
+                            </label>
+                            <input
+                              required
+                              type="email"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                              placeholder="例：example@example.com"
+                            />
+                          </div>
+
+                          <div className="group">
+                            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                              住所 (簡単で構いません)
+                            </label>
+                            <input
+                              type="text"
+                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                              placeholder="例：福岡市中央区"
+                            />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div className="group">
+                              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                                年齢 (応募時点)
+                              </label>
+                              <input
+                                type="number"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                                placeholder="例：25"
+                              />
+                            </div>
+                            <div className="group">
+                              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                                身長・体重
+                              </label>
+                              <input
+                                type="text"
+                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                                placeholder="例：170cm 70kg"
+                              />
+                            </div>
                           </div>
                         </div>
+                      </section>
+
+                      {/* 2. 職歴・資格 */}
+                      <section className="space-y-4">
+                        <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
+                          <h3 className="font-bold text-slate-900">2. 職歴・資格</h3>
+                        </div>
+
                         <div className="group">
                           <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            電話番号
+                            現在の就業状況
+                          </label>
+                          <div className="flex gap-4">
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="employment"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">就業中</span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="employment"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">
+                                就業していない
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            資格内容 (取得年月日)
+                          </label>
+                          <textarea
+                            rows={2}
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                            placeholder="例：普通自動車免許 (2020年取得)"
+                          ></textarea>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            業務経歴
+                          </label>
+                          <textarea
+                            rows={3}
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                            placeholder="簡単な職務経歴をご記入ください"
+                          ></textarea>
+                        </div>
+                      </section>
+
+                      {/* 3. 重要確認事項 */}
+                      <section className="space-y-4">
+                        <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
+                          <h3 className="font-bold text-slate-900">3. 確認事項</h3>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            セラピスト経験
+                          </label>
+                          <div className="flex gap-4">
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="therapist_exp"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">あり</span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="therapist_exp"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">なし</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            YouTube動画に顔だし可能か？
+                          </label>
+                          <div className="flex flex-col gap-2">
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="youtube"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">はい</span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="youtube"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">いいえ</span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="youtube"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">
+                                マスク着用または、音声だけでもOKです。
+                              </span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            深夜クルマ・バイクを出せる
+                          </label>
+                          <div className="flex gap-4">
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="transport"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">はい</span>
+                            </label>
+                            <label className="flex cursor-pointer items-center gap-2">
+                              <input
+                                type="radio"
+                                name="transport"
+                                className="text-amber-600 focus:ring-amber-500"
+                              />
+                              <span className="text-sm font-medium text-slate-700">いいえ</span>
+                            </label>
+                          </div>
+                        </div>
+                      </section>
+
+                      {/* 4. アンケート・その他 */}
+                      <section className="space-y-4">
+                        <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
+                          <h3 className="font-bold text-slate-900">4. アンケート・その他</h3>
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            当店をどこで知りましたか？
                           </label>
                           <input
-                            required
-                            type="tel"
+                            type="text"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                            placeholder="090-0000-0000"
+                            placeholder="例:ネット検索、紹介、ポータルサイト（名前は？）"
                           />
                         </div>
-                      </section>
 
-                      {/* Stats & Experience */}
-                      <section className="space-y-4">
-                        <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
-                          <h3 className="font-bold text-slate-900">身体情報・経験</h3>
-                        </div>
-                        <div className="grid grid-cols-2 gap-4">
-                          <div className="group">
-                            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                              身長 (cm)
-                            </label>
-                            <input
-                              type="number"
-                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                              placeholder="175"
-                            />
-                          </div>
-                          <div className="group">
-                            <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                              体重 (kg)
-                            </label>
-                            <input
-                              type="number"
-                              className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                              placeholder="65"
-                            />
-                          </div>
-                        </div>
-                        <div className="group text-center sm:text-left">
-                          <label className="mb-3 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            業界経験
-                          </label>
-                          <div className="flex flex-wrap justify-center gap-6 sm:justify-start">
-                            <label className="flex cursor-pointer items-center gap-2">
-                              <input
-                                type="radio"
-                                name="experience"
-                                className="h-5 w-5 border-slate-300 text-amber-600 focus:ring-amber-500"
-                              />
-                              <span className="text-sm font-medium text-slate-700">未経験</span>
-                            </label>
-                            <label className="flex cursor-pointer items-center gap-2">
-                              <input
-                                type="radio"
-                                name="experience"
-                                className="h-5 w-5 border-slate-300 text-amber-600 focus:ring-amber-500"
-                              />
-                              <span className="text-sm font-medium text-slate-700">経験者</span>
-                            </label>
-                          </div>
-                        </div>
-                      </section>
-
-                      {/* PR & Photo */}
-                      <section className="space-y-4">
-                        <div className="flex items-center gap-3 border-l-4 border-amber-500 pl-3">
-                          <h3 className="font-bold text-slate-900">自己PR・写真</h3>
-                        </div>
                         <div className="group">
                           <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            自己PR / 応募動機
+                            「ネット検索」の方は、どのキーワードで検索しましたか？
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                            placeholder="例:セラピスト求人、高収入、女性用風俗求人"
+                          />
+                        </div>
+
+                        <div className="group">
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                            自己PR・その他ご質問等
                           </label>
                           <textarea
                             rows={4}
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                            placeholder="あなたの想いや希望する活動内容をお聞かせください。"
+                            placeholder="自由にご記入ください"
                           ></textarea>
                         </div>
+
                         <div className="group">
                           <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                            写真の添付 (任意)
+                            画像を3枚投稿
                           </label>
-                          <div className="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center transition-all hover:bg-slate-100">
-                            <input
-                              type="file"
-                              className="hidden"
-                              id="modal-photo"
-                              accept="image/*"
-                            />
-                            <label htmlFor="modal-photo" className="cursor-pointer">
-                              <div className="mb-2 text-3xl">📸</div>
-                              <div className="text-sm font-bold text-slate-700">
-                                写真をアップロード
+                          <div className="grid grid-cols-3 gap-2">
+                            {[1, 2, 3].map((num) => (
+                              <div
+                                key={num}
+                                className="rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 p-4 text-center transition-all hover:bg-slate-100"
+                              >
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  id={`photo-${num}`}
+                                  accept="image/*"
+                                />
+                                <label htmlFor={`photo-${num}`} className="block cursor-pointer">
+                                  <div className="mb-1 text-2xl">📷</div>
+                                  <div className="text-[10px] font-bold text-slate-500 sm:text-xs">
+                                    Photo {num}
+                                  </div>
+                                </label>
                               </div>
-                              <div className="text-[10px] text-slate-400">
-                                ※マスクなしの鮮明な写真をお願いします
-                              </div>
-                            </label>
+                            ))}
                           </div>
                         </div>
                       </section>
