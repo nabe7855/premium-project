@@ -3,6 +3,7 @@ import Achievements from './sections/Achievements';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
 import ComicSlider from './sections/ComicSlider';
+import Comparison from './sections/Comparison';
 import FAQ from './sections/FAQ';
 import Flow from './sections/Flow';
 import FukuokaReason from './sections/FukuokaReason';
@@ -37,6 +38,9 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => 
       </div>
       <div id="income">
         <Income />
+      </div>
+      <div id="comparison">
+        <Comparison />
       </div>
       <div id="special">
         <BrandingSupport />
