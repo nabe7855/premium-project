@@ -11,10 +11,14 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
   const hideFooterPaths = ['/', '/age-check', '/store-select', '/test8'];
   const hideFooterPrefixes = ['/admin']; // admin配下すべて
 
-  // 完全一致 or startsWith で判定
+  // ✅ /store/[slug]/recruit も非表示にするための正規表現チェック
+  const isRecruitPage = /\/store\/[^/]+\/recruit$/.test(pathname);
+
+  // 完全一致 or startsWith or Regex で判定
   const isHidden =
     hideFooterPaths.includes(pathname) ||
-    hideFooterPrefixes.some((prefix) => pathname.startsWith(prefix));
+    hideFooterPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
+    isRecruitPage;
 
   return (
     <>

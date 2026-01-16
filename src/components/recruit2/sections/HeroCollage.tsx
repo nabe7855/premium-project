@@ -3,12 +3,6 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import React, { useEffect, useState } from 'react';
 
-// Define AnimationState locally for this component
-enum AnimationState {
-  IDLE = 'IDLE',
-  ASSEMBLED = 'ASSEMBLED',
-}
-
 interface HeroCollageProps {
   onOpenChat: () => void;
   mainHeading?: string;
@@ -19,39 +13,6 @@ interface HeroCollageProps {
   heroImage?: string;
 }
 
-// ==========================================
-// 【設定】テキストの重なり具合の調整
-// ==========================================
-// マイナスの数値を大きくすると（例: -10vh → -15vh）、
-// テキストがより上に（画像に重なるように）移動します。
-const LAYOUT_CONFIG = {
-  // ==========================================
-  // 【画像 (上部) のサイズ調整】
-  // ==========================================
-
-  // スマホ用: 画像の高さ
-  MOBILE_IMAGE_HEIGHT: '50vh',
-  // スマホ用: 画像の幅 (通常は 100% または 100vw)
-  MOBILE_IMAGE_WIDTH: '100%',
-
-  // PC用: 画像の高さ
-  DESKTOP_IMAGE_HEIGHT: '95vh',
-  // PC用: 画像の幅 (通常は 100% または 100vw)
-  DESKTOP_IMAGE_WIDTH: '100%',
-
-  // ==========================================
-  // 【テキスト (下部) の位置調整】
-  // ==========================================
-  // マイナスの数値を大きくすると（例: -10vh → -15vh）、
-  // テキストがより上に（画像に重なるように）移動します。
-
-  // スマホ用（画像高さに対する重なり）
-  MOBILE_OVERLAP: '-3.5vh',
-
-  // PC用（画像高さに対する重なり）
-  DESKTOP_OVERLAP: '-2.75vh',
-};
-
 const HeroCollage: React.FC<HeroCollageProps> = ({
   onOpenChat,
   mainHeading = 'ただ「稼ぐ場所」ではなく\n“価値ある男”としてゼロから稼げる場所。',
@@ -59,7 +20,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   isEditing = false,
   onUpdate,
   openCastImage,
-  heroImage, // Add this
+  heroImage,
 }) => {
   // ContentEditable handling helper
   const handleInput = (
@@ -80,25 +41,19 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   };
 
   const [timeLeft, setTimeLeft] = useState(0);
-  const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
-  const [loaded, setLoaded] = useState(false);
 
   // Use prop or default. Dynamic for preview.
-  const imageUrl = heroImage || '/バナーデザインLP用.png';
+  const imageUrl = heroImage || '/福岡募集バナー.png';
 
   useEffect(() => {
     // Target date: February 1st
     const now = new Date();
     const currentYear = now.getFullYear();
-    // If current date is after Feb 1st, target next year's Feb 1st
-    // Note: Month is 0-indexed (1 is Feb)
     let targetYear = currentYear;
     const testDate = new Date(currentYear, 1, 1);
     if (now > testDate) {
       targetYear = currentYear + 1;
     }
-
-    // Set target to Feb 1st 00:00:00
     const targetDate = new Date(targetYear, 1, 1);
 
     const updateTimer = () => {
@@ -117,17 +72,6 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
     return () => clearInterval(timer);
   }, []);
 
-  // Trigger animation after mount/load
-  useEffect(() => {
-    const img = new Image();
-    img.src = imageUrl;
-    img.onload = () => {
-      setLoaded(true);
-      // Small delay before starting animation
-      setTimeout(() => setAnimationState(AnimationState.ASSEMBLED), 500);
-    };
-  }, []);
-
   const formatTime = (seconds: number) => {
     const d = Math.floor(seconds / (3600 * 24));
     const h = Math.floor((seconds % (3600 * 24)) / 3600);
@@ -136,122 +80,22 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
     return `${d}日 ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
   };
 
-  const isAssembled = animationState === AnimationState.ASSEMBLED;
-
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
-  }, []);
-
-  // 画像の分割位置（クリップパス）の設定
-  const desktopClips = {
-    left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
-    middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
-    right: 'polygon(66% 0, 100% 0, 100% 100%, 53% 100%)',
-  };
-
-  const mobileClips = {
-    left: 'polygon(0 0, 32% 0, 19% 100%, 0 100%)',
-    middle: 'polygon(32% 0, 66% 0, 53% 100%, 19% 100%)',
-    right: 'polygon(66% 0, 100% 0, 100% 100%, 53% 100%)',
-  };
-
-  const clips = isMobile ? mobileClips : desktopClips;
-  const duration = '2000ms';
-  const ease = 'cubic-bezier(0.22, 1, 0.36, 1)';
-  const shardBaseClass = 'absolute inset-0 transition-all';
-
   return (
-    <section className="relative flex min-h-screen w-full flex-col overflow-hidden bg-slate-950 pt-20 font-sans md:pt-0">
-      {/* Background/Collage Area */}
-      <div
-        className="relative mx-auto h-[var(--mobile-h)] w-[var(--mobile-w)] overflow-hidden md:h-[var(--desktop-h)] md:w-[var(--desktop-w)]"
-        style={
-          {
-            '--mobile-h': LAYOUT_CONFIG.MOBILE_IMAGE_HEIGHT,
-            '--mobile-w': LAYOUT_CONFIG.MOBILE_IMAGE_WIDTH,
-            '--desktop-h': LAYOUT_CONFIG.DESKTOP_IMAGE_HEIGHT,
-            '--desktop-w': LAYOUT_CONFIG.DESKTOP_IMAGE_WIDTH,
-          } as React.CSSProperties
-        }
-      >
-        {/* Animated Split Image Container */}
-        {loaded ? (
-          <div className="relative h-full w-full">
-            {/* ... shards ... */}
-            {/* Shard 1 (Left) */}
-            <div
-              className={`${shardBaseClass} ${
-                isAssembled
-                  ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
-                  : '-translate-x-full -translate-y-1/4 scale-110 opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'top center',
-                clipPath: clips.left,
-                zIndex: 10,
-                transitionDuration: duration,
-                transitionTimingFunction: ease,
-              }}
-            />
+    <section className="flex w-full flex-col bg-slate-950 pt-16 font-sans">
+      {/* 
+        1. Image Section: 
+           Full width, natural height (aspect ratio preserved).
+           No overlapping text. 
+      */}
+      <div className="relative w-full">
+        {/* Main Hero Image */}
+        <img
+          src={imageUrl}
+          alt="Main Hero"
+          className="block h-auto w-full object-contain" // object-contain or block ensures full visibility
+        />
 
-            {/* Shard 2 (Middle) */}
-            <div
-              className={`${shardBaseClass} ${
-                isAssembled
-                  ? 'translate-y-0 scale-100 opacity-100'
-                  : 'translate-y-full scale-95 opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'top center',
-                clipPath: clips.middle,
-                zIndex: 20,
-                transitionDuration: duration,
-                transitionTimingFunction: ease,
-              }}
-            />
-
-            {/* Shard 3 (Right) */}
-            <div
-              className={`${shardBaseClass} ${
-                isAssembled
-                  ? 'translate-x-0 translate-y-0 scale-100 opacity-100'
-                  : '-translate-y-1/4 translate-x-full scale-110 opacity-0'
-              }`}
-              style={{
-                backgroundImage: `url(${imageUrl})`,
-                backgroundSize: 'cover',
-                backgroundPosition: 'top center',
-                clipPath: clips.right,
-                zIndex: 10,
-                transitionDuration: duration,
-                transitionTimingFunction: ease,
-              }}
-            />
-
-            {/* Subtle separator lines when assembled */}
-            {isAssembled && (
-              <div className="pointer-events-none absolute inset-0 opacity-20 transition-opacity delay-1000 duration-1000">
-                <div className="absolute left-[37.5%] top-0 h-full w-[2px] -translate-x-1/2 rotate-[8deg] bg-white/50 blur-[1px]" />
-                <div className="absolute left-[67.5%] top-0 h-full w-[2px] -translate-x-1/2 rotate-[8deg] bg-white/50 blur-[1px]" />
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="h-full w-full animate-pulse bg-slate-900" />
-        )}
-
-        {/* Edit Background Overlay */}
+        {/* Edit Button Overlay (only if editing) */}
         {isEditing && (
           <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/50 px-4 py-2 text-white hover:bg-black/70">
             <span className="text-sm font-bold">背景画像を変更</span>
@@ -263,37 +107,27 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
             />
           </label>
         )}
-
-        {/* Gradient Overlay */}
-        <div
-          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"
-          style={{ zIndex: 30 }}
-        ></div>
       </div>
 
-      {/* Text Content Area */}
-      <div
-        className="relative z-40 mt-[var(--mobile-margin)] flex flex-1 flex-col items-center justify-start px-4 pb-12 md:mt-[var(--desktop-margin)]"
-        style={
-          {
-            '--mobile-margin': LAYOUT_CONFIG.MOBILE_OVERLAP,
-            '--desktop-margin': LAYOUT_CONFIG.DESKTOP_OVERLAP,
-          } as React.CSSProperties
-        }
-      >
+      {/* 
+        2. Text Content Area:
+           Placed directly below the image.
+           Standard padding/layout.
+      */}
+      <div className="relative z-10 flex w-full flex-col items-center justify-start bg-slate-950 px-4 py-12">
         {/* Main Heading */}
         {isEditing ? (
           <h1
             contentEditable
             suppressContentEditableWarning
             onBlur={(e) => handleInput('mainHeading', e)}
-            className="mb-6 cursor-text rounded text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white outline-none drop-shadow-2xl hover:bg-white/10 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
+            className="mb-6 cursor-text rounded text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white outline-none drop-shadow-md hover:bg-white/10 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
             style={{ whiteSpace: 'pre-line' }}
           >
             {mainHeading}
           </h1>
         ) : (
-          <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
+          <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
             ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
             <br className="hidden sm:block" />
             <span className="italic text-white underline decoration-amber-500 decoration-2 underline-offset-4">
