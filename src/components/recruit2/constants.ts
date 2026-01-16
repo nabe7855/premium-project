@@ -41,6 +41,13 @@ export const STOCK_RECRUIT_CONFIG = {
   fukuoka: {
     isVisible: true,
     backgroundImage: '/福岡夜景.png',
+    heading: 'なぜ、いま福岡なのか。',
+    description1:
+      '数ある都市の中で、私たちが福岡を選んだのは、この街に「自分を変えたい」と強く願う熱量を感じたからです。',
+    description2: '私たちは、あなたのための場所を創るためにここに来ました。',
+    description3:
+      '東京で磨き上げたクオリティと、福岡の情熱を掛け合わせ、新しい時代の働き方を定義します。',
+    italicText: '"あなたの挑戦を、私たちは全力で肯定します。"',
   },
   trust: {
     isVisible: true,

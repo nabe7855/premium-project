@@ -30,6 +30,11 @@ export interface LandingPageConfig {
   };
   fukuoka?: {
     backgroundImage?: string;
+    heading?: string;
+    description1?: string;
+    description2?: string;
+    description3?: string;
+    italicText?: string;
     isVisible?: boolean;
   };
   trust?: {
@@ -220,6 +225,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
           isEditing={isEditing}
           onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
           backgroundImage={config?.fukuoka?.backgroundImage}
+          heading={config?.fukuoka?.heading}
+          description1={config?.fukuoka?.description1}
+          description2={config?.fukuoka?.description2}
+          description3={config?.fukuoka?.description3}
+          italicText={config?.fukuoka?.italicText}
         />
       </div>
 
