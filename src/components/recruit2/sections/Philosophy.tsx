@@ -3,7 +3,45 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 
-const Philosophy: React.FC = () => {
+interface PhilosophyProps {
+  years?: string;
+  heading?: string;
+  description?: string;
+  steps?: Array<{
+    icon: string;
+    title: string;
+    subtitle: string;
+    desc: string;
+  }>;
+  footerText?: string;
+}
+
+const Philosophy: React.FC<PhilosophyProps> = ({
+  years = '8 YEARS',
+  heading = '私たちは「刹那的な稼ぎ」を提供しません。\n「一生モノの価値」を共に創るパートナーです。',
+  description = '単に高収入を得るだけの場所なら、他にもあるかもしれません。\nしかし、私たちが8年間一貫して追求してきたのは、未経験の方がここで得た経験を\nその後の人生を支える「確かなスキルと自信」に変えていただくことです。',
+  steps = [
+    {
+      icon: '🛡️',
+      title: '盤石な土台',
+      subtitle: '創業8年の信頼',
+      desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
+    },
+    {
+      icon: '💡',
+      title: '能力の開花',
+      subtitle: '徹底した教育サポート',
+      desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
+    },
+    {
+      icon: '💎',
+      title: '継続的な成功',
+      subtitle: '個人の価値を資産へ',
+      desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
+    },
+  ],
+  footerText = '新人育成実績No.1の自負。未経験のあなたが輝ける土台は、ここにあります。',
+}) => {
   return (
     <section className="bg-slate-50 py-12 sm:py-20">
       <div className="container mx-auto px-4">
@@ -27,18 +65,20 @@ const Philosophy: React.FC = () => {
                 viewport={{ once: true }}
                 className="mb-6 font-serif text-5xl font-bold text-amber-400 sm:text-7xl"
               >
-                8 YEARS
+                {years}
               </motion.div>
-              <h4 className="mb-6 font-serif text-xl font-bold leading-tight text-slate-100 sm:text-2xl">
-                私たちは「刹那的な稼ぎ」を提供しません。
-                <br className="hidden sm:block" />
-                「一生モノの価値」を共に創るパートナーです。
+              <h4
+                className="mb-6 font-serif text-xl font-bold leading-tight text-slate-100 sm:text-2xl"
+                style={{ whiteSpace: 'pre-line' }}
+              >
+                {heading}
               </h4>
               <div className="mx-auto mb-8 h-px w-24 bg-gradient-to-r from-transparent via-amber-400 to-transparent"></div>
-              <p className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-400 sm:text-base">
-                単に高収入を得るだけの場所なら、他にもあるかもしれません。
-                しかし、私たちが8年間一貫して追求してきたのは、未経験の方がここで得た経験を
-                その後の人生を支える「確かなスキルと自信」に変えていただくことです。
+              <p
+                className="mx-auto max-w-3xl text-sm leading-relaxed text-slate-400 sm:text-base"
+                style={{ whiteSpace: 'pre-line' }}
+              >
+                {description}
               </p>
             </div>
 
@@ -46,26 +86,7 @@ const Philosophy: React.FC = () => {
             <div className="relative grid grid-cols-1 gap-8 md:grid-cols-3">
               <div className="absolute left-0 top-12 z-0 hidden h-px w-full bg-gradient-to-r from-transparent via-slate-700 to-transparent md:block"></div>
 
-              {[
-                {
-                  icon: '🛡️',
-                  title: '盤石な土台',
-                  subtitle: '創業8年の信頼',
-                  desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
-                },
-                {
-                  icon: '💡',
-                  title: '能力の開花',
-                  subtitle: '徹底した教育サポート',
-                  desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
-                },
-                {
-                  icon: '💎',
-                  title: '継続的な成功',
-                  subtitle: '個人の価値を資産へ',
-                  desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
-                },
-              ].map((step, idx) => (
+              {steps.map((step, idx) => (
                 <motion.div
                   key={idx}
                   initial={{ opacity: 0, y: 30 }}
@@ -95,9 +116,7 @@ const Philosophy: React.FC = () => {
             >
               <div className="inline-flex items-center gap-3 rounded-2xl border border-amber-600/30 bg-amber-600/10 px-6 py-3 backdrop-blur-sm">
                 <span className="text-amber-400">✨</span>
-                <p className="text-sm font-medium text-slate-200">
-                  新人育成実績No.1の自負。未経験のあなたが輝ける土台は、ここにあります。
-                </p>
+                <p className="text-sm font-medium text-slate-200">{footerText}</p>
               </div>
             </motion.div>
           </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import { STOCK_RECRUIT_CONFIG } from './constants';
 import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
@@ -74,32 +75,56 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({
   onOpenChat,
   onOpenForm,
-  config,
+  config: incomingConfig,
   isEditing = false,
   onUpdate,
 }) => {
-  // デフォルト設定（既存のハードコード値があればここでマージ、またはコンポーネント側でデフォルトを持つ）
+  // Merge incoming config with stock config. Incoming (DB) takes priority.
+  // We do deep merge logic here manually for clarity.
+  const config = {
+    hero: { ...STOCK_RECRUIT_CONFIG.hero, ...incomingConfig?.hero },
+    openCast: { ...STOCK_RECRUIT_CONFIG.openCast, ...incomingConfig?.openCast },
+    philosophy: { ...STOCK_RECRUIT_CONFIG.philosophy, ...incomingConfig?.philosophy },
+    fukuoka: { ...STOCK_RECRUIT_CONFIG.fukuoka, ...incomingConfig?.fukuoka },
+    trust: { ...STOCK_RECRUIT_CONFIG.trust, ...incomingConfig?.trust },
+    achievements: { ...STOCK_RECRUIT_CONFIG.achievements, ...incomingConfig?.achievements },
+    comic: { ...STOCK_RECRUIT_CONFIG.comic, ...incomingConfig?.comic },
+    benefits: { ...STOCK_RECRUIT_CONFIG.benefits, ...incomingConfig?.benefits },
+    comparison: { ...STOCK_RECRUIT_CONFIG.comparison, ...incomingConfig?.comparison },
+    branding: { ...STOCK_RECRUIT_CONFIG.branding, ...incomingConfig?.branding },
+    ideal: { ...STOCK_RECRUIT_CONFIG.ideal, ...incomingConfig?.ideal },
+    flow: { ...STOCK_RECRUIT_CONFIG.flow, ...incomingConfig?.flow },
+    faq: { ...STOCK_RECRUIT_CONFIG.faq, ...incomingConfig?.faq },
+  };
 
   return (
     <div className="overflow-hidden bg-slate-50">
       {/* Hero Section */}
-      {(!config || config.hero?.isVisible !== false) && (
-        <div className="group relative">
+      {(config.hero.isVisible !== false || isEditing) && (
+        <div
+          className={`group relative transition-opacity duration-300 ${
+            config.hero.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
           {isEditing && (
             <div className="absolute right-2 top-2 z-50">
               <button
-                onClick={() => onUpdate?.('hero', 'isVisible', false)}
-                className="rounded bg-red-500 px-2 py-1 text-xs text-white shadow"
+                onClick={() => onUpdate?.('hero', 'isVisible', config.hero.isVisible !== false)}
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config.hero.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
               >
-                非表示にする
+                {config.hero.isVisible === false ? '表示する' : '非表示にする'}
               </button>
             </div>
           )}
           <HeroCollage
             onOpenChat={onOpenChat}
-            mainHeading={config?.hero?.mainHeading}
-            subHeading={config?.hero?.subHeading}
-            heroImage={config?.hero?.heroImage}
+            mainHeading={config.hero.mainHeading}
+            subHeading={config.hero.subHeading}
+            heroImage={config.hero.heroImage}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('hero', key, value)}
           />
@@ -107,25 +132,25 @@ const LandingPage: React.FC<LandingPageProps> = ({
       )}
 
       {/* Open Cast Recruitment Section */}
-      {(config?.openCast?.isVisible !== false || isEditing) && (
+      {(config.openCast.isVisible !== false || isEditing) && (
         <div
           className={`group relative transition-opacity duration-300 ${
-            config?.openCast?.isVisible === false ? 'opacity-40' : ''
+            config.openCast.isVisible === false ? 'opacity-40' : ''
           }`}
         >
           {isEditing && (
             <div className="absolute right-2 top-2 z-50">
               <button
                 onClick={() =>
-                  onUpdate?.('openCast', 'isVisible', config?.openCast?.isVisible === false)
+                  onUpdate?.('openCast', 'isVisible', config.openCast.isVisible !== false)
                 }
                 className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                  config?.openCast?.isVisible === false
+                  config.openCast.isVisible === false
                     ? 'bg-green-600 hover:bg-green-700'
                     : 'bg-red-500 hover:bg-red-600'
                 }`}
               >
-                {config?.openCast?.isVisible === false ? '表示する' : '非表示にする'}
+                {config.openCast.isVisible === false ? '表示する' : '非表示にする'}
               </button>
             </div>
           )}
@@ -133,7 +158,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             onOpenChat={onOpenChat}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('openCast', key, value)}
-            openCastImage={config?.openCast?.openCastImage}
+            openCastImage={config.openCast.openCastImage}
           />
         </div>
       )}
@@ -160,7 +185,13 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <Philosophy />
+        <Philosophy
+          years={config.philosophy.years}
+          heading={config.philosophy.heading}
+          description={config.philosophy.description}
+          steps={config.philosophy.steps}
+          footerText={config.philosophy.footerText}
+        />
       </div>
 
       {/* Fukuoka Reason Section */}
@@ -241,7 +272,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         )}
         <AchievementsAndLifestyle
           isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('achievements', key, value)}
+          onUpdate={(key, value) => onUpdate?.('achievements', `castImages.${key}`, value)}
           castImages={config?.achievements?.castImages}
         />
       </div>
@@ -297,7 +328,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <Benefits />
+        <Benefits
+          heading={config.benefits.heading}
+          description={config.benefits.description}
+          points={config.benefits.points}
+        />
       </div>
 
       {/* Comparison Section */}
@@ -351,7 +386,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         )}
         <BrandingSupport
           isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('branding', key, value)}
+          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
           brandingImages={config?.branding?.images}
         />
       </div>
@@ -401,7 +436,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <Flow />
+        <Flow
+          heading={config.flow.heading}
+          description={config.flow.description}
+          steps={config.flow.steps}
+        />
       </div>
 
       {/* FAQ Section */}
@@ -425,7 +464,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <FAQ />
+        <FAQ
+          heading={config.faq.heading}
+          description={config.faq.description}
+          items={config.faq.items}
+        />
       </div>
 
       {/* Final CTA Section */}

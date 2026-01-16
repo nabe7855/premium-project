@@ -1,7 +1,18 @@
 import React from 'react';
 
-const Benefits: React.FC = () => {
-  const points = [
+interface BenefitsProps {
+  heading?: string;
+  description?: string;
+  points?: Array<{
+    title: string;
+    desc: string;
+  }>;
+}
+
+const Benefits: React.FC<BenefitsProps> = ({
+  heading = '未経験者が安心できる\n5つの理由',
+  description = '業界の常識を覆すサポート体制。あなたが「自分を変える」ことに専念できる環境を整えました。',
+  points = [
     {
       title: '無料の徹底研修',
       desc: '業界トップクラスの講師陣による未経験者専用カリキュラムをご用意。接客の基礎からプロの技術まで、あなたが自信を持てるまでマンツーマンで寄り添い、最短距離での成長を保証します。',
@@ -20,23 +31,22 @@ const Benefits: React.FC = () => {
     },
     {
       title: '身バレ徹底対策',
-      desc: '専門チームによるアカウント運用管理で、知人への露出をシステムレベルでブロック。端末設定からSNS運用まで、初心者でも安心の身バレ対策マニュアルとサポート体制を完備しています。',
+      desc: '専門チームによるアカウント運用管理で、知人への露出をシステムレベルでブロック。端末設定からSNS運用まで、初心者でも安心の身バレ対策マニュアル and サポート体制を完備しています。',
     },
-  ];
-
+  ],
+}) => {
   return (
     <section className="overflow-hidden bg-white py-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
           <div className="mb-16 text-center">
-            <h3 className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl">
-              未経験者が安心できる
-              <br className="md:hidden" />
-              5つの理由
+            <h3
+              className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
+              style={{ whiteSpace: 'pre-line' }}
+            >
+              {heading}
             </h3>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">
-              業界の常識を覆すサポート体制。あなたが「自分を変える」ことに専念できる環境を整えました。
-            </p>
+            <p className="mx-auto max-w-2xl text-lg text-slate-600">{description}</p>
           </div>
 
           <div className="mb-24 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">

@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 interface BrandingSupportProps {
   isEditing?: boolean;
-  onUpdate?: (key: string, value: string) => void;
+  onUpdate?: (key: string, value: any) => void;
   brandingImages?: {
     image1?: string;
     image2?: string;
@@ -46,8 +46,7 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
   ];
 
   const handleUpload = (key: string) => (file: File) => {
-    const url = URL.createObjectURL(file);
-    if (onUpdate) onUpdate(key, url);
+    if (onUpdate) onUpdate(key, file);
   };
 
   return (

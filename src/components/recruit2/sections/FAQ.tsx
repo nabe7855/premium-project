@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 
-const FAQ: React.FC = () => {
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
-  const [activeTab, setActiveTab] = useState<'all' | 'beginner' | 'expert'>('all');
+interface FAQProps {
+  heading?: string;
+  description?: string;
+  items?: Array<{
+    cat: string;
+    q: string;
+    a: string;
+  }>;
+}
 
-  const faqs = [
+const FAQ: React.FC<FAQProps> = ({
+  heading = 'よくあるご質問',
+  description = '疑問を解消して、安心してお申し込みください。',
+  items = [
     // System & Rules
     {
       cat: 'general',
@@ -109,21 +118,22 @@ const FAQ: React.FC = () => {
       q: 'その日のうちに面接や実技講習は可能ですか？',
       a: 'はい、スケジュールが空いていれば即日対応可能です。まずはお話や相談だけ、という方も大歓迎です。',
     },
-  ];
+  ],
+}) => {
+  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [activeTab, setActiveTab] = useState<'all' | 'beginner' | 'expert'>('all');
 
   const filteredFaqs =
-    activeTab === 'all' ? faqs : faqs.filter((f) => f.cat === activeTab || f.cat === 'general');
+    activeTab === 'all' ? items : items.filter((f) => f.cat === activeTab || f.cat === 'general');
 
   return (
     <section className="bg-white py-16 sm:py-24">
       <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-10 text-center sm:mb-16">
           <h3 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
-            よくあるご質問
+            {heading}
           </h3>
-          <p className="px-4 text-sm text-slate-500 sm:text-base">
-            疑問を解消して、安心してお申し込みください。
-          </p>
+          <p className="px-4 text-sm text-slate-500 sm:text-base">{description}</p>
         </div>
 
         <div className="mb-8 flex flex-wrap justify-center gap-2 px-2 sm:mb-12 sm:gap-4">

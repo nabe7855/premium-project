@@ -8,7 +8,7 @@ interface HeroCollageProps {
   mainHeading?: string;
   subHeading?: string;
   isEditing?: boolean;
-  onUpdate?: (key: string, value: string) => void;
+  onUpdate?: (key: string, value: any) => void;
   heroImage?: string;
 }
 
@@ -33,8 +33,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && onUpdate) {
-      const url = URL.createObjectURL(file);
-      onUpdate('heroImage', url);
+      onUpdate('heroImage', file);
     }
   };
 

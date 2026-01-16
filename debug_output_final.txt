@@ -1,0 +1,50 @@
+﻿--- RecruitPage ---
+node : file:///C:/Us
+ers/nabe7/Documents/
+Projects/premium-pro
+ject/debug_db.mjs:35
+発生場所 行:1 文字:1
++ node --env-file=.e
+nv.local debug_db.mj
+s 2>&1 | Out-File -F
+ilePath deb ...
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~
+~~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: (file   
+ :///C:/User...d    
+ebug_db.mjs:35:    S
+tring) [], Rem    ot
+eException
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+village;
+^
+
+ReferenceError: vill
+age is not defined
+    at file:///C:/Us
+ers/nabe7/Documents/
+Projects/premium-pro
+ject/debug_db.mjs:35
+:1
+    at ModuleJob.run
+ (node:internal/modu
+les/esm/module_job:3
+45:25)
+    at async onImpor
+t.tracePromise.__pro
+to__ (node:internal/
+modules/esm/loader:6
+65:26)
+    at async asyncRu
+nEntryPointWithESMLo
+ader (node:internal/
+modules/run_main:117
+:5)
+
+Node.js v22.20.0

@@ -1,0 +1,51 @@
+﻿
+Testing: Pooler Transaction Mode (Standard)
+node : file:///C:/Us
+ers/nabe7/Documents/
+Projects/premium-pro
+ject/multi_test_db.m
+js:57
+発生場所 行:1 文字:1
++ node multi_test_db
+.mjs 2>&1 | Out-File
+ -FilePath multi_tes
+t_output.tx ...
++ ~~~~~~~~~~~~~~~~~~
+~~~~~~~~~
+    + CategoryInfo  
+            : NotS  
+  pecified: (file   
+ :///C:/User..._    
+test_db.mjs:57:    S
+tring) [], Rem    ot
+eException
+    + FullyQualifie 
+   dErrorId : Nati  
+  veCommandError
+ 
+village;
+^
+
+ReferenceError: vill
+age is not defined
+    at file:///C:/Us
+ers/nabe7/Documents/
+Projects/premium-pro
+ject/multi_test_db.m
+js:57:1
+    at ModuleJob.run
+ (node:internal/modu
+les/esm/module_job:3
+45:25)
+    at async onImpor
+t.tracePromise.__pro
+to__ (node:internal/
+modules/esm/loader:6
+65:26)
+    at async asyncRu
+nEntryPointWithESMLo
+ader (node:internal/
+modules/run_main:117
+:5)
+
+Node.js v22.20.0

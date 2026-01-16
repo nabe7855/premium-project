@@ -1,13 +1,39 @@
 'use server';
 
-// TEMPORARY: Commented out until DATABASE_URL is properly configured
-// Uncomment this file when you're ready to set up the database
-
-/*
 import { extractImageUrls } from '@/lib/image-cleanup';
 import { prisma } from '@/lib/prisma';
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
 
+/**
+ * Get recruitment page configuration for a specific store
+ */
+export async function getRecruitPageConfig(storeSlug: string) {
+  try {
+    const store = await prisma.store.findUnique({
+      where: { slug: storeSlug },
+      include: { recruit_pages: true },
+    });
+
+    if (!store) {
+      return { success: false, error: 'Store not found' };
+    }
+
+    // Convert array of sections to a single config object
+    const config: Record<string, any> = {};
+    store.recruit_pages.forEach((page: any) => {
+      config[page.section_key] = page.content;
+    });
+
+    return { success: true, config };
+  } catch (error) {
+    console.error('Error fetching recruit config:', error);
+    return { success: false, error: String(error) };
+  }
+}
+
+/**
+ * Save recruitment page configuration for a specific store
+ */
 export async function saveRecruitPageConfig(storeSlug: string, fullConfig: any) {
   try {
     // 1. Resolve Store ID from Slug
@@ -48,7 +74,6 @@ export async function saveRecruitPageConfig(storeSlug: string, fullConfig: any) 
             try {
               const urlObj = new URL(url);
               // Expected URL format: https://.../storage/v1/object/public/[bucket]/[path]
-              // Or direct Supabase extracted URL
               const pathParts = urlObj.pathname.split('/storage/v1/object/public/');
               if (pathParts.length > 1) {
                 const fullPath = pathParts[1];
@@ -94,11 +119,4 @@ export async function saveRecruitPageConfig(storeSlug: string, fullConfig: any) 
     console.error('Error saving recruit config:', error);
     return { success: false, error: String(error) };
   }
-}
-*/
-
-// Temporary stub function
-export async function saveRecruitPageConfig(_storeSlug: string, _fullConfig: any) {
-  console.warn('saveRecruitPageConfig is currently disabled. Configure DATABASE_URL to enable.');
-  return { success: false, error: 'Database not configured' };
 }

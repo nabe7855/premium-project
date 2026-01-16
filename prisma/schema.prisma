@@ -82,7 +82,7 @@ model Review {
   created_at DateTime       @default(now())
 
   cast   Cast         @relation(fields: [cast_id], references: [id])
-  tags   ReviewTag[]  @relation("ReviewTagsOnReviews", references: [id])
+  tags   ReviewTag[]
 }
 
 // Review 用のタグ（例: イケメン, ユーモア）
@@ -90,16 +90,9 @@ model ReviewTag {
   id    String   @id @default(uuid())
   name  String   @unique
 
-  reviews Review[] @relation("ReviewTagsOnReviews")
+  reviews Review[]
 }
 
-// 中間テーブル（口コミとタグ 多対多）
-model _ReviewToReviewTag {
-  review_id   String
-  review_tag_id String
-
-  @@id([review_id, review_tag_id])
-}
 
 // -------------------- Gallery Items（ギャラリー画像） --------------------
 model GalleryItem {
@@ -129,6 +122,11 @@ model FeatureMaster {
   category   String
   name       String
   created_at DateTime @default(now())
+
+  cast_personalities CastFeatures[] @relation("Personality")
+  cast_appearances   CastFeatures[] @relation("Appearance")
+  cast_mbtis         CastFeatures[] @relation("Mbti")
+  cast_faces         CastFeatures[] @relation("Face")
 }
 
 model CastFeatures {
@@ -141,10 +139,10 @@ model CastFeatures {
   created_at     DateTime @default(now())
 
   cast         Cast          @relation(fields: [cast_id], references: [id])
-  personality  FeatureMaster @relation("Personality", fields: [personality_id], references: [id])
-  appearance   FeatureMaster @relation("Appearance", fields: [appearance_id], references: [id])
-  mbti         FeatureMaster @relation("Mbti", fields: [mbti_id], references: [id])
-  face         FeatureMaster @relation("Face", fields: [face_id], references: [id])
+  personality  FeatureMaster? @relation("Personality", fields: [personality_id], references: [id])
+  appearance   FeatureMaster? @relation("Appearance", fields: [appearance_id], references: [id])
+  mbti         FeatureMaster? @relation("Mbti", fields: [mbti_id], references: [id])
+  face         FeatureMaster? @relation("Face", fields: [face_id], references: [id])
 }
 
 // -------------------- Cast-Store Memberships（所属店舗） --------------------
@@ -204,14 +202,7 @@ model BlogTag {
   id    String   @id @default(uuid())
   name  String
 
-  blogs Blog[] @relation("TagsOnBlogs")
-}
-
-model _BlogToBlogTag {
-  blog_id String
-  tag_id  String
-
-  @@id([blog_id, tag_id])
+  blogs Blog[]
 }
 
 // -------------------- Videos（YouTube 動画まとめ） --------------------
@@ -239,26 +230,12 @@ model VideoCast {
 model VideoTag {
   id    String   @id @default(uuid())
   name  String
-  videos Video[] @relation("TagsOnVideos")
-}
-
-model _VideoToVideoTag {
-  video_id String
-  tag_id   String
-
-  @@id([video_id, tag_id])
+  videos Video[]
 }
 
 // 「癒されたい」「ときめきたい」など直感タグ
 model VideoFeeling {
   id    String   @id @default(uuid())
   name  String
-  videos Video[] @relation("FeelingsOnVideos")
-}
-
-model _VideoToVideoFeeling {
-  video_id   String
-  feeling_id String
-
-  @@id([video_id, feeling_id])
+  videos Video[]
 }

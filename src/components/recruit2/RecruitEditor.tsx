@@ -1,4 +1,4 @@
-import { saveRecruitPageConfig } from '@/actions/recruit';
+import { getRecruitPageConfig, saveRecruitPageConfig } from '@/actions/recruit';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -8,6 +8,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { stores } from '@/data/stores';
+import { uploadRecruitImage } from '@/lib/uploadRecruitImage';
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -16,8 +17,8 @@ import LandingPage, { LandingPageConfig } from './LandingPage';
 export default function RecruitEditor() {
   const [selectedStore, setSelectedStore] = React.useState('tokyo');
   const [isSaving, setIsSaving] = React.useState(false);
+  const [isUploading, setIsUploading] = React.useState(false);
 
-  // Currently static, but prepared for dynamic config per store
   const [config, setConfig] = React.useState<LandingPageConfig>({
     hero: {
       isVisible: true,
@@ -26,12 +27,93 @@ export default function RecruitEditor() {
       isVisible: true,
     },
   });
+  const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleUpdate = (section: string, key: string, value: any) => {
-    setConfig((prev) => ({
-      ...prev,
-      [section]: { ...prev[section], [key]: value },
-    }));
+  // Fetch config when store changes
+  React.useEffect(() => {
+    const fetchConfig = async () => {
+      setIsLoading(true);
+      try {
+        const result = await getRecruitPageConfig(selectedStore);
+        if (result.success && result.config) {
+          // Merge with default config to ensure all sections exist
+          setConfig((prev) => ({
+            ...prev,
+            ...result.config,
+          }));
+        } else {
+          // Reset to default or handle error
+          console.error('Failed to fetch config:', result.error);
+        }
+      } catch (e) {
+        console.error('Error fetching config:', e);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchConfig();
+  }, [selectedStore]);
+
+  const handleUpdate = async (section: string, key: string, value: any) => {
+    // If value is a File, upload it first
+    if (value instanceof File) {
+      console.log('📂 File detected for upload:', value.name, value.size, value.type);
+      setIsUploading(true);
+      const toastId = toast.loading('画像をアップロード中...');
+      try {
+        const url = await uploadRecruitImage(selectedStore, section, value);
+        if (url) {
+          console.log('🔗 Uploaded URL:', url);
+
+          if (key.includes('.')) {
+            const [mainKey, subKey] = key.split('.');
+            setConfig((prev) => ({
+              ...prev,
+              [section]: {
+                ...prev[section],
+                [mainKey]: {
+                  ...(prev[section]?.[mainKey] || {}),
+                  [subKey]: url,
+                },
+              },
+            }));
+          } else {
+            setConfig((prev) => ({
+              ...prev,
+              [section]: { ...prev[section], [key]: url },
+            }));
+          }
+          toast.success('画像をアップロードしました', { id: toastId });
+        } else {
+          console.error('❌ Upload failed: No URL returned');
+          toast.error('画像のアップロードに失敗しました', { id: toastId });
+        }
+      } catch (error) {
+        console.error('❌ Upload exception:', error);
+        toast.error('アップロード中にエラーが発生しました', { id: toastId });
+      } finally {
+        setIsUploading(false);
+      }
+    } else {
+      if (key.includes('.')) {
+        const [mainKey, subKey] = key.split('.');
+        setConfig((prev) => ({
+          ...prev,
+          [section]: {
+            ...prev[section],
+            [mainKey]: {
+              ...(prev[section]?.[mainKey] || {}),
+              [subKey]: value,
+            },
+          },
+        }));
+      } else {
+        setConfig((prev) => ({
+          ...prev,
+          [section]: { ...prev[section], [key]: value },
+        }));
+      }
+    }
   };
 
   const handleSave = async () => {
@@ -74,7 +156,7 @@ export default function RecruitEditor() {
           <div className="text-sm text-gray-500">※ 画像をクリックして変更できます</div>
           <Button
             onClick={handleSave}
-            disabled={isSaving}
+            disabled={isSaving || isUploading}
             className="bg-primary text-white hover:bg-primary/90"
           >
             {isSaving ? '保存中...' : '変更を保存'}
@@ -83,14 +165,32 @@ export default function RecruitEditor() {
       </div>
 
       {/* Main Content Preview */}
-      <div className="min-h-screen overflow-hidden rounded-lg border bg-slate-50 shadow-lg">
+      <div
+        className={`relative min-h-screen overflow-hidden rounded-lg border bg-slate-50 shadow-lg ${isLoading || isUploading ? 'pointer-events-none opacity-50' : ''}`}
+      >
+        {(isLoading || isUploading) && (
+          <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/50 backdrop-blur-sm">
+            <div className="flex flex-col items-center gap-2">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+              <p className="text-sm font-medium text-gray-600">
+                {isUploading ? '画像をアップロード中...' : '読み込み中...'}
+              </p>
+            </div>
+          </div>
+        )}
         {/* Pass disabled editing props */}
         {/* Wrap in HashRouter to provide context for child components using useNavigate */}
         <HashRouter>
           <LandingPage
             config={config}
             isEditing={true}
-            onUpdate={handleUpdate}
+            onUpdate={(section, key, value) => {
+              console.log(
+                `📝 RecruitEditor update: [${section}] ${key}`,
+                value instanceof File ? 'File' : value,
+              );
+              handleUpdate(section, key, value);
+            }}
             onOpenChat={() => {}}
             onOpenForm={() => {}}
           />

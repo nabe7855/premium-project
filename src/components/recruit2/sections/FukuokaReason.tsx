@@ -6,7 +6,7 @@ import React from 'react';
 
 interface FukuokaReasonProps {
   isEditing?: boolean;
-  onUpdate?: (key: string, value: string) => void;
+  onUpdate?: (key: string, value: any) => void;
   backgroundImage?: string;
 }
 
@@ -31,8 +31,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
           className="duration-[20s] h-full w-full object-cover transition-transform hover:scale-110"
           isEditing={isEditing}
           onUpload={(file) => {
-            const url = URL.createObjectURL(file);
-            if (onUpdate) onUpdate('backgroundImage', url);
+            if (onUpdate) onUpdate('backgroundImage', file);
           }}
         />
         {/* Dark Overlay for Readability */}
@@ -48,9 +47,8 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file) {
-                  const url = URL.createObjectURL(file);
-                  if (onUpdate) onUpdate('backgroundImage', url);
+                if (file && onUpdate) {
+                  onUpdate('backgroundImage', file);
                 }
               }}
             />

@@ -1,7 +1,22 @@
 import React from 'react';
 
-const Flow: React.FC = () => {
-  const steps = [
+interface FlowProps {
+  heading?: string;
+  description?: string;
+  steps?: Array<{
+    step: string;
+    title: string;
+    duration: string;
+    desc: string;
+    color: string;
+    numColor: string;
+  }>;
+}
+
+const Flow: React.FC<FlowProps> = ({
+  heading = 'デビューまでの<span class="text-rose-500">6ステップ</span>',
+  description = 'わかりやすいステップで、未経験の方も安心してスタートできます。',
+  steps = [
     {
       step: '01',
       title: 'カウンセリング面談',
@@ -50,8 +65,8 @@ const Flow: React.FC = () => {
       color: 'bg-pink-50 border-pink-100',
       numColor: 'text-pink-200',
     },
-  ];
-
+  ],
+}) => {
   return (
     <section className="overflow-hidden bg-slate-50 py-24">
       <div className="container mx-auto max-w-5xl px-4">
@@ -59,12 +74,11 @@ const Flow: React.FC = () => {
           <span className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-sm font-bold text-rose-600">
             FLOW TO DEBUT
           </span>
-          <h3 className="mb-6 font-serif text-3xl font-bold text-slate-900 md:text-5xl">
-            デビューまでの<span className="text-rose-500">6ステップ</span>
-          </h3>
-          <p className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg">
-            わかりやすいステップで、未経験の方も安心してスタートできます。
-          </p>
+          <h3
+            className="mb-6 font-serif text-3xl font-bold text-slate-900 md:text-5xl"
+            dangerouslySetInnerHTML={{ __html: heading }}
+          />
+          <p className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg">{description}</p>
 
           <div className="mt-8 inline-block rotate-2 transform animate-bounce rounded-xl border-2 border-yellow-400 bg-yellow-100 px-6 py-3">
             <p className="text-lg font-bold text-yellow-800">※経験者は最短当日デビューも可能！</p>

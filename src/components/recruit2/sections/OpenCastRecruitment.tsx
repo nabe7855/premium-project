@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react';
 interface OpenCastRecruitmentProps {
   onOpenChat: () => void;
   isEditing?: boolean;
-  onUpdate?: (key: string, value: string) => void;
+  onUpdate?: (key: string, value: any) => void;
   openCastImage?: string;
 }
 
@@ -76,17 +76,34 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
           variants={itemVariants}
           className="flex w-full max-w-5xl flex-col items-center px-4"
         >
-          <div className="w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
+          <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
             <EditableImage
               src={openCastImage || '/オープンキャスト募集.png'}
               alt="オープンキャスト募集 - 10名限定超好待遇"
               className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
               isEditing={isEditing}
               onUpload={(file) => {
-                const url = URL.createObjectURL(file);
-                if (onUpdate) onUpdate('openCastImage', url);
+                console.log('📸 OpenCastRecruitment: Image selected', file.name);
+                if (onUpdate) onUpdate('openCastImage', file);
               }}
             />
+            {isEditing && (
+              <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/60 px-4 py-2 text-white hover:bg-black/80">
+                <span className="text-sm font-bold text-white">画像を変更</span>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="image/*"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file && onUpdate) {
+                      console.log('📸 OpenCastRecruitment manual: Image selected', file.name);
+                      onUpdate('openCastImage', file);
+                    }
+                  }}
+                />
+              </label>
+            )}
           </div>
         </motion.div>
 

@@ -120,7 +120,7 @@ const PROFILES: CastProfile[] = [
 
 interface AchievementsAndLifestyleProps {
   isEditing?: boolean;
-  onUpdate?: (key: string, value: string) => void;
+  onUpdate?: (key: string, value: any) => void;
   castImages?: Record<string, string>;
 }
 
@@ -132,14 +132,12 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
   const [activeProfile, setActiveProfile] = useState<CastProfile>(PROFILES[0]);
 
   const handleUpload = (id: string) => (file: File) => {
-    const url = URL.createObjectURL(file);
-    if (onUpdate) onUpdate(`cast_${id}`, url);
+    if (onUpdate) onUpdate(id, file);
   };
 
   const currentImage = castImages?.[activeProfile.id] || activeProfile.image;
 
   const describeArc = (startHour: number, endHour: number) => {
-    // ... (same implementation)
     const startAngle = (startHour / 24) * 360 - 90;
     const endAngle = (endHour / 24) * 360 - 90;
 

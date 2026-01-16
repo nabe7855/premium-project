@@ -20,6 +20,7 @@ export const EditableImage: React.FC<EditableImageProps> = ({
 
   const handleClick = (e: React.MouseEvent) => {
     if (isEditing && fileInputRef.current) {
+      console.log('🎨 EditableImage: Clicked', storageKey || alt);
       e.preventDefault();
       e.stopPropagation();
       fileInputRef.current.click();
@@ -28,8 +29,9 @@ export const EditableImage: React.FC<EditableImageProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && onUpload) {
-      onUpload(file);
+    if (file) {
+      console.log('🎨 EditableImage: File selected', file.name);
+      if (onUpload) onUpload(file);
     }
   };
 
