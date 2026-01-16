@@ -60,9 +60,26 @@ const Comparison: React.FC = () => {
           </p>
         </div>
 
+        {/* Scroll Hint for Mobile */}
+        <div className="mb-4 flex items-center justify-end text-xs font-medium text-slate-400 sm:hidden">
+          <span>← 横スクロールできます</span>
+          <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
+          </svg>
+        </div>
+
         {/* Desktop Table Layout (Usually visible on larger screens, strictly following grid style) */}
-        <div className="-mx-4 overflow-x-auto px-4 pb-8 sm:overflow-visible">
-          <div className="grid min-w-[800px] grid-cols-4 items-stretch gap-4 text-center">
+        <div className="-mx-4 overflow-x-auto px-4 pb-8">
+          {/* ↓ 左端（項目名）の列の横幅を変更したい場合は、下記の 'grid-cols-4' を 
+              'grid-cols-[200px_1fr_1fr_1fr]' (200pxに固定) 
+              や 'grid-cols-[1.5fr_1fr_1fr_1fr]' (比率で指定) 
+              のように書き換えてください */}
+          <div className="grid min-w-[800px] grid-cols-[120px_1fr_1fr_1fr] items-stretch gap-4 text-center">
             {/* Header Row */}
             <div className="col-span-1 flex items-center justify-center bg-transparent text-sm font-bold text-slate-400">
               {/* Empty corner */}
