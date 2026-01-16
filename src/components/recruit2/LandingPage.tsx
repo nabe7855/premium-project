@@ -1,5 +1,5 @@
 import React from 'react';
-import Achievements from './sections/Achievements';
+import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
 import ComicSlider from './sections/ComicSlider';
@@ -9,7 +9,6 @@ import Flow from './sections/Flow';
 import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
 import IdealCandidate from './sections/IdealCandidate';
-import Income from './sections/Income';
 import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
@@ -28,16 +27,13 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => 
         <Trust />
       </div>
       <div id="achievements">
-        <Achievements />
+        <AchievementsAndLifestyle />
       </div>
       <div id="comic">
         <ComicSlider />
       </div>
       <div id="benefits">
         <Benefits />
-      </div>
-      <div id="income">
-        <Income />
       </div>
       <div id="comparison">
         <Comparison />

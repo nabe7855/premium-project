@@ -40,9 +40,7 @@ const BrandingSupport: React.FC = () => {
             
             {/* Left Content */}
             <div className="lg:col-span-7">
-              <div className="inline-block px-4 py-1 bg-amber-600/20 border border-amber-600/30 rounded-full text-amber-500 font-bold text-xs uppercase tracking-widest mb-6">
-                For Entertainment Pros & Experts
-              </div>
+
               <h2 className="text-4xl md:text-6xl font-serif font-bold mb-8 leading-tight">
                 あなたの「影響力」を、<br/>
                 永続的な<span className="text-amber-500 italic">「資産」</span>へ。
