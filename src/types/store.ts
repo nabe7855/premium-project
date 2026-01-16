@@ -1,10 +1,10 @@
 // store.ts
 
-export type StoreLocation = 'tokyo' | 'osaka' | 'nagoya' | 'fukuoka';
+export type StoreLocation = 'tokyo' | 'osaka' | 'nagoya' | 'fukuoka' | 'yokohama';
 
 export interface Store {
   id: StoreLocation;
-  template: 'common' | 'fukuoka';
+  template: 'common' | 'fukuoka' | 'yokohama';
   name: string;
   displayName: string;
   catchphrase: string;

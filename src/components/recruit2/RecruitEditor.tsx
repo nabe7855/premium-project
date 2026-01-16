@@ -1,0 +1,71 @@
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { stores } from '@/data/stores';
+import React from 'react';
+import { HashRouter } from 'react-router-dom';
+import LandingPage, { LandingPageConfig } from './LandingPage';
+
+export default function RecruitEditor() {
+  const [selectedStore, setSelectedStore] = React.useState('tokyo');
+
+  // Currently static, but prepared for dynamic config per store
+  const [config, setConfig] = React.useState<LandingPageConfig>({
+    hero: {
+      isVisible: true,
+    },
+  });
+
+  const handleUpdate = (section: string, key: string, value: any) => {
+    // Mock update: log to console or update local state for preview
+    console.log(`Update ${section}.${key}:`, value);
+    // In a real app, this would update Supabase or local state
+    setConfig((prev) => ({
+      ...prev,
+      [section]: { ...prev[section], [key]: value },
+    }));
+  };
+
+  return (
+    <div className="space-y-4">
+      {/* Store Selector Header */}
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b bg-white/90 p-4 shadow-sm backdrop-blur-sm">
+        <div className="flex items-center gap-4">
+          <h2 className="text-xl font-bold text-gray-800">採用ページ編集</h2>
+          <Select value={selectedStore} onValueChange={setSelectedStore}>
+            <SelectTrigger className="w-[250px] bg-white text-gray-900">
+              <SelectValue placeholder="店舗を選択" />
+            </SelectTrigger>
+            <SelectContent>
+              {Object.values(stores).map((store) => (
+                <SelectItem key={store.id} value={store.id}>
+                  {store.emoji} {store.displayName}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="text-sm text-gray-500">※ 画像をクリックして変更できます</div>
+      </div>
+
+      {/* Main Content Preview */}
+      <div className="min-h-screen overflow-hidden rounded-lg border bg-slate-50 shadow-lg">
+        {/* Pass disabled editing props */}
+        {/* Wrap in HashRouter to provide context for child components using useNavigate */}
+        <HashRouter>
+          <LandingPage
+            config={config}
+            isEditing={true}
+            onUpdate={handleUpdate}
+            onOpenChat={() => {}}
+            onOpenForm={() => {}}
+          />
+        </HashRouter>
+      </div>
+    </div>
+  );
+}

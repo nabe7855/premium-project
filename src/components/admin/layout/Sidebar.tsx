@@ -65,6 +65,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       icon: <PresentationChartLineIcon />,
       label: 'ホテルマスタ管理',
     },
+    {
+      href: '/admin/admin/recruit-management',
+      icon: <DocumentTextIcon />,
+      label: '採用ページ管理',
+    },
   ];
 
   return (

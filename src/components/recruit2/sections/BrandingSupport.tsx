@@ -1,7 +1,25 @@
+'use client';
+
+import { EditableImage } from '@/components/admin/EditableImage';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const BrandingSupport: React.FC = () => {
+interface BrandingSupportProps {
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: string) => void;
+  brandingImages?: {
+    image1?: string;
+    image2?: string;
+    image3?: string;
+    image4?: string;
+  };
+}
+
+const BrandingSupport: React.FC<BrandingSupportProps> = ({
+  isEditing = false,
+  onUpdate,
+  brandingImages,
+}) => {
   const navigate = useNavigate();
 
   const features = [
@@ -23,9 +41,14 @@ const BrandingSupport: React.FC = () => {
     {
       title: '次世代へのキャリアデザイン',
       desc: '店舗運営への参画、独立支援、あるいは芸能活動のバックアップ。単なる『キャスト』で終わらせない、次のステージへの投資を行います。',
-      icon: '�',
+      icon: '',
     },
   ];
+
+  const handleUpload = (key: string) => (file: File) => {
+    const url = URL.createObjectURL(file);
+    if (onUpdate) onUpdate(key, url);
+  };
 
   return (
     <section className="relative overflow-hidden bg-black py-24 text-white">
@@ -89,33 +112,44 @@ const BrandingSupport: React.FC = () => {
               <div className="relative z-10 grid grid-cols-2 gap-4">
                 <div className="space-y-4 pt-12">
                   <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <img
-                      src="/キャストモデル１.png"
+                    <EditableImage
+                      src={brandingImages?.image1 || '/キャストモデル１.png'}
                       className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                       alt="Professional 1"
+                      isEditing={isEditing}
+                      onUpload={handleUpload('image1')}
                     />
                   </div>
                   <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <img
-                      src="/キャストモデル２.png"
+                    <EditableImage
+                      src={brandingImages?.image2 || '/キャストモデル２.png'}
                       className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                       alt="Professional 2"
+                      isEditing={isEditing}
+                      onUpload={handleUpload('image2')}
                     />
                   </div>
                 </div>
                 <div className="space-y-4">
                   <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <img
-                      src="/キャストモデル３.png"
+                    <EditableImage
+                      src={brandingImages?.image3 || '/キャストモデル３.png'}
                       className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                       alt="Professional 3"
+                      isEditing={isEditing}
+                      onUpload={handleUpload('image3')}
                     />
                   </div>
                   <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <img
-                      src="https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600"
+                    <EditableImage
+                      src={
+                        brandingImages?.image4 ||
+                        'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600'
+                      }
                       className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                       alt="Professional 4"
+                      isEditing={isEditing}
+                      onUpload={handleUpload('image4')}
                     />
                   </div>
                 </div>

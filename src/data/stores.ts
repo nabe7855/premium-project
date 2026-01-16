@@ -88,4 +88,24 @@ export const stores: Record<string, Store> = {
         '福岡・博多で最高品質のエンターテインメントサービス。本日出勤キャスト多数、ご予約受付中。',
     },
   },
+  yokohama: {
+    id: 'yokohama',
+    template: 'yokohama',
+    name: 'ストロベリーボーイズ横浜',
+    displayName: '横浜店',
+    catchphrase: '港町横浜で叶える大人の恋',
+    heroTitle: '港町横浜で叶える大人の恋',
+    description: '横浜で大人のための上質な癒しを。洗練されたキャストがあなたをお待ちしています。',
+    emoji: '🎡',
+    subtext: '洗練された夜景と共に',
+    colors: {
+      primary: 'yokohama-500',
+      secondary: 'yokohama-300',
+      gradient: 'bg-gradient-yokohama',
+    },
+    seo: {
+      title: '【横浜店】港町横浜で叶える大人の恋｜ストロベリーボーイズ',
+      description: '横浜で大人のための上質な癒しを。洗練されたキャストがあなたをお待ちしています。',
+    },
+  },
 };

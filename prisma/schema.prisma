@@ -39,6 +39,21 @@ model Store {
   schedules     Schedule[]
   memberships   CastStoreMembership[]
   videos        Video[]
+  recruit_pages RecruitPage[]
+}
+
+// -------------------- Recruit Pages（採用ページ設定） --------------------
+model RecruitPage {
+  id          String   @id @default(uuid())
+  store_id    String
+  section_key String
+  content     Json
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  store Store @relation(fields: [store_id], references: [id])
+
+  @@unique([store_id, section_key])
 }
 
 // -------------------- Schedules（出勤予定） --------------------

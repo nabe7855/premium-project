@@ -1,7 +1,20 @@
+'use client';
+
+import { EditableImage } from '@/components/admin/EditableImage';
 import { motion } from 'framer-motion';
 import React from 'react';
 
-const FukuokaReason: React.FC = () => {
+interface FukuokaReasonProps {
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: string) => void;
+  backgroundImage?: string;
+}
+
+const FukuokaReason: React.FC<FukuokaReasonProps> = ({
+  isEditing = false,
+  onUpdate,
+  backgroundImage,
+}) => {
   return (
     <section className="relative overflow-hidden bg-white py-32 text-white">
       {/* Background Image */}
@@ -12,13 +25,37 @@ const FukuokaReason: React.FC = () => {
         viewport={{ once: true }}
         transition={{ duration: 1.5, ease: 'easeOut' }}
       >
-        <img
-          src="/福岡夜景.png"
+        <EditableImage
+          src={backgroundImage || '/福岡夜景.png'}
           alt="福岡の夜景"
           className="duration-[20s] h-full w-full object-cover transition-transform hover:scale-110"
+          isEditing={isEditing}
+          onUpload={(file) => {
+            const url = URL.createObjectURL(file);
+            if (onUpdate) onUpdate('backgroundImage', url);
+          }}
         />
         {/* Dark Overlay for Readability */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/80"></div>
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/80"></div>
+
+        {/* Edit Background Button */}
+        {isEditing && (
+          <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/50 px-4 py-2 text-white hover:bg-black/70">
+            <span className="text-sm font-bold">背景画像を変更</span>
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  const url = URL.createObjectURL(file);
+                  if (onUpdate) onUpdate('backgroundImage', url);
+                }
+              }}
+            />
+          </label>
+        )}
       </motion.div>
 
       <div className="container relative z-10 mx-auto px-4">

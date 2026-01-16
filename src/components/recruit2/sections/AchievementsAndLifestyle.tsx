@@ -1,5 +1,6 @@
 'use client';
 
+import { EditableImage } from '@/components/admin/EditableImage';
 import { motion } from 'framer-motion';
 import React, { useState } from 'react';
 
@@ -117,10 +118,28 @@ const PROFILES: CastProfile[] = [
   },
 ];
 
-const AchievementsAndLifestyle: React.FC = () => {
+interface AchievementsAndLifestyleProps {
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: string) => void;
+  castImages?: Record<string, string>;
+}
+
+const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
+  isEditing = false,
+  onUpdate,
+  castImages,
+}) => {
   const [activeProfile, setActiveProfile] = useState<CastProfile>(PROFILES[0]);
 
+  const handleUpload = (id: string) => (file: File) => {
+    const url = URL.createObjectURL(file);
+    if (onUpdate) onUpdate(`cast_${id}`, url);
+  };
+
+  const currentImage = castImages?.[activeProfile.id] || activeProfile.image;
+
   const describeArc = (startHour: number, endHour: number) => {
+    // ... (same implementation)
     const startAngle = (startHour / 24) * 360 - 90;
     const endAngle = (endHour / 24) * 360 - 90;
 
@@ -203,15 +222,19 @@ const AchievementsAndLifestyle: React.FC = () => {
                 transition={{ duration: 0.6 }}
                 className="group relative aspect-[3/4] w-full max-w-[80%] overflow-hidden rounded-sm shadow-2xl md:max-w-none"
               >
-                <img
-                  src={activeProfile.image}
-                  alt={activeProfile.name}
-                  className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-slate-900/10 transition-colors duration-500 group-hover:bg-transparent"></div>
+                <div className="h-full w-full">
+                  <EditableImage
+                    src={currentImage}
+                    alt={activeProfile.name}
+                    className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    isEditing={isEditing}
+                    onUpload={handleUpload(activeProfile.id)}
+                  />
+                </div>
+                <div className="pointer-events-none absolute inset-0 bg-slate-900/10 transition-colors duration-500 group-hover:bg-transparent"></div>
 
                 {/* Label Overlay */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-6">
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-6">
                   <div className="font-serif text-5xl italic text-amber-600/80 drop-shadow-md md:text-6xl">
                     {activeProfile.label}
                   </div>

@@ -1,3 +1,6 @@
+'use client';
+
+import { EditableImage } from '@/components/admin/EditableImage';
 import React, { useEffect, useState } from 'react';
 
 // Define AnimationState locally for this component
@@ -8,6 +11,12 @@ enum AnimationState {
 
 interface HeroCollageProps {
   onOpenChat: () => void;
+  mainHeading?: string;
+  subHeading?: string;
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: string) => void;
+  openCastImage?: string;
+  heroImage?: string;
 }
 
 // ==========================================
@@ -43,11 +52,39 @@ const LAYOUT_CONFIG = {
   DESKTOP_OVERLAP: '-2.75vh',
 };
 
-const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
+const HeroCollage: React.FC<HeroCollageProps> = ({
+  onOpenChat,
+  mainHeading = 'ただ「稼ぐ場所」ではなく\n“価値ある男”としてゼロから稼げる場所。',
+  subHeading = '今日からでも、人生は変えられる。\n数多くの未経験者をプロに導いた、創業8年の信頼と実績。',
+  isEditing = false,
+  onUpdate,
+  openCastImage,
+  heroImage, // Add this
+}) => {
+  // ContentEditable handling helper
+  const handleInput = (
+    key: string,
+    e: React.FormEvent<HTMLHeadingElement | HTMLParagraphElement>,
+  ) => {
+    if (onUpdate) {
+      onUpdate(key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && onUpdate) {
+      const url = URL.createObjectURL(file);
+      onUpdate('heroImage', url);
+    }
+  };
+
   const [timeLeft, setTimeLeft] = useState(0);
   const [animationState, setAnimationState] = useState<AnimationState>(AnimationState.IDLE);
   const [loaded, setLoaded] = useState(false);
-  const imageUrl = '/バナーデザインLP用.png';
+
+  // Use prop or default. Dynamic for preview.
+  const imageUrl = heroImage || '/バナーデザインLP用.png';
 
   useEffect(() => {
     // Target date: February 1st
@@ -147,6 +184,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         {/* Animated Split Image Container */}
         {loaded ? (
           <div className="relative h-full w-full">
+            {/* ... shards ... */}
             {/* Shard 1 (Left) */}
             <div
               className={`${shardBaseClass} ${
@@ -213,6 +251,19 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
           <div className="h-full w-full animate-pulse bg-slate-900" />
         )}
 
+        {/* Edit Background Overlay */}
+        {isEditing && (
+          <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/50 px-4 py-2 text-white hover:bg-black/70">
+            <span className="text-sm font-bold">背景画像を変更</span>
+            <input
+              type="file"
+              className="hidden"
+              accept="image/*"
+              onChange={handleBackgroundUpload}
+            />
+          </label>
+        )}
+
         {/* Gradient Overlay */}
         <div
           className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-slate-950/90"
@@ -231,23 +282,47 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         }
       >
         {/* Main Heading */}
-        <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
-          ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
-          <br className="hidden sm:block" />
-          <span className="italic text-white underline decoration-amber-500 decoration-2 underline-offset-4">
-            “価値ある男”
-          </span>
-          に
-          <br className="sm:hidden" />
-          としてゼロから稼げる場所。
-        </h1>
+        {isEditing ? (
+          <h1
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleInput('mainHeading', e)}
+            className="mb-6 cursor-text rounded text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white outline-none drop-shadow-2xl hover:bg-white/10 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
+            style={{ whiteSpace: 'pre-line' }}
+          >
+            {mainHeading}
+          </h1>
+        ) : (
+          <h1 className="animate-fade-in-up mb-6 text-center font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white drop-shadow-2xl delay-100 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl">
+            ただ<span className="text-amber-500">「稼ぐ場所」</span>ではなく
+            <br className="hidden sm:block" />
+            <span className="italic text-white underline decoration-amber-500 decoration-2 underline-offset-4">
+              “価値ある男”
+            </span>
+            に
+            <br className="sm:hidden" />
+            としてゼロから稼げる場所。
+          </h1>
+        )}
 
         {/* Subtext */}
-        <p className="animate-fade-in-up mx-auto mb-10 max-w-3xl px-2 text-center text-base leading-relaxed text-slate-300 delay-200 sm:text-xl md:text-2xl">
-          今日からでも、人生は変えられる。
-          <br className="hidden sm:block" />
-          数多くの未経験者をプロに導いた、創業8年の信頼と実績。
-        </p>
+        {isEditing ? (
+          <p
+            contentEditable
+            suppressContentEditableWarning
+            onBlur={(e) => handleInput('subHeading', e)}
+            className="mx-auto mb-10 max-w-3xl cursor-text rounded px-2 text-center text-base leading-relaxed text-slate-300 outline-none hover:bg-white/10 sm:text-xl md:text-2xl"
+            style={{ whiteSpace: 'pre-line' }}
+          >
+            {subHeading}
+          </p>
+        ) : (
+          <p className="animate-fade-in-up mx-auto mb-10 max-w-3xl px-2 text-center text-base leading-relaxed text-slate-300 delay-200 sm:text-xl md:text-2xl">
+            今日からでも、人生は変えられる。
+            <br className="hidden sm:block" />
+            数多くの未経験者をプロに導いた、創業8年の信頼と実績。
+          </p>
+        )}
 
         {/* Stats Grid */}
         <div className="animate-fade-in-up mx-auto mb-10 grid max-w-5xl grid-cols-2 gap-4 delay-200 sm:gap-6 md:grid-cols-3">
@@ -291,10 +366,16 @@ const HeroCollage: React.FC<HeroCollageProps> = ({ onOpenChat }) => {
         {/* Open Cast Recruitment Heading Image */}
         <div className="animate-fade-in-up delay-250 mt-10 flex w-full max-w-5xl flex-col items-center px-4">
           <div className="w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
-            <img
-              src="/オープンキャスト募集.png"
+            <EditableImage
+              src={openCastImage || '/オープンキャスト募集.png'}
               alt="オープンキャスト募集 - 10名限定超好待遇"
               className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+              isEditing={isEditing}
+              onUpload={(file) => {
+                // Mock upload URL
+                const url = URL.createObjectURL(file);
+                if (onUpdate) onUpdate('openCastImage', url);
+              }}
             />
           </div>
         </div>

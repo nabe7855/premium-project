@@ -12,25 +12,94 @@ import IdealCandidate from './sections/IdealCandidate';
 import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
+export interface LandingPageConfig {
+  hero: {
+    mainHeading?: string;
+    subHeading?: string;
+    isVisible: boolean;
+    heroImage?: string;
+    openCastImage?: string;
+  };
+  fukuoka?: {
+    backgroundImage?: string;
+  };
+  branding?: {
+    images?: Record<string, string>;
+  };
+  achievements?: {
+    castImages?: Record<string, string>;
+  };
+  comic?: {
+    slides?: any[];
+  };
+  [key: string]: any;
+}
+
 interface LandingPageProps {
   onOpenChat: () => void;
   onOpenForm: () => void;
+  config?: LandingPageConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => {
+const LandingPage: React.FC<LandingPageProps> = ({
+  onOpenChat,
+  onOpenForm,
+  config,
+  isEditing = false,
+  onUpdate,
+}) => {
+  // デフォルト設定（既存のハードコード値があればここでマージ、またはコンポーネント側でデフォルトを持つ）
+
   return (
     <div className="overflow-hidden bg-slate-50">
-      <HeroCollage onOpenChat={onOpenChat} />
+      {/* Hero Section */}
+      {(!config || config.hero?.isVisible !== false) && (
+        <div className="group relative">
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() => onUpdate?.('hero', 'isVisible', false)}
+                className="rounded bg-red-500 px-2 py-1 text-xs text-white shadow"
+              >
+                非表示にする
+              </button>
+            </div>
+          )}
+          <HeroCollage
+            onOpenChat={onOpenChat}
+            mainHeading={config?.hero?.mainHeading}
+            subHeading={config?.hero?.subHeading}
+            heroImage={config?.hero?.heroImage}
+            openCastImage={config?.hero?.openCastImage}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('hero', key, value)}
+          />
+        </div>
+      )}
       <Philosophy />
-      <FukuokaReason />
+      <FukuokaReason
+        isEditing={isEditing}
+        onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
+        backgroundImage={config?.fukuoka?.backgroundImage}
+      />
       <div id="trust">
         <Trust />
       </div>
       <div id="achievements">
-        <AchievementsAndLifestyle />
+        <AchievementsAndLifestyle
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('achievements', key, value)}
+          castImages={config?.achievements?.castImages}
+        />
       </div>
       <div id="comic">
-        <ComicSlider />
+        <ComicSlider
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('comic', key, value)}
+          slides={config?.comic?.slides}
+        />
       </div>
       <div id="benefits">
         <Benefits />
@@ -39,7 +108,11 @@ const LandingPage: React.FC<LandingPageProps> = ({ onOpenChat, onOpenForm }) => 
         <Comparison />
       </div>
       <div id="special">
-        <BrandingSupport />
+        <BrandingSupport
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('branding', key, value)}
+          brandingImages={config?.branding?.images}
+        />
       </div>
       <div id="ideal">
         <IdealCandidate />
