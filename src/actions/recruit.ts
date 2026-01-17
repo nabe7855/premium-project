@@ -173,6 +173,17 @@ export async function getRecruitApplications() {
   }
 }
 
+export async function getPendingApplicationsCount() {
+  try {
+    return await prisma.recruitApplication.count({
+      where: { status: 'pending' },
+    });
+  } catch (error) {
+    console.error('Fetch pending count error:', error);
+    return 0;
+  }
+}
+
 export async function getRecruitPageConfig(slug: string) {
   try {
     const store = await prisma.store.findUnique({

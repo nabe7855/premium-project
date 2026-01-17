@@ -1,8 +1,9 @@
 'use client';
 
+import { getPendingApplicationsCount } from '@/actions/recruit';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   BuildingOfficeIcon,
   BuildingStorefrontIcon,
@@ -28,24 +29,45 @@ const NavItem: React.FC<{
   label: string;
   isActive: boolean;
   setOpen: (isOpen: boolean) => void;
-}> = ({ href, icon, label, isActive, setOpen }) => (
+  badge?: number;
+}> = ({ href, icon, label, isActive, setOpen, badge }) => (
   <Link
     href={href}
     onClick={() => setOpen(false)} // モバイル時は閉じる
-    className={`flex w-full items-center rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
+    className={`relative flex w-full items-center rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
       isActive
         ? 'bg-brand-accent text-white shadow-lg'
         : 'text-brand-text-secondary hover:bg-brand-secondary hover:text-white'
     }`}
   >
-    {icon}
-    <span className="ml-4">{label}</span>
+    <div className="flex items-center">
+      {icon}
+      <span className="ml-4">{label}</span>
+    </div>
+    {badge !== undefined && badge > 0 && (
+      <span className="absolute right-4 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-brand-secondary">
+        {badge > 99 ? '99+' : badge}
+      </span>
+    )}
   </Link>
 );
 
 // Main Sidebar component
 export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
   const pathname = usePathname();
+  const [pendingCount, setPendingCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      const count = await getPendingApplicationsCount();
+      setPendingCount(count);
+    };
+    fetchCount();
+
+    // 1分ごとに更新（あるいはインターバルなしでもOKだが、あると親切）
+    const interval = setInterval(fetchCount, 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   const navItems = [
     { href: '/admin/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
@@ -107,6 +129,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
               {...item}
               isActive={pathname === item.href}
               setOpen={setOpen}
+              badge={item.href === '/admin/admin/interview-reservations' ? pendingCount : undefined}
             />
           ))}
         </nav>
