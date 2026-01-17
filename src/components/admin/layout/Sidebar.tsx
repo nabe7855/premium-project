@@ -1,6 +1,7 @@
 'use client';
 
 import { getPendingApplicationsCount } from '@/actions/recruit';
+import { getZeroProgressReservationsCount } from '@/actions/reservation';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -56,16 +57,20 @@ const NavItem: React.FC<{
 export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
   const pathname = usePathname();
   const [pendingCount, setPendingCount] = useState(0);
+  const [reservePendingCount, setReservePendingCount] = useState(0);
 
   useEffect(() => {
-    const fetchCount = async () => {
-      const count = await getPendingApplicationsCount();
-      setPendingCount(count);
-    };
-    fetchCount();
+    const fetchCounts = async () => {
+      const pCount = await getPendingApplicationsCount();
+      setPendingCount(pCount);
 
-    // 1分ごとに更新（あるいはインターバルなしでもOKだが、あると親切）
-    const interval = setInterval(fetchCount, 60000);
+      const rCount = await getZeroProgressReservationsCount();
+      setReservePendingCount(rCount);
+    };
+    fetchCounts();
+
+    // 1分ごとに更新
+    const interval = setInterval(fetchCounts, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -129,7 +134,13 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
               {...item}
               isActive={pathname === item.href}
               setOpen={setOpen}
-              badge={item.href === '/admin/admin/interview-reservations' ? pendingCount : undefined}
+              badge={
+                item.href === '/admin/admin/interview-reservations'
+                  ? pendingCount
+                  : item.href === '/admin/admin/reservations'
+                    ? reservePendingCount
+                    : undefined
+              }
             />
           ))}
         </nav>
