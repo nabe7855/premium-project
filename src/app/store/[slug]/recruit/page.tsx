@@ -14,6 +14,8 @@ import React, { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import IncomeSimulation from '@/components/recruit2/IncomeSimulation';
+import { STOCK_RECRUIT_CONFIG } from '@/components/recruit2/constants';
+import { stores } from '@/data/stores';
 
 const AppContent: React.FC = () => {
   const location = useLocation();
@@ -54,16 +56,70 @@ const AppContent: React.FC = () => {
   const openSimulation = () => setIsSimulationOpen(true);
   const closeSimulation = () => setIsSimulationOpen(false);
 
+  const storeData = stores[slug];
+  const dynamicStoreName = storeData?.displayName || '店舗名';
+
+  // Helper to deep replace "福岡" with dynamicStoreName for default values
+  const localizeDefaults = (obj: any): any => {
+    if (typeof obj === 'string') return obj.replaceAll('福岡', dynamicStoreName);
+    if (Array.isArray(obj)) return obj.map(localizeDefaults);
+    if (obj !== null && typeof obj === 'object') {
+      return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, localizeDefaults(v)]));
+    }
+    return obj;
+  };
+
+  const localizedStock = localizeDefaults(STOCK_RECRUIT_CONFIG);
+
+  const mergedConfig: LandingPageConfig = {
+    ...(config || ({} as LandingPageConfig)),
+    general: {
+      ...localizedStock.general,
+      ...config?.general,
+      storeName:
+        config?.general?.storeName && config?.general?.storeName !== '福岡店'
+          ? config.general.storeName
+          : dynamicStoreName,
+    },
+    fukuoka: {
+      ...localizedStock.fukuoka,
+      ...config?.fukuoka,
+    },
+    hero: {
+      ...localizedStock.hero,
+      ...config?.hero,
+    },
+    // Note: Other sections will still use STOCK_RECRUIT_CONFIG defaults
+    // because LandingPage.tsx does its own merge.
+    // To be thorough, we should pass localizedStock to LandingPage or merge all here.
+  };
+
+  // Ensure all sections are merged with localized defaults here to pass to LandingPage
+  const fullMergedConfig: any = { ...localizedStock };
+  for (const key in mergedConfig) {
+    fullMergedConfig[key] = {
+      ...(fullMergedConfig[key] || {}),
+      ...(mergedConfig as any)[key],
+    };
+  }
+
   return (
     <div
       className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen ? 'overflow-hidden' : ''}`}
     >
-      <Header onOpenForm={openForm} />
+      <Header
+        onOpenForm={openForm}
+        groupName={fullMergedConfig.general?.groupName}
+        storeName={fullMergedConfig.general?.storeName}
+        pageTitleSuffix={fullMergedConfig.general?.pageTitleSuffix}
+      />
       <main className="flex-grow">
         <Routes>
           <Route
             path="/"
-            element={<LandingPage onOpenChat={openChat} onOpenForm={openForm} config={config} />}
+            element={
+              <LandingPage onOpenChat={openChat} onOpenForm={openForm} config={fullMergedConfig} />
+            }
           />
           <Route path="/form-quick" element={<QuickForm />} />
           <Route path="/form-full" element={<FullForm />} />

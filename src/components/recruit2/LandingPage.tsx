@@ -1,5 +1,6 @@
 import React from 'react';
 import { STOCK_RECRUIT_CONFIG } from './constants';
+import Header from './Header';
 import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
@@ -15,6 +16,11 @@ import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
 export interface LandingPageConfig {
+  general?: {
+    groupName?: string;
+    storeName?: string;
+    pageTitleSuffix?: string;
+  };
   hero: {
     mainHeading?: string;
     subHeading?: string;
@@ -87,6 +93,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
   // Merge incoming config with stock config. Incoming (DB) takes priority.
   // We do deep merge logic here manually for clarity.
   const config = {
+    general: { ...STOCK_RECRUIT_CONFIG.general, ...incomingConfig?.general },
     hero: { ...STOCK_RECRUIT_CONFIG.hero, ...incomingConfig?.hero },
     openCast: { ...STOCK_RECRUIT_CONFIG.openCast, ...incomingConfig?.openCast },
     philosophy: { ...STOCK_RECRUIT_CONFIG.philosophy, ...incomingConfig?.philosophy },
@@ -104,6 +111,18 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <div className="overflow-hidden bg-slate-50">
+      {/* Visual Header Preview during Editing */}
+      {isEditing && (
+        <div className="pointer-events-none relative h-16 opacity-80">
+          <Header
+            onOpenForm={() => {}}
+            groupName={config.general.groupName}
+            storeName={config.general.storeName}
+            pageTitleSuffix={config.general.pageTitleSuffix}
+          />
+        </div>
+      )}
+
       {/* Hero Section */}
       {(config.hero.isVisible !== false || isEditing) && (
         <div

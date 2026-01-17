@@ -1,4 +1,9 @@
 export const STOCK_RECRUIT_CONFIG = {
+  general: {
+    groupName: 'ストロベリーボーイズグループ',
+    storeName: '福岡店',
+    pageTitleSuffix: 'キャスト採用ページ',
+  },
   hero: {
     mainHeading: 'ただ「稼ぐ場所」ではなく\n“価値ある男”としてゼロから稼げる場所。',
     subHeading:

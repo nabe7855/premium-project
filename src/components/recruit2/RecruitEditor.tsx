@@ -1,5 +1,7 @@
 import { getRecruitPageConfig, saveRecruitPageConfig } from '@/actions/recruit';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -137,8 +139,22 @@ export default function RecruitEditor() {
     <div className="space-y-4">
       {/* Store Selector Header */}
       <div className="sticky top-0 z-50 flex items-center justify-between border-b bg-white/90 p-4 shadow-sm backdrop-blur-sm">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <h2 className="text-xl font-bold text-gray-800">採用ページ編集</h2>
+          <div className="flex items-center gap-2 border-r pr-4">
+            <Label htmlFor="store-name" className="shrink-0 text-xs font-bold text-gray-500">
+              表示店舗名
+            </Label>
+            <Input
+              id="store-name"
+              value={config.general?.storeName || stores[selectedStore]?.displayName || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                handleUpdate('general', 'storeName', e.target.value);
+              }}
+              className="h-8 w-[120px] bg-white text-sm"
+              placeholder="例: 福岡店"
+            />
+          </div>
           <Select value={selectedStore} onValueChange={setSelectedStore}>
             <SelectTrigger className="w-[250px] bg-white text-gray-900">
               <SelectValue placeholder="店舗を選択" />
