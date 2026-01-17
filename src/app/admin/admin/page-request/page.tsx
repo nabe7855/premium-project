@@ -32,12 +32,17 @@ const { TextArea } = Input;
 type SectionType = 'text' | 'slider' | 'casts' | 'pricing' | 'access' | 'other';
 type ElementType = 'button' | 'slider' | 'text' | 'image' | 'input';
 
+const GRID_ROWS = 20;
+const GRID_COLS = 10;
+
 interface GridElement {
   id: string;
   type: ElementType;
   label: string;
   comment: string;
   gridPosition: { row: number; col: number };
+  rowSpan: number;
+  colSpan: number;
 }
 
 interface Section {
@@ -80,13 +85,17 @@ const MOCK_SECTIONS: Section[] = [
         label: 'タイトル',
         comment: '大きく目立つフォントで',
         gridPosition: { row: 0, col: 0 },
+        rowSpan: 2,
+        colSpan: 10,
       },
       {
         id: 'e2',
         type: 'button',
         label: '申し込みボタン',
         comment: 'オレンジ色で目立たせる',
-        gridPosition: { row: 1, col: 1 },
+        gridPosition: { row: 3, col: 3 },
+        rowSpan: 2,
+        colSpan: 4,
       },
     ],
   },
@@ -105,6 +114,11 @@ export default function PageRequestPage() {
   const [sections, setSections] = useState<Section[]>(MOCK_SECTIONS);
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
   const [editingSection, setEditingSection] = useState<string | null>(null);
+
+  // Grid Selection State
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState<{ row: number; col: number } | null>(null);
+  const [dragCurrent, setDragCurrent] = useState<{ row: number; col: number } | null>(null);
   const [elementModalOpen, setElementModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<Partial<GridElement>>({});
 
@@ -145,23 +159,85 @@ export default function PageRequestPage() {
 
   const closeGridEditor = () => {
     setEditingSection(null);
+    setDragStart(null);
+    setDragCurrent(null);
+    setIsDragging(false);
   };
 
-  const handleCellClick = (row: number, col: number, sectionId: string) => {
+  // Grid Interaction Handlers
+  const handleMouseDown = (row: number, col: number, sectionId: string) => {
     const section = sections.find((s) => s.id === sectionId);
     if (!section) return;
 
+    // Check if clicking on existing element
     const existingElement = section.gridElements.find(
-      (e) => e.gridPosition.row === row && e.gridPosition.col === col,
+      (e) =>
+        row >= e.gridPosition.row &&
+        row < e.gridPosition.row + e.rowSpan &&
+        col >= e.gridPosition.col &&
+        col < e.gridPosition.col + e.colSpan,
     );
 
     if (existingElement) {
       setCurrentElement(existingElement);
       setElementModalOpen(true);
-    } else {
-      setCurrentElement({ gridPosition: { row, col } });
-      setElementModalOpen(true);
+      return;
     }
+
+    setIsDragging(true);
+    setDragStart({ row, col });
+    setDragCurrent({ row, col });
+  };
+
+  const handleMouseEnter = (row: number, col: number) => {
+    if (isDragging) {
+      setDragCurrent({ row, col });
+    }
+  };
+
+  const handleMouseUp = () => {
+    if (!isDragging || !dragStart || !dragCurrent) return;
+
+    setIsDragging(false);
+
+    // Calculate selection bounds
+    const startRow = Math.min(dragStart.row, dragCurrent.row);
+    const endRow = Math.max(dragStart.row, dragCurrent.row);
+    const startCol = Math.min(dragStart.col, dragCurrent.col);
+    const endCol = Math.max(dragStart.col, dragCurrent.col);
+
+    const rowSpan = endRow - startRow + 1;
+    const colSpan = endCol - startCol + 1;
+
+    // Check for collision with existing elements in the selected area
+    const section = sections.find((s) => s.id === editingSection);
+    if (section) {
+      const hasCollision = section.gridElements.some((e) => {
+        const eEndRow = e.gridPosition.row + e.rowSpan - 1;
+        const eEndCol = e.gridPosition.col + e.colSpan - 1;
+
+        return !(
+          startRow > eEndRow ||
+          endRow < e.gridPosition.row ||
+          startCol > eEndCol ||
+          endCol < e.gridPosition.col
+        );
+      });
+
+      if (hasCollision) {
+        message.error('他の要素と重なる配置はできません');
+        setDragStart(null);
+        setDragCurrent(null);
+        return;
+      }
+    }
+
+    setCurrentElement({
+      gridPosition: { row: startRow, col: startCol },
+      rowSpan,
+      colSpan,
+    });
+    setElementModalOpen(true);
   };
 
   const saveElement = () => {
@@ -179,6 +255,8 @@ export default function PageRequestPage() {
       label: currentElement.label,
       comment: currentElement.comment || '',
       gridPosition: currentElement.gridPosition!,
+      rowSpan: currentElement.rowSpan || 1,
+      colSpan: currentElement.colSpan || 1,
     };
 
     const updatedElements = currentElement.id
@@ -188,6 +266,8 @@ export default function PageRequestPage() {
     updateSection(editingSection, 'gridElements', updatedElements);
     setElementModalOpen(false);
     setCurrentElement({});
+    setDragStart(null);
+    setDragCurrent(null);
     message.success('要素を保存しました');
   };
 
@@ -228,9 +308,11 @@ export default function PageRequestPage() {
       }
 
       if (s.gridElements.length > 0) {
-        prompt += `- レイアウト構成:\n`;
+        prompt += `- レイアウト構成 (10x20グリッド):\n`;
         s.gridElements.forEach((el) => {
-          prompt += `  - [${ELEMENT_TYPE_LABELS[el.type]}] ${el.label} (位置: 行${el.gridPosition.row + 1}, 列${el.gridPosition.col + 1})\n`;
+          prompt += `  - [${ELEMENT_TYPE_LABELS[el.type]}] ${el.label}\n`;
+          prompt += `    位置: 行${el.gridPosition.row + 1}, 列${el.gridPosition.col + 1}\n`;
+          prompt += `    サイズ: 幅${el.colSpan}, 高さ${el.rowSpan}\n`;
           if (el.comment) {
             prompt += `    コメント: ${el.comment}\n`;
           }
@@ -255,46 +337,99 @@ export default function PageRequestPage() {
   };
 
   const renderGrid = (section: Section) => {
-    const rows = 4;
-    const cols = 3;
-    const grid = [];
+    const cells = [];
 
-    for (let row = 0; row < rows; row++) {
-      const rowCells = [];
-      for (let col = 0; col < cols; col++) {
-        const element = section.gridElements.find(
-          (e) => e.gridPosition.row === row && e.gridPosition.col === col,
-        );
+    // Create grid array to map occupied cells
+    const gridMap: (GridElement | null)[][] = new Array(GRID_ROWS)
+      .fill(null)
+      .map(() => new Array(GRID_COLS).fill(null));
 
-        rowCells.push(
+    // Fill occupied cells
+    section.gridElements.forEach((el) => {
+      for (let r = 0; r < el.rowSpan; r++) {
+        for (let c = 0; c < el.colSpan; c++) {
+          if (el.gridPosition.row + r < GRID_ROWS && el.gridPosition.col + c < GRID_COLS) {
+            gridMap[el.gridPosition.row + r][el.gridPosition.col + c] = el;
+          }
+        }
+      }
+    });
+
+    // Helper to check if cell is in current selection
+    const isInSelection = (row: number, col: number) => {
+      if (!isDragging || !dragStart || !dragCurrent) return false;
+      const startRow = Math.min(dragStart.row, dragCurrent.row);
+      const endRow = Math.max(dragStart.row, dragCurrent.row);
+      const startCol = Math.min(dragStart.col, dragCurrent.col);
+      const endCol = Math.max(dragStart.col, dragCurrent.col);
+      return row >= startRow && row <= endRow && col >= startCol && col <= endCol;
+    };
+
+    // Generate grid cells
+    for (let row = 0; row < GRID_ROWS; row++) {
+      for (let col = 0; col < GRID_COLS; col++) {
+        const element = gridMap[row][col];
+        const isMainCell =
+          element && element.gridPosition.row === row && element.gridPosition.col === col;
+        const isSelected = isInSelection(row, col);
+
+        // Skip rendering covered cells (only render main cell for elements)
+        if (element && !isMainCell) continue;
+
+        cells.push(
           <div
             key={`${row}-${col}`}
-            onClick={() => handleCellClick(row, col, section.id)}
-            className={`relative flex h-24 cursor-pointer items-center justify-center border-2 border-dashed transition-all hover:border-amber-500 hover:bg-amber-500/10 ${
-              element ? 'border-amber-500 bg-amber-500/20' : 'border-slate-700 bg-slate-800/50'
-            }`}
+            onMouseDown={() => handleMouseDown(row, col, section.id)}
+            onMouseEnter={() => handleMouseEnter(row, col)}
+            onMouseUp={handleMouseUp}
+            style={{
+              gridColumn: element ? `span ${element.colSpan}` : 'span 1',
+              gridRow: element ? `span ${element.rowSpan}` : 'span 1',
+            }}
+            className={`relative flex cursor-pointer select-none items-center justify-center border text-xs transition-all ${
+              element
+                ? 'z-10 border-amber-500 bg-amber-500/20'
+                : isSelected
+                  ? 'border-amber-400 bg-amber-400/30'
+                  : 'border-slate-800 bg-slate-900/50 hover:border-slate-600'
+            } `}
           >
-            {element ? (
-              <div className="text-center">
-                <div className="mb-1 text-xs font-bold text-amber-400">
-                  {ELEMENT_TYPE_LABELS[element.type]}
+            {element && (
+              <div className="w-full overflow-hidden p-1 text-center">
+                <div className="truncate font-bold text-amber-400">
+                  {element.type ? ELEMENT_TYPE_LABELS[element.type] : ''}
                 </div>
-                <div className="text-xs text-white">{element.label}</div>
+                {element.rowSpan >= 1 && element.colSpan >= 2 && (
+                  <div className="truncate text-[10px] text-white">{element.label}</div>
+                )}
               </div>
-            ) : (
-              <PlusOutlined className="text-slate-600" />
             )}
+            {!element && !isSelected && <div className="h-1 w-1 rounded-full bg-slate-800" />}
           </div>,
         );
       }
-      grid.push(
-        <div key={row} className="grid grid-cols-3 gap-2">
-          {rowCells}
-        </div>,
-      );
     }
 
-    return <div className="space-y-2">{grid}</div>;
+    return (
+      <div
+        className="grid gap-1"
+        style={{
+          gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${GRID_ROWS}, 20px)`, // Compact rows
+          width: '100%',
+          userSelect: 'none', // Prevent text selection during drag
+        }}
+        onMouseLeave={() => {
+          if (isDragging) {
+            setIsDragging(false);
+            setDragStart(null);
+            setDragCurrent(null);
+          }
+        }}
+      >
+        {cells}
+      </div>
+    );
   };
 
   return (
@@ -480,14 +615,16 @@ export default function PageRequestPage() {
 
                     <div>
                       <div className="mb-2 flex items-center justify-between">
-                        <Text strong>レイアウト構成 (グリッド)</Text>
+                        <Text strong>レイアウト構成 (グリッド: 10列×20行)</Text>
                         <Button
                           type="primary"
                           size="small"
                           ghost
                           onClick={() => openGridEditor(section.id)}
                         >
-                          {section.gridElements.length > 0 ? '編集' : '要素を配置'}
+                          {section.gridElements.length > 0
+                            ? '編集 (ドラッグ範囲選択可)'
+                            : 'レイアウト編集'}
                         </Button>
                       </div>
                       {section.gridElements.length > 0 && (
@@ -495,8 +632,8 @@ export default function PageRequestPage() {
                           <div className="space-y-1 text-xs">
                             {section.gridElements.map((el) => (
                               <div key={el.id} className="text-slate-400">
-                                • [{ELEMENT_TYPE_LABELS[el.type]}] {el.label} - 行
-                                {el.gridPosition.row + 1}, 列{el.gridPosition.col + 1}
+                                • [{ELEMENT_TYPE_LABELS[el.type]}] {el.label}
+                                {` (位置: 行${el.gridPosition.row + 1}, 列${el.gridPosition.col + 1} / サイズ: ${el.colSpan}x${el.rowSpan})`}
                               </div>
                             ))}
                           </div>
@@ -568,15 +705,16 @@ export default function PageRequestPage() {
           open={!!editingSection}
           onCancel={closeGridEditor}
           footer={null}
-          width={700}
+          width={800}
         >
           {editingSection && (
             <div className="space-y-4">
-              <div className="rounded-lg bg-slate-900 p-4">
+              <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-4">
                 {renderGrid(sections.find((s) => s.id === editingSection)!)}
               </div>
-              <div className="text-xs text-slate-400">
-                グリッドのセルをクリックして要素を配置してください
+              <div className="flex justify-between text-xs text-slate-400">
+                <span>ドラッグして範囲を選択し、要素を配置してください</span>
+                <span>10列 × 20行</span>
               </div>
             </div>
           )}
@@ -590,6 +728,8 @@ export default function PageRequestPage() {
           onCancel={() => {
             setElementModalOpen(false);
             setCurrentElement({});
+            setDragStart(null);
+            setDragCurrent(null);
           }}
           okText="保存"
           cancelText="キャンセル"
