@@ -235,7 +235,36 @@ model VideoTag {
 
 // 「癒されたい」「ときめきたい」など直感タグ
 model VideoFeeling {
-  id    String   @id @default(uuid())
-  name  String
+  id     String  @id @default(uuid())
+  name   String
   videos Video[]
+}
+
+// -------------------- Recruit Applications（面接予約・応募者管理） --------------------
+model RecruitApplication {
+  id               String         @id @default(uuid())
+  type             String         // 'chatbot', 'quick', 'full'
+  name             String
+  phone            String?
+  email            String?
+  age              String?
+  height           String?
+  weight           String?
+  address          String?
+  message          String?
+  store            String?
+  status           String         @default("pending") // 'pending', 'contacted', 'interviewed', 'hired', 'rejected'
+  simulationResult Json?          // { income: number, personality: string }
+  details          Json?          // その他詳細な応募データ
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  photos           RecruitPhoto[]
+}
+
+model RecruitPhoto {
+  id            String             @id @default(uuid())
+  url           String
+  applicationId String
+  application   RecruitApplication @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  createdAt     DateTime           @default(now())
 }

@@ -10,7 +10,8 @@ export type Page =
   | 'intro-list'
   | 'advertising-list'
   | 'hotels'
-  | 'hotel-masters';
+  | 'hotel-masters'
+  | 'interview-reservations';
 
 // Represents a cast member
 export interface Cast {

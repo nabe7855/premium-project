@@ -61,7 +61,14 @@ const AppContent: React.FC = () => {
 
   // Helper to deep replace "福岡" with dynamicStoreName for default values
   const localizeDefaults = (obj: any): any => {
-    if (typeof obj === 'string') return obj.replaceAll('福岡', dynamicStoreName);
+    if (typeof obj === 'string') {
+      // Don't replace if it looks like a path or an image file
+      const isPath = obj.startsWith('/');
+      const isImage = /\.(png|jpe?g|webp|svg)$/i.test(obj);
+      if (isPath || isImage) return obj;
+
+      return obj.replaceAll('福岡', dynamicStoreName);
+    }
     if (Array.isArray(obj)) return obj.map(localizeDefaults);
     if (obj !== null && typeof obj === 'object') {
       return Object.fromEntries(Object.entries(obj).map(([k, v]) => [k, localizeDefaults(v)]));

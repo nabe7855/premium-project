@@ -58,6 +58,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         return 'ホテル管理';
       case 'hotel-masters':
         return 'ホテルマスタ管理';
+      case 'interview-reservations':
+        return '面接予約管理';
       default:
         return 'ダッシュボード';
     }

@@ -1,5 +1,6 @@
 'use client';
 
+import { submitRecruitApplication } from '@/actions/recruit';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 
@@ -11,19 +12,43 @@ interface ApplicationModalProps {
 const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<Record<number, string>>({});
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleFileChange = (num: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviews((prev) => ({
+          ...prev,
+          [num]: reader.result as string,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
+    setError(null);
+
+    const formData = new FormData(e.currentTarget);
+    formData.append('type', 'full'); // 応募種別をフルに設定
+
+    const result = await submitRecruitApplication(formData);
+
+    setLoading(false);
+    if (result.success) {
       setSubmitted(true);
       setTimeout(() => {
         onClose();
         setSubmitted(false);
-      }, 3000);
-    }, 2000);
+      }, 5000);
+    } else {
+      setError(result.error || '送信に失敗しました。');
+    }
   };
 
   return (
@@ -103,6 +128,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                             </label>
                             <input
                               required
+                              name="name"
                               type="text"
                               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                               placeholder="例：山田 一郎"
@@ -115,6 +141,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                             </label>
                             <input
                               required
+                              name="phone"
                               type="tel"
                               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                               placeholder="例：080-1234-5678"
@@ -127,6 +154,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                             </label>
                             <input
                               required
+                              name="email"
                               type="email"
                               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                               placeholder="例：example@example.com"
@@ -138,6 +166,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               住所 (簡単で構いません)
                             </label>
                             <input
+                              name="address"
                               type="text"
                               className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                               placeholder="例：福岡市中央区"
@@ -150,20 +179,35 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                                 年齢 (応募時点)
                               </label>
                               <input
+                                name="age"
                                 type="number"
                                 className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                                 placeholder="例：25"
                               />
                             </div>
-                            <div className="group">
-                              <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
-                                身長・体重
-                              </label>
-                              <input
-                                type="text"
-                                className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
-                                placeholder="例：170cm 70kg"
-                              />
+                            <div className="group flex gap-2">
+                              <div className="flex-1">
+                                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                                  身長 (cm)
+                                </label>
+                                <input
+                                  name="height"
+                                  type="number"
+                                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                                  placeholder="170"
+                                />
+                              </div>
+                              <div className="flex-1">
+                                <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-500">
+                                  体重 (kg)
+                                </label>
+                                <input
+                                  name="weight"
+                                  type="number"
+                                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
+                                  placeholder="60"
+                                />
+                              </div>
                             </div>
                           </div>
                         </div>
@@ -184,6 +228,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="employment"
+                                value="employed"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">就業中</span>
@@ -192,6 +237,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="employment"
+                                value="unemployed"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">
@@ -207,6 +253,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                           </label>
                           <textarea
                             rows={2}
+                            name="qualifications"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                             placeholder="例：普通自動車免許 (2020年取得)"
                           ></textarea>
@@ -218,6 +265,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                           </label>
                           <textarea
                             rows={3}
+                            name="experience"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                             placeholder="簡単な職務経歴をご記入ください"
                           ></textarea>
@@ -239,6 +287,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="therapist_exp"
+                                value="yes"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">あり</span>
@@ -247,6 +296,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="therapist_exp"
+                                value="no"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">なし</span>
@@ -263,6 +313,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="youtube"
+                                value="yes"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">はい</span>
@@ -271,6 +322,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="youtube"
+                                value="no"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">いいえ</span>
@@ -279,6 +331,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="youtube"
+                                value="mask_ok"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">
@@ -297,6 +350,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="transport"
+                                value="yes"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">はい</span>
@@ -305,6 +359,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                               <input
                                 type="radio"
                                 name="transport"
+                                value="no"
                                 className="text-amber-600 focus:ring-amber-500"
                               />
                               <span className="text-sm font-medium text-slate-700">いいえ</span>
@@ -325,6 +380,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                           </label>
                           <input
                             type="text"
+                            name="source"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                             placeholder="例:ネット検索、紹介、ポータルサイト（名前は？）"
                           />
@@ -336,6 +392,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                           </label>
                           <input
                             type="text"
+                            name="keyword"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                             placeholder="例:セラピスト求人、高収入、女性用風俗求人"
                           />
@@ -347,6 +404,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                           </label>
                           <textarea
                             rows={4}
+                            name="message"
                             className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none transition-all focus:border-amber-500 focus:bg-white focus:ring-2 focus:ring-amber-500/20"
                             placeholder="自由にご記入ください"
                           ></textarea>
@@ -366,19 +424,44 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
                                   type="file"
                                   className="hidden"
                                   id={`photo-${num}`}
+                                  name="photos"
                                   accept="image/*"
+                                  onChange={(e) => handleFileChange(num, e)}
                                 />
                                 <label htmlFor={`photo-${num}`} className="block cursor-pointer">
-                                  <div className="mb-1 text-2xl">📷</div>
-                                  <div className="text-[10px] font-bold text-slate-500 sm:text-xs">
-                                    Photo {num}
-                                  </div>
+                                  {previews[num] ? (
+                                    <div className="relative aspect-square w-full">
+                                      <img
+                                        src={previews[num]}
+                                        className="h-full w-full rounded-lg object-cover"
+                                        alt={`Preview ${num}`}
+                                      />
+                                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity hover:opacity-100">
+                                        <span className="rounded-full bg-white/80 p-2 text-xs font-bold text-slate-900">
+                                          変更する
+                                        </span>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <>
+                                      <div className="mb-1 text-2xl">📷</div>
+                                      <div className="text-[10px] font-bold text-slate-500 sm:text-xs">
+                                        Photo {num}
+                                      </div>
+                                    </>
+                                  )}
                                 </label>
                               </div>
                             ))}
                           </div>
                         </div>
                       </section>
+
+                      {error && (
+                        <div className="rounded-xl bg-red-50 p-4 text-center text-sm font-bold text-red-600">
+                          {error}
+                        </div>
+                      )}
 
                       <button
                         type="submit"

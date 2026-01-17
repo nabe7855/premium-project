@@ -1,5 +1,5 @@
-
-import React, { useState, useEffect, useRef } from 'react';
+import { submitRecruitApplication } from '@/actions/recruit';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface Message {
   role: 'user' | 'model';
@@ -12,10 +12,22 @@ interface ChatbotProps {
   onClose: () => void;
 }
 
-type Step = 
-  | 'name' | 'phone' | 'email' | 'birthday' 
-  | 'height' | 'weight' | 'job' | 'homeArea' 
-  | 'workArea' | 'motivation' | 'freeText' | 'photos' | 'source' | 'review' | 'done';
+type Step =
+  | 'name'
+  | 'phone'
+  | 'email'
+  | 'birthday'
+  | 'height'
+  | 'weight'
+  | 'job'
+  | 'homeArea'
+  | 'workArea'
+  | 'motivation'
+  | 'freeText'
+  | 'photos'
+  | 'source'
+  | 'review'
+  | 'done';
 
 // Birthday options
 const currentYear = new Date().getFullYear();
@@ -29,7 +41,15 @@ const HEIGHT_OPTIONS = Array.from({ length: 71 }, (_, i) => `${i + 140}`); // 14
 const STEP_OPTIONS: Partial<Record<Step, string[]>> = {
   weight: ['60kg以下', '61-70kg', '71-80kg', '81kg以上'],
   job: ['会社員', '自営業', '学生', 'フリーター', 'その他'],
-  homeArea: ['福岡市中央区', '福岡市博多区', '福岡市他区', '北九州・筑豊', '筑後', '佐賀・熊本', 'その他'],
+  homeArea: [
+    '福岡市中央区',
+    '福岡市博多区',
+    '福岡市他区',
+    '北九州・筑豊',
+    '筑後',
+    '佐賀・熊本',
+    'その他',
+  ],
   workArea: ['天神・大名', '博多・中洲', '福岡市内他', '特にこだわらない'],
   motivation: ['高収入を得たい', '自分を変えたい', '副業として働きたい', '自由な時間が欲しい'],
   source: ['Instagram / X', 'ネット検索', '求人サイト', '知人の紹介', 'その他'],
@@ -55,14 +75,17 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [userPhotos, setUserPhotos] = useState<string[]>([]);
-  
+
   const [messages, setMessages] = useState<Message[]>([
-    { role: 'model', text: 'はじめまして。Life Change Recruit 福岡 採用担当アシスタントです。あなたの「人生を変える一歩」をサポートさせていただきます。\n\nまずは【お名前】を教えていただけますか？' }
+    {
+      role: 'model',
+      text: 'はじめまして。Life Change Recruit 福岡 採用担当アシスタントです。あなたの「人生を変える一歩」をサポートさせていただきます。\n\nまずは【お名前】を教えていただけますか？',
+    },
   ]);
   const [input, setInput] = useState('');
   const [photos, setPhotos] = useState<string[]>([]);
   const [isTyping, setIsTyping] = useState(false);
-  
+
   const scrollRef = useRef<HTMLDivElement>(null);
   const yearPickerRef = useRef<HTMLDivElement>(null);
   const monthPickerRef = useRef<HTMLDivElement>(null);
@@ -78,7 +101,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
 
   useEffect(() => {
     if (currentStep === 'birthday') {
-      if (yearPickerRef.current) yearPickerRef.current.scrollTo({ top: (currentYear - 1995 - 18) * 40 });
+      if (yearPickerRef.current)
+        yearPickerRef.current.scrollTo({ top: (currentYear - 1995 - 18) * 40 });
       if (monthPickerRef.current) monthPickerRef.current.scrollTo({ top: 0 });
       if (dayPickerRef.current) dayPickerRef.current.scrollTo({ top: 0 });
     }
@@ -91,7 +115,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   const addModelMessage = (text: string) => {
     setIsTyping(true);
     setTimeout(() => {
-      setMessages(prev => [...prev, { role: 'model', text }]);
+      setMessages((prev) => [...prev, { role: 'model', text }]);
       setIsTyping(false);
     }, 600);
   };
@@ -102,8 +126,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         addModelMessage('写真は必須となります。1枚以上選択してください。');
         return;
       }
-      const userMsg: Message = { role: 'user', text: `${photos.length}枚の写真を送信しました`, photos: [...photos] };
-      setMessages(prev => [...prev, userMsg]);
+      const userMsg: Message = {
+        role: 'user',
+        text: `${photos.length}枚の写真を送信しました`,
+        photos: [...photos],
+      };
+      setMessages((prev) => [...prev, userMsg]);
       setUserPhotos([...photos]);
       setPhotos([]);
       processStep('photos_sent');
@@ -114,13 +142,13 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
     if (!finalInput.trim()) return;
 
     const userMsg: Message = { role: 'user', text: finalInput };
-    setMessages(prev => [...prev, userMsg]);
+    setMessages((prev) => [...prev, userMsg]);
     setInput('');
     processStep(finalInput);
   };
 
   const updateFormData = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const processStep = (userInput: string) => {
@@ -150,14 +178,18 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         break;
       case 'birthday':
         updateFormData('birthday', userInput);
-        addModelMessage('ありがとうございます。次に正確な【身長】をスクロールして教えてください。\n※当店では、身長165cm以上の方を募集対象としております。');
+        addModelMessage(
+          'ありがとうございます。次に正確な【身長】をスクロールして教えてください。\n※当店では、身長165cm以上の方を募集対象としております。',
+        );
         setCurrentStep('height');
         break;
       case 'height':
         updateFormData('height', userInput);
         const heightVal = parseInt(userInput.replace('cm', ''));
         if (heightVal < 165) {
-          addModelMessage('大変恐縮ながら、当店では現在身長165cm以上の方を募集対象とさせていただいております。せっかくご応募いただいたところ、誠に申し訳ございませんが、今回は採用を見送らせていただきます。');
+          addModelMessage(
+            '大変恐縮ながら、当店では現在身長165cm以上の方を募集対象とさせていただいております。せっかくご応募いただいたところ、誠に申し訳ございませんが、今回は採用を見送らせていただきます。',
+          );
           setCurrentStep('done');
         } else {
           addModelMessage('ありがとうございます。次に【体重（kg）】を教えてください。');
@@ -186,12 +218,16 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         break;
       case 'motivation':
         updateFormData('motivation', userInput);
-        addModelMessage('ありがとうございます！追加で【自己PRや意気込み】など、自由にメッセージをいただけますか？');
+        addModelMessage(
+          'ありがとうございます！追加で【自己PRや意気込み】など、自由にメッセージをいただけますか？',
+        );
         setCurrentStep('freeText');
         break;
       case 'freeText':
         updateFormData('freeText', userInput);
-        addModelMessage('ありがとうございます。最後に【顔写真】を最大4枚送ってください。\n※帽子・マスク・過度な加工はNGです。');
+        addModelMessage(
+          'ありがとうございます。最後に【顔写真】を最大4枚送ってください。\n※帽子・マスク・過度な加工はNGです。',
+        );
         setCurrentStep('photos');
         break;
       case 'photos':
@@ -201,11 +237,50 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
       case 'source':
         updateFormData('source', userInput);
         setCurrentStep('review');
-        addModelMessage('ありがとうございます！入力いただいた内容をご確認ください。修正したい項目があれば「修正」ボタンを押してください。');
+        addModelMessage(
+          'ありがとうございます！入力いただいた内容をご確認ください。修正したい項目があれば「修正」ボタンを押してください。',
+        );
         break;
       case 'review':
         if (userInput === '送信する') {
-          addModelMessage('すべての情報の入力ありがとうございました！\n担当者より24時間以内に折り返しご連絡させていただきます。本日はありがとうございました。');
+          setIsTyping(true);
+
+          // データを FormData に変換して送信
+          const submitData = async () => {
+            const dataToSubmit = new FormData();
+            dataToSubmit.append('type', 'chatbot');
+            dataToSubmit.append('name', formData.name || '');
+            dataToSubmit.append('phone', formData.phone || '');
+            dataToSubmit.append('age', formData.birthday || ''); // 生年月日を年齢として一旦入れる（または整形）
+            dataToSubmit.append('height', formData.height || '');
+            dataToSubmit.append('weight', formData.weight || '');
+            dataToSubmit.append('store', '福岡店'); // デフォルトまたは選択された店舗
+
+            // 画像の変換 (base64 -> Blob -> File)
+            for (let i = 0; i < userPhotos.length; i++) {
+              const res = await fetch(userPhotos[i]);
+              const blob = await res.blob();
+              dataToSubmit.append(
+                'photos',
+                new File([blob], `photo_${i}.jpg`, { type: 'image/jpeg' }),
+              );
+            }
+
+            const result = await submitRecruitApplication(dataToSubmit);
+            setIsTyping(false);
+
+            if (result.success) {
+              addModelMessage(
+                'すべての情報の入力ありがとうございました！\n担当者より24時間以内に折り返しご連絡させていただきます。本日はありがとうございました。',
+              );
+            } else {
+              addModelMessage(
+                '申し訳ありません。送信中にエラーが発生しました。もう一度「送信する」を押すか、時間をお試しください。',
+              );
+            }
+          };
+
+          submitData();
           setCurrentStep('done');
         }
         break;
@@ -225,10 +300,10 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
     const files = e.target.files;
     if (!files) return;
 
-    Array.from(files).forEach(file => {
+    Array.from(files).forEach((file) => {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhotos(prev => [...prev, reader.result as string].slice(0, 4));
+        setPhotos((prev) => [...prev, reader.result as string].slice(0, 4));
       };
       reader.readAsDataURL(file);
     });
@@ -239,11 +314,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
     const yIdx = Math.round(yearPickerRef.current.scrollTop / 40);
     const mIdx = Math.round(monthPickerRef.current.scrollTop / 40);
     const dIdx = Math.round(dayPickerRef.current.scrollTop / 40);
-    
+
     const year = YEAR_OPTIONS[yIdx];
     const month = MONTH_OPTIONS[mIdx].padStart(2, '0');
     const day = DAY_OPTIONS[dIdx].padStart(2, '0');
-    
+
     handleSend(`${year}年${month}月${day}日`);
   };
 
@@ -259,42 +334,51 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   const currentOptions = STEP_OPTIONS[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950/80 backdrop-blur-xl animate-in fade-in duration-300">
-      <div className="flex items-center justify-between p-4 border-b border-slate-800 bg-slate-900/50">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in">
+      <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/50 p-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-amber-600 rounded-full flex items-center justify-center text-white font-bold">L</div>
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 font-bold text-white">
+            L
+          </div>
           <div>
-            <div className="text-white font-bold text-sm">Life Change Assistant</div>
-            <div className="text-green-500 text-[10px] flex items-center gap-1">
-              <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+            <div className="text-sm font-bold text-white">Life Change Assistant</div>
+            <div className="flex items-center gap-1 text-[10px] text-green-500">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-green-500"></span>
               Online Support
             </div>
           </div>
         </div>
-        <button 
+        <button
           onClick={onClose}
-          className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-white transition-colors"
+          className="flex h-10 w-10 items-center justify-center text-slate-400 transition-colors hover:text-white"
         >
           ✕
         </button>
       </div>
 
-      <div 
-        ref={scrollRef}
-        className="flex-grow overflow-y-auto p-4 space-y-6 scroll-smooth"
-      >
+      <div ref={scrollRef} className="flex-grow space-y-6 overflow-y-auto scroll-smooth p-4">
         {messages.map((m, i) => (
-          <div key={i} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}>
-            <div className={`max-w-[85%] rounded-2xl p-4 ${
-              m.role === 'user' 
-                ? 'bg-amber-600 text-white rounded-tr-none shadow-lg shadow-amber-900/20' 
-                : 'bg-slate-800 text-slate-100 rounded-tl-none border border-slate-700'
-            }`}>
-              <div className="text-sm leading-relaxed whitespace-pre-wrap">{m.text}</div>
+          <div
+            key={i}
+            className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'} animate-in slide-in-from-bottom-2`}
+          >
+            <div
+              className={`max-w-[85%] rounded-2xl p-4 ${
+                m.role === 'user'
+                  ? 'rounded-tr-none bg-amber-600 text-white shadow-lg shadow-amber-900/20'
+                  : 'rounded-tl-none border border-slate-700 bg-slate-800 text-slate-100'
+              }`}
+            >
+              <div className="whitespace-pre-wrap text-sm leading-relaxed">{m.text}</div>
               {m.photos && (
-                <div className="grid grid-cols-2 gap-2 mt-3">
+                <div className="mt-3 grid grid-cols-2 gap-2">
                   {m.photos.map((p, pi) => (
-                    <img key={pi} src={p} alt="uploaded" className="rounded-lg w-full aspect-square object-cover" />
+                    <img
+                      key={pi}
+                      src={p}
+                      alt="uploaded"
+                      className="aspect-square w-full rounded-lg object-cover"
+                    />
                   ))}
                 </div>
               )}
@@ -303,18 +387,23 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         ))}
         {currentStep === 'review' && !isTyping && (
           <div className="flex justify-start animate-in slide-in-from-bottom-4">
-            <div className="bg-slate-800 text-slate-100 rounded-2xl rounded-tl-none border border-slate-700 p-4 max-w-[90%] shadow-xl">
-              <div className="text-amber-500 font-bold text-xs uppercase tracking-widest mb-4">Application Summary</div>
+            <div className="max-w-[90%] rounded-2xl rounded-tl-none border border-slate-700 bg-slate-800 p-4 text-slate-100 shadow-xl">
+              <div className="mb-4 text-xs font-bold uppercase tracking-widest text-amber-500">
+                Application Summary
+              </div>
               <div className="space-y-3">
                 {Object.entries(STEP_LABELS).map(([key, label]) => (
-                  <div key={key} className="flex items-start justify-between gap-4 border-b border-slate-700/50 pb-2">
+                  <div
+                    key={key}
+                    className="flex items-start justify-between gap-4 border-b border-slate-700/50 pb-2"
+                  >
                     <div className="flex-grow">
-                      <div className="text-[10px] text-slate-400 font-bold mb-0.5">{label}</div>
+                      <div className="mb-0.5 text-[10px] font-bold text-slate-400">{label}</div>
                       <div className="text-sm">{formData[key] || '---'}</div>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleEdit(key as Step)}
-                      className="text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded transition-colors mt-2"
+                      className="mt-2 rounded bg-slate-700 px-2 py-1 text-[10px] text-slate-300 transition-colors hover:bg-slate-600"
                     >
                       修正
                     </button>
@@ -322,15 +411,24 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
                 ))}
                 {userPhotos.length > 0 && (
                   <div className="pt-2">
-                    <div className="text-[10px] text-slate-400 font-bold mb-1">顔写真</div>
+                    <div className="mb-1 text-[10px] font-bold text-slate-400">顔写真</div>
                     <div className="flex gap-1 overflow-x-auto pb-2">
                       {userPhotos.map((p, i) => (
-                        <img key={i} src={p} className="w-10 h-10 object-cover rounded border border-slate-700" alt="summary" />
+                        <img
+                          key={i}
+                          src={p}
+                          className="h-10 w-10 rounded border border-slate-700 object-cover"
+                          alt="summary"
+                        />
                       ))}
                     </div>
-                    <button 
-                      onClick={() => { setIsEditing(true); setCurrentStep('photos'); addModelMessage('写真を再送してください。'); }}
-                      className="text-[10px] bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded transition-colors"
+                    <button
+                      onClick={() => {
+                        setIsEditing(true);
+                        setCurrentStep('photos');
+                        addModelMessage('写真を再送してください。');
+                      }}
+                      className="rounded bg-slate-700 px-2 py-1 text-[10px] text-slate-300 transition-colors hover:bg-slate-600"
                     >
                       修正
                     </button>
@@ -342,25 +440,31 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         )}
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-slate-800 rounded-2xl rounded-tl-none p-4 flex gap-1">
-              <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce"></div>
-              <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:0.2s]"></div>
-              <div className="w-1.5 h-1.5 bg-slate-500 rounded-full animate-bounce [animation-delay:0.4s]"></div>
+            <div className="flex gap-1 rounded-2xl rounded-tl-none bg-slate-800 p-4">
+              <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-500"></div>
+              <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-500 [animation-delay:0.2s]"></div>
+              <div className="h-1.5 w-1.5 animate-bounce rounded-full bg-slate-500 [animation-delay:0.4s]"></div>
             </div>
           </div>
         )}
       </div>
 
-      <div className="p-4 bg-slate-900 border-t border-slate-800">
+      <div className="border-t border-slate-800 bg-slate-900 p-4">
         {photos.length > 0 && (
-          <div className="flex gap-2 mb-3 overflow-x-auto pb-2">
+          <div className="mb-3 flex gap-2 overflow-x-auto pb-2">
             {photos.map((p, i) => (
               <div key={i} className="relative shrink-0">
-                <img src={p} className="w-16 h-16 rounded-lg object-cover border border-slate-700" alt="preview" />
-                <button 
-                  onClick={() => setPhotos(prev => prev.filter((_, idx) => idx !== i))}
-                  className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center"
-                >✕</button>
+                <img
+                  src={p}
+                  className="h-16 w-16 rounded-lg border border-slate-700 object-cover"
+                  alt="preview"
+                />
+                <button
+                  onClick={() => setPhotos((prev) => prev.filter((_, idx) => idx !== i))}
+                  className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
+                >
+                  ✕
+                </button>
               </div>
             ))}
           </div>
@@ -369,43 +473,73 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         {/* Smart Birthday Picker */}
         {currentStep === 'birthday' && !isTyping && (
           <div className="mb-6 animate-in slide-in-from-bottom-2">
-            <div className="relative h-40 w-full max-w-md mx-auto flex gap-2 items-center justify-center px-4">
-              <div className="absolute top-1/2 -translate-y-1/2 w-[90%] h-10 bg-amber-500/20 border-y border-amber-500/40 pointer-events-none rounded-sm z-0"></div>
-              
-              <div className="flex-1 h-full flex flex-col items-center">
-                <div className="text-[10px] text-amber-500 font-bold mb-1">YEAR</div>
-                <div ref={yearPickerRef} className="w-full h-full overflow-y-scroll no-scrollbar snap-y snap-mandatory relative z-10" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            <div className="relative mx-auto flex h-40 w-full max-w-md items-center justify-center gap-2 px-4">
+              <div className="pointer-events-none absolute top-1/2 z-0 h-10 w-[90%] -translate-y-1/2 rounded-sm border-y border-amber-500/40 bg-amber-500/20"></div>
+
+              <div className="flex h-full flex-1 flex-col items-center">
+                <div className="mb-1 text-[10px] font-bold text-amber-500">YEAR</div>
+                <div
+                  ref={yearPickerRef}
+                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
                   <div className="h-16"></div>
                   {YEAR_OPTIONS.map((y) => (
-                    <div key={y} className="h-10 flex items-center justify-center snap-center text-lg font-bold text-white">{y}</div>
+                    <div
+                      key={y}
+                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
+                    >
+                      {y}
+                    </div>
                   ))}
                   <div className="h-16"></div>
                 </div>
               </div>
 
-              <div className="flex-1 h-full flex flex-col items-center">
-                <div className="text-[10px] text-amber-500 font-bold mb-1">MONTH</div>
-                <div ref={monthPickerRef} className="w-full h-full overflow-y-scroll no-scrollbar snap-y snap-mandatory relative z-10" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div className="flex h-full flex-1 flex-col items-center">
+                <div className="mb-1 text-[10px] font-bold text-amber-500">MONTH</div>
+                <div
+                  ref={monthPickerRef}
+                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
                   <div className="h-16"></div>
                   {MONTH_OPTIONS.map((m) => (
-                    <div key={m} className="h-10 flex items-center justify-center snap-center text-lg font-bold text-white">{m}</div>
+                    <div
+                      key={m}
+                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
+                    >
+                      {m}
+                    </div>
                   ))}
                   <div className="h-16"></div>
                 </div>
               </div>
 
-              <div className="flex-1 h-full flex flex-col items-center">
-                <div className="text-[10px] text-amber-500 font-bold mb-1">DAY</div>
-                <div ref={dayPickerRef} className="w-full h-full overflow-y-scroll no-scrollbar snap-y snap-mandatory relative z-10" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+              <div className="flex h-full flex-1 flex-col items-center">
+                <div className="mb-1 text-[10px] font-bold text-amber-500">DAY</div>
+                <div
+                  ref={dayPickerRef}
+                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
+                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+                >
                   <div className="h-16"></div>
                   {DAY_OPTIONS.map((d) => (
-                    <div key={d} className="h-10 flex items-center justify-center snap-center text-lg font-bold text-white">{d}</div>
+                    <div
+                      key={d}
+                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
+                    >
+                      {d}
+                    </div>
                   ))}
                   <div className="h-16"></div>
                 </div>
               </div>
             </div>
-            <button onClick={handleBirthdayConfirm} className="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-full font-bold shadow-lg transition-all active:scale-95">
+            <button
+              onClick={handleBirthdayConfirm}
+              className="mt-4 w-full rounded-full bg-amber-600 py-3 font-bold text-white shadow-lg transition-all hover:bg-amber-700 active:scale-95"
+            >
               生年月日を決定する
             </button>
           </div>
@@ -414,23 +548,30 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
         {/* Smart Height Picker */}
         {currentStep === 'height' && !isTyping && (
           <div className="mb-6 animate-in slide-in-from-bottom-2">
-            <div className="relative h-40 w-full max-w-xs mx-auto flex flex-col items-center justify-center">
-              <div className="absolute top-1/2 -translate-y-1/2 w-full h-10 bg-amber-500/20 border-y border-amber-500/40 pointer-events-none rounded-sm"></div>
-              <div 
+            <div className="relative mx-auto flex h-40 w-full max-w-xs flex-col items-center justify-center">
+              <div className="pointer-events-none absolute top-1/2 h-10 w-full -translate-y-1/2 rounded-sm border-y border-amber-500/40 bg-amber-500/20"></div>
+              <div
                 ref={heightPickerRef}
-                className="w-full h-full overflow-y-scroll no-scrollbar snap-y snap-mandatory"
+                className="no-scrollbar h-full w-full snap-y snap-mandatory overflow-y-scroll"
                 style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
               >
                 <div className="h-16"></div>
                 {HEIGHT_OPTIONS.map((h) => (
-                  <div key={h} className="h-10 flex items-center justify-center snap-center text-xl font-bold text-white">
-                    {h}<span className="text-xs ml-1 font-normal opacity-60">cm</span>
+                  <div
+                    key={h}
+                    className="flex h-10 snap-center items-center justify-center text-xl font-bold text-white"
+                  >
+                    {h}
+                    <span className="ml-1 text-xs font-normal opacity-60">cm</span>
                   </div>
                 ))}
                 <div className="h-16"></div>
               </div>
             </div>
-            <button onClick={handleHeightConfirm} className="w-full mt-4 bg-amber-600 hover:bg-amber-700 text-white py-3 rounded-full font-bold shadow-lg transition-all active:scale-95">
+            <button
+              onClick={handleHeightConfirm}
+              className="mt-4 w-full rounded-full bg-amber-600 py-3 font-bold text-white shadow-lg transition-all hover:bg-amber-700 active:scale-95"
+            >
               身長を決定する
             </button>
           </div>
@@ -438,12 +579,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
 
         {/* Option Buttons */}
         {currentOptions && !isTyping && (
-          <div className="flex flex-wrap gap-2 mb-4 animate-in slide-in-from-bottom-2">
+          <div className="mb-4 flex flex-wrap gap-2 animate-in slide-in-from-bottom-2">
             {currentOptions.map((opt) => (
               <button
                 key={opt}
                 onClick={() => handleSend(opt)}
-                className="bg-slate-800 hover:bg-amber-600 text-white text-xs sm:text-sm px-4 py-2 rounded-full border border-slate-700 transition-all active:scale-95 shadow-sm"
+                className="rounded-full border border-slate-700 bg-slate-800 px-4 py-2 text-xs text-white shadow-sm transition-all hover:bg-amber-600 active:scale-95 sm:text-sm"
               >
                 {opt}
               </button>
@@ -456,15 +597,18 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
           <div className="mb-4 animate-in slide-in-from-bottom-2">
             <button
               onClick={() => handleSend('送信する')}
-              className="w-full bg-amber-600 hover:bg-amber-700 text-white py-4 rounded-2xl font-bold text-lg shadow-xl shadow-amber-900/20 transition-all active:scale-95"
+              className="w-full rounded-2xl bg-amber-600 py-4 text-lg font-bold text-white shadow-xl shadow-amber-900/20 transition-all hover:bg-amber-700 active:scale-95"
             >
               この内容で応募する
             </button>
           </div>
         )}
-        
-        {currentStep !== 'done' && currentStep !== 'review' && currentStep !== 'birthday' && currentStep !== 'height' ? (
-          <div className="flex items-end gap-2 bg-slate-800 rounded-3xl p-2 pl-4 focus-within:ring-2 focus-within:ring-amber-500/50 transition-all">
+
+        {currentStep !== 'done' &&
+        currentStep !== 'review' &&
+        currentStep !== 'birthday' &&
+        currentStep !== 'height' ? (
+          <div className="flex items-end gap-2 rounded-3xl bg-slate-800 p-2 pl-4 transition-all focus-within:ring-2 focus-within:ring-amber-500/50">
             <textarea
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -474,47 +618,55 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
                   handleSend();
                 }
               }}
-              placeholder={currentStep === 'photos' ? "写真を選んで送信してください" : (currentStep === 'freeText' ? "あなたの想いを聞かせてください..." : "回答を入力...")}
+              placeholder={
+                currentStep === 'photos'
+                  ? '写真を選んで送信してください'
+                  : currentStep === 'freeText'
+                    ? 'あなたの想いを聞かせてください...'
+                    : '回答を入力...'
+              }
               disabled={currentStep === 'photos'}
               rows={currentStep === 'freeText' ? 2 : 1}
-              className="flex-grow bg-transparent border-none focus:ring-0 text-white text-sm py-2 max-h-32 overflow-y-auto disabled:opacity-50"
+              className="max-h-32 flex-grow overflow-y-auto border-none bg-transparent py-2 text-sm text-white focus:ring-0 disabled:opacity-50"
             />
-            <input 
-              type="file" 
-              ref={fileInputRef} 
-              className="hidden" 
-              accept="image/gif,image/jpeg,image/png" 
-              multiple 
-              onChange={handlePhotoUpload} 
+            <input
+              type="file"
+              ref={fileInputRef}
+              className="hidden"
+              accept="image/gif,image/jpeg,image/png"
+              multiple
+              onChange={handlePhotoUpload}
             />
             {currentStep === 'photos' && (
-              <button 
+              <button
                 onClick={() => fileInputRef.current?.click()}
-                className="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-amber-500 transition-colors"
+                className="flex h-10 w-10 items-center justify-center text-slate-400 transition-colors hover:text-amber-500"
               >
                 📷
               </button>
             )}
-            <button 
+            <button
               onClick={() => handleSend()}
               disabled={(!input.trim() && photos.length === 0 && !currentOptions) || isTyping}
-              className="w-10 h-10 bg-amber-600 hover:bg-amber-700 disabled:opacity-50 text-white rounded-full flex items-center justify-center transition-all shadow-lg active:scale-90"
+              className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 text-white shadow-lg transition-all hover:bg-amber-700 active:scale-90 disabled:opacity-50"
             >
               {currentStep === 'photos' ? '⬆' : '✈'}
             </button>
           </div>
-        ) : currentStep === 'done' && (
-          <div className="text-center py-4">
-            <button 
-              onClick={onClose}
-              className="px-8 py-3 bg-slate-800 text-white rounded-full font-bold hover:bg-slate-700 transition-all active:scale-95"
-            >
-              閉じる
-            </button>
-          </div>
+        ) : (
+          currentStep === 'done' && (
+            <div className="py-4 text-center">
+              <button
+                onClick={onClose}
+                className="rounded-full bg-slate-800 px-8 py-3 font-bold text-white transition-all hover:bg-slate-700 active:scale-95"
+              >
+                閉じる
+              </button>
+            </div>
+          )
         )}
-        
-        <p className="text-[10px] text-slate-500 text-center mt-3">
+
+        <p className="mt-3 text-center text-[10px] text-slate-500">
           安心のプライバシー管理。お送りいただいた情報は厳重に保管されます。
         </p>
       </div>

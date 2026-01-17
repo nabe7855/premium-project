@@ -59,6 +59,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     { href: '/admin/admin/advertising/list', icon: <DocumentTextIcon />, label: '投稿済み広告' },
     { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
     { href: '/admin/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
+    {
+      href: '/admin/admin/interview-reservations',
+      icon: <UsersIcon />,
+      label: '面接予約管理',
+    },
     { href: '/admin/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
     {
       href: '/admin/admin/hotels/masters',
