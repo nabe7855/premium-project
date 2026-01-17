@@ -4,11 +4,13 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BulbOutlined,
-  ColumnWidthOutlined,
   CopyOutlined,
   DeleteOutlined,
+  EditOutlined,
   GlobalOutlined,
   PlusOutlined,
+  RollbackOutlined,
+  SaveOutlined,
 } from '@ant-design/icons';
 import { AntdRegistry } from '@ant-design/nextjs-registry';
 import {
@@ -22,6 +24,8 @@ import {
   Modal,
   Select,
   Space,
+  Table,
+  Tag,
   theme,
   Typography,
 } from 'antd';
@@ -29,6 +33,8 @@ import { useEffect, useRef, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
+
+// --- Types ---
 
 type SectionType = 'text' | 'slider' | 'casts' | 'pricing' | 'access' | 'other';
 type ElementType = 'button' | 'slider' | 'text' | 'image' | 'input';
@@ -55,6 +61,16 @@ interface Section {
   gridElements: GridElement[];
 }
 
+interface PageRequest {
+  id: string;
+  title: string;
+  slug: string;
+  referenceUrls: string[];
+  sections: Section[];
+  updatedAt: string;
+  status: 'draft' | 'published';
+}
+
 interface ElementTemplate {
   type: ElementType;
   label: string;
@@ -63,6 +79,8 @@ interface ElementTemplate {
   color: string;
   borderColor: string;
 }
+
+// --- Constants ---
 
 const SECTION_TYPE_LABELS: Record<SectionType, string> = {
   text: 'テキスト',
@@ -124,49 +142,91 @@ const ELEMENT_TEMPLATES: ElementTemplate[] = [
   },
 ];
 
-const MOCK_SECTIONS: Section[] = [
+const MOCK_REQUESTS: PageRequest[] = [
   {
-    id: '1',
-    name: 'キャンペーンヘッダー',
-    type: 'text',
-    content: '初回限定キャンペーン！最大5,000円OFF。',
-    comment: 'キャッチコピーは目立つように赤系でお願いします。',
-    gridElements: [
+    id: 'req1',
+    title: '期間限定サマーキャンペーン',
+    slug: 'summer-2026',
+    referenceUrls: ['https://example.com/summer'],
+    updatedAt: new Date().toISOString(),
+    status: 'draft',
+    sections: [
       {
-        id: 'e1',
+        id: '1',
+        name: 'キャンペーンヘッダー',
         type: 'text',
-        label: 'タイトル',
-        comment: '大きく目立つフォントで',
-        gridPosition: { row: 0, col: 0 },
-        rowSpan: 2,
-        colSpan: 10,
+        content: '初回限定キャンペーン！最大5,000円OFF。',
+        comment: 'キャッチコピーは目立つように赤系でお願いします。',
+        gridElements: [
+          {
+            id: 'e1',
+            type: 'text',
+            label: 'タイトル',
+            comment: '大きく目立つフォントで',
+            gridPosition: { row: 0, col: 0 },
+            rowSpan: 2,
+            colSpan: 10,
+          },
+          {
+            id: 'e2',
+            type: 'button',
+            label: '申し込みボタン',
+            comment: 'オレンジ色で目立たせる',
+            gridPosition: { row: 3, col: 3 },
+            rowSpan: 2,
+            colSpan: 4,
+          },
+        ],
       },
       {
-        id: 'e2',
-        type: 'button',
-        label: '申し込みボタン',
-        comment: 'オレンジ色で目立たせる',
-        gridPosition: { row: 3, col: 3 },
-        rowSpan: 2,
-        colSpan: 4,
+        id: '2',
+        name: '料金表',
+        type: 'pricing',
+        content: '60分：12,000円\n90分：18,000円',
+        comment: '税込み価格であることを明記してください。',
+        gridElements: [],
       },
     ],
   },
-  {
-    id: '2',
-    name: '料金表',
-    type: 'pricing',
-    content: '60分：12,000円\n90分：18,000円',
-    comment: '税込み価格であることを明記してください。',
-    gridElements: [],
-  },
 ];
 
-export default function PageRequestPage() {
+// --- Sub Component: Layout Editor ---
+
+interface RecruitLayoutEditorProps {
+  initialData?: PageRequest;
+  onSave: (data: Omit<PageRequest, 'id' | 'updatedAt' | 'status'>) => void;
+  onCancel: () => void;
+}
+
+const RecruitLayoutEditor = ({ initialData, onSave, onCancel }: RecruitLayoutEditorProps) => {
   const [form] = Form.useForm();
-  const [sections, setSections] = useState<Section[]>(MOCK_SECTIONS);
+  const [sections, setSections] = useState<Section[]>([]);
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
   const [editingSection, setEditingSection] = useState<string | null>(null);
+
+  // Initialize Data
+  useEffect(() => {
+    if (initialData) {
+      form.setFieldsValue({
+        title: initialData.title,
+        slug: initialData.slug,
+        referenceUrls: initialData.referenceUrls,
+      });
+      setSections(initialData.sections);
+    } else {
+      // Default for new request
+      setSections([
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          name: 'メインビジュアル',
+          type: 'slider',
+          content: '',
+          comment: '',
+          gridElements: [],
+        },
+      ]);
+    }
+  }, [initialData, form]);
 
   // Grid Interaction State
   const [isResizing, setIsResizing] = useState(false);
@@ -184,6 +244,8 @@ export default function PageRequestPage() {
   const [currentElement, setCurrentElement] = useState<Partial<GridElement>>({});
 
   const gridRef = useRef<HTMLDivElement>(null);
+
+  // --- Logic Functions (Copied from previous implementation) ---
 
   const addSection = () => {
     const newSection: Section = {
@@ -228,7 +290,6 @@ export default function PageRequestPage() {
     setMovingElementId(null);
   };
 
-  // Find empty space for a template
   const findEmptySpace = (
     sectionId: string,
     rowSpan: number,
@@ -238,12 +299,9 @@ export default function PageRequestPage() {
     const section = sections.find((s) => s.id === sectionId);
     if (!section) return null;
 
-    // Create collision map
     const occupied = new Array(GRID_ROWS).fill(false).map(() => new Array(GRID_COLS).fill(false));
     section.gridElements.forEach((el) => {
-      // Exclude the element itself when checking (useful for moving)
       if (el.id === excludeElementId) return;
-
       for (let r = 0; r < el.rowSpan; r++) {
         for (let c = 0; c < el.colSpan; c++) {
           if (el.gridPosition.row + r < GRID_ROWS && el.gridPosition.col + c < GRID_COLS) {
@@ -253,7 +311,6 @@ export default function PageRequestPage() {
       }
     });
 
-    // Scan for space
     for (let r = 0; r <= GRID_ROWS - rowSpan; r++) {
       for (let c = 0; c <= GRID_COLS - colSpan; c++) {
         let fits = true;
@@ -272,7 +329,6 @@ export default function PageRequestPage() {
     return null;
   };
 
-  // Helpers for collision
   const checkCollision = (
     section: Section,
     element: GridElement,
@@ -283,13 +339,10 @@ export default function PageRequestPage() {
   ) => {
     return section.gridElements.some((other) => {
       if (other.id === element.id) return false;
-
       const otherEndRow = other.gridPosition.row + other.rowSpan - 1;
       const otherEndCol = other.gridPosition.col + other.colSpan - 1;
-
       const newEndRow = newRow + newRowSpan - 1;
       const newEndCol = newCol + newColSpan - 1;
-
       return !(
         newEndRow < other.gridPosition.row ||
         newRow > otherEndRow ||
@@ -301,21 +354,17 @@ export default function PageRequestPage() {
 
   const handleTemplateClick = (template: ElementTemplate) => {
     if (!editingSection) return;
-
     const position = findEmptySpace(
       editingSection,
       template.defaultRowSpan,
       template.defaultColSpan,
     );
-
     if (!position) {
       message.error('配置するスペースが足りません');
       return;
     }
-
     const section = sections.find((s) => s.id === editingSection);
     if (!section) return;
-
     const newElement: GridElement = {
       id: Math.random().toString(36).substr(2, 9),
       type: template.type,
@@ -325,16 +374,13 @@ export default function PageRequestPage() {
       rowSpan: template.defaultRowSpan,
       colSpan: template.defaultColSpan,
     };
-
     const updatedElements = [...section.gridElements, newElement];
     updateSection(editingSection, 'gridElements', updatedElements);
   };
 
   const handleElementMouseDown = (element: GridElement, e: React.MouseEvent) => {
-    // Only left click triggers move
     if (e.button !== 0) return;
-    e.stopPropagation(); // Stop bubbling to grid background
-
+    e.stopPropagation();
     setIsMoving(true);
     setMovingElementId(element.id);
     setMoveStart({ x: e.clientX, y: e.clientY });
@@ -342,19 +388,11 @@ export default function PageRequestPage() {
   };
 
   const handleElementClick = (element: GridElement, e: React.MouseEvent) => {
-    // If we simply clicked without dragging, open modal
-    // Note: Due to mouseUp logic clearing isMoving, this fires after drag potentially.
-    // We should rely on a check if move actually happened, but simplified flow:
-    // If mouseUp happened and position didn't change, it's a click.
-    // Handled in existing logic or UI structure?
-    // Actually, `onClick` fires after `onMouseUp`. If we prevent bubbling in MouseDown, Click still fires?
-    // Let's just stop propagation here too.
     e.stopPropagation();
     setCurrentElement(element);
     setElementModalOpen(true);
   };
 
-  // Resize Handlers
   const handleResizeStart = (e: React.MouseEvent, element: GridElement) => {
     e.stopPropagation();
     setIsResizing(true);
@@ -369,17 +407,15 @@ export default function PageRequestPage() {
       const section = sections.find((s) => s.id === editingSection);
       if (!section) return;
 
-      // Handle Resize Logic
+      const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
+      const cellHeight = 24;
+
       if (isResizing && resizingElementId && resizeStart && initialSize) {
         const element = section.gridElements.find((el) => el.id === resizingElementId);
         if (!element) return;
 
-        const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
-        const cellHeight = 24;
-
         const deltaX = e.clientX - resizeStart.x;
         const deltaY = e.clientY - resizeStart.y;
-
         const deltaCols = Math.round(deltaX / cellWidth);
         const deltaRows = Math.round(deltaY / cellHeight);
 
@@ -413,30 +449,23 @@ export default function PageRequestPage() {
         return;
       }
 
-      // Handle Move Logic
       if (isMoving && movingElementId && moveStart && initialPosition) {
         const element = section.gridElements.find((el) => el.id === movingElementId);
         if (!element) return;
 
-        const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
-        const cellHeight = 24;
-
         const deltaX = e.clientX - moveStart.x;
         const deltaY = e.clientY - moveStart.y;
-
         const deltaCols = Math.round(deltaX / cellWidth);
         const deltaRows = Math.round(deltaY / cellHeight);
 
-        if (deltaCols === 0 && deltaRows === 0) return; // No grid change
+        if (deltaCols === 0 && deltaRows === 0) return;
 
         let newCol = initialPosition.col + deltaCols;
         let newRow = initialPosition.row + deltaRows;
 
-        // Boundary Check
         newCol = Math.max(0, Math.min(newCol, GRID_COLS - element.colSpan));
         newRow = Math.max(0, Math.min(newRow, GRID_ROWS - element.rowSpan));
 
-        // Only update if position actually changed
         if (newCol !== element.gridPosition.col || newRow !== element.gridPosition.row) {
           if (!checkCollision(section, element, newRow, newCol, element.rowSpan, element.colSpan)) {
             const updatedElements = section.gridElements.map((el) =>
@@ -457,7 +486,6 @@ export default function PageRequestPage() {
       setResizingElementId(null);
       setResizeStart(null);
       setInitialSize(null);
-
       setIsMoving(false);
       setMovingElementId(null);
       setMoveStart(null);
@@ -468,7 +496,6 @@ export default function PageRequestPage() {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
     }
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -491,10 +518,8 @@ export default function PageRequestPage() {
       message.warning('要素タイプとラベルを入力してください');
       return;
     }
-
     const section = sections.find((s) => s.id === editingSection);
     if (!section) return;
-
     const newElement: GridElement = {
       id: currentElement.id || Math.random().toString(36).substr(2, 9),
       type: currentElement.type,
@@ -504,11 +529,9 @@ export default function PageRequestPage() {
       rowSpan: currentElement.rowSpan || 1,
       colSpan: currentElement.colSpan || 1,
     };
-
     const updatedElements = currentElement.id
       ? section.gridElements.map((e) => (e.id === currentElement.id ? newElement : e))
       : [...section.gridElements, newElement];
-
     updateSection(editingSection, 'gridElements', updatedElements);
     setElementModalOpen(false);
     setCurrentElement({});
@@ -517,10 +540,8 @@ export default function PageRequestPage() {
 
   const deleteElement = () => {
     if (!editingSection || !currentElement.id) return;
-
     const section = sections.find((s) => s.id === editingSection);
     if (!section) return;
-
     const updatedElements = section.gridElements.filter((e) => e.id !== currentElement.id);
     updateSection(editingSection, 'gridElements', updatedElements);
     setElementModalOpen(false);
@@ -528,9 +549,24 @@ export default function PageRequestPage() {
     message.success('要素を削除しました');
   };
 
+  const handleSave = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        onSave({
+          title: values.title,
+          slug: values.slug,
+          referenceUrls: values.referenceUrls || [],
+          sections: sections,
+        });
+      })
+      .catch(() => {
+        message.error('入力内容を確認してください');
+      });
+  };
+
   const generatePrompt = () => {
     const values = form.getFieldsValue();
-
     let prompt = `以下の要件に基づいて、新しい特設ページの制作をお願いします。\n\n`;
     prompt += `【ページ基本情報】\n`;
     prompt += `- サイトタイトル: ${values.title || '（未入力）'}\n`;
@@ -550,7 +586,6 @@ export default function PageRequestPage() {
       if (s.comment) {
         prompt += `- 制作担当への要望: ${s.comment}\n`;
       }
-
       if (s.gridElements.length > 0) {
         prompt += `- レイアウト構成 (10x20グリッド):\n`;
         s.gridElements.forEach((el) => {
@@ -564,24 +599,14 @@ export default function PageRequestPage() {
       }
       prompt += `\n`;
     });
-
     prompt += `以上の構成で、モダンで高級感のあるデザインをベースにプログラミングを完了させてください。`;
-
     setGeneratedPrompt(prompt);
     message.success('プロンプトを生成しました。');
   };
 
-  const copyToClipboard = () => {
-    if (!generatedPrompt) {
-      message.warning('プロンプトが生成されていません。');
-      return;
-    }
-    navigator.clipboard.writeText(generatedPrompt);
-    message.success('クリップボードにコピーしました。');
-  };
+  // --- Render Functions ---
 
   const renderGrid = (section: Section) => {
-    // Render grid background (empty cells)
     const emptyCells = [];
     for (let r = 0; r < GRID_ROWS; r++) {
       for (let c = 0; c < GRID_COLS; c++) {
@@ -595,7 +620,6 @@ export default function PageRequestPage() {
       }
     }
 
-    // Render elements
     const elements = section.gridElements.map((el) => {
       const template = ELEMENT_TEMPLATES.find((t) => t.type === el.type);
       const isBeingResized = resizingElementId === el.id;
@@ -624,7 +648,6 @@ export default function PageRequestPage() {
             </div>
           )}
 
-          {/* Resize Handle */}
           <div
             className="absolute bottom-0 right-0 flex h-4 w-4 cursor-se-resize items-end justify-end p-[1px] opacity-0 transition-opacity group-hover:opacity-100"
             onMouseDown={(e) => handleResizeStart(e, el)}
@@ -645,19 +668,430 @@ export default function PageRequestPage() {
           aspectRatio: '10/20',
         }}
       >
-        {/* Background Grid Layer - Using Absolute positioning to overlay? No, Grid layout handles overlaps if we are careful.
-            But we want background grid cells to be always visible.
-            Let's put background cells in the grid, but elements need to float on top effectively.
-            CSS Grid can layer items if they occupy the same space.
-            So we render 200 background cells first, then the elements.
-        */}
         {emptyCells}
-
-        {/* We need to warp elements in a fragment to return array, but we are inside div */}
         {elements}
       </div>
     );
   };
+
+  return (
+    <div className="space-y-4">
+      {/* Editor Actions */}
+      <div className="mb-4 flex items-center justify-between">
+        <Button icon={<RollbackOutlined />} onClick={onCancel}>
+          一覧に戻る
+        </Button>
+        <Space>
+          <Button icon={<BulbOutlined />} onClick={generatePrompt}>
+            プロンプト生成
+          </Button>
+          <Button type="primary" icon={<SaveOutlined />} onClick={handleSave}>
+            保存
+          </Button>
+        </Space>
+      </div>
+
+      {/* Prompt Preview */}
+      {generatedPrompt && (
+        <Card className="mb-4 !border-slate-700 !bg-slate-800">
+          <Text className="mb-2 block !text-slate-300">生成されたプロンプト:</Text>
+          <TextArea
+            value={generatedPrompt}
+            autoSize={{ minRows: 3, maxRows: 10 }}
+            className="!bg-slate-900 !text-slate-200"
+            readOnly
+          />
+          <Button
+            icon={<CopyOutlined />}
+            className="mt-2"
+            onClick={() => {
+              navigator.clipboard.writeText(generatedPrompt);
+              message.success('コピーしました');
+            }}
+          >
+            コピー
+          </Button>
+        </Card>
+      )}
+
+      <Form form={form} layout="vertical" initialValues={{ referenceUrls: [''] }}>
+        <Card
+          title={
+            <Space>
+              <GlobalOutlined />
+              ページ基本情報
+            </Space>
+          }
+          className="shadow-md"
+        >
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <Form.Item
+              label="ページタイトル"
+              name="title"
+              rules={[{ required: true, message: '必須です' }]}
+            >
+              <Input placeholder="例：新店舗オープン記念ページ" />
+            </Form.Item>
+            <Form.Item
+              label="URLスラッグ"
+              name="slug"
+              rules={[{ required: true, message: '必須です' }]}
+            >
+              <Input addonBefore="/service/" placeholder="new-campaign" />
+            </Form.Item>
+          </div>
+          <Form.List name="referenceUrls">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map((field, index) => (
+                  <Form.Item label={index === 0 ? '参考URL' : ''} key={field.key} className="mb-2">
+                    <Space className="flex w-full">
+                      <Form.Item {...field} noStyle>
+                        <Input placeholder="https://example.com" />
+                      </Form.Item>
+                      {fields.length > 1 && (
+                        <Button
+                          type="text"
+                          danger
+                          icon={<DeleteOutlined />}
+                          onClick={() => remove(field.name)}
+                        />
+                      )}
+                    </Space>
+                  </Form.Item>
+                ))}
+                <Form.Item className="mt-2">
+                  <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
+                    追加
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+        </Card>
+
+        <Divider className="!border-slate-800 !text-slate-500">セクション構成</Divider>
+
+        <div className="space-y-4">
+          {sections.map((section, index) => (
+            <Card
+              key={section.id}
+              size="small"
+              title={
+                <Input
+                  value={section.name}
+                  onChange={(e) => updateSection(section.id, 'name', e.target.value)}
+                  className="font-bold"
+                  placeholder="セクション名"
+                  bordered={false}
+                />
+              }
+              extra={
+                <Space>
+                  <Button
+                    size="small"
+                    icon={<ArrowUpOutlined />}
+                    disabled={index === 0}
+                    onClick={() => moveSection(index, 'up')}
+                  />
+                  <Button
+                    size="small"
+                    icon={<ArrowDownOutlined />}
+                    disabled={index === sections.length - 1}
+                    onClick={() => moveSection(index, 'down')}
+                  />
+                  <Button
+                    size="small"
+                    danger
+                    icon={<DeleteOutlined />}
+                    onClick={() => removeSection(section.id)}
+                  />
+                </Space>
+              }
+              className="border-amber-500/20"
+            >
+              <div className="space-y-4">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
+                  <div className="md:col-span-1">
+                    <Text strong className="mb-2 block">
+                      タイプ
+                    </Text>
+                    <Select
+                      value={section.type}
+                      onChange={(val) => updateSection(section.id, 'type', val)}
+                      className="w-full"
+                    >
+                      {(Object.keys(SECTION_TYPE_LABELS) as SectionType[]).map((type) => (
+                        <Select.Option key={type} value={type}>
+                          {SECTION_TYPE_LABELS[type]}
+                        </Select.Option>
+                      ))}
+                    </Select>
+                  </div>
+                  <div className="md:col-span-3">
+                    <Text strong className="mb-2 block">
+                      内容・文言
+                    </Text>
+                    <TextArea
+                      value={section.content}
+                      onChange={(e) => updateSection(section.id, 'content', e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+                </div>
+                <div>
+                  <Text strong className="mb-2 block">
+                    制作担当への要望
+                  </Text>
+                  <TextArea
+                    value={section.comment}
+                    onChange={(e) => updateSection(section.id, 'comment', e.target.value)}
+                    rows={2}
+                    placeholder="デザインの要望など"
+                  />
+                </div>
+
+                <div className="mt-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <Text strong>レイアウト構成 (10x20 Grid)</Text>
+                    {editingSection === section.id ? (
+                      <Button size="small" onClick={closeGridEditor}>
+                        編集を終了
+                      </Button>
+                    ) : (
+                      <Button
+                        size="small"
+                        type="primary"
+                        ghost
+                        onClick={() => openGridEditor(section.id)}
+                      >
+                        レイアウトを編集
+                      </Button>
+                    )}
+                  </div>
+
+                  {editingSection === section.id ? (
+                    <div className="flex items-start gap-4">
+                      {/* Left: Editor */}
+                      <div className="w-[70%] flex-1">{renderGrid(section)}</div>
+                      {/* Right: Palette */}
+                      <div className="sticky top-4 w-[30%] space-y-2">
+                        <Text strong className="mb-2 block !text-slate-300">
+                          要素パレット
+                        </Text>
+                        <div className="grid grid-cols-1 gap-2">
+                          {ELEMENT_TEMPLATES.map((template) => (
+                            <div
+                              key={template.type}
+                              className={`flex cursor-pointer items-center gap-3 rounded border border-slate-700 p-3 transition-all hover:brightness-110 ${template.color} `}
+                              onClick={() => handleTemplateClick(template)}
+                            >
+                              <div
+                                className={`h-8 w-8 rounded border-2 ${template.borderColor} flex items-center justify-center bg-white/20`}
+                              >
+                                <PlusOutlined className="text-white" />
+                              </div>
+                              <div>
+                                <div className="text-sm font-bold text-white">{template.label}</div>
+                                <div className="text-xs text-slate-300">
+                                  {template.defaultColSpan}x{template.defaultRowSpan}
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-4 rounded bg-slate-800 p-4 text-xs text-slate-400">
+                          <p>パレットをクリックして配置</p>
+                          <p>要素をドラッグして移動</p>
+                          <p>右下ハンドルでサイズ変更</p>
+                          <p>クリックして詳細編集</p>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="rounded border border-slate-800 bg-slate-900 p-4 text-center text-slate-500">
+                      {section.gridElements.length > 0
+                        ? `${section.gridElements.length}個の要素が配置されています`
+                        : '要素はまだありません'}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </Card>
+          ))}
+        </div>
+        <Button type="dashed" onClick={addSection} block icon={<PlusOutlined />} className="py-4">
+          新しいセクションを追加
+        </Button>
+      </Form>
+
+      {/* Element Edit Modal */}
+      <Modal
+        title="要素の編集"
+        open={elementModalOpen}
+        onOk={saveElement}
+        onCancel={() => {
+          setElementModalOpen(false);
+          setCurrentElement({});
+        }}
+        footer={[
+          <Button key="delete" danger icon={<DeleteOutlined />} onClick={deleteElement}>
+            削除
+          </Button>,
+          <Button
+            key="cancel"
+            onClick={() => {
+              setElementModalOpen(false);
+              setCurrentElement({});
+            }}
+          >
+            キャンセル
+          </Button>,
+          <Button key="submit" type="primary" onClick={saveElement}>
+            決定
+          </Button>,
+        ]}
+      >
+        <Form layout="vertical">
+          <Form.Item label="ラベル">
+            <Input
+              value={currentElement.label}
+              onChange={(e) => setCurrentElement({ ...currentElement, label: e.target.value })}
+            />
+          </Form.Item>
+          <Form.Item label="タイプ">
+            <Select
+              value={currentElement.type}
+              onChange={(val) => setCurrentElement({ ...currentElement, type: val })}
+            >
+              {(Object.keys(ELEMENT_TYPE_LABELS) as ElementType[]).map((t) => (
+                <Select.Option key={t} value={t}>
+                  {ELEMENT_TYPE_LABELS[t]}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <div className="grid grid-cols-2 gap-4">
+            <Form.Item label="幅 (Col Span)">
+              <Input
+                type="number"
+                min={1}
+                max={GRID_COLS}
+                value={currentElement.colSpan}
+                onChange={(e) =>
+                  setCurrentElement({ ...currentElement, colSpan: Number(e.target.value) })
+                }
+              />
+            </Form.Item>
+            <Form.Item label="高さ (Row Span)">
+              <Input
+                type="number"
+                min={1}
+                max={GRID_ROWS}
+                value={currentElement.rowSpan}
+                onChange={(e) =>
+                  setCurrentElement({ ...currentElement, rowSpan: Number(e.target.value) })
+                }
+              />
+            </Form.Item>
+          </div>
+          <Form.Item label="コメント">
+            <TextArea
+              value={currentElement.comment}
+              onChange={(e) => setCurrentElement({ ...currentElement, comment: e.target.value })}
+              rows={2}
+            />
+          </Form.Item>
+        </Form>
+      </Modal>
+    </div>
+  );
+};
+
+// --- Main Component: Manager ---
+
+export default function PageRequestManager() {
+  const [viewMode, setViewMode] = useState<'list' | 'edit' | 'create'>('list');
+  const [requests, setRequests] = useState<PageRequest[]>(MOCK_REQUESTS);
+  const [editingRequestId, setEditingRequestId] = useState<string | null>(null);
+
+  const handleCreate = () => {
+    setEditingRequestId(null);
+    setViewMode('create');
+  };
+
+  const handleEdit = (id: string) => {
+    setEditingRequestId(id);
+    setViewMode('edit');
+  };
+
+  const handleDelete = (id: string) => {
+    Modal.confirm({
+      title: '削除しますか？',
+      content: 'この操作は取り消せません。',
+      onOk: () => {
+        setRequests(requests.filter((r) => r.id !== id));
+        message.success('削除しました');
+      },
+    });
+  };
+
+  const handleSave = (data: Omit<PageRequest, 'id' | 'updatedAt' | 'status'>) => {
+    if (viewMode === 'create') {
+      const newRequest: PageRequest = {
+        ...data,
+        id: Math.random().toString(36).substr(2, 9),
+        updatedAt: new Date().toISOString(),
+        status: 'draft',
+      };
+      setRequests([newRequest, ...requests]);
+      message.success('新規作成しました');
+    } else if (viewMode === 'edit' && editingRequestId) {
+      setRequests(
+        requests.map((r) =>
+          r.id === editingRequestId ? { ...r, ...data, updatedAt: new Date().toISOString() } : r,
+        ),
+      );
+      message.success('更新しました');
+    }
+    setViewMode('list');
+    setEditingRequestId(null);
+  };
+
+  const columns = [
+    {
+      title: 'タイトル',
+      dataIndex: 'title',
+      key: 'title',
+      render: (text: string) => <Text strong>{text}</Text>,
+    },
+    {
+      title: 'スラッグ',
+      dataIndex: 'slug',
+      key: 'slug',
+      render: (slug: string) => <Tag color="blue">/service/{slug}</Tag>,
+    },
+    {
+      title: '更新日時',
+      dataIndex: 'updatedAt',
+      key: 'updatedAt',
+      render: (date: string) => new Date(date).toLocaleDateString(),
+    },
+    {
+      title: 'アクション',
+      key: 'action',
+      render: (_: any, record: PageRequest) => (
+        <Space>
+          <Button icon={<EditOutlined />} onClick={() => handleEdit(record.id)}>
+            編集
+          </Button>
+          <Button danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.id)}>
+            削除
+          </Button>
+        </Space>
+      ),
+    },
+  ];
 
   return (
     <AntdRegistry>
@@ -665,406 +1099,51 @@ export default function PageRequestPage() {
         theme={{
           algorithm: theme.darkAlgorithm,
           token: {
-            colorPrimary: '#d97706', // amber-600
+            colorPrimary: '#d97706',
             borderRadius: 8,
           },
         }}
       >
-        <div className="mx-auto max-w-4xl space-y-8 pb-12">
-          <div>
-            <Title level={2} className="flex items-center gap-2 !text-white">
-              <BulbOutlined className="text-amber-500" />
-              ページ制作依頼
-            </Title>
-            <Paragraph className="!text-slate-400">
-              新設ページの構成を作成し、AIエンジニアへの指示書（プロンプト）を発行します。
-            </Paragraph>
+        <div className="mx-auto max-w-6xl p-6">
+          <div className="mb-8 flex items-center justify-between">
+            <div>
+              <Title level={2} className="!mb-0 flex items-center gap-2 !text-white">
+                <BulbOutlined className="text-amber-500" />
+                ページ制作依頼管理
+              </Title>
+              <Paragraph className="!mb-0 mt-2 !text-slate-400">
+                AIエンジニアへの制作指示書を作成・管理します。
+              </Paragraph>
+            </div>
+            {viewMode === 'list' && (
+              <Button type="primary" icon={<PlusOutlined />} onClick={handleCreate} size="large">
+                新規依頼を作成
+              </Button>
+            )}
           </div>
 
-          <Form
-            form={form}
-            layout="vertical"
-            initialValues={{
-              title: '期間限定サマーキャンペーン',
-              slug: 'summer-2026',
-              referenceUrls: [''],
-            }}
-          >
-            {/* 1. ページ基本情報 */}
-            <Card
-              title={
-                <Space>
-                  <GlobalOutlined />
-                  ページ基本情報
-                </Space>
-              }
-              className="shadow-md"
-            >
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                <Form.Item
-                  label="ページタイトル"
-                  name="title"
-                  rules={[{ required: true, message: 'タイトルを入力してください' }]}
-                >
-                  <Input placeholder="例：新店舗オープン記念ページ" />
-                </Form.Item>
-                <Form.Item
-                  label="URLスラッグ"
-                  name="slug"
-                  rules={[{ required: true, message: 'スラッグを入力してください' }]}
-                >
-                  <Input addonBefore="/service/" placeholder="new-campaign" />
-                </Form.Item>
-              </div>
-
-              <Form.List name="referenceUrls">
-                {(fields, { add, remove }) => (
-                  <>
-                    {fields.map((field, index) => (
-                      <Form.Item
-                        label={index === 0 ? '参考URL' : ''}
-                        required={false}
-                        key={field.key}
-                        className="mb-2"
-                      >
-                        <Space className="flex w-full">
-                          <Form.Item {...field} noStyle>
-                            <Input
-                              placeholder="https://example.com/ref"
-                              style={{ width: '100%' }}
-                            />
-                          </Form.Item>
-                          {fields.length > 1 && (
-                            <Button
-                              type="text"
-                              danger
-                              icon={<DeleteOutlined />}
-                              onClick={() => remove(field.name)}
-                            />
-                          )}
-                        </Space>
-                      </Form.Item>
-                    ))}
-                    <Form.Item className="mt-2">
-                      <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                        参考URLを追加
-                      </Button>
-                    </Form.Item>
-                  </>
-                )}
-              </Form.List>
+          {viewMode === 'list' ? (
+            <Card className="shadow-md">
+              <Table
+                dataSource={requests}
+                columns={columns}
+                rowKey="id"
+                pagination={{ pageSize: 10 }}
+              />
             </Card>
-
-            <Divider className="!border-slate-800 !text-slate-500">セクション構成</Divider>
-
-            {/* 2. セクションビルダー */}
-            <div className="space-y-4">
-              {sections.map((section, index) => (
-                <Card
-                  key={section.id}
-                  size="small"
-                  title={
-                    <Input
-                      value={section.name}
-                      onChange={(e) => updateSection(section.id, 'name', e.target.value)}
-                      className="font-bold"
-                      placeholder="セクション名"
-                      bordered={false}
-                    />
-                  }
-                  extra={
-                    <Space>
-                      <Button
-                        size="small"
-                        icon={<ArrowUpOutlined />}
-                        disabled={index === 0}
-                        onClick={() => moveSection(index, 'up')}
-                      />
-                      <Button
-                        size="small"
-                        icon={<ArrowDownOutlined />}
-                        disabled={index === sections.length - 1}
-                        onClick={() => moveSection(index, 'down')}
-                      />
-                      <Button
-                        size="small"
-                        danger
-                        icon={<DeleteOutlined />}
-                        onClick={() => removeSection(section.id)}
-                      />
-                    </Space>
-                  }
-                  className="border-amber-500/20"
-                >
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
-                      <div className="md:col-span-1">
-                        <Text strong className="mb-2 block">
-                          タイプ
-                        </Text>
-                        <Select
-                          value={section.type}
-                          onChange={(val) => updateSection(section.id, 'type', val)}
-                          className="w-full"
-                          options={[
-                            { value: 'text', label: 'テキスト' },
-                            { value: 'slider', label: '画像スライダー' },
-                            { value: 'casts', label: 'キャスト一覧' },
-                            { value: 'pricing', label: '料金表' },
-                            { value: 'access', label: 'アクセス' },
-                            { value: 'other', label: 'その他' },
-                          ]}
-                        />
-                      </div>
-                      <div className="md:col-span-3">
-                        <Text strong className="mb-2 block">
-                          内容・文言
-                        </Text>
-                        <TextArea
-                          rows={3}
-                          value={section.content}
-                          onChange={(e) => updateSection(section.id, 'content', e.target.value)}
-                          placeholder="セクションに表示するテキストや情報を入力してください"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <Text strong className="mb-2 block">
-                        制作担当へのコメント
-                      </Text>
-                      <TextArea
-                        rows={2}
-                        value={section.comment}
-                        onChange={(e) => updateSection(section.id, 'comment', e.target.value)}
-                        placeholder="デザインの要望や、リンク先などの指示を記述してください"
-                      />
-                    </div>
-
-                    <div>
-                      <div className="mb-2 flex items-center justify-between">
-                        <Text strong>レイアウト構成 (グリッド: 10列×20行)</Text>
-                        <Button
-                          type="primary"
-                          size="small"
-                          ghost
-                          onClick={() => openGridEditor(section.id)}
-                        >
-                          {section.gridElements.length > 0 ? '編集 / プレビュー' : 'レイアウト編集'}
-                        </Button>
-                      </div>
-                      {section.gridElements.length > 0 && (
-                        <div className="rounded-lg border border-slate-700 bg-slate-900/30 p-3">
-                          <div className="space-y-1 text-xs">
-                            {section.gridElements.map((el) => (
-                              <div key={el.id} className="text-slate-400">
-                                • [{ELEMENT_TYPE_LABELS[el.type]}] {el.label}
-                                {` (位置: 行${el.gridPosition.row + 1}, 列${el.gridPosition.col + 1} / サイズ: ${el.colSpan}x${el.rowSpan})`}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-
-              <Button
-                type="dashed"
-                block
-                size="large"
-                icon={<PlusOutlined />}
-                onClick={addSection}
-                className="h-16 border-amber-500/30 text-amber-500 hover:border-amber-400 hover:text-amber-400"
-              >
-                新しいセクションを追加
-              </Button>
-            </div>
-
-            <Divider className="!border-slate-800" />
-
-            {/* 3. プロンプト生成エリア */}
-            <div className="space-y-4">
-              <Button
-                type="primary"
-                size="large"
-                block
-                icon={<BulbOutlined />}
-                onClick={generatePrompt}
-                className="h-14 text-lg font-bold"
-              >
-                AI用プロンプトを生成
-              </Button>
-
-              {generatedPrompt && (
-                <Card
-                  title="生成されたプロンプト"
-                  extra={
-                    <Button
-                      type="primary"
-                      ghost
-                      size="small"
-                      icon={<CopyOutlined />}
-                      onClick={copyToClipboard}
-                    >
-                      クリップボードにコピー
-                    </Button>
-                  }
-                  className="border-amber-500/30 bg-slate-900/50"
-                >
-                  <TextArea
-                    value={generatedPrompt}
-                    readOnly
-                    rows={12}
-                    className="resize-none border-none bg-transparent p-0 font-mono text-sm !text-slate-300 focus:ring-0"
-                  />
-                </Card>
-              )}
-            </div>
-          </Form>
-        </div>
-
-        {/* グリッドエディターモーダル */}
-        <Modal
-          title={`レイアウト編集: ${sections.find((s) => s.id === editingSection)?.name || ''}`}
-          open={!!editingSection}
-          onCancel={closeGridEditor}
-          footer={null}
-          width={1000}
-          className="top-5"
-        >
-          {editingSection && (
-            <div className="flex h-[70vh] gap-6">
-              {/* Left: Grid Area */}
-              <div className="flex-1 overflow-y-auto pr-2">
-                <div className="mb-2 flex items-center justify-between text-xs text-slate-400">
-                  <span>10列 × 20行 グリッドエリア</span>
-                  <span>要素クリックで編集・右下ドラッグでリサイズ</span>
-                </div>
-                {renderGrid(sections.find((s) => s.id === editingSection)!)}
-              </div>
-
-              {/* Right: Element Palette */}
-              <div className="flex w-64 min-w-[250px] flex-col gap-3 overflow-y-auto border-l border-slate-800 pl-4">
-                <Title level={5} className="mb-0 flex items-center gap-2 !text-white">
-                  <ColumnWidthOutlined /> 要素パレット
-                </Title>
-                <div className="mb-2 text-xs text-slate-400">クリックしてグリッドに配置</div>
-
-                <div className="space-y-3">
-                  {ELEMENT_TEMPLATES.map((template) => (
-                    <div
-                      key={template.type}
-                      onClick={() => handleTemplateClick(template)}
-                      className={`cursor-pointer rounded border-l-4 p-3 transition-all hover:brightness-110 active:scale-95 ${template.color} ${template.borderColor} `}
-                    >
-                      <div className="text-sm font-bold text-white">{template.label}</div>
-                      <div className="mt-1 text-[10px] text-white/80">
-                        サイズ: {template.defaultColSpan}x{template.defaultRowSpan}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+          ) : (
+            <RecruitLayoutEditor
+              initialData={
+                viewMode === 'edit' ? requests.find((r) => r.id === editingRequestId) : undefined
+              }
+              onSave={handleSave}
+              onCancel={() => {
+                setViewMode('list');
+                setEditingRequestId(null);
+              }}
+            />
           )}
-        </Modal>
-
-        {/* 要素編集モーダル */}
-        <Modal
-          title={currentElement.id ? '要素を編集' : '新しい要素を追加'}
-          open={elementModalOpen}
-          onOk={saveElement}
-          onCancel={() => {
-            setElementModalOpen(false);
-            setCurrentElement({});
-          }}
-          okText="保存"
-          cancelText="キャンセル"
-          footer={[
-            currentElement.id && (
-              <Button key="delete" danger onClick={deleteElement}>
-                削除
-              </Button>
-            ),
-            <Button key="cancel" onClick={() => setElementModalOpen(false)}>
-              キャンセル
-            </Button>,
-            <Button key="save" type="primary" onClick={saveElement}>
-              保存
-            </Button>,
-          ]}
-        >
-          <div className="space-y-4 pt-4">
-            <div>
-              <Text strong className="mb-2 block">
-                要素タイプ
-              </Text>
-              <Select
-                value={currentElement.type}
-                onChange={(val) => setCurrentElement({ ...currentElement, type: val })}
-                className="w-full"
-                placeholder="タイプを選択"
-                options={[
-                  { value: 'button', label: 'ボタン' },
-                  { value: 'slider', label: 'スライダー' },
-                  { value: 'text', label: 'テキスト' },
-                  { value: 'image', label: '画像' },
-                  { value: 'input', label: '入力欄' },
-                ]}
-              />
-            </div>
-            <div>
-              <Text strong className="mb-2 block">
-                ラベル
-              </Text>
-              <Input
-                value={currentElement.label}
-                onChange={(e) => setCurrentElement({ ...currentElement, label: e.target.value })}
-                placeholder="例：申し込みボタン"
-              />
-            </div>
-            <div>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Text strong className="mb-2 block">
-                    高さ (行)
-                  </Text>
-                  <Input
-                    type="number"
-                    value={currentElement.rowSpan}
-                    onChange={(e) =>
-                      setCurrentElement({ ...currentElement, rowSpan: Number(e.target.value) })
-                    }
-                  />
-                </div>
-                <div className="flex-1">
-                  <Text strong className="mb-2 block">
-                    幅 (列)
-                  </Text>
-                  <Input
-                    type="number"
-                    value={currentElement.colSpan}
-                    onChange={(e) =>
-                      setCurrentElement({ ...currentElement, colSpan: Number(e.target.value) })
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            <div>
-              <Text strong className="mb-2 block">
-                コメント
-              </Text>
-              <TextArea
-                rows={3}
-                value={currentElement.comment}
-                onChange={(e) => setCurrentElement({ ...currentElement, comment: e.target.value })}
-                placeholder="この要素に関する指示やコメントを入力"
-              />
-            </div>
-          </div>
-        </Modal>
+        </div>
       </ConfigProvider>
     </AntdRegistry>
   );
