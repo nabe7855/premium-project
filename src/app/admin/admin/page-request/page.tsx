@@ -606,22 +606,11 @@ export default function PageRequestPage() {
           key={el.id}
           className={`group relative flex select-none flex-col items-center justify-center overflow-hidden rounded border-2 transition-colors ${template?.color || 'bg-slate-700'} ${template?.borderColor || 'border-slate-500'} ${isBeingResized ? 'z-50 cursor-se-resize opacity-80 ring-2 ring-white' : ''} ${isBeingMoved ? 'z-50 cursor-grabbing opacity-50' : 'z-10 cursor-grab hover:brightness-110'} `}
           style={{
-            gridColumnStart:
-              isBeingMoved && initialPosition && moveStart ? undefined : el.gridPosition.col + 1,
-            gridColumnEnd:
-              isBeingMoved && initialPosition && moveStart ? undefined : `span ${el.colSpan}`,
-            gridRowStart:
-              isBeingMoved && initialPosition && moveStart ? undefined : el.gridPosition.row + 1,
-            gridRowEnd:
-              isBeingMoved && initialPosition && moveStart ? undefined : `span ${el.rowSpan}`,
-            // When moving, use transform to follow cursor smoothly?
-            // Or just update grid position in useEffect?
-            // In the previous step, I implemented "direct update of gridPosition via setSections".
-            // So we don't need manual transform. The grid system handles it.
-            // Wait, "direct update via setSections" might cause jitter if re-render is slow.
-            // But for 10x20 grid, it should be fast enough.
-            // Let's stick to updating gridPosition in state.
-            gridColumn: `span ${el.colSpan}`, // fallback if individual props are undefined? No, above logic handles it.
+            gridColumnStart: el.gridPosition.col + 1,
+            gridColumnEnd: `span ${el.colSpan}`,
+            gridRowStart: el.gridPosition.row + 1,
+            gridRowEnd: `span ${el.rowSpan}`,
+            zIndex: isBeingMoved ? 100 : isBeingResized ? 50 : 10,
           }}
           onMouseDown={(e) => handleElementMouseDown(el, e)}
           onClick={(e) => handleElementClick(el, e)}
