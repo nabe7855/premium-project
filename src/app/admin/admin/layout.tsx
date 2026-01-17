@@ -3,16 +3,15 @@
 import Header from '@/components/admin/layout/Header';
 import Sidebar from '@/components/admin/layout/Sidebar';
 import { useAuth } from '@/hooks/useAuth';
-import { Page } from '@/types/dashboard';
 import { Loader2 } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
   const router = useRouter();
-  const [currentPage] = useState<Page>('dashboard');
   const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     if (!loading) {
@@ -35,34 +34,23 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   // 現在のページタイトルを算出
   const getPageTitle = () => {
-    switch (currentPage) {
-      case 'dashboard':
-        return 'ダッシュボード';
-      case 'all-cast':
-        return '全キャスト管理';
-      case 'store-cast':
-        return '店舗別キャスト管理';
-      case 'stores':
-        return '店舗管理';
-      case 'advertising':
-        return '広告・集客';
-      case 'ai-copywriter':
-        return 'AI広告コピー生成';
-      case 'ai-generate-intro':
-        return 'AI新人紹介生成';
-      case 'intro-list':
-        return '投稿済み紹介';
-      case 'advertising-list':
-        return '投稿済み広告';
-      case 'hotels':
-        return 'ホテル管理';
-      case 'hotel-masters':
-        return 'ホテルマスタ管理';
-      case 'interview-reservations':
-        return '面接予約管理';
-      default:
-        return 'ダッシュボード';
-    }
+    if (pathname === '/admin/admin') return 'ダッシュボード';
+    if (pathname.includes('/all-cast')) return '全キャスト管理';
+    if (pathname.includes('/stores/casts')) return '店舗別キャスト管理';
+    if (pathname === '/admin/admin/stores') return '店舗管理';
+    if (pathname === '/admin/admin/reservations') return '予約管理';
+    if (pathname.includes('/advertising/list')) return '投稿済み広告';
+    if (pathname.includes('/advertising')) return '広告・集客';
+    if (pathname.includes('/ai/copywriter')) return 'AI広告コピー生成';
+    if (pathname.includes('/ai/generate-intro')) return 'AI新人紹介生成';
+    if (pathname.includes('/intro-list')) return '投稿済み紹介';
+    if (pathname.includes('/hotels/masters')) return 'ホテルマスタ管理';
+    if (pathname.includes('/hotels')) return 'ホテル管理';
+    if (pathname.includes('/interview-reservations')) return '面接予約管理';
+    if (pathname.includes('/recruit-management')) return '採用ページ管理';
+    if (pathname.includes('/page-request')) return 'ページ制作依頼';
+    if (pathname.includes('/banners')) return 'バナー管理';
+    return 'ダッシュボード';
   };
 
   return (
