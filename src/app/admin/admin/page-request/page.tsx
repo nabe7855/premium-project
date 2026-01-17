@@ -174,6 +174,12 @@ export default function PageRequestPage() {
   const [resizeStart, setResizeStart] = useState<{ x: number; y: number } | null>(null);
   const [initialSize, setInitialSize] = useState<{ rowSpan: number; colSpan: number } | null>(null);
 
+  // Moving State
+  const [isMoving, setIsMoving] = useState(false);
+  const [movingElementId, setMovingElementId] = useState<string | null>(null);
+  const [moveStart, setMoveStart] = useState<{ x: number; y: number } | null>(null);
+  const [initialPosition, setInitialPosition] = useState<{ row: number; col: number } | null>(null);
+
   const [elementModalOpen, setElementModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<Partial<GridElement>>({});
 
@@ -218,16 +224,26 @@ export default function PageRequestPage() {
     setEditingSection(null);
     setIsResizing(false);
     setResizingElementId(null);
+    setIsMoving(false);
+    setMovingElementId(null);
   };
 
   // Find empty space for a template
-  const findEmptySpace = (sectionId: string, rowSpan: number, colSpan: number) => {
+  const findEmptySpace = (
+    sectionId: string,
+    rowSpan: number,
+    colSpan: number,
+    excludeElementId?: string,
+  ) => {
     const section = sections.find((s) => s.id === sectionId);
     if (!section) return null;
 
     // Create collision map
     const occupied = new Array(GRID_ROWS).fill(false).map(() => new Array(GRID_COLS).fill(false));
     section.gridElements.forEach((el) => {
+      // Exclude the element itself when checking (useful for moving)
+      if (el.id === excludeElementId) return;
+
       for (let r = 0; r < el.rowSpan; r++) {
         for (let c = 0; c < el.colSpan; c++) {
           if (el.gridPosition.row + r < GRID_ROWS && el.gridPosition.col + c < GRID_COLS) {
@@ -254,6 +270,33 @@ export default function PageRequestPage() {
       }
     }
     return null;
+  };
+
+  // Helpers for collision
+  const checkCollision = (
+    section: Section,
+    element: GridElement,
+    newRow: number,
+    newCol: number,
+    newRowSpan: number,
+    newColSpan: number,
+  ) => {
+    return section.gridElements.some((other) => {
+      if (other.id === element.id) return false;
+
+      const otherEndRow = other.gridPosition.row + other.rowSpan - 1;
+      const otherEndCol = other.gridPosition.col + other.colSpan - 1;
+
+      const newEndRow = newRow + newRowSpan - 1;
+      const newEndCol = newCol + newColSpan - 1;
+
+      return !(
+        newEndRow < other.gridPosition.row ||
+        newRow > otherEndRow ||
+        newEndCol < other.gridPosition.col ||
+        newCol > otherEndCol
+      );
+    });
   };
 
   const handleTemplateClick = (template: ElementTemplate) => {
@@ -287,8 +330,26 @@ export default function PageRequestPage() {
     updateSection(editingSection, 'gridElements', updatedElements);
   };
 
+  const handleElementMouseDown = (element: GridElement, e: React.MouseEvent) => {
+    // Only left click triggers move
+    if (e.button !== 0) return;
+    e.stopPropagation(); // Stop bubbling to grid background
+
+    setIsMoving(true);
+    setMovingElementId(element.id);
+    setMoveStart({ x: e.clientX, y: e.clientY });
+    setInitialPosition({ row: element.gridPosition.row, col: element.gridPosition.col });
+  };
+
   const handleElementClick = (element: GridElement, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent triggering background click if needed
+    // If we simply clicked without dragging, open modal
+    // Note: Due to mouseUp logic clearing isMoving, this fires after drag potentially.
+    // We should rely on a check if move actually happened, but simplified flow:
+    // If mouseUp happened and position didn't change, it's a click.
+    // Handled in existing logic or UI structure?
+    // Actually, `onClick` fires after `onMouseUp`. If we prevent bubbling in MouseDown, Click still fires?
+    // Let's just stop propagation here too.
+    e.stopPropagation();
     setCurrentElement(element);
     setElementModalOpen(true);
   };
@@ -303,86 +364,127 @@ export default function PageRequestPage() {
   };
 
   useEffect(() => {
-    const handleResizeMove = (e: MouseEvent) => {
-      if (!isResizing || !resizingElementId || !resizeStart || !initialSize || !editingSection)
-        return;
-
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!editingSection) return;
       const section = sections.find((s) => s.id === editingSection);
       if (!section) return;
 
-      const element = section.gridElements.find((el) => el.id === resizingElementId);
-      if (!element) return;
+      // Handle Resize Logic
+      if (isResizing && resizingElementId && resizeStart && initialSize) {
+        const element = section.gridElements.find((el) => el.id === resizingElementId);
+        if (!element) return;
 
-      // Calculate logic delta (approx 1 cell = 30px width, 20px height)
-      // Note: This matches the grid rendering style
-      const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
-      const cellHeight = 24; // Fixed height in CSS
+        const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
+        const cellHeight = 24;
 
-      const deltaX = e.clientX - resizeStart.x;
-      const deltaY = e.clientY - resizeStart.y;
+        const deltaX = e.clientX - resizeStart.x;
+        const deltaY = e.clientY - resizeStart.y;
 
-      const deltaCols = Math.round(deltaX / cellWidth);
-      const deltaRows = Math.round(deltaY / cellHeight);
+        const deltaCols = Math.round(deltaX / cellWidth);
+        const deltaRows = Math.round(deltaY / cellHeight);
 
-      let newColSpan = Math.max(1, initialSize.colSpan + deltaCols);
-      let newRowSpan = Math.max(1, initialSize.rowSpan + deltaRows);
+        let newColSpan = Math.max(1, initialSize.colSpan + deltaCols);
+        let newRowSpan = Math.max(1, initialSize.rowSpan + deltaRows);
 
-      // Boundary check
-      if (element.gridPosition.col + newColSpan > GRID_COLS)
-        newColSpan = GRID_COLS - element.gridPosition.col;
-      if (element.gridPosition.row + newRowSpan > GRID_ROWS)
-        newRowSpan = GRID_ROWS - element.gridPosition.row;
+        if (element.gridPosition.col + newColSpan > GRID_COLS)
+          newColSpan = GRID_COLS - element.gridPosition.col;
+        if (element.gridPosition.row + newRowSpan > GRID_ROWS)
+          newRowSpan = GRID_ROWS - element.gridPosition.row;
 
-      // Collision check (simple: assume we can resize if end point doesn't explicitly overlap another start point - to improve this we need full map check)
-      // For now, let's update state, and just filter collision during save or render?
-      // Better to check collision here.
+        if (
+          !checkCollision(
+            section,
+            element,
+            element.gridPosition.row,
+            element.gridPosition.col,
+            newRowSpan,
+            newColSpan,
+          )
+        ) {
+          const updatedElements = section.gridElements.map((el) =>
+            el.id === element.id ? { ...el, rowSpan: newRowSpan, colSpan: newColSpan } : el,
+          );
+          setSections((prev) =>
+            prev.map((s) =>
+              s.id === editingSection ? { ...s, gridElements: updatedElements } : s,
+            ),
+          );
+        }
+        return;
+      }
 
-      const hasCollision = section.gridElements.some((other) => {
-        if (other.id === element.id) return false;
+      // Handle Move Logic
+      if (isMoving && movingElementId && moveStart && initialPosition) {
+        const element = section.gridElements.find((el) => el.id === movingElementId);
+        if (!element) return;
 
-        const otherEndRow = other.gridPosition.row + other.rowSpan - 1;
-        const otherEndCol = other.gridPosition.col + other.colSpan - 1;
+        const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
+        const cellHeight = 24;
 
-        const newEndRow = element.gridPosition.row + newRowSpan - 1;
-        const newEndCol = element.gridPosition.col + newColSpan - 1;
+        const deltaX = e.clientX - moveStart.x;
+        const deltaY = e.clientY - moveStart.y;
 
-        return !(
-          newEndRow < other.gridPosition.row ||
-          element.gridPosition.row > otherEndRow ||
-          newEndCol < other.gridPosition.col ||
-          element.gridPosition.col > otherEndCol
-        );
-      });
+        const deltaCols = Math.round(deltaX / cellWidth);
+        const deltaRows = Math.round(deltaY / cellHeight);
 
-      if (!hasCollision) {
-        const updatedElements = section.gridElements.map((el) =>
-          el.id === element.id ? { ...el, rowSpan: newRowSpan, colSpan: newColSpan } : el,
-        );
-        // Direct update is too slow? No, React is fast enough for this amount of data.
-        // But updateSection triggers full rerender.
-        setSections((prev) =>
-          prev.map((s) => (s.id === editingSection ? { ...s, gridElements: updatedElements } : s)),
-        );
+        if (deltaCols === 0 && deltaRows === 0) return; // No grid change
+
+        let newCol = initialPosition.col + deltaCols;
+        let newRow = initialPosition.row + deltaRows;
+
+        // Boundary Check
+        newCol = Math.max(0, Math.min(newCol, GRID_COLS - element.colSpan));
+        newRow = Math.max(0, Math.min(newRow, GRID_ROWS - element.rowSpan));
+
+        // Only update if position actually changed
+        if (newCol !== element.gridPosition.col || newRow !== element.gridPosition.row) {
+          if (!checkCollision(section, element, newRow, newCol, element.rowSpan, element.colSpan)) {
+            const updatedElements = section.gridElements.map((el) =>
+              el.id === element.id ? { ...el, gridPosition: { row: newRow, col: newCol } } : el,
+            );
+            setSections((prev) =>
+              prev.map((s) =>
+                s.id === editingSection ? { ...s, gridElements: updatedElements } : s,
+              ),
+            );
+          }
+        }
       }
     };
 
-    const handleResizeEnd = () => {
+    const handleMouseUp = () => {
       setIsResizing(false);
       setResizingElementId(null);
       setResizeStart(null);
       setInitialSize(null);
+
+      setIsMoving(false);
+      setMovingElementId(null);
+      setMoveStart(null);
+      setInitialPosition(null);
     };
 
-    if (isResizing) {
-      window.addEventListener('mousemove', handleResizeMove);
-      window.addEventListener('mouseup', handleResizeEnd);
+    if (isResizing || isMoving) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
     }
 
     return () => {
-      window.removeEventListener('mousemove', handleResizeMove);
-      window.removeEventListener('mouseup', handleResizeEnd);
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isResizing, resizingElementId, resizeStart, initialSize, editingSection, sections]);
+  }, [
+    isResizing,
+    resizingElementId,
+    resizeStart,
+    initialSize,
+    isMoving,
+    movingElementId,
+    moveStart,
+    initialPosition,
+    editingSection,
+    sections,
+  ]);
 
   const saveElement = () => {
     if (!editingSection || !currentElement.type || !currentElement.label) {
@@ -497,24 +599,40 @@ export default function PageRequestPage() {
     const elements = section.gridElements.map((el) => {
       const template = ELEMENT_TEMPLATES.find((t) => t.type === el.type);
       const isBeingResized = resizingElementId === el.id;
+      const isBeingMoved = movingElementId === el.id;
 
       return (
         <div
           key={el.id}
-          className={`group relative flex cursor-pointer select-none flex-col items-center justify-center overflow-hidden rounded border-2 transition-colors ${template?.color || 'bg-slate-700'} ${template?.borderColor || 'border-slate-500'} ${isBeingResized ? 'z-50 opacity-80 ring-2 ring-white' : 'z-10 hover:brightness-110'} `}
+          className={`group relative flex select-none flex-col items-center justify-center overflow-hidden rounded border-2 transition-colors ${template?.color || 'bg-slate-700'} ${template?.borderColor || 'border-slate-500'} ${isBeingResized ? 'z-50 cursor-se-resize opacity-80 ring-2 ring-white' : ''} ${isBeingMoved ? 'z-50 cursor-grabbing opacity-50' : 'z-10 cursor-grab hover:brightness-110'} `}
           style={{
-            gridColumnStart: el.gridPosition.col + 1,
-            gridColumnEnd: `span ${el.colSpan}`,
-            gridRowStart: el.gridPosition.row + 1,
-            gridRowEnd: `span ${el.rowSpan}`,
+            gridColumnStart:
+              isBeingMoved && initialPosition && moveStart ? undefined : el.gridPosition.col + 1,
+            gridColumnEnd:
+              isBeingMoved && initialPosition && moveStart ? undefined : `span ${el.colSpan}`,
+            gridRowStart:
+              isBeingMoved && initialPosition && moveStart ? undefined : el.gridPosition.row + 1,
+            gridRowEnd:
+              isBeingMoved && initialPosition && moveStart ? undefined : `span ${el.rowSpan}`,
+            // When moving, use transform to follow cursor smoothly?
+            // Or just update grid position in useEffect?
+            // In the previous step, I implemented "direct update of gridPosition via setSections".
+            // So we don't need manual transform. The grid system handles it.
+            // Wait, "direct update via setSections" might cause jitter if re-render is slow.
+            // But for 10x20 grid, it should be fast enough.
+            // Let's stick to updating gridPosition in state.
+            gridColumn: `span ${el.colSpan}`, // fallback if individual props are undefined? No, above logic handles it.
           }}
+          onMouseDown={(e) => handleElementMouseDown(el, e)}
           onClick={(e) => handleElementClick(el, e)}
         >
-          <div className="w-full truncate px-1 text-center text-[10px] font-bold text-white drop-shadow-md md:text-xs">
+          <div className="pointer-events-none w-full truncate px-1 text-center text-[10px] font-bold text-white drop-shadow-md md:text-xs">
             {el.label}
           </div>
           {el.rowSpan >= 2 && (
-            <div className="scale-90 text-[9px] text-white/80">{ELEMENT_TYPE_LABELS[el.type]}</div>
+            <div className="pointer-events-none scale-90 text-[9px] text-white/80">
+              {ELEMENT_TYPE_LABELS[el.type]}
+            </div>
           )}
 
           {/* Resize Handle */}
