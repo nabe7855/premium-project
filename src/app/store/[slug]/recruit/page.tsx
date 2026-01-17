@@ -128,8 +128,14 @@ const AppContent: React.FC = () => {
               <LandingPage onOpenChat={openChat} onOpenForm={openForm} config={fullMergedConfig} />
             }
           />
-          <Route path="/form-quick" element={<QuickForm />} />
-          <Route path="/form-full" element={<FullForm />} />
+          <Route
+            path="/form-quick"
+            element={<QuickForm storeName={fullMergedConfig.general?.storeName} />}
+          />
+          <Route
+            path="/form-full"
+            element={<FullForm storeName={fullMergedConfig.general?.storeName} />}
+          />
           <Route path="/thanks" element={<ThanksPage />} />
         </Routes>
       </main>
@@ -142,8 +148,16 @@ const AppContent: React.FC = () => {
         />
       )}
 
-      <Chatbot isOpen={isChatOpen} onClose={closeChat} />
-      <ApplicationModal isOpen={isFormOpen} onClose={closeForm} />
+      <Chatbot
+        isOpen={isChatOpen}
+        onClose={closeChat}
+        storeName={fullMergedConfig.general?.storeName}
+      />
+      <ApplicationModal
+        isOpen={isFormOpen}
+        onClose={closeForm}
+        storeName={fullMergedConfig.general?.storeName}
+      />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
     </div>
   );

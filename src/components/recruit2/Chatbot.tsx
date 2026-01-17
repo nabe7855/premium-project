@@ -10,6 +10,7 @@ interface Message {
 interface ChatbotProps {
   isOpen: boolean;
   onClose: () => void;
+  storeName?: string;
 }
 
 type Step =
@@ -70,7 +71,7 @@ const STEP_LABELS: Record<string, string> = {
   source: '応募のきっかけ',
 };
 
-const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
   const [currentStep, setCurrentStep] = useState<Step>('name');
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -79,7 +80,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'model',
-      text: 'はじめまして。Life Change Recruit 福岡 採用担当アシスタントです。あなたの「人生を変える一歩」をサポートさせていただきます。\n\nまずは【お名前】を教えていただけますか？',
+      text: `はじめまして。Life Change Recruit ${storeName || '福岡'} 採用担当アシスタントです。あなたの「人生を変える一歩」をサポートさせていただきます。\n\nまずは【お名前】を教えていただけますか？`,
     },
   ]);
   const [input, setInput] = useState('');
@@ -254,7 +255,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose }) => {
             dataToSubmit.append('age', formData.birthday || ''); // 生年月日を年齢として一旦入れる（または整形）
             dataToSubmit.append('height', formData.height || '');
             dataToSubmit.append('weight', formData.weight || '');
-            dataToSubmit.append('store', '福岡店'); // デフォルトまたは選択された店舗
+            dataToSubmit.append('store', storeName || '福岡店'); // 動的な店舗名を使用
 
             // 画像の変換 (base64 -> Blob -> File)
             for (let i = 0; i < userPhotos.length; i++) {

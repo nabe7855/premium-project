@@ -2,7 +2,11 @@ import { submitRecruitApplication } from '@/actions/recruit';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
-const QuickForm: React.FC = () => {
+interface QuickFormProps {
+  storeName?: string;
+}
+
+const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -14,6 +18,9 @@ const QuickForm: React.FC = () => {
 
     const formData = new FormData(e.currentTarget);
     formData.append('type', 'quick');
+    if (storeName) {
+      formData.append('store', storeName);
+    }
 
     const result = await submitRecruitApplication(formData);
 

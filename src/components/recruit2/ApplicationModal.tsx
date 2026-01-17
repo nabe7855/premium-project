@@ -7,9 +7,10 @@ import React, { useState } from 'react';
 interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
+  storeName?: string;
 }
 
-const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) => {
+const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, storeName }) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -36,6 +37,9 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose }) 
 
     const formData = new FormData(e.currentTarget);
     formData.append('type', 'full'); // 応募種別をフルに設定
+    if (storeName) {
+      formData.append('store', storeName);
+    }
 
     const result = await submitRecruitApplication(formData);
 

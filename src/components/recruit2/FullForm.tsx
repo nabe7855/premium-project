@@ -2,7 +2,11 @@ import { submitRecruitApplication } from '@/actions/recruit';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const FullForm: React.FC = () => {
+interface FullFormProps {
+  storeName?: string;
+}
+
+const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -29,6 +33,9 @@ const FullForm: React.FC = () => {
 
     const formData = new FormData(e.currentTarget);
     formData.append('type', 'full');
+    if (storeName) {
+      formData.append('store', storeName);
+    }
 
     const result = await submitRecruitApplication(formData);
 
