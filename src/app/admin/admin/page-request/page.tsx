@@ -4,6 +4,7 @@ import {
   ArrowDownOutlined,
   ArrowUpOutlined,
   BulbOutlined,
+  ColumnWidthOutlined,
   CopyOutlined,
   DeleteOutlined,
   GlobalOutlined,
@@ -24,7 +25,7 @@ import {
   theme,
   Typography,
 } from 'antd';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const { Title, Text, Paragraph } = Typography;
 const { TextArea } = Input;
@@ -54,6 +55,15 @@ interface Section {
   gridElements: GridElement[];
 }
 
+interface ElementTemplate {
+  type: ElementType;
+  label: string;
+  defaultRowSpan: number;
+  defaultColSpan: number;
+  color: string;
+  borderColor: string;
+}
+
 const SECTION_TYPE_LABELS: Record<SectionType, string> = {
   text: 'テキスト',
   slider: '画像スライダー',
@@ -70,6 +80,49 @@ const ELEMENT_TYPE_LABELS: Record<ElementType, string> = {
   image: '画像',
   input: '入力欄',
 };
+
+const ELEMENT_TEMPLATES: ElementTemplate[] = [
+  {
+    type: 'slider',
+    label: '画像スライダー',
+    defaultRowSpan: 6,
+    defaultColSpan: 10,
+    color: 'bg-blue-500/40',
+    borderColor: 'border-blue-500',
+  },
+  {
+    type: 'image',
+    label: '画像',
+    defaultRowSpan: 4,
+    defaultColSpan: 5,
+    color: 'bg-purple-500/40',
+    borderColor: 'border-purple-500',
+  },
+  {
+    type: 'text',
+    label: 'テキストブロック',
+    defaultRowSpan: 3,
+    defaultColSpan: 10,
+    color: 'bg-green-500/40',
+    borderColor: 'border-green-500',
+  },
+  {
+    type: 'button',
+    label: 'ボタン',
+    defaultRowSpan: 2,
+    defaultColSpan: 3,
+    color: 'bg-amber-500/40',
+    borderColor: 'border-amber-500',
+  },
+  {
+    type: 'input',
+    label: '入力フォーム',
+    defaultRowSpan: 2,
+    defaultColSpan: 5,
+    color: 'bg-rose-500/40',
+    borderColor: 'border-rose-500',
+  },
+];
 
 const MOCK_SECTIONS: Section[] = [
   {
@@ -115,12 +168,16 @@ export default function PageRequestPage() {
   const [generatedPrompt, setGeneratedPrompt] = useState<string>('');
   const [editingSection, setEditingSection] = useState<string | null>(null);
 
-  // Grid Selection State
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState<{ row: number; col: number } | null>(null);
-  const [dragCurrent, setDragCurrent] = useState<{ row: number; col: number } | null>(null);
+  // Grid Interaction State
+  const [isResizing, setIsResizing] = useState(false);
+  const [resizingElementId, setResizingElementId] = useState<string | null>(null);
+  const [resizeStart, setResizeStart] = useState<{ x: number; y: number } | null>(null);
+  const [initialSize, setInitialSize] = useState<{ rowSpan: number; colSpan: number } | null>(null);
+
   const [elementModalOpen, setElementModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<Partial<GridElement>>({});
+
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const addSection = () => {
     const newSection: Section = {
@@ -159,86 +216,173 @@ export default function PageRequestPage() {
 
   const closeGridEditor = () => {
     setEditingSection(null);
-    setDragStart(null);
-    setDragCurrent(null);
-    setIsDragging(false);
+    setIsResizing(false);
+    setResizingElementId(null);
   };
 
-  // Grid Interaction Handlers
-  const handleMouseDown = (row: number, col: number, sectionId: string) => {
+  // Find empty space for a template
+  const findEmptySpace = (sectionId: string, rowSpan: number, colSpan: number) => {
     const section = sections.find((s) => s.id === sectionId);
-    if (!section) return;
+    if (!section) return null;
 
-    // Check if clicking on existing element
-    const existingElement = section.gridElements.find(
-      (e) =>
-        row >= e.gridPosition.row &&
-        row < e.gridPosition.row + e.rowSpan &&
-        col >= e.gridPosition.col &&
-        col < e.gridPosition.col + e.colSpan,
+    // Create collision map
+    const occupied = new Array(GRID_ROWS).fill(false).map(() => new Array(GRID_COLS).fill(false));
+    section.gridElements.forEach((el) => {
+      for (let r = 0; r < el.rowSpan; r++) {
+        for (let c = 0; c < el.colSpan; c++) {
+          if (el.gridPosition.row + r < GRID_ROWS && el.gridPosition.col + c < GRID_COLS) {
+            occupied[el.gridPosition.row + r][el.gridPosition.col + c] = true;
+          }
+        }
+      }
+    });
+
+    // Scan for space
+    for (let r = 0; r <= GRID_ROWS - rowSpan; r++) {
+      for (let c = 0; c <= GRID_COLS - colSpan; c++) {
+        let fits = true;
+        for (let i = 0; i < rowSpan; i++) {
+          for (let j = 0; j < colSpan; j++) {
+            if (occupied[r + i][c + j]) {
+              fits = false;
+              break;
+            }
+          }
+          if (!fits) break;
+        }
+        if (fits) return { row: r, col: c };
+      }
+    }
+    return null;
+  };
+
+  const handleTemplateClick = (template: ElementTemplate) => {
+    if (!editingSection) return;
+
+    const position = findEmptySpace(
+      editingSection,
+      template.defaultRowSpan,
+      template.defaultColSpan,
     );
 
-    if (existingElement) {
-      setCurrentElement(existingElement);
-      setElementModalOpen(true);
+    if (!position) {
+      message.error('配置するスペースが足りません');
       return;
     }
 
-    setIsDragging(true);
-    setDragStart({ row, col });
-    setDragCurrent({ row, col });
-  };
-
-  const handleMouseEnter = (row: number, col: number) => {
-    if (isDragging) {
-      setDragCurrent({ row, col });
-    }
-  };
-
-  const handleMouseUp = () => {
-    if (!isDragging || !dragStart || !dragCurrent) return;
-
-    setIsDragging(false);
-
-    // Calculate selection bounds
-    const startRow = Math.min(dragStart.row, dragCurrent.row);
-    const endRow = Math.max(dragStart.row, dragCurrent.row);
-    const startCol = Math.min(dragStart.col, dragCurrent.col);
-    const endCol = Math.max(dragStart.col, dragCurrent.col);
-
-    const rowSpan = endRow - startRow + 1;
-    const colSpan = endCol - startCol + 1;
-
-    // Check for collision with existing elements in the selected area
     const section = sections.find((s) => s.id === editingSection);
-    if (section) {
-      const hasCollision = section.gridElements.some((e) => {
-        const eEndRow = e.gridPosition.row + e.rowSpan - 1;
-        const eEndCol = e.gridPosition.col + e.colSpan - 1;
+    if (!section) return;
+
+    const newElement: GridElement = {
+      id: Math.random().toString(36).substr(2, 9),
+      type: template.type,
+      label: template.label,
+      comment: '',
+      gridPosition: position,
+      rowSpan: template.defaultRowSpan,
+      colSpan: template.defaultColSpan,
+    };
+
+    const updatedElements = [...section.gridElements, newElement];
+    updateSection(editingSection, 'gridElements', updatedElements);
+  };
+
+  const handleElementClick = (element: GridElement, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent triggering background click if needed
+    setCurrentElement(element);
+    setElementModalOpen(true);
+  };
+
+  // Resize Handlers
+  const handleResizeStart = (e: React.MouseEvent, element: GridElement) => {
+    e.stopPropagation();
+    setIsResizing(true);
+    setResizingElementId(element.id);
+    setResizeStart({ x: e.clientX, y: e.clientY });
+    setInitialSize({ rowSpan: element.rowSpan, colSpan: element.colSpan });
+  };
+
+  useEffect(() => {
+    const handleResizeMove = (e: MouseEvent) => {
+      if (!isResizing || !resizingElementId || !resizeStart || !initialSize || !editingSection)
+        return;
+
+      const section = sections.find((s) => s.id === editingSection);
+      if (!section) return;
+
+      const element = section.gridElements.find((el) => el.id === resizingElementId);
+      if (!element) return;
+
+      // Calculate logic delta (approx 1 cell = 30px width, 20px height)
+      // Note: This matches the grid rendering style
+      const cellWidth = gridRef.current ? gridRef.current.clientWidth / GRID_COLS : 30;
+      const cellHeight = 24; // Fixed height in CSS
+
+      const deltaX = e.clientX - resizeStart.x;
+      const deltaY = e.clientY - resizeStart.y;
+
+      const deltaCols = Math.round(deltaX / cellWidth);
+      const deltaRows = Math.round(deltaY / cellHeight);
+
+      let newColSpan = Math.max(1, initialSize.colSpan + deltaCols);
+      let newRowSpan = Math.max(1, initialSize.rowSpan + deltaRows);
+
+      // Boundary check
+      if (element.gridPosition.col + newColSpan > GRID_COLS)
+        newColSpan = GRID_COLS - element.gridPosition.col;
+      if (element.gridPosition.row + newRowSpan > GRID_ROWS)
+        newRowSpan = GRID_ROWS - element.gridPosition.row;
+
+      // Collision check (simple: assume we can resize if end point doesn't explicitly overlap another start point - to improve this we need full map check)
+      // For now, let's update state, and just filter collision during save or render?
+      // Better to check collision here.
+
+      const hasCollision = section.gridElements.some((other) => {
+        if (other.id === element.id) return false;
+
+        const otherEndRow = other.gridPosition.row + other.rowSpan - 1;
+        const otherEndCol = other.gridPosition.col + other.colSpan - 1;
+
+        const newEndRow = element.gridPosition.row + newRowSpan - 1;
+        const newEndCol = element.gridPosition.col + newColSpan - 1;
 
         return !(
-          startRow > eEndRow ||
-          endRow < e.gridPosition.row ||
-          startCol > eEndCol ||
-          endCol < e.gridPosition.col
+          newEndRow < other.gridPosition.row ||
+          element.gridPosition.row > otherEndRow ||
+          newEndCol < other.gridPosition.col ||
+          element.gridPosition.col > otherEndCol
         );
       });
 
-      if (hasCollision) {
-        message.error('他の要素と重なる配置はできません');
-        setDragStart(null);
-        setDragCurrent(null);
-        return;
+      if (!hasCollision) {
+        const updatedElements = section.gridElements.map((el) =>
+          el.id === element.id ? { ...el, rowSpan: newRowSpan, colSpan: newColSpan } : el,
+        );
+        // Direct update is too slow? No, React is fast enough for this amount of data.
+        // But updateSection triggers full rerender.
+        setSections((prev) =>
+          prev.map((s) => (s.id === editingSection ? { ...s, gridElements: updatedElements } : s)),
+        );
       }
+    };
+
+    const handleResizeEnd = () => {
+      setIsResizing(false);
+      setResizingElementId(null);
+      setResizeStart(null);
+      setInitialSize(null);
+    };
+
+    if (isResizing) {
+      window.addEventListener('mousemove', handleResizeMove);
+      window.addEventListener('mouseup', handleResizeEnd);
     }
 
-    setCurrentElement({
-      gridPosition: { row: startRow, col: startCol },
-      rowSpan,
-      colSpan,
-    });
-    setElementModalOpen(true);
-  };
+    return () => {
+      window.removeEventListener('mousemove', handleResizeMove);
+      window.removeEventListener('mouseup', handleResizeEnd);
+    };
+  }, [isResizing, resizingElementId, resizeStart, initialSize, editingSection, sections]);
 
   const saveElement = () => {
     if (!editingSection || !currentElement.type || !currentElement.label) {
@@ -266,8 +410,6 @@ export default function PageRequestPage() {
     updateSection(editingSection, 'gridElements', updatedElements);
     setElementModalOpen(false);
     setCurrentElement({});
-    setDragStart(null);
-    setDragCurrent(null);
     message.success('要素を保存しました');
   };
 
@@ -337,97 +479,75 @@ export default function PageRequestPage() {
   };
 
   const renderGrid = (section: Section) => {
-    const cells = [];
-
-    // Create grid array to map occupied cells
-    const gridMap: (GridElement | null)[][] = new Array(GRID_ROWS)
-      .fill(null)
-      .map(() => new Array(GRID_COLS).fill(null));
-
-    // Fill occupied cells
-    section.gridElements.forEach((el) => {
-      for (let r = 0; r < el.rowSpan; r++) {
-        for (let c = 0; c < el.colSpan; c++) {
-          if (el.gridPosition.row + r < GRID_ROWS && el.gridPosition.col + c < GRID_COLS) {
-            gridMap[el.gridPosition.row + r][el.gridPosition.col + c] = el;
-          }
-        }
-      }
-    });
-
-    // Helper to check if cell is in current selection
-    const isInSelection = (row: number, col: number) => {
-      if (!isDragging || !dragStart || !dragCurrent) return false;
-      const startRow = Math.min(dragStart.row, dragCurrent.row);
-      const endRow = Math.max(dragStart.row, dragCurrent.row);
-      const startCol = Math.min(dragStart.col, dragCurrent.col);
-      const endCol = Math.max(dragStart.col, dragCurrent.col);
-      return row >= startRow && row <= endRow && col >= startCol && col <= endCol;
-    };
-
-    // Generate grid cells
-    for (let row = 0; row < GRID_ROWS; row++) {
-      for (let col = 0; col < GRID_COLS; col++) {
-        const element = gridMap[row][col];
-        const isMainCell =
-          element && element.gridPosition.row === row && element.gridPosition.col === col;
-        const isSelected = isInSelection(row, col);
-
-        // Skip rendering covered cells (only render main cell for elements)
-        if (element && !isMainCell) continue;
-
-        cells.push(
+    // Render grid background (empty cells)
+    const emptyCells = [];
+    for (let r = 0; r < GRID_ROWS; r++) {
+      for (let c = 0; c < GRID_COLS; c++) {
+        emptyCells.push(
           <div
-            key={`${row}-${col}`}
-            onMouseDown={() => handleMouseDown(row, col, section.id)}
-            onMouseEnter={() => handleMouseEnter(row, col)}
-            onMouseUp={handleMouseUp}
-            style={{
-              gridColumn: element ? `span ${element.colSpan}` : 'span 1',
-              gridRow: element ? `span ${element.rowSpan}` : 'span 1',
-            }}
-            className={`relative flex cursor-pointer select-none items-center justify-center border text-xs transition-all ${
-              element
-                ? 'z-10 border-amber-500 bg-amber-500/20'
-                : isSelected
-                  ? 'border-amber-400 bg-amber-400/30'
-                  : 'border-slate-800 bg-slate-900/50 hover:border-slate-600'
-            } `}
-          >
-            {element && (
-              <div className="w-full overflow-hidden p-1 text-center">
-                <div className="truncate font-bold text-amber-400">
-                  {element.type ? ELEMENT_TYPE_LABELS[element.type] : ''}
-                </div>
-                {element.rowSpan >= 1 && element.colSpan >= 2 && (
-                  <div className="truncate text-[10px] text-white">{element.label}</div>
-                )}
-              </div>
-            )}
-            {!element && !isSelected && <div className="h-1 w-1 rounded-full bg-slate-800" />}
-          </div>,
+            key={`bg-${r}-${c}`}
+            className="border border-slate-800 bg-slate-900/40"
+            style={{ gridColumn: 'span 1', gridRow: 'span 1' }}
+          />,
         );
       }
     }
 
+    // Render elements
+    const elements = section.gridElements.map((el) => {
+      const template = ELEMENT_TEMPLATES.find((t) => t.type === el.type);
+      const isBeingResized = resizingElementId === el.id;
+
+      return (
+        <div
+          key={el.id}
+          className={`group relative flex cursor-pointer select-none flex-col items-center justify-center overflow-hidden rounded border-2 transition-colors ${template?.color || 'bg-slate-700'} ${template?.borderColor || 'border-slate-500'} ${isBeingResized ? 'z-50 opacity-80 ring-2 ring-white' : 'z-10 hover:brightness-110'} `}
+          style={{
+            gridColumnStart: el.gridPosition.col + 1,
+            gridColumnEnd: `span ${el.colSpan}`,
+            gridRowStart: el.gridPosition.row + 1,
+            gridRowEnd: `span ${el.rowSpan}`,
+          }}
+          onClick={(e) => handleElementClick(el, e)}
+        >
+          <div className="w-full truncate px-1 text-center text-[10px] font-bold text-white drop-shadow-md md:text-xs">
+            {el.label}
+          </div>
+          {el.rowSpan >= 2 && (
+            <div className="scale-90 text-[9px] text-white/80">{ELEMENT_TYPE_LABELS[el.type]}</div>
+          )}
+
+          {/* Resize Handle */}
+          <div
+            className="absolute bottom-0 right-0 flex h-4 w-4 cursor-se-resize items-end justify-end p-[1px] opacity-0 transition-opacity group-hover:opacity-100"
+            onMouseDown={(e) => handleResizeStart(e, el)}
+          >
+            <div className="h-1.5 w-1.5 rounded-sm bg-white shadow-sm"></div>
+          </div>
+        </div>
+      );
+    });
+
     return (
       <div
-        className="grid gap-1"
+        ref={gridRef}
+        className="grid w-full gap-[2px] rounded-lg border border-slate-800 bg-slate-950 p-2 shadow-inner"
         style={{
           gridTemplateColumns: `repeat(${GRID_COLS}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${GRID_ROWS}, 20px)`, // Compact rows
-          width: '100%',
-          userSelect: 'none', // Prevent text selection during drag
-        }}
-        onMouseLeave={() => {
-          if (isDragging) {
-            setIsDragging(false);
-            setDragStart(null);
-            setDragCurrent(null);
-          }
+          gridTemplateRows: `repeat(${GRID_ROWS}, 24px)`,
+          aspectRatio: '10/20',
         }}
       >
-        {cells}
+        {/* Background Grid Layer - Using Absolute positioning to overlay? No, Grid layout handles overlaps if we are careful.
+            But we want background grid cells to be always visible.
+            Let's put background cells in the grid, but elements need to float on top effectively.
+            CSS Grid can layer items if they occupy the same space.
+            So we render 200 background cells first, then the elements.
+        */}
+        {emptyCells}
+
+        {/* We need to warp elements in a fragment to return array, but we are inside div */}
+        {elements}
       </div>
     );
   };
@@ -622,9 +742,7 @@ export default function PageRequestPage() {
                           ghost
                           onClick={() => openGridEditor(section.id)}
                         >
-                          {section.gridElements.length > 0
-                            ? '編集 (ドラッグ範囲選択可)'
-                            : 'レイアウト編集'}
+                          {section.gridElements.length > 0 ? '編集 / プレビュー' : 'レイアウト編集'}
                         </Button>
                       </div>
                       {section.gridElements.length > 0 && (
@@ -705,16 +823,41 @@ export default function PageRequestPage() {
           open={!!editingSection}
           onCancel={closeGridEditor}
           footer={null}
-          width={800}
+          width={1000}
+          className="top-5"
         >
           {editingSection && (
-            <div className="space-y-4">
-              <div className="overflow-x-auto rounded-lg border border-slate-800 bg-slate-950 p-4">
+            <div className="flex h-[70vh] gap-6">
+              {/* Left: Grid Area */}
+              <div className="flex-1 overflow-y-auto pr-2">
+                <div className="mb-2 flex items-center justify-between text-xs text-slate-400">
+                  <span>10列 × 20行 グリッドエリア</span>
+                  <span>要素クリックで編集・右下ドラッグでリサイズ</span>
+                </div>
                 {renderGrid(sections.find((s) => s.id === editingSection)!)}
               </div>
-              <div className="flex justify-between text-xs text-slate-400">
-                <span>ドラッグして範囲を選択し、要素を配置してください</span>
-                <span>10列 × 20行</span>
+
+              {/* Right: Element Palette */}
+              <div className="flex w-64 min-w-[250px] flex-col gap-3 overflow-y-auto border-l border-slate-800 pl-4">
+                <Title level={5} className="mb-0 flex items-center gap-2 !text-white">
+                  <ColumnWidthOutlined /> 要素パレット
+                </Title>
+                <div className="mb-2 text-xs text-slate-400">クリックしてグリッドに配置</div>
+
+                <div className="space-y-3">
+                  {ELEMENT_TEMPLATES.map((template) => (
+                    <div
+                      key={template.type}
+                      onClick={() => handleTemplateClick(template)}
+                      className={`cursor-pointer rounded border-l-4 p-3 transition-all hover:brightness-110 active:scale-95 ${template.color} ${template.borderColor} `}
+                    >
+                      <div className="text-sm font-bold text-white">{template.label}</div>
+                      <div className="mt-1 text-[10px] text-white/80">
+                        サイズ: {template.defaultColSpan}x{template.defaultRowSpan}
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -728,8 +871,6 @@ export default function PageRequestPage() {
           onCancel={() => {
             setElementModalOpen(false);
             setCurrentElement({});
-            setDragStart(null);
-            setDragCurrent(null);
           }}
           okText="保存"
           cancelText="キャンセル"
@@ -775,6 +916,34 @@ export default function PageRequestPage() {
                 onChange={(e) => setCurrentElement({ ...currentElement, label: e.target.value })}
                 placeholder="例：申し込みボタン"
               />
+            </div>
+            <div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <Text strong className="mb-2 block">
+                    高さ (行)
+                  </Text>
+                  <Input
+                    type="number"
+                    value={currentElement.rowSpan}
+                    onChange={(e) =>
+                      setCurrentElement({ ...currentElement, rowSpan: Number(e.target.value) })
+                    }
+                  />
+                </div>
+                <div className="flex-1">
+                  <Text strong className="mb-2 block">
+                    幅 (列)
+                  </Text>
+                  <Input
+                    type="number"
+                    value={currentElement.colSpan}
+                    onChange={(e) =>
+                      setCurrentElement({ ...currentElement, colSpan: Number(e.target.value) })
+                    }
+                  />
+                </div>
+              </div>
             </div>
             <div>
               <Text strong className="mb-2 block">
