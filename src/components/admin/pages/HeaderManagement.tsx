@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, Eye, Layout, Save } from 'lucide-react';
+import { ChevronLeft, ExternalLink, Eye, Link2, Plus, Save, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -14,28 +14,14 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
+import Header from '@/components/sections/layout/Header';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
-const SECTION_LABELS: Record<string, string> = {
-  header: '共通ヘッダー',
-  hero: 'メインビジュアル',
-  concept: 'コンセプト',
-  campaign: 'キャンペーン',
-  cast: 'セラピスト',
-  price: '料金プラン',
-  flow: '利用の流れ',
-  diary: '写メ日記',
-  newcomer: '新人セラピスト',
-  faq: 'よくあるご質問',
-  footer: 'フッター',
-};
-
-export default function StoreTopManagement() {
+export default function HeaderManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
   const [config, setConfig] = useState<StoreTopPageConfig>(DEFAULT_STORE_TOP_CONFIG);
   const [isLoading, setIsLoading] = useState(false);
@@ -92,17 +78,6 @@ export default function StoreTopManagement() {
     }));
   };
 
-  // 表示切り替えトグル用
-  const toggleVisibility = (section: keyof StoreTopPageConfig) => {
-    setConfig((prev) => ({
-      ...prev,
-      [section]: {
-        ...(prev[section] as any),
-        isVisible: !(prev[section] as any).isVisible,
-      },
-    }));
-  };
-
   // 画像アップロード処理
   const handleImageUpload = async (section: string, file: File, index?: number, key?: string) => {
     if (!selectedStore) return;
@@ -122,32 +97,6 @@ export default function StoreTopManagement() {
         const newConfig = {
           ...config,
           header: { ...config.header, navLinks: newNavLinks },
-        };
-        setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
-      } else if (section === 'diary' && typeof index === 'number') {
-        const newItems = [...config.diary.items];
-        newItems[index] = { ...newItems[index], image: publicUrl };
-        const newConfig = {
-          ...config,
-          diary: { ...config.diary, items: newItems },
-        };
-        setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
-      } else if (section === 'newcomer' && typeof index === 'number') {
-        const newItems = [...config.newcomer.items];
-        newItems[index] = { ...newItems[index], imageUrl: publicUrl };
-        const newConfig = {
-          ...config,
-          newcomer: { ...config.newcomer, items: newItems },
-        };
-        setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
-      } else {
-        const sectionKey = key || 'imageUrl';
-        const newConfig = {
-          ...config,
-          [section]: { ...config[section as keyof StoreTopPageConfig], [sectionKey]: publicUrl },
         };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
@@ -182,8 +131,10 @@ export default function StoreTopManagement() {
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <div>
-            <h1 className="text-lg font-bold text-white">店舗トップ管理</h1>
-            <p className="text-[10px] text-brand-text-secondary">プレビュー上で直接編集できます</p>
+            <h1 className="text-lg font-bold text-white">共通ヘッダー管理</h1>
+            <p className="text-[10px] text-brand-text-secondary">
+              ナビゲーションメニューとロゴを編集できます
+            </p>
           </div>
         </div>
 
@@ -227,39 +178,87 @@ export default function StoreTopManagement() {
 
       <div className="flex flex-grow gap-4 overflow-hidden">
         {/* Sidebar: Controls */}
-        <div className="w-64 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4">
-          <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-            <Layout className="h-3 w-3" />
-            表示セクション
-          </h2>
+        <div className="w-80 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4">
+          <div className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3">
+            <span className="text-sm font-medium text-gray-200">ヘッダーを表示する</span>
+            <Switch
+              checked={config.header.isVisible}
+              onCheckedChange={(checked) => handleUpdate('header', 'isVisible', checked)}
+              className="scale-75"
+            />
+          </div>
 
-          <div className="space-y-2">
-            {Object.keys(config).map((sectionId) => {
-              const label = SECTION_LABELS[sectionId] || sectionId;
-              const sectionData = (config as any)[sectionId];
+          <div className="space-y-4">
+            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+              <Link2 className="h-3 w-3" />
+              メニュー構成
+            </h2>
 
-              if (!sectionData || typeof sectionData.isVisible !== 'boolean') return null;
-
-              return (
+            <div className="space-y-3">
+              {config.header.navLinks.map((link, idx) => (
                 <div
-                  key={sectionId}
-                  className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3"
+                  key={idx}
+                  className="space-y-2 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3"
                 >
-                  <span className="text-sm font-medium text-gray-200">{label}</span>
-                  <Switch
-                    checked={sectionData.isVisible}
-                    onCheckedChange={() => toggleVisibility(sectionId as any)}
-                    className="scale-75"
-                  />
+                  <div className="flex items-center justify-between gap-2">
+                    <input
+                      className="flex-grow bg-transparent text-sm font-bold text-white outline-none transition-colors focus:text-brand-accent"
+                      value={link.name}
+                      onChange={(e) => {
+                        const newLinks = [...config.header.navLinks];
+                        newLinks[idx] = { ...newLinks[idx], name: e.target.value };
+                        handleUpdate('header', 'navLinks', newLinks);
+                      }}
+                      placeholder="メニュー名"
+                    />
+                    <button
+                      onClick={() => {
+                        const newLinks = config.header.navLinks.filter((_, i) => i !== idx);
+                        handleUpdate('header', 'navLinks', newLinks);
+                      }}
+                      className="text-gray-500 transition-colors hover:text-red-400"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                  <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                    <ExternalLink size={12} className="text-gray-500" />
+                    <input
+                      className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                      value={link.href}
+                      onChange={(e) => {
+                        const newLinks = [...config.header.navLinks];
+                        newLinks[idx] = { ...newLinks[idx], href: e.target.value };
+                        handleUpdate('header', 'navLinks', newLinks);
+                      }}
+                      placeholder="/store/slug/..."
+                    />
+                  </div>
                 </div>
-              );
-            })}
+              ))}
+
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full border-dashed border-gray-700 bg-transparent text-xs text-gray-400 hover:bg-white/5"
+                onClick={() => {
+                  const newLinks = [
+                    ...config.header.navLinks,
+                    { name: '新規メニュー', href: '#', imageUrl: '' },
+                  ];
+                  handleUpdate('header', 'navLinks', newLinks);
+                }}
+              >
+                <Plus size={14} className="mr-2" />
+                メニューを追加
+              </Button>
+            </div>
           </div>
 
           <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
             <p className="text-[10px] leading-relaxed text-blue-300">
               <span className="mb-1 block font-bold">💡 編集のヒント</span>
-              右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
+              右側のプレビュー画面でロゴやメニュー名を直接クリックして編集できます。また、メニュー画像のアイコンをクリックして新しい画像をアップロードできます。
             </p>
           </div>
         </div>
@@ -267,45 +266,24 @@ export default function StoreTopManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            <FukuokaPage
-              config={config}
-              isEditing={!isPreviewMode}
-              onUpdate={handleUpdate}
-              onImageUpload={handleImageUpload}
-            />
-          </div>
-
-          {/* Mobile switcher mockup */}
-          <div className="absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-gray-700 bg-brand-secondary/80 px-4 py-2 shadow-2xl backdrop-blur-sm">
-            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-accent">
-              <svg
-                className="h-4 w-4 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"
-                />
-              </svg>
+            <div className="sticky top-0 z-50">
+              <Header
+                config={config.header}
+                isEditing={!isPreviewMode}
+                onUpdate={handleUpdate}
+                onImageUpload={handleImageUpload}
+              />
             </div>
-            <div className="flex h-6 w-6 cursor-not-allowed items-center justify-center rounded-md opacity-50 hover:bg-white/10">
-              <svg
-                className="h-4 w-4 text-gray-400"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                />
-              </svg>
+            {/* Background dummy content to show header scroll effect */}
+            <div className="min-h-screen space-y-12 bg-gray-50 p-8 pt-24">
+              <div className="flex h-64 items-center justify-center rounded-3xl bg-neutral-100 text-3xl font-bold italic text-gray-300">
+                PREVIEW CONTENT
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                <div className="h-48 rounded-3xl bg-neutral-100"></div>
+                <div className="h-48 rounded-3xl bg-neutral-100"></div>
+              </div>
+              <div className="h-96 rounded-3xl bg-neutral-100"></div>
             </div>
           </div>
         </div>

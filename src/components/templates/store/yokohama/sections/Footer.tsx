@@ -9,22 +9,8 @@ interface FooterProps {
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
+const Footer: React.FC<FooterProps> = ({ config }) => {
   if (!config) return null;
-
-  const handleShopInfoUpdate = (key: string, value: string) => {
-    if (onUpdate) {
-      onUpdate('footer', 'shopInfo', { ...config.shopInfo, [key]: value });
-    }
-  };
-
-  const handleButtonUpdate = (index: number, value: string) => {
-    if (onUpdate) {
-      const newButtons = [...config.menuButtons];
-      newButtons[index] = { ...newButtons[index], label: value };
-      onUpdate('footer', 'menuButtons', newButtons);
-    }
-  };
 
   return (
     <footer className="border-t border-pink-100 bg-white py-8 text-slate-800">

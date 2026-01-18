@@ -103,6 +103,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       label: '採用ページ管理',
     },
     {
+      href: '/admin/admin/header-management',
+      icon: <PencilIcon />,
+      label: '共通ヘッダー管理',
+    },
+    {
       href: '/admin/admin/store-top-management',
       icon: <StorefrontIcon />,
       label: 'トップページ管理',

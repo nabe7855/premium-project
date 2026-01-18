@@ -1,15 +1,14 @@
-import { createClient } from '@/lib/supabase/client';
+import { supabase } from '@/lib/supabaseClient';
 
 export async function uploadStoreTopImage(
   file: File,
   storeSlug: string,
   section: string,
 ): Promise<string> {
-  const supabase = createClient();
   const fileExt = file.name.split('.').pop();
   const fileName = `${storeSlug}/${section}/${Date.now()}.${fileExt}`;
 
-  const { data, error } = await supabase.storage.from('store-top-images').upload(fileName, file, {
+  const { error } = await supabase.storage.from('store-top-images').upload(fileName, file, {
     cacheControl: '3600',
     upsert: false,
   });
@@ -27,8 +26,6 @@ export async function uploadStoreTopImage(
 }
 
 export async function deleteStoreTopImage(imageUrl: string): Promise<void> {
-  const supabase = createClient();
-
   // URLからファイルパスを抽出
   const url = new URL(imageUrl);
   const pathParts = url.pathname.split('/');

@@ -7,7 +7,7 @@ interface PriceSectionProps {
   config?: PriceConfig;
 }
 
-const PriceSection: React.FC<PriceSectionProps> = ({ config }) => {
+const PriceSection: React.FC<PriceSectionProps> = () => {
   return (
     <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en="Price Menu" ja="料金プラン" />

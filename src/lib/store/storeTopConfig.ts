@@ -1,5 +1,18 @@
 // 店舗トップページの設定型定義
 
+export interface NavLink {
+  name: string;
+  href: string;
+  imageUrl?: string;
+}
+
+export interface HeaderConfig {
+  logoText: string;
+  navLinks: NavLink[];
+  reserveButtonText: string;
+  isVisible: boolean;
+}
+
 export interface HeroConfig {
   images: string[];
   badge: string;
@@ -155,6 +168,7 @@ export interface FooterConfig {
 }
 
 export interface StoreTopPageConfig {
+  header: HeaderConfig;
   hero: HeroConfig;
   concept: ConceptConfig;
   campaign: CampaignConfig;
@@ -169,6 +183,58 @@ export interface StoreTopPageConfig {
 
 // デフォルト設定
 export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
+  header: {
+    logoText: 'LUMIÈRE',
+    navLinks: [
+      {
+        name: '最新のお知らせ',
+        href: '#news',
+        imageUrl: '/福岡お知らせ.png',
+      },
+      {
+        name: 'はじめての方へ',
+        href: '#flow',
+        imageUrl: '/福岡初めての方へ.png',
+      },
+      {
+        name: 'おすすめホテル一覧',
+        href: '#hotels',
+        imageUrl: '/福岡おすすめホテル一覧.png',
+      },
+      {
+        name: '口コミ・レビュー',
+        href: '#reviews',
+        imageUrl: '/福岡セラピスト一覧.png',
+      },
+      {
+        name: '写メ日記（更新中）',
+        href: '#diary',
+        imageUrl: '/福岡出勤情報.png',
+      },
+      {
+        name: 'プライバシーポリシー',
+        href: '/privacy',
+        imageUrl: '/プライバシーポリシー.png',
+      },
+      {
+        name: 'メディア取材のご連絡',
+        href: '/media',
+        imageUrl: '/images/envelope.png',
+      },
+      {
+        name: '女風求人情報',
+        href: '/recruit',
+        imageUrl: '/images/cast1.png',
+      },
+      {
+        name: 'ラインで問い合わせる',
+        href: 'https://line.me',
+        imageUrl: '/images/envelope.png',
+      },
+    ],
+    reserveButtonText: 'WEB予約',
+    isVisible: true,
+  },
   hero: {
     images: [
       'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1920',

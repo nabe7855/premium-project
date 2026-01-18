@@ -5,6 +5,7 @@ import ConceptSection from '../sections/ConceptSection';
 import FAQSection from '../sections/FAQSection';
 import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
+import Header from '../sections/Header';
 
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
@@ -32,6 +33,14 @@ export default function FukuokaPage({
 
   return (
     <div className="selection:bg-primary-100 selection:text-primary-800 relative min-h-screen font-sans text-slate-600">
+      {(!safeConfig || safeConfig.header.isVisible || isEditing) && (
+        <Header
+          config={safeConfig?.header}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
+      )}
       {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (
         <HeroSection
           config={safeConfig?.hero}

@@ -1,15 +1,20 @@
-'use client';
-
-import { ChevronDown, Mail, MapPin, Menu, MessageCircle, Phone, Users, X } from 'lucide-react';
+import { HeaderConfig } from '@/lib/store/storeTopConfig';
+import { Camera, ChevronDown, MapPin, Menu, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { primaryNavItems, secondaryNavItems } from '@/components/sections/layout/NavItems';
 import { stores } from '@/data/stores';
 
-export default function Header() {
+interface HeaderProps {
+  config?: HeaderConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+}
+
+export default function Header({ config, isEditing, onUpdate, onImageUpload }: HeaderProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
@@ -28,6 +33,10 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  if (!config || (!config.isVisible && !isEditing)) return null;
+
+  const navLinks = config.navLinks;
+
   const handleStoreChange = (newStoreId: string) => {
     const pagePath = pathname.replace(/^\/store\/[^/]+/, '');
     router.push(`/store/${newStoreId}${pagePath}`);
@@ -42,9 +51,22 @@ export default function Header() {
     }, 400);
   };
 
+  const triggerImageUpload = (index: number) => {
+    if (!isEditing || !onImageUpload) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        onImageUpload('header', file, index, 'navLinks');
+      }
+    };
+    input.click();
+  };
+
   const BackgroundDecoration = () => (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
-      {/* 背景のドットパターン */}
       <div
         className="absolute inset-0 opacity-[0.4]"
         style={{
@@ -52,406 +74,332 @@ export default function Header() {
           backgroundSize: '24px 24px',
         }}
       ></div>
-      {/* ほのかなグラデーションの重なり */}
       <div className="absolute left-[-10%] top-[10%] h-[80%] w-[120%] bg-[radial-gradient(circle_at_center,rgba(255,245,245,0.8)_0%,transparent_70%)] opacity-50 blur-3xl"></div>
     </div>
   );
 
-  const renderNavItem = (item: any, isCard: boolean = false) => {
-    const href = item.isAbsolute ? item.href : `/store/${currentStoreId}${item.href}`;
-
-    if (isCard) {
+  const renderNavItem = (item: any, idx: number, type: 'highlight' | 'grid' | 'full' = 'grid') => {
+    if (type === 'highlight') {
       return (
-        <Link
+        <div
           key={item.href}
-          href={href}
-          onClick={closeMenu}
-          className="group relative flex flex-col items-center justify-center gap-5 rounded-[48px] border border-transparent bg-white px-2 py-9 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+          className="group relative overflow-hidden rounded-[40px] bg-white shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-[0.98]"
         >
-          {item.name === 'はじめての方へ' && currentStoreId === 'fukuoka' ? (
-            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
-              <img
-                src="/福岡初めての方へ.png"
-                alt={item.name}
-                className="h-full w-full object-contain"
-              />
+          <Link href={item.href} onClick={closeMenu} className="flex items-center gap-6 px-4 py-6">
+            <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
+              {item.imageUrl && (
+                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+              )}
+              {isEditing && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    triggerImageUpload(idx);
+                  }}
+                  className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                >
+                  <Camera size={20} />
+                </button>
+              )}
             </div>
-          ) : item.name === 'セラピスト一覧' && currentStoreId === 'fukuoka' ? (
-            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
-              <img
-                src="/福岡セラピスト一覧.png"
-                alt={item.name}
-                className="h-full w-full object-contain"
-              />
+            <div className="flex-grow">
+              <span
+                className="text-xl font-black tracking-widest text-[#4A4A4A] outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  if (!isEditing) return;
+                  const newLinks = [...navLinks];
+                  newLinks[idx] = { ...newLinks[idx], name: e.currentTarget.innerText };
+                  onUpdate?.('header', 'navLinks', newLinks);
+                }}
+              >
+                {item.name}
+              </span>
+              <div className="mt-1 flex h-2 w-2 rounded-full bg-pink-400" />
             </div>
-          ) : item.name === '本日の出勤情報' && currentStoreId === 'fukuoka' ? (
-            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
-              <img
-                src="/福岡出勤情報.png"
-                alt={item.name}
-                className="h-full w-full object-contain"
-              />
-            </div>
-          ) : item.name === 'おすすめホテル一覧' && currentStoreId === 'fukuoka' ? (
-            <div className="flex h-24 w-24 items-center justify-center transition-transform group-hover:scale-110">
-              <img
-                src="/福岡おすすめホテル一覧.png"
-                alt={item.name}
-                className="h-full w-full object-contain"
-              />
-            </div>
-          ) : (
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-[#FCF0F2] text-[#B1354E] transition-transform group-hover:scale-110">
-              <item.icon size={28} strokeWidth={1.5} />
-            </div>
-          )}
-          <span className="px-1 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A]">
-            {item.name}
-          </span>
-          {item.hasUpdate && (
-            <div className="absolute right-8 top-6 h-2.5 w-2.5 rounded-full border-2 border-white bg-[#D43D6F] shadow-sm"></div>
-          )}
-        </Link>
+            <ChevronDown size={24} className="-rotate-90 text-pink-200" />
+          </Link>
+        </div>
       );
     }
 
-    return (
-      <Link
-        key={item.href}
-        href={href}
-        onClick={closeMenu}
-        className={`group flex w-full items-center justify-between rounded-2xl border border-gray-100 bg-white px-5 py-4 shadow-sm transition-all hover:shadow-md active:scale-[0.99] ${
-          pathname.endsWith(item.href) ? 'border-pink-200 bg-pink-50/30' : ''
-        }`}
-      >
-        <div className="flex items-center gap-4">
-          <div className="text-[#C5A059] group-hover:text-pink-600">
-            <item.icon size={18} />
-          </div>
-          <span className="text-sm font-bold text-[#4A2B2F]">{item.name}</span>
-          {item.hasUpdate && <span className="h-1.5 w-1.5 rounded-full bg-pink-200"></span>}
+    if (type === 'full') {
+      const getButtonColor = (name: string) => {
+        if (name.includes('プライバシー')) return 'bg-[#9BA3AF] border-[#818B9A]';
+        if (name.includes('メディア')) return 'bg-[#C5A368] border-[#A88B5A]';
+        if (name.includes('求人')) return 'bg-[#FAD231] border-[#C8A811]';
+        if (name.includes('ライン') || name.includes('LINE'))
+          return 'bg-[#56C361] border-[#3E9A47]';
+        return 'bg-pink-500 border-pink-600';
+      };
+
+      const colorClass = getButtonColor(item.name);
+      const isYellow = item.name.includes('求人');
+
+      return (
+        <div key={item.href} className="transition-transform active:translate-y-[2px]">
+          <Link
+            href={item.href}
+            onClick={closeMenu}
+            className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
+          >
+            <div className="h-10 w-10 flex-shrink-0">
+              {item.imageUrl ? (
+                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+              ) : (
+                <Users className={isYellow ? 'text-black' : 'text-white'} size={32} />
+              )}
+            </div>
+            <span
+              className={`flex-1 text-center text-lg font-black tracking-widest outline-none ${isYellow ? 'text-black' : 'text-white'}`}
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => {
+                if (!isEditing) return;
+                const newLinks = [...navLinks];
+                newLinks[idx] = { ...newLinks[idx], name: e.currentTarget.innerText };
+                onUpdate?.('header', 'navLinks', newLinks);
+              }}
+            >
+              {item.name}
+            </span>
+          </Link>
         </div>
-        <ChevronDown size={16} className="-rotate-90 text-gray-200 group-hover:text-pink-600" />
-      </Link>
+      );
+    }
+
+    // Default Grid
+    return (
+      <div
+        key={item.href}
+        className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] border border-transparent bg-white px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+      >
+        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center">
+          <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
+            {item.imageUrl ? (
+              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
+            ) : (
+              <div className="flex h-full w-full items-center justify-center rounded-3xl bg-pink-50">
+                <span className="text-2xl font-bold text-pink-300">{item.name.charAt(0)}</span>
+              </div>
+            )}
+            {isEditing && (
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  triggerImageUpload(idx);
+                }}
+                className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              >
+                <Camera size={20} />
+              </button>
+            )}
+          </div>
+          <span
+            className="px-2 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A] outline-none"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => {
+              if (!isEditing) return;
+              const newLinks = [...navLinks];
+              newLinks[idx] = { ...newLinks[idx], name: e.currentTarget.innerText };
+              onUpdate?.('header', 'navLinks', newLinks);
+            }}
+          >
+            {item.name}
+          </span>
+        </Link>
+      </div>
     );
   };
 
-  // 表示順を画像に合わせるためのマッピング
-  const orderedItems = [
-    primaryNavItems.find((i) => i.name === 'はじめての方へ'),
-    primaryNavItems.find((i) => i.name === 'おすすめホテル一覧'),
-    primaryNavItems.find((i) => i.name === 'セラピスト一覧'),
-    primaryNavItems.find((i) => i.name === '本日の出勤情報'),
-    primaryNavItems.find((i) => i.name === '口コミ・レビュー'),
-    primaryNavItems.find((i) => i.name === '写メ日記（更新中）'),
-  ].filter(Boolean);
-
-  const remainingPrimaryItems = primaryNavItems.filter(
-    (i) => !orderedItems.includes(i) && i.name !== '動画',
-  );
-  const filteredSecondaryItems = secondaryNavItems.filter(
-    (i) =>
-      i.name !== '求人・採用情報' &&
-      i.name !== 'お問い合わせ' &&
-      i.name !== '最新のお知らせ' &&
-      i.name !== 'メディア取材のご連絡' &&
-      i.name !== 'プライバシーポリシー',
-  );
-
-  const newsItem = secondaryNavItems.find((i) => i.name === '最新のお知らせ');
-
   return (
     <header
-      className={`sticky top-0 z-50 transition-shadow ${
-        scrollY > 10 ? 'bg-white/80 shadow-md backdrop-blur' : 'bg-white'
-      }`}
+      className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
+        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-transparent py-4'
+      } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="flex items-center justify-between px-4 py-3 md:px-8">
-        <Link href="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
-          <span className="text-2xl">🍓</span>
-          <div className="flex items-center gap-3">
-            <span className="text-2xl font-black leading-none tracking-tight text-[#D43D6F]">
-              Strawberry Boys
+      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
+        <Link
+          href="/"
+          className="group flex items-center gap-2 transition-transform hover:scale-[1.02]"
+        >
+          <span className="text-3xl drop-shadow-sm filter">🍓</span>
+          <span
+            className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
+          >
+            {config.logoText}
+          </span>
+          <div className="ml-2 flex items-center gap-2 border-l border-pink-100 pl-3">
+            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+              Premium
             </span>
-            <div className="flex items-center gap-2 font-light text-gray-400 sm:gap-3">
-              <span className="text-sm sm:text-xl">|</span>
-              <span className="text-sm font-medium text-[#4A5568] sm:text-xl">
-                {currentStore?.displayName ?? '店舗を選択'} {currentStore?.emoji ?? ''}
-              </span>
-            </div>
+            <span className="text-lg">{currentStore?.emoji}</span>
           </div>
         </Link>
 
-        <button
-          onClick={() => {
-            if (!isMenuOpen) setIsMenuOpen(true);
-            else closeMenu();
-          }}
-          className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-pink-50/50 text-pink-600 transition-all hover:bg-pink-100 active:scale-90 md:hidden"
-          aria-label="メニューを開閉"
-        >
-          {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
-          {isMenuOpen && (
-            <span className="absolute -right-1 -top-1 h-3 w-3 rounded-full border-2 border-white bg-pink-600"></span>
-          )}
-        </button>
-
-        <nav className="hidden items-center gap-4 md:flex">
-          {primaryNavItems.slice(0, 4).map((item) => {
-            const href = item.isAbsolute ? item.href : `/store/${currentStoreId}${item.href}`;
-            return (
-              <Link
-                key={item.href}
-                href={href}
-                className={`flex items-center gap-2 px-2 py-1 transition-colors duration-200 hover:text-pink-600 ${
-                  pathname.endsWith(item.href) ? 'font-semibold text-pink-600' : ''
-                }`}
-              >
-                <item.icon size={18} />
-                <span className="text-sm">{item.name}</span>
-              </Link>
-            );
-          })}
-
-          <div className="relative">
-            <button
-              onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-              className="flex items-center gap-1 px-2 py-1 hover:text-pink-600"
-              aria-haspopup="true"
-              aria-expanded={isStoreDropdownOpen}
-            >
-              <MapPin size={18} />
-              {currentStore?.displayName ?? '店舗を選択'} <ChevronDown size={16} />
-            </button>
-
-            {isStoreDropdownOpen && (
-              <div className="animate-fadeIn absolute right-0 z-50 mt-2 w-48 overflow-hidden rounded-md border bg-white shadow-lg">
-                {Object.values(stores).map((store) => (
-                  <button
-                    key={store.id}
-                    onClick={() => handleStoreChange(store.id)}
-                    className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm transition-colors hover:bg-pink-100"
-                  >
-                    {store.emoji} {store.displayName}
-                  </button>
-                ))}
-              </div>
-            )}
-          </div>
-        </nav>
+        <div className="flex items-center gap-2 sm:gap-4">
+          <Link
+            href="#reserve"
+            className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:block"
+          >
+            {config.reserveButtonText}
+          </Link>
+          <button
+            onClick={() => {
+              if (!isMenuOpen) setIsMenuOpen(true);
+              else closeMenu();
+            }}
+            className={`relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all active:scale-95 sm:h-12 sm:w-12 ${
+              isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-white text-gray-600 shadow-sm'
+            }`}
+          >
+            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+          </button>
+        </div>
       </div>
 
-      {/* モバイルメニュー */}
+      {/* モバイルメニューオーバーレイ */}
       {(isMenuOpen || isAnimating) &&
         typeof window !== 'undefined' &&
         createPortal(
           <>
             <div
-              onClick={closeMenu}
-              className={`fixed inset-0 z-[9998] bg-black/40 backdrop-blur-sm transition-opacity duration-500 ${
-                isAnimating ? 'opacity-0' : 'opacity-100'
-              }`}
-            />
-
-            <div
               className={`fixed inset-0 z-[9999] overflow-y-auto bg-white transition-all duration-500 ${
-                isAnimating ? 'translate-y-full opacity-0' : 'translate-y-0 opacity-100'
+                isAnimating ? 'translate-y-full' : 'translate-y-0'
               }`}
-              style={{ top: '64px' }}
+              style={{ top: '0' }}
             >
-              <BackgroundDecoration />
+              {/* Menu Header (Sticky) */}
+              <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl font-black italic text-[#D43D6F]">
+                    {config.logoText}
+                  </span>
+                </div>
+                <button onClick={closeMenu} className="rounded-full bg-pink-50 p-2 text-pink-500">
+                  <X size={24} />
+                </button>
+              </div>
 
-              <div className="relative z-10 mx-auto max-w-md space-y-10 px-5 py-8 pb-40">
-                {/* 店舗選択 */}
-                <section>
-                  <button
-                    onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                    className="flex w-full items-center justify-between rounded-2xl border border-gray-100 bg-white px-5 py-4 text-[#4A2B2F] shadow-sm transition-colors active:bg-pink-50"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-pink-50 text-pink-600">
-                        <MapPin size={18} />
-                      </div>
-                      <span className="text-[15px] font-bold tracking-wider">店舗を選ぶ</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <span className="rounded-full border border-pink-100 bg-pink-50 px-3 py-1 text-sm font-medium text-pink-600">
-                        {currentStore?.displayName}
-                      </span>
-                      <ChevronDown
-                        size={20}
-                        className={`text-pink-600 transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`}
-                      />
-                    </div>
-                  </button>
+              <div className="relative min-h-screen pb-32 pt-4">
+                <BackgroundDecoration />
 
-                  <div
-                    className={`overflow-hidden transition-all duration-300 ${isStoreDropdownOpen ? 'mt-3 max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-                  >
-                    <div className="grid grid-cols-2 gap-2 px-1">
-                      {Object.values(stores).map((store) => (
-                        <button
-                          key={store.id}
-                          onClick={() => handleStoreChange(store.id)}
-                          className={`flex items-center gap-3 rounded-xl border px-4 py-3 shadow-sm transition-all ${currentStoreId === store.id ? 'border-pink-200 bg-pink-50 ring-1 ring-pink-200' : 'border-gray-100 bg-white hover:border-pink-200'}`}
-                        >
-                          <span className="text-xl">{store.emoji}</span>
-                          <span className="text-sm font-bold text-[#4A2B2F]">
-                            {store.displayName}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                </section>
-
-                {/* 最新のお知らせ (横長カード) */}
-                {newsItem && (
+                <div className="relative z-10 mx-auto max-w-md space-y-6 px-5">
+                  {/* 店舗選択 */}
                   <section>
-                    <Link
-                      href={newsItem.href}
-                      onClick={closeMenu}
-                      className="group relative flex items-center gap-6 overflow-hidden rounded-[48px] border border-pink-100 bg-white p-5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] transition-all hover:shadow-lg active:scale-[0.98]"
+                    <button
+                      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
+                      className="flex w-full items-center justify-between rounded-3xl border border-gray-100 bg-white px-6 py-5 text-[#4A2B2F] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05)] transition-all active:scale-[0.98]"
                     >
-                      {currentStoreId === 'fukuoka' ? (
-                        <div className="flex h-20 w-20 items-center justify-center transition-transform group-hover:scale-110">
-                          <img
-                            src="/福岡お知らせ.png"
-                            alt="News"
-                            className="h-full w-full object-contain"
-                          />
-                        </div>
-                      ) : (
-                        <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#FFF5F5] text-[#D43D6F] transition-transform group-hover:scale-110">
-                          <newsItem.icon size={28} strokeWidth={1.5} />
-                        </div>
-                      )}
                       <div className="flex items-center gap-3">
-                        <span className="text-[17px] font-black tracking-tight text-[#4A2B2F]">
-                          {newsItem.name}
-                        </span>
-                        {newsItem.hasUpdate && (
-                          <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-pink-400"></span>
-                        )}
+                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-50 text-pink-500 shadow-inner">
+                          <MapPin size={22} />
+                        </div>
+                        <span className="text-lg font-bold">店舗を選ぶ</span>
                       </div>
-                      <ChevronDown
-                        size={20}
-                        className="ml-auto -rotate-90 text-gray-200 transition-colors group-hover:text-[#D43D6F]"
-                      />
-                    </Link>
+                      <div className="flex items-center gap-2">
+                        <span className="rounded-full bg-pink-50 px-4 py-1.5 text-sm font-bold text-pink-600">
+                          {currentStore?.displayName}
+                        </span>
+                        <ChevronDown
+                          size={20}
+                          className={`text-pink-300 transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`}
+                        />
+                      </div>
+                    </button>
+
+                    <div
+                      className={`overflow-hidden transition-all duration-500 ${isStoreDropdownOpen ? 'mt-3 max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
+                    >
+                      <div className="grid grid-cols-2 gap-3 p-1">
+                        {Object.values(stores).map((store) => (
+                          <button
+                            key={store.id}
+                            onClick={() => handleStoreChange(store.id)}
+                            className={`flex items-center gap-3 rounded-2xl border-2 px-4 py-4 transition-all ${
+                              currentStoreId === store.id
+                                ? 'border-pink-400 bg-pink-50 shadow-md'
+                                : 'border-gray-50 bg-white shadow-sm'
+                            }`}
+                          >
+                            <span className="text-2xl">{store.emoji}</span>
+                            <span className="font-bold text-[#4A2B2F]">{store.displayName}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
                   </section>
-                )}
 
-                {/* メインナビゲーション (カードスタイル) */}
-                <section>
+                  {/* Highlights (News) */}
+                  {navLinks[0] && renderNavItem(navLinks[0], 0, 'highlight')}
+
+                  {/* Main Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                    {orderedItems.map((item) => renderNavItem(item, true))}
+                    {navLinks.slice(1, 5).map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
                   </div>
-                </section>
 
-                {/* サブナビゲーション (リストスタイル) */}
-                <section className="space-y-2">
-                  {[...remainingPrimaryItems, ...filteredSecondaryItems].map((item) =>
-                    renderNavItem(item, false),
-                  )}
-                </section>
+                  {/* Secondary Buttons */}
+                  <div className="space-y-4 pt-4">
+                    {navLinks.slice(5).map((item, idx) => renderNavItem(item, idx + 5, 'full'))}
+                  </div>
 
-                {/* CTA セクション */}
-                <section className="space-y-4 pt-6">
-                  {/* プライバシーポリシー */}
-                  <a
-                    href="/Announcement-information/policy"
-                    className="flex w-full items-center gap-4 rounded-lg bg-[#9CA3AF] px-6 py-4 text-white shadow-md transition-all active:scale-95"
-                  >
-                    <div className="flex h-12 w-12 items-center justify-center transition-transform group-hover:scale-110">
-                      <img
-                        src="/プライバシーポリシー.png"
-                        alt="Privacy Policy"
-                        className="h-full w-full object-contain"
-                      />
-                    </div>
-                    <span className="flex-1 text-center text-lg font-black tracking-widest">
-                      プライバシーポリシー
-                    </span>
-                  </a>
-
-                  {/* メディア取材のご連絡 */}
-                  <a
-                    href="/media-contact"
-                    className="flex w-full items-center gap-4 rounded-lg bg-[#C5A059] px-6 py-4 text-white shadow-md transition-all active:scale-95"
-                  >
-                    <div className="rounded-lg bg-white/20 p-1.5">
-                      <Mail size={24} />
-                    </div>
-                    <span className="flex-1 text-center text-lg font-black tracking-widest">
-                      メディア取材のご連絡
-                    </span>
-                  </a>
-
-                  <Link
-                    href={`/store/${currentStoreId}/recruit`}
-                    onClick={closeMenu}
-                    className="flex w-full items-center gap-4 rounded-xl border-b-4 border-[#C8A811] bg-[#FAD231] px-6 py-4 text-black shadow-lg transition-all hover:brightness-105 active:translate-y-[4px] active:border-b-0"
-                  >
-                    <Users size={32} strokeWidth={1.5} className="text-black" />
-                    <span className="flex-1 pr-8 text-center text-[17px] font-black tracking-widest">
-                      女風求人情報
-                    </span>
-                  </Link>
-
-                  <a
-                    href="#"
-                    className="flex w-full items-center gap-4 rounded-lg bg-[#06C755] px-6 py-3 text-white shadow-md transition-all active:scale-95"
-                  >
-                    <div className="rounded-lg bg-white/20 p-2">
-                      <MessageCircle size={24} />
-                    </div>
-                    <div className="flex-1 text-center">
-                      <p className="mb-1 text-[13px] font-bold leading-none opacity-90">
-                        ラインで問い合わせる
-                      </p>
-                      <div className="flex items-center justify-center gap-1">
-                        <span className="rounded bg-white px-1.5 py-0.5 text-[9px] font-black text-[#06C755]">
-                          ID
+                  {/* Phone Section */}
+                  <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
+                    <div className="flex flex-col items-center">
+                      <div className="mb-4 flex items-center justify-center gap-4 text-[#D43D6F]">
+                        <div className="rounded-full bg-pink-50 p-3 ring-8 ring-pink-50/30">
+                          <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          >
+                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                          </svg>
+                        </div>
+                        <span className="text-4xl font-black tabular-nums tracking-tighter">
+                          03-6356-3860
                         </span>
-                        <span className="text-sm font-black tracking-tight">best.follows</span>
                       </div>
-                    </div>
-                  </a>
-
-                  <div className="space-y-3 rounded-lg border-2 border-[#3C8296]/30 bg-white p-4 shadow-md">
-                    <div className="flex items-center justify-center gap-3 text-[#3C8296]">
-                      <Phone size={24} />
-                      <span className="text-3xl font-black tracking-tighter">03-6356-3860</span>
-                    </div>
-                    <div className="flex flex-col items-center gap-1 text-[11px] font-bold text-gray-500">
-                      <p>電話受付: 12:00〜23:00</p>
-                      <p>営業時間: 12:00〜翌朝4時</p>
+                      <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
+                      <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
                     </div>
                   </div>
-                </section>
 
-                {/* バナー */}
-                <section className="pb-12 pt-4">
-                  <a
-                    href="#"
-                    className="group relative block aspect-[16/6] overflow-hidden rounded-2xl shadow-xl"
-                  >
-                    <img
-                      src="https://images.unsplash.com/photo-1549416878-b9ca35c2d47b?q=80&w=800&auto=format&fit=crop"
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                      alt="Special Banner"
-                    />
-                    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-[#4A2B2F]/90 via-[#4A2B2F]/20 to-transparent p-5">
-                      <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.3em] text-white opacity-90">
-                        Strawberry Boys Premium
-                      </p>
-                      <h3 className="text-lg font-black tracking-tight text-white drop-shadow-md">
-                        甘い誘惑を、今夜貴女に。
-                      </h3>
-                    </div>
-                  </a>
-                </section>
+                  {/* Special Banner */}
+                  <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
+                    <Link
+                      href="#recruit"
+                      onClick={closeMenu}
+                      className="group relative block aspect-[16/7]"
+                    >
+                      <img
+                        src="/福岡募集バナー.png"
+                        alt="Special Banner"
+                        className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                      />
+                      <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                          Strawberry Boys Premium
+                        </p>
+                        <h3 className="text-xl font-black leading-tight text-white">
+                          甘い誘惑を、今夜貴女に。
+                        </h3>
+                      </div>
+                    </Link>
+                  </div>
+                </div>
               </div>
             </div>
           </>,
