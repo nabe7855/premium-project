@@ -163,6 +163,7 @@ export interface FAQConfig {
 
 export interface FooterConfig {
   logoImageUrl: string;
+  logoLink?: string;
   menuButtons: { label: string; link: string }[];
   banners: { imageUrl: string; link: string }[];
   smallBanners: { imageUrl: string; link: string }[];
@@ -172,7 +173,7 @@ export interface FooterConfig {
     phone: string;
     businessHours: string;
   };
-  trustBadges: string[];
+  trustBadges: { imageUrl: string; link: string }[];
   copyright: string;
   isVisible: boolean;
 }
@@ -681,7 +682,8 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       businessHours:
         '24時間営業（受付 8:00〜23:00）\n※あくまでも23時までの受付になり、それ以降のお申込みは翌日に対応をさせて頂きます。\n年中無休',
     },
-    trustBadges: ['https://placehold.jp/150x150.png?text=TRUST%26SAFETY'],
+    trustBadges: [{ imageUrl: 'https://placehold.jp/150x150.png?text=TRUST%26SAFETY', link: '#' }],
+    logoLink: '#',
     copyright: 'Copyright © ストロベリーボーイズ. All Rights Reserved.',
     isVisible: true,
   },

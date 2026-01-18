@@ -1,4 +1,4 @@
-import { ImageIcon, Plus } from 'lucide-react';
+import { ImageIcon, Link2, Plus } from 'lucide-react';
 import React from 'react';
 
 import { FooterConfig } from '@/lib/store/storeTopConfig';
@@ -27,21 +27,48 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
     }
   };
 
+  const handleLinkUpdate = (key: string, index?: number) => {
+    if (!onUpdate) return;
+
+    const currentLink =
+      typeof index === 'number'
+        ? (config[key as keyof FooterConfig] as any)[index].link
+        : (config[key as keyof FooterConfig] as any);
+
+    const newLink = window.prompt('リンクURLを入力してください:', currentLink);
+
+    if (newLink !== null) {
+      if (typeof index === 'number') {
+        const newArray = [...(config[key as keyof FooterConfig] as any)];
+        newArray[index] = { ...newArray[index], link: newLink };
+        onUpdate('footer', key, newArray);
+      } else {
+        onUpdate('footer', key, newLink);
+      }
+    }
+  };
+
   return (
-    <footer id="footer" className="border-t border-pink-100 bg-white py-8 text-slate-800">
+    <footer id="footer" className="border-Pink-100 border-t bg-white py-8 text-slate-800">
       <div className="mx-auto max-w-[1000px] px-4">
         {/* Main Content Area */}
         <div className="flex flex-col gap-6 md:flex-row">
           {/* Left: Store Image Wrapper */}
           <div className="w-full flex-shrink-0 md:w-[240px]">
             <div className="group relative overflow-hidden rounded-lg border-[3px] border-pink-200 bg-white shadow-sm">
-              <img
-                src={config.logoImageUrl || '/placeholder-store.png'}
-                alt={config.shopInfo.name}
-                className="h-auto w-full"
-              />
+              <a
+                href={config.logoLink || '#'}
+                onClick={(e) => isEditing && e.preventDefault()}
+                className="block"
+              >
+                <img
+                  src={config.logoImageUrl || '/placeholder-store.png'}
+                  alt={config.shopInfo.name}
+                  className="h-auto w-full"
+                />
+              </a>
               {isEditing && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                   <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800 shadow-lg">
                     <ImageIcon className="h-5 w-5" />
                     <input
@@ -54,6 +81,12 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       }
                     />
                   </label>
+                  <button
+                    onClick={() => handleLinkUpdate('logoLink')}
+                    className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800 shadow-lg"
+                  >
+                    <Link2 className="h-5 w-5" />
+                  </button>
                 </div>
               )}
             </div>
@@ -113,21 +146,30 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             {/* Grid of buttons (12 buttons as in Image 2) */}
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               {config.menuButtons.map((btn, idx) => (
-                <a
-                  key={idx}
-                  href={btn.link}
-                  className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
-                >
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
+                <div key={idx} className="group relative">
+                  <a
+                    href={btn.link}
                     onClick={(e) => isEditing && e.preventDefault()}
-                    onBlur={(e) => handleButtonUpdate(idx, e.currentTarget.innerText)}
-                    className={isEditing ? 'cursor-text px-1 outline-none' : ''}
+                    className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
                   >
-                    {btn.label}
-                  </span>
-                </a>
+                    <span
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning={isEditing}
+                      onBlur={(e) => handleButtonUpdate(idx, e.currentTarget.innerText)}
+                      className={isEditing ? 'cursor-text px-1 outline-none' : ''}
+                    >
+                      {btn.label}
+                    </span>
+                  </a>
+                  {isEditing && (
+                    <button
+                      onClick={() => handleLinkUpdate('menuButtons', idx)}
+                      className="absolute -right-1 -top-1 z-10 hidden rounded-full bg-white p-1 text-slate-800 shadow-sm transition-opacity group-hover:block"
+                    >
+                      <Link2 className="h-3 w-3" />
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
 
@@ -135,13 +177,16 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             <div className="mt-6 space-y-3">
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 {config.banners.map((banner, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
-                  >
-                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                  <div key={idx} className="group relative">
+                    <a
+                      href={banner.link}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
+                    >
+                      <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                    </a>
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                         <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
                           <ImageIcon className="h-4 w-4" />
                           <input
@@ -154,6 +199,12 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                             }
                           />
                         </label>
+                        <button
+                          onClick={() => handleLinkUpdate('banners', idx)}
+                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                        >
+                          <Link2 className="h-4 w-4" />
+                        </button>
                       </div>
                     )}
                   </div>
@@ -165,13 +216,16 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row">
               <div className="grid flex-grow grid-cols-1 gap-2">
                 {config.smallBanners.map((banner, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative h-16 w-full max-w-[300px] overflow-hidden rounded bg-slate-100 shadow-sm"
-                  >
-                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                  <div key={idx} className="group relative w-full max-w-[300px]">
+                    <a
+                      href={banner.link}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block h-16 overflow-hidden rounded bg-slate-100 shadow-sm"
+                    >
+                      <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                    </a>
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                         <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
                           <ImageIcon className="h-4 w-4" />
                           <input
@@ -184,6 +238,12 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                             }
                           />
                         </label>
+                        <button
+                          onClick={() => handleLinkUpdate('smallBanners', idx)}
+                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                        >
+                          <Link2 className="h-4 w-4" />
+                        </button>
                       </div>
                     )}
                   </div>
@@ -193,13 +253,16 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {/* Trust Badges Area */}
               <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
                 {config.trustBadges.map((badge, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
-                  >
-                    <img src={badge} alt="Trust Badge" className="h-24 w-auto" />
+                  <div key={idx} className="group relative">
+                    <a
+                      href={badge.link}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
+                    >
+                      <img src={badge.imageUrl} alt="Trust Badge" className="h-24 w-auto" />
+                    </a>
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                         <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
                           <ImageIcon className="h-4 w-4" />
                           <input
@@ -212,6 +275,22 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                             }
                           />
                         </label>
+                        <button
+                          onClick={() => handleLinkUpdate('trustBadges', idx)}
+                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                        >
+                          <Link2 className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            const newBadges = [...config.trustBadges];
+                            newBadges.splice(idx, 1);
+                            onUpdate?.('footer', 'trustBadges', newBadges);
+                          }}
+                          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
+                        >
+                          ✕
+                        </button>
                       </div>
                     )}
                   </div>
@@ -221,7 +300,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     onClick={() =>
                       onUpdate?.('footer', 'trustBadges', [
                         ...config.trustBadges,
-                        'https://placehold.jp/100x120.png',
+                        { imageUrl: 'https://placehold.jp/100x120.png', link: '#' },
                       ])
                     }
                     className="flex h-24 w-20 items-center justify-center rounded border-2 border-dashed border-slate-200 text-slate-300 hover:border-slate-400 hover:text-slate-500"

@@ -200,11 +200,14 @@ export default function StoreTopManagement() {
         await saveStoreTopConfig(selectedStore, newConfig);
       } else if (section === 'footer' && key === 'trustBadges' && typeof index === 'number') {
         const newTrustBadges = [...config.footer.trustBadges];
-        const oldImageUrl = newTrustBadges[index];
+        const oldImageUrl = newTrustBadges[index]?.imageUrl;
         if (oldImageUrl && oldImageUrl.startsWith('http')) {
           await deleteStorageFile(oldImageUrl);
         }
-        newTrustBadges[index] = publicUrl;
+        newTrustBadges[index] = {
+          ...(newTrustBadges[index] || { link: '#' }),
+          imageUrl: publicUrl,
+        };
         const newConfig = {
           ...config,
           footer: { ...config.footer, trustBadges: newTrustBadges },
