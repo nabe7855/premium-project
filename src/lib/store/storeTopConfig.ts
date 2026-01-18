@@ -202,6 +202,16 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         imageUrl: '/福岡おすすめホテル一覧.png',
       },
       {
+        name: 'セラピスト一覧',
+        href: '#casts',
+        imageUrl: '/福岡セラピスト一覧.png',
+      },
+      {
+        name: '本日の出勤情報',
+        href: '#schedules',
+        imageUrl: '/福岡本日の出勤.png',
+      },
+      {
         name: '口コミ・レビュー',
         href: '#reviews',
         imageUrl: '/福岡セラピスト一覧.png',

@@ -342,12 +342,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
                   {/* Main Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                    {navLinks.slice(1, 5).map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
+                    {navLinks.slice(1, 7).map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
                   </div>
 
                   {/* Secondary Buttons */}
                   <div className="space-y-4 pt-4">
-                    {navLinks.slice(5).map((item, idx) => renderNavItem(item, idx + 5, 'full'))}
+                    {navLinks.slice(7).map((item, idx) => renderNavItem(item, idx + 7, 'full'))}
                   </div>
 
                   {/* Phone Section */}
