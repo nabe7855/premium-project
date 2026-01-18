@@ -2,6 +2,7 @@
 import CampaignSection from '../sections/CampaignSection';
 import CastSection from '../sections/CastSection';
 import ConceptSection from '../sections/ConceptSection';
+import FAQSection from '../sections/FAQSection';
 import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
 
@@ -84,6 +85,9 @@ export default function FukuokaPage({
       )}
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
         <FlowSection config={safeConfig?.flow} isEditing={isEditing} onUpdate={onUpdate} />
+      )}
+      {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
+        <FAQSection config={safeConfig?.faq} isEditing={isEditing} onUpdate={onUpdate} />
       )}
       <Footer
         config={safeConfig?.footer}
