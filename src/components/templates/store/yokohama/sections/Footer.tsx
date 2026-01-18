@@ -1,114 +1,77 @@
-import React from 'react';
-
 import { FooterConfig } from '@/lib/store/storeTopConfig';
+import React from 'react';
 
 interface FooterProps {
   config?: FooterConfig;
-  isEditing?: boolean;
-  onUpdate?: (section: string, key: string, value: any) => void;
-  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
 const Footer: React.FC<FooterProps> = ({ config }) => {
   if (!config) return null;
 
   return (
-    <footer className="border-t border-pink-100 bg-white py-8 text-slate-800">
-      <div className="mx-auto max-w-[1000px] px-4">
-        {/* Main Content Area */}
-        <div className="flex flex-col gap-6 md:flex-row">
-          {/* Left: Store Image Wrapper */}
-          <div className="w-full flex-shrink-0 md:w-[240px]">
-            <div className="group relative overflow-hidden rounded-lg border-[3px] border-pink-200 bg-white shadow-sm">
-              <img
-                src={config.logoImageUrl || '/placeholder-store.png'}
-                alt={config.shopInfo.name}
-                className="h-auto w-full"
-              />
+    <footer id="footer" className="bg-slate-900 py-12 text-slate-400 md:py-20">
+      <div className="mx-auto max-w-7xl px-4 md:px-6">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+          <div className="col-span-1 lg:col-span-2">
+            <div className="mb-6 flex items-center gap-3">
+              {config.logoImageUrl ? (
+                <img src={config.logoImageUrl} alt="Logo" className="h-12 w-auto object-contain" />
+              ) : (
+                <span className="font-serif text-2xl font-bold tracking-tighter text-white">
+                  {config.shopInfo.name}
+                </span>
+              )}
             </div>
-
-            {/* Shop Info Box Below Logo (Image 2 style) */}
-            <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
-              <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
-                <span>{config.shopInfo.name}</span>
-              </div>
-              <div className="space-y-2 bg-white p-3 text-[11px] leading-relaxed">
-                <div className="flex gap-2">
-                  <span className="w-12 flex-shrink-0 font-bold">Address</span>
-                  <span>{config.shopInfo.address}</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="w-12 flex-shrink-0 font-bold">Phone</span>
-                  <span className="font-bold">{config.shopInfo.phone}</span>
-                </div>
-                <div className="flex gap-2">
-                  <span className="w-12 flex-shrink-0 font-bold">Open-Close</span>
-                  <span className="whitespace-pre-line">{config.shopInfo.businessHours}</span>
-                </div>
-              </div>
+            <div className="space-y-4 text-sm leading-relaxed">
+              <p>{config.shopInfo.address}</p>
+              <p className="text-xl font-bold text-white">{config.shopInfo.phone}</p>
+              <p>{config.shopInfo.businessHours}</p>
             </div>
           </div>
 
-          {/* Right: Buttons and Banners */}
-          <div className="flex-grow">
-            {/* Grid of buttons (12 buttons as in Image 2) */}
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+          <div>
+            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-white">Menu</h4>
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
               {config.menuButtons.map((btn, idx) => (
-                <a
-                  key={idx}
-                  href={btn.link}
-                  className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
-                >
-                  {btn.label}
-                </a>
+                <li key={idx}>
+                  <a href={btn.link} className="transition-colors hover:text-white">
+                    {btn.label}
+                  </a>
+                </li>
               ))}
-            </div>
+            </ul>
+          </div>
 
-            {/* Middle Banners (3 Large ones) */}
-            <div className="mt-6 space-y-3">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {config.banners.map((banner, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
-                  >
-                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Lower Banners and Trust Badges Layer */}
-            <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row">
-              <div className="grid flex-grow grid-cols-1 gap-2">
-                {config.smallBanners.map((banner, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative h-16 w-full max-w-[300px] overflow-hidden rounded bg-slate-100 shadow-sm"
-                  >
-                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
-                  </div>
-                ))}
-              </div>
-
-              {/* Trust Badges Area */}
-              <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
-                {config.trustBadges.map((badge, idx) => (
-                  <div
-                    key={idx}
-                    className="group relative flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
-                  >
-                    <img src={badge} alt="Trust Badge" className="h-24 w-auto" />
-                  </div>
-                ))}
-              </div>
+          <div>
+            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-white">
+              Information
+            </h4>
+            <div className="flex flex-wrap gap-2">
+              {config.trustBadges.map((badge, idx) => (
+                <img
+                  key={idx}
+                  src={badge}
+                  alt="Badge"
+                  className="h-16 w-auto rounded bg-white/10 p-1"
+                />
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Bottom Copyright */}
-        <div className="mt-12 border-t border-slate-100 pt-6 text-center">
-          <p className="text-[10px] tracking-widest text-[#666]">{config.copyright}</p>
+        <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-slate-800 pt-8 md:flex-row">
+          <div className="flex gap-4">
+            {config.banners.map((banner, idx) => (
+              <a
+                key={idx}
+                href={banner.link}
+                className="overflow-hidden rounded shadow-lg transition-transform hover:scale-105"
+              >
+                <img src={banner.imageUrl} alt="" className="h-10 w-auto" />
+              </a>
+            ))}
+          </div>
+          <p className="text-xs tracking-widest">{config.copyright}</p>
         </div>
       </div>
     </footer>

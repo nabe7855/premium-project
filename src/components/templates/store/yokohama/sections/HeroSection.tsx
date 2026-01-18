@@ -58,7 +58,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({ config }) => {
 
   return (
     <section
-      id="home"
+      id="hero"
       className="relative h-[100dvh] min-h-[500px] w-full overflow-hidden"
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}

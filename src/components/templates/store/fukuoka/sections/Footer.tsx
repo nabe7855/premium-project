@@ -28,7 +28,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   };
 
   return (
-    <footer className="border-t border-pink-100 bg-white py-8 text-slate-800">
+    <footer id="footer" className="border-t border-pink-100 bg-white py-8 text-slate-800">
       <div className="mx-auto max-w-[1000px] px-4">
         {/* Main Content Area */}
         <div className="flex flex-col gap-6 md:flex-row">

@@ -1,0 +1,3 @@
+﻿src/components/templates/store/fukuoka/sections/CastSection.tsx(59,3): error TS6133: 'onUpdate' is declared but its value is never read.
+src/components/templates/store/fukuoka/sections/CastSection.tsx(60,3): error TS6133: 'onImageUpload' is declared but its value is never read.
+src/components/templates/store/fukuoka/sections/NewcomerSection.tsx(15,3): error TS6133: 'onImageUpload' is declared but its value is never read.

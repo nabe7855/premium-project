@@ -232,8 +232,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
   return (
     <header
+      id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-transparent py-4'
+        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
@@ -403,11 +404,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </svg>
                         </div>
                         <span className="text-4xl font-black tabular-nums tracking-tighter">
-                          03-6356-3860
+                          {config.phoneNumber || '03-6356-3860'}
                         </span>
                       </div>
-                      <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
-                      <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
+                      <p className="text-sm font-bold text-gray-400">
+                        電話受付: {config.receptionHours || '12:00〜23:00'}
+                      </p>
+                      <p className="text-sm font-bold text-gray-400">
+                        営業時間: {config.businessHours || '12:00〜翌朝4時'}
+                      </p>
                     </div>
                   </div>
 

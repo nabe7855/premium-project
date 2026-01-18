@@ -1,3 +1,4 @@
+import { deleteStorageFile } from '@/actions/storage';
 import Card from '@/components/admin/ui/Card';
 import { supabase } from '@/lib/supabaseClient';
 import { Store } from '@/types/dashboard';
@@ -206,8 +207,18 @@ export default function StoreManagement() {
     if (!confirm('本当に削除しますか？この操作は取り消せません。')) return;
 
     try {
+      // 1. Get the image URL before deleting
+      const storeToDelete = stores.find((s) => s.id === id);
+      const imageUrl = storeToDelete?.photoUrl;
+
       const { error } = await supabase.from('stores').delete().eq('id', id);
       if (error) throw error;
+
+      // 2. Delete image from storage if exists
+      if (imageUrl && imageUrl.startsWith('http')) {
+        await deleteStorageFile(imageUrl);
+      }
+
       setStores((prev) => prev.filter((s) => s.id !== id));
       alert('店舗を削除しました');
     } catch (err) {
@@ -224,6 +235,10 @@ export default function StoreManagement() {
     try {
       let imageUrl = editingStore.photoUrl;
       if (selectedFile) {
+        // Old image cleanup
+        if (imageUrl && imageUrl.startsWith('http')) {
+          await deleteStorageFile(imageUrl);
+        }
         imageUrl = await handleFileUpload(selectedFile);
       }
 

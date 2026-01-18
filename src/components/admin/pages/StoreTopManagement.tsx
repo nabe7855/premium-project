@@ -14,7 +14,9 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
+import { deleteStorageFile } from '@/actions/storage';
 import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
+import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
@@ -34,6 +36,20 @@ const SECTION_LABELS: Record<string, string> = {
   faq: 'よくあるご質問',
   footer: 'フッター',
 };
+
+const SECTION_ORDER = [
+  'header',
+  'hero',
+  'concept',
+  'campaign',
+  'diary',
+  'cast',
+  'newcomer',
+  'price',
+  'flow',
+  'faq',
+  'footer',
+];
 
 export default function StoreTopManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
@@ -103,6 +119,14 @@ export default function StoreTopManagement() {
     }));
   };
 
+  // セクションへスクロール
+  const scrollToSection = (sectionId: string) => {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
   // 画像アップロード処理
   const handleImageUpload = async (section: string, file: File, index?: number, key?: string) => {
     if (!selectedStore) return;
@@ -135,6 +159,11 @@ export default function StoreTopManagement() {
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
       } else if (section === 'newcomer' && typeof index === 'number') {
+        const oldImageUrl = config.newcomer.items[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+
         const newItems = [...config.newcomer.items];
         newItems[index] = { ...newItems[index], imageUrl: publicUrl };
         const newConfig = {
@@ -143,8 +172,52 @@ export default function StoreTopManagement() {
         };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
+        const newBanners = [...config.footer.banners];
+        const oldImageUrl = newBanners[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newBanners[index] = { ...newBanners[index], imageUrl: publicUrl };
+        const newConfig = {
+          ...config,
+          footer: { ...config.footer, banners: newBanners },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'footer' && key === 'smallBanners' && typeof index === 'number') {
+        const newSmallBanners = [...config.footer.smallBanners];
+        const oldImageUrl = newSmallBanners[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newSmallBanners[index] = { ...newSmallBanners[index], imageUrl: publicUrl };
+        const newConfig = {
+          ...config,
+          footer: { ...config.footer, smallBanners: newSmallBanners },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'footer' && key === 'trustBadges' && typeof index === 'number') {
+        const newTrustBadges = [...config.footer.trustBadges];
+        const oldImageUrl = newTrustBadges[index];
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newTrustBadges[index] = publicUrl;
+        const newConfig = {
+          ...config,
+          footer: { ...config.footer, trustBadges: newTrustBadges },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
       } else {
         const sectionKey = key || 'imageUrl';
+        const oldImageUrl = (config[section as keyof StoreTopPageConfig] as any)?.[sectionKey];
+        if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+
         const newConfig = {
           ...config,
           [section]: { ...config[section as keyof StoreTopPageConfig], [sectionKey]: publicUrl },
@@ -234,7 +307,7 @@ export default function StoreTopManagement() {
           </h2>
 
           <div className="space-y-2">
-            {Object.keys(config).map((sectionId) => {
+            {SECTION_ORDER.map((sectionId) => {
               const label = SECTION_LABELS[sectionId] || sectionId;
               const sectionData = (config as any)[sectionId];
 
@@ -245,7 +318,12 @@ export default function StoreTopManagement() {
                   key={sectionId}
                   className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3"
                 >
-                  <span className="text-sm font-medium text-gray-200">{label}</span>
+                  <button
+                    onClick={() => scrollToSection(sectionId)}
+                    className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
+                  >
+                    {label}
+                  </button>
                   <Switch
                     checked={sectionData.isVisible}
                     onCheckedChange={() => toggleVisibility(sectionId as any)}
@@ -267,12 +345,21 @@ export default function StoreTopManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            <FukuokaPage
-              config={config}
-              isEditing={!isPreviewMode}
-              onUpdate={handleUpdate}
-              onImageUpload={handleImageUpload}
-            />
+            {getAllStores().find((s) => s.slug === selectedStore)?.template === 'yokohama' ? (
+              <YokohamaPage
+                config={config}
+                isEditing={!isPreviewMode}
+                onUpdate={handleUpdate}
+                onImageUpload={handleImageUpload}
+              />
+            ) : (
+              <FukuokaPage
+                config={config}
+                isEditing={!isPreviewMode}
+                onUpdate={handleUpdate}
+                onImageUpload={handleImageUpload}
+              />
+            )}
           </div>
 
           {/* Mobile switcher mockup */}

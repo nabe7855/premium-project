@@ -65,6 +65,20 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.click();
   };
 
+  const triggerLogoUpload = () => {
+    if (!isEditing || !onImageUpload) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        onImageUpload('header', file, 0, 'logoUrl');
+      }
+    };
+    input.click();
+  };
+
   const BackgroundDecoration = () => (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <div
@@ -219,23 +233,43 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   return (
     <header
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-transparent py-4'
+        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link
           href="/"
-          className="group flex items-center gap-2 transition-transform hover:scale-[1.02]"
+          className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
         >
-          <span className="text-3xl drop-shadow-sm filter">🍓</span>
-          <span
-            className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
-          >
-            {config.logoText}
-          </span>
+          {config.logoUrl ? (
+            <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" />
+          ) : (
+            <>
+              <span className="text-3xl drop-shadow-sm filter">🍓</span>
+              <span
+                className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
+              >
+                {config.logoText}
+              </span>
+            </>
+          )}
+
+          {isEditing && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerLogoUpload();
+              }}
+              className="absolute -right-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-black/40 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              <Camera size={16} />
+            </button>
+          )}
+
           <div className="ml-2 flex items-center gap-2 border-l border-pink-100 pl-3">
             <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Premium

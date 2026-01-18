@@ -1,5 +1,6 @@
 'use client';
 
+import { deleteStorageFile } from '@/actions/storage';
 import { supabase } from '@/lib/supabaseClient';
 import {
   Edit2,
@@ -111,7 +112,9 @@ export default function BannerManagementPage() {
     console.log('File:', file.name, file.type, file.size);
     console.log('-------------------------');
 
-    const { error: uploadError } = await supabase.storage.from('banners').upload(filePath, file);
+    const { error: uploadError } = await supabase.storage
+      .from('banners')
+      .upload(filePath, file, { upsert: false });
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError);
@@ -120,22 +123,6 @@ export default function BannerManagementPage() {
 
     const { data } = supabase.storage.from('banners').getPublicUrl(filePath);
     return data.publicUrl;
-  };
-
-  const deleteStorageImage = async (imageUrl: string) => {
-    try {
-      // Extract file path from URL
-      // Expected URL format: .../storage/v1/object/public/banners/filename.jpg
-      const urlObj = new URL(imageUrl);
-      const pathParts = urlObj.pathname.split('/banners/');
-      if (pathParts.length > 1) {
-        const filePath = pathParts[1]; // "filename.jpg"
-        const { error } = await supabase.storage.from('banners').remove([filePath]);
-        if (error) console.error('Error deleting storage image:', error);
-      }
-    } catch (e) {
-      console.error('Error parsing image URL for deletion:', e);
-    }
   };
 
   const handleSave = async () => {
@@ -158,7 +145,7 @@ export default function BannerManagementPage() {
 
         // Delete old image if updating and image changed
         if (editingBanner && editingBanner.image_url && editingBanner.image_url !== uploadedUrl) {
-          await deleteStorageImage(editingBanner.image_url);
+          await deleteStorageFile(editingBanner.image_url);
         }
 
         finalImageUrl = uploadedUrl;
@@ -204,7 +191,7 @@ export default function BannerManagementPage() {
     try {
       // 1. Delete image from storage
       if (banner.image_url) {
-        await deleteStorageImage(banner.image_url);
+        await deleteStorageFile(banner.image_url);
       }
 
       // 2. Delete record

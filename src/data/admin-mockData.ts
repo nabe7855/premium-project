@@ -211,7 +211,7 @@ export const mockCasts: Cast[] = [
     storeIds: ['store-1', 'store-2'],
     storePriorities: {},
     status: '在籍中',
-    storeStatus: '店長おすすめ',
+    storeStatuses: ['店長おすすめ'],
     tags: ['癒し系', '聞き上手', 'お酒好き'],
     photoUrl: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80',
     managerComment:
@@ -232,7 +232,7 @@ export const mockCasts: Cast[] = [
     storeIds: ['store-3'],
     storePriorities: {},
     status: '在籍中',
-    storeStatus: 'レギュラー',
+    storeStatuses: ['レギュラー'],
     tags: ['クールビューティー', 'ミステリアス', 'ワイン好き'],
     photoUrl: 'https://images.unsplash.com/photo-1619946794135-5bc917a27793?w=100&q=80',
     managerComment:
@@ -253,7 +253,7 @@ export const mockCasts: Cast[] = [
     storeIds: ['store-2'],
     storePriorities: {},
     status: '在籍中',
-    storeStatus: '新人',
+    storeStatuses: ['新人'],
     tags: ['元気', '妹キャラ', 'アニメ好き'],
     photoUrl: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&q=80',
     managerComment:
@@ -274,7 +274,7 @@ export const mockCasts: Cast[] = [
     storeIds: ['store-1', 'store-4'],
     storePriorities: {},
     status: '在籍中',
-    storeStatus: 'レギュラー',
+    storeStatuses: ['レギュラー'],
     tags: ['お姉さん系', '包容力', '聞き上手'],
     photoUrl: 'https://images.unsplash.com/photo-1557053910-d9eadeed1c58?w=100&q=80',
     managerComment:
@@ -295,7 +295,7 @@ export const mockCasts: Cast[] = [
     storeIds: ['store-4'],
     storePriorities: {},
     status: '離籍',
-    storeStatus: 'レギュラー',
+    storeStatuses: ['レギュラー'],
     tags: ['小悪魔', 'ミステリアス', '刺激的'],
     photoUrl: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&q=80',
     managerComment:
@@ -316,10 +316,7 @@ export const mockCasts: Cast[] = [
     storeIds: [`store-${(i % 4) + 1}`],
     storePriorities: {},
     status: i % 5 === 0 ? ('離籍' as const) : ('在籍中' as const),
-    storeStatus: ['レギュラー', '新人', '店長おすすめ'][i % 3] as
-      | 'レギュラー'
-      | '新人'
-      | '店長おすすめ',
+    storeStatuses: [['レギュラー', '新人', '店長おすすめ'][i % 3]],
     tags: ['サンプル', 'テスト'],
     photoUrl: `https://i.pravatar.cc/100?u=cast${i + 6}`,
     managerComment: 'これはサンプルキャストのコメントです。',

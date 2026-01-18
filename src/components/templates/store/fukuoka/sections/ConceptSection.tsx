@@ -100,7 +100,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   };
 
   return (
-    <section className="mx-auto max-w-7xl overflow-hidden px-6 py-16 md:py-24">
+    <section id="concept" className="mx-auto max-w-7xl overflow-hidden px-6 py-16 md:py-24">
       <div className="grid grid-cols-1 items-center gap-12 md:gap-20 lg:grid-cols-2">
         {/* Image Side */}
         <div className="relative order-2 h-[400px] md:h-[600px] lg:order-1">

@@ -1,5 +1,4 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
-import { Camera, Plus, Trash2 } from 'lucide-react';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -13,47 +12,11 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
   config,
   isEditing,
   onUpdate,
-  onImageUpload,
+  onImageUpload: _onImageUpload,
 }) => {
   if (!config || (!config.isVisible && !isEditing)) return null;
 
   const items = config.items || [];
-
-  const handleItemUpdate = (index: number, key: string, value: any) => {
-    if (onUpdate) {
-      const newItems = [...items];
-      newItems[index] = { ...newItems[index], [key]: value };
-      onUpdate('newcomer', 'items', newItems);
-    }
-  };
-
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file && onImageUpload) {
-      onImageUpload('newcomer', file, index, 'imageUrl');
-    }
-  };
-
-  const addItem = () => {
-    if (onUpdate) {
-      const newId = items.length > 0 ? Math.max(...items.map((i: any) => parseInt(i.id))) + 1 : 1;
-      const newItem = {
-        id: newId.toString(),
-        name: 'New Cast',
-        age: '20代',
-        height: '160',
-        imageUrl: items[0]?.imageUrl || '',
-      };
-      onUpdate('newcomer', 'items', [...items, newItem]);
-    }
-  };
-
-  const removeItem = (index: number) => {
-    if (onUpdate) {
-      const newItems = items.filter((_, i) => i !== index);
-      onUpdate('newcomer', 'items', newItems);
-    }
-  };
 
   return (
     <section
@@ -83,16 +46,17 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
 
         {/* Horizontal Slider / Grid */}
         <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
-          {items.map((item, idx) => (
+          {items.map((item) => (
             <div key={item.id} className="group relative min-w-[280px] snap-center md:min-w-0">
-              {isEditing && (
+              {/* Manual Removal Disabled for dynamic Newcomer section */}
+              {/* isEditing && (
                 <button
                   onClick={() => removeItem(idx)}
                   className="absolute right-4 top-4 z-50 rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110"
                 >
                   <Trash2 size={16} />
                 </button>
-              )}
+              ) */}
 
               <div className="relative mb-4">
                 <div className="relative aspect-[3/4] overflow-hidden border-[3px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
@@ -102,7 +66,8 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
 
-                  {isEditing && (
+                  {/* Manual Image Change Disabled for dynamic Newcomer section */}
+                  {/* isEditing && (
                     <label className="absolute inset-0 z-40 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
                       <Camera size={40} className="mb-2" />
                       <span className="text-xs font-bold">画像を変更</span>
@@ -113,7 +78,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                         onChange={(e) => handleImageChange(e, idx)}
                       />
                     </label>
-                  )}
+                  ) */}
 
                   {/* "New Face" Badge */}
                   <div className="absolute right-4 top-4 flex h-14 w-14 flex-col items-center justify-center rounded-full border-2 border-[#C4A97A] bg-white/95 text-center shadow-sm">
@@ -125,39 +90,23 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
 
               <div className="px-1 text-left">
                 <h3
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleItemUpdate(idx, 'name', e.currentTarget.innerText)}
-                  className={`mb-1 font-serif text-xl font-bold tracking-widest text-slate-800 outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
+                  className={`mb-1 font-serif text-xl font-bold tracking-widest text-slate-800 outline-none`}
                 >
                   {item.name}
                 </h3>
                 <div className="flex gap-1 font-serif text-sm tracking-widest text-[#9C7E4F]">
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleItemUpdate(idx, 'age', e.currentTarget.innerText)}
-                    className={`outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
-                  >
-                    {item.age}
-                  </span>
+                  <span className="outline-none">{item.age}</span>
                   <span>/</span>
                   <span className="text-[#C4A97A]">T</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleItemUpdate(idx, 'height', e.currentTarget.innerText)}
-                    className={`outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
-                  >
-                    {item.height}
-                  </span>
-                  <span>cm</span>
+                  <span className="tracking-tighter outline-none">{item.height}</span>
+                  <span className="ml-[-2px]">cm</span>
                 </div>
               </div>
             </div>
           ))}
 
-          {isEditing && (
+          {/* Manual Addition Disabled for dynamic Newcomer section */}
+          {/* isEditing && (
             <button
               onClick={addItem}
               className="flex min-h-[350px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#C4A97A] bg-white/50 p-8 text-[#9C7E4F] transition-all hover:bg-neutral-50"
@@ -165,7 +114,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
               <Plus size={40} className="mb-2" />
               <span className="text-xs font-bold">新人を追加</span>
             </button>
-          )}
+          ) */}
         </div>
       </div>
     </section>

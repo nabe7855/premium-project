@@ -13,26 +13,32 @@ export async function uploadStoreTopImage(
   file: File,
 ): Promise<string | null> {
   const fileExt = file.name.split('.').pop();
+  // 常に新規ファイルとして扱うため、秒単位まで含めたタイムスタンプを使用
   const timestamp = Date.now();
   const fileName = `${section}_${timestamp}.${fileExt}`;
   const filePath = `store-top/${storeSlug}/${fileName}`;
 
-  // 'banners' バケットが公開設定、かつ存在が確認されているためこれを使用
+  // 'banners' バケットを使用
   const bucketName = 'banners';
-  console.log(`📤 Uploading store top image to bucket: ${bucketName}, path: ${filePath}`);
+  console.log(`📤 [uploadStoreTopImage] Uploading to bucket: ${bucketName}, path: ${filePath}`);
 
+  // upsertをfalseにすることで、既存ファイルの更新権限(UPDATE)ではなく、
+  // 公開されている追加権限(INSERT/SELECT)だけで動作するようにする
   const { error: uploadError } = await supabase.storage
     .from(bucketName)
-    .upload(filePath, file, { upsert: true });
+    .upload(filePath, file, { upsert: false });
 
   if (uploadError) {
-    console.error('❌ Supabase upload error detail:', JSON.stringify(uploadError, null, 2));
+    console.error(
+      '❌ [uploadStoreTopImage] Supabase upload error:',
+      JSON.stringify(uploadError, null, 2),
+    );
     return null;
   }
 
   // 公開URLを取得
   const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
-  console.log('✅ Upload success. Public URL:', data.publicUrl);
+  console.log('✅ [uploadStoreTopImage] Upload success. Public URL:', data.publicUrl);
 
   return data.publicUrl;
 }
@@ -44,33 +50,44 @@ export async function uploadStoreTopImage(
  */
 export async function deleteStoreTopImage(imageUrl: string): Promise<boolean> {
   try {
+    if (!imageUrl || !imageUrl.startsWith('http')) {
+      return true; // 削除不要なURL
+    }
+
     // URLからファイルパスを抽出
     const url = new URL(imageUrl);
     const pathParts = url.pathname.split('/');
 
-    // 'banners' バケット内のパスを抽出
-    const bucketIndex = pathParts.findIndex((part) => part === 'banners');
+    // バケット名 ('banners') を探し、その後のパスを結合する
+    const bucketName = 'banners';
+    const bucketIndex = pathParts.findIndex((part) => part === bucketName);
+
     if (bucketIndex === -1) {
-      console.error('❌ Invalid image URL format:', imageUrl);
-      return false;
+      console.warn(
+        '⚠️ [deleteStoreTopImage] Bucket not found in URL, skipping storage deletion:',
+        imageUrl,
+      );
+      return true;
     }
 
     const filePath = pathParts.slice(bucketIndex + 1).join('/');
-    const bucketName = 'banners';
 
-    console.log(`🗑️ Deleting image from bucket: ${bucketName}, path: ${filePath}`);
+    console.log(`🗑️ [deleteStoreTopImage] Deleting from bucket: ${bucketName}, path: ${filePath}`);
 
     const { error } = await supabase.storage.from(bucketName).remove([filePath]);
 
     if (error) {
-      console.error('❌ Supabase delete error:', JSON.stringify(error, null, 2));
+      console.error(
+        '❌ [deleteStoreTopImage] Supabase delete error:',
+        JSON.stringify(error, null, 2),
+      );
       return false;
     }
 
-    console.log('✅ Image deleted successfully');
+    console.log('✅ [deleteStoreTopImage] Image deleted successfully');
     return true;
   } catch (error) {
-    console.error('❌ Error deleting image:', error);
+    console.error('❌ [deleteStoreTopImage] Unexpected error:', error);
     return false;
   }
 }

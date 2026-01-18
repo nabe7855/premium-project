@@ -27,7 +27,33 @@ export async function getStoreTopConfig(storeSlug: string) {
     }
 
     // Prisma の Json 型を StoreTopPageConfig にキャスト
-    return { success: true, config: config.config as any };
+    const finalConfig = config.config as any;
+
+    // 🆕 新人キャストを動的に取得して上書き
+    try {
+      const { getCastsByStore } = await import('@/lib/getCastsByStore');
+      const allCasts = await getCastsByStore(storeSlug);
+      const newcomers = allCasts
+        .filter((c) => c.isNewcomer)
+        .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+
+      if (finalConfig.newcomer) {
+        finalConfig.newcomer.items = newcomers.map((c) => ({
+          id: c.id,
+          name: c.name,
+          age: c.age ? `${Math.floor(c.age / 10) * 10}代` : '20代',
+          height: c.height?.toString() || '170',
+          imageUrl: c.mainImageUrl || c.imageUrl || '',
+        }));
+
+        // 見出しの人数も動的に更新
+        finalConfig.newcomer.heading = `新人セラピスト(${newcomers.length}名)`;
+      }
+    } catch (e) {
+      console.error('Error fetching dynamic newcomers:', e);
+    }
+
+    return { success: true, config: finalConfig };
   } catch (error) {
     console.error('Unexpected error fetching store top config:', error);
     return { success: false, error: 'Unexpected error occurred' };

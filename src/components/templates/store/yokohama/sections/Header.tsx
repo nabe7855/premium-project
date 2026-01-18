@@ -65,6 +65,20 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.click();
   };
 
+  const triggerLogoUpload = () => {
+    if (!isEditing || !onImageUpload) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        onImageUpload('header', file, 0, 'logoUrl');
+      }
+    };
+    input.click();
+  };
+
   const BackgroundDecoration = () => (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <div
@@ -218,24 +232,45 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
   return (
     <header
+      id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-transparent py-4'
+        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
         <Link
           href="/"
-          className="group flex items-center gap-2 transition-transform hover:scale-[1.02]"
+          className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
         >
-          <span className="text-3xl drop-shadow-sm filter">🍓</span>
-          <span
-            className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
-          >
-            {config.logoText}
-          </span>
+          {config.logoUrl ? (
+            <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" />
+          ) : (
+            <>
+              <span className="text-3xl drop-shadow-sm filter">🍓</span>
+              <span
+                className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
+              >
+                {config.logoText}
+              </span>
+            </>
+          )}
+
+          {isEditing && (
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerLogoUpload();
+              }}
+              className="absolute -right-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-black/40 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+            >
+              <Camera size={16} />
+            </button>
+          )}
+
           <div className="ml-2 flex items-center gap-2 border-l border-pink-100 pl-3">
             <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
               Premium
@@ -369,32 +404,36 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </svg>
                         </div>
                         <span className="text-4xl font-black tabular-nums tracking-tighter">
-                          03-6356-3860
+                          {config.phoneNumber || '03-6356-3860'}
                         </span>
                       </div>
-                      <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
-                      <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
+                      <p className="text-sm font-bold text-gray-400">
+                        電話受付: {config.receptionHours || '12:00〜23:00'}
+                      </p>
+                      <p className="text-sm font-bold text-gray-400">
+                        営業時間: {config.businessHours || '12:00〜翌朝4時'}
+                      </p>
                     </div>
                   </div>
 
                   {/* Special Banner */}
                   <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
                     <Link
-                      href="#recruit"
+                      href={config.specialBanner?.link || '#recruit'}
                       onClick={closeMenu}
                       className="group relative block aspect-[16/7]"
                     >
                       <img
-                        src="/福岡募集バナー.png"
+                        src={config.specialBanner?.imageUrl || '/福岡募集バナー.png'}
                         alt="Special Banner"
                         className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
                         <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                          Strawberry Boys Premium
+                          {config.specialBanner?.subHeading || 'Strawberry Boys Premium'}
                         </p>
                         <h3 className="text-xl font-black leading-tight text-white">
-                          甘い誘惑を、今夜貴女に。
+                          {config.specialBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                         </h3>
                       </div>
                     </Link>

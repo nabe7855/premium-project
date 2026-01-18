@@ -14,11 +14,12 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
+import { deleteStorageFile } from '@/actions/storage';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
-import { deleteStoreTopImage, uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
+import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
 export default function HeaderManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
@@ -116,15 +117,25 @@ export default function HeaderManagement() {
           // 古いロゴを削除
           const oldImageUrl = config.header.logoUrl;
           if (oldImageUrl && oldImageUrl.startsWith('http')) {
-            console.log('Deleting old logo:', oldImageUrl);
-            await deleteStoreTopImage(oldImageUrl);
+            console.log('Deleting old logo via server action:', oldImageUrl);
+            const deleteResult = await deleteStorageFile(oldImageUrl);
+            if (!deleteResult.success) {
+              console.warn('⚠️ Old logo deletion failed:', deleteResult.error);
+              // アップロード自体は成功しているので、継続するが警告を出す
+              toast.error('古い画像の削除に失敗しました', { id: toastId });
+            }
           }
           newHeader.logoUrl = publicUrl;
         } else if (key === 'navLinks' && typeof index === 'number') {
           // 古い画像を削除
           const oldImageUrl = config.header.navLinks[index]?.imageUrl;
           if (oldImageUrl && oldImageUrl.startsWith('http')) {
-            await deleteStoreTopImage(oldImageUrl);
+            console.log('Deleting old nav link image via server action:', oldImageUrl);
+            const deleteResult = await deleteStorageFile(oldImageUrl);
+            if (!deleteResult.success) {
+              console.warn('⚠️ Nav link image deletion failed:', deleteResult.error);
+              toast.error('古いナビ画像の削除に失敗しました', { id: toastId });
+            }
           }
 
           const newNavLinks = [...config.header.navLinks];
@@ -139,7 +150,11 @@ export default function HeaderManagement() {
             !oldImageUrl.includes('placehold') &&
             !oldImageUrl.includes('福岡募集バナー')
           ) {
-            await deleteStoreTopImage(oldImageUrl);
+            const deleteResult = await deleteStorageFile(oldImageUrl);
+            if (!deleteResult.success) {
+              console.warn('⚠️ Special banner deletion failed:', deleteResult.error);
+              toast.error('古いバナー画像の削除に失敗しました', { id: toastId });
+            }
           }
 
           newHeader.specialBanner = {
@@ -174,8 +189,8 @@ export default function HeaderManagement() {
 
     const toastId = toast.loading('画像を削除中...');
     try {
-      const success = await deleteStoreTopImage(imageUrl);
-      if (success) {
+      const deleteResult = await deleteStorageFile(imageUrl);
+      if (deleteResult.success) {
         const newNavLinks = [...config.header.navLinks];
         newNavLinks[index] = { ...newNavLinks[index], imageUrl: '' };
         const newConfig = {
@@ -186,7 +201,7 @@ export default function HeaderManagement() {
         await saveStoreTopConfig(selectedStore, newConfig);
         toast.success('画像を削除しました', { id: toastId });
       } else {
-        toast.error('画像の削除に失敗しました', { id: toastId });
+        toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, { id: toastId });
       }
     } catch (error) {
       console.error('Image delete failed:', error);
@@ -204,7 +219,11 @@ export default function HeaderManagement() {
     const toastId = toast.loading('画像を削除中...');
     try {
       if (imageUrl.startsWith('http')) {
-        await deleteStoreTopImage(imageUrl);
+        const deleteResult = await deleteStorageFile(imageUrl);
+        if (!deleteResult.success) {
+          toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, { id: toastId });
+          return;
+        }
       }
 
       const newConfig = {
@@ -235,7 +254,11 @@ export default function HeaderManagement() {
     try {
       // httpで始まる場合のみ削除を試みる
       if (imageUrl.startsWith('http')) {
-        await deleteStoreTopImage(imageUrl);
+        const deleteResult = await deleteStorageFile(imageUrl);
+        if (!deleteResult.success) {
+          toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, { id: toastId });
+          return;
+        }
       }
 
       const newConfig = {
