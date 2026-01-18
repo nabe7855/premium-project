@@ -22,7 +22,7 @@ export interface Cast {
   storeIds: string[];
   storePriorities: Record<string, number>; // Added to track rank per store
   status: '在籍中' | '離籍';
-  storeStatus: '新人' | '店長おすすめ' | 'レギュラー';
+  storeStatuses: string[];
   tags: string[];
   photoUrl: string;
   managerComment: string;

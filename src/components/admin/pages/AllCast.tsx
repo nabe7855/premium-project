@@ -407,11 +407,8 @@ export default function AllCast() {
           const news = Math.floor(designations * 0.2);
           const free = designations - repeat - news;
 
-          const storeStatus = c.cast_statuses?.some((s: any) => s.status_master?.name === '新人')
-            ? '新人'
-            : c.cast_statuses?.some((s: any) => s.status_master?.name === '店長おすすめ')
-              ? '店長おすすめ'
-              : 'レギュラー';
+          const storeStatuses =
+            c.cast_statuses?.map((s: any) => s.status_master?.name).filter(Boolean) || [];
 
           return {
             id: c.id,
@@ -422,7 +419,7 @@ export default function AllCast() {
               return acc;
             }, {}),
             status: c.is_active ? '在籍中' : '離籍',
-            storeStatus: storeStatus as '新人' | '店長おすすめ' | 'レギュラー',
+            storeStatuses: storeStatuses,
             tags: [], // Tags can be added if needed
             photoUrl: c.main_image_url || '',
             managerComment: c.manager_comment || '',

@@ -74,7 +74,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         newItems[index] = {
           ...newItems[index],
           [key]: value
-            .split(',')
+            .split(/[,、，\s]+/)
             .map((t: string) => t.trim())
             .filter((t: string) => t),
         };
@@ -195,12 +195,14 @@ const CastSection: React.FC<CastSectionProps> = ({
                 <div className="mb-4 flex flex-wrap gap-2">
                   {isEditing ? (
                     <div className="w-full">
-                      <p className="mb-1 text-[10px] text-slate-400">タグ (カンマ区切り)</p>
+                      <p className="mb-1 text-[10px] text-slate-400">
+                        タグ (カンマ・スペース区切り)
+                      </p>
                       <span
                         contentEditable={isEditing}
                         suppressContentEditableWarning={isEditing}
                         onBlur={(e) => handleItemUpdate(idx, 'tags', e.currentTarget.innerText)}
-                        className="block w-full rounded-md border border-neutral-100 bg-neutral-50 px-2 py-1 text-[9px] font-bold tracking-wider text-slate-500 outline-none hover:bg-white"
+                        className="block w-full rounded-md border border-neutral-100 bg-neutral-50 px-2 py-1 text-[9px] font-bold tracking-wider text-slate-500 outline-none transition-all hover:bg-white focus:border-pink-300 focus:bg-white focus:ring-2 focus:ring-pink-100"
                       >
                         {cast.tags?.join(', ')}
                       </span>

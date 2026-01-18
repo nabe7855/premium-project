@@ -1,7 +1,11 @@
 import Card from '@/components/admin/ui/Card';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
-import { Trash2 } from 'lucide-react';
+import { Tag as TagIcon, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { PlusIcon } from '../admin-assets/Icons';
 
@@ -29,7 +33,7 @@ const PRESET_COLORS = [
 // Component for displaying a single tag
 const Tag: React.FC<{ tag: UnifiedTag; onRemove: () => void }> = ({ tag, onRemove }) => (
   <span
-    className="mr-2 flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-sm"
+    className="mr-2 flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold shadow-sm duration-200 animate-in fade-in zoom-in"
     style={{
       backgroundColor:
         tag.color ||
@@ -46,7 +50,6 @@ const Tag: React.FC<{ tag: UnifiedTag; onRemove: () => void }> = ({ tag, onRemov
 );
 
 // Card for managing a cast member within a specific store
-// Card for managing a cast member within a specific store
 const StoreCastCard: React.FC<{
   cast: Cast;
   availableTags: UnifiedTag[];
@@ -56,22 +59,17 @@ const StoreCastCard: React.FC<{
   onPriorityChange: (castId: string, priority: number) => void;
   error?: string;
 }> = ({ cast, availableTags, currentStoreId, onAddTag, onRemoveTag, onPriorityChange, error }) => {
-  const [isTagSelectorOpen, setIsTagSelectorOpen] = useState(false);
+  const currentTagNames = [...(cast.tags || []), ...(cast.storeStatuses || [])];
 
-  // Filter available tags to only show ones the cast doesn't have
-  const currentTagNames = [...(cast.tags || []), ...(cast.storeStatus ? [cast.storeStatus] : [])];
+  const statusTags = availableTags.filter((t) => t.type === 'status');
+  const featureTags = availableTags.filter((t) => t.type === 'feature');
 
-  const unpickedTags = (availableTags || []).filter((t) => !currentTagNames.includes(t.name));
-
-  // Combine current tags for display
-  const displayTags: UnifiedTag[] = (availableTags || []).filter((t) =>
-    currentTagNames.includes(t.name),
-  );
+  const displayTags: UnifiedTag[] = availableTags.filter((t) => currentTagNames.includes(t.name));
 
   return (
     <Card
       title={cast.name}
-      className="flex h-full flex-col border border-gray-800 transition-all duration-300 hover:border-gray-700"
+      className="flex h-full flex-col border border-gray-800 bg-brand-secondary/40 transition-all duration-300 hover:border-gray-700"
     >
       <div className="mb-4 flex items-center space-x-4">
         <img
@@ -80,70 +78,142 @@ const StoreCastCard: React.FC<{
             'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
           }
           alt={cast.name}
-          className="h-16 w-16 rounded-full border-2 border-brand-accent/20 object-cover"
+          className="h-16 w-16 rounded-full border-2 border-brand-accent/20 object-cover shadow-lg"
         />
         <div className="flex-1 overflow-hidden">
           <p className="truncate text-lg font-bold text-white">{cast.name}</p>
-          <p className="truncate text-sm text-brand-text-secondary">{cast.catchphrase}</p>
+          <p className="truncate text-[10px] italic text-brand-text-secondary opacity-70">
+            {cast.catchphrase}
+          </p>
           <div className="mt-2 flex items-center space-x-2">
-            <span className="text-xs text-brand-text-secondary">表示順:</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+              表示順:
+            </span>
             <input
               type="number"
               min="1"
               value={cast.storePriorities?.[currentStoreId] || ''}
               onChange={(e) => onPriorityChange(cast.id, parseInt(e.target.value) || 0)}
-              className={`w-16 rounded border ${
+              className={`w-14 rounded border ${
                 error ? 'border-red-500' : 'border-gray-700'
-              } bg-brand-primary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
+              } bg-brand-primary p-1 text-center text-sm font-bold text-brand-accent transition-all focus:ring-1 focus:ring-brand-accent`}
             />
           </div>
           {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
         </div>
       </div>
 
-      <div className="mb-4 flex min-h-[32px] flex-wrap items-center gap-2">
-        {displayTags.map((tag) => (
-          <Tag key={tag.id} tag={tag} onRemove={() => onRemoveTag(cast.id, tag)} />
-        ))}
+      <div className="mb-4 flex min-h-[40px] flex-wrap items-center gap-1.5 rounded-lg border border-white/5 bg-black/20 p-2">
+        {displayTags.length > 0 ? (
+          displayTags.map((tag) => (
+            <Tag key={tag.id} tag={tag} onRemove={() => onRemoveTag(cast.id, tag)} />
+          ))
+        ) : (
+          <span className="px-2 text-[10px] italic text-brand-text-secondary opacity-50">
+            タグなし
+          </span>
+        )}
       </div>
 
-      <div className="relative mt-auto">
-        <button
-          onClick={() => setIsTagSelectorOpen(!isTagSelectorOpen)}
-          className="flex w-full items-center justify-center rounded-md border border-gray-700 bg-brand-primary p-2.5 text-sm transition-all duration-200 hover:bg-gray-700"
-        >
-          <PlusIcon />
-          <span className="ml-2 font-medium">タグを追加</span>
-        </button>
+      <div className="mt-auto">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button className="group flex w-full items-center justify-center rounded-md border border-gray-700 bg-brand-primary p-2.5 text-xs font-bold uppercase tracking-widest text-gray-300 transition-all duration-200 hover:border-brand-accent/50 hover:bg-gray-700 hover:text-white">
+              <TagIcon className="mr-2 h-3.5 w-3.5 transition-transform group-hover:scale-110" />
+              <span>タグ編集</span>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-64 border-gray-700 bg-brand-secondary p-0 shadow-2xl"
+            align="center"
+          >
+            <div className="flex h-[350px] flex-col">
+              <div className="border-b border-gray-700 bg-brand-primary/50 p-3">
+                <h4 className="text-xs font-bold uppercase tracking-wider text-white">
+                  タグ・ステータス設定
+                </h4>
+              </div>
 
-        {isTagSelectorOpen && (
-          <div className="scrollbar-thin scrollbar-thumb-gray-600 absolute bottom-full left-0 z-20 mb-2 max-h-48 w-full overflow-y-auto rounded-lg border border-gray-700 bg-brand-secondary shadow-2xl">
-            {unpickedTags.length > 0 ? (
-              unpickedTags.map((tag) => (
-                <button
-                  key={tag.id}
-                  onClick={() => {
-                    onAddTag(cast.id, tag);
-                    setIsTagSelectorOpen(false);
-                  }}
-                  className="block w-full border-b border-gray-800 px-4 py-3 text-left text-sm text-brand-text-secondary last:border-0 hover:bg-brand-primary hover:text-white"
-                >
-                  <span
-                    className="mr-2 inline-block h-2 w-2 rounded-full"
-                    style={{
-                      backgroundColor: tag.type === 'status' ? tag.color || '#06b6d4' : '#6b7280',
-                    }}
-                  ></span>
-                  {tag.name}
-                </button>
-              ))
-            ) : (
-              <p className="px-4 py-3 text-sm italic text-brand-text-secondary">
-                追加できるタグがありません。
-              </p>
-            )}
-          </div>
-        )}
+              <ScrollArea className="flex-1">
+                <div className="space-y-6 p-3">
+                  {/* Status Section */}
+                  <div>
+                    <h5 className="mb-2.5 text-[10px] font-bold uppercase tracking-tight text-brand-accent">
+                      ステータス (複数選択可)
+                    </h5>
+                    <div className="space-y-1">
+                      {statusTags.map((tag) => {
+                        const isChecked = cast.storeStatuses?.includes(tag.name);
+                        return (
+                          <div
+                            key={tag.id}
+                            className="group flex cursor-pointer items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={`${cast.id}-${tag.id}`}
+                              checked={isChecked}
+                              onCheckedChange={(checked) => {
+                                if (checked) onAddTag(cast.id, tag);
+                                else onRemoveTag(cast.id, tag);
+                              }}
+                              className="border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
+                            />
+                            <Label
+                              htmlFor={`${cast.id}-${tag.id}`}
+                              className="flex-1 cursor-pointer py-1 text-xs text-gray-300 transition-colors group-hover:text-white"
+                            >
+                              {tag.name}
+                            </Label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Features Section */}
+                  <div>
+                    <h5 className="mb-2.5 text-[10px] font-bold uppercase tracking-tight text-brand-accent">
+                      特徴タグ (複数選択可)
+                    </h5>
+                    <div className="space-y-1">
+                      {featureTags.map((tag) => {
+                        const isChecked = cast.tags?.includes(tag.name);
+                        return (
+                          <div
+                            key={tag.id}
+                            className="group flex cursor-pointer items-center space-x-2"
+                          >
+                            <Checkbox
+                              id={`${cast.id}-${tag.id}`}
+                              checked={isChecked}
+                              onCheckedChange={(checked) => {
+                                if (checked) onAddTag(cast.id, tag);
+                                else onRemoveTag(cast.id, tag);
+                              }}
+                              className="border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
+                            />
+                            <Label
+                              htmlFor={`${cast.id}-${tag.id}`}
+                              className="flex-1 cursor-pointer py-1 text-xs text-gray-300 transition-colors group-hover:text-white"
+                            >
+                              {tag.name}
+                            </Label>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                </div>
+              </ScrollArea>
+
+              <div className="border-t border-gray-700 bg-brand-primary/30 p-2">
+                <p className="text-center text-[9px] text-brand-text-secondary opacity-60">
+                  ※変更は即座に反映されます
+                </p>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
       </div>
     </Card>
   );
@@ -420,7 +490,9 @@ export default function StoreCast() {
               storeIds: [selectedStore],
               storePriorities: { [selectedStore]: c.priority || 0 },
               status: '在籍中',
-              storeStatus: (cStatuses[0]?.status_master as any)?.name || 'レギュラー',
+              storeStatuses: cStatuses
+                .map((s: any) => (s.status_master as any)?.name)
+                .filter(Boolean),
               tags: cFeatures
                 .filter((f: any) =>
                   ['personality', 'appearance'].includes(f.feature_master?.category),
@@ -522,7 +594,8 @@ export default function StoreCast() {
       setCasts((prev) =>
         prev.map((c) => {
           if (c.id === castId) {
-            if (tag.type === 'status') return { ...c, storeStatus: tag.name as any };
+            if (tag.type === 'status')
+              return { ...c, storeStatuses: [...(c.storeStatuses || []), tag.name] };
             return { ...c, tags: [...c.tags, tag.name] };
           }
           return c;
@@ -549,7 +622,8 @@ export default function StoreCast() {
       setCasts((prev) =>
         prev.map((c) => {
           if (c.id === castId) {
-            if (tag.type === 'status') return { ...c, storeStatus: 'レギュラー' };
+            if (tag.type === 'status')
+              return { ...c, storeStatuses: (c.storeStatuses || []).filter((s) => s !== tag.name) };
             return { ...c, tags: c.tags.filter((t) => t !== tag.name) };
           }
           return c;
