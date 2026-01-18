@@ -83,6 +83,8 @@ model StoreTopConfig {
   updated_at DateTime @updatedAt
 
   store Store @relation(fields: [store_id], references: [id])
+
+  @@map("store_top_configs")
 }
 
 // -------------------- Schedules（出勤予定） --------------------
