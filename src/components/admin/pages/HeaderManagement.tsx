@@ -18,7 +18,7 @@ import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
-import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
+import { deleteStoreTopImage, uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
 export default function HeaderManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
@@ -91,6 +91,12 @@ export default function HeaderManagement() {
       }
 
       if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
+        // 古い画像を削除
+        const oldImageUrl = config.header.navLinks[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStoreTopImage(oldImageUrl);
+        }
+
         const newNavLinks = [...config.header.navLinks];
         newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
         const newConfig = {
@@ -105,6 +111,54 @@ export default function HeaderManagement() {
     } catch (error) {
       console.error('Image upload failed:', error);
       toast.error('画像のアップロードに失敗しました', { id: toastId });
+    }
+  };
+
+  // 画像削除処理
+  const handleImageDelete = async (index: number) => {
+    if (!selectedStore) return;
+
+    const imageUrl = config.header.navLinks[index]?.imageUrl;
+    if (!imageUrl) return;
+
+    const toastId = toast.loading('画像を削除中...');
+    try {
+      const success = await deleteStoreTopImage(imageUrl);
+      if (success) {
+        const newNavLinks = [...config.header.navLinks];
+        newNavLinks[index] = { ...newNavLinks[index], imageUrl: '' };
+        const newConfig = {
+          ...config,
+          header: { ...config.header, navLinks: newNavLinks },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+        toast.success('画像を削除しました', { id: toastId });
+      } else {
+        toast.error('画像の削除に失敗しました', { id: toastId });
+      }
+    } catch (error) {
+      console.error('Image delete failed:', error);
+      toast.error('画像の削除に失敗しました', { id: toastId });
+    }
+  };
+
+  // ヘッダー設定のリセット
+  const handleReset = async () => {
+    if (!confirm('ヘッダー設定をデフォルトに戻しますか？この操作は取り消せません。')) return;
+
+    const toastId = toast.loading('リセット中...');
+    try {
+      const newConfig = {
+        ...config,
+        header: DEFAULT_STORE_TOP_CONFIG.header,
+      };
+      setConfig(newConfig);
+      await saveStoreTopConfig(selectedStore, newConfig);
+      toast.success('ヘッダー設定をリセットしました', { id: toastId });
+    } catch (error) {
+      console.error('Reset failed:', error);
+      toast.error('リセットに失敗しました', { id: toastId });
     }
   };
 
@@ -152,6 +206,16 @@ export default function HeaderManagement() {
           </Select>
 
           <div className="h-6 w-px bg-gray-700"></div>
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleReset}
+            className="h-9 border-gray-700 text-gray-300 hover:bg-red-500/10 hover:text-red-400"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            リセット
+          </Button>
 
           <Button
             variant={isPreviewMode ? 'secondary' : 'outline'}
@@ -309,39 +373,61 @@ export default function HeaderManagement() {
                           </div>
                         )}
                         {!isPreviewMode && (
-                          <button
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.onchange = (e) => {
-                                const file = (e.target as HTMLInputElement).files?.[0];
-                                if (file) handleImageUpload('header', file, 0, 'navLinks');
-                              };
-                              input.click();
-                            }}
-                            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            <svg
-                              className="h-8 w-8"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                          <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                            <button
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  const file = (e.target as HTMLInputElement).files?.[0];
+                                  if (file) handleImageUpload('header', file, 0, 'navLinks');
+                                };
+                                input.click();
+                              }}
+                              className="rounded-lg bg-white/20 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </button>
+                              <svg
+                                className="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                            </button>
+                            {config.header.navLinks[0].imageUrl && (
+                              <button
+                                onClick={() => handleImageDelete(0)}
+                                className="rounded-lg bg-red-500/80 p-2 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
+                              >
+                                <svg
+                                  className="h-6 w-6"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
                       <div className="flex-grow">
@@ -375,39 +461,61 @@ export default function HeaderManagement() {
                           </div>
                         )}
                         {!isPreviewMode && (
-                          <button
-                            onClick={() => {
-                              const input = document.createElement('input');
-                              input.type = 'file';
-                              input.accept = 'image/*';
-                              input.onchange = (e) => {
-                                const file = (e.target as HTMLInputElement).files?.[0];
-                                if (file) handleImageUpload('header', file, idx + 1, 'navLinks');
-                              };
-                              input.click();
-                            }}
-                            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            <svg
-                              className="h-6 w-6"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                          <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-full bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                            <button
+                              onClick={() => {
+                                const input = document.createElement('input');
+                                input.type = 'file';
+                                input.accept = 'image/*';
+                                input.onchange = (e) => {
+                                  const file = (e.target as HTMLInputElement).files?.[0];
+                                  if (file) handleImageUpload('header', file, idx + 1, 'navLinks');
+                                };
+                                input.click();
+                              }}
+                              className="rounded-lg bg-white/20 p-1.5 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                              />
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                              />
-                            </svg>
-                          </button>
+                              <svg
+                                className="h-5 w-5"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                />
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                />
+                              </svg>
+                            </button>
+                            {item.imageUrl && (
+                              <button
+                                onClick={() => handleImageDelete(idx + 1)}
+                                className="rounded-lg bg-red-500/80 p-1.5 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
+                              >
+                                <svg
+                                  className="h-5 w-5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
                         )}
                       </div>
                       <span className="px-2 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A]">
@@ -445,40 +553,62 @@ export default function HeaderManagement() {
                               />
                             )}
                             {!isPreviewMode && (
-                              <button
-                                onClick={() => {
-                                  const input = document.createElement('input');
-                                  input.type = 'file';
-                                  input.accept = 'image/*';
-                                  input.onchange = (e) => {
-                                    const file = (e.target as HTMLInputElement).files?.[0];
-                                    if (file)
-                                      handleImageUpload('header', file, idx + 7, 'navLinks');
-                                  };
-                                  input.click();
-                                }}
-                                className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                              >
-                                <svg
-                                  className="h-5 w-5"
-                                  fill="none"
-                                  stroke="currentColor"
-                                  viewBox="0 0 24 24"
+                              <div className="absolute inset-0 flex items-center justify-center gap-1 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                <button
+                                  onClick={() => {
+                                    const input = document.createElement('input');
+                                    input.type = 'file';
+                                    input.accept = 'image/*';
+                                    input.onchange = (e) => {
+                                      const file = (e.target as HTMLInputElement).files?.[0];
+                                      if (file)
+                                        handleImageUpload('header', file, idx + 7, 'navLinks');
+                                    };
+                                    input.click();
+                                  }}
+                                  className="rounded bg-white/20 p-1 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
                                 >
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                                  />
-                                  <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                                  />
-                                </svg>
-                              </button>
+                                  <svg
+                                    className="h-4 w-4"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                    />
+                                    <path
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      strokeWidth={2}
+                                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                    />
+                                  </svg>
+                                </button>
+                                {item.imageUrl && (
+                                  <button
+                                    onClick={() => handleImageDelete(idx + 7)}
+                                    className="rounded bg-red-500/80 p-1 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
+                                  >
+                                    <svg
+                                      className="h-4 w-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                      />
+                                    </svg>
+                                  </button>
+                                )}
+                              </div>
                             )}
                           </div>
                           <span
@@ -490,6 +620,52 @@ export default function HeaderManagement() {
                       </div>
                     );
                   })}
+                </div>
+
+                {/* Phone Section */}
+                <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
+                  <div className="flex flex-col items-center">
+                    <div className="mb-4 flex items-center justify-center gap-4 text-[#D43D6F]">
+                      <div className="rounded-full bg-pink-50 p-3 ring-8 ring-pink-50/30">
+                        <svg
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                        </svg>
+                      </div>
+                      <span className="text-4xl font-black tabular-nums tracking-tighter">
+                        03-6356-3860
+                      </span>
+                    </div>
+                    <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
+                    <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
+                  </div>
+                </div>
+
+                {/* Special Banner */}
+                <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl">
+                  <div className="group relative block aspect-[16/7]">
+                    <img
+                      src="/福岡募集バナー.png"
+                      alt="Special Banner"
+                      className="h-full w-full object-cover opacity-60"
+                    />
+                    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                        Strawberry Boys Premium
+                      </p>
+                      <h3 className="text-xl font-black leading-tight text-white">
+                        甘い誘惑を、今夜貴女に。
+                      </h3>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
