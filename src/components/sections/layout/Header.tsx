@@ -369,32 +369,36 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </svg>
                         </div>
                         <span className="text-4xl font-black tabular-nums tracking-tighter">
-                          03-6356-3860
+                          {config.phoneNumber || '03-6356-3860'}
                         </span>
                       </div>
-                      <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
-                      <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
+                      <p className="text-sm font-bold text-gray-400">
+                        電話受付: {config.receptionHours || '12:00〜23:00'}
+                      </p>
+                      <p className="text-sm font-bold text-gray-400">
+                        営業時間: {config.businessHours || '12:00〜翌朝4時'}
+                      </p>
                     </div>
                   </div>
 
                   {/* Special Banner */}
                   <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
                     <Link
-                      href="#recruit"
+                      href={config.specialBanner?.link || '#recruit'}
                       onClick={closeMenu}
                       className="group relative block aspect-[16/7]"
                     >
                       <img
-                        src="/福岡募集バナー.png"
+                        src={config.specialBanner?.imageUrl || '/福岡募集バナー.png'}
                         alt="Special Banner"
                         className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
                         <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                          Strawberry Boys Premium
+                          {config.specialBanner?.subHeading || 'Strawberry Boys Premium'}
                         </p>
                         <h3 className="text-xl font-black leading-tight text-white">
-                          甘い誘惑を、今夜貴女に。
+                          {config.specialBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                         </h3>
                       </div>
                     </Link>

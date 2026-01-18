@@ -11,6 +11,15 @@ export interface HeaderConfig {
   navLinks: NavLink[];
   reserveButtonText: string;
   isVisible: boolean;
+  phoneNumber: string;
+  receptionHours: string;
+  businessHours: string;
+  specialBanner: {
+    imageUrl: string;
+    subHeading: string;
+    mainHeading: string;
+    link: string;
+  };
 }
 
 export interface HeroConfig {
@@ -244,6 +253,15 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     ],
     reserveButtonText: 'WEB予約',
     isVisible: true,
+    phoneNumber: '03-6356-3860',
+    receptionHours: '12:00〜23:00',
+    businessHours: '12:00〜翌朝4時',
+    specialBanner: {
+      imageUrl: '/福岡募集バナー.png',
+      subHeading: 'Strawberry Boys Premium',
+      mainHeading: '甘い誘惑を、今夜貴女に。',
+      link: '#recruit',
+    },
   },
   hero: {
     images: [

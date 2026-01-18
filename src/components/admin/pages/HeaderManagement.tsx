@@ -90,19 +90,37 @@ export default function HeaderManagement() {
         return;
       }
 
-      if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
-        // 古い画像を削除
-        const oldImageUrl = config.header.navLinks[index]?.imageUrl;
-        if (oldImageUrl && oldImageUrl.startsWith('http')) {
-          await deleteStoreTopImage(oldImageUrl);
+      if (section === 'header') {
+        let newConfig = { ...config };
+
+        if (key === 'navLinks' && typeof index === 'number') {
+          // 古い画像を削除
+          const oldImageUrl = config.header.navLinks[index]?.imageUrl;
+          if (oldImageUrl && oldImageUrl.startsWith('http')) {
+            await deleteStoreTopImage(oldImageUrl);
+          }
+
+          const newNavLinks = [...config.header.navLinks];
+          newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
+          newConfig.header.navLinks = newNavLinks;
+        } else if (key === 'specialBanner') {
+          // バナー画像の更新
+          const oldImageUrl = config.header.specialBanner?.imageUrl;
+          if (
+            oldImageUrl &&
+            oldImageUrl.startsWith('http') &&
+            !oldImageUrl.includes('placehold') &&
+            !oldImageUrl.includes('福岡募集バナー')
+          ) {
+            await deleteStoreTopImage(oldImageUrl);
+          }
+
+          newConfig.header.specialBanner = {
+            ...config.header.specialBanner,
+            imageUrl: publicUrl,
+          };
         }
 
-        const newNavLinks = [...config.header.navLinks];
-        newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
-        const newConfig = {
-          ...config,
-          header: { ...config.header, navLinks: newNavLinks },
-        };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
       }
@@ -139,6 +157,43 @@ export default function HeaderManagement() {
       }
     } catch (error) {
       console.error('Image delete failed:', error);
+      toast.error('画像の削除に失敗しました', { id: toastId });
+    }
+  };
+
+  // バナー画像削除処理
+  const handleBannerDelete = async () => {
+    if (!selectedStore) return;
+
+    const imageUrl = config.header.specialBanner?.imageUrl;
+    // デフォルト画像は削除しない
+    if (!imageUrl || imageUrl === '/福岡募集バナー.png') {
+      toast.error('この画像は削除できません');
+      return;
+    }
+
+    const toastId = toast.loading('画像を削除中...');
+    try {
+      // httpで始まる場合のみ削除を試みる
+      if (imageUrl.startsWith('http')) {
+        await deleteStoreTopImage(imageUrl);
+      }
+
+      const newConfig = {
+        ...config,
+        header: {
+          ...config.header,
+          specialBanner: {
+            ...config.header.specialBanner,
+            imageUrl: '', // またはデフォルト画像に戻す
+          },
+        },
+      };
+      setConfig(newConfig);
+      await saveStoreTopConfig(selectedStore, newConfig);
+      toast.success('画像を削除しました', { id: toastId });
+    } catch (error) {
+      console.error('Banner delete failed:', error);
       toast.error('画像の削除に失敗しました', { id: toastId });
     }
   };
@@ -623,6 +678,7 @@ export default function HeaderManagement() {
                 </div>
 
                 {/* Phone Section */}
+                {/* Phone Section */}
                 <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
                   <div className="flex flex-col items-center">
                     <div className="mb-4 flex items-center justify-center gap-4 text-[#D43D6F]">
@@ -640,29 +696,142 @@ export default function HeaderManagement() {
                           <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                         </svg>
                       </div>
-                      <span className="text-4xl font-black tabular-nums tracking-tighter">
-                        03-6356-3860
+                      <span
+                        className="text-4xl font-black tabular-nums tracking-tighter outline-none focus:border-b-2 focus:border-pink-300"
+                        contentEditable={!isPreviewMode}
+                        onBlur={(e) =>
+                          handleUpdate('header', 'phoneNumber', e.currentTarget.textContent)
+                        }
+                        suppressContentEditableWarning
+                      >
+                        {config.header.phoneNumber || '03-6356-3860'}
                       </span>
                     </div>
-                    <p className="text-sm font-bold text-gray-400">電話受付: 12:00〜23:00</p>
-                    <p className="text-sm font-bold text-gray-400">営業時間: 12:00〜翌朝4時</p>
+                    <p className="flex items-center gap-2 text-sm font-bold text-gray-400">
+                      電話受付:
+                      <span
+                        className="outline-none focus:border-b focus:border-gray-400"
+                        contentEditable={!isPreviewMode}
+                        onBlur={(e) =>
+                          handleUpdate('header', 'receptionHours', e.currentTarget.textContent)
+                        }
+                        suppressContentEditableWarning
+                      >
+                        {config.header.receptionHours || '12:00〜23:00'}
+                      </span>
+                    </p>
+                    <p className="flex items-center gap-2 text-sm font-bold text-gray-400">
+                      営業時間:
+                      <span
+                        className="outline-none focus:border-b focus:border-gray-400"
+                        contentEditable={!isPreviewMode}
+                        onBlur={(e) =>
+                          handleUpdate('header', 'businessHours', e.currentTarget.textContent)
+                        }
+                        suppressContentEditableWarning
+                      >
+                        {config.header.businessHours || '12:00〜翌朝4時'}
+                      </span>
+                    </p>
                   </div>
                 </div>
 
                 {/* Special Banner */}
-                <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl">
-                  <div className="group relative block aspect-[16/7]">
+                <div className="group relative overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl">
+                  <div className="relative block aspect-[16/7]">
                     <img
-                      src="/福岡募集バナー.png"
+                      src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
                       alt="Special Banner"
                       className="h-full w-full object-cover opacity-60"
                     />
-                    <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                        Strawberry Boys Premium
+
+                    {!isPreviewMode && (
+                      <div className="absolute inset-0 z-20 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) handleImageUpload('header', file, 0, 'specialBanner');
+                            };
+                            input.click();
+                          }}
+                          className="rounded-lg bg-white/20 p-2 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                        >
+                          <svg
+                            className="h-6 w-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                          </svg>
+                        </button>
+                        {config.header.specialBanner?.imageUrl &&
+                          config.header.specialBanner.imageUrl !== '/福岡募集バナー.png' && (
+                            <button
+                              onClick={handleBannerDelete}
+                              className="rounded-lg bg-red-500/80 p-2 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
+                            >
+                              <svg
+                                className="h-6 w-6"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                                />
+                              </svg>
+                            </button>
+                          )}
+                      </div>
+                    )}
+
+                    <div className="absolute inset-0 z-10 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
+                      <p
+                        className="text-[10px] font-black uppercase tracking-widest text-white/70 outline-none focus:border-b focus:border-white/50"
+                        contentEditable={!isPreviewMode}
+                        onBlur={(e) => {
+                          const newBanner = {
+                            ...config.header.specialBanner,
+                            subHeading: e.currentTarget.textContent || '',
+                          };
+                          handleUpdate('header', 'specialBanner', newBanner);
+                        }}
+                        suppressContentEditableWarning
+                      >
+                        {config.header.specialBanner?.subHeading || 'Strawberry Boys Premium'}
                       </p>
-                      <h3 className="text-xl font-black leading-tight text-white">
-                        甘い誘惑を、今夜貴女に。
+                      <h3
+                        className="text-xl font-black leading-tight text-white outline-none focus:border-b focus:border-white/50"
+                        contentEditable={!isPreviewMode}
+                        onBlur={(e) => {
+                          const newBanner = {
+                            ...config.header.specialBanner,
+                            mainHeading: e.currentTarget.textContent || '',
+                          };
+                          handleUpdate('header', 'specialBanner', newBanner);
+                        }}
+                        suppressContentEditableWarning
+                      >
+                        {config.header.specialBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                       </h3>
                     </div>
                   </div>
