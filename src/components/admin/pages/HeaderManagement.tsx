@@ -91,7 +91,7 @@ export default function HeaderManagement() {
       }
 
       if (section === 'header') {
-        let newConfig = { ...config };
+        const newHeader = { ...config.header };
 
         if (key === 'navLinks' && typeof index === 'number') {
           // 古い画像を削除
@@ -102,7 +102,7 @@ export default function HeaderManagement() {
 
           const newNavLinks = [...config.header.navLinks];
           newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
-          newConfig.header.navLinks = newNavLinks;
+          newHeader.navLinks = newNavLinks;
         } else if (key === 'specialBanner') {
           // バナー画像の更新
           const oldImageUrl = config.header.specialBanner?.imageUrl;
@@ -115,11 +115,16 @@ export default function HeaderManagement() {
             await deleteStoreTopImage(oldImageUrl);
           }
 
-          newConfig.header.specialBanner = {
+          newHeader.specialBanner = {
             ...config.header.specialBanner,
             imageUrl: publicUrl,
           };
         }
+
+        const newConfig = {
+          ...config,
+          header: newHeader,
+        };
 
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);

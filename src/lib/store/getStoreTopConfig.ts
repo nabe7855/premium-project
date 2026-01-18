@@ -22,8 +22,8 @@ export async function getStoreTopConfig(storeSlug: string) {
     });
 
     if (!config) {
-      // 設定が見つからない場合はデフォルト値を返す
-      return { success: true, config: DEFAULT_STORE_TOP_CONFIG };
+      // 設定が見つからない場合はデフォルト値を返す(ディープコピー)
+      return { success: true, config: JSON.parse(JSON.stringify(DEFAULT_STORE_TOP_CONFIG)) };
     }
 
     // Prisma の Json 型を StoreTopPageConfig にキャスト
