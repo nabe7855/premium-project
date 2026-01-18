@@ -309,7 +309,7 @@ export default function HeaderManagement() {
             className="h-9 bg-brand-accent font-bold hover:bg-brand-accent/90"
           >
             <Save className="mr-2 h-4 w-4" />
-            {isSaving ? '保存中...' : '公開する'}
+            {isSaving ? '保存中...' : '設定を保存'}
           </Button>
         </div>
       </div>
