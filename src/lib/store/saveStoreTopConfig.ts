@@ -18,6 +18,7 @@ export async function saveStoreTopConfig(storeSlug: string, config: StoreTopPage
     }
 
     // 更新または新規作成 (upsert)
+    console.log(`Saving config for store: ${storeSlug}`);
     await prisma.storeTopConfig.upsert({
       where: { store_id: store.id },
       update: {
@@ -31,6 +32,7 @@ export async function saveStoreTopConfig(storeSlug: string, config: StoreTopPage
 
     // ページをrevalidate
     revalidatePath(`/store/${storeSlug}`);
+    console.log(`Successfully saved config for ${storeSlug}`);
 
     return { success: true };
   } catch (error) {

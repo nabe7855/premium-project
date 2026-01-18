@@ -67,14 +67,29 @@ export default function HeaderManagement() {
   };
 
   // インライン更新処理
-  const handleUpdate = (section: string, key: string, value: any) => {
-    setConfig((prev) => ({
-      ...prev,
+  const handleUpdate = async (section: string, key: string, value: any) => {
+    const newConfig = {
+      ...config,
       [section]: {
-        ...(prev[section as keyof StoreTopPageConfig] as any),
+        ...(config[section as keyof StoreTopPageConfig] as any),
         [key]: value,
       },
-    }));
+    };
+    setConfig(newConfig);
+
+    // 即時保存
+    const toastId = toast.loading('設定を保存中...');
+    try {
+      const result = await saveStoreTopConfig(selectedStore, newConfig);
+      if (result.success) {
+        toast.success('設定を保存しました', { id: toastId });
+      } else {
+        toast.error(`保存に失敗しました: ${result.error}`, { id: toastId });
+      }
+    } catch (error) {
+      console.error('Error saving config:', error);
+      toast.error('エラーが発生しました', { id: toastId });
+    }
   };
 
   // 画像アップロード処理
