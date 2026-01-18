@@ -14,7 +14,6 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 
-import Header from '@/components/sections/layout/Header';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
@@ -265,25 +264,234 @@ export default function HeaderManagement() {
 
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
-          <div className="absolute inset-0 overflow-y-auto">
-            <div className="sticky top-0 z-50">
-              <Header
-                config={config.header}
-                isEditing={!isPreviewMode}
-                onUpdate={handleUpdate}
-                onImageUpload={handleImageUpload}
-              />
-            </div>
-            {/* Background dummy content to show header scroll effect */}
-            <div className="min-h-screen space-y-12 bg-gray-50 p-8 pt-24">
-              <div className="flex h-64 items-center justify-center rounded-3xl bg-neutral-100 text-3xl font-bold italic text-gray-300">
-                PREVIEW CONTENT
+          <div className="absolute inset-0 overflow-y-auto bg-white p-8">
+            <div className="mx-auto max-w-md space-y-6">
+              {/* Header Preview */}
+              <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <span className="text-3xl">🍓</span>
+                    <span
+                      className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F]"
+                      contentEditable={!isPreviewMode}
+                      suppressContentEditableWarning
+                      onBlur={(e) => handleUpdate('header', 'logoText', e.currentTarget.innerText)}
+                    >
+                      {config.header.logoText}
+                    </span>
+                  </div>
+                  <div className="rounded-xl bg-pink-50 px-3 py-1.5 text-sm font-bold text-pink-500">
+                    {config.header.reserveButtonText}
+                  </div>
+                </div>
               </div>
-              <div className="grid grid-cols-2 gap-6">
-                <div className="h-48 rounded-3xl bg-neutral-100"></div>
-                <div className="h-48 rounded-3xl bg-neutral-100"></div>
+
+              {/* Mobile Menu Preview */}
+              <div className="space-y-6 rounded-2xl border-2 border-pink-100 bg-white p-6">
+                <h3 className="text-sm font-bold text-gray-500">モバイルメニュープレビュー</h3>
+
+                {/* Highlights (News) */}
+                {config.header.navLinks[0] && (
+                  <div className="group relative overflow-hidden rounded-[40px] bg-white shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)]">
+                    <div className="flex items-center gap-6 px-4 py-6">
+                      <div className="relative h-24 w-24 flex-shrink-0">
+                        {config.header.navLinks[0].imageUrl ? (
+                          <img
+                            src={config.header.navLinks[0].imageUrl}
+                            alt=""
+                            className="h-full w-full object-contain"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center rounded-3xl bg-pink-50">
+                            <span className="text-2xl font-bold text-pink-300">
+                              {config.header.navLinks[0].name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        {!isPreviewMode && (
+                          <button
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.onchange = (e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleImageUpload('header', file, 0, 'navLinks');
+                              };
+                              input.click();
+                            }}
+                            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            <svg
+                              className="h-8 w-8"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                      <div className="flex-grow">
+                        <span className="text-xl font-black tracking-widest text-[#4A4A4A]">
+                          {config.header.navLinks[0].name}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Main Grid */}
+                <div className="grid grid-cols-2 gap-4">
+                  {config.header.navLinks.slice(1, 7).map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] border border-transparent bg-white px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)]"
+                    >
+                      <div className="relative mb-4 h-28 w-28 flex-shrink-0">
+                        {item.imageUrl ? (
+                          <img
+                            src={item.imageUrl}
+                            alt={item.name}
+                            className="h-full w-full object-contain"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center rounded-3xl bg-pink-50">
+                            <span className="text-2xl font-bold text-pink-300">
+                              {item.name.charAt(0)}
+                            </span>
+                          </div>
+                        )}
+                        {!isPreviewMode && (
+                          <button
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.onchange = (e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleImageUpload('header', file, idx + 1, 'navLinks');
+                              };
+                              input.click();
+                            }}
+                            className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            <svg
+                              className="h-6 w-6"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                      <span className="px-2 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A]">
+                        {item.name}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Secondary Buttons */}
+                <div className="space-y-4">
+                  {config.header.navLinks.slice(7).map((item, idx) => {
+                    const getButtonColor = (name: string) => {
+                      if (name.includes('プライバシー')) return 'bg-[#9BA3AF] border-[#818B9A]';
+                      if (name.includes('メディア')) return 'bg-[#C5A368] border-[#A88B5A]';
+                      if (name.includes('求人')) return 'bg-[#FAD231] border-[#C8A811]';
+                      if (name.includes('ライン') || name.includes('LINE'))
+                        return 'bg-[#56C361] border-[#3E9A47]';
+                      return 'bg-pink-500 border-pink-600';
+                    };
+                    const colorClass = getButtonColor(item.name);
+                    const isYellow = item.name.includes('求人');
+
+                    return (
+                      <div key={idx} className="group relative">
+                        <div
+                          className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
+                        >
+                          <div className="relative h-10 w-10 flex-shrink-0">
+                            {item.imageUrl && (
+                              <img
+                                src={item.imageUrl}
+                                alt=""
+                                className="h-full w-full object-contain"
+                              />
+                            )}
+                            {!isPreviewMode && (
+                              <button
+                                onClick={() => {
+                                  const input = document.createElement('input');
+                                  input.type = 'file';
+                                  input.accept = 'image/*';
+                                  input.onchange = (e) => {
+                                    const file = (e.target as HTMLInputElement).files?.[0];
+                                    if (file)
+                                      handleImageUpload('header', file, idx + 7, 'navLinks');
+                                  };
+                                  input.click();
+                                }}
+                                className="absolute inset-0 flex items-center justify-center rounded-lg bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                              >
+                                <svg
+                                  className="h-5 w-5"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                </svg>
+                              </button>
+                            )}
+                          </div>
+                          <span
+                            className={`flex-1 text-center text-lg font-black tracking-widest ${isYellow ? 'text-black' : 'text-white'}`}
+                          >
+                            {item.name}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-              <div className="h-96 rounded-3xl bg-neutral-100"></div>
             </div>
           </div>
         </div>
