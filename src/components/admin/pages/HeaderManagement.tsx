@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, ExternalLink, Eye, Link2, Plus, Save, Trash2 } from 'lucide-react';
+import { Camera, ChevronLeft, ExternalLink, Eye, Link2, Plus, Save, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -97,8 +97,10 @@ export default function HeaderManagement() {
     if (!selectedStore) return;
 
     const toastId = toast.loading('画像をアップロード中...');
+    console.log('Starting image upload...', { section, index, key });
     try {
       const publicUrl = await uploadStoreTopImage(selectedStore, section, file);
+      console.log('Upload completed. Public URL:', publicUrl);
 
       if (!publicUrl) {
         toast.error('画像のアップロードに失敗しました', { id: toastId });
@@ -106,9 +108,19 @@ export default function HeaderManagement() {
       }
 
       if (section === 'header') {
+        console.log('Processing header image upload for key:', key);
         const newHeader = { ...config.header };
 
-        if (key === 'navLinks' && typeof index === 'number') {
+        if (key === 'logoUrl') {
+          console.log('Updating logoUrl. publicUrl:', publicUrl);
+          // 古いロゴを削除
+          const oldImageUrl = config.header.logoUrl;
+          if (oldImageUrl && oldImageUrl.startsWith('http')) {
+            console.log('Deleting old logo:', oldImageUrl);
+            await deleteStoreTopImage(oldImageUrl);
+          }
+          newHeader.logoUrl = publicUrl;
+        } else if (key === 'navLinks' && typeof index === 'number') {
           // 古い画像を削除
           const oldImageUrl = config.header.navLinks[index]?.imageUrl;
           if (oldImageUrl && oldImageUrl.startsWith('http')) {
@@ -140,6 +152,7 @@ export default function HeaderManagement() {
           ...config,
           header: newHeader,
         };
+        console.log('Saving new config with header:', newConfig.header);
 
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
@@ -177,6 +190,32 @@ export default function HeaderManagement() {
       }
     } catch (error) {
       console.error('Image delete failed:', error);
+      toast.error('画像の削除に失敗しました', { id: toastId });
+    }
+  };
+
+  // ロゴ画像削除処理
+  const handleLogoDelete = async () => {
+    if (!selectedStore) return;
+
+    const imageUrl = config.header.logoUrl;
+    if (!imageUrl) return;
+
+    const toastId = toast.loading('画像を削除中...');
+    try {
+      if (imageUrl.startsWith('http')) {
+        await deleteStoreTopImage(imageUrl);
+      }
+
+      const newConfig = {
+        ...config,
+        header: { ...config.header, logoUrl: '' },
+      };
+      setConfig(newConfig);
+      await saveStoreTopConfig(selectedStore, newConfig);
+      toast.success('画像を削除しました', { id: toastId });
+    } catch (error) {
+      console.error('Logo delete failed:', error);
       toast.error('画像の削除に失敗しました', { id: toastId });
     }
   };
@@ -408,16 +447,59 @@ export default function HeaderManagement() {
               {/* Header Preview */}
               <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="text-3xl">🍓</span>
-                    <span
-                      className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F]"
-                      contentEditable={!isPreviewMode}
-                      suppressContentEditableWarning
-                      onBlur={(e) => handleUpdate('header', 'logoText', e.currentTarget.innerText)}
-                    >
-                      {config.header.logoText}
-                    </span>
+                  <div className="group relative flex items-center gap-2">
+                    {config.header.logoUrl ? (
+                      <img
+                        key={config.header.logoUrl}
+                        src={config.header.logoUrl}
+                        alt="Logo"
+                        className="h-10 w-auto object-contain"
+                      />
+                    ) : (
+                      <>
+                        <span className="text-3xl">🍓</span>
+                        <span
+                          className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F]"
+                          contentEditable={!isPreviewMode}
+                          suppressContentEditableWarning
+                          onBlur={(e) =>
+                            handleUpdate('header', 'logoText', e.currentTarget.innerText)
+                          }
+                        >
+                          {config.header.logoText}
+                        </span>
+                      </>
+                    )}
+
+                    {!isPreviewMode && (
+                      <div className="absolute -right-8 top-1/2 flex -translate-y-1/2 flex-col gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) handleImageUpload('header', file, 0, 'logoUrl');
+                            };
+                            input.click();
+                          }}
+                          className="rounded bg-gray-200 p-1 hover:bg-gray-300"
+                          title="ロゴ画像をアップロード"
+                        >
+                          <Camera className="h-4 w-4 text-gray-600" />
+                        </button>
+                        {config.header.logoUrl && (
+                          <button
+                            onClick={handleLogoDelete}
+                            className="rounded bg-red-100 p-1 hover:bg-red-200"
+                            title="ロゴ画像を削除"
+                          >
+                            <Trash2 className="h-4 w-4 text-red-500" />
+                          </button>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="rounded-xl bg-pink-50 px-3 py-1.5 text-sm font-bold text-pink-500">
                     {config.header.reserveButtonText}
