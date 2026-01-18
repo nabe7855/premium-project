@@ -6,19 +6,20 @@ import { StoreTopPageConfig } from './storeTopConfig';
 
 export async function saveStoreTopConfig(storeSlug: string, config: StoreTopPageConfig) {
   try {
-    // まず店舗を取得
+    // 店舗を取得
+    console.log(`[saveStoreTopConfig] Finding store with slug: ${storeSlug}`);
     const store = await prisma.store.findUnique({
       where: { slug: storeSlug },
-      select: { id: true },
     });
 
     if (!store) {
-      console.error('Store not found:', storeSlug);
-      return { success: false, error: 'Store not found' };
+      console.error(`[saveStoreTopConfig] Store not found: ${storeSlug}`);
+      return { success: false, error: '店舗が見つかりません' };
     }
+    console.log(`[saveStoreTopConfig] Found store: ${store.name} (${store.id})`);
 
     // 更新または新規作成 (upsert)
-    console.log(`Saving config for store: ${storeSlug}`);
+    console.log(`[saveStoreTopConfig] Upserting config for store_id: ${store.id}`);
     await prisma.storeTopConfig.upsert({
       where: { store_id: store.id },
       update: {
