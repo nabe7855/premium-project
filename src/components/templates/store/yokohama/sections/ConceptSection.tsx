@@ -1,6 +1,11 @@
 'use client';
+import { ConceptConfig } from '@/lib/store/storeTopConfig';
 import { CheckCircle2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+interface ConceptSectionProps {
+  config?: ConceptConfig;
+}
 
 const concepts = [
   {
@@ -29,8 +34,13 @@ const concepts = [
   },
 ];
 
-const ConceptSection: React.FC = () => {
+const ConceptSection: React.FC<ConceptSectionProps> = ({ config }) => {
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
+  const items = config?.items || concepts;
+  const heading = config?.heading || '安心と癒やしを、すべての女性の日常に。';
+  const subHeading = config?.subHeading || 'Our Concept';
+  const footerText =
+    config?.footerText || '「自分へのご褒美」を、もっと身近で、もっと心地よいものに。';
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -47,7 +57,7 @@ const ConceptSection: React.FC = () => {
           <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-pink-100 opacity-50 mix-blend-multiply blur-3xl filter"></div>
           <div className="bg-primary-100 absolute -bottom-10 -right-10 h-40 w-40 rounded-full opacity-50 mix-blend-multiply blur-3xl filter"></div>
 
-          {concepts.map((concept, idx) => (
+          {items.map((concept, idx) => (
             <div
               key={idx}
               className={`absolute inset-0 z-10 transform overflow-hidden rounded-[2rem] shadow-2xl transition-all duration-1000 ${
@@ -69,16 +79,14 @@ const ConceptSection: React.FC = () => {
         {/* Content Side */}
         <div className="order-1 lg:order-2">
           <span className="text-primary-400 text-[10px] font-bold uppercase tracking-[0.4em] md:text-xs">
-            Our Concept
+            {subHeading}
           </span>
-          <h2 className="mb-6 mt-3 font-serif text-2xl leading-snug text-slate-800 md:text-4xl">
-            安心と癒やしを、
-            <br />
-            すべての女性の日常に。
+          <h2 className="mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl">
+            {heading}
           </h2>
 
           <div className="mb-8 space-y-4">
-            {concepts.map((concept, idx) => (
+            {items.map((concept, idx) => (
               <div
                 key={idx}
                 className={`relative cursor-pointer rounded-[1.5rem] border p-4 transition-all duration-500 md:p-6 ${
@@ -117,7 +125,7 @@ const ConceptSection: React.FC = () => {
           </div>
 
           <p className="border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm">
-            「自分へのご褒美」を、もっと身近で、もっと心地よいものに。LUMIÈREは福岡の女性を応援します。
+            {footerText}
           </p>
         </div>
       </div>

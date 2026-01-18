@@ -1,6 +1,11 @@
+import { CastConfig } from '@/lib/store/storeTopConfig';
 import { Cast } from '@/types/fukuoka';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
+
+interface CastSectionProps {
+  config?: CastConfig;
+}
 
 const castList: Cast[] = [
   {
@@ -45,17 +50,22 @@ const castList: Cast[] = [
   },
 ];
 
-const CastSection: React.FC = () => {
+const CastSection: React.FC<CastSectionProps> = ({ config }) => {
+  const casts = config?.items || castList;
+
   return (
     <section id="cast" className="py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <SectionTitle en="Therapists" ja="心に寄り添う、セラピストたち" />
+        <SectionTitle
+          en={config?.subHeading || 'Therapists'}
+          ja={config?.heading || '本日出勤のセラピスト'}
+        />
 
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:gap-8 lg:grid-cols-4">
-          {castList.map((cast) => (
+        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
+          {casts.map((cast) => (
             <div
               key={cast.id}
-              className="group overflow-hidden rounded-[2rem] border border-neutral-100 bg-white shadow-sm transition-all duration-500 hover:shadow-xl"
+              className="group min-w-[280px] snap-center overflow-hidden rounded-[2rem] border border-neutral-100 bg-white shadow-sm transition-all duration-500 hover:shadow-xl md:min-w-0"
             >
               <div className="relative aspect-[3/4] overflow-hidden">
                 <img

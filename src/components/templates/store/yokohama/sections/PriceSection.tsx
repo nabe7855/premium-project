@@ -1,8 +1,13 @@
+import { PriceConfig } from '@/lib/store/storeTopConfig';
 import { AlertCircle } from 'lucide-react';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
 
-const PriceSection: React.FC = () => {
+interface PriceSectionProps {
+  config?: PriceConfig;
+}
+
+const PriceSection: React.FC<PriceSectionProps> = ({ config }) => {
   return (
     <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en="Price Menu" ja="料金プラン" />

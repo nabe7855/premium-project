@@ -1,83 +1,129 @@
-import { Instagram, MessageCircle } from 'lucide-react';
 import React from 'react';
 
-const Footer: React.FC = () => {
+import { FooterConfig } from '@/lib/store/storeTopConfig';
+
+interface FooterProps {
+  config?: FooterConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
+  if (!config) return null;
+
+  const handleShopInfoUpdate = (key: string, value: string) => {
+    if (onUpdate) {
+      onUpdate('footer', 'shopInfo', { ...config.shopInfo, [key]: value });
+    }
+  };
+
+  const handleButtonUpdate = (index: number, value: string) => {
+    if (onUpdate) {
+      const newButtons = [...config.menuButtons];
+      newButtons[index] = { ...newButtons[index], label: value };
+      onUpdate('footer', 'menuButtons', newButtons);
+    }
+  };
+
   return (
-    <footer className="border-t border-neutral-50 bg-white py-16 pb-28 text-slate-400 md:pb-16">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 px-8 text-center md:grid-cols-4 md:text-left">
-        <div className="md:col-span-2">
-          <h2 className="mb-6 font-serif text-3xl font-bold italic tracking-[0.3em] text-slate-800">
-            LUMIÈRE
-          </h2>
-          <p className="mb-8 max-w-sm text-[11px] leading-relaxed">
-            福岡エリアで最も選ばれる、女性のためのリラクゼーションサービス。
-            <br />
-            安全性と心地よさを追求し、心身の調和をサポートします。
-          </p>
-          <div className="flex justify-center space-x-6 md:justify-start">
-            <a href="#" className="hover:text-primary-400 text-slate-300 transition-colors">
-              <Instagram size={20} />
-            </a>
-            <a href="#" className="hover:text-primary-400 text-slate-300 transition-colors">
-              <MessageCircle size={20} />
-            </a>
+    <footer className="border-t border-pink-100 bg-white py-8 text-slate-800">
+      <div className="mx-auto max-w-[1000px] px-4">
+        {/* Main Content Area */}
+        <div className="flex flex-col gap-6 md:flex-row">
+          {/* Left: Store Image Wrapper */}
+          <div className="w-full flex-shrink-0 md:w-[240px]">
+            <div className="group relative overflow-hidden rounded-lg border-[3px] border-pink-200 bg-white shadow-sm">
+              <img
+                src={config.logoImageUrl || '/placeholder-store.png'}
+                alt={config.shopInfo.name}
+                className="h-auto w-full"
+              />
+            </div>
+
+            {/* Shop Info Box Below Logo (Image 2 style) */}
+            <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
+              <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
+                <span>{config.shopInfo.name}</span>
+              </div>
+              <div className="space-y-2 bg-white p-3 text-[11px] leading-relaxed">
+                <div className="flex gap-2">
+                  <span className="w-12 flex-shrink-0 font-bold">Address</span>
+                  <span>{config.shopInfo.address}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-12 flex-shrink-0 font-bold">Phone</span>
+                  <span className="font-bold">{config.shopInfo.phone}</span>
+                </div>
+                <div className="flex gap-2">
+                  <span className="w-12 flex-shrink-0 font-bold">Open-Close</span>
+                  <span className="whitespace-pre-line">{config.shopInfo.businessHours}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right: Buttons and Banners */}
+          <div className="flex-grow">
+            {/* Grid of buttons (12 buttons as in Image 2) */}
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {config.menuButtons.map((btn, idx) => (
+                <a
+                  key={idx}
+                  href={btn.link}
+                  className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
+                >
+                  {btn.label}
+                </a>
+              ))}
+            </div>
+
+            {/* Middle Banners (3 Large ones) */}
+            <div className="mt-6 space-y-3">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                {config.banners.map((banner, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
+                  >
+                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Lower Banners and Trust Badges Layer */}
+            <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row">
+              <div className="grid flex-grow grid-cols-1 gap-2">
+                {config.smallBanners.map((banner, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative h-16 w-full max-w-[300px] overflow-hidden rounded bg-slate-100 shadow-sm"
+                  >
+                    <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                  </div>
+                ))}
+              </div>
+
+              {/* Trust Badges Area */}
+              <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
+                {config.trustBadges.map((badge, idx) => (
+                  <div
+                    key={idx}
+                    className="group relative flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
+                  >
+                    <img src={badge} alt="Trust Badge" className="h-24 w-auto" />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 
-        <div className="hidden md:block">
-          <h4 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-800">
-            Navigation
-          </h4>
-          <ul className="space-y-4 text-[11px] tracking-wider">
-            <li>
-              <a href="#home" className="hover:text-primary-400">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#campaign" className="hover:text-primary-400">
-                Campaign
-              </a>
-            </li>
-            <li>
-              <a href="#cast" className="hover:text-primary-400">
-                Therapists
-              </a>
-            </li>
-            <li>
-              <a href="#price" className="hover:text-primary-400">
-                Price List
-              </a>
-            </li>
-          </ul>
+        {/* Bottom Copyright */}
+        <div className="mt-12 border-t border-slate-100 pt-6 text-center">
+          <p className="text-[10px] tracking-widest text-[#666]">{config.copyright}</p>
         </div>
-        <div className="hidden md:block">
-          <h4 className="mb-6 text-[10px] font-bold uppercase tracking-widest text-slate-800">
-            Support
-          </h4>
-          <ul className="space-y-4 text-[11px] tracking-wider">
-            <li>
-              <a href="#" className="hover:text-primary-400">
-                FAQ
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-primary-400">
-                Contact
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-
-      <div className="mx-auto mt-16 flex max-w-7xl flex-col items-center justify-between border-t border-neutral-50 px-8 pt-8 text-[9px] tracking-[0.1em] text-slate-300 md:flex-row">
-        <p className="mb-6 flex items-center md:mb-0">
-          <span className="mr-3 rounded bg-slate-100 px-2 py-0.5 text-[8px] font-bold text-slate-400">
-            ADULT ONLY
-          </span>
-          当サービスは18歳未満の方の利用を固く禁じております。
-        </p>
-        <p>&copy; 2023-2024 LUMIÈRE Fukuoka. All Rights Reserved.</p>
       </div>
     </footer>
   );

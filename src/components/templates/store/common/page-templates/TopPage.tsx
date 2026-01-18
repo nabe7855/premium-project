@@ -15,17 +15,21 @@ import VideoSection from '@/components/sections/store/VideoSection';
 import { TestimonialSection } from '@/components/sections/TestimonialSection';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { Store } from '@/lib/store/store-data';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
+import Footer from '../../fukuoka/sections/Footer';
 
 interface CommonStorePageProps {
   store: Store;
   todayCasts: TodayCast[];
   structuredData: any;
+  topConfig?: StoreTopPageConfig | null;
 }
 
 export default function CommonStorePage({
   store,
   todayCasts,
   structuredData,
+  topConfig,
 }: CommonStorePageProps) {
   // 安全のためのnullチェック
   if (!store) {
@@ -55,6 +59,7 @@ export default function CommonStorePage({
           <AIMatchingSection />
           <ClosingCTA />
         </main>
+        <Footer config={topConfig?.footer} />
       </div>
     </StoreProvider>
   );

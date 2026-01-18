@@ -2,7 +2,9 @@ import CommonTopPage from '@/components/templates/store/common/page-templates/To
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -21,94 +23,36 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     };
   }
 
-  // 福岡店の場合は専用のメタデータロジック
-  if (store.template === 'fukuoka') {
-    return {
-      title: 'LUMIÈRE 福岡 | 女性専用リラクゼーション',
-      description:
-        '福岡で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-      keywords: '福岡,リラクゼーション,女性専用,メンズセラピスト,癒し',
-      openGraph: {
-        title: 'LUMIÈRE 福岡 | 女性専用リラクゼーション',
-        description:
-          '福岡で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-            width: 1200,
-            height: 630,
-            alt: 'LUMIÈRE 福岡',
-          },
-        ],
-        type: 'website',
-        locale: 'ja_JP',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: 'LUMIÈRE 福岡 | 女性専用リラクゼーション',
-        description:
-          '福岡で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-        images: [
-          'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-        ],
-      },
-      alternates: {
-        canonical: `https://strawberry-boy.com/${params.slug}`,
-      },
-    };
-  }
+  // DBから最新の設定を取得 (失敗した場合はデフォルトを使用)
+  const topConfigResult = await getStoreTopConfig(params.slug);
+  const config = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
 
-  // 横浜店の場合は専用のメタデータロジック
-  if (store.template === 'yokohama') {
-    return {
-      title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
-      description:
-        '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-      keywords: '横浜,リラクゼーション,女性専用,メンズセラピスト,癒し',
-      openGraph: {
-        title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
-        description:
-          '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-        images: [
-          {
-            url: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-            width: 1200,
-            height: 630,
-            alt: 'LUMIÈRE 横浜',
-          },
-        ],
-        type: 'website',
-        locale: 'ja_JP',
-      },
-      twitter: {
-        card: 'summary_large_image',
-        title: 'LUMIÈRE 横浜 | 女性専用リラクゼーション',
-        description:
-          '横浜で愛される女性専用リラクゼーション。厳選されたセラピストが、心を込めてお迎えします。',
-        images: [
-          'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1200',
-        ],
-      },
-      alternates: {
-        canonical: `https://strawberry-boy.com/${params.slug}`,
-      },
-    };
-  }
+  // 動的な値を抽出 (設定がない場合はフォールバック)
+  const shopName = config?.footer?.shopInfo?.name || store.name;
+  const mainHeading = config?.hero?.mainHeading || '';
+  const subHeading = config?.hero?.subHeading || '';
+  const description = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
+  const ogImage = config?.hero?.images?.[0] || store.seo.ogImage;
 
-  // その他の店舗は既存のメタデータ
+  const title = config?.hero?.mainHeading
+    ? `${shopName} | ${mainHeading}${subHeading}`
+    : `${shopName} | 女性専用リラクゼーション`;
+
   return {
-    title: store.seo.title,
-    description: store.seo.description,
+    title,
+    description,
     keywords: store.seo.keywords,
     openGraph: {
-      title: store.seo.title,
-      description: store.seo.description,
+      title,
+      description,
       images: [
         {
-          url: store.seo.ogImage,
+          url: ogImage,
           width: 1200,
           height: 630,
-          alt: store.seo.title,
+          alt: shopName,
         },
       ],
       type: 'website',
@@ -116,9 +60,9 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     },
     twitter: {
       card: 'summary_large_image',
-      title: store.seo.title,
-      description: store.seo.description,
-      images: [store.seo.ogImage],
+      title,
+      description,
+      images: [ogImage],
     },
     alternates: {
       canonical: `https://strawberry-boy.com/${params.slug}`,
@@ -142,22 +86,28 @@ export default async function StorePage({ params }: StorePageProps) {
     notFound();
   }
 
+  // 店舗トップ設定を取得
+  const topConfigResult = await getStoreTopConfig(params.slug);
+  const topConfig = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
+
   // Supabaseから今日のキャストを取得
   const todayCasts = await getTodayCastsByStore(params.slug);
 
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
-    name: store.name,
-    description: store.seo.description,
+    name: topConfig?.footer?.shopInfo?.name || store.name,
+    description: topConfig?.hero?.description?.replace(/\n/g, ' ') || store.seo.description,
     address: {
       '@type': 'PostalAddress',
       addressLocality: store.city,
       addressCountry: 'JP',
     },
-    telephone: store.contact.phone,
+    telephone: topConfig?.footer?.shopInfo?.phone || store.contact.phone,
     url: `https://strawberry-boy.com/${params.slug}`,
-    image: store.seo.ogImage,
+    image: topConfig?.hero?.images?.[0] || store.seo.ogImage,
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.8',
@@ -185,7 +135,7 @@ export default async function StorePage({ params }: StorePageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <FukuokaTopPage />
+        <FukuokaTopPage config={topConfig as any} />
       </div>
     );
   }
@@ -197,11 +147,18 @@ export default async function StorePage({ params }: StorePageProps) {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
         />
-        <YokohamaTopPage />
+        <YokohamaTopPage config={topConfig as any} />
       </div>
     );
   }
 
   // その他の店舗は共通テンプレートを表示
-  return <CommonTopPage store={store} todayCasts={todayCasts} structuredData={structuredData} />;
+  return (
+    <CommonTopPage
+      store={store}
+      todayCasts={todayCasts}
+      structuredData={structuredData}
+      topConfig={topConfig}
+    />
+  );
 }

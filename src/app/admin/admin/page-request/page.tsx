@@ -142,54 +142,6 @@ const ELEMENT_TEMPLATES: ElementTemplate[] = [
   },
 ];
 
-const MOCK_REQUESTS: PageRequest[] = [
-  {
-    id: 'req1',
-    title: '期間限定サマーキャンペーン',
-    slug: 'summer-2026',
-    referenceUrls: ['https://example.com/summer'],
-    updatedAt: new Date().toISOString(),
-    status: 'draft',
-    sections: [
-      {
-        id: '1',
-        name: 'キャンペーンヘッダー',
-        type: 'text',
-        content: '初回限定キャンペーン！最大5,000円OFF。',
-        comment: 'キャッチコピーは目立つように赤系でお願いします。',
-        gridElements: [
-          {
-            id: 'e1',
-            type: 'text',
-            label: 'タイトル',
-            comment: '大きく目立つフォントで',
-            gridPosition: { row: 0, col: 0 },
-            rowSpan: 2,
-            colSpan: 10,
-          },
-          {
-            id: 'e2',
-            type: 'button',
-            label: '申し込みボタン',
-            comment: 'オレンジ色で目立たせる',
-            gridPosition: { row: 3, col: 3 },
-            rowSpan: 2,
-            colSpan: 4,
-          },
-        ],
-      },
-      {
-        id: '2',
-        name: '料金表',
-        type: 'pricing',
-        content: '60分：12,000円\n90分：18,000円',
-        comment: '税込み価格であることを明記してください。',
-        gridElements: [],
-      },
-    ],
-  },
-];
-
 // --- Sub Component: Layout Editor ---
 
 interface RecruitLayoutEditorProps {
@@ -1012,7 +964,7 @@ const RecruitLayoutEditor = ({ initialData, onSave, onCancel }: RecruitLayoutEdi
 
 export default function PageRequestManager() {
   const [viewMode, setViewMode] = useState<'list' | 'edit' | 'create'>('list');
-  const [requests, setRequests] = useState<PageRequest[]>(MOCK_REQUESTS);
+  const [requests, setRequests] = useState<PageRequest[]>([]);
   const [editingRequestId, setEditingRequestId] = useState<string | null>(null);
 
   const handleCreate = () => {

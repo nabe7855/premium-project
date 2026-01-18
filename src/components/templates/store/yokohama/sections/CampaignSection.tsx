@@ -1,7 +1,12 @@
+import { CampaignConfig } from '@/lib/store/storeTopConfig';
 import { Campaign } from '@/types/fukuoka';
 import { ChevronRight, Gift, Instagram, Zap } from 'lucide-react';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
+
+interface CampaignSectionProps {
+  config?: CampaignConfig;
+}
 
 const campaigns: Campaign[] = [
   {
@@ -36,17 +41,21 @@ const campaigns: Campaign[] = [
   },
 ];
 
-const CampaignSection: React.FC = () => {
+const CampaignSection: React.FC<CampaignSectionProps> = ({ config }) => {
+  const items = config?.items || campaigns;
+  const heading = config?.heading || '最新情報・キャンペーン';
+  const subHeading = config?.subHeading || 'News & Campaigns';
+
   return (
     <section
       id="campaign"
       className="bg-primary-50/50 border-primary-100/50 border-y py-16 md:py-24"
     >
       <div className="mx-auto max-w-7xl">
-        <SectionTitle en="News & Campaigns" ja="最新情報・キャンペーン" />
+        <SectionTitle en={subHeading} ja={heading} />
 
         <div className="scrollbar-hide flex snap-x gap-8 overflow-x-auto px-6 pb-8 md:grid md:grid-cols-3 md:px-0">
-          {campaigns.map((camp) => (
+          {items.map((camp) => (
             <div
               key={camp.id}
               className="border-primary-100/20 group min-w-[300px] snap-center overflow-hidden rounded-[2.5rem] border bg-white shadow-sm transition-all duration-500 hover:shadow-xl md:min-w-0"

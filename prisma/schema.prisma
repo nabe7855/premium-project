@@ -42,6 +42,7 @@ model Store {
   memberships   CastStoreMembership[]
   videos        Video[]
   recruit_pages RecruitPage[]
+  store_top_config StoreTopConfig?
 }
 
 // -------------------- Recruit Pages（採用ページ設定） --------------------
@@ -57,6 +58,31 @@ model RecruitPage {
   store Store @relation(fields: [store_id], references: [id])
 
   @@unique([store_id, section_key])
+}
+
+// -------------------- Page Requests（ページ制作依頼） --------------------
+model PageRequest {
+  id            String   @id @default(uuid())
+  title         String
+  slug          String   @unique
+  referenceUrls Json?    @default("[]")
+  sections      Json?    @default("[]")
+  status        String   @default("draft")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  @@map("page_requests")
+}
+
+// -------------------- Store Top Config（店舗トップページ設定） --------------------
+model StoreTopConfig {
+  id         String   @id @default(uuid())
+  store_id   String   @unique
+  config     Json     // セクション設定をJSON形式で保存
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  store Store @relation(fields: [store_id], references: [id])
 }
 
 // -------------------- Schedules（出勤予定） --------------------

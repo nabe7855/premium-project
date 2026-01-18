@@ -3,8 +3,8 @@ import React from 'react';
 interface StepCardProps {
   num: number;
   icon: React.ReactNode;
-  title: string;
-  desc: string;
+  title: React.ReactNode;
+  desc: React.ReactNode;
 }
 
 const StepCard: React.FC<StepCardProps> = ({ num, icon, title, desc }) => (

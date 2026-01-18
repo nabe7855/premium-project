@@ -1,9 +1,14 @@
+import { FlowConfig } from '@/lib/store/storeTopConfig';
 import { Calendar, ChevronRight, Heart, MapPin, User } from 'lucide-react';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
 import StepCard from '../components/StepCard';
 
-const FlowSection: React.FC = () => {
+interface FlowSectionProps {
+  config?: FlowConfig;
+}
+
+const FlowSection: React.FC<FlowSectionProps> = ({ config }) => {
   return (
     <section id="flow" className="relative bg-white py-16 md:py-24">
       <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(#fce7f3_0.8px,transparent_0.8px)] opacity-30 [background-size:24px_24px]"></div>

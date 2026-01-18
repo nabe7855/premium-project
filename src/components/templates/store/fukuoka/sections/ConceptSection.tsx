@@ -1,8 +1,9 @@
-'use client';
-import { CheckCircle2 } from 'lucide-react';
+import { Camera, CheckCircle2, Plus, Trash2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
-const concepts = [
+import { ConceptConfig } from '@/lib/store/storeTopConfig';
+
+const defaultConcepts = [
   {
     title: '厳選セラピスト',
     desc: '容姿だけでなく、高いホスピタリティと社会人としてのマナーを兼ね備えた男性のみを採用。厳しい研修をクリアしたプロフェッショナルが伺います。',
@@ -29,15 +30,74 @@ const concepts = [
   },
 ];
 
-const ConceptSection: React.FC = () => {
+interface ConceptSectionProps {
+  config?: ConceptConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+}
+
+const ConceptSection: React.FC<ConceptSectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
 
+  const concepts = config?.items || defaultConcepts;
+
   useEffect(() => {
+    if (isEditing) return; // 編集時は自動スライドを停止
+    if (concepts.length === 0) return;
     const timer = setInterval(() => {
       setCurrentConceptIndex((prev) => (prev + 1) % concepts.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, []);
+  }, [concepts.length, isEditing]);
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('concept', key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleItemUpdate = (index: number, key: string, value: string) => {
+    if (onUpdate) {
+      const newItems = [...concepts];
+      newItems[index] = { ...newItems[index], [key]: value };
+      onUpdate('concept', 'items', newItems);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (file && onImageUpload) {
+      onImageUpload('concept', file, index, 'imageUrl');
+    }
+  };
+
+  const addItem = () => {
+    if (onUpdate) {
+      const newItem = {
+        title: '新規コンセプト',
+        desc: '説明文を入力してください',
+        imageUrl: defaultConcepts[0].imageUrl,
+      };
+      onUpdate('concept', 'items', [...concepts, newItem]);
+    }
+  };
+
+  const removeItem = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onUpdate) {
+      const newItems = concepts.filter((_, i) => i !== index);
+      onUpdate('concept', 'items', newItems);
+      if (currentConceptIndex >= newItems.length) {
+        setCurrentConceptIndex(Math.max(0, newItems.length - 1));
+      }
+    }
+  };
 
   return (
     <section className="mx-auto max-w-7xl overflow-hidden px-6 py-16 md:py-24">
@@ -62,22 +122,43 @@ const ConceptSection: React.FC = () => {
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+
+              {isEditing && idx === currentConceptIndex && (
+                <label className="absolute inset-0 z-50 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
+                  <Camera size={48} className="mb-2" />
+                  <span className="text-sm font-bold">画像を変更</span>
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="image/*"
+                    onChange={(e) => handleImageChange(e, idx)}
+                  />
+                </label>
+              )}
             </div>
           ))}
         </div>
 
         {/* Content Side */}
         <div className="order-1 lg:order-2">
-          <span className="text-primary-400 text-[10px] font-bold uppercase tracking-[0.4em] md:text-xs">
-            Our Concept
+          <span
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => handleTextUpdate('badge', e)}
+            className={`text-primary-400 text-[10px] font-bold uppercase tracking-[0.4em] md:text-xs ${isEditing ? 'hover:bg-primary-50 rounded px-1' : ''}`}
+          >
+            {config?.badge || 'Our Concept'}
           </span>
-          <h2 className="mb-6 mt-3 font-serif text-2xl leading-snug text-slate-800 md:text-4xl">
-            安心と癒やしを、
-            <br />
-            すべての女性の日常に。
+          <h2
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => handleTextUpdate('heading', e)}
+            className={`mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+          >
+            {config?.heading || '安心と癒やしを、\nすべての女性の日常に。'}
           </h2>
 
-          <div className="mb-8 space-y-4">
+          <div className="mb-8 space-y-4 text-left">
             {concepts.map((concept, idx) => (
               <div
                 key={idx}
@@ -94,30 +175,63 @@ const ConceptSection: React.FC = () => {
                   >
                     <CheckCircle2 size={18} />
                   </div>
-                  <div>
+                  <div className="flex-grow">
                     <h3
-                      className={`mb-1 text-sm font-bold transition-colors md:text-base ${idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'}`}
+                      contentEditable={isEditing}
+                      suppressContentEditableWarning={isEditing}
+                      onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
+                      onClick={(e) => isEditing && e.stopPropagation()}
+                      className={`mb-1 text-sm font-bold transition-colors md:text-base ${idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'} ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
                     >
                       {concept.title}
                     </h3>
-                    {idx === currentConceptIndex && (
-                      <p className="text-xs leading-relaxed text-slate-500 duration-500 animate-in fade-in slide-in-from-top-2 md:text-sm">
+                    {(idx === currentConceptIndex || isEditing) && (
+                      <p
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
+                        onClick={(e) => isEditing && e.stopPropagation()}
+                        className={`text-xs leading-relaxed text-slate-500 duration-500 md:text-sm ${isEditing ? 'mt-2 block min-h-[1em] rounded px-1 hover:bg-slate-50' : 'animate-in fade-in slide-in-from-top-2'}`}
+                      >
                         {concept.desc}
                       </p>
                     )}
                   </div>
+                  {isEditing && (
+                    <button
+                      onClick={(e) => removeItem(idx, e)}
+                      className="ml-2 rounded-full p-2 text-red-300 hover:bg-red-50 hover:text-red-500"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
-                {idx === currentConceptIndex && (
+                {idx === currentConceptIndex && !isEditing && (
                   <div className="bg-primary-100 absolute bottom-0 left-0 h-1 w-full overflow-hidden rounded-b-[1.5rem]">
                     <div className="bg-primary-500 h-full animate-pulse"></div>
                   </div>
                 )}
               </div>
             ))}
+            {isEditing && (
+              <button
+                onClick={addItem}
+                className="hover:border-primary-300 hover:text-primary-500 flex w-full items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors"
+              >
+                <Plus size={20} />
+                <span>コンセプトを追加</span>
+              </button>
+            )}
           </div>
 
-          <p className="border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm">
-            「自分へのご褒美」を、もっと身近で、もっと心地よいものに。LUMIÈREは福岡の女性を応援します。
+          <p
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => handleTextUpdate('subHeading', e)}
+            className={`whitespace-pre-line border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+          >
+            {config?.subHeading ||
+              '「自分へのご褒美」を、もっと身近で、もっと心地よいものに。LUMIÈREは福岡の女性を応援します。'}
           </p>
         </div>
       </div>
