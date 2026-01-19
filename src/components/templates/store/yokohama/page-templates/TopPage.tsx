@@ -36,17 +36,52 @@ export default function YokohamaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      <HeroSection config={config?.hero} />
-      <ConceptSection config={config?.concept} />
-      <CampaignSection config={config?.campaign} />
-      <DiarySection config={config?.diary} />
-      <CastSection config={config?.cast} />
-      <NewcomerSection config={config?.newcomer} />
-      <PriceSection config={config?.price} />
-      <FlowSection config={config?.flow} />
-      <FAQSection config={config?.faq} />
-      <Footer config={config?.footer} />
-      <MobileStickyButton />
+      <HeroSection
+        config={config?.hero}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <ConceptSection
+        config={config?.concept}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <CampaignSection
+        config={config?.campaign}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <DiarySection
+        config={config?.diary}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <CastSection
+        config={config?.cast}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <NewcomerSection
+        config={config?.newcomer}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <PriceSection config={config?.price} isEditing={isEditing} onUpdate={onUpdate} />
+      <FlowSection config={config?.flow} isEditing={isEditing} onUpdate={onUpdate} />
+      <FAQSection config={config?.faq} isEditing={isEditing} onUpdate={onUpdate} />
+      <Footer
+        config={config?.footer}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      {!isEditing && <MobileStickyButton />}
     </div>
   );
 }

@@ -149,6 +149,48 @@ export default function StoreTopManagement() {
         };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'hero' && typeof index === 'number') {
+        // Hero images array handling
+        const newImages = [...config.hero.images];
+        const oldImageUrl = newImages[index];
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newImages[index] = publicUrl;
+        const newConfig = {
+          ...config,
+          hero: { ...config.hero, images: newImages },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
+        // Concept items handling
+        const newItems = [...config.concept.items];
+        const oldImageUrl = newItems[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+        const newConfig = {
+          ...config,
+          concept: { ...config.concept, items: newItems },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
+        // Campaign items handling
+        const newItems = [...config.campaign.items];
+        const oldImageUrl = newItems[index]?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+        const newConfig = {
+          ...config,
+          campaign: { ...config.campaign, items: newItems },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
       } else if (section === 'diary' && typeof index === 'number') {
         const newItems = [...config.diary.items];
         newItems[index] = { ...newItems[index], image: publicUrl };

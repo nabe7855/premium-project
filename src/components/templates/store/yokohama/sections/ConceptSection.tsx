@@ -1,10 +1,13 @@
 'use client';
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
-import { CheckCircle2 } from 'lucide-react';
+import { Camera, CheckCircle2 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 interface ConceptSectionProps {
   config?: ConceptConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
 const defaultConcepts = [
@@ -34,18 +37,45 @@ const defaultConcepts = [
   },
 ];
 
-const ConceptSection: React.FC<ConceptSectionProps> = ({ config }) => {
+const ConceptSection: React.FC<ConceptSectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
   const items = config?.items || defaultConcepts;
   const heading = config?.heading || '安心と癒やしを、すべての女性の日常に。';
   const subHeading = config?.subHeading || 'Our Concept';
 
   useEffect(() => {
+    if (isEditing) return;
     const timer = setInterval(() => {
       setCurrentConceptIndex((prev) => (prev + 1) % items.length);
     }, 4500);
     return () => clearInterval(timer);
-  }, [items.length]);
+  }, [items.length, isEditing]);
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('concept', key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleItemUpdate = (index: number, key: string, value: string) => {
+    if (onUpdate) {
+      const newItems = [...items];
+      newItems[index] = { ...newItems[index], [key]: value };
+      onUpdate('concept', 'items', newItems);
+    }
+  };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
+    const file = e.target.files?.[0];
+    if (file && onImageUpload) {
+      onImageUpload('concept', file, index, 'items');
+    }
+  };
 
   return (
     <section id="concept" className="bg-slate-50 py-16 md:py-24">
@@ -53,11 +83,21 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({ config }) => {
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
           {/* Content Side */}
           <div className="order-2 lg:order-1">
-            <span className="text-primary-500 text-xs font-bold uppercase tracking-[0.3em]">
-              {subHeading}
+            <span
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => handleTextUpdate('badge', e)}
+              className={`text-primary-500 text-xs font-bold uppercase tracking-[0.3em] ${isEditing ? 'hover:bg-primary-50 rounded px-1' : ''}`}
+            >
+              {config?.badge || subHeading}
             </span>
-            <h2 className="mb-8 mt-4 font-serif text-3xl font-bold leading-tight text-slate-800 md:text-5xl">
-              {heading}
+            <h2
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => handleTextUpdate('heading', e)}
+              className={`mb-8 mt-4 font-serif text-3xl font-bold leading-tight text-slate-800 md:text-5xl ${isEditing ? 'rounded px-1 hover:bg-white/10' : ''}`}
+            >
+              {config?.heading || heading}
             </h2>
 
             <div className="space-y-4">
@@ -83,14 +123,24 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({ config }) => {
                     </div>
                     <div>
                       <h3
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
+                        onClick={(e) => isEditing && e.stopPropagation()}
                         className={`mb-2 text-lg font-bold ${
                           idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'
-                        }`}
+                        } ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
                       >
                         {concept.title}
                       </h3>
-                      {idx === currentConceptIndex && (
-                        <p className="text-sm leading-relaxed text-slate-500 duration-500 animate-in fade-in slide-in-from-top-2">
+                      {(idx === currentConceptIndex || isEditing) && (
+                        <p
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
+                          onClick={(e) => isEditing && e.stopPropagation()}
+                          className={`text-sm leading-relaxed text-slate-500 duration-500 ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : 'animate-in fade-in slide-in-from-top-2'}`}
+                        >
                           {concept.desc}
                         </p>
                       )}
@@ -117,6 +167,19 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({ config }) => {
                     className="h-full w-full object-cover"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
+
+                  {isEditing && idx === currentConceptIndex && (
+                    <label className="absolute inset-0 z-50 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
+                      <Camera size={48} className="mb-2" />
+                      <span className="text-sm font-bold">画像を変更</span>
+                      <input
+                        type="file"
+                        className="hidden"
+                        accept="image/*"
+                        onChange={(e) => handleImageChange(e, idx)}
+                      />
+                    </label>
+                  )}
                 </div>
               ))}
             </div>

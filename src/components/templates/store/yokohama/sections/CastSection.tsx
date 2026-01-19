@@ -5,6 +5,9 @@ import SectionTitle from '../components/SectionTitle';
 
 interface CastSectionProps {
   config?: CastConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
 const castList: Cast[] = [
@@ -50,7 +53,12 @@ const castList: Cast[] = [
   },
 ];
 
-const CastSection: React.FC<CastSectionProps> = ({ config }) => {
+const CastSection: React.FC<CastSectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   const casts = config?.items || castList;
 
   return (

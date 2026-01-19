@@ -3,9 +3,17 @@ import React from 'react';
 
 interface NewcomerSectionProps {
   config?: NewcomerConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config }) => {
+const NewcomerSection: React.FC<NewcomerSectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   if (!config || !config.isVisible) return null;
 
   return (

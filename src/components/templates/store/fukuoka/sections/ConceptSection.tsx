@@ -73,7 +73,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
-      onImageUpload('concept', file, index, 'imageUrl');
+      onImageUpload('concept', file, index, 'items');
     }
   };
 

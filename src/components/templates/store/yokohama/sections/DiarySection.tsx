@@ -5,9 +5,17 @@ import SectionTitle from '../components/SectionTitle';
 
 interface DiarySectionProps {
   config?: DiaryConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const DiarySection: React.FC<DiarySectionProps> = ({ config }) => {
+const DiarySection: React.FC<DiarySectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   const params = useParams();
   const slug = params?.slug || 'tokyo';
 

@@ -69,7 +69,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
-      onImageUpload('campaign', file, index, 'imageUrl');
+      onImageUpload('campaign', file, index, 'items');
     }
   };
 

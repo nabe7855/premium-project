@@ -6,14 +6,21 @@ import StepCard from '../components/StepCard';
 
 interface FlowSectionProps {
   config?: FlowConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const FlowSection: React.FC<FlowSectionProps> = () => {
+const FlowSection: React.FC<FlowSectionProps> = ({ config, isEditing, onUpdate }) => {
   return (
     <section id="flow" className="relative bg-white py-16 md:py-24">
       <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(#fce7f3_0.8px,transparent_0.8px)] opacity-30 [background-size:24px_24px]"></div>
-      <div className="relative z-10 mx-auto max-w-7xl px-6">
-        <SectionTitle en="Guide" ja="ご利用までのステップ" />
+      <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+        <SectionTitle en="Service Flow" ja="ご利用の流れ" />
+        {isEditing && (
+          <div className="border-primary-200 bg-primary-50 text-primary-600 mb-8 rounded border p-2 text-center text-xs">
+            ※ ご利用の流れの編集は現在管理画面のフォームからのみ可能です
+          </div>
+        )}
         <div className="flex flex-col items-stretch justify-center gap-6 md:flex-row lg:gap-8">
           <StepCard
             num={1}

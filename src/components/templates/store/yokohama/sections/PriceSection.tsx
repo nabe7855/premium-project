@@ -5,12 +5,19 @@ import SectionTitle from '../components/SectionTitle';
 
 interface PriceSectionProps {
   config?: PriceConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const PriceSection: React.FC<PriceSectionProps> = () => {
+const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate }) => {
   return (
     <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en="Price Menu" ja="料金プラン" />
+      {isEditing && (
+        <div className="border-primary-200 bg-primary-50 text-primary-600 mb-4 rounded border p-2 text-center text-xs">
+          ※ 料金プランの編集は現在管理画面のフォームからのみ可能です
+        </div>
+      )}
 
       <div className="shadow-primary-100/50 border-primary-50 rounded-[2.5rem] border bg-white p-6 shadow-2xl md:p-12">
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3 md:gap-8">

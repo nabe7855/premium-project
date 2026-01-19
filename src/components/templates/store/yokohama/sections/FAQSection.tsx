@@ -5,9 +5,11 @@ import SectionTitle from '../components/SectionTitle';
 
 interface FAQSectionProps {
   config?: FAQConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const FAQSection: React.FC<FAQSectionProps> = ({ config }) => {
+const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) => {
   const [openIds, setOpenIds] = useState<string[]>([]);
 
   if (!config || !config.isVisible) return null;
