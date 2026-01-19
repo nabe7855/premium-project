@@ -9,7 +9,7 @@ interface PriceSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate }) => {
+const PriceSection: React.FC<PriceSectionProps> = ({ isEditing }) => {
   return (
     <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en="Price Menu" ja="料金プラン" />

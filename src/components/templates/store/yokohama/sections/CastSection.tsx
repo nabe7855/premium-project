@@ -53,21 +53,18 @@ const castList: Cast[] = [
   },
 ];
 
-const CastSection: React.FC<CastSectionProps> = ({
-  config,
-  isEditing,
-  onUpdate,
-  onImageUpload,
-}) => {
+const CastSection: React.FC<CastSectionProps> = ({ config, isEditing }) => {
   const casts = config?.items || castList;
 
   return (
     <section id="cast" className="py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <SectionTitle
-          en={config?.subHeading || 'Therapists'}
-          ja={config?.heading || '本日出勤のセラピスト'}
-        />
+        <SectionTitle en="Top Casts" ja="人気のセラピスト" />
+        {isEditing && (
+          <div className="border-primary-200 bg-primary-50 text-primary-600 mb-8 rounded border p-2 text-center text-xs">
+            ※ キャスト情報の編集は管理者設定からのみ可能です
+          </div>
+        )}
 
         <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
           {casts.map((cast) => (

@@ -10,12 +10,7 @@ interface DiarySectionProps {
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const DiarySection: React.FC<DiarySectionProps> = ({
-  config,
-  isEditing,
-  onUpdate,
-  onImageUpload,
-}) => {
+const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
   const params = useParams();
   const slug = params?.slug || 'tokyo';
 
@@ -24,7 +19,12 @@ const DiarySection: React.FC<DiarySectionProps> = ({
   return (
     <section id="diary" className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <SectionTitle en={config.subHeading} ja={config.heading} />
+        <SectionTitle en="Cast Diary" ja="セラピスト日記" />
+        {isEditing && (
+          <div className="border-primary-200 bg-primary-50 text-primary-600 mb-4 rounded border p-2 text-center text-xs">
+            ※ 日記セクションの設定は管理者設定からのみ可能です
+          </div>
+        )}
 
         <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
           {config.items.slice(0, 4).map((item) => (

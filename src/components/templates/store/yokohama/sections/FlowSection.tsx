@@ -10,7 +10,7 @@ interface FlowSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const FlowSection: React.FC<FlowSectionProps> = ({ config, isEditing, onUpdate }) => {
+const FlowSection: React.FC<FlowSectionProps> = ({ isEditing }) => {
   return (
     <section id="flow" className="relative bg-white py-16 md:py-24">
       <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(#fce7f3_0.8px,transparent_0.8px)] opacity-30 [background-size:24px_24px]"></div>

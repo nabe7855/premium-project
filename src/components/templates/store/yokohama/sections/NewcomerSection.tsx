@@ -8,12 +8,7 @@ interface NewcomerSectionProps {
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const NewcomerSection: React.FC<NewcomerSectionProps> = ({
-  config,
-  isEditing,
-  onUpdate,
-  onImageUpload,
-}) => {
+const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) => {
   if (!config || !config.isVisible) return null;
 
   return (
@@ -26,6 +21,12 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
           </h2>
           <p className="text-sm font-medium tracking-widest md:text-xl">{config.courseText}</p>
         </div>
+
+        {isEditing && (
+          <div className="mb-8 rounded border border-[#C4A97A] bg-amber-50 p-2 text-center text-xs text-[#9C7E4F]">
+            ※ 新人キャスト情報の編集は管理者設定からのみ可能です
+          </div>
+        )}
 
         {/* Horizontal Slider / Grid */}
         <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
