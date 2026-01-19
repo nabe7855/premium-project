@@ -1,3 +1,4 @@
+import AgeVerificationGuard from '@/components/common/AgeVerificationGuard';
 import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
@@ -35,9 +36,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body>
         <Providers>
           {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
-          <HeaderGuard>
-            <FooterGuard>{children}</FooterGuard>
-          </HeaderGuard>
+          <AgeVerificationGuard>
+            <HeaderGuard>
+              <FooterGuard>{children}</FooterGuard>
+            </HeaderGuard>
+          </AgeVerificationGuard>
         </Providers>
 
         {/* ✅ JSON-LD構造化データ（FAQ） */}
