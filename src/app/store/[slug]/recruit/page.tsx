@@ -25,6 +25,7 @@ const AppContent: React.FC = () => {
 
   const { slug } = useParams() as { slug: string };
   const [config, setConfig] = useState<LandingPageConfig | undefined>();
+  const [isLoading, setIsLoading] = useState(true);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -33,7 +34,10 @@ const AppContent: React.FC = () => {
 
   // Fetch config on mount
   useEffect(() => {
-    if (!slug) return;
+    if (!slug) {
+      setIsLoading(false);
+      return;
+    }
     const fetchConfig = async () => {
       try {
         const result = await getRecruitPageConfig(slug);
@@ -42,6 +46,8 @@ const AppContent: React.FC = () => {
         }
       } catch (e) {
         console.error('Failed to fetch recruit config:', e);
+      } finally {
+        setIsLoading(false);
       }
     };
     fetchConfig();
@@ -108,6 +114,10 @@ const AppContent: React.FC = () => {
       ...(fullMergedConfig[key] || {}),
       ...(mergedConfig as any)[key],
     };
+  }
+
+  if (isLoading) {
+    return <div className="min-h-screen bg-slate-950" />;
   }
 
   return (
