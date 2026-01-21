@@ -1,5 +1,5 @@
-'use client';
-
+import { fetchDailyCasts } from '@/actions/cast';
+import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDown, Heart, RotateCcw, Search, Star } from 'lucide-react';
@@ -11,6 +11,7 @@ interface CastSectionProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  storeSlug?: string;
 }
 
 const CastSection: React.FC<CastSectionProps> = ({
@@ -18,9 +19,12 @@ const CastSection: React.FC<CastSectionProps> = ({
   isEditing,
   onUpdate: _onUpdate,
   onImageUpload: _onImageUpload,
+  storeSlug = 'fukuoka', // デフォルトは福岡
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<string>(''); // YYYY-MM-DD
+  const [fetchedCasts, setFetchedCasts] = useState<CastItem[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
   const [sortKey, setSortKey] = useState<
     'default' | 'age-asc' | 'age-desc' | 'height-asc' | 'height-desc' | 'new'
   >('default');
@@ -29,6 +33,8 @@ const CastSection: React.FC<CastSectionProps> = ({
   const dates = useMemo(() => {
     const arr = [];
     const today = new Date();
+    // JST補正はクライアントサイドではブラウザのタイムゾーン依存になるため、
+    // 厳密にはサーバーサイドで計算するか、UTC変換が必要だが、ここでは簡易的にJSのDateを使用
     for (let i = 0; i < 10; i++) {
       const d = new Date(today);
       d.setDate(today.getDate() + i);
@@ -44,21 +50,55 @@ const CastSection: React.FC<CastSectionProps> = ({
 
   // 初期選択を本日に設定
   useEffect(() => {
-    if (!selectedDate) {
+    if (!selectedDate && dates.length > 0) {
       setSelectedDate(dates[0].date);
     }
   }, [dates, selectedDate]);
 
-  const castList = config?.items || [];
+  // 日付変更時にデータフェッチ
+  useEffect(() => {
+    const loadCasts = async () => {
+      if (!selectedDate) return;
+
+      setIsLoading(true);
+      try {
+        const data = await fetchDailyCasts(storeSlug, selectedDate);
+
+        // TodayCast -> CastItem 変換
+        const mappedCasts: CastItem[] = data.map((c: TodayCast) => ({
+          id: Number(c.id) || 0, // IDがUUIDの場合はハッシュ等にするか、CastItemの型をstringに変更する必要があるが、一旦0または数値変換
+          name: c.name,
+          age: c.age || 0,
+          height: c.height || 0,
+          comment: c.catch_copy || '',
+          status: '本日出勤',
+          tags: c.tags || [],
+          imageUrl: c.main_image_url || c.image_url || '/images/cast-placeholder.png',
+          schedule: [selectedDate], // 現在選択中の日付のみ
+        }));
+        setFetchedCasts(mappedCasts);
+      } catch (e) {
+        console.error('Failed to load casts', e);
+        setFetchedCasts([]);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadCasts();
+  }, [selectedDate, storeSlug]);
+
+  // 表示するリスト：データフェッチが完了していればそれを、なければConfigの初期値（SSG/SSR時点のもの）を使用...
+  // としたいが、日付切り替えに対応するため、基本は fetchedCasts を使う。
+  // 初回レンダリング時などで fetchedCasts が空の間だけ config.items を使う手もあるが、
+  // 整合性を保つため fetchedCasts をメインにする。ただし、初期表示のチラつき防止で config.items を利用可能。
+  const displayCasts = fetchedCasts.length > 0 ? fetchedCasts : isLoading ? [] : [];
 
   // フィルタリング & ソートロジック
   const filteredCasts = useMemo(() => {
-    let result = [...castList];
+    let result = [...displayCasts];
 
-    // 日付フィルター
-    if (selectedDate) {
-      result = result.filter((cast) => cast.schedule?.includes(selectedDate));
-    }
+    // 日付フィルターは fetch 段階で行っているので、ここでは不要（念のため schedule チェックはしても良いが省略）
 
     // 名前検索
     if (searchTerm) {
@@ -88,11 +128,11 @@ const CastSection: React.FC<CastSectionProps> = ({
     }
 
     return result;
-  }, [castList, selectedDate, searchTerm, sortKey]);
+  }, [displayCasts, searchTerm, sortKey]);
 
   const resetFilters = () => {
     setSearchTerm('');
-    setSelectedDate(dates[0].date);
+    if (dates.length > 0) setSelectedDate(dates[0].date);
     setSortKey('default');
   };
 
@@ -198,76 +238,82 @@ const CastSection: React.FC<CastSectionProps> = ({
 
         {/* キャストカード一覧 */}
         <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
-          <div className="flex gap-4 md:grid md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-8">
-            <AnimatePresence mode="popLayout">
-              {filteredCasts.map((cast: CastItem) => (
-                <motion.div
-                  key={cast.id}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.4 }}
-                  className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
-                >
-                  {/* 画像エリア */}
-                  <div className="relative aspect-[1/1.2] overflow-hidden">
-                    <img
-                      src={cast.imageUrl}
-                      alt={cast.name}
-                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
+          <div className="flex min-h-[300px] gap-4 md:grid md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-8">
+            {isLoading ? (
+              <div className="col-span-full flex h-60 items-center justify-center">
+                <div className="h-10 w-10 animate-spin rounded-full border-4 border-rose-200 border-t-rose-500" />
+              </div>
+            ) : (
+              <AnimatePresence mode="popLayout">
+                {filteredCasts.map((cast: CastItem) => (
+                  <motion.div
+                    key={cast.id}
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    transition={{ duration: 0.4 }}
+                    className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
+                  >
+                    {/* 画像エリア */}
+                    <div className="relative aspect-[1/1.2] overflow-hidden">
+                      <img
+                        src={cast.imageUrl}
+                        alt={cast.name}
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      />
 
-                    {/* バッジ装飾 */}
-                    <div className="absolute left-2 top-2 flex flex-col gap-1.5">
-                      {cast.id % 3 === 0 && (
-                        <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
-                          <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                      {/* バッジ装飾 */}
+                      <div className="absolute left-2 top-2 flex flex-col gap-1.5">
+                        {cast.id % 3 === 0 && (
+                          <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
+                            <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                          </span>
+                        )}
+                        <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
+                          <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
                         </span>
-                      )}
-                      <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
-                        <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
-                      </span>
+                      </div>
+
+                      {/* グラデーションオーバーレイ */}
+                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+
+                      {/* 名前と基本情報（画像下部） */}
+                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                        <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
+                          {cast.name}
+                        </h3>
+                        <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+                          {cast.height}cm / {cast.age}歳
+                        </p>
+                      </div>
                     </div>
 
-                    {/* グラデーションオーバーレイ */}
-                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
-
-                    {/* 名前と基本情報（画像下部） */}
-                    <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                      <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
-                        {cast.name}
-                      </h3>
-                      <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
-                        {cast.height}cm / {cast.age}歳
-                      </p>
+                    {/* タグエリア */}
+                    <div className="flex flex-wrap gap-1 p-2">
+                      {cast.tags?.slice(0, 3).map((tag: string) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
+                        >
+                          {tag}
+                        </span>
+                      ))}
                     </div>
-                  </div>
 
-                  {/* タグエリア */}
-                  <div className="flex flex-wrap gap-1 p-2">
-                    {cast.tags?.slice(0, 3).map((tag: string) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-
-                  {/* イチゴの隠しアイコン（ホバー時） */}
-                  <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
-                    <span className="text-3xl">🍓</span>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
+                    {/* イチゴの隠しアイコン（ホバー時） */}
+                    <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
+                      <span className="text-3xl">🍓</span>
+                    </div>
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            )}
           </div>
         </div>
 
         {/* 検索結果なし */}
-        {filteredCasts.length === 0 && (
+        {!isLoading && filteredCasts.length === 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
