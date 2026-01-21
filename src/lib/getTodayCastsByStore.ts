@@ -68,9 +68,10 @@ export async function getTodayCastsByStore(
         image_url,
         is_active,
         mbti:mbti_id ( name ),
+
         face:face_id ( name ),
-        cast_tags (
-          tags (
+        cast_statuses (
+          status_master (
             name
           )
         )
@@ -87,22 +88,35 @@ export async function getTodayCastsByStore(
   }
 
   // console.log('🔍 schedules raw data:', data);
+  console.log(`🔍 Schedules found: ${data?.length || 0} records for storeId: ${store.id}`);
 
   if (!data || data.length === 0) {
-    // console.warn('⚠️ 指定日の出勤キャストは見つかりませんでした');
+    console.warn('⚠️ 指定日の出勤キャストは見つかりませんでした');
     return [];
   }
 
+  // デバッグ: 最初のデータの構造を確認
+  // console.log('🔍 First raw item:', JSON.stringify(data[0], null, 2));
+
   // 4. 整形して返す
-  return data
-    .filter((item: any) => item.casts?.is_active)
+  const result = data
+    .filter((item: any) => {
+      const isActive = item.casts?.is_active;
+      if (!isActive) {
+        // console.log(`Strain filtered out inactive cast: ${item.casts?.name} (ID: ${item.casts?.id})`);
+      }
+      return isActive;
+    })
     .map((item: any): TodayCast => {
       const mbti = Array.isArray(item.casts.mbti) ? item.casts.mbti[0] : item.casts.mbti;
       const face = Array.isArray(item.casts.face) ? item.casts.face[0] : item.casts.face;
 
-      // タグ情報の抽出
+      // タグ情報の抽出 (cast_statuses から status_master.name を取得)
       const tags =
-        item.casts.cast_tags?.map((ct: any) => ct.tags?.name).filter((t: any) => t) || [];
+        item.casts.cast_statuses?.map((cs: any) => cs.status_master?.name).filter((t: any) => t) ||
+        [];
+
+      // console.log(`✨ Processed cast: ${item.casts.name} (ID: ${item.casts.id})`);
 
       return {
         id: item.casts.id,
@@ -119,4 +133,7 @@ export async function getTodayCastsByStore(
         end_datetime: item.end_datetime,
       };
     });
+
+  console.log(`✅ Returns ${result.length} casts for ${storeSlug} on ${dateStr}`);
+  return result;
 }
