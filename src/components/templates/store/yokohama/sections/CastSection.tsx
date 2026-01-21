@@ -2,7 +2,7 @@
 
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpDown, Heart, RotateCcw, Search, Sparkles } from 'lucide-react';
+import { ArrowUpDown, Heart, RotateCcw, Search, Star } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
 
@@ -187,68 +187,72 @@ const CastSection: React.FC<CastSectionProps> = ({
           </div>
         </div>
 
-        {/* キャストグリッド */}
-        <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8 lg:grid-cols-4">
-          <AnimatePresence mode="popLayout">
-            {filteredCasts.map((cast: CastItem) => (
-              <motion.div
-                key={cast.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.9 }}
-                className="group relative flex flex-col overflow-hidden rounded-[2.5rem] border border-rose-50/50 bg-white p-2 shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50"
-              >
-                <div className="relative aspect-[3/4] overflow-hidden rounded-[2rem]">
-                  <img
-                    src={cast.imageUrl}
-                    alt={cast.name}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+        {/* キャストカード一覧 */}
+        <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+          <div className="flex gap-4 md:grid md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-8">
+            <AnimatePresence mode="popLayout">
+              {filteredCasts.map((cast: CastItem) => (
+                <motion.div
+                  key={cast.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
+                >
+                  <div className="relative aspect-[1/1.2] overflow-hidden">
+                    <img
+                      src={cast.imageUrl}
+                      alt={cast.name}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
 
-                  <div className="absolute left-3 top-3 flex flex-col gap-2">
-                    <span className="flex items-center gap-1 rounded-full bg-white/90 px-3 py-1 text-[9px] font-black text-rose-500 shadow-sm backdrop-blur-sm">
-                      <Heart className="h-3 w-3 fill-current" /> 出勤中
-                    </span>
+                    {/* バッジ装飾 */}
+                    <div className="absolute left-2 top-2 flex flex-col gap-1.5">
+                      {cast.id % 3 === 0 && (
+                        <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
+                          <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                        </span>
+                      )}
+                      <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
+                        <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
+                      </span>
+                    </div>
+
+                    {/* グラデーションオーバーレイ */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+
+                    {/* 名前と基本情報（画像下部） */}
+                    <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                      <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
+                        {cast.name}
+                      </h3>
+                      <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+                        {cast.height}cm / {cast.age}歳
+                      </p>
+                    </div>
                   </div>
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-rose-900/60 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-
-                  <div className="absolute bottom-4 left-4 right-4 translate-y-2 text-left text-white opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                    <p className="mb-0.5 text-[9px] font-bold uppercase tracking-widest opacity-80">
-                      {cast.height}cm / {cast.age}age
-                    </p>
-                    <h3 className="font-serif text-xl font-bold tracking-widest">{cast.name}</h3>
-                  </div>
-                </div>
-
-                <div className="flex flex-grow flex-col p-4 text-center">
-                  <h3 className="mb-1 font-serif text-lg font-bold text-slate-700 group-hover:text-rose-500">
-                    {cast.name}
-                  </h3>
-
-                  <div className="mb-3 flex justify-center gap-1">
-                    {cast.tags?.slice(0, 2).map((tag: string) => (
+                  {/* タグエリア */}
+                  <div className="flex flex-wrap gap-1 p-2">
+                    {cast.tags?.slice(0, 3).map((tag: string) => (
                       <span
                         key={tag}
-                        className="rounded-full bg-rose-50/50 px-3 py-0.5 text-[8px] font-bold text-rose-400"
+                        className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
                       >
-                        #{tag}
+                        {tag}
                       </span>
                     ))}
                   </div>
 
-                  <p className="mb-4 line-clamp-2 text-[10px] italic leading-relaxed text-slate-400">
-                    "{cast.comment}"
-                  </p>
-
-                  <button className="flex w-full items-center justify-center gap-2 rounded-2xl bg-rose-50 py-3 text-[10px] font-black tracking-widest text-rose-400 shadow-inner transition-all hover:bg-rose-500 hover:text-white active:scale-95">
-                    <Sparkles className="h-3 w-3" /> Details
-                  </button>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
+                  {/* イチゴの隠しアイコン（ホバー時） */}
+                  <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
+                    <span className="text-3xl">🍓</span>
+                  </div>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
         </div>
 
         {filteredCasts.length === 0 && (

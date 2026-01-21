@@ -1,31 +1,35 @@
-import { AlertCircle, Plus, Trash2 } from 'lucide-react';
-import React from 'react';
-import SectionTitle from '../components/SectionTitle';
+'use client';
 
 import { PriceConfig } from '@/lib/store/storeTopConfig';
+import { AlertCircle } from 'lucide-react';
+import Link from 'next/link';
+import React, { useState } from 'react';
+import SectionTitle from '../components/SectionTitle';
 
-const defaultPrices = [
-  {
-    title: 'Short',
-    duration: 60,
-    price: 12000,
-    description: 'お試し・部分的な集中ケアに',
-    isPopular: false,
-  },
-  {
-    title: 'Standard',
-    duration: 90,
-    price: 17000,
-    description: '全身をゆっくりほぐす定番コース',
-    isPopular: true,
-  },
-  {
-    title: 'Long',
-    duration: 120,
-    price: 23000,
-    description: '心身ともに深く癒される贅沢な時間',
-    isPopular: false,
-  },
+const defaultPricesByTab = [
+  // オープニングキャンペーン中
+  [
+    { title: 'SHORT', duration: 60, price: 10000, description: 'キャンペーン特別価格' },
+    { title: 'STANDARD', duration: 90, price: 15000, description: '一番人気の定番コース' },
+    { title: 'LONG', duration: 120, price: 20000, description: '至福のロングタイム' },
+  ],
+  // スタンダードコース
+  [
+    { title: 'SHORT', duration: 60, price: 12000, description: 'お試し・部分的な集中ケアに' },
+    {
+      title: 'STANDARD',
+      duration: 90,
+      price: 17000,
+      description: '全身をゆっくりほぐす定番コース',
+    },
+    { title: 'LONG', duration: 120, price: 23000, description: '心身ともに深く癒される贅沢な時間' },
+  ],
+  // ロングコース
+  [
+    { title: 'LUXURY', duration: 150, price: 28000, description: '最高級のトリートメント' },
+    { title: 'ROYAL', duration: 180, price: 33000, description: '究極の癒やし体験' },
+    { title: 'VIP', duration: 210, price: 38000, description: '完全オーダーメイド' },
+  ],
 ];
 
 const defaultNotes = [
@@ -39,180 +43,128 @@ interface PriceSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate }) => {
-  const prices = config?.items || defaultPrices;
+const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
+  const [activeTab, setActiveTab] = useState(0);
+
+  const tabs = [
+    { id: 0, label: 'オープニングキャンペーン中' },
+    { id: 1, label: 'スタンダードコース' },
+    { id: 2, label: 'ロングコース' },
+  ];
+
+  const prices = config?.itemsByTab?.[activeTab] || defaultPricesByTab[activeTab];
   const notes = config?.notes || defaultNotes;
-
-  const handleItemUpdate = (index: number, key: string, value: any) => {
-    if (onUpdate) {
-      const newItems = [...prices];
-      if (key === 'price' || key === 'duration') {
-        const numericValue = parseInt(value.toString().replace(/[^0-9]/g, '')) || 0;
-        newItems[index] = { ...newItems[index], [key]: numericValue };
-      } else {
-        newItems[index] = { ...newItems[index], [key]: value };
-      }
-      onUpdate('price', 'items', newItems);
-    }
-  };
-
-  const addItem = () => {
-    if (onUpdate) {
-      const newItem = {
-        title: 'New Plan',
-        duration: 60,
-        price: 10000,
-        description: '説明文を入力',
-        isPopular: false,
-      };
-      onUpdate('price', 'items', [...prices, newItem]);
-    }
-  };
-
-  const removeItem = (index: number) => {
-    if (onUpdate) {
-      const newItems = prices.filter((_, i) => i !== index);
-      onUpdate('price', 'items', newItems);
-    }
-  };
-
-  const handleNoteUpdate = (index: number, value: string) => {
-    if (onUpdate) {
-      const newNotes = [...notes];
-      newNotes[index] = value;
-      onUpdate('price', 'notes', newNotes);
-    }
-  };
-
-  const addNote = () => {
-    if (onUpdate) {
-      onUpdate('price', 'notes', [...notes, '新しい注意事項']);
-    }
-  };
-
-  const removeNote = (index: number) => {
-    if (onUpdate) {
-      const newNotes = notes.filter((_, i) => i !== index);
-      onUpdate('price', 'notes', newNotes);
-    }
-  };
 
   return (
     <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en={config?.subHeading || 'Price Menu'} ja={config?.heading || '料金プラン'} />
 
-      <div className="shadow-primary-100/50 border-primary-50 rounded-[2.5rem] border bg-white p-6 shadow-2xl md:p-12">
-        <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3 md:gap-8">
-          {prices.map((item, idx) => (
-            <div
-              key={idx}
-              className={`group relative rounded-[2rem] border border-neutral-100 p-8 text-center transition-all hover:bg-neutral-50 ${
-                item.isPopular
-                  ? 'from-primary-50 border-primary-200 transform bg-gradient-to-b to-white p-10 shadow-xl md:-translate-y-6'
-                  : ''
+      <div className="overflow-hidden rounded-[2.5rem] border-2 border-slate-200 bg-gradient-to-b from-slate-50 to-white p-6 shadow-2xl md:p-12">
+        {/* タブ */}
+        <div className="mb-10 flex flex-wrap justify-center gap-3">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`transform rounded-full px-6 py-3.5 text-sm font-black transition-all active:scale-95 md:px-8 md:text-base ${
+                activeTab === tab.id
+                  ? 'bg-primary-500 shadow-primary-300/50 text-white shadow-lg'
+                  : 'hover:border-primary-300 hover:bg-primary-50 border-2 border-slate-300 bg-white text-slate-600'
               }`}
             >
-              {isEditing && (
-                <button
-                  onClick={() => removeItem(idx)}
-                  className="absolute -right-2 -top-2 z-50 rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110"
-                >
-                  <Trash2 size={14} />
-                </button>
-              )}
-
-              {item.isPopular && (
-                <div className="bg-primary-500 absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-[9px] font-bold uppercase tracking-[0.2em] text-white shadow-md">
-                  Popular No.1
-                </div>
-              )}
-              <h3
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
-                className={`mb-4 text-xs font-bold uppercase tracking-widest outline-none ${item.isPopular ? 'text-primary-500' : 'text-slate-400'} ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
-              >
-                {item.title}
-              </h3>
-              <div className="mb-3 flex items-baseline justify-center text-slate-800">
-                <span
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleItemUpdate(idx, 'duration', e.currentTarget.innerText)}
-                  className={`font-serif outline-none ${item.isPopular ? 'text-5xl' : 'text-4xl'} ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
-                >
-                  {item.duration}
-                </span>
-                <span className="ml-1 text-xs font-bold">min</span>
-              </div>
-              <div className="mb-3 flex items-baseline justify-center">
-                <span
-                  className={`font-bold ${item.isPopular ? 'text-primary-500 text-2xl' : 'text-xl text-slate-700'}`}
-                >
-                  ¥
-                </span>
-                <span
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleItemUpdate(idx, 'price', e.currentTarget.innerText)}
-                  className={`font-bold outline-none ${item.isPopular ? 'text-primary-500 text-2xl' : 'text-xl text-slate-700'} ${isEditing ? 'ml-1 rounded px-1 hover:bg-slate-50' : ''}`}
-                >
-                  {isEditing ? item.price : item.price.toLocaleString()}
-                </span>
-              </div>
-              <p
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleItemUpdate(idx, 'description', e.currentTarget.innerText)}
-                className={`text-[10px] font-medium tracking-wider outline-none ${item.isPopular ? 'text-slate-500' : 'text-slate-400'} ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
-              >
-                {item.description}
-              </p>
-            </div>
-          ))}
-
-          {isEditing && (
-            <button
-              onClick={addItem}
-              className="border-primary-200 text-primary-300 hover:text-primary-500 hover:border-primary-400 flex min-h-[250px] flex-col items-center justify-center rounded-[2.5rem] border-2 border-dashed bg-white/50 p-8 transition-all"
-            >
-              <Plus size={32} className="mb-2" />
-              <span className="text-xs font-bold">プランを追加</span>
+              {tab.label}
             </button>
-          )}
+          ))}
         </div>
 
-        <div className="mt-10 space-y-3 rounded-[2rem] border border-neutral-100 bg-neutral-50/50 p-6 text-left text-[10px] text-slate-400 md:p-8 md:text-xs">
-          {notes.map((note, idx) => (
-            <div key={idx} className="group/note relative flex items-start gap-3">
-              <AlertCircle size={14} className="text-primary-300 mt-0.5 shrink-0" />
-              <p
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleNoteUpdate(idx, e.currentTarget.innerText)}
-                className={`flex-grow tracking-wider outline-none ${isEditing ? 'min-h-[1.2rem] rounded px-1 hover:bg-white' : ''}`}
+        {/* 料金グリッド */}
+        <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3 md:gap-8">
+          {prices.map((item: any, idx: number) => {
+            const isMain = idx === 1; // 中央を強調
+            return (
+              <div
+                key={idx}
+                className={`relative flex flex-col items-center rounded-[2rem] border-2 p-8 transition-all duration-500 ${
+                  isMain
+                    ? 'border-primary-400 from-primary-100 z-10 scale-105 bg-gradient-to-b to-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)]'
+                    : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-lg'
+                }`}
               >
-                {note}
-              </p>
-              {isEditing && (
-                <button
-                  onClick={() => removeNote(idx)}
-                  className="text-red-300 opacity-0 transition-opacity hover:text-red-500 group-hover/note:opacity-100"
+                {isMain && (
+                  <div className="bg-primary-500 absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                    Popular No.1
+                  </div>
+                )}
+                <span
+                  className={`mb-4 text-xs font-black uppercase tracking-[0.25em] md:text-sm ${isMain ? 'text-primary-600' : 'text-slate-500'}`}
                 >
-                  <Trash2 size={12} />
-                </button>
-              )}
+                  {item.title}
+                </span>
+                <div className="mb-2 flex items-baseline gap-1">
+                  <span
+                    className={`font-serif font-black leading-none ${isMain ? 'text-6xl text-slate-900' : 'text-5xl text-slate-800'}`}
+                  >
+                    {item.duration}
+                  </span>
+                  <span
+                    className={`text-sm font-bold md:text-base ${isMain ? 'text-slate-600' : 'text-slate-500'}`}
+                  >
+                    min
+                  </span>
+                </div>
+                <div className="mb-6 flex items-baseline">
+                  <span
+                    className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
+                  >
+                    ¥
+                  </span>
+                  <span
+                    className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
+                  >
+                    {item.price.toLocaleString()}
+                  </span>
+                </div>
+                <p
+                  className={`min-h-[2.5rem] text-center text-xs font-semibold leading-relaxed md:text-sm ${isMain ? 'text-slate-700' : 'text-slate-600'}`}
+                >
+                  {item.description}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 注意事項 */}
+        <div className="mt-10 space-y-3 rounded-[2rem] border-2 border-slate-200 bg-slate-50 p-6 text-left text-xs text-slate-600 md:p-8 md:text-sm">
+          {notes.map((note: string, idx: number) => (
+            <div key={idx} className="flex items-start gap-3">
+              <AlertCircle size={16} className="text-primary-400 mt-0.5 shrink-0" />
+              <p className="flex-grow font-medium leading-relaxed">{note}</p>
             </div>
           ))}
-          {isEditing && (
-            <button
-              onClick={addNote}
-              className="text-primary-400 hover:text-primary-600 mt-2 flex items-center gap-2 font-bold transition-colors"
+        </div>
+
+        {/* 詳細ボタン */}
+        <div className="mt-12 text-center">
+          <Link
+            href="/price"
+            className="bg-primary-500 hover:bg-primary-600 group inline-flex transform items-center gap-3 rounded-full px-12 py-5 font-black text-white shadow-xl transition-all hover:scale-105 active:scale-95"
+          >
+            <span>詳しいコースはこちら</span>
+            <svg
+              className="h-5 w-5 transition-transform group-hover:translate-x-1"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <Plus size={14} />
-              <span>注意事項を追加</span>
-            </button>
-          )}
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={3}
+                d="M14 5l7 7m0 0l-7 7m7-7H3"
+              />
+            </svg>
+          </Link>
         </div>
       </div>
     </section>

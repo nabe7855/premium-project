@@ -51,6 +51,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (pathname.includes('/header-management')) return '共通ヘッダー管理';
     if (pathname.includes('/store-top-management')) return 'トップページ管理';
     if (pathname.includes('/page-request')) return 'ページ制作依頼';
+    if (pathname.includes('/news-management')) return 'ニュースページ管理';
     if (pathname.includes('/banners')) return 'バナー管理';
     return 'ダッシュボード';
   };

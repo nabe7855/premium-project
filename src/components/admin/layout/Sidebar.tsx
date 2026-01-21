@@ -117,6 +117,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       icon: <PencilIcon />,
       label: 'ページ制作依頼',
     },
+    {
+      href: '/admin/admin/news-management',
+      icon: <DocumentTextIcon />,
+      label: 'ニュースページ管理',
+    },
   ];
 
   return (
