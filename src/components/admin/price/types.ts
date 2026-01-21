@@ -1,9 +1,8 @@
-
 export interface PricePlan {
   minutes: number;
   price: number;
-  subLabel?: string; 
-  discountInfo?: string; 
+  subLabel?: string;
+  discountInfo?: string;
 }
 
 export interface DesignationFees {

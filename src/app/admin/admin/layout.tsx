@@ -38,6 +38,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (pathname.includes('/all-cast')) return '全キャスト管理';
     if (pathname.includes('/stores/casts')) return '店舗別キャスト管理';
     if (pathname === '/admin/admin/stores') return '店舗管理';
+    if (pathname.includes('/price-management')) return '料金管理';
     if (pathname === '/admin/admin/reservations') return '予約管理';
     if (pathname.includes('/advertising/list')) return '投稿済み広告';
     if (pathname.includes('/advertising')) return '広告・集客';

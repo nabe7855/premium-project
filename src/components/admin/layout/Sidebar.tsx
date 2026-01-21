@@ -79,6 +79,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     { href: '/admin/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
     { href: '/admin/admin/stores/casts', icon: <StorefrontIcon />, label: '店舗別キャスト管理' },
     { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
+    { href: '/admin/admin/price-management', icon: <ChartBarIcon />, label: '料金管理' },
     { href: '/admin/admin/reservations', icon: <ChartBarIcon />, label: '予約管理' },
     { href: '/admin/admin/advertising', icon: <PresentationChartLineIcon />, label: '広告・集客' },
     { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },

@@ -1,12 +1,16 @@
-
 import React from 'react';
 
 const Breadcrumbs: React.FC = () => {
   return (
-    <nav className="flex text-rose-300 text-xs mb-6 px-4 md:px-0 justify-center" aria-label="Breadcrumb">
+    <nav
+      className="mb-6 flex justify-center px-4 text-xs text-rose-300 md:px-0"
+      aria-label="Breadcrumb"
+    >
       <ol className="inline-flex items-center space-x-1 md:space-x-3">
         <li className="inline-flex items-center">
-          <a href="#" className="hover:text-rose-500 transition-colors">TOP</a>
+          <a href="#" className="transition-colors hover:text-rose-500">
+            TOP
+          </a>
         </li>
         <li>
           <div className="flex items-center">

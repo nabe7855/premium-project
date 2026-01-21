@@ -100,6 +100,7 @@ export interface PriceConfig {
   heading: string;
   subHeading: string;
   items: PriceItem[];
+  itemsByTab?: PriceItem[][];
   notes: string[];
   isVisible: boolean;
 }
