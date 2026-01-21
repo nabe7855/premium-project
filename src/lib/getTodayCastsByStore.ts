@@ -18,13 +18,14 @@ export interface TodayCast {
 
 // ✅ JSTの日付文字列 (YYYY-MM-DD) を取得
 function getJSTDateString(date: Date): string {
-  const diff = 9 * 60; // JST (+9時間) 分
-  const jstDate = new Date(date.getTime() + diff * 60 * 1000); // UTCに関係なくローカルタイムとして扱う必要があれば調整
-  // シンプルにローカル時間をYYYY-MM-DDにする
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  return date
+    .toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      timeZone: 'Asia/Tokyo',
+    })
+    .replace(/\//g, '-');
 }
 
 export async function getTodayCastsByStore(
@@ -49,7 +50,7 @@ export async function getTodayCastsByStore(
 
   // 2. 日付を取得 (指定がなければ今日)
   const dateStr = targetDate || getJSTDateString(new Date());
-  console.log('📅 対象日付:', dateStr);
+  // console.log('📅 対象日付:', dateStr);
 
   // 3. 対象日の出勤キャストを取得
   const { data, error } = await supabase
@@ -87,25 +88,17 @@ export async function getTodayCastsByStore(
     return [];
   }
 
-  // console.log('🔍 schedules raw data:', data);
-  console.log(`🔍 Schedules found: ${data?.length || 0} records for storeId: ${store.id}`);
+  console.log(`🔍 Schedules found: ${data?.length || 0} records`);
 
   if (!data || data.length === 0) {
     console.warn('⚠️ 指定日の出勤キャストは見つかりませんでした');
     return [];
   }
 
-  // デバッグ: 最初のデータの構造を確認
-  // console.log('🔍 First raw item:', JSON.stringify(data[0], null, 2));
-
   // 4. 整形して返す
   const result = data
     .filter((item: any) => {
-      const isActive = item.casts?.is_active;
-      if (!isActive) {
-        // console.log(`Strain filtered out inactive cast: ${item.casts?.name} (ID: ${item.casts?.id})`);
-      }
-      return isActive;
+      return item.casts?.is_active;
     })
     .map((item: any): TodayCast => {
       const mbti = Array.isArray(item.casts.mbti) ? item.casts.mbti[0] : item.casts.mbti;

@@ -120,7 +120,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {config.menuButtons.map((btn, idx) => (
                 <li key={idx} className="group flex items-center gap-1">
                   <a
-                    href={btn.link}
+                    href={btn.link || '#'}
                     onClick={(e) => isEditing && e.preventDefault()}
                     className="transition-colors hover:text-white"
                   >
@@ -158,7 +158,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {config.trustBadges.map((badge, idx) => (
                 <div key={idx} className="group relative">
                   <a
-                    href={badge.link}
+                    href={badge.link || '#'}
                     onClick={(e) => isEditing && e.preventDefault()}
                     className="block"
                   >
@@ -201,7 +201,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             {config.banners.map((banner, idx) => (
               <div key={idx} className="group relative">
                 <a
-                  href={banner.link}
+                  href={banner.link || '#'}
                   onClick={(e) => isEditing && e.preventDefault()}
                   className="block overflow-hidden rounded shadow-lg transition-transform hover:scale-105"
                 >

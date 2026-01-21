@@ -148,7 +148,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {config.menuButtons.map((btn, idx) => (
                 <div key={idx} className="group relative">
                   <a
-                    href={btn.link || ''}
+                    href={btn.link || '#'}
                     onClick={(e) => isEditing && e.preventDefault()}
                     className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
                   >
@@ -179,7 +179,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 {config.banners.map((banner, idx) => (
                   <div key={idx} className="group relative">
                     <a
-                      href={banner.link || ''}
+                      href={banner.link || '#'}
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
                     >
@@ -218,7 +218,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 {config.smallBanners.map((banner, idx) => (
                   <div key={idx} className="group relative w-full max-w-[300px]">
                     <a
-                      href={banner.link || ''}
+                      href={banner.link || '#'}
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block h-16 overflow-hidden rounded bg-slate-100 shadow-sm"
                     >
@@ -255,7 +255,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 {config.trustBadges.map((badge, idx) => (
                   <div key={idx} className="group relative">
                     <a
-                      href={badge.link || ''}
+                      href={badge.link || '#'}
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
                     >
