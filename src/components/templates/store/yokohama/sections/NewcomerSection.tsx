@@ -29,30 +29,30 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) 
         )}
 
         {/* Horizontal Slider / Grid */}
-        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
+        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {config.items.map((item) => (
-            <div key={item.id} className="min-w-[280px] snap-center md:min-w-0">
-              <div className="group relative mb-4">
+            <div key={item.id} className="min-w-[140px] snap-center md:min-w-0">
+              <div className="group relative mb-2">
                 {/* Image with brown/gold border matching the image */}
-                <div className="relative aspect-[3/4] overflow-hidden border-[3px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
+                <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
                   <img
                     src={item.imageUrl}
                     alt={item.name}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
                   {/* "New Face" Badge */}
-                  <div className="absolute right-4 top-4 flex h-14 w-14 flex-col items-center justify-center rounded-full border-2 border-[#C4A97A] bg-white/95 text-center shadow-sm">
-                    <span className="font-serif text-[10px] leading-none text-[#9C7E4F]">New</span>
-                    <span className="font-serif text-[10px] leading-none text-[#9C7E4F]">Face</span>
+                  <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
+                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">New</span>
+                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">Face</span>
                   </div>
                 </div>
               </div>
 
               <div className="px-1 text-left">
-                <h3 className="mb-1 font-serif text-xl font-bold tracking-widest text-slate-800">
+                <h3 className="mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800">
                   {item.name}
                 </h3>
-                <p className="font-serif text-sm tracking-widest text-[#9C7E4F]">
+                <p className="font-serif text-[10px] tracking-widest text-[#9C7E4F]">
                   {item.age} / <span className="text-[#C4A97A]">T</span>
                   {item.height}cm
                 </p>

@@ -45,9 +45,9 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
         </div>
 
         {/* Horizontal Slider / Grid */}
-        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-6 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-8 md:px-0">
+        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {items.map((item) => (
-            <div key={item.id} className="group relative min-w-[280px] snap-center md:min-w-0">
+            <div key={item.id} className="group relative min-w-[140px] snap-center md:min-w-0">
               {/* Manual Removal Disabled for dynamic Newcomer section */}
               {/* isEditing && (
                 <button
@@ -58,8 +58,8 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                 </button>
               ) */}
 
-              <div className="relative mb-4">
-                <div className="relative aspect-[3/4] overflow-hidden border-[3px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
+              <div className="relative mb-2">
+                <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
                   <img
                     src={item.imageUrl}
                     alt={item.name}
@@ -81,25 +81,25 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                   ) */}
 
                   {/* "New Face" Badge */}
-                  <div className="absolute right-4 top-4 flex h-14 w-14 flex-col items-center justify-center rounded-full border-2 border-[#C4A97A] bg-white/95 text-center shadow-sm">
-                    <span className="font-serif text-[10px] leading-none text-[#9C7E4F]">New</span>
-                    <span className="font-serif text-[10px] leading-none text-[#9C7E4F]">Face</span>
+                  <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
+                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">New</span>
+                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">Face</span>
                   </div>
                 </div>
               </div>
 
               <div className="px-1 text-left">
                 <h3
-                  className={`mb-1 font-serif text-xl font-bold tracking-widest text-slate-800 outline-none`}
+                  className={`mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800 outline-none`}
                 >
                   {item.name}
                 </h3>
-                <div className="flex gap-1 font-serif text-sm tracking-widest text-[#9C7E4F]">
+                <div className="flex gap-1 font-serif text-[10px] tracking-widest text-[#9C7E4F]">
                   <span className="outline-none">{item.age}</span>
                   <span>/</span>
                   <span className="text-[#C4A97A]">T</span>
                   <span className="tracking-tighter outline-none">{item.height}</span>
-                  <span className="ml-[-2px]">cm</span>
+                  <span className="ml-[-1px]">cm</span>
                 </div>
               </div>
             </div>
