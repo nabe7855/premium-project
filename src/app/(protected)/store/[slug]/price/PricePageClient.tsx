@@ -10,15 +10,16 @@ interface PricePageClientProps {
 }
 
 export default function PricePageClient({ priceConfig }: PricePageClientProps) {
-  const [activeTab, setActiveTab] = useState<'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS'>(
-    'COURSES',
-  );
+  const [activeTab, setActiveTab] = useState<
+    'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS' | 'PROHIBITIONS'
+  >('COURSES');
 
   const tabs = [
     { id: 'COURSES' as const, label: 'コース' },
     { id: 'TRANSPORT' as const, label: '送迎' },
     { id: 'OPTIONS' as const, label: 'オプション' },
     { id: 'DISCOUNTS' as const, label: '割引' },
+    { id: 'PROHIBITIONS' as const, label: '禁止事項' },
   ];
 
   return (
@@ -205,6 +206,56 @@ export default function PricePageClient({ priceConfig }: PricePageClientProps) {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* 禁止事項タブ */}
+          {activeTab === 'PROHIBITIONS' && (
+            <div className="space-y-8 pb-10">
+              <div className="mb-10 text-center">
+                <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                  禁止事項について
+                  <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                    PROHIBITIONS
+                  </span>
+                </h2>
+              </div>
+
+              <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50 md:p-10">
+                <ul className="space-y-4">
+                  {[
+                    '本番行為の強要・要求またはそれに付帯する行為をされる方',
+                    '18歳未満の方、高校生の方、妊娠中の方のご利用',
+                    'シャワーやうがいを拒否する方の利用',
+                    '乱暴な扱いをされる方、セラピストが怖がるような暴言を吐かれる方の利用',
+                    '泥酔状態の方',
+                    'アロマオイル、ローションなど施術で使用したものによる皮膚の被れ等の責任は負いかねます',
+                    'お客様の持ち物の紛失などのトラブルは責任を負いかねます（貴重品などは、ご自身で管理お願い致します）',
+                    '性病の方もしくはその疑いのある方',
+                    'カメラやレコーダなどの機器で撮影・録音・盗聴される方',
+                    'その他当店が不適切と判断した方',
+                    'キャストと店を通さずに会う行為またはそれを促す発言',
+                  ].map((item, index) => (
+                    <li key={index} className="flex items-start gap-3">
+                      <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400" />
+                      <span className="text-sm font-medium leading-relaxed text-rose-800 md:text-base">
+                        {item}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="mt-10 rounded-xl bg-rose-50 p-6 text-center text-xs leading-relaxed text-rose-600 md:text-sm">
+                  <p className="font-bold">
+                    ※禁止事項を必ず読んで頂き、ご理解を頂いてからのご利用をお願い致します。
+                  </p>
+                  <p className="mt-2">
+                    上記によるサービス中断の返金には一切応じられません。
+                    <br className="hidden md:inline" />
+                    マナーよくご利用頂けますよう重ねてお願い申し上げます。
+                  </p>
+                </div>
               </div>
             </div>
           )}
