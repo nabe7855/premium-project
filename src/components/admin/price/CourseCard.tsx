@@ -23,7 +23,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
       </div>
 
       <div className="space-y-8 p-6 md:p-8">
-        {/* Time & Price List */}
+        {/* Time & Price List - 2 Column Grid (Always) */}
         <div>
           <div className="mb-4 flex items-center gap-2">
             <div className="h-1.5 w-1.5 rounded-full bg-rose-400"></div>
@@ -31,57 +31,46 @@ const CourseCard: React.FC<CourseCardProps> = ({ course }) => {
               Time & Price
             </h4>
           </div>
-          <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 sm:gap-x-6">
             {course.plans.map((plan, idx) => {
               const isRecommended = course.id === 'standard' && plan.minutes === 120;
               return (
-                <div key={idx} className="relative">
+                <div
+                  key={idx}
+                  className={`group relative flex items-center justify-between gap-2 border-b border-dotted py-3 transition-all ${
+                    isRecommended ? 'border-rose-200 bg-rose-50/50' : 'border-rose-100/50'
+                  }`}
+                >
                   {isRecommended && (
-                    <div className="absolute -top-4 left-4 z-10 animate-bounce">
-                      <div className="flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-[9px] font-black text-white shadow-lg md:text-[10px]">
+                    <div className="absolute -left-1 -top-2 z-10 sm:-left-2">
+                      <div className="flex items-center gap-0.5 rounded-full bg-rose-500 px-1.5 py-0.5 text-[7px] font-black text-white shadow-sm sm:px-2 sm:text-[8px]">
                         <span>✨</span>
-                        <span>初心者におすすめ</span>
-                        <div className="absolute bottom-[-3px] left-4 h-1.5 w-1.5 rotate-45 bg-rose-500"></div>
+                        <span className="hidden sm:inline">おすすめ</span>
                       </div>
                     </div>
                   )}
-                  <div
-                    className={`flex flex-col gap-1 rounded-2xl border px-5 py-4 transition-all md:flex-row md:items-center md:justify-between md:gap-4 ${
-                      isRecommended
-                        ? 'border-rose-200 bg-rose-50 shadow-sm'
-                        : 'border-rose-50/50 bg-rose-50/30'
-                    }`}
-                  >
-                    <div className="flex flex-col">
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span className="text-base font-bold text-rose-800 md:text-lg">
-                          {plan.minutes >= 600
-                            ? `${plan.minutes / 60}時間`
-                            : plan.minutes === 0
-                              ? 'FREE TIME'
-                              : `${plan.minutes} min`}
-                        </span>
-                        {plan.subLabel && (
-                          <span className="rounded-full border border-rose-100 bg-white px-2 py-0.5 text-[9px] font-bold text-rose-500 md:text-[10px]">
-                            {plan.subLabel}
-                          </span>
-                        )}
-                      </div>
-                      {plan.discountInfo && (
-                        <div className="mt-0.5 flex items-center gap-1">
-                          <span className="rounded bg-rose-500 px-1 text-[10px] font-bold text-white">
-                            HOT
-                          </span>
-                          <span className="text-[10px] font-bold text-rose-500 md:text-[11px]">
-                            ※{plan.discountInfo}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                    <span className="self-end text-xl font-black text-rose-500 md:self-center md:text-2xl">
-                      ¥{plan.price.toLocaleString()}
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="inline-block shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 sm:px-3 sm:py-1 sm:text-xs">
+                      {plan.minutes >= 600
+                        ? `${plan.minutes / 60}時間`
+                        : plan.minutes === 0
+                          ? 'FREE'
+                          : `${plan.minutes}min`}
                     </span>
+                    {plan.discountInfo && (
+                      <div className="flex items-center gap-1">
+                        <span className="shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
+                          HOT
+                        </span>
+                        <span className="min-w-0 truncate text-[8px] font-bold text-rose-500 sm:text-[9px]">
+                          {plan.discountInfo}
+                        </span>
+                      </div>
+                    )}
                   </div>
+                  <span className="shrink-0 text-base font-black text-rose-900 sm:text-lg">
+                    ¥{plan.price.toLocaleString()}
+                  </span>
                 </div>
               );
             })}
