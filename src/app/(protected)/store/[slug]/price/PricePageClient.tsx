@@ -1,0 +1,353 @@
+'use client';
+
+import type { FullPriceConfig } from '@/types/priceConfig';
+import { ChevronDown } from 'lucide-react';
+import Image from 'next/image';
+import { useState } from 'react';
+
+interface PricePageClientProps {
+  priceConfig: FullPriceConfig;
+}
+
+export default function PricePageClient({ priceConfig }: PricePageClientProps) {
+  const [activeTab, setActiveTab] = useState<'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS'>(
+    'COURSES',
+  );
+
+  const tabs = [
+    { id: 'COURSES' as const, label: 'コース' },
+    { id: 'TRANSPORT' as const, label: '送迎' },
+    { id: 'OPTIONS' as const, label: 'オプション' },
+    { id: 'DISCOUNTS' as const, label: '割引' },
+  ];
+
+  return (
+    <div className="bg-strawberry-dots min-h-screen bg-[#fffaf0] pb-32 selection:bg-rose-200 selection:text-rose-900 md:pb-16">
+      {/* Decorative Top Leaf */}
+      <div className="absolute left-1/2 top-0 h-16 w-32 -translate-x-1/2 rounded-full bg-emerald-400/20 blur-2xl" />
+
+      {/* Main Content Container */}
+      <main className="mx-auto max-w-4xl px-4 pt-8">
+        {/* Hero Image */}
+        {priceConfig.hero_image_url && (
+          <div className="mb-12 overflow-hidden rounded-[2rem] shadow-2xl duration-700 animate-in fade-in">
+            <Image
+              src={priceConfig.hero_image_url}
+              alt="料金ページ"
+              width={1200}
+              height={400}
+              className="h-auto w-full object-cover"
+            />
+          </div>
+        )}
+
+        {/* Tab Navigation */}
+        <nav className="mb-12">
+          <div className="mx-auto max-w-xl">
+            <div className="flex overflow-hidden rounded-full border border-rose-100 bg-rose-100/50 p-1.5">
+              {tabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`font-rounded flex-1 truncate rounded-full px-1 py-3 text-xs font-bold outline-none transition-all duration-500 md:text-sm ${
+                    activeTab === tab.id
+                      ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
+                      : 'text-rose-300 hover:text-rose-400'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </div>
+        </nav>
+
+        <div className="duration-1000 animate-in fade-in slide-in-from-bottom-8">
+          {/* コースタブ */}
+          {activeTab === 'COURSES' && (
+            <div className="space-y-4">
+              {priceConfig.courses.map((course, idx) => (
+                <CourseAccordion key={course.id} course={course} defaultOpen={idx === 0} />
+              ))}
+              <div className="space-y-4 rounded-[2rem] border-2 border-rose-100 bg-white/60 p-8 text-xs leading-relaxed text-rose-900/60">
+                <div className="flex items-center gap-2 text-sm font-bold text-rose-400">
+                  <span>🍓</span>
+                  <span>【安心してご利用いただくために】</span>
+                </div>
+                <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-2 pl-0 md:grid-cols-2">
+                  <li className="flex items-start gap-2">
+                    <span className="text-rose-300">●</span>
+                    <span>全コース、入室後のコース変更は致しかねます。</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-rose-300">●</span>
+                    <span>キャストにより指名料が異なる場合がございます。</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-rose-300">●</span>
+                    <span>泥酔・18歳未満の方の入店は固くお断りします。</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-rose-300">●</span>
+                    <span>貴重品の管理はご自身でお願いいたします。</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          )}
+
+          {/* 送迎タブ */}
+          {activeTab === 'TRANSPORT' && (
+            <div className="space-y-8">
+              <div className="mb-10 text-center">
+                <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                  送迎エリア・料金
+                </h2>
+                <p className="text-sm text-rose-400">ご指定の場所までセラピストが伺います。</p>
+              </div>
+              <div className="space-y-3">
+                {priceConfig.transport_areas.map((area) => (
+                  <div
+                    key={area.id}
+                    className="flex items-center justify-between rounded-2xl border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50"
+                  >
+                    <div>
+                      <p className="text-sm font-bold text-rose-900 md:text-base">{area.area}</p>
+                      {area.note && <p className="mt-1 text-xs text-rose-400">{area.note}</p>}
+                    </div>
+                    <div className="text-right">
+                      <p className="text-xs font-bold uppercase tracking-widest text-rose-300">
+                        {area.label}
+                      </p>
+                      <p className="text-xl font-black text-rose-500">
+                        {area.price ? `¥${area.price.toLocaleString()}` : '応相談'}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* オプションタブ */}
+          {activeTab === 'OPTIONS' && (
+            <div className="space-y-8 pb-10">
+              <div className="mb-10 text-center">
+                <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                  サービス・オプション
+                </h2>
+                <p className="text-sm text-rose-400">
+                  ご希望に合わせて各サービスをご用命ください。
+                </p>
+              </div>
+              <div className="space-y-3">
+                {priceConfig.options.map((option) => (
+                  <div
+                    key={option.id}
+                    className="rounded-2xl border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50"
+                  >
+                    <div className="mb-2 flex items-center justify-between">
+                      <h3 className="font-rounded text-lg font-bold text-rose-900">
+                        {option.name}
+                      </h3>
+                      <p className="text-xl font-black text-rose-500">
+                        {option.price >= 0 ? '+' : ''}¥{option.price.toLocaleString()}
+                      </p>
+                    </div>
+                    {option.description && (
+                      <p className="text-sm text-rose-600">{option.description}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* 割引タブ */}
+          {activeTab === 'DISCOUNTS' && (
+            <div className="space-y-6">
+              <p className="px-2 text-right text-[10px] text-rose-300">
+                ※各キャンペーンの詳細はキャンペーンルールをご確認ください。
+              </p>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {priceConfig.campaigns.map((campaign) => (
+                  <div
+                    key={campaign.id}
+                    className="overflow-hidden rounded-[2rem] border-2 border-rose-100 bg-white shadow-lg shadow-rose-100/50"
+                  >
+                    {campaign.image_url && (
+                      <div className="relative h-48">
+                        <Image
+                          src={campaign.image_url}
+                          alt={campaign.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    )}
+                    <div className="p-6">
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white">
+                          {campaign.accent_text}
+                        </span>
+                        {campaign.price_info && (
+                          <span className="text-lg font-black text-rose-500">
+                            {campaign.price_info}
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="font-rounded mb-2 text-lg font-bold text-rose-900">
+                        {campaign.title}
+                      </h3>
+                      {campaign.description && (
+                        <p className="text-sm text-rose-600">{campaign.description}</p>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </main>
+    </div>
+  );
+}
+
+// コースアコーディオンコンポーネント
+function CourseAccordion({
+  course,
+  defaultOpen = false,
+}: {
+  course: FullPriceConfig['courses'][0];
+  defaultOpen?: boolean;
+}) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
+
+  return (
+    <div className="overflow-hidden rounded-[2rem] border-2 border-rose-100 bg-white shadow-lg shadow-rose-100/50 transition-all duration-300">
+      {/* Accordion Header */}
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-center gap-5 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white p-6 transition-all hover:from-rose-100 hover:to-rose-50 md:p-8"
+      >
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-rose-100 text-3xl">
+          {course.icon}
+        </div>
+        <div className="flex-1 text-left">
+          <h3 className="font-rounded text-xl font-bold leading-tight text-rose-900 md:text-2xl">
+            {course.name}
+          </h3>
+          <p className="mt-1 text-[11px] leading-relaxed text-rose-400 md:text-sm">
+            {course.description}
+          </p>
+        </div>
+        <ChevronDown
+          className={`h-6 w-6 shrink-0 text-rose-400 transition-transform duration-300 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+
+      {/* Accordion Content */}
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="space-y-8 p-6 md:p-8">
+          {/* Time & Price List */}
+          <div>
+            <div className="mb-4 flex items-center gap-2">
+              <div className="h-1.5 w-1.5 rounded-full bg-rose-400"></div>
+              <h4 className="text-[10px] font-bold uppercase tracking-widest text-rose-300">
+                Time & Price
+              </h4>
+            </div>
+            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 sm:gap-x-6">
+              {course.plans?.map((plan, idx) => (
+                <div
+                  key={plan.id}
+                  className="group relative flex items-center justify-between gap-2 border-b border-dotted border-rose-100/50 py-3 transition-all"
+                >
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="inline-block shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 sm:px-3 sm:py-1 sm:text-xs">
+                      {plan.minutes >= 600
+                        ? `${plan.minutes / 60}時間`
+                        : plan.minutes === 0
+                          ? 'FREE'
+                          : `${plan.minutes}min`}
+                    </span>
+                    {plan.discount_info && (
+                      <div className="flex items-center gap-1">
+                        <span className="shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
+                          HOT
+                        </span>
+                        <span className="min-w-0 truncate text-[8px] font-bold text-rose-500 sm:text-[9px]">
+                          {plan.discount_info}
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                  <span className="shrink-0 text-base font-black text-rose-900 sm:text-lg">
+                    ¥{plan.price.toLocaleString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Additional Info Grid */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="rounded-2xl border border-orange-100/50 bg-orange-50/30 p-5">
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-widest text-orange-400">
+                延長料金
+              </p>
+              <p className="text-sm font-bold text-orange-900 md:text-base">
+                30分 /{' '}
+                <span className="text-rose-500">
+                  ¥{course.extension_per_30min.toLocaleString()}
+                </span>
+              </p>
+            </div>
+            <div className="rounded-2xl border border-emerald-100/50 bg-emerald-50/30 p-5">
+              <p className="mb-1 text-[9px] font-bold uppercase tracking-widest text-emerald-400">
+                指名料
+              </p>
+              <div className="space-y-1 text-xs font-bold text-emerald-900 md:text-sm">
+                <div className="flex justify-between">
+                  <span>本指名:</span>
+                  <span className="text-rose-500">
+                    ¥{course.designation_fee_first.toLocaleString()}
+                  </span>
+                </div>
+                {course.designation_fee_note && (
+                  <div className="flex items-start justify-between">
+                    <span className="shrink-0">備考:</span>
+                    <span className="text-right text-[9px] font-medium leading-tight text-emerald-600/70 md:text-[10px]">
+                      {course.designation_fee_note}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {course.notes && (
+            <div className="rounded-2xl border border-rose-100/50 bg-rose-50/50 p-5">
+              <div className="mb-2 flex items-center gap-2">
+                <span className="text-xs">📝</span>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-rose-400">
+                  Course Notes
+                </p>
+              </div>
+              <p className="whitespace-pre-wrap text-[11px] font-medium leading-relaxed text-rose-800 md:text-xs">
+                {course.notes}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}

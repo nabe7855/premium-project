@@ -67,4 +67,4 @@ export interface StoreConfig {
 }
 
 export type Category = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS';
-export type AppView = 'PUBLIC' | 'ADMIN' | 'EDITOR';
+export type AppView = 'PUBLIC' | 'ADMIN' | 'EDITOR' | 'EDIT';

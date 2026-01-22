@@ -1,7 +1,6 @@
 'use client';
 
 import AdditionalInfoSection from '@/components/admin/price/AdditionalInfoSection';
-import Breadcrumbs from '@/components/admin/price/Breadcrumbs';
 import CampaignCard from '@/components/admin/price/CampaignCard';
 import {
   MOCK_BASIC_SERVICES,
@@ -13,7 +12,7 @@ import {
 } from '@/components/admin/price/constants';
 import CourseCard from '@/components/admin/price/CourseCard';
 import FAQSection from '@/components/admin/price/FAQSection';
-import HeroBanner from '@/components/admin/price/HeroBanner';
+import PriceConfigEditor from '@/components/admin/price/PriceConfigEditor';
 import PriceDashboard from '@/components/admin/price/PriceDashboard';
 import SimplePriceList from '@/components/admin/price/SimplePriceList';
 import { AppView, Category, StoreConfig } from '@/components/admin/price/types';
@@ -150,6 +149,8 @@ export default function PriceManagementPage() {
     setStores(stores.map((s) => (s.id === id ? { ...s, storeName: name, slug: slug } : s)));
   };
 
+  const [editingStoreSlug, setEditingStoreSlug] = useState<string | null>(null);
+
   const tabs: { id: Category; label: string }[] = [
     { id: 'COURSES', label: 'コース' },
     { id: 'TRANSPORT', label: '送迎' },
@@ -157,14 +158,86 @@ export default function PriceManagementPage() {
     { id: 'DISCOUNTS', label: '割引' },
   ];
 
+  const handleEdit = (store: StoreConfig) => {
+    setEditingStoreSlug(store.slug);
+    setView('EDIT');
+  };
+
+  if (view === 'EDIT' && editingStoreSlug) {
+    return (
+      <div className="bg-strawberry-dots min-h-screen bg-[#fffaf0] pb-20">
+        <div className="mx-auto max-w-6xl px-4 py-8">
+          <button
+            onClick={() => {
+              setView('ADMIN');
+              setEditingStoreSlug(null);
+            }}
+            className="mb-6 flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-rose-500 shadow-lg transition-transform hover:scale-105"
+          >
+            ← ダッシュボードへ戻る
+          </button>
+          <PriceConfigEditor
+            storeSlug={editingStoreSlug}
+            initialConfig={{
+              hero_image_url: '/料金ページトップ画像.jpg',
+              courses: MOCK_COURSES.map((c) => ({
+                course_key: c.id,
+                name: c.name,
+                description: c.description,
+                icon: c.icon,
+                extension_per_30min: c.extensionPer30min,
+                designation_fee_first: c.designationFees.first,
+                designation_fee_note: c.designationFees.note || '',
+                notes: c.notes || '',
+                display_order: 0,
+                plans: c.plans.map((p, idx) => ({
+                  minutes: p.minutes,
+                  price: p.price,
+                  sub_label: p.subLabel,
+                  discount_info: p.discountInfo,
+                  display_order: idx,
+                })),
+              })),
+              transport_areas: MOCK_TRANSPORT_AREAS.map((a, idx) => ({
+                area: a.area,
+                price: a.price === 'negotiable' ? undefined : a.price,
+                label: a.label,
+                note: a.note,
+                display_order: idx,
+              })),
+              options: MOCK_OPTIONS.map((o, idx) => ({
+                name: o.name,
+                description: o.description,
+                price: o.price,
+                is_relative: o.isRelative || false,
+                display_order: idx,
+              })),
+              campaigns: MOCK_CAMPAIGNS.map((c, idx) => ({
+                title: c.title,
+                description: c.description,
+                image_url: c.imageUrl,
+                need_entry: c.needEntry,
+                accent_text: c.accentText,
+                price_info: c.priceInfo || '',
+                display_order: idx,
+              })),
+            }}
+            onSaveComplete={() => {
+              setView('ADMIN');
+              setEditingStoreSlug(null);
+            }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   if (view === 'ADMIN') {
     return (
       <div className="bg-strawberry-dots min-h-screen bg-[#fffaf0] pb-20">
         <PriceDashboard
           stores={stores}
-          onEdit={() => {
-            alert('現在編集機能は準備中です。プレビュー機能をお試しください。');
-          }}
+          onEdit={handleEdit}
           onPreview={handlePreview}
           onAdd={handleAddStore}
           onDelete={handleDeleteStore}
@@ -188,31 +261,16 @@ export default function PriceManagementPage() {
       {/* Decorative Top Leaf */}
       <div className="absolute left-1/2 top-0 h-16 w-32 -translate-x-1/2 rounded-full bg-emerald-400/20 blur-2xl" />
 
-      {/* Header Section */}
-      <header className="relative px-4 pb-8 pt-10 text-center">
-        <div className="relative z-10 mx-auto max-w-4xl">
-          <Breadcrumbs />
-          <div className="relative mb-4 inline-block">
-            <span className="absolute -right-6 -top-6 animate-bounce text-4xl">🍓</span>
-            <h1 className="font-serif text-4xl italic leading-tight text-rose-900 md:text-6xl">
-              System Preview
-            </h1>
-          </div>
-          <p className="font-rounded mt-2 text-sm font-bold uppercase tracking-[0.3em] text-rose-400 md:text-base">
-            {currentStore.storeName}
-          </p>
-        </div>
-      </header>
-
       {/* Main Content Container */}
       <main className="mx-auto max-w-4xl px-4">
-        <HeroBanner
-          imageUrl="https://images.unsplash.com/photo-1596560548464-f010549b84d7?auto=format&fit=crop&q=80&w=1200"
-          title="Strawberry Night"
-          subtitle="今夜は、一番甘い夢を見ませんか？"
-          priceTag="¥5,000 OFF"
-          badge="SEASONAL CAMPAIGN"
-        />
+        {/* Hero Image - Fade In */}
+        <div className="mb-12 overflow-hidden rounded-[2rem] shadow-2xl duration-700 animate-in fade-in">
+          <img
+            src="/料金ページトップ画像.jpg"
+            alt="料金ページ"
+            className="h-auto w-full object-cover"
+          />
+        </div>
 
         {/* Tab Navigation */}
         <nav
