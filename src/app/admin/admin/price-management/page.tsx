@@ -240,8 +240,8 @@ export default function PriceManagementPage() {
         <div className="duration-1000 animate-in fade-in slide-in-from-bottom-8">
           {activeTab === 'COURSES' && (
             <div className="space-y-4">
-              {currentStore.courses.map((course) => (
-                <CourseCard key={course.id} course={course} />
+              {currentStore.courses.map((course, idx) => (
+                <CourseCard key={course.id} course={course} defaultOpen={idx === 0} />
               ))}
               <div className="space-y-4 rounded-[2rem] border-2 border-rose-100 bg-white/60 p-8 text-xs leading-relaxed text-rose-900/60">
                 <div className="flex items-center gap-2 text-sm font-bold text-rose-400">
