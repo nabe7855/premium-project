@@ -18,14 +18,21 @@ export interface TodayCast {
 
 // ✅ JSTの日付文字列 (YYYY-MM-DD) を取得
 function getJSTDateString(date: Date): string {
-  return date
-    .toLocaleDateString('ja-JP', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      timeZone: 'Asia/Tokyo',
-    })
-    .replace(/\//g, '-');
+  const jstDate = new Intl.DateTimeFormat('ja-JP', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    timeZone: 'Asia/Tokyo',
+  })
+    .formatToParts(date)
+    .reduce((acc: any, part) => {
+      if (part.type !== 'literal') {
+        acc[part.type] = part.value;
+      }
+      return acc;
+    }, {});
+
+  return `${jstDate.year}-${jstDate.month}-${jstDate.day}`;
 }
 
 export async function getTodayCastsByStore(
@@ -50,83 +57,77 @@ export async function getTodayCastsByStore(
 
   // 2. 日付を取得 (指定がなければ今日)
   const dateStr = targetDate || getJSTDateString(new Date());
-  // console.log('📅 対象日付:', dateStr);
 
-  // 3. 対象日の出勤キャストを取得
+  // 3. 対象日の出勤キャストを取得 (スケジュールページを参考に、store_id フィルタリングなしで一旦取得)
   const { data, error } = await supabase
     .from('schedules')
     .select(
       `
+      id,
+      work_date,
       start_datetime,
       end_datetime,
+      status,
       casts (
         id,
         name,
         age,
         height,
+        slug,
         catch_copy,
         main_image_url,
         image_url,
         is_active,
-        mbti:mbti_id ( name ),
-
-        face:face_id ( name ),
         cast_statuses (
+          id,
+          status_id,
+          is_active,
           status_master (
-            name
+            id,
+            name,
+            label_color,
+            text_color
           )
         )
       )
     `,
     )
-    .gte('work_date', dateStr)
-    .lte('work_date', dateStr)
-    .eq('store_id', store.id);
+    .eq('work_date', dateStr);
 
   if (error) {
     console.error('❌ getTodayCastsByStore error:', error.message);
     return [];
   }
 
-  console.log(`🔍 Schedules found: ${data?.length || 0} records`);
-
-  if (!data || data.length === 0) {
-    console.warn('⚠️ 指定日の出勤キャストは見つかりませんでした');
-    return [];
-  }
-
-  // 4. 整形して返す
-  const result = data
+  const result = (data || [])
     .filter((item: any) => {
-      return item.casts?.is_active;
+      // 1-to-1 か 1-to-N かで item.casts が配列かオブジェクトか変わる可能性があるため robust に処理
+      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
+      return cast?.is_active;
     })
     .map((item: any): TodayCast => {
-      const mbti = Array.isArray(item.casts.mbti) ? item.casts.mbti[0] : item.casts.mbti;
-      const face = Array.isArray(item.casts.face) ? item.casts.face[0] : item.casts.face;
-
-      // タグ情報の抽出 (cast_statuses から status_master.name を取得)
-      const tags =
-        item.casts.cast_statuses?.map((cs: any) => cs.status_master?.name).filter((t: any) => t) ||
-        [];
-
-      // console.log(`✨ Processed cast: ${item.casts.name} (ID: ${item.casts.id})`);
+      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
 
       return {
-        id: item.casts.id,
-        name: item.casts.name,
-        age: item.casts.age,
-        height: item.casts.height,
-        catch_copy: item.casts.catch_copy,
-        main_image_url: item.casts.main_image_url,
-        image_url: item.casts.image_url,
-        mbti_name: mbti?.name ?? null,
-        face_name: face?.name ?? null,
-        tags: tags,
+        id: cast.id, // UUID (string)
+        name: cast.name,
+        age: cast.age,
+        height: cast.height,
+        catch_copy: cast.catch_copy,
+        main_image_url: cast.main_image_url,
+        image_url: cast.image_url,
+        // tags は status_master から取得
+        tags: (cast.cast_statuses || [])
+          .filter((cs: any) => cs.is_active)
+          .map((cs: any) => cs.status_master?.name)
+          .filter(Boolean),
+        // 追加の情報があればマッピング
+        mbti_name: null, // 今回のクエリからは除外（必要なら追加）
+        face_name: null,
         start_datetime: item.start_datetime,
         end_datetime: item.end_datetime,
       };
     });
 
-  console.log(`✅ Returns ${result.length} casts for ${storeSlug} on ${dateStr}`);
   return result;
 }

@@ -70,7 +70,7 @@ export interface CampaignConfig {
 }
 
 export interface CastItem {
-  id: number;
+  id: string;
   name: string;
   age: number;
   height: number;
@@ -362,7 +362,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     subHeading: 'Therapists',
     items: [
       {
-        id: 1,
+        id: '1',
         name: '蓮 (レン)',
         age: 26,
         height: 178,
@@ -373,7 +373,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         schedule: ['2026-01-21', '2026-01-22', '2026-01-24', '2026-01-26'],
       },
       {
-        id: 2,
+        id: '2',
         name: 'ハルト',
         age: 24,
         height: 175,
@@ -384,7 +384,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         schedule: ['2026-01-21', '2026-01-23', '2026-01-25'],
       },
       {
-        id: 3,
+        id: '3',
         name: 'ユウキ',
         age: 28,
         height: 182,
@@ -395,7 +395,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         schedule: ['2026-01-22', '2026-01-24', '2026-01-27'],
       },
       {
-        id: 4,
+        id: '4',
         name: 'ソラ',
         age: 22,
         height: 174,

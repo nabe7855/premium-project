@@ -66,7 +66,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
         // TodayCast -> CastItem 変換
         const mappedCasts: CastItem[] = data.map((c: TodayCast) => ({
-          id: Number(c.id) || 0, // IDがUUIDの場合はハッシュ等にするか、CastItemの型をstringに変更する必要があるが、一旦0または数値変換
+          id: c.id, // IDはUUID(string)
           name: c.name,
           age: c.age || 0,
           height: c.height || 0,
@@ -120,8 +120,8 @@ const CastSection: React.FC<CastSectionProps> = ({
         result.sort((a, b) => b.height - a.height);
         break;
       case 'new':
-        // IDが大きい順を新着とする（簡易的）
-        result.sort((a, b) => b.id - a.id);
+        // UUIDの場合は作成日時などでソートすべきだが、ここでは文字列比較または元の順序を維持
+        result.sort((a, b) => b.id.localeCompare(a.id));
         break;
       default:
         break;
@@ -265,7 +265,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
                       {/* バッジ装飾 */}
                       <div className="absolute left-2 top-2 flex flex-col gap-1.5">
-                        {cast.id % 3 === 0 && (
+                        {cast.name.length % 3 === 0 && (
                           <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
                             <Star className="h-2.5 w-2.5 fill-current" /> NEW
                           </span>

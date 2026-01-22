@@ -64,7 +64,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
         // TodayCast -> CastItem 変換
         const mappedCasts: CastItem[] = data.map((c: TodayCast) => ({
-          id: Number(c.id) || 0,
+          id: c.id,
           name: c.name,
           age: c.age || 0,
           height: c.height || 0,
@@ -112,7 +112,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         result.sort((a, b) => b.height - a.height);
         break;
       case 'new':
-        result.sort((a, b) => b.id - a.id);
+        result.sort((a, b) => b.id.localeCompare(a.id));
         break;
       default:
         break;
@@ -246,7 +246,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
                       {/* バッジ装飾 */}
                       <div className="absolute left-2 top-2 flex flex-col gap-1.5">
-                        {cast.id % 3 === 0 && (
+                        {cast.name.length % 3 === 0 && (
                           <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
                             <Star className="h-2.5 w-2.5 fill-current" /> NEW
                           </span>
