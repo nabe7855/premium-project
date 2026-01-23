@@ -1,0 +1,282 @@
+[
+  {
+    "id": "ce1d223a-82a7-4005-8eeb-e7c7d213b13b",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "cac4d5c4-32a4-4421-9a08-75176f00e8db",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "d616c151-af9b-43a2-8724-825b1a1920c0",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "151aac96-91c1-43ab-a884-1532130b90fd",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "818cfba9-e1a1-4e67-84b9-d7826dede0cb",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "995111cc-ca78-462c-94e5-5bddfb711c8e",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "5a68be9b-83a9-4f34-8898-72fc4eb9c16b",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "d0ac33cf-9fd4-446e-92fa-88693144db5e",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "25f4cec3-1c37-47b0-bfdb-6172ba37766d",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "6d190aa4-c2f7-422b-ba78-4e5b4527be76",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "b9cb6cf5-9213-4662-8f7f-43d5e401bdab",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "dd34dc8f-2493-48d5-a04d-ec5bb795db8f",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "06bb14a1-be6c-4634-bf30-43b6d9071824",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "4892fac1-9a96-40b4-9602-505a25f44927",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "8b6b30e6-eb60-4aa7-8479-e72a3c1d2893",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "9231dcf9-8052-433a-887d-6b7031de5c96",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "7db72ef5-daa9-4c0d-945e-5354213f70a8",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "7cf06cc7-4317-45f3-a5b0-3167b5968fac",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "5403f5bd-97a0-4c1a-821c-a89e5d1cd556",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "673ea233-f7a4-4c7b-896e-b68e93ddcfa0",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "edba5b08-8a93-4df9-bbb0-2141caf71b77",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "0d5edd72-56d9-4523-b3f0-80e86f52e2b0",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "f791eb53-b6e4-4dea-b64d-eee90e7a62b2",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "8775c759-f782-4b39-b655-5aa652c8f903",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "1d64fd00-29d4-4993-bf5d-b989228c438b",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "name": "指名料",
+    "description": "当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。",
+    "price": 1000,
+    "is_relative": false,
+    "display_order": 0,
+    "created_at": "2026-01-23T01:48:43.581055+00:00"
+  },
+  {
+    "id": "f9f41b33-cd28-4ad6-a351-bd96c4730b33",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "name": "洗体オプション",
+    "description": "お風呂にてお客様のお身体を丁寧に、そしていやらしく洗体をさせて頂きます♡",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 1,
+    "created_at": "2026-01-23T01:48:43.581055+00:00"
+  },
+  {
+    "id": "25a4da57-7db2-462c-a4bd-c7dfa3d7659e",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "name": "ドMオプション",
+    "description": "「目一杯男性に虐められたい」その非日常の願望を叶えます☆ 通常プレイよりもゾクゾク感10倍間違い無し！",
+    "price": 2000,
+    "is_relative": true,
+    "display_order": 2,
+    "created_at": "2026-01-23T01:48:43.581055+00:00"
+  },
+  {
+    "id": "3173e2e1-86eb-47e7-93a8-66c0bae7eaf6",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "name": "アイラインタッチ無し",
+    "description": "女性風俗に対して抵抗のあるお客様でも、ご安心してご利用頂けるオプションとなります。",
+    "price": -1000,
+    "is_relative": true,
+    "display_order": 3,
+    "created_at": "2026-01-23T01:48:43.581055+00:00"
+  }
+]

@@ -185,6 +185,7 @@ export async function getPendingApplicationsCount() {
 }
 
 export async function getRecruitPageConfig(slug: string) {
+  console.log(`📡 getRecruitPageConfig called for slug: ${slug}`);
   try {
     const store = await prisma.store.findUnique({
       where: { slug },
@@ -194,13 +195,21 @@ export async function getRecruitPageConfig(slug: string) {
     });
 
     if (!store) {
+      console.warn(`⚠️ Store not found for slug: ${slug}`);
       return { success: false, error: '店舗が見つかりません。' };
     }
 
+    console.log(
+      `✅ Store found: ${store.name} (${store.id}), Pages: ${store.recruit_pages.length}`,
+    );
+
     const config: any = {};
     store.recruit_pages.forEach((page: any) => {
+      // console.log(`   - Page: ${page.section_key}, Content keys: ${Object.keys(page.content || {})}`);
       config[page.section_key] = page.content;
     });
+
+    console.log(`📦 Built config with keys: ${Object.keys(config).join(', ')}`);
 
     return { success: true, config };
   } catch (error) {
@@ -210,35 +219,47 @@ export async function getRecruitPageConfig(slug: string) {
 }
 
 export async function saveRecruitPageConfig(slug: string, config: any) {
+  console.log(`💾 saveRecruitPageConfig called for slug: ${slug}`);
   try {
     const store = await prisma.store.findUnique({
       where: { slug },
     });
 
     if (!store) {
+      console.error(`❌ Store not found for slug: ${slug}`);
       return { success: false, error: '店舗が見つかりません。' };
     }
 
+    console.log(`✅ Store found: ${store.name} (${store.id})`);
+
     // 各セクションごとに保存
     for (const [sectionKey, content] of Object.entries(config)) {
-      await prisma.recruitPage.upsert({
-        where: {
-          store_id_section_key: {
+      console.log(`📝 Upserting section: ${sectionKey}`);
+      try {
+        await prisma.recruitPage.upsert({
+          where: {
+            store_id_section_key: {
+              store_id: store.id,
+              section_key: sectionKey,
+            },
+          },
+          update: {
+            content: content as any,
+          },
+          create: {
             store_id: store.id,
             section_key: sectionKey,
+            content: content as any,
           },
-        },
-        update: {
-          content: content as any,
-        },
-        create: {
-          store_id: store.id,
-          section_key: sectionKey,
-          content: content as any,
-        },
-      });
+        });
+        console.log(`✨ Upserted ${sectionKey}`);
+      } catch (upsertError: any) {
+        console.error(`❌ Failed to upsert ${sectionKey}:`, upsertError);
+        throw upsertError; // Re-throw to catch block
+      }
     }
 
+    console.log('🎉 Save complete');
     return { success: true };
   } catch (error) {
     console.error('Failed to save recruit page config:', error);

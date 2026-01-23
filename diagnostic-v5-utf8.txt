@@ -1,0 +1,23 @@
+﻿--- ACTION DIAGNOSTIC START ---
+Checking database connection...
+Database connection check successful: [{"result":1}]
+Calling getStoreConfigsForAdmin...
+--- getStoreConfigsForAdmin (Resilient Version) START ---
+[PriceConfig] prisma.store.findMany count: 5
+[PriceConfig] Found 7 stores via raw SQL.
+[PriceConfig] Using 7 stores for processing.
+[PriceConfig] Processing Store ID: 35cdc104-2234-418a-8fa1-44f402cd43a6, Name: 莉吝床
+[PriceConfig] Store not found in Prisma: 35cdc104-2234-418a-8fa1-44f402cd43a6
+[PriceConfig] Processing Store ID: bcc67dee-757b-4923-8b84-04628d0d64c9, Name: 蛹玲ｵｷ驕・[PriceConfig] Store not found in Prisma: bcc67dee-757b-4923-8b84-04628d0d64c9
+[PriceConfig] Processing Store ID: b385cfa8-47b6-4eaf-b0e6-8d3eb16bc3ad, Name: 蜷榊商螻・[PriceConfig] Store not found in Prisma: b385cfa8-47b6-4eaf-b0e6-8d3eb16bc3ad
+[PriceConfig] Processing Store ID: 0ffd39f8-8610-491f-8a3e-f33866e5d4f3, Name: 螟ｧ髦ｪ
+[PriceConfig] Store not found in Prisma: 0ffd39f8-8610-491f-8a3e-f33866e5d4f3
+[PriceConfig] Processing Store ID: 16bc0774-059a-4f4c-b09c-63bc26b430bf, Name: 譚ｱ莠ｬ
+[PriceConfig] Store not found in Prisma: 16bc0774-059a-4f4c-b09c-63bc26b430bf
+[PriceConfig] Processing Store ID: c5e519eb-ace2-4609-adb0-f3023021a143, Name: 讓ｪ豬・[PriceConfig] Store not found in Prisma: c5e519eb-ace2-4609-adb0-f3023021a143
+[PriceConfig] Processing Store ID: cf627a03-f600-45b8-86f5-60a9f513beac, Name: 遖丞ｲ｡
+[PriceConfig] Store not found in Prisma: cf627a03-f600-45b8-86f5-60a9f513beac
+[PriceConfig] Returning 0 mapped stores.
+Final results count: 0
+Results written to diagnostic_results.json
+--- ACTION DIAGNOSTIC END ---

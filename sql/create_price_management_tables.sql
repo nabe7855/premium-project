@@ -96,17 +96,29 @@ ALTER TABLE price_options ENABLE ROW LEVEL SECURITY;
 ALTER TABLE campaigns ENABLE ROW LEVEL SECURITY;
 
 -- 全ユーザーが読み取り可能
+DROP POLICY IF EXISTS "Public read access" ON price_configs;
 CREATE POLICY "Public read access" ON price_configs FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON courses;
 CREATE POLICY "Public read access" ON courses FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON course_plans;
 CREATE POLICY "Public read access" ON course_plans FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON transport_areas;
 CREATE POLICY "Public read access" ON transport_areas FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON price_options;
 CREATE POLICY "Public read access" ON price_options FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Public read access" ON campaigns;
 CREATE POLICY "Public read access" ON campaigns FOR SELECT USING (true);
 
--- 認証済みユーザーは全ての操作が可能
-CREATE POLICY "Authenticated users full access" ON price_configs FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Authenticated users full access" ON courses FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Authenticated users full access" ON course_plans FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Authenticated users full access" ON transport_areas FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Authenticated users full access" ON price_options FOR ALL USING (auth.role() = 'authenticated');
-CREATE POLICY "Authenticated users full access" ON campaigns FOR ALL USING (auth.role() = 'authenticated');
+-- 全ユーザーが全ての操作が可能（管理者認証が別で行われている前提）
+DROP POLICY IF EXISTS "Full access for everyone" ON price_configs;
+CREATE POLICY "Full access for everyone" ON price_configs FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access for everyone" ON courses;
+CREATE POLICY "Full access for everyone" ON courses FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access for everyone" ON course_plans;
+CREATE POLICY "Full access for everyone" ON course_plans FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access for everyone" ON transport_areas;
+CREATE POLICY "Full access for everyone" ON transport_areas FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access for everyone" ON price_options;
+CREATE POLICY "Full access for everyone" ON price_options FOR ALL USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "Full access for everyone" ON campaigns;
+CREATE POLICY "Full access for everyone" ON campaigns FOR ALL USING (true) WITH CHECK (true);

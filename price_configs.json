@@ -1,0 +1,51 @@
+[
+  {
+    "id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "store_id": "16bc0774-059a-4f4c-b09c-63bc26b430bf",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "store_id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "store_id": "b385cfa8-47b6-4eaf-b0e6-8d3eb16bc3ad",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "store_id": "0ffd39f8-8610-491f-8a3e-f33866e5d4f3",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "store_id": "35cdc104-2234-418a-8fa1-44f402cd43a6",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "store_id": "bcc67dee-757b-4923-8b84-04628d0d64c9",
+    "hero_image_url": "/料金ページトップ画像.jpg",
+    "updated_at": "2026-01-22T22:56:10.717075+00:00",
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "store_id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+    "hero_image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/price/fukuoka/hero_1769132906426.jpg",
+    "updated_at": "2026-01-23T01:48:41.343+00:00",
+    "created_at": "2026-01-22T22:39:11.496035+00:00"
+  }
+]

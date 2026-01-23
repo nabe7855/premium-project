@@ -1,0 +1,12 @@
+{
+  "log": [
+    "--- ACTION DIAGNOSTIC START ---",
+    "Checking database connection...",
+    "Database connection check successful: [{\"result\":1}]",
+    "Calling getStoreConfigsForAdmin...",
+    "Final results count: 0"
+  ],
+  "count": 0,
+  "firstResult": null,
+  "allIds": []
+}

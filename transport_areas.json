@@ -1,0 +1,282 @@
+[
+  {
+    "id": "5d1110f9-3300-4bb5-990a-fbca8f03cbf9",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "45c71afc-ce27-498a-a607-d4ea6d36070b",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "76576fa2-e026-462f-9298-49dfaa3082e6",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "2a3c3964-ba28-420e-b695-37e87086b6c3",
+    "price_config_id": "e1f98ad2-8ef2-420e-9e5b-41761b960162",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "0fb65039-3e49-47ff-9bb5-ef500a9fb42c",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "422f6465-0954-40e5-9c9d-b79301c212b4",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "87ffa37f-de7e-4fba-9d16-2784b3c17173",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "ae8c7473-e75b-4b6f-899a-0af2f93abed7",
+    "price_config_id": "209e6727-a7bb-4638-b2d7-6b1bc24caa99",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "aec7a62f-c807-4c89-8b0f-55554f8ff759",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "978a8b85-bd51-4d65-be73-fcbe1c41bdfc",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "296a86a0-5155-44a9-88ba-96817ff02d3f",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "4167ec81-11d3-499a-831b-083229bbe580",
+    "price_config_id": "f4190ce6-d1b4-4e8e-aa50-85c628844d1a",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "e4fe83bc-13a0-4eeb-baac-085938de4acc",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "ed55cf01-5303-4ba3-9d1c-ee747b916ce9",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "94ff60b5-e970-42f4-8c94-18de9d1ce276",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "310771b6-1ee7-433b-ad40-421737b721d8",
+    "price_config_id": "4aa7d263-de54-4c6a-acf4-100914811823",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "ae5534e9-4c6e-41b8-a02f-454f47fd7c85",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "c64b6cef-c765-450a-ba79-7e613b519342",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "26ffb43b-a97e-418c-9e7b-4053b32b99f1",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "413b8848-09b9-4935-8c1c-93d3c43307e0",
+    "price_config_id": "5b6d8faf-d526-4f48-84d9-cf41f19d4288",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "5617bf46-1068-44fa-bdad-467ca90c5bfb",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "ed33fec9-186c-4e7f-a461-00b6db712c81",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "f992460d-0c47-41e3-86e3-3bb2008e2fee",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "1c1122bf-b2e8-464b-adb0-764fd14af502",
+    "price_config_id": "6a228646-4a07-4e04-93b8-d57e4aafed3d",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-22T22:56:10.717075+00:00"
+  },
+  {
+    "id": "2d14e2b1-2c53-4346-b22f-73e90efd7f23",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "area": "東京23区",
+    "price": 1000,
+    "label": "1,000円エリア",
+    "note": null,
+    "display_order": 0,
+    "created_at": "2026-01-23T01:48:43.545137+00:00"
+  },
+  {
+    "id": "91aff17d-5195-4552-ac4f-1590fad52490",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "area": "東京23区外",
+    "price": 2000,
+    "label": "2,000円エリア",
+    "note": null,
+    "display_order": 1,
+    "created_at": "2026-01-23T01:48:43.545137+00:00"
+  },
+  {
+    "id": "bb63a4dc-0902-4fb5-98f7-a2476e3e7606",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "area": "その他、関東近郊",
+    "price": 3000,
+    "label": "3,000円エリア",
+    "note": null,
+    "display_order": 2,
+    "created_at": "2026-01-23T01:48:43.545137+00:00"
+  },
+  {
+    "id": "e4ae1d4a-a811-4237-ab51-e6dadfd23f80",
+    "price_config_id": "681923f6-313e-4e6d-a8d0-11ec2c5d9787",
+    "area": "タクシー代",
+    "price": null,
+    "label": "応相談",
+    "note": null,
+    "display_order": 3,
+    "created_at": "2026-01-23T01:48:43.545137+00:00"
+  }
+]

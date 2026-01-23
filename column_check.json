@@ -1,0 +1,96 @@
+{
+  "columns": [
+    {
+      "table_name": "stores",
+      "column_name": "id",
+      "data_type": "uuid"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "name",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "slug",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "address",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "created_at",
+      "data_type": "timestamp without time zone"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "phone",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "catch_copy",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "image_url",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "theme_color",
+      "data_type": "text"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "tags",
+      "data_type": "ARRAY"
+    },
+    {
+      "table_name": "stores",
+      "column_name": "description",
+      "data_type": "text"
+    }
+  ],
+  "sample": [
+    {
+      "id": "16bc0774-059a-4f4c-b09c-63bc26b430bf",
+      "name": "東京",
+      "slug": "tokyo"
+    },
+    {
+      "id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+      "name": "横浜",
+      "slug": "yokohama"
+    },
+    {
+      "id": "b385cfa8-47b6-4eaf-b0e6-8d3eb16bc3ad",
+      "name": "名古屋",
+      "slug": "nagoya"
+    },
+    {
+      "id": "0ffd39f8-8610-491f-8a3e-f33866e5d4f3",
+      "name": "大阪",
+      "slug": "osaka"
+    },
+    {
+      "id": "35cdc104-2234-418a-8fa1-44f402cd43a6",
+      "name": "仙台",
+      "slug": "sengai"
+    },
+    {
+      "id": "bcc67dee-757b-4923-8b84-04628d0d64c9",
+      "name": "北海道",
+      "slug": ""
+    },
+    {
+      "id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+      "name": "福岡",
+      "slug": "fukuoka"
+    }
+  ]
+}

@@ -1,0 +1,82 @@
+﻿--- ACTION DIAGNOSTIC START ---
+Checking database connection...
+node.exe : ACTION DIA
+GNOSTIC ERROR: Prisma
+ClientInitializationE
+rror: 
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (ACTION    
+ DIAGNOST...lizat    
+ionError: :Strin    g
+) [], RemoteExc    ep
+tion
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+Invalid `prisma.$quer
+yRaw()` invocation:
+
+
+error: Environment va
+riable not found: DAT
+ABASE_URL.
+  -->  schema.prisma:
+9
+   | 
+ 8 |   provider = "po
+stgresql"
+ 9 |   url      = env
+("DATABASE_URL") // S
+upabase 縺ｮ謗･邯・URL
+   | 
+
+Validation Error Coun
+t: 1
+    at $n.handleReque
+stError (C:\Users\nab
+e7\Documents\Projects
+\premium-project\node
+_modules\@prisma\clie
+nt\runtime\library.js
+:121:7615)
+    at $n.handleAndLo
+gRequestError (C:\Use
+rs\nabe7\Documents\Pr
+ojects\premium-projec
+t\node_modules\@prism
+a\client\runtime\libr
+ary.js:121:6623)
+    at $n.request (C:
+\Users\nabe7\Document
+s\Projects\premium-pr
+oject\node_modules\@p
+risma\client\runtime\
+library.js:121:6307)
+    at async l (C:\Us
+ers\nabe7\Documents\P
+rojects\premium-proje
+ct\node_modules\@pris
+ma\client\runtime\lib
+rary.js:130:9633)
+    at async test (C:
+\Users\nabe7\Document
+s\Projects\premium-pr
+oject\test-action-dir
+ect-v2.ts:8:21) {
+  clientVersion: '5.2
+2.0',
+  errorCode: undefine
+d
+}
+--- ACTION DIAGNOSTIC END ---

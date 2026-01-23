@@ -81,6 +81,7 @@ interface LandingPageProps {
   config?: LandingPageConfig;
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
+  onUpload?: (file: File) => Promise<string | null>;
 }
 
 const LandingPage: React.FC<LandingPageProps> = ({
@@ -89,9 +90,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
   config: incomingConfig,
   isEditing = false,
   onUpdate,
+  onUpload,
 }) => {
   // Merge incoming config with stock config. Incoming (DB) takes priority.
   // We do deep merge logic here manually for clarity.
+  console.log('🖼️ LandingPage received incomingConfig:', incomingConfig);
   const config = {
     general: { ...STOCK_RECRUIT_CONFIG.general, ...incomingConfig?.general },
     hero: { ...STOCK_RECRUIT_CONFIG.hero, ...incomingConfig?.hero },
@@ -108,6 +111,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
     flow: { ...STOCK_RECRUIT_CONFIG.flow, ...incomingConfig?.flow },
     faq: { ...STOCK_RECRUIT_CONFIG.faq, ...incomingConfig?.faq },
   };
+  console.log('✅ LandingPage merged config hero:', config.hero);
 
   return (
     <div className="overflow-hidden bg-slate-50">
@@ -330,6 +334,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         <ComicSlider
           isEditing={isEditing}
           onUpdate={(key, value) => onUpdate?.('comic', key, value)}
+          onUpload={onUpload}
           slides={config?.comic?.slides}
         />
       </div>

@@ -1,0 +1,89 @@
+﻿node.exe : 
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpe  
+  cified: (:String   
+ ) [], RemoteExce    
+ption
+    + FullyQualified 
+   ErrorId : Native  
+  CommandError
+ 
+node:internal/modules
+/run_main:123
+    triggerUncaughtEx
+ception(
+    ^
+Error [ERR_MODULE_NOT
+_FOUND]: Cannot find 
+package 'dotenv' impo
+rted from C:\Users\na
+be7\Documents\Project
+s\premium-project\tes
+t-action-direct-v3.ts
+    at Object.getPack
+ageJSONURL (node:inte
+rnal/modules/package_
+json_reader:266:9)
+    at packageResolve
+ (node:internal/modul
+es/esm/resolve:767:81
+)
+    at moduleResolve 
+(node:internal/module
+s/esm/resolve:853:18)
+    at defaultResolve
+ (node:internal/modul
+es/esm/resolve:983:11
+)
+    at nextResolve (n
+ode:internal/modules/
+esm/hooks:748:28)
+    at resolveBase (f
+ile:///C:/Users/nabe7
+/AppData/Local/npm-ca
+che/_npx/fd45a72a5455
+57e9/node_modules/tsx
+/dist/esm/index.mjs?1
+769147349948:2:3744)
+    at resolveDirecto
+ry (file:///C:/Users/
+nabe7/AppData/Local/n
+pm-cache/_npx/fd45a72
+a545557e9/node_module
+s/tsx/dist/esm/index.
+mjs?1769147349948:2:4
+243)
+    at resolveTsPaths
+ (file:///C:/Users/na
+be7/AppData/Local/npm
+-cache/_npx/fd45a72a5
+45557e9/node_modules/
+tsx/dist/esm/index.mj
+s?1769147349948:2:498
+4)
+    at async resolve 
+(file:///C:/Users/nab
+e7/AppData/Local/npm-
+cache/_npx/fd45a72a54
+5557e9/node_modules/t
+sx/dist/esm/index.mjs
+?1769147349948:2:5355
+)
+    at async nextReso
+lve (node:internal/mo
+dules/esm/hooks:748:2
+2) {
+  code: 'ERR_MODULE_N
+OT_FOUND'
+}
+
+Node.js v22.20.0

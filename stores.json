@@ -1,0 +1,93 @@
+[
+  {
+    "id": "16bc0774-059a-4f4c-b09c-63bc26b430bf",
+    "name": "東京",
+    "slug": "tokyo",
+    "address": "東京都",
+    "created_at": "2025-09-09T05:34:01.16041",
+    "phone": null,
+    "catch_copy": "こころとろける極上のひと時を",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1757847913517-toukyou.png",
+    "theme_color": "#ff579a",
+    "tags": null,
+    "description": "ストロベリーボーイズ東京店は、あなたの心と体を優しく満たすために生まれた女性専用のリラクゼーション空間です。\n日々の疲れや寂しさをそっと受け止め、笑顔と安心に包まれるひとときをお届けします。\n清潔感あふれるキャストが、恋人のように寄り添い、あなたの気持ちに合わせた時間を丁寧に演出。\nここでは誰にも気を遣わず、ただ自分らしく過ごせることを大切にしています。"
+  },
+  {
+    "id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+    "name": "横浜",
+    "slug": "yokohama",
+    "address": "神奈川県横浜市",
+    "created_at": "2025-09-09T05:34:01.16041",
+    "phone": null,
+    "catch_copy": "夜景よりも輝く大人時間を",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1757847816948-yokohama.png",
+    "theme_color": "#1f51ff",
+    "tags": null,
+    "description": "ストロベリーボーイズ横浜店では、横浜の煌めく夜景に包まれながら、桃色に満たされる特別なひとときをご用意します。\n優しい声と温もりに寄り添われ、まるで恋人と過ごす夜のように心が解きほぐされていく…。\n甘く切ないロマンチックな時間の中で、あなたの心にそっと触れる出会いを演出します。日常を忘れて愛される歓びを味わいませんか？"
+  },
+  {
+    "id": "b385cfa8-47b6-4eaf-b0e6-8d3eb16bc3ad",
+    "name": "名古屋",
+    "slug": "nagoya",
+    "address": "愛知県名古屋市",
+    "created_at": "2025-09-09T05:34:01.16041",
+    "phone": null,
+    "catch_copy": "誰にも言えない魅惑のご褒美",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1757848046174-nagoya.png",
+    "theme_color": "#b361ff",
+    "tags": null,
+    "description": "ストロベリーボーイズ名古屋店は、あなたの心にそっと寄り添う「誰にも言えない魅惑のご褒美」をコンセプトに誕生しました。\n日常では味わえないロマンチックな時間を、清潔感と優しさにあふれたキャストが丁寧に演出。甘い言葉に包まれ、愛される歓びを思い出すひとときは、まるで秘密の恋そのものです。\n誰にも邪魔されないあなただけの物語を、この街で始めませんか？"
+  },
+  {
+    "id": "0ffd39f8-8610-491f-8a3e-f33866e5d4f3",
+    "name": "大阪",
+    "slug": "osaka",
+    "address": "大阪府大阪市",
+    "created_at": "2025-09-09T05:34:01.16041",
+    "phone": null,
+    "catch_copy": "え？やばい、こんな楽しいの反則やん",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1757848064062-oosaka.png",
+    "theme_color": "#ffc800",
+    "tags": null,
+    "description": "ストロベリーボーイズ名古屋店はあなたの心を一瞬でときめかせる特別な空間です。\n胸が高鳴る瞬間、笑顔がこぼれる会話、ふとした仕草に包まれる安心感…。\nすべてが恋の魔法のように甘くロマンチックに広がっていきます。\n日常では味わえない、まるで秘密の恋に落ちたかのようなドキドキを、ここで一緒に体験しませんか？"
+  },
+  {
+    "id": "35cdc104-2234-418a-8fa1-44f402cd43a6",
+    "name": "仙台",
+    "slug": "sengai",
+    "address": "",
+    "created_at": "2025-09-22T16:19:45.4972",
+    "phone": "",
+    "catch_copy": "国産牛タン❤️",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1758558089531-IMG_4306.jpeg",
+    "theme_color": "#5e30eb",
+    "tags": null,
+    "description": null
+  },
+  {
+    "id": "bcc67dee-757b-4923-8b84-04628d0d64c9",
+    "name": "北海道",
+    "slug": "",
+    "address": "",
+    "created_at": "2025-09-24T11:30:44.611347",
+    "phone": "",
+    "catch_copy": "寒くないよ",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1758713466036-IMG_2318.jpeg",
+    "theme_color": "#ff6a00",
+    "tags": null,
+    "description": null
+  },
+  {
+    "id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+    "name": "福岡",
+    "slug": "fukuoka",
+    "address": "福岡",
+    "created_at": "2026-01-05T01:31:15.920766",
+    "phone": "00000000000",
+    "catch_copy": "ふくおかだよ",
+    "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1768338985555-fukuoka.png",
+    "theme_color": "#55b9f7",
+    "tags": null,
+    "description": "福岡だよ"
+  }
+]

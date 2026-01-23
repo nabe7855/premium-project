@@ -42,3 +42,9 @@ USING (
   bucket_id = 'price-images' 
   AND auth.role() = 'authenticated'
 );
+
+-- 【デバッグ用】全ユーザー（非ログイン含む）がアップロード可能にする場合
+-- 注意: セキュリティ上のリスクがあるため、本番では使用しないでください
+-- CREATE POLICY "Allow public upload for debug"
+-- ON storage.objects FOR INSERT
+-- WITH CHECK (bucket_id = 'price-images');

@@ -1,0 +1,2 @@
+﻿Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database

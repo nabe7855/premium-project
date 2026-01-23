@@ -282,8 +282,12 @@ function CourseAccordion({
         onClick={() => setIsOpen(!isOpen)}
         className="flex w-full items-center gap-5 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white p-6 transition-all hover:from-rose-100 hover:to-rose-50 md:p-8"
       >
-        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-rose-100 text-3xl">
-          {course.icon}
+        <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-rose-100 text-3xl">
+          {course.icon && (course.icon.startsWith('http') || course.icon.startsWith('/')) ? (
+            <img src={course.icon} alt="" className="h-full w-full object-cover" />
+          ) : (
+            course.icon || '🍓'
+          )}
         </div>
         <div className="flex-1 text-left">
           <h3 className="font-rounded text-xl font-bold leading-tight text-rose-900 md:text-2xl">

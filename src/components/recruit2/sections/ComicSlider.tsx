@@ -12,10 +12,16 @@ interface ComicSlide {
 interface ComicSliderProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
+  onUpload?: (file: File) => Promise<string | null>;
   slides?: ComicSlide[];
 }
 
-const ComicSlider: React.FC<ComicSliderProps> = ({ isEditing = false, onUpdate, slides }) => {
+const ComicSlider: React.FC<ComicSliderProps> = ({
+  isEditing = false,
+  onUpdate,
+  onUpload,
+  slides,
+}) => {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const defaultSteps: ComicSlide[] = [
@@ -100,8 +106,14 @@ const ComicSlider: React.FC<ComicSliderProps> = ({ isEditing = false, onUpdate, 
     }
   };
 
-  const handleImageUpload = (index: number) => (file: File) => {
-    if (onUpdate) {
+  const handleImageUpload = (index: number) => async (file: File) => {
+    if (onUpload) {
+      const url = await onUpload(file);
+      if (url) {
+        handleUpdateSlide(index, 'img', url);
+      }
+    } else if (onUpdate) {
+      // Fallback if onUpload is not provided (should not happen in editor)
       const url = URL.createObjectURL(file);
       handleUpdateSlide(index, 'img', url);
     }

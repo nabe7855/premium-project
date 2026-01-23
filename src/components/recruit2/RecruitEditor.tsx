@@ -38,6 +38,7 @@ export default function RecruitEditor() {
       try {
         const result = await getRecruitPageConfig(selectedStore);
         if (result.success && result.config) {
+          console.log('📡 Fetched recruit config:', result.config);
           // Merge with default config to ensure all sections exist
           setConfig((prev) => ({
             ...prev,
@@ -135,6 +136,49 @@ export default function RecruitEditor() {
     }
   };
 
+  const handleUpload = async (file: File): Promise<string | null> => {
+    try {
+      // Use a generic section name for general uploads if needed, or maybe pass section from child?
+      // For now, let's assume 'comic' or generic 'uploads' since the child just wants a URL.
+      // Actually, uploadRecruitImage takes (storeId, sectionKey, file).
+      // Let's use 'comic' as default or generic 'images' if we want it reusable for everything?
+      // The instruction says "Propagate... to ComicSlider". ComicSlider is "comic".
+      // But LandingPage might use it for others.
+      // Let's make the prop accept (file, section?) or just (file) and we imply section?
+      // In the plan I said `onUpload?: (file: File) => Promise<string | null>`.
+      // Let's infer section or use a generic one. 'common' or 'misc'?
+      // Or better, let's keep it simple. The child knows what component it is, but maybe not the section key in the global config.
+      // Actually, ComicSlider IS the comic section.
+
+      // Let's just use 'uploads' for now as a generic bucket folder or pass a second optional arg?
+      // Plan signature was `(file: File) => Promise<string | null>`.
+      // Let's stick to that for simplicity, or update it to be cleaner.
+      // I'll assume 'uploads' for the section key for these generic helper uploads, or 'comic' since that's the main user right now.
+      // Actually, looking at uploadRecruitImage, it puts it in `recruit/${storeId}/${fileName}`.
+      // `fileName` is `${sectionKey}_${timestamp}.${fileExt}`.
+      // So if I pass 'general', files will be `general_123.jpg`. This is fine.
+
+      setIsUploading(true);
+      const toastId = toast.loading('画像をアップロード中...');
+      const url = await uploadRecruitImage(selectedStore, 'general', file);
+
+      if (url) {
+        toast.success('画像をアップロードしました', { id: toastId });
+        return url;
+      } else {
+        toast.error('画像のアップロードに失敗しました', { id: toastId });
+        return null;
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error('アップロードエラー', { id: toast.loading('Error') }); // toast.loading returns id, but here I just want to show error.
+      // actually toast.error replaces if ID matches, but here I just want to show error.
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       {/* Store Selector Header */}
@@ -207,6 +251,7 @@ export default function RecruitEditor() {
               );
               handleUpdate(section, key, value);
             }}
+            onUpload={handleUpload}
             onOpenChat={() => {}}
             onOpenForm={() => {}}
           />

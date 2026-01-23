@@ -66,6 +66,7 @@ export const EditableImage: React.FC<EditableImageProps> = ({
         className="hidden"
         accept="image/*"
         onChange={handleFileChange}
+        onClick={(e) => e.stopPropagation()}
       />
     </div>
   );
