@@ -67,50 +67,72 @@ export default function PriceConfigEditor({
 
   return (
     <div className="space-y-6">
-      {/* 固定ヘッダー（保存ボタンなど） */}
-      <div className="sticky top-0 z-50 flex items-center justify-between rounded-2xl bg-white/90 p-4 shadow-lg backdrop-blur-md">
-        <h2 className="text-xl font-bold text-rose-900 md:text-2xl">料金設定へ編集</h2>
-        <div className="flex items-center gap-4">
-          <div className="hidden text-xs text-gray-500 md:block">
-            ※変更は「保存」ボタンを押すまで反映されません
-          </div>
-          <button
-            onClick={handleSave}
-            disabled={isSaving}
-            className="flex items-center gap-2 rounded-full bg-rose-500 px-6 py-2.5 font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-rose-600 disabled:opacity-50"
-          >
-            <Save className="h-4 w-4" />
-            {isSaving ? '保存中...' : '保存する'}
-          </button>
-        </div>
-      </div>
-
-      {/* ヒーロー画像設定 */}
-      <div className="rounded-2xl border-2 border-rose-100 bg-white p-6">
-        <h3 className="mb-4 text-lg font-bold text-rose-900">ページトップ画像</h3>
-        <div className="space-y-4">
-          {config.hero_image_url && (
-            <div className="overflow-hidden rounded-xl">
-              <img
-                src={config.hero_image_url}
-                alt="ヒーロー画像"
-                className="h-48 w-full object-cover"
-              />
+      {/* ヒーローヘッダー（保存ボタン・画像設定など） */}
+      <div className="group relative overflow-hidden rounded-3xl bg-white shadow-xl">
+        {/* 背景画像（ヒーロー画像） */}
+        <div className="relative h-64 w-full bg-rose-50 md:h-80">
+          {config.hero_image_url ? (
+            <img
+              src={config.hero_image_url}
+              alt="ヒーロー画像"
+              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center text-rose-300">
+              <span className="text-4xl">🍓</span>
             </div>
           )}
-          <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-rose-200 bg-rose-50 p-4 text-center transition-colors hover:border-rose-300 hover:bg-rose-100">
-            <Upload className="h-5 w-5 text-rose-500" />
-            <span className="text-sm font-bold text-rose-700">
-              {uploadingHero ? 'アップロード中...' : '画像をアップロード/変更'}
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleHeroImageUpload}
-              disabled={uploadingHero}
-              className="hidden"
-            />
-          </label>
+          {/* オーバーレイ */}
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-transparent" />
+        </div>
+
+        {/* ヘッダーコンテンツ */}
+        <div className="absolute left-0 right-0 top-0 p-6">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <div className="rounded-full bg-white/20 p-2 backdrop-blur-md">
+                <button
+                  onClick={() => document.getElementById('hero-upload')?.click()}
+                  className="flex items-center gap-2 rounded-full bg-white px-4 py-2 text-sm font-bold text-rose-500 shadow-sm transition-all hover:bg-rose-50"
+                  disabled={uploadingHero}
+                >
+                  <Upload className="h-4 w-4" />
+                  {uploadingHero ? '更新中...' : '画像変更'}
+                </button>
+                <input
+                  id="hero-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleHeroImageUpload}
+                  disabled={uploadingHero}
+                  className="hidden"
+                />
+              </div>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <div className="hidden text-xs font-bold text-white/80 md:block">
+                ※変更内容は「保存」で反映
+              </div>
+              <button
+                onClick={handleSave}
+                disabled={isSaving}
+                className="flex items-center gap-2 rounded-full bg-rose-500 px-8 py-3 font-bold text-white shadow-lg shadow-rose-500/30 transition-all hover:scale-105 hover:bg-rose-600 disabled:opacity-50"
+              >
+                <Save className="h-5 w-5" />
+                {isSaving ? '保存中...' : '保存する'}
+              </button>
+            </div>
+          </div>
+
+          <div className="mt-8">
+            <h2 className="font-rounded text-3xl font-black tracking-wide text-white drop-shadow-md md:text-4xl">
+              料金設定へ編集
+            </h2>
+            <p className="mt-2 text-sm font-bold text-white/90">
+              コース、送迎エリア、オプション、キャンペーンの設定
+            </p>
+          </div>
         </div>
       </div>
 
