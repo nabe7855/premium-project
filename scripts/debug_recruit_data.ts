@@ -8,7 +8,7 @@ dotenv.config({ path: path.resolve(process.cwd(), '.env.local') });
 const prisma = new PrismaClient();
 
 async function main() {
-  const slug = 'fukuoka'; // ユーザーが作業していたのは福岡店? デフォルトはtokyoだが、アップロードしてたのは福岡かも
+  const slug: string = 'fukuoka'; // ユーザーが作業していたのは福岡店? デフォルトはtokyoだが、アップロードしてたのは福岡かも
   console.log(`🔍 Checking data for slug: ${slug}`);
 
   // 環境変数の確認 (値は隠す)
