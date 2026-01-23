@@ -260,3 +260,103 @@ export async function uploadPriceImage(
     return { success: false, error: 'Failed to upload image' };
   }
 }
+
+/**
+ * 管理画面用の全店舗設定を取得
+ */
+import { StoreConfig } from '@/components/admin/price/types';
+
+export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
+  try {
+    // 1. 全店舗を取得
+    const { data: stores, error: storesError } = await supabase
+      .from('stores')
+      .select('id, name, slug')
+      .order('name');
+
+    if (storesError || !stores) {
+      console.error('Stores fetch error:', storesError);
+      return [];
+    }
+
+    // 2. 各店舗の設定を取得してマッピング
+    const configs = await Promise.all(
+      stores.map(async (store) => {
+        const config = await getPriceConfig(store.slug);
+
+        if (!config) {
+          // 設定がない場合はデフォルトの空設定を返す
+          return {
+            id: store.id,
+            storeName: store.name,
+            slug: store.slug,
+            lastUpdated: '-',
+            courses: [],
+            transportAreas: [],
+            options: [],
+            campaigns: [],
+            faqs: [], // FAQは現在DBにないので空配
+          };
+        }
+
+        // DB型からUI型への変換
+        return {
+          id: store.id,
+          storeName: store.name,
+          slug: store.slug,
+          lastUpdated: new Date(config.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+          courses: config.courses.map((c) => ({
+            id: c.id,
+            name: c.name,
+            description: c.description || '',
+            icon: c.icon || '✨',
+            extensionPer30min: c.extension_per_30min,
+            designationFees: {
+              free: 0, // DBにないので仮
+              first: c.designation_fee_first,
+              follow: 0, // DBにないので仮
+              note: c.designation_fee_note,
+            },
+            notes: c.notes,
+            plans:
+              c.plans?.map((p) => ({
+                minutes: p.minutes,
+                price: p.price,
+                subLabel: p.sub_label,
+                discountInfo: p.discount_info,
+              })) || [],
+          })),
+          transportAreas: config.transport_areas.map((t) => ({
+            id: t.id,
+            area: t.area,
+            price: (t.price ?? 'negotiable') as number | 'negotiable',
+            label: t.label,
+            note: t.note,
+          })),
+          options: config.options.map((o) => ({
+            id: o.id,
+            name: o.name,
+            description: o.description || '',
+            price: o.price,
+            isRelative: o.is_relative,
+          })),
+          campaigns: config.campaigns.map((c) => ({
+            id: c.id,
+            title: c.title,
+            description: c.description || '',
+            imageUrl: c.image_url || '',
+            needEntry: c.need_entry,
+            accentText: c.accent_text || '',
+            priceInfo: c.price_info,
+          })),
+          faqs: [], // FAQテーブル未実装
+        };
+      }),
+    );
+
+    return configs;
+  } catch (error) {
+    console.error('Error fetching admin configs:', error);
+    return [];
+  }
+}
