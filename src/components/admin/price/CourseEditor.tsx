@@ -1,8 +1,8 @@
 'use client';
 
-import { savePriceConfig, uploadPriceImage } from '@/lib/actions/priceConfig';
+import { savePriceConfig } from '@/lib/actions/priceConfig';
 import type { EditableCourse, EditableCoursePlan, EditablePriceConfig } from '@/types/priceConfig';
-import { ChevronDown, ChevronUp, Plus, Save, Trash2, Upload, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, Plus, Save, Trash2, X } from 'lucide-react';
 import { useState } from 'react';
 
 interface CourseEditorProps {
@@ -19,22 +19,6 @@ export default function CourseEditor({
   const [config, setConfig] = useState<EditablePriceConfig>(initialConfig);
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
-
-  // ヒーロー画像アップロード
-  const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    setUploadingHero(true);
-    const result = await uploadPriceImage(file, `hero-${storeSlug}`);
-    setUploadingHero(false);
-
-    if (result.success && result.url) {
-      setConfig({ ...config, hero_image_url: result.url });
-    } else {
-      alert('画像のアップロードに失敗しました: ' + result.error);
-    }
-  };
 
   // コース追加
   const addCourse = () => {
@@ -129,35 +113,6 @@ export default function CourseEditor({
           <Save className="h-5 w-5" />
           {isSaving ? '保存中...' : '保存'}
         </button>
-      </div>
-
-      {/* ヒーロー画像 */}
-      <div className="rounded-2xl border-2 border-rose-100 bg-white p-6">
-        <h3 className="mb-4 text-lg font-bold text-rose-900">ヒーロー画像</h3>
-        <div className="space-y-4">
-          {config.hero_image_url && (
-            <div className="overflow-hidden rounded-xl">
-              <img
-                src={config.hero_image_url}
-                alt="ヒーロー画像"
-                className="h-48 w-full object-cover"
-              />
-            </div>
-          )}
-          <label className="flex cursor-pointer items-center gap-2 rounded-lg border-2 border-dashed border-rose-200 bg-rose-50 p-4 text-center transition-colors hover:border-rose-300 hover:bg-rose-100">
-            <Upload className="h-5 w-5 text-rose-500" />
-            <span className="text-sm font-bold text-rose-700">
-              {uploadingHero ? 'アップロード中...' : '画像をアップロード'}
-            </span>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handleHeroImageUpload}
-              disabled={uploadingHero}
-              className="hidden"
-            />
-          </label>
-        </div>
       </div>
 
       {/* コース一覧 */}
