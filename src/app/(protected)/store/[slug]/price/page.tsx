@@ -1,4 +1,5 @@
 import { getPriceConfig } from '@/lib/actions/priceConfig';
+import { getStoreData } from '@/lib/store/store-data';
 import { notFound } from 'next/navigation';
 import PricePageClient from './PricePageClient';
 
@@ -10,6 +11,12 @@ interface PricePageProps {
 
 export default async function PricePage({ params }: PricePageProps) {
   const { slug } = params;
+
+  // 店舗データを取得
+  const store = getStoreData(slug);
+  if (!store) {
+    notFound();
+  }
 
   // 料金設定を取得
   const priceConfig = await getPriceConfig(slug);

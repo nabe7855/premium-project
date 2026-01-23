@@ -1,7 +1,6 @@
 import CommonTopPage from '@/components/templates/store/common/page-templates/TopPage';
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
-import { StoreProvider } from '@/contexts/StoreContext';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -130,7 +129,7 @@ export default async function StorePage({ params }: StorePageProps) {
 
   // テンプレート振り分け
   return (
-    <StoreProvider store={store}>
+    <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
@@ -147,6 +146,6 @@ export default async function StorePage({ params }: StorePageProps) {
           topConfig={topConfig}
         />
       )}
-    </StoreProvider>
+    </>
   );
 }
