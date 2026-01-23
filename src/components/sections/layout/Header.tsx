@@ -43,6 +43,18 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     closeMenu();
   };
 
+  const adjustLinks = (links: any[]) => {
+    return links.map((link) => {
+      // '#' で始まる内部リンク、または '/price' などの相対パスを調整
+      if (link.href === '#price' || link.name.includes('料金')) {
+        return { ...link, href: `/store/${currentStoreId}/price` };
+      }
+      return link;
+    });
+  };
+
+  const adjustedNavLinks = adjustLinks(navLinks);
+
   const closeMenu = () => {
     setIsAnimating(true);
     setTimeout(() => {
@@ -372,16 +384,20 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   </section>
 
                   {/* Highlights (News) */}
-                  {navLinks[0] && renderNavItem(navLinks[0], 0, 'highlight')}
+                  {adjustedNavLinks[0] && renderNavItem(adjustedNavLinks[0], 0, 'highlight')}
 
                   {/* Main Grid */}
                   <div className="grid grid-cols-2 gap-4">
-                    {navLinks.slice(1, 7).map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
+                    {adjustedNavLinks
+                      .slice(1, 7)
+                      .map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
                   </div>
 
                   {/* Secondary Buttons */}
                   <div className="space-y-4 pt-4">
-                    {navLinks.slice(7).map((item, idx) => renderNavItem(item, idx + 7, 'full'))}
+                    {adjustedNavLinks
+                      .slice(7)
+                      .map((item, idx) => renderNavItem(item, idx + 7, 'full'))}
                   </div>
 
                   {/* Phone Section */}

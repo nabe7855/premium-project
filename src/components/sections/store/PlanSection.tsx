@@ -1,9 +1,9 @@
 'use client';
 
-import { useStore } from '@/contexts/StoreContext';
 import { Button } from '@/components/ui/button';
-import { Check, Star, Clock, CreditCard } from 'lucide-react';
+import { useStore } from '@/contexts/StoreContext';
 import type { Plan } from '@/types/store';
+import { Check, Clock, CreditCard, Star } from 'lucide-react';
 
 export default function PlanSection() {
   const { store } = useStore();
@@ -82,9 +82,11 @@ export default function PlanSection() {
           <p className="mb-4 text-gray-600">
             ご不明な点やカスタムプランについてはお気軽にお問い合わせください
           </p>
-          <Button variant="outline" className="rounded-full px-8 py-3 text-lg font-semibold">
-            詳しいプラン内容を見る
-          </Button>
+          <Link href={`/store/${store.slug}/price`}>
+            <Button variant="outline" className="rounded-full px-8 py-3 text-lg font-semibold">
+              詳しいプラン内容を見る
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

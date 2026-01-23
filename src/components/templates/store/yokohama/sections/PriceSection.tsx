@@ -1,5 +1,6 @@
 'use client';
 
+import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -44,6 +45,7 @@ interface PriceSectionProps {
 }
 
 const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
+  const { store } = useStore();
   const [activeTab, setActiveTab] = useState(0);
 
   const tabs = [
@@ -147,7 +149,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
         {/* 詳細ボタン */}
         <div className="mt-12 text-center">
           <Link
-            href="/price"
+            href={`/store/${store.slug}/price`}
             className="bg-primary-500 hover:bg-primary-600 group inline-flex transform items-center gap-3 rounded-full px-12 py-5 font-black text-white shadow-xl transition-all hover:scale-105 active:scale-95"
           >
             <span>詳しいコースはこちら</span>

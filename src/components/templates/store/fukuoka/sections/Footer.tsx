@@ -1,7 +1,7 @@
+import { useStore } from '@/contexts/StoreContext';
+import { FooterConfig } from '@/lib/store/storeTopConfig';
 import { ImageIcon, Link2, Plus } from 'lucide-react';
 import React from 'react';
-
-import { FooterConfig } from '@/lib/store/storeTopConfig';
 
 interface FooterProps {
   config?: FooterConfig;
@@ -47,6 +47,15 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
       }
     }
   };
+
+  const { store } = useStore();
+
+  const adjustedMenuButtons = config.menuButtons.map((btn) => {
+    if (btn.label.includes('料金') || btn.label.includes('コース')) {
+      return { ...btn, link: `/store/${store.slug}/price` };
+    }
+    return btn;
+  });
 
   return (
     <footer id="footer" className="border-Pink-100 border-t bg-white py-8 text-slate-800">
@@ -145,7 +154,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           <div className="flex-grow">
             {/* Grid of buttons (12 buttons as in Image 2) */}
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {config.menuButtons.map((btn, idx) => (
+              {adjustedMenuButtons.map((btn, idx) => (
                 <div key={idx} className="group relative">
                   <a
                     href={btn.link || '#'}
