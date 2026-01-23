@@ -1,6 +1,7 @@
 import CommonTopPage from '@/components/templates/store/common/page-templates/TopPage';
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
+import { StoreProvider } from '@/contexts/StoreContext';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -128,37 +129,24 @@ export default async function StorePage({ params }: StorePageProps) {
   };
 
   // テンプレート振り分け
-  if (store.template === 'fukuoka') {
-    return (
-      <div>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <FukuokaTopPage config={topConfig as any} />
-      </div>
-    );
-  }
-
-  if (store.template === 'yokohama') {
-    return (
-      <div>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-        <YokohamaTopPage config={topConfig as any} />
-      </div>
-    );
-  }
-
-  // その他の店舗は共通テンプレートを表示
   return (
-    <CommonTopPage
-      store={store}
-      todayCasts={todayCasts}
-      structuredData={structuredData}
-      topConfig={topConfig}
-    />
+    <StoreProvider store={store}>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      {store.template === 'fukuoka' ? (
+        <FukuokaTopPage config={topConfig as any} />
+      ) : store.template === 'yokohama' ? (
+        <YokohamaTopPage config={topConfig as any} />
+      ) : (
+        <CommonTopPage
+          store={store}
+          todayCasts={todayCasts}
+          structuredData={structuredData}
+          topConfig={topConfig}
+        />
+      )}
+    </StoreProvider>
   );
 }

@@ -14,7 +14,6 @@ import PlanSection from '@/components/sections/store/PlanSection';
 import ReviewSection from '@/components/sections/store/ReviewSection';
 import VideoSection from '@/components/sections/store/VideoSection';
 import { TestimonialSection } from '@/components/sections/TestimonialSection';
-import { StoreProvider } from '@/contexts/StoreContext';
 import { Store } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig'; // Added import for DEFAULT_STORE_TOP_CONFIG
 import Footer from '../../fukuoka/sections/Footer';
@@ -46,38 +45,36 @@ export default function CommonStorePage({
   const safeConfig = topConfig ?? DEFAULT_STORE_TOP_CONFIG;
 
   return (
-    <StoreProvider store={store}>
-      <div className={`min-h-screen ${store.theme.bodyClass}`}>
-        {(safeConfig.header.isVisible || isEditing) && (
-          <Header
-            config={safeConfig.header}
-            isEditing={isEditing}
-            onUpdate={onUpdate}
-            onImageUpload={onImageUpload}
-          />
-        )}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+    <div className={`min-h-screen ${store.theme.bodyClass}`}>
+      {(safeConfig.header.isVisible || isEditing) && (
+        <Header
+          config={safeConfig.header}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
         />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
 
-        <main>
-          <HeroSection />
-          <TestimonialSection />
-          <BannerSlideSection />
-          <CastSliderSection casts={todayCasts} />
-          <NewcomerSection />
-          <EventSection />
-          <DiarySection />
-          <MediaSection />
-          <VideoSection />
-          <ReviewSection />
-          <PlanSection />
-          <AIMatchingSection />
-          <ClosingCTA />
-        </main>
-        <Footer config={topConfig?.footer} />
-      </div>
-    </StoreProvider>
+      <main>
+        <HeroSection />
+        <TestimonialSection />
+        <BannerSlideSection />
+        <CastSliderSection casts={todayCasts} />
+        <NewcomerSection />
+        <EventSection />
+        <DiarySection />
+        <MediaSection />
+        <VideoSection />
+        <ReviewSection />
+        <PlanSection />
+        <AIMatchingSection />
+        <ClosingCTA />
+      </main>
+      <Footer config={topConfig?.footer} />
+    </div>
   );
 }
