@@ -5,7 +5,6 @@ import type { EditablePriceConfig } from '@/types/priceConfig';
 import { Plus, Save, Trash2, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import CampaignEditor from './CampaignEditor';
-import CourseEditor from './CourseEditor';
 import OptionEditor from './OptionEditor';
 import TransportEditor from './TransportEditor';
 
@@ -157,42 +156,6 @@ export default function PriceConfigEditor({
       <div className="duration-500 animate-in fade-in slide-in-from-bottom-4">
         {activeTab === 'COURSES' && (
           <div className="space-y-4">
-            {/* Note: CourseEditor is reused here but effectively acts as list editor now */}
-            {/* We recreate standard course editor logic but controlled */}
-            <CourseEditor
-              storeSlug={storeSlug} // Reused props although we control state here
-              initialConfig={config} // We pass full config, CourseEditor handles its part
-              onSaveComplete={() => {}} // Internal save disabled here, we use parent save
-              // Hack: CourseEditor currently has its own state.
-              // To properly integrate, we should have refactored CourseEditor to be controlled.
-              // For now, we will use a different approach:
-              // We will render CourseEditor's internal components if we had them.
-              // Limitation: CourseEditor logic is duplicated or we rely on CourseEditor to be "smart".
-              // Actually, CourseEditor (as implemented in Phase B) owns its state.
-              // Let's patch CourseEditor to accept `config` and `onChange`?
-              // The `CourseEditor` I wrote in Phase B has `initialConfig` prop.
-              // If I render it, it will have its own state detached from `config` here.
-              // This is a problem. The parent `PriceConfigEditor` needs to control the state.
-              // SOLUTION: I will modify CourseEditor to accept `courses` and `onUpdate`.
-              // But for now, I will render the `CourseEditor` logic INLINE here or use a `CourseListEditor`.
-              // Since I can't refactor easily in this turn, I will just replicate the course list logic here
-              // using the sub-components I defined inside `CourseEditor` (CourseEditCard).
-              // Wait, `CourseEditCard` was not exported.
-
-              /* 
-                 Correct Approach:
-                 Since I cannot modify `CourseEditor.tsx` in this turn (I already used write_to_file limits?),
-                 Actually I only used 2 write calls in this turn so far (CampaignEditor, PriceConfigEditor).
-                 I can modify `CourseEditor.tsx` in the SAME turn if I want.
-                 I will Rewrite `CourseEditor.tsx` to be a pure `CourseListEditor` 
-                 and move the state management up to `PriceConfigEditor`.
-               */
-            />
-            {/* 
-               Actually, I will just Render the Course Editor UI directly here.
-               Or better, I will output `CourseListEditor.tsx` as well.
-               It seems I have enough token budget.
-             */}
             <CourseListLogic
               courses={config.courses}
               onUpdate={(courses) => setConfig({ ...config, courses })}
