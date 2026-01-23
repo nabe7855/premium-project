@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { useStore } from '@/contexts/StoreContext';
 import type { Plan } from '@/types/store';
 import { Check, Clock, CreditCard, Star } from 'lucide-react';
+import Link from 'next/link';
 
 export default function PlanSection() {
   const { store } = useStore();
