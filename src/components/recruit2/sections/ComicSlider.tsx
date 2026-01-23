@@ -142,7 +142,7 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
 
           <div
             ref={scrollRef}
-            className="no-scrollbar flex snap-x snap-mandatory items-stretch gap-4 overflow-x-auto scroll-smooth pb-6 sm:gap-6"
+            className="no-scrollbar flex snap-x snap-mandatory items-start gap-4 overflow-x-auto scroll-smooth pb-6 sm:gap-6"
             style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
           >
             {steps.map((step, idx) => (
@@ -150,17 +150,17 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
                 key={idx}
                 className="group/item relative w-[280px] flex-shrink-0 snap-center sm:w-[350px] sm:snap-start"
               >
-                <div className="h-full overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-                  <div className="relative aspect-video w-full border-b border-slate-100">
+                <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+                  <div className="relative w-full border-b border-slate-100">
                     <EditableImage
                       src={step.img}
                       alt={step.title}
-                      className="h-full w-full object-cover"
+                      className="h-auto w-full"
                       isEditing={isEditing}
                       onUpload={handleImageUpload(idx)}
                     />
                   </div>
-                  <div className="p-6">
+                  <div className="flex flex-col p-6">
                     <div className="mb-3 flex items-center gap-3">
                       <span className="flex h-7 w-7 items-center justify-center rounded-full bg-slate-900 text-xs font-bold text-white">
                         {idx + 1}
