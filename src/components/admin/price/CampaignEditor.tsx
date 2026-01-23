@@ -1,6 +1,6 @@
 'use client';
 
-import { uploadPriceImage } from '@/lib/actions/priceConfig';
+import { uploadPriceImageClient } from '@/lib/store/uploadPriceImageClient';
 import type { EditableCampaign } from '@/types/priceConfig';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import { useState } from 'react';
@@ -44,13 +44,18 @@ export default function CampaignEditor({ campaigns, storeSlug, onUpdate }: Campa
     if (!file) return;
 
     setUploadingIndex(index);
-    const result = await uploadPriceImage(file, `campaign-${storeSlug}`);
-    setUploadingIndex(null);
-
-    if (result.success && result.url) {
-      updateCampaign(index, { image_url: result.url });
-    } else {
-      alert('画像のアップロードに失敗しました: ' + result.error);
+    try {
+      const publicUrl = await uploadPriceImageClient(storeSlug, `campaign-${index}`, file);
+      if (publicUrl) {
+        updateCampaign(index, { image_url: publicUrl });
+      } else {
+        alert('画像のアップロードに失敗しました');
+      }
+    } catch (error: any) {
+      console.error('Campaign Image Upload Error:', error);
+      alert('エラーが発生しました: ' + error.message);
+    } finally {
+      setUploadingIndex(null);
     }
   };
 
