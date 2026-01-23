@@ -264,6 +264,13 @@ export async function uploadPriceImage(
 /**
  * 管理画面用の全店舗設定を取得
  */
+import {
+  MOCK_CAMPAIGNS,
+  MOCK_COURSES,
+  MOCK_OPTIONS,
+  MOCK_TRANSPORT_AREAS,
+} from '@/components/admin/price/constants';
+
 import { StoreConfig } from '@/components/admin/price/types';
 
 export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
@@ -285,17 +292,17 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
         const config = await getPriceConfig(store.slug);
 
         if (!config) {
-          // 設定がない場合はデフォルトの空設定を返す
+          // 設定がない場合はデフォルトの設定を返す
           return {
             id: store.id,
             storeName: store.name,
             slug: store.slug,
             lastUpdated: '-',
-            courses: [],
-            transportAreas: [],
-            options: [],
-            campaigns: [],
-            faqs: [], // FAQは現在DBにないので空配
+            courses: MOCK_COURSES,
+            transportAreas: MOCK_TRANSPORT_AREAS,
+            options: MOCK_OPTIONS,
+            campaigns: MOCK_CAMPAIGNS,
+            faqs: [], // FAQは現在DBにないので空配列
           };
         }
 
