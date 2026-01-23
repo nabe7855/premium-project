@@ -24,39 +24,11 @@ export const MOCK_FREE_OPTIONS = [
 
 export const MOCK_COURSES: Course[] = [
   {
-    id: 'standard',
-    name: 'スタンダードコース',
-    description: '当店の基本となる施術コース。時間に合わせて最適な行程をご提供します。',
-    icon: '🍓',
-    plans: [
-      { minutes: 60, price: 12000, subLabel: '一部の施術のみ' },
-      { minutes: 90, price: 16000, subLabel: '比較的ゆったり' },
-      {
-        minutes: 120,
-        price: 20000,
-        subLabel: '当店のスタンダード',
-        discountInfo: '初回2,000円OFF',
-      },
-      {
-        minutes: 150,
-        price: 24000,
-        subLabel: '余裕を持ちたい時に',
-        discountInfo: '初回2,000円OFF',
-      },
-      { minutes: 180, price: 29000, subLabel: '7,000円お得', discountInfo: '初回2,000円OFF' },
-      {
-        minutes: 240,
-        price: 39000,
-        subLabel: '9,000円お得・洗体無料',
-        discountInfo: '初回4,000円OFF',
-      },
-      {
-        minutes: 300,
-        price: 47000,
-        subLabel: '13,000円お得・洗体無料',
-        discountInfo: '初回4,000円OFF',
-      },
-    ],
+    id: 'course-60',
+    name: '60分コース',
+    description: '一部の施術のみとなるショートコースです。',
+    icon: '⚡',
+    plans: [{ minutes: 60, price: 12000 }],
     extensionPer30min: 6000,
     designationFees: {
       free: 0,
@@ -65,13 +37,109 @@ export const MOCK_COURSES: Course[] = [
       note: '全セラピスト一律。特にご希望がなければ無料となります♫',
     },
     notes:
-      '120分コースは、2時間をかけてメインの施術行程をご堪能いただける当店のスタンダードコースです。非常にお得な料金設定となっております♡\n\n※60分コースについては施術時間が短いため、一部の施術のみとさせて頂きます。',
+      '60分コースについては施術時間が短く、当店の基本コースの行程を終える事が出来ませんので、一部の施術のみとさせて頂きます。',
   },
   {
-    id: 'stay',
+    id: 'course-90',
+    name: '90分コース',
+    description: '60分コースよりもゆったりとお過ごしいただけます。',
+    icon: '✨',
+    plans: [{ minutes: 90, price: 16000 }],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes: '60分コースよりも比較的ゆったりとお過ごしが出来るコースです♡',
+  },
+  {
+    id: 'course-120',
+    name: '120分コース',
+    description: '当店のスタンダードコース。メインの施術行程をご堪能いただけます。',
+    icon: '🍓',
+    plans: [
+      {
+        minutes: 120,
+        price: 20000,
+        discountInfo: '初回2,000円OFF',
+      },
+    ],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes:
+      '2時間をかけてメインの施術行程をご堪能いただける当店のスタンダードコースです♫ 非常にお得な料金設定です♡\n\n※当店のご利用が初めての方は2,000円割引き',
+  },
+  {
+    id: 'course-150',
+    name: '150分コース',
+    description: '少しお時間に余裕を持ちたい時におすすめです。',
+    icon: '🕰️',
+    plans: [
+      {
+        minutes: 150,
+        price: 24000,
+        discountInfo: '初回2,000円OFF',
+      },
+    ],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes:
+      '少しお時間に余裕を持ちたい時の150分コースです♡\n\n※当店のご利用が初めての方は2,000円割引き',
+  },
+  {
+    id: 'course-180',
+    name: '180分コース',
+    description: '総額7,000円お得なロングコースです。',
+    icon: '💖',
+    plans: [
+      {
+        minutes: 180,
+        price: 29000,
+        discountInfo: '初回2,000円OFF',
+      },
+    ],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes: '総額7,000円お得な180分コースです♡\n\n※当店のご利用が初めての方は2,000円割引き',
+  },
+  {
+    id: 'course-240',
+    name: '240分コース',
+    description: '洗体オプション(2,000円分)が無料のお得なコースです。',
+    icon: '🛁',
+    plans: [
+      {
+        minutes: 240,
+        price: 39000,
+        subLabel: '洗体OP無料',
+        discountInfo: '初回4,000円OFF',
+      },
+    ],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes:
+      '総額9,000円お得で洗体オプション(2,000円分)が無料の240分コースです♡\n\n※当店ご利用初めての方は4,000円割引き',
+  },
+  {
+    id: 'course-300',
+    name: '300分コース',
+    description: 'セラピストを5時間独り占めできる贅沢コースです。',
+    icon: '👑',
+    plans: [
+      {
+        minutes: 300,
+        price: 47000,
+        subLabel: '洗体OP無料',
+        discountInfo: '初回4,000円OFF',
+      },
+    ],
+    extensionPer30min: 6000,
+    designationFees: { free: 0, first: 1000, follow: 1000 },
+    notes:
+      '総額13,000円お得で洗体オプション(2,000円分)が無料の300分コースです♡ セラピストを5時間、独り占めが出来ちゃいます♫\n\n※当店ご利用初めての方は4,000円割引き',
+  },
+  {
+    id: 'course-stay',
     name: 'お泊りコース',
-    description: '通常の120分コースが含まれ、それ以外の時間はデートなどに。',
-    icon: '🎀',
+    description: '通常の120分コースが含まれ、それ以外の時間はお食事やデートなどに。',
+    icon: '🌙',
     plans: [
       { minutes: 600, price: 55000, subLabel: '10時間' },
       { minutes: 720, price: 65000, subLabel: '12時間' },
@@ -79,39 +147,42 @@ export const MOCK_COURSES: Course[] = [
       { minutes: 960, price: 85000, subLabel: '16時間' },
       { minutes: 1080, price: 95000, subLabel: '18時間' },
     ],
-    extensionPer30min: 6000,
+    extensionPer30min: 6000, // 通常コースと同様
     designationFees: { free: 0, first: 1000, follow: 1000 },
     notes:
-      '常識の範囲内でセラピストへ休息（5〜6時間目安の睡眠時間）を与えて頂けると幸いです。デート代・食事代は実費負担となります。',
+      '※通常の120分コースが含まれています、それ以外の時間はお食事やデートなどにご利用下さい。\n料金設定がとてもお得なコースになっておりますので、常識の範囲内でセラピストへ休息を与えて頂けると幸いです。(5〜6時間目安の睡眠時間)\nデート代お食事代はお客様ご負担でお願い致します。\n\n※大変お得なコースのため上限は18時間とさせて頂きます、18時間以上ご利用の場合は通常コースと同様に30分6,000円単位でのご利用料金が発生致しますので予めご確認ください。',
   },
   {
-    id: 'date',
+    id: 'course-date',
     name: 'デートコース',
-    description: '外でのデートから始まり、気持ちがほぐれた所でホテルへ。',
+    description: 'お食事やショッピング等のデートをお楽しみいただき、気持ちがほぐれた所でホテルへ。',
     icon: '🍰',
     plans: [
       { minutes: 180, price: 32000 },
-      { minutes: 240, price: 42000, subLabel: '洗体オプション無料' },
-      { minutes: 300, price: 50000, subLabel: '洗体オプション無料' },
+      { minutes: 240, price: 42000, subLabel: '洗体OP無料' },
+      { minutes: 300, price: 50000, subLabel: '洗体OP無料' },
     ],
     extensionPer30min: 6000,
     designationFees: { free: 0, first: 1000, follow: 1000 },
-    notes: 'いきなりホテルに入るのが抵抗ある方は、外でのデートからお楽しみください♫',
+    notes:
+      'いきなりホテルに入るのが抵抗ある方は、外でお食事やショッピング等のデートをお楽しみいただき、気持ちがほぐれた所でホテルへ♫\n240分以上のデートコースで洗体オプション(2,000円分)が無料です♡\n\n※コース時間に施術も含まれます。\nデート代、お食事代はお客様ご負担でお願い致します。',
   },
   {
-    id: 'new',
+    id: 'course-new',
     name: '新苺コース（90分）',
-    description: '入店してまもない新人さんを格安料金でご案内。',
+    description: '入店してまもない新人さんを格安のご利用料金にてご案内。',
     icon: '🌱',
     plans: [{ minutes: 90, price: 10000 }],
     extensionPer30min: 6000,
     designationFees: { free: 0, first: 1000, follow: 1000 },
-    notes: '新人セラピストを格安のご利用料金にてご案内させて頂きます♫',
+    notes:
+      '入店してまもない新人さんを格安のご利用料金にてご案内させて頂きます♫ まだ淡い苺のセラピストさんをお客様色に染め上げてください☆',
   },
   {
-    id: 'couple',
-    name: 'カップルコース',
-    description: 'お客様お二人と、当店セラピストの3名でのご案内。',
+    id: 'course-couple',
+    name: 'カップルコース（60分〜）',
+    description:
+      '女性のお客様、男性のお客様、当店セラピストの3名にてご案内。日常ではありえない非現実的なプレイを。',
     icon: '👩‍❤️‍👨',
     plans: [
       { minutes: 60, price: 19000 },
@@ -120,36 +191,42 @@ export const MOCK_COURSES: Course[] = [
     ],
     extensionPer30min: 10000,
     designationFees: { free: 0, first: 1000, follow: 1000 },
-    notes: 'お客様のご要望通りにサービスを行います。非現実的なプレイをお楽しみください♡',
+    notes:
+      '女性のお客様、男性のお客様、当店セラピストの3名にてご案内をさせていただきます♫\nお客様のご要望通りにサービスを行いますので、日常ではありえない非現実的なプレイをお楽しみください♡',
   },
   {
-    id: '3p',
-    name: '3Pコース',
-    description: 'お客様おひとりに対してセラピスト2名で施術する夢のコース。',
-    icon: '🍓🍓',
+    id: 'course-3p',
+    name: '3Pコース（セラピスト2人 90分〜）',
+    description:
+      'お客様おひとりに対してセラピストが2名にて施術をする、まさに夢のようなコースです。',
+    icon: '👯‍♀️',
     plans: [
       { minutes: 90, price: 30000 },
       { minutes: 120, price: 40000 },
     ],
     extensionPer30min: 10000,
     designationFees: { free: 0, first: 1000, follow: 1000 },
-    notes: 'お客様おひとりに対してセラピストが2名にて施術をする、極楽コースです☆',
+    notes:
+      'お客様おひとりに対してセラピストが2名にて施術をする、まさに夢のようなコースです♫ 当店の極楽コースを是非一度ご堪能ください☆\n\n※セラピストによって3Pコース対応不可の場合がありますので、ご指名の場合はお店までお問い合わせ下さいませ。',
   },
   {
-    id: 'travel',
+    id: 'course-travel',
     name: 'トラベルコース',
-    description: '旅行中ずっと一緒に過ごせる特別プラン。',
+    description: '3泊目以上のご旅行プランとなる場合は要相談。',
     icon: '✈️',
     plans: [
       { minutes: 1440, price: 100000, subLabel: '24時間以内' },
       { minutes: 1800, price: 125000, subLabel: '30時間以内' },
       { minutes: 2160, price: 150000, subLabel: '36時間以内' },
+      { minutes: 2520, price: 175000, subLabel: '42時間以内' },
       { minutes: 2880, price: 200000, subLabel: '48時間以内' },
+      { minutes: 3240, price: 225000, subLabel: '54時間以内' },
       { minutes: 3600, price: 250000, subLabel: '60時間以内' },
     ],
     extensionPer30min: 6000,
     designationFees: { free: 0, first: 1000, follow: 1000 },
-    notes: '大変お得なコースのため、トラベルコースには施術は含まれておりません。',
+    notes:
+      '※交通費、飲食費、交遊費など、旅行中にかかる基本的な費用はお客様のご負担となります。\n\n※兼業の関係上トラベル対応が難しいセラピストもおりますので、事務局またはセラピスト本人までお気軽にお問い合わせください。\n\n※お泊まりコース同様、セラピストの睡眠時間を常識の範囲内(1日あたり5〜6時間)にて頂けますと幸いです。\n\n※大変お得なコースのため、トラベルコースには施術は含まれておりません、施術をご希望のお客様は通常の施術コースを60分コースから追加にてご提供が可能ですので、担当セラピスト又はお店までお気軽にご相談くださいませ。\n※メール、LINEも対応しておりますが、順次対応をしておりますので返信が遅くなる恐れがございます。当日予約などお急ぎの方はお電話頂いた方が対応が早く、ご案内がスムーズです。',
   },
 ];
 
@@ -170,7 +247,8 @@ export const MOCK_OPTIONS: OptionItem[] = [
   {
     id: 'o1',
     name: '指名料',
-    description: '当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となります。',
+    description:
+      '当店は全セラピスト一律の指名料金です♫ 特にご希望がなければ無料となりますので、受付時に年齢、タイプなどセラピストさんのご希望をお気軽にお伝えください☆',
     price: 1000,
   },
   {

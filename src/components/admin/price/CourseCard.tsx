@@ -68,14 +68,21 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, defaultOpen = false }) 
                         </div>
                       </div>
                     )}
-                    <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                      <span className="inline-block shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 sm:px-3 sm:py-1 sm:text-xs">
-                        {plan.minutes >= 600
-                          ? `${plan.minutes / 60}時間`
-                          : plan.minutes === 0
-                            ? 'FREE'
-                            : `${plan.minutes}min`}
-                      </span>
+                    <div className="flex min-w-0 flex-1 flex-col gap-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span className="inline-block shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 sm:px-3 sm:py-1 sm:text-xs">
+                          {plan.minutes >= 600
+                            ? `${plan.minutes / 60}時間`
+                            : plan.minutes === 0
+                              ? 'FREE'
+                              : `${plan.minutes}min`}
+                        </span>
+                        {plan.subLabel && (
+                          <span className="text-[10px] font-bold text-rose-400">
+                            {plan.subLabel}
+                          </span>
+                        )}
+                      </div>
                       {plan.discountInfo && (
                         <div className="flex items-center gap-1">
                           <span className="shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
