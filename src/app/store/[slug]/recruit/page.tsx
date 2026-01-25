@@ -1,5 +1,6 @@
 'use client';
 import { getRecruitPageConfig } from '@/actions/recruit';
+import ScrollToTopButton from '@/components/common/ScrollToTopButton';
 import ApplicationModal from '@/components/recruit2/ApplicationModal';
 import Chatbot from '@/components/recruit2/Chatbot';
 import FloatingCTA from '@/components/recruit2/FloatingCTA';
@@ -169,6 +170,7 @@ const AppContent: React.FC = () => {
         storeName={fullMergedConfig.general?.storeName}
       />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
+      <ScrollToTopButton />
     </div>
   );
 };
