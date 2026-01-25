@@ -222,10 +222,10 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
                   <button
                     onClick={onOpenChat}
-                    className="group relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-600 via-amber-500 to-amber-600 px-10 py-5 text-lg font-bold text-slate-900 shadow-[0_0_30px_rgba(251,191,36,0.3)] transition-all hover:scale-105 hover:shadow-[0_0_50px_rgba(251,191,36,0.5)] active:scale-95"
+                    className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95"
                   >
-                    <span className="relative z-10">オープンキャストに応募する</span>
-                    <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/30 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
+                    <span className="relative z-10">簡単相談してみる</span>
+                    <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
                   </button>
                   <button
                     onClick={onOpenChat}
@@ -237,7 +237,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
                 {/* Reassurance */}
                 <div className="text-center text-sm text-slate-400">
-                  <p>✓ 応募は30秒で完了します</p>
+                  <p>✓ 相談は30秒で完了します</p>
                   <p>✓ 面接ではありません。まずはお気軽にご相談ください</p>
                 </div>
 

@@ -33,12 +33,12 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
         </button>
         <button
           onClick={onOpenChat}
-          className="flex flex-col items-center justify-center rounded-xl bg-amber-600 px-1 py-2 text-white shadow-md transition-all active:scale-[0.98] active:bg-amber-700"
+          className="flex flex-col items-center justify-center rounded-xl bg-yellow-400 px-1 py-2 text-black shadow-md transition-all active:scale-[0.98] active:bg-yellow-500"
         >
           <span className="mb-0.5 text-[8px] font-bold uppercase tracking-tighter opacity-80">
             Quick
           </span>
-          <span className="text-[11px] font-bold">カンタン応募</span>
+          <span className="text-[11px] font-bold">簡単相談</span>
         </button>
         <button
           onClick={onOpenForm}

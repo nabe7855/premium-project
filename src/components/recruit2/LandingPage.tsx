@@ -530,10 +530,10 @@ const LandingPage: React.FC<LandingPageProps> = ({
               </button>
               <button
                 onClick={onOpenChat}
-                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-amber-600 py-6 text-lg font-bold text-white shadow-xl transition-all hover:bg-amber-700 hover:shadow-amber-900/40 active:scale-95"
+                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-yellow-400 py-6 text-lg font-bold text-black shadow-xl transition-all hover:bg-yellow-500 hover:shadow-yellow-900/20 active:scale-95"
               >
                 <span className="text-2xl transition-transform group-hover:scale-110">⚡</span>
-                <span>30秒でカンタン応募してみる</span>
+                <span>30秒で簡単相談してみる</span>
               </button>
             </div>
 

@@ -34,9 +34,9 @@ const Header: React.FC<HeaderProps> = ({
         <nav className="flex items-center">
           <button
             onClick={onOpenForm}
-            className="transform whitespace-nowrap rounded-full bg-amber-600 px-3 py-1.5 text-xs font-bold text-white shadow-md transition-all hover:scale-105 hover:bg-amber-700 sm:px-4 sm:py-2 sm:text-sm"
+            className="transform whitespace-nowrap rounded-full bg-yellow-400 px-3 py-1.5 text-xs font-bold text-black shadow-md transition-all hover:scale-105 hover:bg-yellow-500 sm:px-4 sm:py-2 sm:text-sm"
           >
-            30秒で応募
+            簡単相談
           </button>
         </nav>
       </div>
