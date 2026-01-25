@@ -17,6 +17,8 @@ import { Switch } from '@/components/ui/switch';
 import { deleteStorageFile } from '@/actions/storage';
 import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
+import { StoreProvider } from '@/contexts/StoreContext';
+import { stores } from '@/data/stores';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
@@ -390,21 +392,23 @@ export default function StoreTopManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            {getAllStores().find((s) => s.slug === selectedStore)?.template === 'yokohama' ? (
-              <YokohamaPage
-                config={config}
-                isEditing={!isPreviewMode}
-                onUpdate={handleUpdate}
-                onImageUpload={handleImageUpload}
-              />
-            ) : (
-              <FukuokaPage
-                config={config}
-                isEditing={!isPreviewMode}
-                onUpdate={handleUpdate}
-                onImageUpload={handleImageUpload}
-              />
-            )}
+            <StoreProvider store={(stores[selectedStore] || stores['fukuoka']) as any}>
+              {stores[selectedStore]?.template === 'yokohama' ? (
+                <YokohamaPage
+                  config={config}
+                  isEditing={!isPreviewMode}
+                  onUpdate={handleUpdate}
+                  onImageUpload={handleImageUpload}
+                />
+              ) : (
+                <FukuokaPage
+                  config={config}
+                  isEditing={!isPreviewMode}
+                  onUpdate={handleUpdate}
+                  onImageUpload={handleImageUpload}
+                />
+              )}
+            </StoreProvider>
           </div>
 
           {/* Mobile switcher mockup */}

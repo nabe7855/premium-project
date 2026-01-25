@@ -81,59 +81,61 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
 
         {/* 料金グリッド */}
         <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3 md:gap-8">
-          {prices.map((item: any, idx: number) => {
-            const isMain = idx === 1; // 中央を強調
-            return (
-              <div
-                key={idx}
-                className={`relative flex flex-col items-center rounded-[2rem] border-2 p-8 transition-all duration-500 ${
-                  isMain
-                    ? 'border-primary-400 from-primary-100 z-10 scale-105 bg-gradient-to-b to-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)]'
-                    : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-lg'
-                }`}
-              >
-                {isMain && (
-                  <div className="bg-primary-500 absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
-                    Popular No.1
+          {Array.isArray(prices) &&
+            prices.map((item: any, idx: number) => {
+              if (!item) return null;
+              const isMain = idx === 1; // 中央を強調
+              return (
+                <div
+                  key={idx}
+                  className={`relative flex flex-col items-center rounded-[2rem] border-2 p-8 transition-all duration-500 ${
+                    isMain
+                      ? 'border-primary-400 from-primary-100 z-10 scale-105 bg-gradient-to-b to-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)]'
+                      : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-lg'
+                  }`}
+                >
+                  {isMain && (
+                    <div className="bg-primary-500 absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                      Popular No.1
+                    </div>
+                  )}
+                  <span
+                    className={`mb-4 text-xs font-black uppercase tracking-[0.25em] md:text-sm ${isMain ? 'text-primary-600' : 'text-slate-500'}`}
+                  >
+                    {item.title}
+                  </span>
+                  <div className="mb-2 flex items-baseline gap-1">
+                    <span
+                      className={`font-serif font-black leading-none ${isMain ? 'text-6xl text-slate-900' : 'text-5xl text-slate-800'}`}
+                    >
+                      {item.duration}
+                    </span>
+                    <span
+                      className={`text-sm font-bold md:text-base ${isMain ? 'text-slate-600' : 'text-slate-500'}`}
+                    >
+                      min
+                    </span>
                   </div>
-                )}
-                <span
-                  className={`mb-4 text-xs font-black uppercase tracking-[0.25em] md:text-sm ${isMain ? 'text-primary-600' : 'text-slate-500'}`}
-                >
-                  {item.title}
-                </span>
-                <div className="mb-2 flex items-baseline gap-1">
-                  <span
-                    className={`font-serif font-black leading-none ${isMain ? 'text-6xl text-slate-900' : 'text-5xl text-slate-800'}`}
+                  <div className="mb-6 flex items-baseline">
+                    <span
+                      className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
+                    >
+                      ¥
+                    </span>
+                    <span
+                      className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
+                    >
+                      {(item.price || 0).toLocaleString()}
+                    </span>
+                  </div>
+                  <p
+                    className={`min-h-[2.5rem] text-center text-xs font-semibold leading-relaxed md:text-sm ${isMain ? 'text-slate-700' : 'text-slate-600'}`}
                   >
-                    {item.duration}
-                  </span>
-                  <span
-                    className={`text-sm font-bold md:text-base ${isMain ? 'text-slate-600' : 'text-slate-500'}`}
-                  >
-                    min
-                  </span>
+                    {item.description}
+                  </p>
                 </div>
-                <div className="mb-6 flex items-baseline">
-                  <span
-                    className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
-                  >
-                    ¥
-                  </span>
-                  <span
-                    className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
-                  >
-                    {item.price.toLocaleString()}
-                  </span>
-                </div>
-                <p
-                  className={`min-h-[2.5rem] text-center text-xs font-semibold leading-relaxed md:text-sm ${isMain ? 'text-slate-700' : 'text-slate-600'}`}
-                >
-                  {item.description}
-                </p>
-              </div>
-            );
-          })}
+              );
+            })}
         </div>
 
         {/* 注意事項 */}
