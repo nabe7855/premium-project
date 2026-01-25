@@ -39,7 +39,6 @@ export default function PriceConfigEditor({
     setUploadingHero(true);
     try {
       const publicUrl = await uploadPriceImageClient(storeSlug, 'hero', file);
-      console.log('Client: Hero Image Upload Result:', publicUrl);
       if (publicUrl) {
         setConfig({ ...config, hero_image_url: publicUrl });
       } else {

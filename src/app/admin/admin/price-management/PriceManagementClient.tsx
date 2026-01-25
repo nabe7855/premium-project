@@ -151,7 +151,7 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
         <main className="mx-auto max-w-4xl px-4">
           <div className="mb-12 overflow-hidden rounded-[2rem] shadow-2xl">
             <img
-              src={currentStore.courses[0]?.icon || '/料金ページトップ画像.jpg'}
+              src={currentStore.heroImageUrl || '/料金ページトップ画像.jpg'}
               alt="料金ページ"
               className="h-auto w-full object-cover"
               onError={(e) => {

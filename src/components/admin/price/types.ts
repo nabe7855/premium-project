@@ -59,6 +59,7 @@ export interface StoreConfig {
   storeName: string;
   slug: string; // URL識別子
   lastUpdated: string;
+  heroImageUrl?: string;
   courses: Course[];
   transportAreas: TransportItem[];
   options: OptionItem[];

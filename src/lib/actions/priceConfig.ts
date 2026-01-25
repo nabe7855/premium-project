@@ -283,6 +283,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           storeName: fullStore.name,
           slug: fullStore.slug,
           lastUpdated: new Date(config.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+          heroImageUrl: config.hero_image_url || '',
           courses: (config.courses || []).map((c: any) => ({
             id: c.id,
             name: c.name,

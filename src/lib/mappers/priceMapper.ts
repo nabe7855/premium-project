@@ -6,7 +6,7 @@ import { EditablePriceConfig } from '@/types/priceConfig';
  */
 export function mapStoreConfigToEditableConfig(store: StoreConfig): EditablePriceConfig {
   return {
-    hero_image_url: '/料金ページトップ画像.jpg', // より適切なデフォルト画像
+    hero_image_url: store.heroImageUrl || '/料金ページトップ画像.jpg',
     courses: store.courses.map((c, idx) => ({
       id: c.id.startsWith('temp-') ? undefined : c.id, // 新規追加分はIDなし
       course_key: c.id,

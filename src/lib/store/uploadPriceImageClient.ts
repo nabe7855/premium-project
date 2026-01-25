@@ -35,7 +35,5 @@ export async function uploadPriceImageClient(
 
   // 公開URLを取得
   const { data } = supabase.storage.from(bucketName).getPublicUrl(filePath);
-  console.log('✅ [uploadPriceImageClient] Upload success. Public URL:', data.publicUrl);
-
   return data.publicUrl;
 }
