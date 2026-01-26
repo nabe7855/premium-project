@@ -96,13 +96,13 @@ const PopCampaignHero: React.FC = () => {
                 OPENING RECRUIT
               </span>
             </div>
-            <div className="relative mt-[-5px] md:mt-[-10px]">
-              <span className="text-outline-black absolute inset-0 translate-y-[4px] text-5xl font-black leading-tight text-white md:text-8xl">
+            <div className="relative mt-[-5px] flex w-full flex-col items-center md:mt-[-10px]">
+              <span className="text-outline-black absolute inset-0 block w-full translate-y-[4px] text-center text-5xl font-black leading-tight text-white md:text-8xl">
                 超・グランドオープン
                 <br />
                 キャンペーン実施中！
               </span>
-              <span className="relative block text-center text-5xl font-black leading-tight text-white md:text-8xl">
+              <span className="relative block w-full text-center text-5xl font-black leading-tight text-white md:text-8xl">
                 超・グランドオープン
                 <br />
                 キャンペーン実施中！
