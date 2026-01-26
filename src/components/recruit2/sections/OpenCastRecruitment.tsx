@@ -173,7 +173,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
               {/* Benefits Section */}
               <div className="mb-10">
-                <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-amber-300 sm:text-3xl">
+                <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-orange-500 sm:text-3xl">
                   オープンキャスト限定特典
                 </h3>
                 <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -205,12 +205,12 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                   ].map((benefit, idx) => (
                     <div
                       key={idx}
-                      className="group rounded-xl border border-amber-400/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-4 backdrop-blur-sm transition-all hover:border-amber-400/40 hover:shadow-[0_0_20px_rgba(251,191,36,0.1)]"
+                      className="group rounded-xl border border-orange-500/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-4 text-center backdrop-blur-sm transition-all hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)]"
                     >
-                      <h4 className="mb-2 text-base font-bold text-amber-300 sm:text-lg">
+                      <h4 className="mb-2 break-words text-base font-bold text-orange-500 sm:text-lg">
                         {benefit.title}
                       </h4>
-                      <p className="text-xs leading-relaxed text-slate-400 sm:text-sm">
+                      <p className="break-words text-xs leading-relaxed text-orange-300/80 sm:text-sm">
                         {benefit.desc}
                       </p>
                     </div>
