@@ -122,8 +122,16 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
             {/* Inner content */}
             <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
+              {/* Grand Opening Message - Moved and Prominent */}
+              <div className="mb-8 text-center">
+                <p className="mb-3 text-2xl font-black tracking-[0.1em] text-white drop-shadow-[0_0_15px_rgba(251,191,36,0.6)] sm:text-4xl">
+                  2月1日 <span className="text-amber-300">グランドオープン</span>まで
+                </p>
+                <div className="mx-auto h-0.5 w-32 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent"></div>
+              </div>
+
               {/* Limited Slots Indicator */}
-              <div className="mb-8 flex items-center justify-center gap-4">
+              <div className="mb-10 flex items-center justify-center gap-4">
                 <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                   <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
@@ -141,13 +149,6 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
               {/* Timer Section */}
               <div className="mb-10">
-                <div className="mb-4 text-center">
-                  <p className="mb-2 text-base font-bold tracking-widest text-amber-100 sm:text-lg">
-                    2月1日 グランドオープンまで
-                  </p>
-                  <div className="mx-auto mb-2 h-px w-24 bg-gradient-to-r from-transparent via-amber-400/50 to-transparent"></div>
-                </div>
-
                 {/* Timer Display */}
                 <div className="relative mx-auto max-w-3xl">
                   <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-400/20 via-indigo-400/20 to-amber-400/20 blur-xl"></div>
