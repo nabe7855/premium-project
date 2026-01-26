@@ -8,10 +8,34 @@ import './pop-campaign.css';
 
 const PopCampaignHero: React.FC = () => {
   const [isLoaded, setIsLoaded] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
     setIsLoaded(true);
+
+    // Target date: February 1st
+    const now = new Date();
+    const currentYear = now.getFullYear();
+    const targetDate = new Date(currentYear, 1, 1);
+    if (now > targetDate) targetDate.setFullYear(currentYear + 1);
+
+    const updateTimer = () => {
+      const diff = targetDate.getTime() - new Date().getTime();
+      setTimeLeft(Math.max(0, Math.floor(diff / 1000)));
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
   }, []);
+
+  const formatTime = (seconds: number) => {
+    const d = Math.floor(seconds / (3600 * 24));
+    const h = Math.floor((seconds % (3600 * 24)) / 3600);
+    const m = Math.floor((seconds % 3600) / 60);
+    const s = seconds % 60;
+    return `${d}日 ${h.toString().padStart(2, '0')}:${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+  };
 
   return (
     <div className="pop-campaign-container relative flex h-screen w-full flex-col items-center justify-center overflow-hidden bg-[#f59e0b]">
@@ -37,13 +61,13 @@ const PopCampaignHero: React.FC = () => {
             {isLoaded && (
               <>
                 <PopSpeechBubble
-                  text="大満足！"
+                  text="かつてない\n衝撃！"
                   className="absolute left-[-5%] top-0 rotate-[-5deg] scale-90 md:left-[5%] md:scale-100"
                   delay={0.2}
                   isRect
                 />
                 <PopSpeechBubble
-                  text="ちゃんと\nつながる！"
+                  text="超・グランド\nオープン！"
                   className="absolute left-[35%] top-[-20px] rotate-[2deg] scale-90 md:left-[30%] md:scale-110"
                   delay={0.4}
                 />
@@ -65,92 +89,64 @@ const PopCampaignHero: React.FC = () => {
             className="title-drop-shadow mb-6 flex flex-col items-center"
           >
             <div className="relative">
-              <span className="text-outline-black-thin absolute inset-0 translate-y-[2px] text-4xl font-black italic text-white md:text-6xl">
-                LINEMO
+              <span className="text-outline-black-thin absolute inset-0 translate-y-[2px] text-3xl font-black italic text-white md:text-5xl">
+                OPENING RECRUIT
               </span>
-              <span className="relative text-4xl font-black italic text-white md:text-6xl">
-                LINEMO
+              <span className="relative text-3xl font-black italic text-white md:text-5xl">
+                OPENING RECRUIT
               </span>
             </div>
-            <div className="relative mt-[-10px] md:mt-[-15px]">
-              <span className="text-outline-black absolute inset-0 translate-y-[4px] text-7xl font-black leading-none text-white md:text-[10rem]">
-                いいかも！
+            <div className="relative mt-[-5px] md:mt-[-10px]">
+              <span className="text-outline-black absolute inset-0 translate-y-[4px] text-5xl font-black leading-tight text-white md:text-8xl">
+                超・グランドオープン
+                <br />
+                キャンペーン実施中！
               </span>
-              <span className="relative text-7xl font-black leading-none text-white md:text-[10rem]">
-                いいかも！
+              <span className="relative block text-center text-5xl font-black leading-tight text-white md:text-8xl">
+                超・グランドオープン
+                <br />
+                キャンペーン実施中！
               </span>
             </div>
           </motion.div>
 
-          {/* Subcopy */}
+          {/* Subcopy & Timer Box */}
           <motion.div
             initial={{ y: 20, opacity: 0 }}
             animate={isLoaded ? { y: 0, opacity: 1 } : {}}
             transition={{ delay: 0.8, duration: 0.4 }}
-            className="space-y-2 text-center"
+            className="space-y-4 text-center"
           >
-            <p className="text-xl font-bold text-black md:text-2xl">をツイートして</p>
-            <div className="inline-block rounded-2xl border-2 border-[#fbbf24]/50 bg-[#fef3c7] px-6 py-2 shadow-sm">
-              <p className="text-2xl font-black text-black md:text-4xl">"PayPayポイント"を</p>
-            </div>
-            <p className="text-xl font-bold text-black md:text-2xl">当てよう！</p>
-          </motion.div>
-        </div>
-
-        {/* Bottom Section: Banner and Bubbles */}
-        <div className="relative flex w-full flex-col items-center gap-6">
-          {/* Bottom Banner */}
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={isLoaded ? { y: 0, opacity: 1 } : {}}
-            transition={{ delay: 1.0, duration: 0.5 }}
-            className="relative w-full max-w-md rounded-full border-[5px] border-black bg-gradient-to-b from-[#fde68a] to-[#fcd34d] px-10 py-4 shadow-[0_8px_0_#000]"
-          >
-            {/* Stitches / X marks */}
-            <div className="absolute left-4 top-1/2 flex -translate-y-1/2 flex-col items-center">
-              <div className="h-1.5 w-8 rotate-45 rounded-full bg-black"></div>
-              <div className="-mt-1.5 h-1.5 w-8 -rotate-45 rounded-full bg-black"></div>
-            </div>
-            <div className="absolute right-4 top-1/2 flex -translate-y-1/2 flex-col items-center">
-              <div className="h-1.5 w-8 rotate-45 rounded-full bg-black"></div>
-              <div className="-mt-1.5 h-1.5 w-8 -rotate-45 rounded-full bg-black"></div>
-            </div>
-
-            <div className="text-center">
-              <p className="text-lg font-bold text-black md:text-xl">ご契約者も 他社ご利用者も</p>
-              <p className="text-2xl font-black tracking-widest text-black md:text-3xl">
-                当選のチャンス
+            <div className="inline-block rounded-2xl border-[4px] border-black bg-white px-8 py-4 shadow-[8px_8px_0_#000]">
+              <p className="mb-2 text-xl font-black text-black md:text-2xl">
+                2月1日 OPEN までの残り時間
+              </p>
+              <p className="font-mono text-3xl font-black tabular-nums tracking-tighter text-[#f59e0b] md:text-6xl">
+                {formatTime(timeLeft)}
               </p>
             </div>
 
-            {/* Top left star on banner */}
-            <div className="absolute left-[15%] top-[-15px] rotate-[-15deg]">
-              <Sparkle size={30} color="white" />
+            <div className="mt-4 inline-block animate-bounce rounded-full bg-black px-6 py-2 text-white shadow-xl">
+              <p className="text-lg font-bold md:text-xl">
+                今だけの「超・優待枠」残り{' '}
+                <span className="px-2 text-2xl text-yellow-400 md:text-4xl">4</span> 名
+              </p>
             </div>
           </motion.div>
+        </div>
 
-          {/* Lower Bubbles */}
-          <div className="flex w-full items-end justify-between px-2 md:px-0">
-            <AnimatePresence>
-              {isLoaded && (
-                <>
-                  <PopSpeechBubble
-                    text="キャンペーンが\nたくさん♪"
-                    className="rotate-[-5deg] scale-90 md:scale-100"
-                    delay={1.2}
-                    variant="cloud"
-                  />
-                  <PopSpeechBubble
-                    text="はやくて\n感動"
-                    className="rotate-[5deg] scale-90 md:scale-100"
-                    delay={1.4}
-                    isRect
-                    hasMascotIcon
-                  />
-                </>
-              )}
-            </AnimatePresence>
-          </div>
+        {/* Bottom Section: Decorative elements or smaller CTA cues */}
+        <div className="relative flex w-full flex-col items-center gap-6">
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="flex flex-col items-center gap-2"
+          >
+            <p className="text-sm font-black uppercase tracking-widest text-black opacity-60">
+              Scroll for detail
+            </p>
+            <div className="h-12 w-1 rounded-full bg-black opacity-60"></div>
+          </motion.div>
         </div>
       </div>
 
