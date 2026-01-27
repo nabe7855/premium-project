@@ -22,375 +22,245 @@ const Trust: React.FC = () => {
     },
   ];
 
-  const systemPillars = [
+  const pillars = [
     {
-      title: '圧倒的なWeb集客力',
-      desc: 'SEO対策に力を入れたWeb集客を行っているため、圧倒的な集客力があり、日々多くのお問い合わせが入る環境が整っています。',
-      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&q=80',
+      title: '盤石な土台',
+      sub: '創業8年の信頼',
+      desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
+      icon: (
+        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+        </svg>
+      ),
     },
     {
-      title: '少人数制の環境づくり',
-      desc: 'あえて少人数制を採用。セラピストを無制限に増やさず、一人ひとりにお客様が入りやすい環境づくりを徹底しています。だから結果的に、自然とお問い合わせが集まります。',
-      image: 'https://images.unsplash.com/photo-1519494140681-8917d16a1c23?w=800&q=80',
+      title: '能力の開花',
+      sub: '徹底した教育サポート',
+      desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
+      icon: (
+        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M9 21c0 .5.5 1 1 1h4c.55 0 1-.5 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
+        </svg>
+      ),
     },
     {
-      title: '8年のデータ分析と仕組み',
-      desc: '8年間にわたり蓄積したデータ分析に基づいた運営だから、“なんとなく売れる”ではなく、実際にお客様からの問い合わせが集まる仕組みができています。',
-      image: 'https://images.unsplash.com/photo-1551288049-bbda3865c17d?w=800&q=80',
+      title: '継続的な成功',
+      sub: '個人の価値を資産へ',
+      desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
+      icon: (
+        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm6 10H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V17z" />
+        </svg>
+      ),
+    },
+  ];
+
+  const stats = [
+    {
+      label: '継続年数',
+      value: '8',
+      unit: '年',
+      desc: '店舗生存率は3年で0.8%。私たちは8年間選ばれ続けています。',
     },
     {
-      title: '戦略的SNSマネジメント',
-      desc: 'SNS運用を個人のセンス任せにしません。専任チームがトレンド分析からコンテンツ制作まで戦略的にサポートし、あなたのファンを確実に増やします。',
-      image: 'https://images.unsplash.com/photo-1611162617474-5b21e879e113?w=800&q=80',
+      label: '育成実績',
+      value: '200',
+      unit: '名以上',
+      desc: 'ほとんどが未経験スタート。0から育てた確かな実績。',
+    },
+    {
+      label: '定着率',
+      value: '92',
+      unit: '%',
+      desc: '稼げるから、続く。1年以上継続率92％。',
+    },
+    {
+      label: '平均月収',
+      value: '85',
+      unit: '万円',
+      desc: '多くのキャストが3年以上在籍。続けられる＝稼げる証拠です。',
     },
   ];
 
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-white via-slate-50 to-white py-24 sm:py-32">
-      {/* Decorative Elements */}
-      <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
-      <div className="absolute bottom-0 left-0 h-px w-full bg-gradient-to-r from-transparent via-slate-200 to-transparent"></div>
+    <section className="relative overflow-hidden bg-[#111827] py-24 sm:py-32">
+      {/* Background Decorative Elements */}
+      <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+      <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-3xl"></div>
+      <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-indigo-500/10 blur-3xl"></div>
 
-      <div className="container mx-auto px-4">
-        {/* Header Section */}
+      <div className="container relative z-10 mx-auto px-4">
+        {/* 1. Brand Concept Header (8 YEARS) */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-20 text-center"
+          className="mb-24 text-center"
         >
-          <h2 className="mb-6 font-serif text-3xl font-bold leading-tight text-slate-900 sm:text-5xl md:text-6xl">
-            なぜ、私たちは8年も
-            <br />
-            選ばれ続けるのか
-          </h2>
-          <div className="mx-auto mb-8 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
-          <p className="mx-auto max-w-3xl font-serif text-base leading-relaxed text-slate-600 sm:text-lg">
-            東京・大阪・名古屋。激戦区で培った再現性の高いノウハウ。
+          <motion.h2
+            initial={{ scale: 0.9, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="mb-6 font-serif text-6xl font-black tracking-widest text-amber-400 drop-shadow-lg sm:text-8xl md:text-9xl"
+          >
+            8 YEARS
+          </motion.h2>
+          <h3 className="mb-8 font-serif text-xl font-bold leading-relaxed text-white sm:text-3xl md:text-4xl">
+            私たちは「刹那的な稼ぎ」を提供しません。
             <br className="hidden sm:block" />
-            それは一人の人間としての成長を支援する思想の証です。
+            「一生モノの価値」を共に創るパートナーです。
+          </h3>
+          <div className="mx-auto mb-8 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
+          <p className="mx-auto max-w-3xl text-base leading-loose text-slate-300 sm:text-lg">
+            単に高収入を得るだけの場所なら、他にあるかもしれません。
+            <br />
+            しかし、私たちが8年間一貫して追求してきたのは、
+            <br className="hidden sm:block" />
+            未経験の方がここで得た経験をその後の人生を支える
+            <strong className="text-white">「確かなスキルと自信」</strong>に変えていただくことです。
           </p>
         </motion.div>
 
-        {/* Metrics Grid */}
+        {/* 2. Three Pillars (Concept) */}
+        <div className="mb-32 grid gap-8 md:grid-cols-3">
+          {pillars.map((pillar, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: idx * 0.2 }}
+              viewport={{ once: true }}
+              className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10 hover:shadow-2xl hover:shadow-amber-900/20"
+            >
+              <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-900 shadow-xl ring-1 ring-white/10 transition-transform duration-500 group-hover:scale-110 group-hover:ring-amber-500/50">
+                {pillar.icon}
+              </div>
+              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-amber-400">
+                {pillar.sub}
+              </div>
+              <h4 className="mb-4 font-serif text-2xl font-bold text-white">{pillar.title}</h4>
+              <p className="text-sm leading-relaxed text-slate-400 group-hover:text-slate-200">
+                {pillar.desc}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* 3. Evidence Data Header */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
           viewport={{ once: true }}
-          className="mb-24 grid grid-cols-1 gap-6 md:grid-cols-2"
+          className="mb-16 text-center"
         >
-          {/* Item 1 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0 }}
-            viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
-          >
-            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative">
-              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                継続年数
-              </div>
-              <div className="mb-3 flex items-baseline gap-1">
-                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
-                  8
-                </span>
-                <span className="font-serif text-lg font-semibold text-amber-600">年</span>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-600">
-                女風業界の店舗生存率は、3年で0.8％程度です。
-                <br />
-                ほとんどの店が消えていく世界で、私たちは8年間、第一線に立ち続けています。
-                <br />
-                生き残る店には、理由がある。集まる男にも、理由がある。
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Item 2 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
-          >
-            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative">
-              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                育成実績
-              </div>
-              <div className="mb-3 flex items-baseline gap-1">
-                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
-                  200
-                </span>
-                <span className="font-serif text-lg font-semibold text-amber-600">名以上</span>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-600">
-                ほとんどが未経験スタート。
-                <br />
-                0から育てた実績は200名以上。
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Item 3 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
-          >
-            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative">
-              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                定着率
-              </div>
-              <div className="mb-3 flex items-baseline gap-1">
-                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
-                  92
-                </span>
-                <span className="font-serif text-lg font-semibold text-amber-600">%</span>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-600">
-                稼げるから、続く。
-                <br />
-                1年以上継続率92％。
-              </p>
-            </div>
-          </motion.div>
-
-          {/* Item 4 */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-all hover:border-amber-300 hover:shadow-xl sm:p-8"
-          >
-            <div className="absolute right-0 top-0 h-32 w-32 -translate-y-8 translate-x-8 rounded-full bg-amber-50 opacity-0 transition-opacity group-hover:opacity-100"></div>
-            <div className="relative">
-              <div className="mb-2 text-xs font-medium uppercase tracking-wider text-slate-500">
-                平均月収
-              </div>
-              <div className="mb-3 flex items-baseline gap-1">
-                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-bold text-transparent sm:text-5xl">
-                  85
-                </span>
-                <span className="font-serif text-lg font-semibold text-amber-600">万円</span>
-              </div>
-              <p className="text-sm leading-relaxed text-slate-600">
-                在籍キャスト平均実績→ 平均在籍年数 ３年以上
-                <br />
-                多くのキャストが3年以上在籍。
-                <br />
-                続けられる＝稼げる証拠です。
-              </p>
-            </div>
-          </motion.div>
+          <h3 className="mb-4 font-serif text-3xl font-bold text-white sm:text-5xl">
+            なぜ、8年も選ばれ続けるのか
+          </h3>
+          <p className="text-slate-400">数字が証明する、私たちの実績。</p>
         </motion.div>
 
-        {/* Locations Section - Infinite Slider */}
+        {/* 4. Evidence Data Grid */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
           viewport={{ once: true }}
-          className="mb-24"
+          className="mb-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          <div className="mb-12 text-center">
-            <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
-              全国主要都市を制圧した、
-              <br className="sm:hidden" />
-              勝ち続ける組織の布陣
-            </h3>
-            <p className="mx-auto max-w-2xl text-sm leading-relaxed text-slate-600">
-              東京・大阪・名古屋。日本の激戦区で長年戦い続けてきた実績。
-              <br className="hidden sm:block" />
-              三大都市を束ねるひとつの成長エンジンが、あなたの成功を支えます。
-            </p>
-          </div>
-
-          {/* Infinite Slider Container */}
-          <div className="relative w-full overflow-hidden py-4">
-            {/* Gradient Masks for Fade Effeect */}
-            <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-white to-transparent sm:w-24"></div>
-            <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-white to-transparent sm:w-24"></div>
-
-            {/* Slider Track */}
-            <div className="animate-infinite-scroll hover:pause flex w-max">
-              {/* First Set */}
-              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
-                {locations.map((location, idx) => (
-                  <div
-                    key={`loc-1-${idx}`}
-                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={location.image}
-                        alt={location.city}
-                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-3 flex items-baseline gap-3">
-                        <h4 className="font-serif text-3xl font-bold text-slate-900">
-                          {location.city}
-                        </h4>
-                      </div>
-                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
-                    </div>
-                  </div>
-                ))}
+          {stats.map((stat, idx) => (
+            <motion.div
+              key={idx}
+              initial={{ scale: 0.9, opacity: 0 }}
+              whileInView={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, delay: idx * 0.1 }}
+              viewport={{ once: true }}
+              className="relative overflow-hidden rounded-xl border border-white/10 bg-white p-6 shadow-lg sm:p-8"
+            >
+              <div className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+                {stat.label}
               </div>
-
-              {/* Duplicate Set for Loop */}
-              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
-                {locations.map((location, idx) => (
-                  <div
-                    key={`loc-2-${idx}`}
-                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={location.image}
-                        alt={location.city}
-                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-3 flex items-baseline gap-3">
-                        <h4 className="font-serif text-3xl font-bold text-slate-900">
-                          {location.city}
-                        </h4>
-                      </div>
-                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
-                    </div>
-                  </div>
-                ))}
+              <div className="mb-3 flex items-baseline gap-1">
+                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-black text-transparent md:text-5xl">
+                  {stat.value}
+                </span>
+                <span className="font-serif text-sm font-bold text-amber-600 md:text-lg">
+                  {stat.unit}
+                </span>
               </div>
-
-              {/* 3rd Set for Loop (Ensure coverage) */}
-              <div className="flex gap-4 px-2 sm:gap-6 sm:px-3">
-                {locations.map((location, idx) => (
-                  <div
-                    key={`loc-3-${idx}`}
-                    className="relative w-[260px] flex-shrink-0 overflow-hidden rounded-2xl border-2 border-slate-200 bg-white shadow-lg transition-all hover:border-amber-300 hover:shadow-xl sm:w-[350px]"
-                  >
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={location.image}
-                        alt={location.city}
-                        className="h-full w-full object-cover transition-transform duration-700 hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-slate-900/30 to-transparent"></div>
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-3 flex items-baseline gap-3">
-                        <h4 className="font-serif text-3xl font-bold text-slate-900">
-                          {location.city}
-                        </h4>
-                      </div>
-                      <div className="h-1 w-16 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Styles for Animation */}
-            <style jsx>{`
-              @keyframes infinite-scroll {
-                from {
-                  transform: translateX(0);
-                }
-                to {
-                  transform: translateX(-33.33%);
-                }
-              }
-              .animate-infinite-scroll {
-                animation: infinite-scroll 40s linear infinite;
-              }
-              .hover\\:pause:hover {
-                animation-play-state: paused;
-              }
-            `}</style>
-          </div>
-
-          {/* Bottom Stats */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            viewport={{ once: true }}
-            className="mt-8 text-center"
-          >
-            <div className="inline-flex items-center gap-2 rounded-full border border-amber-400/30 bg-amber-50 px-6 py-3">
-              <span className="text-amber-600">⚡</span>
-              <p className="text-sm font-bold text-slate-800">
-                三大都市を束ねる、ひとつの成長エンジン
+              <p className="text-xs font-medium leading-relaxed text-slate-600 md:text-sm">
+                {stat.desc}
               </p>
-            </div>
-          </motion.div>
+              {/* Highlight Deco */}
+              <div className="absolute right-0 top-0 -mr-4 -mt-4 h-20 w-20 rounded-full bg-amber-100/50 blur-2xl transition-opacity group-hover:opacity-100"></div>
+            </motion.div>
+          ))}
         </motion.div>
 
-        {/* System Pillars */}
+        {/* 5. Locations Slider Header */}
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mb-24"
+          className="mb-12 text-center"
         >
-          <div className="mb-12 text-center">
-            <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
-              組織の牽引力
-            </h3>
-            <p className="text-sm text-slate-600">
-              個人の才能 × 組織の仕組み = 圧倒的な成長エンジン
-            </p>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 backdrop-blur-md">
+            <span className="animate-pulse text-amber-400">●</span>
+            <span className="text-xs font-bold text-amber-200 sm:text-sm">
+              三大都市を制圧する組織力
+            </span>
           </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-            {systemPillars.map((pillar, idx) => (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.15 }}
-                viewport={{ once: true }}
-                className="group relative overflow-hidden rounded-2xl shadow-xl"
+          <h3 className="font-serif text-2xl font-bold text-white sm:text-3xl">
+            全国主要都市を網羅する、確かな基盤
+          </h3>
+        </motion.div>
+
+        {/* 6. Locations Infinite Slider (Dark Theme Adjusted) */}
+        <div className="relative w-full overflow-hidden py-4">
+          {/* Gradient Masks */}
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-[#111827] to-transparent sm:w-24"></div>
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-[#111827] to-transparent sm:w-24"></div>
+
+          <div className="animate-infinite-scroll hover:pause flex w-max">
+            {[...locations, ...locations, ...locations, ...locations].map((location, idx) => (
+              <div
+                key={`loc-${idx}`}
+                className="relative mx-3 w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-xl transition-all hover:scale-105 hover:border-amber-500/50 sm:w-[320px]"
               >
-                {/* Background Image */}
-                <div className="aspect-[4/3]">
+                <div className="relative aspect-[16/10] overflow-hidden">
                   <img
-                    src={pillar.image}
-                    alt={pillar.title}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    src={location.image}
+                    alt={location.city}
+                    className="h-full w-full object-cover opacity-80 transition-transform duration-700 hover:scale-110"
                   />
-                  {/* Gradient Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/90 via-slate-900/50 to-transparent"></div>
-                </div>
-
-                {/* Text Overlay */}
-                <div className="absolute inset-0 flex flex-col justify-end p-6 sm:p-8">
-                  <div className="mb-4 inline-block bg-white/90 px-4 py-2 backdrop-blur-sm">
-                    <h4 className="font-serif text-lg font-bold text-slate-900 sm:text-xl">
-                      {pillar.title}
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                  <div className="absolute bottom-4 left-4">
+                    <h4 className="font-serif text-2xl font-bold text-white drop-shadow-md">
+                      {location.city}
                     </h4>
                   </div>
-                  <p className="leading-relaxed text-white/90">{pillar.desc}</p>
                 </div>
-              </motion.div>
+              </div>
             ))}
           </div>
-        </motion.div>
+        </div>
+
+        {/* Custom Styles for Slider Animation */}
+        <style jsx>{`
+          @keyframes infinite-scroll {
+            from {
+              transform: translateX(0);
+            }
+            to {
+              transform: translateX(-50%);
+            }
+          }
+          .animate-infinite-scroll {
+            animation: infinite-scroll 60s linear infinite;
+          }
+          .hover\\:pause:hover {
+            animation-play-state: paused;
+          }
+        `}</style>
       </div>
     </section>
   );

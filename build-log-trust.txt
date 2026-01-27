@@ -1,0 +1,26 @@
+﻿
+> premium-project@0.1.0 build
+> prisma generate && next build --no-lint
+
+Prisma schema loaded from prisma\schema.prisma
+node.exe : Error: 
+発生場所 行:1 文字:1
++ & "C:\Program Files\nodejs/node.exe" "C
+:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifi 
+   ed: (Error: :String) [], RemoteExcep  
+  tion
+    + FullyQualifiedErrorId : NativeComm 
+   andError
+ 
+EPERM: operation not permitted, rename 'C
+:\Users\nabe7\Documents\Projects\premium-
+project\node_modules\.prisma\client\query
+_engine-windows.dll.node.tmp14776' -> 'C:
+\Users\nabe7\Documents\Projects\premium-p
+roject\node_modules\.prisma\client\query_
+engine-windows.dll.node'
+
+
