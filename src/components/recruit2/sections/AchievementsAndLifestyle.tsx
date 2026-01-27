@@ -209,16 +209,17 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
 
         {/* Main Content */}
         <div className="mx-auto max-w-7xl">
-          <div className="grid grid-cols-2 gap-3 lg:grid-cols-2 lg:gap-12">
-            {/* Left Column: Image + Chart */}
-            <div className="space-y-4 md:space-y-8">
+          {/* Mobile: 2-row layout, Desktop: 2-column layout */}
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 lg:gap-12">
+            {/* Mobile Top Row: Image + Chart (side by side) */}
+            <div className="grid grid-cols-2 gap-3 lg:block lg:space-y-8">
               {/* Cast Image */}
               <motion.div
                 key={`image-${activeProfile.id}`}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                className="group relative aspect-[3/4] w-full max-w-[80%] overflow-hidden rounded-sm shadow-2xl md:max-w-none"
+                className="group relative aspect-[3/4] w-full overflow-hidden rounded-sm shadow-2xl"
               >
                 <div className="h-full w-full">
                   <EditableImage
@@ -232,8 +233,8 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 <div className="pointer-events-none absolute inset-0 bg-slate-900/10 transition-colors duration-500 group-hover:bg-transparent"></div>
 
                 {/* Label Overlay */}
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-6">
-                  <div className="font-serif text-5xl italic text-amber-600/80 drop-shadow-md md:text-6xl">
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-3 lg:p-6">
+                  <div className="font-serif text-3xl italic text-amber-600/80 drop-shadow-md md:text-6xl lg:text-5xl">
                     {activeProfile.label}
                   </div>
                 </div>
@@ -245,13 +246,13 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.2 }}
-                className="group relative scale-125 md:scale-100"
+                className="group relative flex items-center"
               >
                 <div className="pointer-events-none absolute inset-0 rounded-full bg-amber-500/10 blur-[100px]"></div>
 
                 <svg
                   viewBox="0 0 300 300"
-                  className="mx-auto w-full max-w-[400px] brightness-110 drop-shadow-2xl filter"
+                  className="mx-auto w-full brightness-110 drop-shadow-2xl filter"
                 >
                   {/* Outer Ring */}
                   <circle
@@ -329,7 +330,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                         return (
                           <div
                             key={i}
-                            className="absolute whitespace-nowrap text-center text-[10px] font-bold text-amber-200 md:text-xs"
+                            className="absolute whitespace-nowrap text-center text-[8px] font-bold text-amber-200 md:text-xs lg:text-[10px]"
                             style={{
                               left: `${lx}%`,
                               top: `${ly}%`,
@@ -345,13 +346,13 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
               </motion.div>
             </div>
 
-            {/* Right Column: Earnings + Schedule */}
+            {/* Mobile Bottom Row / Desktop Right Column: Earnings + Schedule */}
             <motion.div
               key={`details-${activeProfile.id}`}
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.3 }}
-              className="space-y-4 md:space-y-6"
+              className="space-y-3 md:space-y-6"
             >
               {/* Earnings Card */}
               <div className="relative overflow-hidden rounded-2xl border border-slate-800 bg-slate-900/50 p-4 shadow-2xl backdrop-blur-xl md:rounded-3xl md:p-10">
@@ -407,16 +408,20 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 </div>
                 <div className="space-y-4">
                   {activeProfile.routine.map((s, idx) => (
-                    <div key={idx} className="group flex items-center gap-4">
-                      <div className="w-14 font-mono text-xs text-slate-500">{s.start}:00</div>
-                      <div className="flex-grow">
-                        <div className="mb-1 flex items-center justify-between">
+                    <div key={idx} className="group flex items-center gap-2 md:gap-4">
+                      <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
+                        {s.start}:00
+                      </div>
+                      <div className="min-w-0 flex-grow">
+                        <div className="mb-1 flex items-center justify-between gap-2">
                           <span
-                            className={`text-sm font-bold ${s.type === 'work' ? 'text-amber-500' : 'text-slate-300'}`}
+                            className={`whitespace-nowrap text-[clamp(0.7rem,3vw,0.875rem)] font-bold md:text-sm ${s.type === 'work' ? 'text-amber-500' : 'text-slate-300'}`}
                           >
                             {s.label}
                           </span>
-                          <span className="text-[10px] text-slate-500">{s.end - s.start}h</span>
+                          <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                            {s.end - s.start}h
+                          </span>
                         </div>
                         <div className="h-1 overflow-hidden rounded-full bg-slate-800">
                           <div
