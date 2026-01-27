@@ -60,79 +60,62 @@ const Comparison: React.FC = () => {
           </p>
         </div>
 
-        {/* Scroll Hint for Mobile */}
-        <div className="mb-4 flex items-center justify-end text-xs font-medium text-slate-400 sm:hidden">
-          <span>← 横スクロールできます</span>
-          <svg className="ml-1 h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17 8l4 4m0 0l-4 4m4-4H3"
-            />
-          </svg>
-        </div>
-
-        {/* Desktop Table Layout (Usually visible on larger screens, strictly following grid style) */}
-        <div className="-mx-4 overflow-x-auto px-4 pb-8">
-          {/* ↓ 左端（項目名）の列の横幅を変更したい場合は、下記の 'grid-cols-4' を 
-              'grid-cols-[200px_1fr_1fr_1fr]' (200pxに固定) 
-              や 'grid-cols-[1.5fr_1fr_1fr_1fr]' (比率で指定) 
-              のように書き換えてください */}
-          <div className="grid min-w-[800px] grid-cols-[120px_1fr_1fr_1fr] items-stretch gap-4 text-center">
+        {/* Desktop Table Layout (Optimized for all screens) */}
+        <div className="-mx-4 px-4 pb-8 sm:mx-0 sm:px-0">
+          <div className="grid grid-cols-[70px_1fr_1fr_1fr] items-stretch gap-1 text-center sm:grid-cols-[120px_1fr_1fr_1fr] sm:gap-4">
             {/* Header Row */}
-            <div className="col-span-1 flex items-center justify-center bg-transparent text-sm font-bold text-slate-400">
+            <div className="col-span-1 flex items-center justify-center bg-transparent text-xs font-bold text-slate-400 sm:text-sm">
               {/* Empty corner */}
             </div>
 
             {/* Our Store Header */}
             <div className="relative col-span-1">
-              <div className="absolute -left-2 -right-2 -top-4 bottom-0 z-0 origin-bottom scale-y-110 transform rounded-t-2xl bg-blue-600 shadow-xl"></div>
-              <div className="relative z-10 px-4 py-6 text-white">
-                <h4 className="mb-1 text-2xl font-bold">当店</h4>
-                <p className="text-xs font-bold text-blue-100">PREMIUM</p>
+              <div className="absolute -left-1 -right-1 -top-2 bottom-0 z-0 origin-bottom scale-y-105 transform rounded-t-xl bg-blue-600 shadow-lg sm:-left-2 sm:-right-2 sm:-top-4 sm:scale-y-110 sm:rounded-t-2xl sm:shadow-xl"></div>
+              <div className="relative z-10 px-1 py-3 text-white sm:px-4 sm:py-6">
+                <h4 className="mb-0 text-base font-bold sm:mb-1 sm:text-2xl">当店</h4>
+                <p className="text-[8px] font-bold text-blue-100 sm:text-xs">PREMIUM</p>
               </div>
             </div>
 
             {/* Company A Header */}
-            <div className="col-span-1 flex flex-col justify-center rounded-t-xl bg-slate-200 px-4 py-6 text-slate-600">
-              <h4 className="text-lg font-bold">A店</h4>
-              <p className="text-xs opacity-70">一般的な店舗</p>
+            <div className="col-span-1 flex flex-col justify-center rounded-t-lg bg-slate-200 px-1 py-3 text-slate-600 sm:rounded-t-xl sm:px-4 sm:py-6">
+              <h4 className="text-xs font-bold sm:text-lg">A店</h4>
+              <p className="hidden text-[8px] opacity-70 sm:block sm:text-xs">一般的な店舗</p>
             </div>
 
             {/* Company B Header */}
-            <div className="col-span-1 flex flex-col justify-center rounded-t-xl bg-slate-100 px-4 py-6 text-slate-500">
-              <h4 className="text-lg font-bold">B店</h4>
-              <p className="text-xs opacity-70">旧来型店舗</p>
+            <div className="col-span-1 flex flex-col justify-center rounded-t-lg bg-slate-100 px-1 py-3 text-slate-500 sm:rounded-t-xl sm:px-4 sm:py-6">
+              <h4 className="text-xs font-bold sm:text-lg">B店</h4>
+              <p className="hidden text-[8px] opacity-70 sm:block sm:text-xs">旧来型店舗</p>
             </div>
 
             {/* Rows */}
             {features.map((item, idx) => (
               <React.Fragment key={idx}>
                 {/* Label */}
-                <div className="col-span-1 flex items-center justify-center rounded-lg bg-slate-50 p-4 font-bold text-slate-700">
+                <div className="col-span-1 flex items-center justify-center rounded-lg bg-slate-50 p-2 text-[10px] font-bold text-slate-700 sm:p-4 sm:text-sm">
                   {item.label}
                 </div>
 
                 {/* Our Store Cell */}
                 <div
-                  className={`relative col-span-1 flex items-center justify-center p-6 ${idx === features.length - 1 ? 'rounded-b-2xl' : ''}`}
+                  className={`relative col-span-1 flex items-center justify-center p-2 sm:p-6 ${idx === features.length - 1 ? 'rounded-b-xl sm:rounded-b-2xl' : ''}`}
                 >
                   {/* Continuous Blue Background Column Effect */}
-                  <div className="absolute inset-x-[-8px] inset-y-0 z-0 border-x-2 border-blue-100 bg-white shadow-lg"></div>
+                  <div className="absolute inset-x-[-4px] inset-y-0 z-0 border-x border-blue-100 bg-white shadow-md sm:inset-x-[-8px] sm:border-x-2 sm:shadow-lg"></div>
                   {/* Highlight Content */}
-                  <p className="relative z-10 whitespace-pre-wrap text-lg font-bold leading-tight text-blue-600">
+                  <p className="relative z-10 whitespace-pre-wrap text-[10px] font-bold leading-tight text-blue-600 sm:text-lg">
                     {item.us}
                   </p>
                   {/* Circle Check Badge */}
-                  <div className="absolute right-0 top-2 z-20 -translate-y-1/2 translate-x-1/2 transform">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 shadow-sm">
+                  <div className="absolute right-0 top-1 z-20 -translate-y-1/2 translate-x-1/2 transform sm:top-2">
+                    <div className="flex h-5 w-5 items-center justify-center rounded-full bg-amber-400 shadow-sm sm:h-8 sm:w-8">
                       <svg
-                        className="h-5 w-5 text-white"
+                        className="h-3 w-3 text-white sm:h-5 sm:w-5"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
-                        strokeWidth={3}
+                        strokeWidth={4}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -141,12 +124,12 @@ const Comparison: React.FC = () => {
                 </div>
 
                 {/* Company A Cell */}
-                <div className="col-span-1 flex items-center justify-center whitespace-pre-wrap rounded-lg bg-slate-50 p-4 text-sm font-medium leading-relaxed text-slate-500">
+                <div className="col-span-1 flex items-center justify-center whitespace-pre-wrap rounded-lg bg-slate-50 p-2 text-[10px] font-medium leading-tight text-slate-500 sm:p-4 sm:text-sm sm:leading-relaxed">
                   {item.otherA}
                 </div>
 
                 {/* Company B Cell */}
-                <div className="col-span-1 flex items-center justify-center whitespace-pre-wrap rounded-lg border border-slate-100 bg-white p-4 text-sm leading-relaxed text-slate-400">
+                <div className="col-span-1 flex items-center justify-center whitespace-pre-wrap rounded-lg border border-slate-100 bg-white p-2 text-[10px] leading-tight text-slate-400 sm:p-4 sm:text-sm sm:leading-relaxed">
                   {item.otherB}
                 </div>
               </React.Fragment>
