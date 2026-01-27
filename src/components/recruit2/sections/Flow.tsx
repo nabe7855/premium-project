@@ -25,7 +25,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'まずはリラックスして、あなたのご希望やお悩みをお聞かせください。履歴書は不要です。',
       color: 'bg-rose-50 border-rose-100',
       numColor: 'text-rose-200',
-      image: '/01カウンセリング面談.jpg',
+      image: '/01カウンセリング面談.png',
     },
     {
       step: '02',
@@ -34,7 +34,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '面談を行い、お互いの条件が合えばその場で仮エントリー。必要な書類の手続きを行います。',
       color: 'bg-blue-50 border-blue-100',
       numColor: 'text-blue-200',
-      image: '/02仮エントリー.jpg',
+      image: '/02仮エントリー.png',
     },
     {
       step: '03',
@@ -43,7 +43,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'お仕事を開始するにあたっての不安解消や、法律・ルールの確認をしっかり行います。',
       color: 'bg-amber-50 border-amber-100',
       numColor: 'text-amber-200',
-      image: '/03安心サポートチェック.jpg',
+      image: '/03安心サポートチェック.png',
     },
     {
       step: '04',
@@ -52,7 +52,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '未経験でも安心。専属スタッフが接客の基本から、稼げるコツまで丁寧にレクチャーします。',
       color: 'bg-emerald-50 border-emerald-100',
       numColor: 'text-emerald-200',
-      image: '/04専属育成サポート.jpg',
+      image: '/04専属育成サポート.png',
     },
     {
       step: '05',
@@ -61,7 +61,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '実際の店舗やオンライン環境でリハーサル。自信を持って本番を迎えられるようサポートします。',
       color: 'bg-purple-50 border-purple-100',
       numColor: 'text-purple-200',
-      image: '/05デビュー前サポート.jpg',
+      image: '/05デビュー前サポート.png',
     },
     {
       step: '06',
@@ -70,7 +70,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'いよいよキャストデビュー！デビュー後も継続的なフォローアップで、あなたの活躍を支えます。',
       color: 'bg-pink-50 border-pink-100',
       numColor: 'text-pink-200',
-      image: '/06デビュー.jpg',
+      image: '/06デビュー.png',
     },
   ],
 }) => {
@@ -123,62 +123,69 @@ const Flow: React.FC<FlowProps> = ({
                   {s.step}
                 </div>
 
-                <div className="relative z-10 flex flex-col p-8 md:p-10">
+                <div className="relative z-10 flex flex-col p-6 md:p-10">
                   {/* Step Label + Expand Icon */}
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center">
-                      <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-4xl font-bold text-transparent md:text-5xl">
-                        0{i + 1}.
-                      </span>
-                      <span className="ml-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
-                        {s.title}
+                    <div className="flex flex-col items-start gap-2">
+                      <div className="flex items-center">
+                        <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-3xl font-bold text-transparent md:text-5xl">
+                          0{i + 1}.
+                        </span>
+                        <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
+                          {s.title}
+                        </span>
+                      </div>
+                      {/* Duration Badge (Always Visible) */}
+                      <span className="flex items-center gap-1.5 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold text-white shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
+                        <svg
+                          className="h-3 w-3 text-yellow-400 md:h-4 md:w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                          />
+                        </svg>
+                        {s.duration}
                       </span>
                     </div>
-                    <span
-                      className={`shrink-0 transform text-amber-600 transition-transform duration-500 ${openStep === i ? 'rotate-180' : ''}`}
+
+                    {/* Enhanced Expand Icon */}
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
+                        openStep === i
+                          ? 'rotate-180 border-amber-500 bg-amber-500 text-white shadow-md'
+                          : 'border-slate-200 bg-white text-amber-600 shadow-sm group-hover:border-amber-200 group-hover:bg-amber-50'
+                      }`}
                     >
-                      ▼
-                    </span>
+                      <span className="text-xs md:text-sm">▼</span>
+                    </div>
                   </div>
 
                   {/* Expandable Content Wrap */}
                   <div
                     className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                      openStep === i ? 'mt-6 max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
+                      openStep === i
+                        ? 'mt-6 max-h-[800px] opacity-100 md:mt-8'
+                        : 'max-h-0 opacity-0'
                     }`}
                   >
                     <div
                       className={`flex flex-col items-center gap-6 border-t border-slate-100 pt-6 md:flex-row ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
                     >
                       {/* Text Column */}
-                      <div className="flex flex-1 flex-col items-center text-center">
-                        {/* Duration Badge */}
-                        <div className="mb-6">
-                          <span className="mx-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-bold text-white shadow-md md:text-base">
-                            <svg
-                              className="h-4 w-4 text-yellow-400"
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                              />
-                            </svg>
-                            {s.duration}
-                          </span>
-                        </div>
-
-                        <p className="text-xs font-medium leading-relaxed text-slate-600 md:text-base">
+                      <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
+                        <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
                           {s.desc}
                         </p>
                       </div>
 
                       {/* Image Column */}
-                      <div className="flex-1">
+                      <div className="w-full flex-1">
                         <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
                           <img
                             src={s.image}
