@@ -64,7 +64,17 @@ export async function savePriceConfig(
   storeSlug: string,
   config: EditablePriceConfig,
 ): Promise<{ success: boolean; error?: string }> {
-  console.log('--- savePriceConfig START (Prisma) ---', { storeSlug });
+  const startTime = performance.now();
+  console.log('--- savePriceConfig START (Prisma) ---', {
+    storeSlug,
+    counts: {
+      courses: config.courses.length,
+      transportAreas: config.transport_areas?.length || 0,
+      options: config.options?.length || 0,
+      campaigns: config.campaigns?.length || 0,
+    },
+  });
+
   try {
     // 1. 店舗を取得
     const store = await prisma.store.findUnique({
@@ -76,100 +86,129 @@ export async function savePriceConfig(
     }
 
     // Prisma Transaction を使用して一括更新
-    await prisma.$transaction(async (tx) => {
-      // 2. PriceConfig を upsert
-      const priceConfig = await tx.priceConfig.upsert({
-        where: { store_id: store.id },
-        update: {
-          hero_image_url: config.hero_image_url,
-          updated_at: new Date(),
-        },
-        create: {
-          store_id: store.id,
-          hero_image_url: config.hero_image_url,
-        },
-      });
+    await prisma.$transaction(
+      async (tx) => {
+        const txStartTime = performance.now();
+        console.log('[Transaction] Started');
 
-      // 3. 既存の関連データを削除
-      await tx.course.deleteMany({ where: { price_config_id: priceConfig.id } });
-      await tx.transportArea.deleteMany({ where: { price_config_id: priceConfig.id } });
-      await tx.priceOption.deleteMany({ where: { price_config_id: priceConfig.id } });
-      await tx.campaign.deleteMany({ where: { price_config_id: priceConfig.id } });
-
-      // 4. 新しいデータを追加
-      for (const course of config.courses) {
-        const savedCourse = await tx.course.create({
-          data: {
-            price_config_id: priceConfig.id,
-            course_key: course.course_key,
-            name: course.name,
-            description: course.description,
-            icon: course.icon,
-            extension_per_30min: course.extension_per_30min,
-            designation_fee_first: course.designation_fee_first,
-            designation_fee_note: course.designation_fee_note,
-            notes: course.notes,
-            display_order: course.display_order,
+        // 2. PriceConfig を upsert
+        const priceConfig = await tx.priceConfig.upsert({
+          where: { store_id: store.id },
+          update: {
+            hero_image_url: config.hero_image_url,
+            updated_at: new Date(),
+          },
+          create: {
+            store_id: store.id,
+            hero_image_url: config.hero_image_url,
           },
         });
+        console.log(
+          `[Transaction] Upserted priceConfig (${Math.round(performance.now() - txStartTime)}ms)`,
+        );
 
-        if (course.plans && course.plans.length > 0) {
-          await tx.coursePlan.createMany({
-            data: course.plans.map((p) => ({
-              course_id: savedCourse.id,
-              minutes: p.minutes,
-              price: p.price,
-              sub_label: p.sub_label,
-              discount_info: p.discount_info,
-              display_order: p.display_order,
+        const deleteStartTime = performance.now();
+        // 3. 既存の関連データを削除
+        await tx.course.deleteMany({ where: { price_config_id: priceConfig.id } });
+        await tx.transportArea.deleteMany({ where: { price_config_id: priceConfig.id } });
+        await tx.priceOption.deleteMany({ where: { price_config_id: priceConfig.id } });
+        await tx.campaign.deleteMany({ where: { price_config_id: priceConfig.id } });
+        console.log(
+          `[Transaction] Deleted old data (${Math.round(performance.now() - deleteStartTime)}ms)`,
+        );
+
+        const coursesStartTime = performance.now();
+        // 4. 新しいデータを追加
+        let totalPlans = 0;
+        for (const course of config.courses) {
+          const savedCourse = await tx.course.create({
+            data: {
+              price_config_id: priceConfig.id,
+              course_key: course.course_key,
+              name: course.name,
+              description: course.description,
+              icon: course.icon,
+              extension_per_30min: course.extension_per_30min,
+              designation_fee_first: course.designation_fee_first,
+              designation_fee_note: course.designation_fee_note,
+              notes: course.notes,
+              display_order: course.display_order,
+            },
+          });
+
+          if (course.plans && course.plans.length > 0) {
+            totalPlans += course.plans.length;
+            await tx.coursePlan.createMany({
+              data: course.plans.map((p) => ({
+                course_id: savedCourse.id,
+                minutes: p.minutes,
+                price: p.price,
+                sub_label: p.sub_label,
+                discount_info: p.discount_info,
+                display_order: p.display_order,
+              })),
+            });
+          }
+        }
+        console.log(
+          `[Transaction] Created courses/plans (Courses: ${config.courses.length}, Plans: ${totalPlans}) (${Math.round(performance.now() - coursesStartTime)}ms)`,
+        );
+
+        const otherDataStartTime = performance.now();
+        if (config.transport_areas && config.transport_areas.length > 0) {
+          await tx.transportArea.createMany({
+            data: config.transport_areas.map((t) => ({
+              price_config_id: priceConfig.id,
+              area: t.area,
+              price: t.price,
+              label: t.label,
+              note: t.note,
+              display_order: t.display_order,
             })),
           });
         }
-      }
 
-      if (config.transport_areas && config.transport_areas.length > 0) {
-        await tx.transportArea.createMany({
-          data: config.transport_areas.map((t) => ({
-            price_config_id: priceConfig.id,
-            area: t.area,
-            price: t.price,
-            label: t.label,
-            note: t.note,
-            display_order: t.display_order,
-          })),
-        });
-      }
+        if (config.options && config.options.length > 0) {
+          await tx.priceOption.createMany({
+            data: config.options.map((o) => ({
+              price_config_id: priceConfig.id,
+              name: o.name,
+              description: o.description,
+              price: o.price,
+              is_relative: o.is_relative,
+              display_order: o.display_order,
+            })),
+          });
+        }
 
-      if (config.options && config.options.length > 0) {
-        await tx.priceOption.createMany({
-          data: config.options.map((o) => ({
-            price_config_id: priceConfig.id,
-            name: o.name,
-            description: o.description,
-            price: o.price,
-            is_relative: o.is_relative,
-            display_order: o.display_order,
-          })),
-        });
-      }
+        if (config.campaigns && config.campaigns.length > 0) {
+          await tx.campaign.createMany({
+            data: config.campaigns.map((c) => ({
+              price_config_id: priceConfig.id,
+              title: c.title,
+              description: c.description,
+              image_url: c.image_url,
+              need_entry: c.need_entry,
+              accent_text: c.accent_text,
+              price_info: c.price_info,
+              display_order: c.display_order,
+            })),
+          });
+        }
+        console.log(
+          `[Transaction] Other data created (${Math.round(performance.now() - otherDataStartTime)}ms)`,
+        );
+        console.log(
+          `[Transaction] Total duration (${Math.round(performance.now() - txStartTime)}ms)`,
+        );
+      },
+      {
+        timeout: 30000, // タイムアウトを30秒に延長（デフォルト5秒）
+      },
+    );
 
-      if (config.campaigns && config.campaigns.length > 0) {
-        await tx.campaign.createMany({
-          data: config.campaigns.map((c) => ({
-            price_config_id: priceConfig.id,
-            title: c.title,
-            description: c.description,
-            image_url: c.image_url,
-            need_entry: c.need_entry,
-            accent_text: c.accent_text,
-            price_info: c.price_info,
-            display_order: c.display_order,
-          })),
-        });
-      }
-    });
-
-    console.log('--- savePriceConfig SUCCESS (Prisma) ---');
+    const totalDuration = Math.round(performance.now() - startTime);
+    console.log(`--- savePriceConfig SUCCESS (Prisma) --- Total: ${totalDuration}ms`);
 
     // キャッシュクリア
     revalidatePath(`/store/${storeSlug}/price`);
@@ -177,7 +216,8 @@ export async function savePriceConfig(
 
     return { success: true };
   } catch (error: any) {
-    console.error('Error saving price config (Prisma):', error);
+    const totalDuration = Math.round(performance.now() - startTime);
+    console.error(`Error saving price config (Prisma) after ${totalDuration}ms:`, error);
     return { success: false, error: 'Database error: ' + error.message };
   }
 }
