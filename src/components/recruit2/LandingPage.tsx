@@ -4,6 +4,7 @@ import Header from './Header';
 import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
 import Benefits from './sections/Benefits';
 import BrandingSupport from './sections/BrandingSupport';
+import CheckSheet from './sections/CheckSheet';
 import ComicSlider from './sections/ComicSlider';
 import Comparison from './sections/Comparison';
 import FAQ from './sections/FAQ';
@@ -417,6 +418,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         )}
         <IdealCandidate />
+      </div>
+
+      {/* Check Sheet Section */}
+      <div id="check">
+        <CheckSheet onOpenChat={onOpenChat} />
       </div>
 
       {/* Flow Section */}

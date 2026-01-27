@@ -1,0 +1,221 @@
+﻿
+> premium-project@0.1.0 build
+> prisma generate && next build --no-lint
+
+Prisma schema loaded from prisma\schema.prisma
+
+笨・Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 124ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to turn off tips and other hints? https://pris.ly/tip-4-nohints
+
+node.exe :  笞 Linting is disabled.
+発生場所 行:1 文字:1
++ & "C:\Program Files\nodejs/node.exe" "C
+:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifi 
+   ed: ( 笞 Linting is disabled.:String  
+  ) [], RemoteException
+    + FullyQualifiedErrorId : NativeComm 
+   andError
+ 
+  笆ｲ Next.js 14.2.35
+  - Environments: .env.local, .env.production
+
+   Creating an optimized production build ...
+Browserslist: caniuse-lite is outdated. P
+lease run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https:/
+/github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite
+) is 7 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https:/
+/github.com/browserslist/update-db#readme
+
+[1m[33mwarn[39m[22m - The class `dura
+tion-[1500ms]` is ambiguous and matches m
+ultiple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;1500ms&rsqb;` to silence this
+ warning.
+
+[1m[33mwarn[39m[22m - The class `dura
+tion-[20s]` is ambiguous and matches mult
+iple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;20s&rsqb;` to silence this wa
+rning.
+
+[1m[33mwarn[39m[22m - The class `dura
+tion-[2s]` is ambiguous and matches multi
+ple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;2s&rsqb;` to silence this war
+ning.
+
+[1m[33mwarn[39m[22m - The class `dura
+tion-[3s]` is ambiguous and matches multi
+ple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;3s&rsqb;` to silence this war
+ning.
+ 笨・Compiled successfully
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/55) ...
+   Generating static pages (13/55) 
+   Generating static pages (27/55) 
+   Generating static pages (41/55) 
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
+藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
+剥 StorePage params: { slug: 'tokyo' }
+剥 getStoreData('tokyo'): Found
+剥 StorePage params: { slug: 'tokyo' }
+剥 getStoreData('tokyo'): Found
+藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
+藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
+藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
+藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
+ 笨・Generating static pages (55/55)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size     First Load JS
+笏・笳・/                                               491 B           172 kB
+笏・笳・/_not-found                                     153 B          87.7 kB
+笏・笳・/admin                                          2 kB           98.7 kB
+笏・笳・/admin/admin                                    281 B           210 kB
+笏・笳・/admin/admin/advertising                        7.35 kB         214 kB
+笏・笳・/admin/admin/advertising/list                   2.04 kB        94.5 kB
+笏・笳・/admin/admin/ai/copywriter                      5.58 kB        93.1 kB
+笏・笳・/admin/admin/ai/generate-intro                  7.7 kB         95.2 kB
+笏・笳・/admin/admin/all-cast                           6.4 kB          235 kB
+笏・笳・/admin/admin/banners                            5.77 kB         133 kB
+笏・笳・/admin/admin/dashboard                          275 B           210 kB
+笏・笳・/admin/admin/header-management                  5.84 kB         186 kB
+笏・笳・/admin/admin/hotels                             5.81 kB         147 kB
+笏・ﾆ・/admin/admin/hotels/[id]                        152 B           140 kB
+笏・笳・/admin/admin/hotels/masters                     5.64 kB         138 kB
+笏・笳・/admin/admin/hotels/new                         151 B           140 kB
+笏・笳・/admin/admin/interview-reservations             10.8 kB         138 kB
+笏・笳・/admin/admin/intro-list                         2.86 kB        95.3 kB
+笏・笳・/admin/admin/news-management                    11.8 kB        99.3 kB
+笏・笳・/admin/admin/page-request                       258 kB          345 kB
+笏・ﾆ・/admin/admin/price-management                   12.8 kB         140 kB
+笏・笳・/admin/admin/recruit-management                 6.51 kB         261 kB
+笏・笳・/admin/admin/reservations                       5.26 kB        92.8 kB
+笏・笳・/admin/admin/store-top-management               4.29 kB         265 kB
+笏・笳・/admin/admin/stores                             5.4 kB          133 kB
+笏・笳・/admin/admin/stores/casts                       14.8 kB         170 kB
+笏・笳・/admin/casts                                    3.37 kB         131 kB
+笏・笳・/admin/login                                    3.56 kB         131 kB
+笏・笳・/admin/stores                                   2.86 kB         130 kB
+笏・ﾆ・/admin/stores/[id]/casts                        4.69 kB         132 kB
+笏・ﾆ・/admin/stores/[id]/edit                         2.14 kB         130 kB
+笏・笳・/admin/stores/new                               1.46 kB         129 kB
+笏・笳・/age-check                                      13.2 kB         183 kB
+笏・ﾆ・/api/debug-db                                   0 B                0 B
+笏・笳・/api/debug/check-price                          0 B                0 B
+笏・笳・/api/set-age-cookie                             0 B                0 B
+笏・笳・/cast-list                                      919 B           103 kB
+笏・笳・/cast/cast-dashboard                            32.4 kB         236 kB
+笏・笳・/cast/signup                                    2.82 kB         130 kB
+笏・ﾆ・/consent/[reservationId]                        5.6 kB         97.6 kB
+笏・ﾆ・/counseling/[reservationId]                     1.4 kB         94.7 kB
+笏・笳・/login                                          2.94 kB         131 kB
+笏・ﾆ・/reflection/[reservationId]                     4.76 kB        96.7 kB
+笏・笳・/store/[slug]                                   14.3 kB         202 kB
+笏・  笏・/store/tokyo
+笏・  笏・/store/osaka
+笏・  笏・/store/nagoya
+笏・  笏・/store/yokohama
+笏・ﾆ・/store/[slug]/[cast]                            8.17 kB         141 kB
+笏・ﾆ・/store/[slug]/aaaa                              490 B           172 kB
+笏・ﾆ・/store/[slug]/Announcement-information/policy   7.16 kB        94.7 kB
+笏・ﾆ・/store/[slug]/Announcement-information/recruit  22.6 kB         110 kB
+笏・ﾆ・/store/[slug]/cast                              25.5 kB         163 kB
+笏・ﾆ・/store/[slug]/cast-list                         3.72 kB         191 kB
+笏・ﾆ・/store/[slug]/cast-list/search                  208 B           187 kB
+笏・ﾆ・/store/[slug]/cast/[cast]                       15 kB           198 kB
+笏・ﾆ・/store/[slug]/diary/cast/[castName]             3.25 kB         105 kB
+笏・ﾆ・/store/[slug]/diary/diary-list                  5.21 kB         147 kB
+笏・ﾆ・/store/[slug]/diary/post/[postId]               8.47 kB         105 kB
+笏・ﾆ・/store/[slug]/guide/guide                       13.3 kB         101 kB
+笏・ﾆ・/store/[slug]/hotel                             15.8 kB         112 kB
+笏・ﾆ・/store/[slug]/hotel/[area]                      2.23 kB        98.9 kB
+笏・ﾆ・/store/[slug]/hotel/[area]/[hotelId]            10.1 kB         147 kB
+笏・ﾆ・/store/[slug]/hotel/features                    5.04 kB         102 kB
+笏・ﾆ・/store/[slug]/hotel/features/[articleId]        5.56 kB         102 kB
+笏・ﾆ・/store/[slug]/hotel/search                      6.71 kB         103 kB
+笏・笳・/store/[slug]/price                             4.83 kB        97.7 kB
+笏・  笏・/store/fukuoka/price
+笏・  笏・/store/yokohama/price
+笏・ﾆ・/store/[slug]/recruit                           3.18 kB         204 kB
+笏・ﾆ・/store/[slug]/reviews/reviews                   10.1 kB         153 kB
+笏・ﾆ・/store/[slug]/schedule/schedule                 5.25 kB         181 kB
+笏・ﾆ・/store/[slug]/videos/videos                     9.65 kB        97.2 kB
+笏・ﾆ・/survey/[reservationId]                         7 kB             99 kB
+笏・笳・/test                                           3.64 kB        91.2 kB
+笏・笳・/test/reservation                               4.21 kB        99.2 kB
+笏・笳・/test2                                          5.86 kB        93.4 kB
+笏・笳・/test3                                          6.36 kB        93.9 kB
+笏・笳・/test4                                          4.85 kB        92.4 kB
+笏・笳・/test5                                          3.38 kB        96.7 kB
+笏・笳・/test6                                          4.06 kB        91.6 kB
+笏・笳・/test7                                          8.99 kB         218 kB
+笏・笳・/test8                                          742 B           201 kB
+笏・笳・/test9                                          8.99 kB         135 kB
++ First Load JS shared by all                       87.5 kB
+  笏・chunks/2117-99a4431afb5ece1e.js                 31.9 kB
+  笏・chunks/fd9d1056-8678cf7090b2780b.js             53.6 kB
+  笏・other shared chunks (total)                     1.99 kB
+
+
+笳・ (Static)   prerendered as static content
+笳・ (SSG)      prerendered as static HTML (uses getStaticProps)
+ﾆ・ (Dynamic)  server-rendered on demand
+
+
+> premium-project@0.1.0 postbuild
+> next-sitemap --config next-sitemap.config.cjs
+
+笨ｨ [next-sitemap] Loading next-sitemap config: file:///C:/Users/nabe7/Documents/Projects/premium-project/next-sitemap.config.cjs
+笨・[next-sitemap] Generation completed
+笏娯楳笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏ｬ笏笏笏笏笏笏笏笏笏・笏・(index)       笏・Values 笏・笏懌楳笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏ｼ笏笏笏笏笏笏笏笏笏､
+笏・indexSitemaps 笏・1      笏・笏・sitemaps      笏・1      笏・笏披楳笏笏笏笏笏笏笏笏笏笏笏笏笏笏笏ｴ笏笏笏笏笏笏笏笏笏・-----------------------------------------------------
+ SITEMAP INDICES 
+-----------------------------------------------------
+
+   笳・https://premium-project-alpha.vercel.app/sitemap.xml
+
+
+-----------------------------------------------------
+ SITEMAPS 
+-----------------------------------------------------
+
+   笳・https://premium-project-alpha.vercel.app/sitemap-0.xml
+
+
