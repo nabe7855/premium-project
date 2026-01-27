@@ -10,6 +10,7 @@ interface FlowProps {
     desc: string;
     color: string;
     numColor: string;
+    image: string;
   }>;
 }
 
@@ -24,6 +25,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'まずはリラックスして、あなたのご希望やお悩みをお聞かせください。履歴書は不要です。',
       color: 'bg-rose-50 border-rose-100',
       numColor: 'text-rose-200',
+      image: '/01カウンセリング面談.jpg',
     },
     {
       step: '02',
@@ -32,6 +34,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '面談を行い、お互いの条件が合えばその場で仮エントリー。必要な書類の手続きを行います。',
       color: 'bg-blue-50 border-blue-100',
       numColor: 'text-blue-200',
+      image: '/02仮エントリー.jpg',
     },
     {
       step: '03',
@@ -40,6 +43,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'お仕事を開始するにあたっての不安解消や、法律・ルールの確認をしっかり行います。',
       color: 'bg-amber-50 border-amber-100',
       numColor: 'text-amber-200',
+      image: '/03安心サポートチェック.jpg',
     },
     {
       step: '04',
@@ -48,6 +52,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '未経験でも安心。専属スタッフが接客の基本から、稼げるコツまで丁寧にレクチャーします。',
       color: 'bg-emerald-50 border-emerald-100',
       numColor: 'text-emerald-200',
+      image: '/04専属育成サポート.jpg',
     },
     {
       step: '05',
@@ -56,6 +61,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '実際の店舗やオンライン環境でリハーサル。自信を持って本番を迎えられるようサポートします。',
       color: 'bg-purple-50 border-purple-100',
       numColor: 'text-purple-200',
+      image: '/05デビュー前サポート.jpg',
     },
     {
       step: '06',
@@ -64,6 +70,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'いよいよキャストデビュー！デビュー後も継続的なフォローアップで、あなたの活躍を支えます。',
       color: 'bg-pink-50 border-pink-100',
       numColor: 'text-pink-200',
+      image: '/06デビュー.jpg',
     },
   ],
 }) => {
@@ -92,7 +99,7 @@ const Flow: React.FC<FlowProps> = ({
         </div>
 
         {/* Vertical Flow with Arrows */}
-        <div className="relative z-10 mx-auto flex max-w-3xl flex-col">
+        <div className="relative z-10 mx-auto flex max-w-4xl flex-col">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
               <button
@@ -137,33 +144,49 @@ const Flow: React.FC<FlowProps> = ({
                   {/* Expandable Content Wrap */}
                   <div
                     className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                      openStep === i ? 'mt-6 max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                      openStep === i ? 'mt-6 max-h-[800px] opacity-100' : 'max-h-0 opacity-0'
                     }`}
                   >
-                    <div className="flex flex-col items-center border-t border-slate-100 pt-6 text-center">
-                      {/* Duration Badge */}
-                      <div className="mb-6">
-                        <span className="mx-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-sm font-bold text-white shadow-md md:text-base">
-                          <svg
-                            className="h-4 w-4 text-yellow-400"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                            />
-                          </svg>
-                          {s.duration}
-                        </span>
+                    <div
+                      className={`flex flex-col items-center gap-6 border-t border-slate-100 pt-6 md:flex-row ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                    >
+                      {/* Text Column */}
+                      <div className="flex flex-1 flex-col items-center text-center">
+                        {/* Duration Badge */}
+                        <div className="mb-6">
+                          <span className="mx-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-xs font-bold text-white shadow-md md:text-base">
+                            <svg
+                              className="h-4 w-4 text-yellow-400"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                              />
+                            </svg>
+                            {s.duration}
+                          </span>
+                        </div>
+
+                        <p className="text-xs font-medium leading-relaxed text-slate-600 md:text-base">
+                          {s.desc}
+                        </p>
                       </div>
 
-                      <p className="max-w-lg text-sm font-medium leading-7 text-slate-600 md:text-base">
-                        {s.desc}
-                      </p>
+                      {/* Image Column */}
+                      <div className="flex-1">
+                        <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
+                          <img
+                            src={s.image}
+                            alt={s.title}
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                          />
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
