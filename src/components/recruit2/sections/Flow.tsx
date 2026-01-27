@@ -104,98 +104,103 @@ const Flow: React.FC<FlowProps> = ({
             <React.Fragment key={i}>
               <button
                 onClick={() => toggleStep(i)}
-                className={`relative w-full overflow-hidden rounded-[2.5rem] border-2 bg-white/90 text-left backdrop-blur-sm transition-all duration-300 hover:shadow-xl ${s.color} ${openStep === i ? 'shadow-lg' : ''} group`}
+                className="group relative w-full text-left transition-all duration-300"
               >
-                {/* Background Grid Pattern */}
+                {/* Inner Clipped Container */}
                 <div
-                  className="absolute inset-0 opacity-[0.4]"
-                  style={{
-                    backgroundImage:
-                      'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)',
-                    backgroundSize: '20px 20px',
-                  }}
-                />
-
-                {/* Large Number */}
-                <div
-                  className={`absolute -right-2 -top-6 text-9xl font-black ${s.numColor} select-none font-serif opacity-50 transition-transform duration-500 group-hover:scale-110`}
+                  className={`relative w-full overflow-hidden rounded-[2.5rem] border-2 bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-xl ${s.color} ${openStep === i ? 'shadow-lg' : ''}`}
                 >
-                  {s.step}
-                </div>
+                  {/* Background Grid Pattern */}
+                  <div
+                    className="absolute inset-0 opacity-[0.4]"
+                    style={{
+                      backgroundImage:
+                        'linear-gradient(#cbd5e1 1px, transparent 1px), linear-gradient(90deg, #cbd5e1 1px, transparent 1px)',
+                      backgroundSize: '20px 20px',
+                    }}
+                  />
 
-                <div className="relative z-10 flex flex-col">
-                  {/* Header Part (Title + Duration + Absolute Button) */}
-                  <div className="relative p-6 md:p-10">
-                    <div className="flex flex-col items-start gap-2">
-                      <div className="flex items-center">
-                        <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-3xl font-bold text-transparent md:text-5xl">
-                          0{i + 1}.
-                        </span>
-                        <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
-                          {s.title}
-                        </span>
-                      </div>
-                      {/* Duration Badge (Always Visible) */}
-                      <span className="flex items-center gap-1.5 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold text-white shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
-                        <svg
-                          className="h-3 w-3 text-yellow-400 md:h-4 md:w-4"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                        {s.duration}
-                      </span>
-                    </div>
-
-                    {/* Enhanced Expand Icon (Absolute Positioned at Bottom Center) */}
-                    <div
-                      className={`absolute bottom-0 left-1/2 z-20 flex h-10 w-10 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
-                        openStep === i
-                          ? 'rotate-180 border-amber-500 bg-amber-500 text-white shadow-md'
-                          : 'border-slate-200 bg-white text-amber-600 shadow-sm group-hover:border-amber-200 group-hover:bg-amber-50'
-                      }`}
-                    >
-                      <span className="text-xs md:text-sm">▼</span>
-                    </div>
+                  {/* Large Number */}
+                  <div
+                    className={`absolute -right-2 -top-6 font-serif text-9xl font-black opacity-50 transition-transform duration-500 ${s.numColor} select-none group-hover:scale-110`}
+                  >
+                    {s.step}
                   </div>
 
-                  {/* Expandable Content Wrap */}
-                  <div
-                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                      openStep === i
-                        ? 'mt-6 max-h-[800px] opacity-100 md:mt-8'
-                        : 'max-h-0 opacity-0'
-                    }`}
-                  >
-                    <div
-                      className={`flex flex-col items-center gap-6 border-t border-slate-100 p-8 pt-10 md:flex-row md:p-10 md:pt-14 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
-                    >
-                      {/* Text Column */}
-                      <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
-                        <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
-                          {s.desc}
-                        </p>
+                  <div className="relative z-10 flex flex-col">
+                    {/* Header Part (Title + Duration + Absolute Button Reference) */}
+                    <div className="relative p-6 md:p-10">
+                      <div className="flex flex-col items-start gap-2">
+                        <div className="flex items-center">
+                          <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-3xl font-bold text-transparent md:text-5xl">
+                            0{i + 1}.
+                          </span>
+                          <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
+                            {s.title}
+                          </span>
+                        </div>
+                        {/* Duration Badge (Always Visible) */}
+                        <span className="flex items-center gap-1.5 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold text-white shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
+                          <svg
+                            className="h-3 w-3 text-yellow-400 md:h-4 md:w-4"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          {s.duration}
+                        </span>
                       </div>
+                    </div>
 
-                      {/* Image Column */}
-                      <div className="w-full flex-1">
-                        <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
-                          <img
-                            src={s.image}
-                            alt={s.title}
-                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                          />
+                    {/* Expandable Content Wrap */}
+                    <div
+                      className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                        openStep === i
+                          ? 'mt-6 max-h-[800px] opacity-100 md:mt-8'
+                          : 'max-h-0 opacity-0'
+                      }`}
+                    >
+                      <div
+                        className={`flex flex-col items-center gap-6 border-t border-slate-100 p-8 pt-10 md:flex-row md:p-10 md:pt-14 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                      >
+                        {/* Text Column */}
+                        <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
+                          <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+                            {s.desc}
+                          </p>
+                        </div>
+
+                        {/* Image Column */}
+                        <div className="w-full flex-1">
+                          <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
+                            <img
+                              src={s.image}
+                              alt={s.title}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
+                </div>
+
+                {/* Enhanced Expand Icon (Absolute Positioned at Bottom Center - Outside clipped container) */}
+                <div
+                  className={`absolute bottom-0 left-1/2 z-20 flex h-10 w-10 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
+                    openStep === i
+                      ? 'rotate-180 border-amber-500 bg-amber-500 text-white shadow-md'
+                      : 'border-slate-200 bg-white text-amber-600 shadow-sm group-hover:border-amber-200 group-hover:bg-amber-50'
+                  }`}
+                >
+                  <span className="text-xs md:text-sm">▼</span>
                 </div>
               </button>
 
