@@ -8,11 +8,10 @@ export async function getStoreTopConfig(storeSlug: string) {
     // まず店舗を取得
     const store = await prisma.store.findUnique({
       where: { slug: storeSlug },
-      select: { id: true },
+      select: { id: true, name: true },
     });
 
     if (!store) {
-      console.error('Store not found:', storeSlug);
       return { success: false, error: 'Store not found' };
     }
 
@@ -27,7 +26,7 @@ export async function getStoreTopConfig(storeSlug: string) {
     }
 
     // Prisma の Json 型を StoreTopPageConfig にキャスト
-    const finalConfig = config.config as any;
+    let finalConfig = config.config as any;
 
     // 🆕 新人キャストを動的に取得して上書き
     try {
@@ -50,12 +49,12 @@ export async function getStoreTopConfig(storeSlug: string) {
         finalConfig.newcomer.heading = `新人セラピスト(${newcomers.length}名)`;
       }
     } catch (e) {
-      console.error('Error fetching dynamic newcomers:', e);
+      console.error('[getStoreTopConfig] Error fetching dynamic newcomers:', e);
     }
 
     return { success: true, config: finalConfig };
-  } catch (error) {
-    console.error('Unexpected error fetching store top config:', error);
-    return { success: false, error: 'Unexpected error occurred' };
+  } catch (error: any) {
+    console.error(`[getStoreTopConfig] FATAL ERROR for ${storeSlug}:`, error);
+    return { success: false, error: 'Unexpected error occurred: ' + error.message };
   }
 }

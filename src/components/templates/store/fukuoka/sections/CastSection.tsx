@@ -73,7 +73,10 @@ const CastSection: React.FC<CastSectionProps> = ({
           comment: c.catch_copy || '',
           status: '本日出勤',
           tags: c.tags || [],
-          imageUrl: c.main_image_url || c.image_url || '/images/cast-placeholder.png',
+          imageUrl:
+            c.main_image_url ||
+            c.image_url ||
+            'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
           schedule: [selectedDate], // 現在選択中の日付のみ
         }));
         setFetchedCasts(mappedCasts);

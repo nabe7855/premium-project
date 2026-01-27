@@ -69,6 +69,7 @@ export default function StoreTopManagement() {
         if (result.success && result.config) {
           setConfig(result.config as StoreTopPageConfig);
         } else {
+          console.warn('[StoreTopManagement] Config fetch failed or empty, using default');
           setConfig(DEFAULT_STORE_TOP_CONFIG);
         }
       } catch (error) {

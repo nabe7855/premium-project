@@ -1,0 +1,13 @@
+import { PrismaClient } from '@prisma/client';
+
+const prisma = new PrismaClient();
+
+async function main() {
+  const stores = await prisma.store.findMany();
+  console.log('--- Stores in Database ---');
+  console.table(stores.map((s) => ({ id: s.id, name: s.name, slug: s.slug })));
+}
+
+main()
+  .catch((e) => console.error(e))
+  .finally(async () => await prisma.$disconnect());

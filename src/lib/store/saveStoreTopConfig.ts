@@ -20,6 +20,7 @@ export async function saveStoreTopConfig(storeSlug: string, config: StoreTopPage
 
     // 更新または新規作成 (upsert)
     console.log(`[saveStoreTopConfig] Upserting config for store_id: ${store.id}`);
+
     await prisma.storeTopConfig.upsert({
       where: { store_id: store.id },
       update: {
