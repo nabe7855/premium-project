@@ -205,8 +205,11 @@ const FAQ: React.FC<FAQProps> = ({
           <p className="mb-6 text-base font-bold text-slate-700">解決しない疑問はございますか？</p>
           <button
             onClick={onOpenChat}
-            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
+            className="inline-flex items-center gap-3 rounded-full bg-[#06C755] px-8 py-4 text-xl font-bold text-white shadow-xl transition-all hover:bg-[#05b34c] hover:shadow-2xl active:scale-95 md:px-12 md:py-5"
           >
+            <svg className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.5C6.5 2.5 2 6.6 2 11.7c0 2.9 1.4 5.5 3.8 7.1-.2.8-1.2 2.8-1.3 3 .1.1 2.9.2 4.9-1.4 1.1.3 2.3.5 3.6.5 5.5 0 10-4.1 10-9.2S17.5 2.5 12 2.5z" />
+            </svg>
             <span>LINEで直接質問してみる</span>
           </button>
         </div>

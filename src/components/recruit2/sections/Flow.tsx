@@ -141,10 +141,10 @@ const Flow: React.FC<FlowProps> = ({
                             {s.title}
                           </span>
                         </div>
-                        {/* Duration Badge (Always Visible) */}
-                        <span className="flex items-center gap-1.5 rounded-full bg-slate-900/90 px-3 py-1 text-[10px] font-bold text-white shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
+                        {/* Duration Badge (Enhanced Visibility) */}
+                        <span className="flex items-center gap-1.5 rounded-full border-2 border-yellow-400 bg-white px-3 py-1 text-xs font-bold text-slate-900 shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
                           <svg
-                            className="h-3 w-3 text-yellow-400 md:h-4 md:w-4"
+                            className="h-3.5 w-3.5 text-yellow-500 md:h-4 md:w-4"
                             fill="none"
                             viewBox="0 0 24 24"
                             stroke="currentColor"
@@ -152,7 +152,7 @@ const Flow: React.FC<FlowProps> = ({
                             <path
                               strokeLinecap="round"
                               strokeLinejoin="round"
-                              strokeWidth={2}
+                              strokeWidth={2.5}
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
@@ -186,6 +186,7 @@ const Flow: React.FC<FlowProps> = ({
                               src={s.image}
                               alt={s.title}
                               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
                             />
                           </div>
                         </div>
@@ -194,21 +195,28 @@ const Flow: React.FC<FlowProps> = ({
                   </div>
                 </div>
 
-                {/* Enhanced Expand Icon (Absolute Positioned at Bottom Center - Outside clipped container) */}
+                {/* Enhanced Expand Icon (Overlapping Border) */}
                 <div
-                  className={`absolute bottom-0 left-1/2 z-20 flex h-10 w-10 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
+                  className={`absolute bottom-0 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-4 border-slate-50 transition-all duration-500 md:h-14 md:w-14 ${
                     openStep === i
-                      ? 'rotate-180 border-amber-500 bg-amber-500 text-white shadow-md'
-                      : 'border-slate-200 bg-white text-amber-600 shadow-sm group-hover:border-amber-200 group-hover:bg-amber-50'
+                      ? 'rotate-180 bg-amber-500 text-white shadow-lg'
+                      : 'bg-white text-amber-500 shadow-md group-hover:bg-amber-50'
                   }`}
                 >
-                  <span className="text-xs md:text-sm">▼</span>
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={3}
+                      d="M19 9l-7 7-7-7"
+                    />
+                  </svg>
                 </div>
               </button>
 
               {/* Connector Arrow (Not after last item) */}
               {i < steps.length - 1 && (
-                <div className="relative z-20 flex items-center justify-center py-8">
+                <div className="relative z-20 flex items-center justify-center py-10">
                   <div className="h-0 w-0 border-l-[30px] border-r-[30px] border-t-[40px] border-l-transparent border-r-transparent border-t-yellow-400 drop-shadow-md filter"></div>
                 </div>
               )}
@@ -216,14 +224,17 @@ const Flow: React.FC<FlowProps> = ({
           ))}
         </div>
 
-        <div className="mt-16 text-center">
-          <p className="mb-6 text-base font-bold text-slate-700">
+        <div className="mt-20 text-center">
+          <p className="mb-8 text-lg font-bold text-slate-700">
             不安な点はいつでもLINEで相談可能です
           </p>
           <button
             onClick={onOpenChat}
-            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
+            className="inline-flex items-center gap-3 rounded-full bg-[#06C755] px-8 py-4 text-xl font-bold text-white shadow-xl transition-all hover:bg-[#05b34c] hover:shadow-2xl active:scale-95 md:px-12 md:py-5"
           >
+            <svg className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2.5C6.5 2.5 2 6.6 2 11.7c0 2.9 1.4 5.5 3.8 7.1-.2.8-1.2 2.8-1.3 3 .1.1 2.9.2 4.9-1.4 1.1.3 2.3.5 3.6.5 5.5 0 10-4.1 10-9.2S17.5 2.5 12 2.5z" />
+            </svg>
             <span>LINEで直接質問してみる</span>
           </button>
         </div>

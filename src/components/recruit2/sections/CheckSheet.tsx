@@ -184,8 +184,11 @@ const CheckSheet: React.FC<CheckSheetProps> = ({ onOpenChat }) => {
                 <div className="flex flex-col items-center gap-6">
                   <button
                     onClick={onOpenChat}
-                    className="inline-flex items-center gap-2 rounded-full bg-green-600 px-10 py-5 text-lg font-black text-white shadow-xl transition-all hover:bg-green-700 hover:shadow-green-900/40 active:scale-95"
+                    className="inline-flex items-center gap-3 rounded-full bg-[#06C755] px-8 py-4 text-xl font-bold text-white shadow-xl transition-all hover:bg-[#05b34c] hover:shadow-2xl active:scale-95 md:px-12 md:py-5"
                   >
+                    <svg className="h-8 w-8" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2.5C6.5 2.5 2 6.6 2 11.7c0 2.9 1.4 5.5 3.8 7.1-.2.8-1.2 2.8-1.3 3 .1.1 2.9.2 4.9-1.4 1.1.3 2.3.5 3.6.5 5.5 0 10-4.1 10-9.2S17.5 2.5 12 2.5z" />
+                    </svg>
                     <span>適性を確認して応募する（LINEで相談）</span>
                   </button>
                   <p className="text-sm font-bold text-slate-500">

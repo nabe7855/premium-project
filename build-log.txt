@@ -4,69 +4,75 @@
 
 Prisma schema loaded from prisma\schema.prisma
 
-笨・Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 165ms
+笨・Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 152ms
 
 Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
 
-Tip: Need your database queries to be 1000x faster? Accelerate offers you that and more: https://pris.ly/tip-2-accelerate
+Tip: Easily identify and fix slow SQL queries in your app. Optimize helps you enhance your visibility: https://pris.ly/--optimize
 
 node.exe :  笞 Linting is disabled.
 発生場所 行:1 文字:1
-+ & "C:\Program Files\nodejs/node.exe" "C:\Progr
-am Files\nodejs/node_mo ...
-+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-~~~~~~~~~~~~~~~~~~~~~~~
-    + CategoryInfo          : NotSpecified: ( 笞 
-    Linting is disabled.:String) [], RemoteEx  
-  ception
-    + FullyQualifiedErrorId : NativeCommandErro 
-   r
++ & "C:\Program Files\nodejs/node.exe" "C
+:\Program Files\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecifi 
+   ed: ( 笞 Linting is disabled.:String  
+  ) [], RemoteException
+    + FullyQualifiedErrorId : NativeComm 
+   andError
  
   笆ｲ Next.js 14.2.35
   - Environments: .env.local, .env.production
 
    Creating an optimized production build ...
-Browserslist: caniuse-lite is outdated. Please r
-un:
+Browserslist: caniuse-lite is outdated. P
+lease run:
   npx update-browserslist-db@latest
-  Why you should do it regularly: https://github
-.com/browserslist/update-db#readme
-Browserslist: browsers data (caniuse-lite) is 7 
-months old. Please run:
+  Why you should do it regularly: https:/
+/github.com/browserslist/update-db#readme
+Browserslist: browsers data (caniuse-lite
+) is 7 months old. Please run:
   npx update-browserslist-db@latest
-  Why you should do it regularly: https://github
-.com/browserslist/update-db#readme
+  Why you should do it regularly: https:/
+/github.com/browserslist/update-db#readme
 
-[1m[33mwarn[39m[22m - The class `duration-[1
-500ms]` is ambiguous and matches multiple utilit
-ies.
-[1m[33mwarn[39m[22m - If this is content and
- not a class, replace it with `duration-&lsqb;15
-00ms&rsqb;` to silence this warning.
+[1m[33mwarn[39m[22m - The class `dura
+tion-[1500ms]` is ambiguous and matches m
+ultiple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;1500ms&rsqb;` to silence this
+ warning.
 
-[1m[33mwarn[39m[22m - The class `duration-[2
-0s]` is ambiguous and matches multiple utilities
-.
-[1m[33mwarn[39m[22m - If this is content and
- not a class, replace it with `duration-&lsqb;20
-s&rsqb;` to silence this warning.
+[1m[33mwarn[39m[22m - The class `dura
+tion-[20s]` is ambiguous and matches mult
+iple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;20s&rsqb;` to silence this wa
+rning.
 
-[1m[33mwarn[39m[22m - The class `duration-[2
-s]` is ambiguous and matches multiple utilities.
-[1m[33mwarn[39m[22m - If this is content and
- not a class, replace it with `duration-&lsqb;2s
-&rsqb;` to silence this warning.
+[1m[33mwarn[39m[22m - The class `dura
+tion-[2s]` is ambiguous and matches multi
+ple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;2s&rsqb;` to silence this war
+ning.
 
-[1m[33mwarn[39m[22m - The class `duration-[3
-s]` is ambiguous and matches multiple utilities.
-[1m[33mwarn[39m[22m - If this is content and
- not a class, replace it with `duration-&lsqb;3s
-&rsqb;` to silence this warning.
-Browserslist: caniuse-lite is outdated. Please r
-un:
+[1m[33mwarn[39m[22m - The class `dura
+tion-[3s]` is ambiguous and matches multi
+ple utilities.
+[1m[33mwarn[39m[22m - If this is cont
+ent and not a class, replace it with `dur
+ation-&lsqb;3s&rsqb;` to silence this war
+ning.
+Browserslist: caniuse-lite is outdated. P
+lease run:
   npx update-browserslist-db@latest
-  Why you should do it regularly: https://github
-.com/browserslist/update-db#readme
+  Why you should do it regularly: https:/
+/github.com/browserslist/update-db#readme
  笨・Compiled successfully
    Checking validity of types ...
    Collecting page data ...
@@ -74,29 +80,29 @@ un:
    Generating static pages (13/55) 
    Generating static pages (27/55) 
    Generating static pages (41/55) 
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
 剥 StorePage params: { slug: 'tokyo' }
 剥 getStoreData('tokyo'): Found
 剥 StorePage params: { slug: 'tokyo' }
 剥 getStoreData('tokyo'): Found
 藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
-藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
-剥 StorePage params: { slug: 'osaka' }
-剥 getStoreData('osaka'): Found
-剥 StorePage params: { slug: 'osaka' }
-剥 getStoreData('osaka'): Found
-藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
-藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
-剥 StorePage params: { slug: 'nagoya' }
-剥 getStoreData('nagoya'): Found
-剥 StorePage params: { slug: 'nagoya' }
-剥 getStoreData('nagoya'): Found
 藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
-藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
-剥 StorePage params: { slug: 'yokohama' }
-剥 getStoreData('yokohama'): Found
-剥 StorePage params: { slug: 'yokohama' }
-剥 getStoreData('yokohama'): Found
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
 藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
+藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
+藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
 藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
  笨・Generating static pages (55/55)
    Finalizing page optimization ...
@@ -185,7 +191,7 @@ Route (app)                                         Size     First Load JS
 笏・笳・/test5                                          3.38 kB        96.7 kB
 笏・笳・/test6                                          4.06 kB        91.6 kB
 笏・笳・/test7                                          8.99 kB         218 kB
-笏・笳・/test8                                          742 B           201 kB
+笏・笳・/test8                                          742 B           202 kB
 笏・笳・/test9                                          8.99 kB         135 kB
 + First Load JS shared by all                       87.5 kB
   笏・chunks/2117-99a4431afb5ece1e.js                 31.9 kB
