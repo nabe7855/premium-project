@@ -13,7 +13,6 @@ import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
 import IdealCandidate from './sections/IdealCandidate';
 import OpenCastRecruitment from './sections/OpenCastRecruitment';
-import Philosophy from './sections/Philosophy';
 import Trust from './sections/Trust';
 
 export interface LandingPageConfig {
@@ -31,9 +30,6 @@ export interface LandingPageConfig {
   openCast?: {
     isVisible?: boolean;
     openCastImage?: string;
-  };
-  philosophy?: {
-    isVisible?: boolean;
   };
   fukuoka?: {
     backgroundImage?: string;
@@ -100,7 +96,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
     general: { ...STOCK_RECRUIT_CONFIG.general, ...incomingConfig?.general },
     hero: { ...STOCK_RECRUIT_CONFIG.hero, ...incomingConfig?.hero },
     openCast: { ...STOCK_RECRUIT_CONFIG.openCast, ...incomingConfig?.openCast },
-    philosophy: { ...STOCK_RECRUIT_CONFIG.philosophy, ...incomingConfig?.philosophy },
     fukuoka: { ...STOCK_RECRUIT_CONFIG.fukuoka, ...incomingConfig?.fukuoka },
     trust: { ...STOCK_RECRUIT_CONFIG.trust, ...incomingConfig?.trust },
     achievements: { ...STOCK_RECRUIT_CONFIG.achievements, ...incomingConfig?.achievements },
@@ -191,37 +186,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
           />
         </div>
       )}
-
-      {/* Philosophy Section */}
-      <div
-        className={`group relative transition-opacity duration-300 ${
-          config?.philosophy?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('philosophy', 'isVisible', config?.philosophy?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.philosophy?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.philosophy?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Philosophy
-          years={config.philosophy.years}
-          heading={config.philosophy.heading}
-          description={config.philosophy.description}
-          steps={config.philosophy.steps}
-          footerText={config.philosophy.footerText}
-        />
-      </div>
 
       {/* Fukuoka Reason Section */}
       <div
