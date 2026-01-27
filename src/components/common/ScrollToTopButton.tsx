@@ -39,7 +39,7 @@ const ScrollToTopButton: React.FC<ScrollToTopButtonProps> = ({ threshold = 400 }
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
           onClick={scrollToTop}
-          className="fixed bottom-24 right-5 z-[55] flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 font-bold text-white shadow-2xl transition-colors hover:bg-amber-700 active:scale-95 md:bottom-10 md:right-10"
+          className="fixed bottom-40 right-5 z-[55] flex h-12 w-12 items-center justify-center rounded-full bg-amber-600 font-bold text-white shadow-2xl transition-colors hover:bg-amber-700 active:scale-95 md:bottom-10 md:right-10"
           aria-label="Scroll to top"
         >
           <ChevronUp className="h-6 w-6 stroke-[3]" />
