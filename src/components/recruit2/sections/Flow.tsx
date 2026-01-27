@@ -123,9 +123,9 @@ const Flow: React.FC<FlowProps> = ({
                   {s.step}
                 </div>
 
-                <div className="relative z-10 flex flex-col p-6 md:p-10">
-                  {/* Step Label + Expand Icon */}
-                  <div className="flex items-center justify-between">
+                <div className="relative z-10 flex flex-col">
+                  {/* Header Part (Title + Duration + Absolute Button) */}
+                  <div className="relative p-6 md:p-10">
                     <div className="flex flex-col items-start gap-2">
                       <div className="flex items-center">
                         <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-3xl font-bold text-transparent md:text-5xl">
@@ -154,9 +154,9 @@ const Flow: React.FC<FlowProps> = ({
                       </span>
                     </div>
 
-                    {/* Enhanced Expand Icon */}
+                    {/* Enhanced Expand Icon (Absolute Positioned at Bottom Center) */}
                     <div
-                      className={`flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
+                      className={`absolute bottom-0 left-1/2 z-20 flex h-10 w-10 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-2 transition-all duration-500 md:h-12 md:w-12 ${
                         openStep === i
                           ? 'rotate-180 border-amber-500 bg-amber-500 text-white shadow-md'
                           : 'border-slate-200 bg-white text-amber-600 shadow-sm group-hover:border-amber-200 group-hover:bg-amber-50'
@@ -175,7 +175,7 @@ const Flow: React.FC<FlowProps> = ({
                     }`}
                   >
                     <div
-                      className={`flex flex-col items-center gap-6 border-t border-slate-100 pt-6 md:flex-row ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                      className={`flex flex-col items-center gap-6 border-t border-slate-100 p-8 pt-10 md:flex-row md:p-10 md:pt-14 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
                     >
                       {/* Text Column */}
                       <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
