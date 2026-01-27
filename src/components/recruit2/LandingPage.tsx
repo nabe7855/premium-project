@@ -503,6 +503,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           heading={config.faq.heading}
           description={config.faq.description}
           items={config.faq.items}
+          onOpenChat={onOpenChat}
         />
       </div>
 

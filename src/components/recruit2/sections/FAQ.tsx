@@ -8,6 +8,7 @@ interface FAQProps {
     q: string;
     a: string;
   }>;
+  onOpenChat?: () => void;
 }
 
 const FAQ: React.FC<FAQProps> = ({
@@ -119,6 +120,7 @@ const FAQ: React.FC<FAQProps> = ({
       a: 'はい、スケジュールが空いていれば即日対応可能です。まずはお話や相談だけ、という方も大歓迎です。',
     },
   ],
+  onOpenChat,
 }) => {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'beginner' | 'expert'>('all');
@@ -201,14 +203,12 @@ const FAQ: React.FC<FAQProps> = ({
 
         <div className="mt-16 text-center">
           <p className="mb-6 text-base font-bold text-slate-700">解決しない疑問はございますか？</p>
-          <a
-            href="https://line.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-8 py-4 font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
+          <button
+            onClick={onOpenChat}
+            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
           >
             <span>LINEで直接質問してみる</span>
-          </a>
+          </button>
         </div>
       </div>
     </section>

@@ -217,12 +217,13 @@ const Flow: React.FC<FlowProps> = ({
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-base font-bold text-slate-700">不安な点はいつでもLINEで相談可能です</p>
+          <p className="mb-6 text-base font-bold text-slate-700">
+            不安な点はいつでもLINEで相談可能です
+          </p>
           <button
             onClick={onOpenChat}
-            className="group relative mx-auto mt-6 flex max-w-sm items-center justify-center space-x-3 rounded-full bg-green-600 px-8 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-green-700 hover:shadow-green-900/40 active:scale-95"
+            className="inline-flex items-center gap-2 rounded-full bg-green-600 px-10 py-4 text-lg font-bold text-white shadow-lg transition-all hover:bg-green-700 active:scale-95"
           >
-            <span className="text-2xl transition-transform group-hover:scale-110">💬</span>
             <span>LINEで直接質問してみる</span>
           </button>
         </div>
