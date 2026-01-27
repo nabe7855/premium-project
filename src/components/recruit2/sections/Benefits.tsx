@@ -36,7 +36,7 @@ const Benefits: React.FC<BenefitsProps> = ({
   ],
 }) => {
   return (
-    <section className="overflow-hidden bg-white py-24">
+    <section className="overflow-hidden bg-white pb-12 pt-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
           <div className="mb-16 text-center">
@@ -49,7 +49,7 @@ const Benefits: React.FC<BenefitsProps> = ({
             <p className="mx-auto max-w-2xl text-lg text-slate-600">{description}</p>
           </div>
 
-          <div className="mb-24 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {points.map((p, i) => (
               <div
                 key={i}

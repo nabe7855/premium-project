@@ -395,36 +395,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
         <Comparison />
       </div>
 
-      {/* Branding Support Section */}
-      <div
-        id="special"
-        className={`group relative transition-opacity duration-300 ${
-          config?.branding?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('branding', 'isVisible', config?.branding?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.branding?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.branding?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <BrandingSupport
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
-          brandingImages={config?.branding?.images}
-        />
-      </div>
-
       {/* Ideal Candidate Section */}
       <div
         id="ideal"
@@ -474,6 +444,36 @@ const LandingPage: React.FC<LandingPageProps> = ({
           heading={config.flow.heading}
           description={config.flow.description}
           steps={config.flow.steps}
+        />
+      </div>
+
+      {/* Branding Support Section */}
+      <div
+        id="special"
+        className={`group relative transition-opacity duration-300 ${
+          config?.branding?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('branding', 'isVisible', config?.branding?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.branding?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.branding?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
+        <BrandingSupport
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
+          brandingImages={config?.branding?.images}
         />
       </div>
 

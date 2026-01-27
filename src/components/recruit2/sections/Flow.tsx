@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface FlowProps {
   heading?: string;
@@ -67,6 +67,12 @@ const Flow: React.FC<FlowProps> = ({
     },
   ],
 }) => {
+  const [openStep, setOpenStep] = useState<number | null>(null);
+
+  const toggleStep = (idx: number) => {
+    setOpenStep(openStep === idx ? null : idx);
+  };
+
   return (
     <section className="overflow-hidden bg-slate-50 py-24">
       <div className="container mx-auto max-w-5xl px-4">
@@ -89,8 +95,9 @@ const Flow: React.FC<FlowProps> = ({
         <div className="relative z-10 mx-auto flex max-w-3xl flex-col">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
-              <div
-                className={`relative rounded-[2.5rem] border-2 p-8 md:p-10 ${s.color} group overflow-hidden bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-xl`}
+              <button
+                onClick={() => toggleStep(i)}
+                className={`relative w-full overflow-hidden rounded-[2.5rem] border-2 bg-white/90 text-left backdrop-blur-sm transition-all duration-300 hover:shadow-xl ${s.color} ${openStep === i ? 'shadow-lg' : ''} group`}
               >
                 {/* Background Grid Pattern */}
                 <div
@@ -109,49 +116,62 @@ const Flow: React.FC<FlowProps> = ({
                   {s.step}
                 </div>
 
-                <div className="relative z-10 flex flex-col items-center text-center">
-                  {/* Step Label */}
-                  <div className="mb-4">
-                    <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-4xl font-bold text-transparent md:text-5xl">
-                      0{i + 1}.
-                    </span>
+                <div className="relative z-10 flex flex-col p-8 md:p-10">
+                  {/* Step Label + Expand Icon */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-4xl font-bold text-transparent md:text-5xl">
+                        0{i + 1}.
+                      </span>
+                      <span className="ml-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent md:text-3xl">
+                        {s.title}
+                      </span>
+                    </div>
                     <span
-                      className={`ml-4 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-2xl font-bold text-transparent md:text-3xl`}
+                      className={`shrink-0 transform text-amber-600 transition-transform duration-500 ${openStep === i ? 'rotate-180' : ''}`}
                     >
-                      {s.title}
+                      ▼
                     </span>
                   </div>
 
-                  {/* Duration Badge */}
-                  <div className="mb-6">
-                    <span className="mx-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-sm font-bold text-white shadow-md md:text-base">
-                      <svg
-                        className="h-4 w-4 text-yellow-400"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                        />
-                      </svg>
-                      {s.duration}
-                    </span>
-                  </div>
+                  {/* Expandable Content Wrap */}
+                  <div
+                    className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                      openStep === i ? 'mt-6 max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                    }`}
+                  >
+                    <div className="flex flex-col items-center border-t border-slate-100 pt-6 text-center">
+                      {/* Duration Badge */}
+                      <div className="mb-6">
+                        <span className="mx-auto flex items-center gap-2 rounded-full bg-slate-900 px-4 py-1.5 text-sm font-bold text-white shadow-md md:text-base">
+                          <svg
+                            className="h-4 w-4 text-yellow-400"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                            />
+                          </svg>
+                          {s.duration}
+                        </span>
+                      </div>
 
-                  <p className="max-w-lg text-sm font-medium leading-7 text-slate-600 md:text-base">
-                    {s.desc}
-                  </p>
+                      <p className="max-w-lg text-sm font-medium leading-7 text-slate-600 md:text-base">
+                        {s.desc}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              </button>
 
               {/* Connector Arrow (Not after last item) */}
               {i < steps.length - 1 && (
                 <div className="relative z-20 flex items-center justify-center py-8">
-                  {/* CSS Triangle */}
                   <div className="h-0 w-0 border-l-[30px] border-r-[30px] border-t-[40px] border-l-transparent border-r-transparent border-t-yellow-400 drop-shadow-md filter"></div>
                 </div>
               )}
@@ -160,7 +180,7 @@ const Flow: React.FC<FlowProps> = ({
         </div>
 
         <div className="mt-16 text-center">
-          <p className="text-sm text-slate-400">不安な点はいつでもLINEで相談可能です</p>
+          <p className="text-base font-bold text-slate-700">不安な点はいつでもLINEで相談可能です</p>
         </div>
       </div>
     </section>

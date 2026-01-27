@@ -26,22 +26,18 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
     {
       title: '最大級の還元率と移籍ボーナス',
       desc: '前職の給与・指名数を考慮。移籍に伴う準備金制度あり。あなたの実績を『数字』で100%評価します。',
-      icon: '💎',
     },
     {
       title: '芸能・インフルエンサー特化サポート',
       desc: '完全顔出しなし、SNS対策、アリバイ対策完備。活動に支障をきたさない徹底したプライバシー管理を約束します。',
-      icon: '🛡️',
     },
     {
       title: '富裕層・V.I.P客限定の集客力',
       desc: '業界屈指のブランド力で、客層の良さは折り紙付き。無駄な待機を減らし、短時間で効率よく稼げる環境です。',
-      icon: '👑',
     },
     {
       title: '次世代へのキャリアデザイン',
       desc: '店舗運営への参画、独立支援、あるいは芸能活動のバックアップ。単なる『キャスト』で終わらせない、次のステージへの投資を行います。',
-      icon: '',
     },
   ];
 
@@ -84,9 +80,6 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
                     key={i}
                     className="group rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10"
                   >
-                    <div className="mb-4 text-3xl text-amber-400 transition-transform duration-300 group-hover:scale-110">
-                      {f.icon}
-                    </div>
                     <h4 className="mb-2 font-serif text-lg text-amber-50">{f.title}</h4>
                     <p className="text-sm font-light leading-relaxed text-slate-400">{f.desc}</p>
                   </div>

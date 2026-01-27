@@ -200,7 +200,7 @@ const FAQ: React.FC<FAQProps> = ({
         </div>
 
         <div className="mt-16 text-center">
-          <p className="mb-6 text-sm text-slate-400">解決しない疑問はございますか？</p>
+          <p className="mb-6 text-base font-bold text-slate-700">解決しない疑問はございますか？</p>
           <a
             href="https://line.me"
             target="_blank"

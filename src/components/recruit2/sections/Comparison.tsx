@@ -47,7 +47,7 @@ const Comparison: React.FC = () => {
   ];
 
   return (
-    <section className="overflow-hidden bg-white py-20 sm:py-28">
+    <section className="overflow-hidden bg-white pb-20 pt-8 sm:pb-28 sm:pt-12">
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mb-16 text-center">
           <h3 className="mb-6 font-serif text-3xl font-bold text-slate-900 sm:text-4xl">
