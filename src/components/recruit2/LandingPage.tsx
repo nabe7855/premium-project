@@ -444,6 +444,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           heading={config.flow.heading}
           description={config.flow.description}
           steps={config.flow.steps}
+          onOpenChat={onOpenChat}
         />
       </div>
 
