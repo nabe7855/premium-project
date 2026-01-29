@@ -10,15 +10,15 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.1)] md:hidden">
       {/* Diagnostic Banner - First Row (Full Width) */}
-      <div className="border-b border-slate-200">
+      <div>
         <button
           onClick={onOpenDiagnostic}
-          className="w-full transition-transform active:scale-[0.98]"
+          className="block w-full transition-transform active:scale-[0.98]"
         >
           <img
             src="/スピード適正診断.png"
             alt="30秒スピード適正診断する"
-            className="h-auto w-full"
+            className="block h-auto w-full"
           />
         </button>
       </div>

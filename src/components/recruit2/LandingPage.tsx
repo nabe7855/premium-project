@@ -11,7 +11,7 @@ import FAQ from './sections/FAQ';
 import Flow from './sections/Flow';
 import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
-import IdealCandidate from './sections/IdealCandidate';
+
 import OpenCastRecruitment from './sections/OpenCastRecruitment';
 import Trust from './sections/Trust';
 
@@ -358,30 +358,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         )}
         <Comparison />
-      </div>
-
-      {/* Ideal Candidate Section */}
-      <div
-        id="ideal"
-        className={`group relative transition-opacity duration-300 ${
-          config?.ideal?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('ideal', 'isVisible', config?.ideal?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.ideal?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.ideal?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <IdealCandidate />
       </div>
 
       {/* Check Sheet Section */}
