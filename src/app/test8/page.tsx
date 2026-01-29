@@ -11,6 +11,7 @@ import ThanksPage from '@/components/recruit2/ThanksPage';
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
+import MascotWalker from '@/components/MascotWalker';
 import IncomeSimulation from '@/components/recruit2/IncomeSimulation'; // Import custom component
 
 // ... imports
@@ -60,6 +61,7 @@ const AppContent: React.FC = () => {
       <Chatbot isOpen={isChatOpen} onClose={closeChat} />
       <ApplicationModal isOpen={isFormOpen} onClose={closeForm} />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
+      <MascotWalker />
     </div>
   );
 };
