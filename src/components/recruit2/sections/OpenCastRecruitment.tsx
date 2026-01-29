@@ -176,41 +176,135 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-orange-500 sm:text-3xl">
                   オープンキャスト限定特典
                 </h3>
-                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
                   {[
                     {
-                      title: '専属プロデューサー制度',
-                      desc: '業界経験豊富な専任担当者が、あなたの個性を見極め、最短ルートでの成功をマンツーマンで徹底サポートします。',
+                      title: (
+                        <>
+                          <span className="inline-block">専属プロデューサー</span>
+                          <span className="inline-block">制度</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">業界経験豊富な</span>
+                          <span className="inline-block">専任担当者が、</span>
+                          <span className="inline-block">あなたの個性を</span>
+                          <span className="inline-block">見極め、</span>
+                          <span className="inline-block">最短ルートでの</span>
+                          <span className="inline-block">成功を</span>
+                          <span className="inline-block">マンツーマンで</span>
+                          <span className="inline-block">徹底サポート</span>
+                          <span className="inline-block">します。</span>
+                        </>
+                      ),
                     },
                     {
-                      title: '最短1ヶ月でデビュー',
-                      desc: '実践重視の独自プログラムにより、未経験からでも短期間でプロとしての自信と実力を身につけられます。',
+                      title: (
+                        <>
+                          <span className="inline-block">最短1ヶ月で</span>
+                          <span className="inline-block">デビュー</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">実践重視の</span>
+                          <span className="inline-block">独自プログラム</span>
+                          <span className="inline-block">により、</span>
+                          <span className="inline-block">未経験からでも</span>
+                          <span className="inline-block">短期間で</span>
+                          <span className="inline-block">プロとしての</span>
+                          <span className="inline-block">自信と実力を</span>
+                          <span className="inline-block">身につけられます。</span>
+                        </>
+                      ),
                     },
                     {
-                      title: '未経験者専用カリキュラム',
-                      desc: '接客の基礎から心理学まで、ゼロからプロフェッショナルを目指すための体系化された研修をご用意しています。',
+                      title: (
+                        <>
+                          <span className="inline-block">未経験者</span>
+                          <span className="inline-block">専用カリキュラム</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">接客の基礎から</span>
+                          <span className="inline-block">心理学まで、</span>
+                          <span className="inline-block">ゼロから</span>
+                          <span className="inline-block">プロフェッショナルを</span>
+                          <span className="inline-block">目指すための</span>
+                          <span className="inline-block">体系化された研修を</span>
+                          <span className="inline-block">ご用意しています。</span>
+                        </>
+                      ),
                     },
                     {
-                      title: '3ヶ月間の最低保証',
-                      desc: 'デビュー直後でも安心して働けるよう、安定した収入を保証。焦らずじっくりと実力を磨ける環境です。',
+                      title: (
+                        <>
+                          <span className="inline-block">3ヶ月間の</span>
+                          <span className="inline-block">最低保証</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">デビュー直後でも</span>
+                          <span className="inline-block">安心して</span>
+                          <span className="inline-block">働けるよう、</span>
+                          <span className="inline-block">安定した</span>
+                          <span className="inline-block">収入を保証。</span>
+                          <span className="inline-block">焦らずじっくりと</span>
+                          <span className="inline-block">実力を磨ける</span>
+                          <span className="inline-block">環境です。</span>
+                        </>
+                      ),
                     },
                     {
-                      title: '初期費用完全無料',
-                      desc: '宣材写真撮影やレッスン費用など、スタートにかかる費用はすべて店舗が負担。リスクゼロで挑戦できます。',
+                      title: (
+                        <>
+                          <span className="inline-block">初期費用</span>
+                          <span className="inline-block">完全無料</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">宣材写真撮影や</span>
+                          <span className="inline-block">レッスン費用など、</span>
+                          <span className="inline-block">スタートに</span>
+                          <span className="inline-block">かかる費用は</span>
+                          <span className="inline-block">すべて店舗が負担。</span>
+                          <span className="inline-block">リスクゼロで</span>
+                          <span className="inline-block">挑戦できます。</span>
+                        </>
+                      ),
                     },
                     {
-                      title: 'プロフェッショナル育成',
-                      desc: '業界トップクラスの教育環境で、一流のホストとして必要なマインドとスキルを余すことなく伝授します。',
+                      title: (
+                        <>
+                          <span className="inline-block">プロフェッショナル</span>
+                          <span className="inline-block">育成</span>
+                        </>
+                      ),
+                      desc: (
+                        <>
+                          <span className="inline-block">業界トップクラスの</span>
+                          <span className="inline-block">教育環境で、</span>
+                          <span className="inline-block">一流のホストとして</span>
+                          <span className="inline-block">必要なマインドと</span>
+                          <span className="inline-block">スキルを</span>
+                          <span className="inline-block">余すことなく</span>
+                          <span className="inline-block">伝授します。</span>
+                        </>
+                      ),
                     },
                   ].map((benefit, idx) => (
                     <div
                       key={idx}
-                      className="group rounded-xl border border-orange-500/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-4 text-center backdrop-blur-sm transition-all hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)]"
+                      className="group flex flex-col items-center justify-start rounded-xl border border-orange-500/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-3 text-center backdrop-blur-sm transition-all hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)] sm:p-4"
                     >
-                      <h4 className="mb-2 break-words text-base font-bold text-orange-500 sm:text-lg">
+                      <h4 className="mb-2 break-words text-sm font-bold text-orange-500 sm:text-lg">
                         {benefit.title}
                       </h4>
-                      <p className="break-words text-xs leading-relaxed text-orange-300/80 sm:text-sm">
+                      <p className="break-words text-[10px] leading-relaxed text-orange-300/80 sm:text-sm">
                         {benefit.desc}
                       </p>
                     </div>
