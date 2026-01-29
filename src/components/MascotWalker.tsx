@@ -9,9 +9,9 @@ const SPEED_MAX = 80; // px/sec
 const SPRITE_COUNT = 6;
 const REAPPEAR_DELAY_MIN = 300; // ms
 const REAPPEAR_DELAY_MAX = 1200; // ms
-const SCROLL_STOP_DELAY = 200; // ms
-const VERTICAL_MARGIN_PERCENT = 10; // 10% from top and bottom
-const MIN_Y_DISTANCE = 80; // Minimum distance from previous Y when reappearing
+const SCROLL_STOP_DELAY = 150; // ms
+const VERTICAL_MARGIN_PERCENT = 10; // margin for spawning
+const OFF_SCREEN_THRESHOLD = 150; // Distance to be considered fully off-screen
 
 interface MascotState {
   x: number;
@@ -24,7 +24,7 @@ interface MascotState {
 
 const MascotWalker: React.FC = () => {
   const [state, setState] = useState<MascotState>({
-    x: -200, // Start off-screen
+    x: -200,
     y: 0,
     direction: 'right',
     speed: 0,
@@ -35,34 +35,22 @@ const MascotWalker: React.FC = () => {
   const requestRef = useRef<number>();
   const lastUpdateRef = useRef<number>(0);
   const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
-  const isScrollingRef = useRef<boolean>(false);
+  const lastScrollYRef = useRef<number>(0);
   const lastYRef = useRef<number>(0);
 
   // Initialize mascot at a random edge
-  const spawnMascot = useCallback((forceDifferentY = false) => {
+  const spawnMascot = useCallback(() => {
     const direction = Math.random() > 0.5 ? 'right' : 'left';
     const speed = SPEED_MIN + Math.random() * (SPEED_MAX - SPEED_MIN);
 
-    // Calculate vertical range
     const margin = window.innerHeight * (VERTICAL_MARGIN_PERCENT / 100);
     const minY = margin;
     const maxY = window.innerHeight - margin;
-
-    let y = minY + Math.random() * (maxY - minY);
-
-    // Ensure it's different enough from the last position if needed
-    if (forceDifferentY && Math.abs(y - lastYRef.current) < MIN_Y_DISTANCE) {
-      if (y > (minY + maxY) / 2) {
-        y -= MIN_Y_DISTANCE;
-      } else {
-        y += MIN_Y_DISTANCE;
-      }
-    }
+    const y = minY + Math.random() * (maxY - minY);
 
     lastYRef.current = y;
-
-    // Start off-screen
-    const startX = direction === 'right' ? -150 : window.innerWidth + 50;
+    const startX =
+      direction === 'right' ? -OFF_SCREEN_THRESHOLD : window.innerWidth + OFF_SCREEN_THRESHOLD;
 
     setState({
       x: startX,
@@ -74,26 +62,24 @@ const MascotWalker: React.FC = () => {
     });
   }, []);
 
-  // Handle Animation Loop
+  // Handle Animation Loop (Horizontal movement only)
   const animate = useCallback((time: number) => {
     if (lastUpdateRef.current !== undefined) {
       const deltaTime = (time - lastUpdateRef.current) / 1000;
-
-      // Update frame roughly every 100ms (10fps)
       const frameDelta = Math.floor(time / (1000 / FPS));
 
       setState((prev) => {
-        if (!prev.visible || isScrollingRef.current) return prev;
+        if (!prev.visible) return prev;
 
         const moveAmount = prev.speed * deltaTime;
         const newX = prev.direction === 'right' ? prev.x + moveAmount : prev.x - moveAmount;
 
-        // Check if character is completely off-screen
-        const isOffScreen =
-          (prev.direction === 'right' && newX > window.innerWidth + 150) ||
-          (prev.direction === 'left' && newX < -150);
+        // Horizontal boundary check (off-screen)
+        const isOffScreenX =
+          (prev.direction === 'right' && newX > window.innerWidth + OFF_SCREEN_THRESHOLD) ||
+          (prev.direction === 'left' && newX < -OFF_SCREEN_THRESHOLD);
 
-        if (isOffScreen) {
+        if (isOffScreenX) {
           return { ...prev, visible: false };
         }
 
@@ -108,44 +94,69 @@ const MascotWalker: React.FC = () => {
     requestRef.current = requestAnimationFrame(animate);
   }, []);
 
-  // Spawn logic when visibility changes to false
+  // Handle Scroll and Vertical reset
   useEffect(() => {
-    if (!state.visible && !isScrollingRef.current) {
+    lastScrollYRef.current = window.scrollY;
+
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      const deltaY = currentScrollY - lastScrollYRef.current;
+      lastScrollYRef.current = currentScrollY;
+
+      setState((prev) => {
+        if (!prev.visible) return prev;
+
+        const newY = prev.y - deltaY;
+
+        // Vertical boundary check (If character moves off top or bottom due to scroll)
+        const mascotHeight = window.innerWidth * 0.15; // Rough estimate for clamping logic
+        const isOffScreenY = newY < -mascotHeight || newY > window.innerHeight + mascotHeight;
+
+        if (isOffScreenY) {
+          return { ...prev, visible: false };
+        }
+
+        return { ...prev, y: newY };
+      });
+
+      // Reset timer to detect scroll stop
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+      scrollTimeoutRef.current = setTimeout(() => {
+        // When scroll stops, if mascot is gone, spawn a new one
+        setState((current) => {
+          if (!current.visible) {
+            // We can't use spawnMascot directly inside setState, so we handle it via visibility effect
+            return current;
+          }
+          return current;
+        });
+      }, SCROLL_STOP_DELAY);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
+    };
+  }, []);
+
+  // Re-spawn trigger when visible goes from true -> false
+  useEffect(() => {
+    if (!state.visible) {
       const delay = REAPPEAR_DELAY_MIN + Math.random() * (REAPPEAR_DELAY_MAX - REAPPEAR_DELAY_MIN);
       const timer = setTimeout(() => {
-        spawnMascot(true);
+        spawnMascot();
       }, delay);
       return () => clearTimeout(timer);
     }
   }, [state.visible, spawnMascot]);
 
-  // Handle Scroll logic
+  // Lifecycle
   useEffect(() => {
-    const handleScroll = () => {
-      // Immediate hide
-      isScrollingRef.current = true;
-      setState((s) => ({ ...s, visible: false }));
-
-      // Clear previous timeout
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
-
-      // Set timeout to detect stop
-      scrollTimeoutRef.current = setTimeout(() => {
-        isScrollingRef.current = false;
-        spawnMascot(false);
-      }, SCROLL_STOP_DELAY);
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    // Initial spawn
     spawnMascot();
     requestRef.current = requestAnimationFrame(animate);
-
     return () => {
-      window.removeEventListener('scroll', handleScroll);
       if (requestRef.current) cancelAnimationFrame(requestRef.current);
-      if (scrollTimeoutRef.current) clearTimeout(scrollTimeoutRef.current);
     };
   }, [spawnMascot, animate]);
 
@@ -174,6 +185,7 @@ const MascotWalker: React.FC = () => {
           maxWidth: '120px',
           transform: `translate(-50%, -50%) scaleX(${state.direction === 'left' ? -1 : 1})`,
           transition: 'none',
+          willChange: 'transform, left, top',
         }}
       >
         <img
@@ -184,7 +196,6 @@ const MascotWalker: React.FC = () => {
             height: 'auto',
             display: 'block',
           }}
-          // Basic fallback for development if images are missing
           onError={(e) => {
             (e.target as HTMLImageElement).src = 'https://via.placeholder.com/120?text=Sprite';
           }}
