@@ -1,0 +1,105 @@
+'use client';
+
+import { EditableImage } from '@/components/admin/EditableImage';
+import React from 'react';
+
+interface MetricsGridProps {
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
+  brandingImages?: {
+    image1?: string;
+    image2?: string;
+    image3?: string;
+    image4?: string;
+  };
+}
+
+const MetricsGrid: React.FC<MetricsGridProps> = ({
+  isEditing = false,
+  onUpdate,
+  brandingImages,
+}) => {
+  const handleUpload = (key: string) => (file: File) => {
+    if (onUpdate) onUpdate(key, file);
+  };
+
+  return (
+    <section className="relative overflow-hidden bg-black py-24 text-white">
+      {/* Decorative background elements - subtle glow */}
+      <div className="pointer-events-none absolute left-1/2 top-1/2 h-[500px] w-[500px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-600/10 blur-[120px]"></div>
+
+      <div className="container relative z-10 mx-auto px-4">
+        <div className="mx-auto max-w-4xl">
+          {/* Visuals - 2x2 Grid */}
+          <div className="relative">
+            <div className="relative z-10 grid grid-cols-2 gap-4 md:gap-8">
+              <div className="space-y-4 md:space-y-8 md:pt-12">
+                <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
+                  <EditableImage
+                    src={brandingImages?.image1 || '/キャストモデル１.png'}
+                    className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
+                    alt="Professional 1"
+                    isEditing={isEditing}
+                    onUpload={handleUpload('image1')}
+                  />
+                </div>
+                <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
+                  <EditableImage
+                    src={brandingImages?.image2 || '/キャストモデル２.png'}
+                    className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
+                    alt="Professional 2"
+                    isEditing={isEditing}
+                    onUpload={handleUpload('image2')}
+                  />
+                </div>
+              </div>
+              <div className="space-y-4 md:space-y-8">
+                <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
+                  <EditableImage
+                    src={brandingImages?.image3 || '/キャストモデル３.png'}
+                    className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
+                    alt="Professional 3"
+                    isEditing={isEditing}
+                    onUpload={handleUpload('image3')}
+                  />
+                </div>
+                <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
+                  <EditableImage
+                    src={
+                      brandingImages?.image4 ||
+                      'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600'
+                    }
+                    className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
+                    alt="Professional 4"
+                    isEditing={isEditing}
+                    onUpload={handleUpload('image4')}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Floating metrics badge */}
+            <div className="animate-bounce-slow absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-3xl border-4 border-slate-950 bg-amber-600 p-6 text-white shadow-2xl md:p-10">
+              <div className="mb-1 text-[10px] font-bold uppercase tracking-widest opacity-80 md:text-sm">
+                Fan Retention Rate
+              </div>
+              <div className="font-serif text-3xl font-bold md:text-5xl">94.2%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <style>{`
+        @keyframes bounce-slow {
+          0%, 100% { transform: translate(-50%, -55%); }
+          50% { transform: translate(-50%, -45%); }
+        }
+        .animate-bounce-slow {
+          animation: bounce-slow 4s ease-in-out infinite;
+        }
+      `}</style>
+    </section>
+  );
+};
+
+export default MetricsGrid;

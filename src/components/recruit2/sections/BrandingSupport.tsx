@@ -1,25 +1,13 @@
 'use client';
 
-import { EditableImage } from '@/components/admin/EditableImage';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 interface BrandingSupportProps {
   isEditing?: boolean;
-  onUpdate?: (key: string, value: any) => void;
-  brandingImages?: {
-    image1?: string;
-    image2?: string;
-    image3?: string;
-    image4?: string;
-  };
 }
 
-const BrandingSupport: React.FC<BrandingSupportProps> = ({
-  isEditing = false,
-  onUpdate,
-  brandingImages,
-}) => {
+const BrandingSupport: React.FC<BrandingSupportProps> = ({ isEditing = false }) => {
   const navigate = useNavigate();
 
   const features = [
@@ -41,10 +29,6 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
     },
   ];
 
-  const handleUpload = (key: string) => (file: File) => {
-    if (onUpdate) onUpdate(key, file);
-  };
-
   return (
     <section className="relative overflow-hidden bg-black py-24 text-white">
       {/* Decorative background elements - Champagne Bubbles */}
@@ -59,115 +43,43 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
       <div className="pointer-events-none absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-slate-800/20 blur-[120px]"></div>
 
       <div className="container relative z-10 mx-auto px-4">
-        <div className="mx-auto max-w-6xl">
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-20">
-            {/* Left Content */}
-            <div className="lg:col-span-7">
-              <h2 className="mb-8 font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
-                芸能・インフルエンサー活動との両立。
-                <br />
-                私たちが選ばれるのは、
-                <br />
-                圧倒的な<span className="font-normal text-amber-500">『質』</span>ゆえ。
-              </h2>
-              <p className="mb-12 text-lg font-light leading-relaxed text-slate-300 md:text-xl">
-                今の環境に満足していますか？あなたの実績を正当に評価し、前職を上回る最高の条件を約束します。福岡完全新規店だからこそ可能な、しがらみのないリスタートを。
-              </p>
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className="mb-8 font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
+            芸能・インフルエンサー活動との両立。
+            <br />
+            私たちが選ばれるのは、
+            <br />
+            圧倒的な<span className="font-normal text-amber-500">『質』</span>ゆえ。
+          </h2>
+          <p className="mx-auto mb-16 max-w-2xl text-lg font-light leading-relaxed text-slate-300 md:text-xl">
+            今の環境に満足していますか？あなたの実績を正当に評価し、前職を上回る最高の条件を約束します。福岡完全新規店だからこそ可能な、しがらみのないリスタートを。
+          </p>
 
-              <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-                {features.map((f, i) => (
-                  <div
-                    key={i}
-                    className="group rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10"
-                  >
-                    <h4 className="mb-2 font-serif text-lg text-amber-50">{f.title}</h4>
-                    <p className="text-sm font-light leading-relaxed text-slate-400">{f.desc}</p>
-                  </div>
-                ))}
+          <div className="grid grid-cols-1 gap-8 text-left md:grid-cols-2">
+            {features.map((f, i) => (
+              <div
+                key={i}
+                className="group rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10"
+              >
+                <h4 className="mb-4 font-serif text-xl text-amber-50">{f.title}</h4>
+                <p className="text-base font-light leading-relaxed text-slate-400">{f.desc}</p>
               </div>
-
-              <div className="mt-12 flex flex-col gap-4 sm:flex-row">
-                <button
-                  onClick={() => navigate('/form-full')}
-                  className="rounded-none border border-amber-600 bg-amber-600/20 px-10 py-5 font-serif text-lg text-amber-500 transition-all hover:bg-amber-600 hover:text-white active:scale-95"
-                >
-                  優遇条件を詳しく確認する
-                </button>
-              </div>
-              <p className="mt-6 text-xs text-slate-500">
-                ※事務所所属の方のシークレット入店、スケジュール調整も柔軟に対応いたします
-              </p>
-            </div>
-
-            {/* Right Visuals */}
-            <div className="relative lg:col-span-5">
-              <div className="relative z-10 grid grid-cols-2 gap-4">
-                <div className="space-y-4 pt-12">
-                  <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <EditableImage
-                      src={brandingImages?.image1 || '/キャストモデル１.png'}
-                      className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
-                      alt="Professional 1"
-                      isEditing={isEditing}
-                      onUpload={handleUpload('image1')}
-                    />
-                  </div>
-                  <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <EditableImage
-                      src={brandingImages?.image2 || '/キャストモデル２.png'}
-                      className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
-                      alt="Professional 2"
-                      isEditing={isEditing}
-                      onUpload={handleUpload('image2')}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-4">
-                  <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <EditableImage
-                      src={brandingImages?.image3 || '/キャストモデル３.png'}
-                      className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
-                      alt="Professional 3"
-                      isEditing={isEditing}
-                      onUpload={handleUpload('image3')}
-                    />
-                  </div>
-                  <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
-                    <EditableImage
-                      src={
-                        brandingImages?.image4 ||
-                        'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600'
-                      }
-                      className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
-                      alt="Professional 4"
-                      isEditing={isEditing}
-                      onUpload={handleUpload('image4')}
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating metrics badge */}
-              <div className="animate-bounce-slow absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-3xl border-4 border-slate-950 bg-amber-600 p-6 text-white shadow-2xl">
-                <div className="mb-1 text-[10px] font-bold uppercase tracking-widest opacity-80">
-                  Fan Retention Rate
-                </div>
-                <div className="font-serif text-3xl font-bold">94.2%</div>
-              </div>
-            </div>
+            ))}
           </div>
+
+          <div className="mt-16 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <button
+              onClick={() => navigate('/form-full')}
+              className="rounded-none border border-amber-600 bg-amber-600/20 px-12 py-5 font-serif text-lg text-amber-500 transition-all hover:bg-amber-600 hover:text-white active:scale-95"
+            >
+              優遇条件を詳しく確認する
+            </button>
+          </div>
+          <p className="mt-8 text-xs text-slate-500">
+            ※事務所所属の方のシークレット入店、スケジュール調整も柔軟に対応いたします
+          </p>
         </div>
       </div>
-
-      <style>{`
-        @keyframes bounce-slow {
-          0%, 100% { transform: translate(-50%, -55%); }
-          50% { transform: translate(-50%, -45%); }
-        }
-        .animate-bounce-slow {
-          animation: bounce-slow 4s ease-in-out infinite;
-        }
-      `}</style>
     </section>
   );
 };

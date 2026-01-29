@@ -11,6 +11,7 @@ import FAQ from './sections/FAQ';
 import Flow from './sections/Flow';
 import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
+import MetricsGrid from './sections/MetricsGrid';
 
 import OpenCastRecruitment from './sections/OpenCastRecruitment';
 import Trust from './sections/Trust';
@@ -394,6 +395,19 @@ const LandingPage: React.FC<LandingPageProps> = ({
         />
       </div>
 
+      {/* Metrics Grid Section */}
+      <div
+        className={`group relative transition-opacity duration-300 ${
+          config?.branding?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        <MetricsGrid
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
+          brandingImages={config?.branding?.images}
+        />
+      </div>
+
       {/* Branding Support Section */}
       <div
         id="special"
@@ -417,11 +431,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <BrandingSupport
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
-          brandingImages={config?.branding?.images}
-        />
+        <BrandingSupport isEditing={isEditing} />
       </div>
 
       {/* FAQ Section */}
