@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 import MascotWalker from '@/components/MascotWalker';
+import DiagnosticModal from '@/components/recruit2/DiagnosticModal';
 import IncomeSimulation from '@/components/recruit2/IncomeSimulation'; // Import custom component
 
 // ... imports
@@ -21,6 +22,7 @@ const AppContent: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSimulationOpen, setIsSimulationOpen] = useState(false); // New state
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
 
   // Scroll to top on route change
   useEffect(() => {
@@ -36,9 +38,12 @@ const AppContent: React.FC = () => {
   const openSimulation = () => setIsSimulationOpen(true);
   const closeSimulation = () => setIsSimulationOpen(false);
 
+  const openDiagnostic = () => setIsDiagnosticOpen(true);
+  const closeDiagnostic = () => setIsDiagnosticOpen(false);
+
   return (
     <div
-      className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen ? 'overflow-hidden' : ''}`}
+      className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen || isDiagnosticOpen ? 'overflow-hidden' : ''}`}
     >
       <Header onOpenForm={openForm} />
       <main className="flex-grow">
@@ -54,13 +59,14 @@ const AppContent: React.FC = () => {
         <FloatingCTA
           onOpenChat={openChat}
           onOpenForm={openForm}
-          onOpenSimulation={openSimulation}
+          onOpenDiagnostic={openDiagnostic}
         />
       )}
 
       <Chatbot isOpen={isChatOpen} onClose={closeChat} />
       <ApplicationModal isOpen={isFormOpen} onClose={closeForm} />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
+      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={closeDiagnostic} />
       <MascotWalker />
     </div>
   );

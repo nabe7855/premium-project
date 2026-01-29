@@ -14,6 +14,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
 
+import DiagnosticModal from '@/components/recruit2/DiagnosticModal';
 import IncomeSimulation from '@/components/recruit2/IncomeSimulation';
 import { STOCK_RECRUIT_CONFIG } from '@/components/recruit2/constants';
 import { stores } from '@/data/stores';
@@ -23,6 +24,7 @@ const AppContent: React.FC = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSimulationOpen, setIsSimulationOpen] = useState(false);
+  const [isDiagnosticOpen, setIsDiagnosticOpen] = useState(false);
 
   const { slug } = useParams() as { slug: string };
   const [config, setConfig] = useState<LandingPageConfig | undefined>();
@@ -62,6 +64,9 @@ const AppContent: React.FC = () => {
 
   const openSimulation = () => setIsSimulationOpen(true);
   const closeSimulation = () => setIsSimulationOpen(false);
+
+  const openDiagnostic = () => setIsDiagnosticOpen(true);
+  const closeDiagnostic = () => setIsDiagnosticOpen(false);
 
   const storeData = stores[slug];
   const dynamicStoreName = storeData?.displayName || '店舗名';
@@ -123,7 +128,7 @@ const AppContent: React.FC = () => {
 
   return (
     <div
-      className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen ? 'overflow-hidden' : ''}`}
+      className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen || isDiagnosticOpen ? 'overflow-hidden' : ''}`}
     >
       <Header
         onOpenForm={openForm}
@@ -155,7 +160,7 @@ const AppContent: React.FC = () => {
         <FloatingCTA
           onOpenChat={openChat}
           onOpenForm={openForm}
-          onOpenSimulation={openSimulation}
+          onOpenDiagnostic={openDiagnostic}
         />
       )}
 
@@ -170,6 +175,7 @@ const AppContent: React.FC = () => {
         storeName={fullMergedConfig.general?.storeName}
       />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
+      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={closeDiagnostic} />
       <ScrollToTopButton />
     </div>
   );
