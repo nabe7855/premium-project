@@ -139,13 +139,6 @@ const EnvelopeAnimation: React.FC = () => {
               </p>
             </div>
           </div>
-
-          <div className="mt-10 flex items-center justify-between border-t border-slate-50 pt-6 font-serif text-sm italic text-slate-400">
-            <span>Sincerely, The AI Engineer</span>
-            <div className="flex h-12 w-12 items-center justify-center rounded-full border border-slate-200 bg-slate-50 font-bold not-italic text-blue-600 shadow-sm">
-              AI
-            </div>
-          </div>
         </div>
 
         {/* 3. FRONT PANEL (The Pouch / Pocket) */}
