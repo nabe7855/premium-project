@@ -42,6 +42,7 @@ const EnvelopeAnimation: React.FC = () => {
       rotateX: 180,
       duration: 1.2,
       ease: 'power2.inOut',
+      transformOrigin: '50% 0%',
     });
 
     // Step 3: Letter slides up
@@ -199,7 +200,7 @@ const EnvelopeAnimation: React.FC = () => {
           >
             <AirmailBorder />
             {/* Wax Seal detail */}
-            <div className="translate-z-10 z-50 flex h-14 w-14 translate-x-[-50%] translate-y-[-50%] items-center justify-center rounded-full border-4 border-red-700 bg-red-600 text-2xl font-black text-white shadow-2xl">
+            <div className="z-50 flex h-14 w-14 items-center justify-center rounded-full border-4 border-red-700 bg-red-600 text-2xl font-black text-white shadow-2xl [transform:translateZ(1px)]">
               A
             </div>
           </div>
@@ -209,7 +210,7 @@ const EnvelopeAnimation: React.FC = () => {
             className="absolute inset-0 bg-[#f5f4ed]"
             style={{
               clipPath: 'polygon(0 0, 100% 0, 50% 50%)',
-              transform: 'rotateX(180deg)',
+              transform: 'rotateY(180deg)',
               backfaceVisibility: 'hidden',
               WebkitBackfaceVisibility: 'hidden',
               border: '1px solid #e5e7eb',
