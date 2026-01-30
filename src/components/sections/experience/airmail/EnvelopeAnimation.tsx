@@ -47,52 +47,61 @@ const EnvelopeAnimation: React.FC = () => {
       transformOrigin: '50% 0%',
     });
 
-    // Step 3: Letter slides up
+    // Step 3: Letter slides up (Shortened distance and duration)
     tl.to(
       letterRef.current,
       {
-        y: -400,
+        y: -250,
         z: 100,
         rotateZ: -1,
-        duration: 1.8,
+        duration: 0.8,
         ease: 'power2.out',
       },
       '-=0.4',
     );
 
-    // Step 4: Slight scale up for better readability
-    tl.to(letterRef.current, {
-      scale: 1.05,
-      boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.4)',
-      duration: 0.5,
-    });
+    // Step 4: Slight scale up (Faster and overlapping)
+    tl.to(
+      letterRef.current,
+      {
+        scale: 1.05,
+        boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.4)',
+        duration: 0.4,
+      },
+      '-=0.2',
+    );
 
-    // Step 5: Fade out the small letter
-    tl.to(letterRef.current, {
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.inOut',
-    });
+    // Step 5: Fade out the small letter (Happens quickly)
+    tl.to(
+      letterRef.current,
+      {
+        opacity: 0,
+        duration: 0.5,
+        ease: 'power2.inOut',
+      },
+      '-=0.2',
+    );
 
-    // Step 6: Fade out the envelope
+    // Step 6: Fade out the envelope (Sync with letter)
     tl.to(
       envelopeRef.current,
       {
         opacity: 0,
-        duration: 0.8,
+        duration: 0.5,
         ease: 'power2.inOut',
       },
-      '-=0.4',
+      '<',
     );
 
-    // Step 7: Set initial state for large letter
+    // Step 7: Set initial state for large letter (Start from below)
     gsap.set(largeLetterRef.current, {
-      y: -1500,
+      y: 100,
       opacity: 0,
-      scale: 0.9,
+      scale: 0.95,
+      zIndex: 50,
     });
 
-    // Step 8: Large letter descends from above
+    // Step 8: Large letter floats up
     tl.to(
       largeLetterRef.current,
       {
