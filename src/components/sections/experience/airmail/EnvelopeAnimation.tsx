@@ -106,7 +106,7 @@ const EnvelopeAnimation: React.FC = () => {
         {/* 2. THE LETTER (The message inside) */}
         <div
           ref={letterRef}
-          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col rounded-sm border border-slate-100 bg-white p-8 shadow-lg md:p-14"
+          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col overflow-hidden rounded-sm border border-slate-100 bg-white p-8 shadow-lg md:p-14"
           style={{ transform: 'translateZ(1px)', transformStyle: 'preserve-3d' }}
         >
           <div className="mb-8 flex items-start justify-between">
@@ -122,22 +122,22 @@ const EnvelopeAnimation: React.FC = () => {
           </div>
 
           <h3 className="mb-8 border-b border-slate-100 pb-6 font-serif text-3xl font-bold leading-none text-slate-900 md:text-5xl">
-            Digital Craft
+            初めてのご利用のお客様へ
           </h3>
 
-          <div className="flex-1 overflow-hidden font-serif text-sm leading-relaxed text-slate-700 md:text-lg">
-            <div className="space-y-5">
-              <p>To our esteemed visitor,</p>
-              <p>
-                We have successfully synchronized the 3D hinge physics. By anchoring the flap
-                rotation strictly to the top edge, we've eliminated the distortion previously seen
-                when unfolding past the 90-degree threshold.
-              </p>
-              <p>
-                The structural integrity is now maintained through explicit depth management,
-                ensuring every fold and slide feels tactile and intentional.
-              </p>
+          <div className="flex flex-1 flex-col items-center justify-center font-serif text-sm leading-relaxed text-slate-700 md:text-lg">
+            <div className="relative mb-6 h-48 w-48 md:h-64 md:w-64">
+              <img
+                src="/strawberry-bunny.png"
+                alt="Strawberry Bunny"
+                className="h-full w-full object-contain"
+              />
             </div>
+            <p className="max-w-sm text-center">
+              ストロベリーボーイズへようこそ。
+              <br />
+              最高のリラクゼーション体験をあなたに。
+            </p>
           </div>
         </div>
 
