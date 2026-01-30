@@ -49,6 +49,11 @@ export const SevenReasons: React.FC = () => {
               key={i}
               className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors hover:border-[#FF4B5C]/30"
             >
+              {r.title === '定期的な性病検査の義務付け！' && (
+                <div className="absolute right-2 top-2 animate-pulse rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                  検査済証発行可
+                </div>
+              )}
               <div className="flex-shrink-0 text-xl">✅</div>
               <div>
                 <h3 className="mb-2 font-bold leading-tight text-gray-800">{r.title}</h3>

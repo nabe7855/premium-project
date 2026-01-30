@@ -1,7 +1,9 @@
 'use client';
 
+import { CastSampler } from '@/components/sections/guide/first-time/CastSampler';
 import { CTA } from '@/components/sections/guide/first-time/CTA';
 import { DayFlow } from '@/components/sections/guide/first-time/DayFlow';
+import { FAQ } from '@/components/sections/guide/first-time/FAQ';
 import { FirstTimeBanner } from '@/components/sections/guide/first-time/FirstTimeBanner';
 import { Footer } from '@/components/sections/guide/first-time/Footer';
 import { Hero } from '@/components/sections/guide/first-time/Hero';
@@ -40,12 +42,14 @@ export default function Test10Page() {
       <FirstTimeBanner />
       <Hero />
       <Welcome />
+      <CastSampler />
       <ThreePoints />
       <SevenReasons />
       <ReservationFlow />
       <DayFlow />
       <Pricing />
       <Options />
+      <FAQ />
       <CTA />
       <Footer />
 

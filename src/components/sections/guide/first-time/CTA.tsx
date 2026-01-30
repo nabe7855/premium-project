@@ -39,7 +39,10 @@ export const CTA: React.FC = () => {
               </div>
               <div className="text-center md:text-left">
                 <div className="text-xl font-black md:text-2xl">LINEで簡単予約・お問い合わせ</div>
-                <div className="text-sm opacity-90">こちらをクリックして友達登録</div>
+                <div className="text-sm opacity-90">
+                  <span className="mr-2 rounded bg-white/20 px-2 py-0.5">スタンプ1つでもOK</span>
+                  こちらをクリックして友達登録
+                </div>
               </div>
             </div>
           </a>

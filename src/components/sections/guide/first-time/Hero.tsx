@@ -14,9 +14,9 @@ export const Hero: React.FC = () => {
             <span className="text-[#FF4B5C]">安心して楽しめる場所へ!!</span>
           </h1>
           <p className="mb-8 max-w-2xl text-lg font-medium text-gray-600 md:text-xl">
-            ストロベリーボーイズは、貴女の「女風デビュー」を徹底支援します。
+            ストロベリーボーイズは、新宿・渋谷・池袋といった都心を中心に、貴女の「女風デビュー」を徹底支援します。
             <br />
-            業界最安値!! 業界最高レベルのセラピストが貴女をお迎えします。
+            業界最安値かつ最高レベルのセラピストが、日常を忘れる最高の癒やしと潤いをお約束します。
           </p>
 
           <div className="group relative cursor-pointer transition-transform duration-300 hover:scale-105">

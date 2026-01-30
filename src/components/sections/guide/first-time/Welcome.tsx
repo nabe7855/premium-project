@@ -24,13 +24,24 @@ export const Welcome: React.FC = () => {
             </div>
 
             <div className="relative z-10 space-y-8 text-base md:text-lg">
-              <p className="text-lg font-bold text-[#FF4B5C] md:text-xl">
+              <p className="text-lg font-bold leading-relaxed text-[#FF4B5C] md:text-xl">
                 「全ての女性が安心安全にご利用できる女風店」
                 <br />
                 をコンセプトに運営しています☆
               </p>
 
               <div className="space-y-6 text-gray-600">
+                <p className="text-sm leading-relaxed md:text-base">
+                  ストロベリーボーイズは、ただの刺激ではなく、
+                  <br className="hidden md:block" />
+                  <span className="font-bold text-[#FF4B5C]">「明日からまた頑張れる自分」</span>
+                  になれる場所。
+                  <br />
+                  新宿や渋谷の喧騒を離れ、極上のプライベート空間で
+                  <br className="hidden md:block" />
+                  心も体も解き放たれる瞬間をお約束します。
+                </p>
+
                 <p>
                   女風を初めてご利用されるにあたり、不安や懸念をお持ちのお客様も多くいらっしゃると思います。
                   <br />
