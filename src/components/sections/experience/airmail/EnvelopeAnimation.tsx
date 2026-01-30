@@ -9,6 +9,7 @@ const EnvelopeAnimation: React.FC = () => {
   const flapRef = useRef<HTMLDivElement>(null);
   const letterRef = useRef<HTMLDivElement>(null);
   const envelopeRef = useRef<HTMLDivElement>(null);
+  const largeLetterRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -17,7 +18,7 @@ const EnvelopeAnimation: React.FC = () => {
       scrollTrigger: {
         trigger: containerRef.current,
         start: 'top top',
-        end: '+=2000',
+        end: '+=4000', // Extended for new animation sequence
         scrub: 0.5,
         pin: true,
         anticipatePin: 1,
@@ -58,12 +59,48 @@ const EnvelopeAnimation: React.FC = () => {
       '-=0.4',
     );
 
-    // Final emphasis: Slight scale up for better readability
+    // Step 4: Slight scale up for better readability
     tl.to(letterRef.current, {
       scale: 1.05,
       boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.4)',
       duration: 0.5,
     });
+
+    // Step 5: Fade out the small letter
+    tl.to(letterRef.current, {
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.inOut',
+    });
+
+    // Step 6: Fade out the envelope
+    tl.to(
+      envelopeRef.current,
+      {
+        opacity: 0,
+        duration: 0.8,
+        ease: 'power2.inOut',
+      },
+      '-=0.4',
+    );
+
+    // Step 7: Large letter descends from above
+    tl.fromTo(
+      largeLetterRef.current,
+      {
+        y: -800,
+        opacity: 0,
+        scale: 0.9,
+      },
+      {
+        y: 0,
+        opacity: 1,
+        scale: 1,
+        duration: 1.5,
+        ease: 'power2.out',
+      },
+      '-=0.2',
+    );
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -202,6 +239,35 @@ const EnvelopeAnimation: React.FC = () => {
             <div className="absolute left-0 top-0 h-6 w-full overflow-hidden">
               <AirmailBorder />
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Large Letter Pages - Descends from above */}
+      <div
+        ref={largeLetterRef}
+        className="absolute inset-0 flex items-center justify-center opacity-0"
+        style={{ perspective: '2000px' }}
+      >
+        <div className="flex gap-8 md:gap-12">
+          {/* Page 1 */}
+          <div className="h-[500px] w-[350px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/letter-page-1.png"
+              alt="Letter Page 1"
+              className="h-full w-full object-cover"
+            />
+          </div>
+
+          {/* Page 2 */}
+          <div className="h-[500px] w-[350px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/letter-page-2.png"
+              alt="Letter Page 2"
+              className="h-full w-full object-cover"
+            />
           </div>
         </div>
       </div>
