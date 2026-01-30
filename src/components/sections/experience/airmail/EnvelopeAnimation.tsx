@@ -49,7 +49,6 @@ const EnvelopeAnimation: React.FC = () => {
     });
 
     // Step 3: Letter slides up (High Z to pop in front)
-    // Step 3: Letter slides up (High Z to pop in front)
     tl.to(
       letterRef.current,
       {
@@ -71,18 +70,18 @@ const EnvelopeAnimation: React.FC = () => {
         boxShadow: '0 50px 100px -20px rgba(0, 0, 0, 0.4)',
         duration: 0.4,
       },
-      '-=0.7',
+      '-=0.75',
     );
 
-    // Step 5: Fade out the small letter (Aggressively early)
+    // Step 5: Fade out the small letter (Instant fade)
     tl.to(
       letterRef.current,
       {
         opacity: 0,
-        duration: 0.4,
+        duration: 0.3,
         ease: 'power2.inOut',
       },
-      '-=0.6',
+      '-=0.75',
     );
 
     // Step 6: Fade out the envelope (Sync with letter)
@@ -90,7 +89,7 @@ const EnvelopeAnimation: React.FC = () => {
       envelopeRef.current,
       {
         opacity: 0,
-        duration: 0.4,
+        duration: 0.3,
         ease: 'power2.inOut',
       },
       '<',
@@ -104,7 +103,7 @@ const EnvelopeAnimation: React.FC = () => {
       zIndex: 50,
     });
 
-    // Step 8: Large letter floats up (Overlap significantly)
+    // Step 8: Large letter floats up (Immediate overlap)
     tl.to(
       largeLetterRef.current,
       {
@@ -119,7 +118,7 @@ const EnvelopeAnimation: React.FC = () => {
           }
         },
       },
-      '-=0.5',
+      '-=0.7',
     );
 
     return () => {
