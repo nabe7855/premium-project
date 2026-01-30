@@ -106,22 +106,23 @@ const EnvelopeAnimation: React.FC = () => {
         {/* 2. THE LETTER (The message inside) */}
         <div
           ref={letterRef}
-          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col overflow-hidden rounded-sm border border-slate-100 bg-white p-8 shadow-lg md:p-14"
+          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col rounded-sm border border-slate-100 bg-white p-3 shadow-lg md:p-6"
           style={{ transform: 'translateZ(1px)', transformStyle: 'preserve-3d' }}
         >
-          <h3 className="mb-8 border-b border-slate-100 pb-6 pt-4 font-serif text-3xl font-bold leading-none text-slate-900 md:text-5xl">
+          <h3 className="mb-3 border-b border-slate-100 pb-2 pt-1 text-center font-serif text-lg font-bold leading-tight text-slate-900 md:text-2xl">
             初めてのご利用のお客様へ
           </h3>
 
-          <div className="flex flex-1 flex-col items-center justify-center font-serif text-sm leading-relaxed text-slate-700 md:text-lg">
-            <div className="relative mb-6 h-48 w-48 md:h-64 md:w-64">
+          <div className="flex flex-1 flex-col items-center justify-center font-serif text-xs leading-relaxed text-slate-700 md:text-sm">
+            <div className="relative mb-2 h-28 w-28 md:h-36 md:w-36">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/strawberry-bunny.png"
                 alt="Strawberry Bunny"
                 className="h-full w-full object-contain"
               />
             </div>
-            <p className="max-w-sm text-center">
+            <p className="max-w-xs px-2 text-center text-[10px] leading-relaxed md:text-xs">
               ストロベリーボーイズへようこそ。
               <br />
               最高のリラクゼーション体験をあなたに。
