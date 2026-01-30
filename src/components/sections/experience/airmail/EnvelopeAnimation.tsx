@@ -11,6 +11,7 @@ const EnvelopeAnimation: React.FC = () => {
   const letterRef = useRef<HTMLDivElement>(null);
   const envelopeRef = useRef<HTMLDivElement>(null);
   const largeLetterRef = useRef<HTMLDivElement>(null);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
@@ -110,6 +111,11 @@ const EnvelopeAnimation: React.FC = () => {
         scale: 1,
         duration: 1.5,
         ease: 'power2.out',
+        onStart: () => {
+          if (scrollContainerRef.current) {
+            scrollContainerRef.current.scrollTop = 0;
+          }
+        },
       },
       '-=0.2',
     );
@@ -257,10 +263,14 @@ const EnvelopeAnimation: React.FC = () => {
 
       {/* Large Letter Pages - Descends from above */}
       <div
+        ref={scrollContainerRef}
         className="absolute inset-0 z-50 overflow-y-auto overflow-x-hidden"
         style={{ perspective: '2000px', WebkitOverflowScrolling: 'touch' }}
       >
-        <div ref={largeLetterRef} className="flex min-h-full w-full justify-center py-20 opacity-0">
+        <div
+          ref={largeLetterRef}
+          className="flex min-h-full w-full items-start justify-center py-20 opacity-0"
+        >
           <div className="w-full max-w-4xl px-4 md:px-0">
             <Welcome />
           </div>
