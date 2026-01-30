@@ -1,5 +1,6 @@
 'use client';
 
+import { Welcome } from '@/components/sections/guide/first-time/Welcome';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import React, { useEffect, useRef } from 'react';
@@ -86,7 +87,7 @@ const EnvelopeAnimation: React.FC = () => {
 
     // Step 7: Set initial state for large letter
     gsap.set(largeLetterRef.current, {
-      y: -800,
+      y: -1500,
       opacity: 0,
       scale: 0.9,
     });
@@ -247,29 +248,12 @@ const EnvelopeAnimation: React.FC = () => {
 
       {/* Large Letter Pages - Descends from above */}
       <div
-        ref={largeLetterRef}
-        className="absolute inset-0 z-50 flex items-center justify-center"
-        style={{ perspective: '2000px' }}
+        className="absolute inset-0 z-50 overflow-y-auto overflow-x-hidden"
+        style={{ perspective: '2000px', WebkitOverflowScrolling: 'touch' }}
       >
-        <div className="flex gap-2 md:gap-12">
-          {/* Page 1 */}
-          <div className="h-[280px] w-[160px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/letter-page-1.png"
-              alt="Letter Page 1"
-              className="h-full w-full object-cover"
-            />
-          </div>
-
-          {/* Page 2 */}
-          <div className="h-[280px] w-[160px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/letter-page-2.png"
-              alt="Letter Page 2"
-              className="h-full w-full object-cover"
-            />
+        <div ref={largeLetterRef} className="flex min-h-full w-full justify-center py-20 opacity-0">
+          <div className="w-full max-w-4xl px-4 md:px-0">
+            <Welcome />
           </div>
         </div>
       </div>
