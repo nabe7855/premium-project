@@ -251,9 +251,9 @@ const EnvelopeAnimation: React.FC = () => {
         className="absolute inset-0 z-50 flex items-center justify-center"
         style={{ perspective: '2000px' }}
       >
-        <div className="flex gap-8 md:gap-12">
+        <div className="flex gap-2 md:gap-12">
           {/* Page 1 */}
-          <div className="h-[500px] w-[350px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
+          <div className="h-[280px] w-[160px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/letter-page-1.png"
@@ -263,7 +263,7 @@ const EnvelopeAnimation: React.FC = () => {
           </div>
 
           {/* Page 2 */}
-          <div className="h-[500px] w-[350px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
+          <div className="h-[280px] w-[160px] overflow-hidden rounded-lg bg-white shadow-2xl md:h-[600px] md:w-[420px]">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/letter-page-2.png"
