@@ -84,14 +84,16 @@ const EnvelopeAnimation: React.FC = () => {
       '-=0.4',
     );
 
-    // Step 7: Large letter descends from above
-    tl.fromTo(
+    // Step 7: Set initial state for large letter
+    gsap.set(largeLetterRef.current, {
+      y: -800,
+      opacity: 0,
+      scale: 0.9,
+    });
+
+    // Step 8: Large letter descends from above
+    tl.to(
       largeLetterRef.current,
-      {
-        y: -800,
-        opacity: 0,
-        scale: 0.9,
-      },
       {
         y: 0,
         opacity: 1,
@@ -246,7 +248,7 @@ const EnvelopeAnimation: React.FC = () => {
       {/* Large Letter Pages - Descends from above */}
       <div
         ref={largeLetterRef}
-        className="absolute inset-0 flex items-center justify-center opacity-0"
+        className="absolute inset-0 z-50 flex items-center justify-center"
         style={{ perspective: '2000px' }}
       >
         <div className="flex gap-8 md:gap-12">
