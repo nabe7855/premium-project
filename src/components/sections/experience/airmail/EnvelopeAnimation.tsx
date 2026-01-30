@@ -109,19 +109,7 @@ const EnvelopeAnimation: React.FC = () => {
           className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col overflow-hidden rounded-sm border border-slate-100 bg-white p-8 shadow-lg md:p-14"
           style={{ transform: 'translateZ(1px)', transformStyle: 'preserve-3d' }}
         >
-          <div className="mb-8 flex items-start justify-between">
-            <div className="space-y-2">
-              <div className="h-1.5 w-20 bg-blue-600"></div>
-              <div className="font-mono text-[10px] tracking-widest text-slate-400">
-                CORRESPONDENCE ID: 772-B
-              </div>
-            </div>
-            <div className="font-serif text-[10px] italic text-slate-400">
-              Personal & Hand-Delivered
-            </div>
-          </div>
-
-          <h3 className="mb-8 border-b border-slate-100 pb-6 font-serif text-3xl font-bold leading-none text-slate-900 md:text-5xl">
+          <h3 className="mb-8 border-b border-slate-100 pb-6 pt-4 font-serif text-3xl font-bold leading-none text-slate-900 md:text-5xl">
             初めてのご利用のお客様へ
           </h3>
 
