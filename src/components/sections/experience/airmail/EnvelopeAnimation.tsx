@@ -100,7 +100,7 @@ const EnvelopeAnimation: React.FC = () => {
       y: 100,
       opacity: 0,
       scale: 0.95,
-      zIndex: 50,
+      zIndex: 101, // Boost z-index above flap
     });
 
     // Step 8: Large letter floats up (Fast appearance)
@@ -265,7 +265,7 @@ const EnvelopeAnimation: React.FC = () => {
       {/* Large Letter Pages - Descends from above */}
       <div
         ref={scrollContainerRef}
-        className="absolute inset-0 z-50 overflow-y-auto overflow-x-hidden"
+        className="absolute inset-0 z-[100] overflow-y-auto overflow-x-hidden"
         style={{ perspective: '2000px', WebkitOverflowScrolling: 'touch' }}
       >
         <div
