@@ -40,7 +40,10 @@ const EnvelopeAnimation: React.FC = () => {
       { rotateX: 0, scale: 1, opacity: 1, duration: 0.6 },
     );
 
-    // Step 2: Flap Opens (Strictly around the top long side)
+    // Initial state: hide the letter until envelope starts opening
+    gsap.set(letterRef.current, { opacity: 0 });
+
+    // Step 2: Flap Opens & Letter Fades In
     tl.to(flapRef.current, {
       rotateX: 180,
       duration: 1.2,
@@ -48,18 +51,32 @@ const EnvelopeAnimation: React.FC = () => {
       transformOrigin: '50% 0%',
     });
 
-    // Step 3: Letter slides up (High Z to pop in front)
+    // Fade in the letter inside the pocket as the flap opens
     tl.to(
       letterRef.current,
       {
-        y: -350,
-        z: 220,
+        opacity: 1,
+        duration: 0.6,
+        ease: 'power2.inOut',
+      },
+      '<+=0.2',
+    ); // Start slightly after flap starts lifting
+
+    // Step 3: Letter pops to front and slides up (TRIGGER AFTER FLAP IS OPEN)
+    tl.to(
+      letterRef.current,
+      {
+        y: -550, // ★蓋の先端を完全にクリアする距離
+        z: 220, // ★前面への移動
         rotateZ: -1,
         duration: 0.8,
         ease: 'power2.out',
-        zIndex: 40,
+        zIndex: 100, // ★重なり順を確実に最前面へ
+        onStart: () => {
+          if (letterRef.current) letterRef.current.style.zIndex = '100';
+        },
       },
-      '-=0.4',
+      '>', // 蓋の開き終わり直後に開始
     );
 
     // Step 4: Slight scale up
@@ -100,7 +117,7 @@ const EnvelopeAnimation: React.FC = () => {
       y: 100,
       opacity: 0,
       scale: 0.95,
-      zIndex: 101, // Boost z-index above flap
+      zIndex: 301, // Boost z-index above flap AND small letter
     });
 
     // Step 8: Large letter floats up (Fast appearance)
@@ -159,34 +176,7 @@ const EnvelopeAnimation: React.FC = () => {
           ></div>
         </div>
 
-        {/* 2. THE LETTER (The message inside) */}
-        <div
-          ref={letterRef}
-          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col rounded-sm border border-slate-100 bg-white p-3 shadow-lg md:p-6"
-          style={{ transform: 'translateZ(1px)', transformStyle: 'preserve-3d' }}
-        >
-          <h3 className="mb-3 border-b border-slate-100 pb-2 pt-1 text-center font-serif text-lg font-bold leading-tight text-slate-900 md:text-2xl">
-            初めてのご利用のお客様へ
-          </h3>
-
-          <div className="flex flex-1 flex-col items-center justify-center font-serif text-xs leading-relaxed text-slate-700 md:text-sm">
-            <div className="relative mb-2 h-28 w-28 md:h-36 md:w-36">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src="/strawberry-bunny.png"
-                alt="Strawberry Bunny"
-                className="h-full w-full object-contain"
-              />
-            </div>
-            <p className="max-w-xs px-2 text-center text-[10px] leading-relaxed md:text-xs">
-              ストロベリーボーイズへようこそ。
-              <br />
-              最高のリラクゼーション体験をあなたに。
-            </p>
-          </div>
-        </div>
-
-        {/* 3. FRONT PANEL (The Pouch / Pocket) */}
+        {/* 2. FRONT PANEL (The Pouch / Pocket) */}
         <div
           className="absolute inset-0 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-[0_20px_50px_rgba(0,0,0,0.1)]"
           style={{
@@ -215,15 +205,14 @@ const EnvelopeAnimation: React.FC = () => {
           </div>
         </div>
 
-        {/* 4. THE FLAP (The hinged top lid) */}
+        {/* 3. THE FLAP (The hinged top lid) */}
         <div
           ref={flapRef}
           className="pointer-events-none absolute left-0 top-0 h-full w-full"
           style={{
             transformOrigin: 'top center',
             transformStyle: 'preserve-3d',
-            zIndex: 50,
-            transform: 'translateZ(3px)',
+            transform: 'translateZ(3px)', // zIndexを削除
           }}
         >
           {/* FLAP FRONT (Visible when envelope is closed) */}
@@ -260,12 +249,44 @@ const EnvelopeAnimation: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* 4. THE LETTER (Message inside) - 最後に記述することで自然な重なり順を確保 */}
+        <div
+          ref={letterRef}
+          className="absolute left-[4%] top-[4%] flex h-[92%] w-[92%] flex-col rounded-sm border border-slate-100 bg-white p-3 shadow-lg md:p-6"
+          style={{
+            transform: 'translateZ(1px)',
+            transformStyle: 'preserve-3d',
+            zIndex: 1,
+            opacity: 0, // 最初は完全に隠す
+          }}
+        >
+          <h3 className="mb-3 border-b border-slate-100 pb-2 pt-1 text-center font-serif text-lg font-bold leading-tight text-slate-900 md:text-2xl">
+            初めてのご利用のお客様へ
+          </h3>
+
+          <div className="flex flex-1 flex-col items-center justify-center font-serif text-xs leading-relaxed text-slate-700 md:text-sm">
+            <div className="relative mb-2 h-28 w-28 md:h-36 md:w-36">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/strawberry-bunny.png"
+                alt="Strawberry Bunny"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <p className="max-w-xs px-2 text-center text-[10px] leading-relaxed md:text-xs">
+              ストロベリーボーイズへようこそ。
+              <br />
+              最高のリラクゼーション体験をあなたに。
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Large Letter Pages - Descends from above */}
       <div
         ref={scrollContainerRef}
-        className="absolute inset-0 z-[100] overflow-y-auto overflow-x-hidden"
+        className="absolute inset-0 z-[1000] overflow-y-auto overflow-x-hidden"
         style={{ perspective: '2000px', WebkitOverflowScrolling: 'touch' }}
       >
         <div
