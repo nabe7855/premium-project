@@ -103,14 +103,14 @@ const EnvelopeAnimation: React.FC = () => {
       zIndex: 50,
     });
 
-    // Step 8: Large letter floats up (Immediate overlap)
+    // Step 8: Large letter floats up (Fast appearance)
     tl.to(
       largeLetterRef.current,
       {
         y: 0,
         opacity: 1,
         scale: 1,
-        duration: 1.5,
+        duration: 0.8,
         ease: 'power2.out',
         onStart: () => {
           if (scrollContainerRef.current) {
