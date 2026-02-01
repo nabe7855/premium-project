@@ -24,12 +24,6 @@ const EnvelopeAnimation: React.FC = () => {
         scrub: 0.5,
         pin: true,
         anticipatePin: 1,
-        onUpdate: (self: any) => {
-          const progressBar = document.getElementById('progress-bar');
-          if (progressBar) {
-            progressBar.style.width = `${self.progress * 100}%`;
-          }
-        },
       },
     });
 
@@ -295,19 +289,6 @@ const EnvelopeAnimation: React.FC = () => {
           <div className="w-full max-w-4xl px-4 md:px-0">
             <Welcome />
           </div>
-        </div>
-      </div>
-
-      {/* Progress tracking footer */}
-      <div className="absolute bottom-10 flex flex-col items-center gap-3 opacity-40">
-        <span className="text-[10px] font-bold uppercase tracking-[0.5em] text-slate-500">
-          Unfolding Sequence
-        </span>
-        <div className="h-[3px] w-32 overflow-hidden rounded-full bg-slate-100">
-          <div
-            id="progress-bar"
-            className="h-full w-0 bg-blue-600 transition-all duration-150 ease-out"
-          ></div>
         </div>
       </div>
     </div>
