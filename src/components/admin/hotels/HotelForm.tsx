@@ -763,11 +763,11 @@ export default function HotelForm({ id }: HotelFormProps) {
         </div>
       )}
 
-      <div className="flex justify-end gap-4">
+      <div className="flex flex-col-reverse justify-end gap-4 sm:flex-row">
         <button
           type="button"
           onClick={() => router.back()}
-          className="rounded-lg bg-white/5 px-6 py-2 text-white transition-colors hover:bg-white/10"
+          className="w-full rounded-lg bg-white/5 px-6 py-3 text-white transition-colors hover:bg-white/10 sm:w-auto sm:py-2"
         >
           キャンセル
         </button>
@@ -777,7 +777,7 @@ export default function HotelForm({ id }: HotelFormProps) {
           value="draft"
           formNoValidate
           disabled={loading}
-          className="rounded-lg border border-brand-accent bg-brand-primary px-6 py-2 font-bold text-brand-accent transition-all hover:bg-brand-accent/10 disabled:opacity-50"
+          className="w-full rounded-lg border border-brand-accent bg-brand-primary px-6 py-3 font-bold text-brand-accent transition-all hover:bg-brand-accent/10 disabled:opacity-50 sm:w-auto sm:py-2"
         >
           {loading ? '保存中...' : '下書き保存'}
         </button>
@@ -786,7 +786,7 @@ export default function HotelForm({ id }: HotelFormProps) {
           name="status"
           value="published"
           disabled={loading}
-          className="rounded-lg bg-brand-accent px-8 py-2 font-bold text-white shadow-lg transition-all hover:opacity-90 disabled:opacity-50"
+          className="w-full rounded-lg bg-brand-accent px-8 py-3 font-bold text-white shadow-lg transition-all hover:opacity-90 disabled:opacity-50 sm:w-auto sm:py-2"
         >
           {loading ? '保存中...' : '公開する'}
         </button>
