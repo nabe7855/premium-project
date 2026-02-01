@@ -114,23 +114,37 @@ const EnvelopeAnimation: React.FC = () => {
       zIndex: 301, // Boost z-index above flap AND small letter
     });
 
-    // Step 8: Large letter floats up (Fast appearance)
+    // Step 8: Large letter appearance (Split fade and movement)
+    // First, fade in very quickly
     tl.to(
       largeLetterRef.current,
       {
-        y: 0,
         opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: 'power2.out',
+        duration: 0.2, // Fast fade
+        ease: 'none',
         onStart: () => {
           if (scrollContainerRef.current) {
             scrollContainerRef.current.scrollTop = 0;
           }
         },
       },
-      '-=0.7',
+      '-=0.75',
     );
+
+    // Then, continue floating up and scaling
+    tl.to(
+      largeLetterRef.current,
+      {
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        ease: 'power2.out',
+      },
+      '<', // Start with the fade
+    );
+
+    // Step 9: "Hold" the letter at full opacity while pinned
+    tl.to({}, { duration: 1 }); // Empty animation to act as a buffer/hold
 
     return () => {
       ScrollTrigger.getAll().forEach((t) => t.kill());
