@@ -237,7 +237,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4 md:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-20 md:px-6">
         <Link
           href="/"
           className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
@@ -270,32 +270,57 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               <Camera size={16} />
             </button>
           )}
-
-          <div className="ml-2 flex items-center gap-2 border-l border-pink-100 pl-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
-              Premium
-            </span>
-            <span className="text-lg">{currentStore?.emoji}</span>
-          </div>
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {/* Header Banner Image (Horizontal) */}
+          <Link
+            href={`/store/${currentStoreId}/first-time`}
+            className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
+          >
+            <img
+              src="/初めてのお客様へバナー.png"
+              alt="初めてのお客様へ"
+              className="h-full w-full object-cover"
+            />
+          </Link>
+          <Link
+            href={`/store/${currentStoreId}/first-time`}
+            className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+          >
+            <img
+              src="/初めてのお客様へバナー.png"
+              alt="初めてのお客様へ"
+              className="h-full w-full object-cover"
+            />
+          </Link>
+
           <Link
             href="#reserve"
             className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:block"
           >
             {config.reserveButtonText}
           </Link>
+
           <button
             onClick={() => {
               if (!isMenuOpen) setIsMenuOpen(true);
               else closeMenu();
             }}
-            className={`relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all active:scale-95 sm:h-12 sm:w-12 ${
-              isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-white text-gray-600 shadow-sm'
+            className={`flex flex-col items-center justify-center gap-1 rounded-full px-5 py-3 transition-all active:scale-95 md:gap-1.5 md:px-6 md:py-4 ${
+              isMenuOpen
+                ? 'bg-pink-50 text-pink-500'
+                : 'bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-md hover:shadow-lg'
             }`}
           >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            {isMenuOpen ? (
+              <X size={24} className="md:h-7 md:w-7" />
+            ) : (
+              <Menu size={24} className="md:h-7 md:w-7" />
+            )}
+            <span className="text-xs font-black tracking-wider md:text-sm">
+              {isMenuOpen ? '閉じる' : 'MENU'}
+            </span>
           </button>
         </div>
       </div>
