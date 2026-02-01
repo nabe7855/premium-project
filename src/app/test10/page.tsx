@@ -54,7 +54,7 @@ export default function Test10Page() {
       <Footer />
 
       {/* Sticky Bottom CTA for Mobile */}
-      <div className="fixed bottom-4 left-4 right-4 z-50 md:hidden">
+      <div className="fixed bottom-24 left-4 right-4 z-50 md:hidden">
         <a
           href="https://line.me"
           target="_blank"

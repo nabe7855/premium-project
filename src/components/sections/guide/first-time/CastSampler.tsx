@@ -45,11 +45,11 @@ export const CastSampler: React.FC = () => {
           </p>
         </div>
 
-        <div className="mb-12 grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="mb-12 flex gap-6 overflow-x-auto pb-6 md:grid md:grid-cols-3 md:gap-8 md:pb-0">
           {castSamples.map((cast) => (
             <div
               key={cast.id}
-              className="group relative overflow-hidden rounded-3xl bg-white shadow-xl transition-all hover:-translate-y-2"
+              className="group relative w-[280px] flex-shrink-0 overflow-hidden rounded-3xl bg-white shadow-xl transition-all hover:-translate-y-2 md:w-full"
             >
               <div className="aspect-[3/4] overflow-hidden">
                 <img
