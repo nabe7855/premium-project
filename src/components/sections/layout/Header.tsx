@@ -282,31 +282,60 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             </button>
           )}
 
-          <div className="ml-2 flex items-center gap-2 border-l border-pink-100 pl-3">
-            <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
-              Premium
-            </span>
-            <span className="text-lg">{currentStore?.emoji}</span>
+          <div className="ml-2 flex items-center">
+            <span className="text-xl sm:text-2xl">{currentStore?.emoji}</span>
           </div>
         </Link>
 
-        <div className="flex items-center gap-2 sm:gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          {/* Header Banner Image (Horizontal) */}
+          <Link
+            href={`/store/${currentStoreId}/first-time`}
+            className="hidden h-10 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-12"
+          >
+            <img
+              src="/初めてのお客様へバナー.png"
+              alt="初めてのお客様へ"
+              className="h-full w-full object-cover"
+            />
+          </Link>
+          <Link
+            href={`/store/${currentStoreId}/first-time`}
+            className="block h-9 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+          >
+            <img
+              src="/初めてのお客様へバナー.png"
+              alt="初めてのお客様へ"
+              className="h-full w-full object-cover"
+            />
+          </Link>
+
           <Link
             href="#reserve"
             className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:block"
           >
             {config.reserveButtonText}
           </Link>
+
           <button
             onClick={() => {
               if (!isMenuOpen) setIsMenuOpen(true);
               else closeMenu();
             }}
-            className={`relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all active:scale-95 sm:h-12 sm:w-12 ${
-              isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-white text-gray-600 shadow-sm'
+            className={`relative flex flex-col items-center justify-center transition-all active:scale-95 ${
+              isMenuOpen ? 'text-pink-500' : 'text-gray-600'
             }`}
           >
-            {isMenuOpen ? <X size={28} /> : <Menu size={28} />}
+            <div
+              className={`flex h-9 w-9 items-center justify-center rounded-xl transition-all sm:h-10 sm:w-10 ${
+                isMenuOpen ? 'bg-pink-50' : 'bg-white shadow-sm'
+              }`}
+            >
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </div>
+            <span className="mt-0.5 text-[8px] font-black tracking-tighter sm:text-[9px]">
+              MENU
+            </span>
           </button>
         </div>
       </div>
