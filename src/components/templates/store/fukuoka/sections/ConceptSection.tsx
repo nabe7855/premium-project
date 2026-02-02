@@ -101,46 +101,9 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
 
   return (
     <section id="concept" className="mx-auto max-w-7xl overflow-hidden px-6 py-16 md:py-24">
-      <div className="grid grid-cols-1 items-center gap-12 md:gap-20 lg:grid-cols-2">
-        {/* Image Side */}
-        <div className="relative order-2 h-[400px] md:h-[600px] lg:order-1">
-          <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-pink-100 opacity-50 mix-blend-multiply blur-3xl filter"></div>
-          <div className="bg-primary-100 absolute -bottom-10 -right-10 h-40 w-40 rounded-full opacity-50 mix-blend-multiply blur-3xl filter"></div>
-
-          {concepts.map((concept, idx) => (
-            <div
-              key={idx}
-              className={`absolute inset-0 z-10 transform overflow-hidden rounded-[2rem] shadow-2xl transition-all duration-1000 ${
-                idx === currentConceptIndex
-                  ? 'translate-y-0 rotate-0 opacity-100'
-                  : 'pointer-events-none translate-y-8 rotate-3 opacity-0'
-              }`}
-            >
-              <img
-                src={concept.imageUrl}
-                alt={concept.title}
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
-
-              {isEditing && idx === currentConceptIndex && (
-                <label className="absolute inset-0 z-50 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
-                  <Camera size={48} className="mb-2" />
-                  <span className="text-sm font-bold">画像を変更</span>
-                  <input
-                    type="file"
-                    className="hidden"
-                    accept="image/*"
-                    onChange={(e) => handleImageChange(e, idx)}
-                  />
-                </label>
-              )}
-            </div>
-          ))}
-        </div>
-
+      <div className="mx-auto max-w-4xl">
         {/* Content Side */}
-        <div className="order-1 lg:order-2">
+        <div>
           <span
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
@@ -164,7 +127,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                 key={idx}
                 className={`relative cursor-pointer rounded-[1.5rem] border p-4 transition-all duration-500 md:p-6 ${
                   idx === currentConceptIndex
-                    ? 'border-primary-200 shadow-primary-50 scale-[1.02] bg-white shadow-lg'
+                    ? 'border-primary-200 shadow-primary-50 scale-[1.01] bg-white shadow-lg'
                     : 'hover:border-primary-100 border-neutral-100 bg-white/50 hover:bg-white'
                 }`}
                 onClick={() => setCurrentConceptIndex(idx)}
@@ -186,15 +149,41 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                       {concept.title}
                     </h3>
                     {(idx === currentConceptIndex || isEditing) && (
-                      <p
-                        contentEditable={isEditing}
-                        suppressContentEditableWarning={isEditing}
-                        onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
-                        onClick={(e) => isEditing && e.stopPropagation()}
-                        className={`text-xs leading-relaxed text-slate-500 duration-500 md:text-sm ${isEditing ? 'mt-2 block min-h-[1em] rounded px-1 hover:bg-slate-50' : 'animate-in fade-in slide-in-from-top-2'}`}
+                      <div
+                        className={`mt-3 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
                       >
-                        {concept.desc}
-                      </p>
+                        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
+                          <img
+                            src={concept.imageUrl}
+                            alt={concept.title}
+                            className="h-full w-full object-cover"
+                          />
+                          {isEditing && (
+                            <label
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100"
+                            >
+                              <Camera size={24} className="mb-1" />
+                              <span className="text-[10px] font-bold">画像変更</span>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => handleImageChange(e, idx)}
+                              />
+                            </label>
+                          )}
+                        </div>
+                        <p
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
+                          onClick={(e) => isEditing && e.stopPropagation()}
+                          className={`text-xs leading-relaxed text-slate-500 md:text-sm ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : ''}`}
+                        >
+                          {concept.desc}
+                        </p>
+                      </div>
                     )}
                   </div>
                   {isEditing && (

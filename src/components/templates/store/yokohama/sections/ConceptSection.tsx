@@ -79,10 +79,10 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
 
   return (
     <section id="concept" className="bg-slate-50 py-16 md:py-24">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+      <div className="mx-auto max-w-4xl px-4 md:px-6">
+        <div className="relative">
           {/* Content Side */}
-          <div className="order-2 lg:order-1">
+          <div>
             <span
               contentEditable={isEditing}
               suppressContentEditableWarning={isEditing}
@@ -121,7 +121,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                     >
                       <CheckCircle2 size={18} />
                     </div>
-                    <div>
+                    <div className="flex-grow">
                       <h3
                         contentEditable={isEditing}
                         suppressContentEditableWarning={isEditing}
@@ -134,52 +134,44 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                         {concept.title}
                       </h3>
                       {(idx === currentConceptIndex || isEditing) && (
-                        <p
-                          contentEditable={isEditing}
-                          suppressContentEditableWarning={isEditing}
-                          onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
-                          onClick={(e) => isEditing && e.stopPropagation()}
-                          className={`text-sm leading-relaxed text-slate-500 duration-500 ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : 'animate-in fade-in slide-in-from-top-2'}`}
+                        <div
+                          className={`mt-4 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
                         >
-                          {concept.desc}
-                        </p>
+                          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
+                            <img
+                              src={concept.imageUrl}
+                              alt={concept.title}
+                              className="h-full w-full object-cover"
+                            />
+                            {isEditing && (
+                              <label
+                                onClick={(e) => e.stopPropagation()}
+                                className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100"
+                              >
+                                <Camera size={24} className="mb-1" />
+                                <span className="text-[10px] font-bold">画像変更</span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  accept="image/*"
+                                  onChange={(e) => handleImageChange(e, idx)}
+                                />
+                              </label>
+                            )}
+                          </div>
+                          <p
+                            contentEditable={isEditing}
+                            suppressContentEditableWarning={isEditing}
+                            onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
+                            onClick={(e) => isEditing && e.stopPropagation()}
+                            className={`text-sm leading-relaxed text-slate-500 ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : ''}`}
+                          >
+                            {concept.desc}
+                          </p>
+                        </div>
                       )}
                     </div>
                   </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Image Side */}
-          <div className="order-1 lg:order-2">
-            <div className="relative aspect-square overflow-hidden rounded-[2.5rem] shadow-2xl">
-              {items.map((concept, idx) => (
-                <div
-                  key={idx}
-                  className={`absolute inset-0 transition-opacity duration-1000 ${
-                    idx === currentConceptIndex ? 'opacity-100' : 'opacity-0'
-                  }`}
-                >
-                  <img
-                    src={concept.imageUrl}
-                    alt={concept.title}
-                    className="h-full w-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 to-transparent"></div>
-
-                  {isEditing && idx === currentConceptIndex && (
-                    <label className="absolute inset-0 z-50 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
-                      <Camera size={48} className="mb-2" />
-                      <span className="text-sm font-bold">画像を変更</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, idx)}
-                      />
-                    </label>
-                  )}
                 </div>
               ))}
             </div>
