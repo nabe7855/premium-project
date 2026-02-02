@@ -21,6 +21,7 @@ export default function NewsManagementPage() {
       title: '名称未設定のページ',
       status: 'private',
       updatedAt: Date.now(),
+      targetStoreSlugs: [],
       sections: [
         {
           id: '1',
@@ -68,11 +69,15 @@ export default function NewsManagementPage() {
     );
   };
 
+  const updatePage = (id: string, data: Partial<PageData>) => {
+    setPages((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, ...data, updatedAt: Date.now() } : p)),
+    );
+  };
+
   const updateActivePage = (data: Partial<PageData>) => {
     if (!activePageId) return;
-    setPages((prev) =>
-      prev.map((p) => (p.id === activePageId ? { ...p, ...data, updatedAt: Date.now() } : p)),
-    );
+    updatePage(activePageId, data);
   };
 
   if (view === 'dashboard') {
@@ -83,6 +88,7 @@ export default function NewsManagementPage() {
         onEditPage={handleEditPage}
         onDeletePage={handleDeletePage}
         onToggleStatus={handleToggleStatus}
+        onUpdatePage={updatePage}
       />
     );
   }

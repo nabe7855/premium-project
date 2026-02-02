@@ -1,3 +1,4 @@
+import { getAllStores } from '@/lib/store/store-data';
 import React from 'react';
 import { PageData } from './types';
 
@@ -7,6 +8,7 @@ interface NewsDashboardProps {
   onEditPage: (id: string) => void;
   onDeletePage: (id: string) => void;
   onToggleStatus: (id: string) => void;
+  onUpdatePage: (id: string, data: Partial<PageData>) => void;
 }
 
 const NewsDashboard: React.FC<NewsDashboardProps> = ({
@@ -15,7 +17,16 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   onEditPage,
   onDeletePage,
   onToggleStatus,
+  onUpdatePage,
 }) => {
+  const stores = getAllStores();
+
+  const handleStoreToggle = (pageId: string, currentStores: string[], storeSlug: string) => {
+    const nextStores = currentStores.includes(storeSlug)
+      ? currentStores.filter((s) => s !== storeSlug)
+      : [...currentStores, storeSlug];
+    onUpdatePage(pageId, { targetStoreSlugs: nextStores });
+  };
   return (
     <div className="min-h-screen bg-slate-50 p-8 md:p-12">
       <div className="mx-auto max-w-6xl">
@@ -119,6 +130,33 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                         minute: '2-digit',
                       })}
                     </span>
+                  </div>
+
+                  {/* Store Selection */}
+                  <div className="mb-6 space-y-3">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                      表示対象店舗:
+                    </span>
+                    <div className="flex flex-wrap gap-2">
+                      {stores.map((store) => {
+                        const isSelected = (page.targetStoreSlugs || []).includes(store.slug);
+                        return (
+                          <button
+                            key={store.slug}
+                            onClick={() =>
+                              handleStoreToggle(page.id, page.targetStoreSlugs || [], store.slug)
+                            }
+                            className={`rounded-xl px-3 py-1.5 text-[10px] font-bold transition-all ${
+                              isSelected
+                                ? 'bg-rose-500 text-white shadow-md'
+                                : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                            }`}
+                          >
+                            {store.name.replace('ストロベリーボーイ', '').replace('店', '').trim()}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   <div className="mt-auto flex items-center justify-between border-t border-slate-50 pt-8">

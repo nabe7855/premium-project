@@ -48,4 +48,5 @@ export interface PageData {
   sections: SectionData[];
   thumbnailUrl?: string;
   shortDescription?: string;
+  targetStoreSlugs?: string[];
 }
