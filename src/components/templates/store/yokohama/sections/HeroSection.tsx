@@ -124,10 +124,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               key={index}
               onClick={() => setCurrentHeroSlide(index)}
-              className={`h-2.5 w-2.5 rounded-full border border-white/30 shadow-md transition-all duration-500 ${
-                index === currentHeroSlide
-                  ? 'w-6 bg-white opacity-100'
-                  : 'bg-white/40 hover:bg-white/60'
+              className={`h-2.5 w-2.5 rounded-full border border-black/10 shadow-sm transition-all duration-300 ${
+                index === currentHeroSlide ? 'bg-slate-700' : 'bg-white/80 hover:bg-white'
               }`}
               aria-label={`Slide ${index + 1}`}
             />
