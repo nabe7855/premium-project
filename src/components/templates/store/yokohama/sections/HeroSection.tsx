@@ -211,31 +211,30 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       </svg>
                     </button>
                   </div>
-
-                  {/* Add Image */}
-                  <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-emerald-500/80 py-2 text-white transition-all hover:bg-emerald-600">
-                    <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 4v16m8-8H4"
-                      />
-                    </svg>
-                    <span className="text-xs font-bold">新しい画像を追加</span>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={handleAddImage}
-                    />
-                  </label>
                 </div>
               )}
             </div>
           ))}
           <div className="absolute inset-0 z-10 hidden bg-gradient-to-r from-white/95 via-white/40 to-transparent md:block"></div>
           <div className="absolute inset-0 z-10 bg-gradient-to-t from-white/90 via-white/10 to-transparent md:hidden"></div>
+
+          {/* Add Image Button - Always visible in editing mode */}
+          {isEditing && (
+            <div className="absolute bottom-20 left-1/2 z-50 -translate-x-1/2">
+              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-emerald-500/80 px-6 py-3 text-white shadow-lg transition-all hover:bg-emerald-600">
+                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                <span className="text-sm font-bold">新しい画像を追加</span>
+                <input type="file" className="hidden" accept="image/*" onChange={handleAddImage} />
+              </label>
+            </div>
+          )}
         </div>
 
         <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
