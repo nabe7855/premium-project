@@ -156,11 +156,19 @@ export default function StoreTopManagement() {
       } else if (section === 'hero' && typeof index === 'number') {
         // Hero images array handling
         const newImages = [...config.hero.images];
-        const oldImageUrl = newImages[index];
-        if (oldImageUrl && oldImageUrl.startsWith('http')) {
-          await deleteStorageFile(oldImageUrl);
+
+        // If index equals length, we're adding a new image
+        if (index === newImages.length) {
+          newImages.push(publicUrl);
+        } else {
+          // Otherwise, we're replacing an existing image
+          const oldImageUrl = newImages[index];
+          if (oldImageUrl && oldImageUrl.startsWith('http')) {
+            await deleteStorageFile(oldImageUrl);
+          }
+          newImages[index] = publicUrl;
         }
-        newImages[index] = publicUrl;
+
         const newConfig = {
           ...config,
           hero: { ...config.hero, images: newImages },
