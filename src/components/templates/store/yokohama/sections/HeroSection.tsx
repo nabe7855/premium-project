@@ -117,22 +117,23 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
           {/* Text and buttons removed as per user request */}
         </div>
-      </section>
 
-      {/* Slider Indicators - Moved below hero section */}
-      <div className="relative z-30 flex justify-center space-x-3 py-4">
-        {images.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentHeroSlide(index)}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              index === currentHeroSlide
-                ? 'bg-primary-500 w-12'
-                : 'hover:bg-primary-400 w-5 bg-slate-300'
-            }`}
-          />
-        ))}
-      </div>
+        {/* Slider Indicators - Moved inside hero section and styled as circles */}
+        <div className="absolute bottom-10 left-1/2 z-30 flex -translate-x-1/2 justify-center space-x-3">
+          {images.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentHeroSlide(index)}
+              className={`h-2.5 w-2.5 rounded-full border border-white/30 shadow-md transition-all duration-500 ${
+                index === currentHeroSlide
+                  ? 'w-6 bg-white opacity-100'
+                  : 'bg-white/40 hover:bg-white/60'
+              }`}
+              aria-label={`Slide ${index + 1}`}
+            />
+          ))}
+        </div>
+      </section>
     </>
   );
 };
