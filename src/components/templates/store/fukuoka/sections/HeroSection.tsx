@@ -73,23 +73,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    console.log('[HeroSection] handleImageChange called', {
-      index,
-      filesLength: e.target.files?.length,
-    });
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
-      console.log('[HeroSection] Calling onImageUpload', {
-        section: 'hero',
-        fileName: file.name,
-        index,
-      });
       onImageUpload('hero', file, index);
-    } else {
-      console.log('[HeroSection] No file or onImageUpload not available', {
-        file: !!file,
-        onImageUpload: !!onImageUpload,
-      });
     }
   };
 
@@ -117,24 +103,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   };
 
   const handleAddImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('[HeroSection] handleAddImage called', {
-      filesLength: e.target.files?.length,
-      imagesLength: images.length,
-    });
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
-      console.log('[HeroSection] Calling onImageUpload for new image', {
-        section: 'hero',
-        fileName: file.name,
-        index: images.length,
-      });
       onImageUpload('hero', file, images.length);
       setCurrentHeroSlide(images.length);
-    } else {
-      console.log('[HeroSection] No file or onImageUpload not available', {
-        file: !!file,
-        onImageUpload: !!onImageUpload,
-      });
     }
   };
 

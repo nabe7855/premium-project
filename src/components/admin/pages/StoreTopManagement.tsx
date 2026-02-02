@@ -133,23 +133,11 @@ export default function StoreTopManagement() {
 
   // 画像アップロード処理
   const handleImageUpload = async (section: string, file: File, index?: number, key?: string) => {
-    console.log('[StoreTopManagement] handleImageUpload called', {
-      section,
-      fileName: file.name,
-      index,
-      key,
-      selectedStore,
-    });
-    if (!selectedStore) {
-      console.log('[StoreTopManagement] No store selected');
-      return;
-    }
+    if (!selectedStore) return;
 
     const toastId = toast.loading('画像をアップロード中...');
     try {
-      console.log('[StoreTopManagement] Calling uploadStoreTopImage');
       const publicUrl = await uploadStoreTopImage(selectedStore, section, file);
-      console.log('[StoreTopManagement] Upload result:', publicUrl);
 
       if (!publicUrl) {
         toast.error('画像のアップロードに失敗しました', { id: toastId });
@@ -166,19 +154,13 @@ export default function StoreTopManagement() {
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
       } else if (section === 'hero' && typeof index === 'number') {
-        console.log('[StoreTopManagement] Processing hero image upload', {
-          index,
-          currentImagesLength: config.hero.images.length,
-        });
         // Hero images array handling
         const newImages = [...config.hero.images];
 
         // If index equals length, we're adding a new image
         if (index === newImages.length) {
-          console.log('[StoreTopManagement] Adding new image to array');
           newImages.push(publicUrl);
         } else {
-          console.log('[StoreTopManagement] Replacing existing image at index', index);
           // Otherwise, we're replacing an existing image
           const oldImageUrl = newImages[index];
           if (oldImageUrl && oldImageUrl.startsWith('http')) {
@@ -191,9 +173,6 @@ export default function StoreTopManagement() {
           ...config,
           hero: { ...config.hero, images: newImages },
         };
-        console.log('[StoreTopManagement] Saving new config', {
-          newImagesLength: newImages.length,
-        });
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
       } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
