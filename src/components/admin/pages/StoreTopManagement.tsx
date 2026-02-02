@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, Eye, Layout, Save } from 'lucide-react';
+import { ChevronLeft, Eye, Layout, Menu, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { Switch } from '@/components/ui/switch';
 
 import { deleteStorageFile } from '@/actions/storage';
@@ -281,6 +282,50 @@ export default function StoreTopManagement() {
     }
   };
 
+  const renderSidebarContent = () => (
+    <div className="space-y-4">
+      <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+        <Layout className="h-3 w-3" />
+        表示セクション
+      </h2>
+
+      <div className="space-y-2">
+        {SECTION_ORDER.map((sectionId) => {
+          const label = SECTION_LABELS[sectionId] || sectionId;
+          const sectionData = (config as any)[sectionId];
+
+          if (!sectionData || typeof sectionData.isVisible !== 'boolean') return null;
+
+          return (
+            <div
+              key={sectionId}
+              className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3"
+            >
+              <button
+                onClick={() => scrollToSection(sectionId)}
+                className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
+              >
+                {label}
+              </button>
+              <Switch
+                checked={sectionData.isVisible}
+                onCheckedChange={() => toggleVisibility(sectionId as any)}
+                className="scale-75"
+              />
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
+        <p className="text-[10px] leading-relaxed text-blue-300">
+          <span className="mb-1 block font-bold">💡 編集のヒント</span>
+          右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
+        </p>
+      </div>
+    </div>
+  );
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center p-20">
@@ -290,104 +335,102 @@ export default function StoreTopManagement() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-120px)] flex-col gap-4 overflow-hidden">
+    <div className="flex h-[calc(100vh-120px)] flex-col gap-2 overflow-hidden sm:gap-4">
       {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between rounded-2xl border border-gray-700/50 bg-brand-secondary px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400"
-            onClick={() => window.history.back()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-bold text-white">店舗トップ管理</h1>
-            <p className="text-[10px] text-brand-text-secondary">プレビュー上で直接編集できます</p>
+      <div className="flex flex-shrink-0 flex-col items-stretch justify-between gap-2 rounded-2xl border border-gray-700/50 bg-brand-secondary px-4 py-2 sm:flex-row sm:items-center sm:px-6 sm:py-3">
+        <div className="flex items-center justify-between gap-2 sm:justify-start sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-gray-400 sm:h-9 sm:w-auto sm:px-3"
+              onClick={() => window.history.back()}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-sm font-bold text-white sm:text-lg">店舗トップ管理</h1>
+              <p className="hidden text-[10px] text-brand-text-secondary sm:block">
+                プレビュー上で直接編集できます
+              </p>
+            </div>
+          </div>
+
+          <div className="sm:hidden">
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="h-8 w-8 border-gray-700 p-0 text-gray-400"
+                >
+                  <Menu className="h-4 w-4" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[80%] border-gray-700 bg-brand-secondary p-4">
+                <SheetHeader className="mb-4">
+                  <SheetTitle className="text-left text-white">表示セクション</SheetTitle>
+                </SheetHeader>
+                <div className="h-[calc(100vh-100px)] overflow-y-auto pb-8">
+                  {renderSidebarContent()}
+                </div>
+              </SheetContent>
+            </Sheet>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="h-9 w-[160px] border-gray-700 bg-brand-primary text-xs text-white">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {getAllStores().map((store) => (
-                <SelectItem key={store.slug} value={store.slug}>
-                  {store.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+        <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-4">
+          <div className="flex flex-grow items-center gap-2 sm:flex-grow-0">
+            <Select value={selectedStore} onValueChange={setSelectedStore}>
+              <SelectTrigger className="h-8 flex-grow border-gray-700 bg-brand-primary text-[10px] text-white sm:h-9 sm:w-[160px] sm:text-xs">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {getAllStores().map((store) => (
+                  <SelectItem key={store.slug} value={store.slug}>
+                    {store.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-          <div className="h-6 w-px bg-gray-700"></div>
+          <div className="hidden h-6 w-px bg-gray-700 sm:block"></div>
 
-          <Button
-            variant={isPreviewMode ? 'secondary' : 'outline'}
-            size="sm"
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={isPreviewMode ? 'h-9 bg-white/10' : 'h-9 border-gray-700 text-gray-300'}
-          >
-            <Eye className="mr-2 h-4 w-4" />
-            {isPreviewMode ? '編集モードに戻る' : 'プレビュー'}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant={isPreviewMode ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              className={
+                isPreviewMode
+                  ? 'h-8 bg-white/10 px-2 sm:h-9 sm:px-4'
+                  : 'h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-4'
+              }
+            >
+              <Eye className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">
+                {isPreviewMode ? '編集モードに戻る' : 'プレビュー'}
+              </span>
+            </Button>
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            size="sm"
-            className="h-9 bg-brand-accent font-bold hover:bg-brand-accent/90"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            {isSaving ? '保存中...' : '公開する'}
-          </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              size="sm"
+              className="h-8 bg-brand-accent px-3 font-bold hover:bg-brand-accent/90 sm:h-9 sm:px-4"
+            >
+              <Save className="h-4 w-4 sm:mr-2" />
+              <span>{isSaving ? '...' : '公開'}</span>
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-grow gap-4 overflow-hidden">
-        {/* Sidebar: Controls */}
-        <div className="w-64 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4">
-          <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-            <Layout className="h-3 w-3" />
-            表示セクション
-          </h2>
-
-          <div className="space-y-2">
-            {SECTION_ORDER.map((sectionId) => {
-              const label = SECTION_LABELS[sectionId] || sectionId;
-              const sectionData = (config as any)[sectionId];
-
-              if (!sectionData || typeof sectionData.isVisible !== 'boolean') return null;
-
-              return (
-                <div
-                  key={sectionId}
-                  className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3"
-                >
-                  <button
-                    onClick={() => scrollToSection(sectionId)}
-                    className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
-                  >
-                    {label}
-                  </button>
-                  <Switch
-                    checked={sectionData.isVisible}
-                    onCheckedChange={() => toggleVisibility(sectionId as any)}
-                    className="scale-75"
-                  />
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
-            <p className="text-[10px] leading-relaxed text-blue-300">
-              <span className="mb-1 block font-bold">💡 編集のヒント</span>
-              右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
-            </p>
-          </div>
+      <div className="flex flex-grow flex-col gap-2 overflow-hidden sm:flex-row sm:gap-4">
+        {/* Sidebar: Controls (Desktop Only) */}
+        <div className="hidden w-64 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4 sm:block">
+          {renderSidebarContent()}
         </div>
 
         {/* Preview Area */}
@@ -412,8 +455,8 @@ export default function StoreTopManagement() {
             </StoreProvider>
           </div>
 
-          {/* Mobile switcher mockup */}
-          <div className="absolute bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 rounded-full border border-gray-700 bg-brand-secondary/80 px-4 py-2 shadow-2xl backdrop-blur-sm">
+          {/* Mobile switcher mockup - Hidden on small screens to avoid confusion since the page itself is now responsive */}
+          <div className="absolute bottom-4 left-1/2 z-50 hidden -translate-x-1/2 items-center gap-2 rounded-full border border-gray-700 bg-brand-secondary/80 px-4 py-2 shadow-2xl backdrop-blur-sm sm:flex">
             <div className="flex h-6 w-6 items-center justify-center rounded-md bg-brand-accent">
               <svg
                 className="h-4 w-4 text-white"
