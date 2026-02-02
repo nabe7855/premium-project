@@ -115,69 +115,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
-          <div className="max-w-2xl">
-            <div className="mb-4 inline-flex items-center gap-2 duration-700 animate-in fade-in slide-in-from-bottom-4">
-              <span className="bg-primary-400 h-[1px] w-8"></span>
-              <span
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleTextUpdate('badgeText', e)}
-                className={`text-primary-500 text-[10px] font-bold uppercase tracking-[0.3em] md:text-xs ${isEditing ? 'hover:bg-primary-50 min-w-[50px] rounded px-1' : ''}`}
-              >
-                {config?.badgeText || 'Premium Relaxation Fukuoka'}
-              </span>
-            </div>
-            <h1
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => handleTextUpdate('mainHeading', e)}
-              className={`mb-6 font-serif text-3xl leading-tight text-slate-800 delay-100 duration-700 animate-in fade-in slide-in-from-bottom-4 md:text-6xl ${isEditing ? 'min-h-[1em] rounded px-1 hover:bg-white/10' : ''}`}
-            >
-              {config?.mainHeading || '日常を忘れる、'}
-              {!isEditing && <br />}
-              <span
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleTextUpdate('subHeading', e)}
-                className={`text-primary-500 italic ${isEditing ? 'hover:bg-primary-50 block min-h-[1em] rounded px-1' : ''}`}
-              >
-                {config?.subHeading || '至福のひととき。'}
-              </span>
-            </h1>
-            <p
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => handleTextUpdate('description', e)}
-              className={`mb-8 max-w-md whitespace-pre-line text-xs leading-relaxed text-slate-600 delay-200 duration-700 animate-in fade-in slide-in-from-bottom-4 md:text-lg ${isEditing ? 'min-h-[3em] rounded px-1 hover:bg-white/10' : ''}`}
-            >
-              {config?.description ||
-                '福岡で愛される女性専用リラクゼーション。\n厳選されたセラピストが、心を込めてお迎えします。'}
-            </p>
-            <div className="flex w-full flex-col gap-4 delay-300 duration-700 animate-in fade-in slide-in-from-bottom-4 sm:w-auto sm:flex-row">
-              <div className="relative">
-                <span
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleTextUpdate('primaryButtonText', e)}
-                  className={`from-primary-400 to-primary-500 block rounded-full bg-gradient-to-r px-8 py-4 text-center text-sm font-bold tracking-widest text-white shadow-xl transition-all hover:scale-105 hover:shadow-2xl ${isEditing ? 'cursor-text' : ''}`}
-                >
-                  {config?.primaryButtonText || 'セラピストを探す'}
-                </span>
-              </div>
-              {(config?.secondaryButtonText || isEditing) && (
-                <div className="relative">
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleTextUpdate('secondaryButtonText', e)}
-                    className={`border-primary-200 hover:bg-primary-50 block rounded-full border bg-white/80 px-8 py-4 text-center text-sm font-bold tracking-widest text-slate-700 backdrop-blur-sm transition-colors ${isEditing ? 'cursor-text' : ''}`}
-                  >
-                    {config?.secondaryButtonText || '初めての方へ'}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+          {/* Text and buttons removed as per user request */}
         </div>
       </section>
 
