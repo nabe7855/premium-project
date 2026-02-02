@@ -124,7 +124,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => handleTextUpdate('badge', e)}
-            className={`text-primary-400 text-[10px] font-bold uppercase tracking-[0.4em] md:text-xs ${isEditing ? 'hover:bg-primary-50 rounded px-1' : ''}`}
+            className={`text-[10px] font-bold uppercase tracking-[0.4em] text-rose-400 md:text-xs ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
           >
             {config?.badge || 'Our Concept'}
           </span>
@@ -143,14 +143,14 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                 key={idx}
                 className={`group relative cursor-pointer rounded-[1.5rem] border p-4 transition-all duration-500 md:p-6 ${
                   idx === currentConceptIndex
-                    ? 'border-primary-200 shadow-primary-50 scale-[1.01] bg-white shadow-xl'
-                    : 'hover:border-primary-100 border-neutral-100 bg-white/50 hover:bg-white hover:shadow-md'
+                    ? 'scale-[1.01] border-rose-200 bg-white shadow-xl shadow-rose-50'
+                    : 'border-neutral-100 bg-white/50 hover:border-rose-100 hover:bg-white hover:shadow-md'
                 }`}
                 onClick={() => setCurrentConceptIndex(idx)}
               >
                 <div className="flex items-start gap-4">
                   <div
-                    className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${idx === currentConceptIndex ? 'bg-primary-500 rotate-0 text-white shadow-lg' : '-rotate-3 bg-neutral-100 text-slate-400 group-hover:rotate-0'}`}
+                    className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${idx === currentConceptIndex ? 'rotate-0 bg-rose-500 text-white shadow-lg' : '-rotate-3 bg-neutral-100 text-slate-400 group-hover:rotate-0'}`}
                   >
                     {getConceptIcon(concept.title, idx)}
                   </div>
@@ -167,7 +167,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                       </h3>
                       <ChevronDown
                         size={20}
-                        className={`transition-all duration-500 ${idx === currentConceptIndex ? 'text-primary-500 rotate-180' : 'text-slate-300'}`}
+                        className={`transition-all duration-500 ${idx === currentConceptIndex ? 'rotate-180 text-rose-500' : 'text-slate-300'}`}
                       />
                     </div>
                     {(idx === currentConceptIndex || isEditing) && (
@@ -218,8 +218,8 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                   )}
                 </div>
                 {idx === currentConceptIndex && !isEditing && (
-                  <div className="bg-primary-100 absolute bottom-0 left-0 h-1 w-full overflow-hidden rounded-b-[1.5rem]">
-                    <div className="bg-primary-500 h-full animate-pulse"></div>
+                  <div className="absolute bottom-0 left-0 h-1 w-full overflow-hidden rounded-b-[1.5rem] bg-rose-100">
+                    <div className="h-full animate-pulse bg-rose-500"></div>
                   </div>
                 )}
               </div>
@@ -227,7 +227,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             {isEditing && (
               <button
                 onClick={addItem}
-                className="hover:border-primary-300 hover:text-primary-500 flex w-full items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors"
+                className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
               >
                 <Plus size={20} />
                 <span>コンセプトを追加</span>

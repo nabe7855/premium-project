@@ -36,7 +36,7 @@ const defaultConcepts = [
   },
   {
     title: '女性目線の安心感',
-    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全েরセキュリティ体制で、初めての方でも安心してご利用いただけます。',
+    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全のセキュリティ体制で、初めての方でも安心してご利用いただけます。',
     imageUrl:
       'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1000',
   },
@@ -104,7 +104,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
               contentEditable={isEditing}
               suppressContentEditableWarning={isEditing}
               onBlur={(e) => handleTextUpdate('badge', e)}
-              className={`text-primary-500 text-xs font-bold uppercase tracking-[0.3em] ${isEditing ? 'hover:bg-primary-50 rounded px-1' : ''}`}
+              className={`text-xs font-bold uppercase tracking-[0.3em] text-rose-500 ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
             >
               {config?.badge || subHeading}
             </span>
@@ -123,7 +123,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                   key={idx}
                   className={`group cursor-pointer rounded-2xl border p-6 transition-all duration-300 ${
                     idx === currentConceptIndex
-                      ? 'border-primary-200 shadow-primary-100/20 bg-white shadow-xl'
+                      ? 'border-rose-200 bg-white shadow-xl shadow-rose-100/20'
                       : 'border-transparent bg-transparent hover:bg-white/50 hover:shadow-md'
                   }`}
                   onClick={() => setCurrentConceptIndex(idx)}
@@ -132,8 +132,8 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                     <div
                       className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${
                         idx === currentConceptIndex
-                          ? 'bg-primary-500 rotate-0 text-white shadow-lg'
-                          : 'bg-primary-50 text-primary-400 -rotate-3 group-hover:rotate-0'
+                          ? 'rotate-0 bg-rose-500 text-white shadow-lg'
+                          : '-rotate-3 bg-rose-50 text-rose-400 group-hover:rotate-0'
                       }`}
                     >
                       {getConceptIcon(concept.title, idx)}
@@ -155,7 +155,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                           size={20}
                           className={`transition-all duration-500 ${
                             idx === currentConceptIndex
-                              ? 'text-primary-500 rotate-180'
+                              ? 'rotate-180 text-rose-500'
                               : 'text-slate-300'
                           }`}
                         />
