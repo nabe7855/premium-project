@@ -1,5 +1,5 @@
 'use client';
-import { Camera, ChevronDown, Heart, Home, Receipt, Users } from 'lucide-react';
+import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
@@ -91,6 +91,28 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
       onImageUpload('concept', file, index, 'items');
+    }
+  };
+
+  const addItem = () => {
+    if (onUpdate) {
+      const newItem = {
+        title: '新規コンセプト',
+        desc: '説明文を入力してください',
+        imageUrl: defaultConcepts[0].imageUrl,
+      };
+      onUpdate('concept', 'items', [...items, newItem]);
+    }
+  };
+
+  const removeItem = (index: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (onUpdate) {
+      const newItems = items.filter((_, i) => i !== index);
+      onUpdate('concept', 'items', newItems);
+      if (currentConceptIndex >= newItems.length) {
+        setCurrentConceptIndex(Math.max(0, newItems.length - 1));
+      }
     }
   };
 
@@ -199,8 +221,25 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                       )}
                     </div>
                   </div>
+                  {isEditing && (
+                    <button
+                      onClick={(e) => removeItem(idx, e)}
+                      className="ml-2 rounded-full p-2 text-red-300 hover:bg-red-50 hover:text-red-500"
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
               ))}
+              {isEditing && (
+                <button
+                  onClick={addItem}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
+                >
+                  <Plus size={20} />
+                  <span>コンセプトを追加</span>
+                </button>
+              )}
             </div>
           </div>
         </div>
