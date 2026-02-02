@@ -52,7 +52,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
     if (isEditing) return;
     const timer = setInterval(() => {
       setCurrentConceptIndex((prev) => (prev + 1) % items.length);
-    }, 4500);
+    }, 11250);
     return () => clearInterval(timer);
   }, [items.length, isEditing]);
 
