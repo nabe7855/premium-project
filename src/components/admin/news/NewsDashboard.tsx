@@ -152,7 +152,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                                 : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
                             }`}
                           >
-                            {store.name.replace('ストロベリーボーイ', '').replace('店', '').trim()}
+                            {store.city}
                           </button>
                         );
                       })}
