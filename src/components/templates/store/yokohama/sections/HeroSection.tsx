@@ -81,7 +81,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     <>
       <section
         id="hero"
-        className="relative h-[100dvh] min-h-[500px] w-full overflow-hidden"
+        className="relative h-[100dvh] w-full overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
