@@ -1,7 +1,24 @@
 'use client';
-import { ConceptConfig } from '@/lib/store/storeTopConfig';
-import { Camera, CheckCircle2 } from 'lucide-react';
+import { Camera, ChevronDown, Heart, Home, Receipt, Users } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+
+import { ConceptConfig } from '@/lib/store/storeTopConfig';
+
+const getConceptIcon = (title: string, index: number) => {
+  if (title.includes('セラピスト')) return <Users size={20} />;
+  if (title.includes('安心')) return <Heart size={20} />;
+  if (title.includes('プライベート')) return <Home size={20} />;
+  if (title.includes('会計') || title.includes('料金')) return <Receipt size={20} />;
+
+  // Fallback based on index
+  const icons = [
+    <Users size={20} />,
+    <Heart size={20} />,
+    <Home size={20} />,
+    <Receipt size={20} />,
+  ];
+  return icons[index % icons.length];
+};
 
 interface ConceptSectionProps {
   config?: ConceptConfig;
@@ -104,38 +121,48 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
               {items.map((concept, idx) => (
                 <div
                   key={idx}
-                  className={`cursor-pointer rounded-2xl border p-6 transition-all duration-300 ${
+                  className={`group cursor-pointer rounded-2xl border p-6 transition-all duration-300 ${
                     idx === currentConceptIndex
-                      ? 'border-primary-200 shadow-primary-100/20 bg-white shadow-lg'
-                      : 'border-transparent bg-transparent hover:bg-white/50'
+                      ? 'border-primary-200 shadow-primary-100/20 bg-white shadow-xl'
+                      : 'border-transparent bg-transparent hover:bg-white/50 hover:shadow-md'
                   }`}
                   onClick={() => setCurrentConceptIndex(idx)}
                 >
-                  <div className="flex items-start gap-4">
+                  <div className="flex items-start gap-5">
                     <div
-                      className={`mt-1 rounded-full p-2 ${
+                      className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${
                         idx === currentConceptIndex
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-primary-50 text-primary-400'
+                          ? 'bg-primary-500 rotate-0 text-white shadow-lg'
+                          : 'bg-primary-50 text-primary-400 -rotate-3 group-hover:rotate-0'
                       }`}
                     >
-                      <CheckCircle2 size={18} />
+                      {getConceptIcon(concept.title, idx)}
                     </div>
-                    <div className="flex-grow">
-                      <h3
-                        contentEditable={isEditing}
-                        suppressContentEditableWarning={isEditing}
-                        onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
-                        onClick={(e) => isEditing && e.stopPropagation()}
-                        className={`mb-2 text-lg font-bold ${
-                          idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'
-                        } ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
-                      >
-                        {concept.title}
-                      </h3>
+                    <div className="flex-grow pt-1">
+                      <div className="flex items-center justify-between">
+                        <h3
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
+                          onClick={(e) => isEditing && e.stopPropagation()}
+                          className={`text-lg font-bold transition-colors ${
+                            idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'
+                          } ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+                        >
+                          {concept.title}
+                        </h3>
+                        <ChevronDown
+                          size={20}
+                          className={`transition-all duration-500 ${
+                            idx === currentConceptIndex
+                              ? 'text-primary-500 rotate-180'
+                              : 'text-slate-300'
+                          }`}
+                        />
+                      </div>
                       {(idx === currentConceptIndex || isEditing) && (
                         <div
-                          className={`mt-4 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
+                          className={`mt-5 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
                         >
                           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
                             <img
