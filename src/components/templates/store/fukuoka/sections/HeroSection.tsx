@@ -114,8 +114,11 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     <>
       <section
         id="hero"
-        className="relative !h-svh min-h-0 w-full overflow-hidden"
-        style={{ height: '100svh' }}
+        className="relative w-full overflow-hidden"
+        style={{
+          height: 'calc(100svh - 80px - 80px)', // ヘッダー(80px) + フッター(80px)を引く
+          minHeight: '400px', // 最小高さを確保
+        }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
