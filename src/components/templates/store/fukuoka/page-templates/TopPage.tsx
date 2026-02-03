@@ -12,6 +12,7 @@ import HeroSection from '../sections/HeroSection';
 import MobileStickyButton from '../sections/MobileStickyButton';
 import NewcomerSection from '../sections/NewcomerSection';
 import PriceSection from '../sections/PriceSection';
+import QuickAccessMenu from '../sections/QuickAccessMenu';
 
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 
@@ -49,6 +50,7 @@ export default function FukuokaPage({
           onImageUpload={onImageUpload}
         />
       )}
+      <QuickAccessMenu />
       {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
         <ConceptSection
           config={safeConfig?.concept}
