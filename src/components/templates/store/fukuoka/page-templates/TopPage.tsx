@@ -7,6 +7,7 @@ import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
 import Header from '../sections/Header';
 
+import BeginnerGuideSection from '../sections/BeginnerGuideSection';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
 import MobileStickyButton from '../sections/MobileStickyButton';
@@ -51,6 +52,7 @@ export default function FukuokaPage({
         />
       )}
       <QuickAccessMenu />
+      <BeginnerGuideSection />
       {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
         <ConceptSection
           config={safeConfig?.concept}
