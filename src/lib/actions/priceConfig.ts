@@ -97,12 +97,16 @@ export async function savePriceConfig(
           update: {
             hero_image_url: config.hero_image_url,
             prohibitions: config.prohibitions,
+            faqs: config.faqs as any,
+            cancellation_policy: config.cancellation_policy as any,
             updated_at: new Date(),
           },
           create: {
             store_id: store.id,
             hero_image_url: config.hero_image_url,
             prohibitions: config.prohibitions,
+            faqs: config.faqs as any,
+            cancellation_policy: config.cancellation_policy as any,
           },
         });
         console.log(
@@ -286,6 +290,11 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           campaigns: [],
           faqs: [],
           prohibitions: [],
+          cancellation_policy: {
+            tokyo23ku: { title: '', rules: [] },
+            outside23ku: { title: '', description: '' },
+            reschedule: '',
+          },
         };
       }
 
@@ -338,8 +347,13 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           accentText: c.accent_text || '',
           priceInfo: c.price_info || '',
         })),
-        faqs: [],
+        faqs: (config.faqs as any[]) || [],
         prohibitions: (config.prohibitions as string[]) || [],
+        cancellation_policy: (config.cancellation_policy as any) || {
+          tokyo23ku: { title: '', rules: [] },
+          outside23ku: { title: '', description: '' },
+          reschedule: '',
+        },
       };
     });
   } catch (error: any) {

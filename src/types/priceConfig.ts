@@ -5,6 +5,8 @@ export interface PriceConfig {
   store_id: string;
   hero_image_url?: string;
   prohibitions?: any;
+  faqs?: any;
+  cancellation_policy?: any;
   updated_at: string;
   created_at: string;
 }
@@ -133,6 +135,26 @@ export interface EditableCampaign {
   display_order: number;
 }
 
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+export interface CancellationPolicy {
+  tokyo23ku: {
+    title: string;
+    rules: {
+      period: string;
+      fee: string;
+    }[];
+  };
+  outside23ku: {
+    title: string;
+    description: string;
+  };
+  reschedule: string;
+}
+
 export interface EditablePriceConfig {
   hero_image_url?: string;
   courses: EditableCourse[];
@@ -140,4 +162,6 @@ export interface EditablePriceConfig {
   options: EditablePriceOption[];
   campaigns: EditableCampaign[];
   prohibitions: string[];
+  faqs: FAQ[];
+  cancellation_policy: CancellationPolicy;
 }

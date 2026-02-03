@@ -263,6 +263,107 @@ export default function PricePageClient({ priceConfig }: PricePageClientProps) {
             </div>
           )}
         </div>
+
+        {/* FAQセクション */}
+        {priceConfig.faqs && priceConfig.faqs.length > 0 && (
+          <div className="mt-16 space-y-6">
+            <div className="text-center">
+              <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                よくある質問
+                <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                  FAQ
+                </span>
+              </h2>
+            </div>
+
+            <div className="space-y-4">
+              {(priceConfig.faqs as any[]).map((faq: any, index: number) => (
+                <div
+                  key={index}
+                  className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8"
+                >
+                  <h3 className="mb-3 flex items-start gap-3 text-base font-bold text-rose-900 md:text-lg">
+                    <span className="shrink-0 rounded-full bg-rose-500 px-2 py-0.5 text-xs text-white">
+                      Q
+                    </span>
+                    {faq.question}
+                  </h3>
+                  <p className="flex items-start gap-3 text-sm leading-relaxed text-rose-700 md:text-base">
+                    <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-500">
+                      A
+                    </span>
+                    <span>{faq.answer}</span>
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* キャンセルポリシーセクション */}
+        {priceConfig.cancellation_policy && (
+          <div className="mt-16 space-y-6">
+            <div className="text-center">
+              <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                ご変更・キャンセルについて
+                <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                  CANCELLATION POLICY
+                </span>
+              </h2>
+            </div>
+
+            <div className="space-y-6 rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8">
+              {/* 東京23区内 */}
+              {(priceConfig.cancellation_policy as any).tokyo23ku && (
+                <div>
+                  <h3 className="mb-4 text-lg font-bold text-rose-900">
+                    {(priceConfig.cancellation_policy as any).tokyo23ku.title}
+                  </h3>
+                  <div className="space-y-2">
+                    {(priceConfig.cancellation_policy as any).tokyo23ku.rules.map(
+                      (rule: any, index: number) => (
+                        <div
+                          key={index}
+                          className="flex items-start justify-between gap-4 border-b border-rose-100 pb-2 last:border-0"
+                        >
+                          <span className="text-sm text-rose-700">{rule.period}</span>
+                          <span className="shrink-0 text-sm font-bold text-rose-900">
+                            {rule.fee}
+                          </span>
+                        </div>
+                      ),
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* 東京23区外 */}
+              {(priceConfig.cancellation_policy as any).outside23ku && (
+                <div className="rounded-xl bg-rose-50 p-4">
+                  <h3 className="mb-2 text-base font-bold text-rose-900">
+                    {(priceConfig.cancellation_policy as any).outside23ku.title}
+                  </h3>
+                  <p className="text-sm leading-relaxed text-rose-700">
+                    {(priceConfig.cancellation_policy as any).outside23ku.description}
+                  </p>
+                </div>
+              )}
+
+              {/* 変更（延期）について */}
+              {(priceConfig.cancellation_policy as any).reschedule && (
+                <div className="rounded-xl bg-emerald-50 p-4">
+                  <p className="text-sm leading-relaxed text-emerald-900">
+                    {(priceConfig.cancellation_policy as any).reschedule}
+                  </p>
+                </div>
+              )}
+
+              <div className="mt-4 text-center text-xs text-rose-400">
+                ご変更やキャンセルは分かり次第、必ずお電話にてご連絡してください。
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

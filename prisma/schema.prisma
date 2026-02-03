@@ -269,17 +269,19 @@ model RecruitPhoto {
 }
 
 model PriceConfig {
-  id              String          @id @default(uuid())
-  store_id        String          @unique
-  hero_image_url  String?
-  prohibitions    Json?           @default("[]")
-  updated_at      DateTime        @updatedAt
-  created_at      DateTime        @default(now())
-  campaigns       Campaign[]
-  courses         Course[]
-  store           Store           @relation(fields: [store_id], references: [id], onDelete: Cascade)
-  options         PriceOption[]
-  transport_areas TransportArea[]
+  id                  String          @id @default(uuid())
+  store_id            String          @unique
+  hero_image_url      String?
+  prohibitions        Json?           @default("[]")
+  faqs                Json?           @default("[]")
+  cancellation_policy Json?
+  updated_at          DateTime        @updatedAt
+  created_at          DateTime        @default(now())
+  campaigns           Campaign[]
+  courses             Course[]
+  store               Store           @relation(fields: [store_id], references: [id], onDelete: Cascade)
+  options             PriceOption[]
+  transport_areas     TransportArea[]
 
   @@map("price_configs")
 }

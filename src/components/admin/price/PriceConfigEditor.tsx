@@ -6,6 +6,9 @@ import type { EditablePriceConfig } from '@/types/priceConfig';
 import { Plus, Save, Trash2, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import CampaignEditor from './CampaignEditor';
+import CancellationPolicyEditor from './CancellationPolicyEditor';
+import { DEFAULT_CANCELLATION_POLICY, DEFAULT_FAQS } from './defaultData';
+import FAQEditor from './FAQEditor';
 import OptionEditor from './OptionEditor';
 import ProhibitionEditor from './ProhibitionEditor';
 import TransportEditor from './TransportEditor';
@@ -16,7 +19,14 @@ interface PriceConfigEditorProps {
   onSaveComplete: () => void;
 }
 
-type TabType = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'CAMPAIGN' | 'PROHIBITIONS';
+type TabType =
+  | 'COURSES'
+  | 'TRANSPORT'
+  | 'OPTIONS'
+  | 'CAMPAIGN'
+  | 'PROHIBITIONS'
+  | 'FAQ'
+  | 'CANCELLATION';
 
 export default function PriceConfigEditor({
   storeSlug,
@@ -27,7 +37,11 @@ export default function PriceConfigEditor({
   console.log('StoreSlug:', storeSlug);
   console.log('initialConfig courses count:', initialConfig.courses.length);
 
-  const [config, setConfig] = useState<EditablePriceConfig>(initialConfig);
+  const [config, setConfig] = useState<EditablePriceConfig>({
+    ...initialConfig,
+    faqs: initialConfig.faqs || DEFAULT_FAQS,
+    cancellation_policy: initialConfig.cancellation_policy || DEFAULT_CANCELLATION_POLICY,
+  });
   const [activeTab, setActiveTab] = useState<TabType>('COURSES');
   const [isSaving, setIsSaving] = useState(false);
   const [uploadingHero, setUploadingHero] = useState(false);
@@ -74,6 +88,8 @@ export default function PriceConfigEditor({
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'CAMPAIGN', label: 'キャンペーン' },
     { id: 'PROHIBITIONS', label: '禁止事項' },
+    { id: 'FAQ', label: 'よくある質問' },
+    { id: 'CANCELLATION', label: 'キャンセル' },
   ];
 
   return (
@@ -202,6 +218,17 @@ export default function PriceConfigEditor({
           <ProhibitionEditor
             prohibitions={config.prohibitions}
             onUpdate={(prohibitions) => setConfig({ ...config, prohibitions })}
+          />
+        )}
+
+        {activeTab === 'FAQ' && (
+          <FAQEditor faqs={config.faqs} onUpdate={(faqs) => setConfig({ ...config, faqs })} />
+        )}
+
+        {activeTab === 'CANCELLATION' && (
+          <CancellationPolicyEditor
+            policy={config.cancellation_policy}
+            onUpdate={(cancellation_policy) => setConfig({ ...config, cancellation_policy })}
           />
         )}
       </div>
