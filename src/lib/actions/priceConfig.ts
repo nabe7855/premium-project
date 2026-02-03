@@ -244,142 +244,104 @@ export async function uploadPriceImage(
 import { StoreConfig } from '@/components/admin/price/types';
 
 export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
-  console.log('--- getStoreConfigsForAdmin (Resilient Version) START ---');
   try {
-    // 1. Prisma で全店舗を取得（比較用）
-    const prismaStores = await prisma.store.findMany({
-      select: { id: true, name: true, slug: true },
-      orderBy: { name: 'asc' },
-    });
-    console.log(`[PriceConfig] prisma.store.findMany count: ${prismaStores.length}`);
-
-    // 2. 全店舗のIDと名前を $queryRaw で取得（型エラーを回避）
-    const storesRaw = await prisma.$queryRaw<
-      any[]
-    >`SELECT id::text as id, name, slug FROM stores ORDER BY name ASC`;
-    console.log(`[PriceConfig] Found ${storesRaw.length} stores via raw SQL.`);
-
-    const effectiveStores = storesRaw.length > 0 ? storesRaw : prismaStores;
-    console.log(`[PriceConfig] Using ${effectiveStores.length} stores for processing.`);
-
-    const results: StoreConfig[] = [];
-
-    // 2. 1件ずつ詳細を取得（1件壊れていても他を表示できるようにする）
-    for (const s of effectiveStores) {
-      console.log(`[PriceConfig] Processing Store ID: ${s.id}, Name: ${s.name}`);
-      try {
-        const fullStore = await prisma.store.findUnique({
-          where: { id: s.id },
+    const stores = await prisma.store.findMany({
+      include: {
+        price_config: {
           include: {
-            price_config: {
+            courses: {
               include: {
-                courses: {
-                  include: {
-                    plans: {
-                      orderBy: { display_order: 'asc' },
-                    },
-                  },
-                  orderBy: { display_order: 'asc' },
-                },
-                transport_areas: {
-                  orderBy: { display_order: 'asc' },
-                },
-                options: {
-                  orderBy: { display_order: 'asc' },
-                },
-                campaigns: {
+                plans: {
                   orderBy: { display_order: 'asc' },
                 },
               },
+              orderBy: { display_order: 'asc' },
+            },
+            transport_areas: {
+              orderBy: { display_order: 'asc' },
+            },
+            options: {
+              orderBy: { display_order: 'asc' },
+            },
+            campaigns: {
+              orderBy: { display_order: 'asc' },
             },
           },
-        });
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
 
-        if (!fullStore) {
-          console.log(`[PriceConfig] Store not found in Prisma: ${s.id}`);
-          continue;
-        }
-
-        const config = fullStore.price_config;
-        if (!config) {
-          console.log(
-            `[PriceConfig] No price_config for store: ${fullStore.name} (${fullStore.id})`,
-          );
-          results.push({
-            id: fullStore.id,
-            storeName: fullStore.name,
-            slug: fullStore.slug,
-            lastUpdated: '未設定',
-            courses: [],
-            transportAreas: [],
-            options: [],
-            campaigns: [],
-            faqs: [],
-            prohibitions: [],
-          });
-          continue;
-        }
-
-        console.log(`[PriceConfig] Successfully mapped store: ${fullStore.name}`);
-        results.push({
-          id: fullStore.id,
-          storeName: fullStore.name,
-          slug: fullStore.slug,
-          lastUpdated: new Date(config.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
-          heroImageUrl: config.hero_image_url || '',
-          courses: (config.courses || []).map((c: any) => ({
-            id: c.id,
-            name: c.name,
-            description: c.description || '',
-            icon: c.icon || '✨',
-            extensionPer30min: c.extension_per_30min,
-            designationFees: {
-              free: 0,
-              first: c.designation_fee_first,
-              follow: 0,
-              note: c.designation_fee_note,
-            },
-            notes: c.notes || '',
-            plans: (c.plans || []).map((p: any) => ({
-              minutes: p.minutes,
-              price: p.price,
-              subLabel: p.sub_label || '',
-              discountInfo: p.discount_info || '',
-            })),
-          })),
-          transportAreas: (config.transport_areas || []).map((t: any) => ({
-            id: t.id,
-            area: t.area,
-            price: t.price ?? 'negotiable',
-            label: t.label,
-            note: t.note || '',
-          })),
-          options: (config.options || []).map((o: any) => ({
-            id: o.id,
-            name: o.name,
-            description: o.description || '',
-            price: o.price,
-            isRelative: o.is_relative,
-          })),
-          campaigns: (config.campaigns || []).map((c: any) => ({
-            id: c.id,
-            title: c.title,
-            description: c.description || '',
-            imageUrl: c.image_url || '',
-            needEntry: c.need_entry || false,
-            accentText: c.accent_text || '',
-            priceInfo: c.price_info || '',
-          })),
+    return stores.map((store) => {
+      const config = store.price_config;
+      if (!config) {
+        return {
+          id: store.id,
+          storeName: store.name,
+          slug: store.slug,
+          lastUpdated: '未設定',
+          courses: [],
+          transportAreas: [],
+          options: [],
+          campaigns: [],
           faqs: [],
-          prohibitions: (config.prohibitions as string[]) || [],
-        });
-      } catch (innerError) {
-        console.error(`[PriceConfig] Skipping store ID: ${s.id} due to Prisma error:`, innerError);
+          prohibitions: [],
+        };
       }
-    }
 
-    console.log(`[PriceConfig] Returning ${results.length} mapped stores.`);
-    return results;
+      return {
+        id: store.id,
+        storeName: store.name,
+        slug: store.slug,
+        lastUpdated: new Date(config.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+        heroImageUrl: config.hero_image_url || '',
+        courses: (config.courses || []).map((c: any) => ({
+          id: c.id,
+          name: c.name,
+          description: c.description || '',
+          icon: c.icon || '✨',
+          extensionPer30min: c.extension_per_30min,
+          designationFees: {
+            free: 0,
+            first: c.designation_fee_first,
+            follow: 0,
+            note: c.designation_fee_note,
+          },
+          notes: c.notes || '',
+          plans: (c.plans || []).map((p: any) => ({
+            minutes: p.minutes,
+            price: p.price,
+            subLabel: p.sub_label || '',
+            discountInfo: p.discount_info || '',
+          })),
+        })),
+        transportAreas: (config.transport_areas || []).map((t: any) => ({
+          id: t.id,
+          area: t.area,
+          price: t.price ?? 'negotiable',
+          label: t.label,
+          note: t.note || '',
+        })),
+        options: (config.options || []).map((o: any) => ({
+          id: o.id,
+          name: o.name,
+          description: o.description || '',
+          price: o.price,
+          isRelative: o.is_relative,
+        })),
+        campaigns: (config.campaigns || []).map((c: any) => ({
+          id: c.id,
+          title: c.title,
+          description: c.description || '',
+          imageUrl: c.image_url || '',
+          needEntry: c.need_entry || false,
+          accentText: c.accent_text || '',
+          priceInfo: c.price_info || '',
+        })),
+        faqs: [],
+        prohibitions: (config.prohibitions as string[]) || [],
+      };
+    });
   } catch (error: any) {
     console.error('[PriceConfig] Fatal Error in getStoreConfigsForAdmin:', error);
     return [];

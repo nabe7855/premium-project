@@ -240,7 +240,7 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
 
                 <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50 md:p-10">
                   <ul className="space-y-4">
-                    {currentStore.prohibitions.length > 0 ? (
+                    {currentStore.prohibitions && currentStore.prohibitions.length > 0 ? (
                       currentStore.prohibitions.map((item, index) => (
                         <li key={index} className="flex items-start gap-3">
                           <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400" />
