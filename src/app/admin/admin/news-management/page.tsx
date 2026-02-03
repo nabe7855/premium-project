@@ -23,9 +23,14 @@ export default function NewsManagementPage() {
 
   const fetchPages = async () => {
     setLoading(true);
-    const data = await getAllPages();
-    setPages(data);
-    setLoading(false);
+    try {
+      const data = await getAllPages();
+      setPages(data);
+    } catch (e) {
+      console.error('fetchPages error:', e);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleCreatePage = async () => {

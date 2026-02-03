@@ -77,7 +77,7 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
     revalidatePath('/admin/news-management');
     return mapPrismaToPageData(record);
   } catch (error) {
-    console.error('Failed to create page:', error);
+    console.error('createPage Server Action Error:', error);
     return null;
   }
 }
@@ -130,7 +130,6 @@ export async function uploadNewsImage(formData: FormData): Promise<string | null
 
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}.${fileExt}`;
-    // Path includes pageId as requested: news-pages/{pageId}/{filename}
     const filePath = `news-pages/${pageId}/${fileName}`;
     const bucketName = 'banners';
 
