@@ -1,4 +1,6 @@
+import { uploadNewsImage } from '@/lib/actions/news-pages';
 import React from 'react';
+import { toast } from 'sonner';
 import { PageData, SectionData } from './types';
 
 interface InspectorProps {
@@ -16,25 +18,45 @@ const Inspector: React.FC<InspectorProps> = ({
   onUpdatePage,
   onDeleteSection,
 }) => {
-  const handleImageUpload = (
+  // ... (Inspector function start)
+
+  const handleImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     target: 'section' | 'page',
     field: string = 'imageUrl',
   ) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (target === 'section' && section) {
-        onUpdateSection({
-          ...section,
-          content: { ...section.content, [field]: reader.result as string },
-        });
-      } else if (target === 'page') {
-        onUpdatePage({ [field]: reader.result as string });
+    if (!file || !page) return;
+
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('pageId', page.id);
+
+      const promise = uploadNewsImage(formData);
+
+      toast.promise(promise, {
+        loading: '画像をアップロード中...',
+        success: 'アップロード完了',
+        error: 'アップロード失敗',
+      });
+
+      const publicUrl = await promise;
+
+      if (publicUrl) {
+        if (target === 'section' && section) {
+          onUpdateSection({
+            ...section,
+            content: { ...section.content, [field]: publicUrl },
+          });
+        } else if (target === 'page') {
+          onUpdatePage({ [field]: publicUrl });
+        }
       }
-    };
-    reader.readAsDataURL(file);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast.error('画像のアップロードに失敗しました');
+    }
   };
 
   // ページ全体の設定
