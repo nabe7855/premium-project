@@ -68,6 +68,7 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
     { id: 'TRANSPORT', label: '送迎' },
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'DISCOUNTS', label: '割引' },
+    { id: 'PROHIBITIONS', label: '禁止事項' },
   ];
 
   // --- 管理画面（ダッシュボード） ---
@@ -223,6 +224,36 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
                 {currentStore.campaigns.map((campaign) => (
                   <CampaignCard key={campaign.id} campaign={campaign} />
                 ))}
+              </div>
+            )}
+
+            {activeTab === 'PROHIBITIONS' && (
+              <div className="space-y-8 pb-10">
+                <div className="mb-10 text-center">
+                  <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                    禁止事項について
+                    <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                      PROHIBITIONS
+                    </span>
+                  </h2>
+                </div>
+
+                <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50 md:p-10">
+                  <ul className="space-y-4">
+                    {currentStore.prohibitions.length > 0 ? (
+                      currentStore.prohibitions.map((item, index) => (
+                        <li key={index} className="flex items-start gap-3">
+                          <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400" />
+                          <span className="text-sm font-medium leading-relaxed text-rose-800 md:text-base">
+                            {item}
+                          </span>
+                        </li>
+                      ))
+                    ) : (
+                      <p className="text-center text-rose-300">禁止事項は設定されていません。</p>
+                    )}
+                  </ul>
+                </div>
               </div>
             )}
 

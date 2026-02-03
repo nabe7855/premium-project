@@ -224,19 +224,22 @@ export default function PricePageClient({ priceConfig }: PricePageClientProps) {
 
               <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50 md:p-10">
                 <ul className="space-y-4">
-                  {[
-                    '本番行為の強要・要求またはそれに付帯する行為をされる方',
-                    '18歳未満の方、高校生の方、妊娠中の方のご利用',
-                    'シャワーやうがいを拒否する方の利用',
-                    '乱暴な扱いをされる方、セラピストが怖がるような暴言を吐かれる方の利用',
-                    '泥酔状態の方',
-                    'アロマオイル、ローションなど施術で使用したものによる皮膚の被れ等の責任は負いかねます',
-                    'お客様の持ち物の紛失などのトラブルは責任を負いかねます（貴重品などは、ご自身で管理お願い致します）',
-                    '性病の方もしくはその疑いのある方',
-                    'カメラやレコーダなどの機器で撮影・録音・盗聴される方',
-                    'その他当店が不適切と判断した方',
-                    'キャストと店を通さずに会う行為またはそれを促す発言',
-                  ].map((item, index) => (
+                  {(priceConfig.prohibitions && priceConfig.prohibitions.length > 0
+                    ? (priceConfig.prohibitions as string[])
+                    : [
+                        '本番行為の強要・要求またはそれに付帯する行為をされる方',
+                        '18歳未満の方、高校生の方、妊娠中の方のご利用',
+                        'シャワーやうがいを拒否する方の利用',
+                        '乱暴な扱いをされる方、セラピストが怖がるような暴言を吐かれる方の利用',
+                        '泥酔状態の方',
+                        'アロマオイル、ローションなど施術で使用したものによる皮膚の被れ等の責任は負いかねます',
+                        'お客様の持ち物の紛失などのトラブルは責任を負いかねます（貴重品などは、ご自身で管理お願い致します）',
+                        '性病の方もしくはその疑いのある方',
+                        'カメラやレコーダなどの機器で撮影・録音・盗聴される方',
+                        'その他当店が不適切と判断した方',
+                        'キャストと店を通さずに会う行為またはそれを促す発言',
+                      ]
+                  ).map((item, index) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400" />
                       <span className="text-sm font-medium leading-relaxed text-rose-800 md:text-base">

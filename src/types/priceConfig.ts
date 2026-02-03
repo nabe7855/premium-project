@@ -4,6 +4,7 @@ export interface PriceConfig {
   id: string;
   store_id: string;
   hero_image_url?: string;
+  prohibitions?: any;
   updated_at: string;
   created_at: string;
 }
@@ -138,4 +139,5 @@ export interface EditablePriceConfig {
   transport_areas: EditableTransportArea[];
   options: EditablePriceOption[];
   campaigns: EditableCampaign[];
+  prohibitions: string[];
 }

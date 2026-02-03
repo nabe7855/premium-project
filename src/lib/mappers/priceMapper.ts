@@ -52,5 +52,6 @@ export function mapStoreConfigToEditableConfig(store: StoreConfig): EditablePric
       price_info: c.priceInfo || '',
       display_order: idx,
     })),
+    prohibitions: store.prohibitions || [],
   };
 }

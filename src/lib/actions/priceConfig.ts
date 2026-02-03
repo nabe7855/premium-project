@@ -96,11 +96,13 @@ export async function savePriceConfig(
           where: { store_id: store.id },
           update: {
             hero_image_url: config.hero_image_url,
+            prohibitions: config.prohibitions,
             updated_at: new Date(),
           },
           create: {
             store_id: store.id,
             hero_image_url: config.hero_image_url,
+            prohibitions: config.prohibitions,
           },
         });
         console.log(
@@ -313,6 +315,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
             options: [],
             campaigns: [],
             faqs: [],
+            prohibitions: [],
           });
           continue;
         }
@@ -368,6 +371,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
             priceInfo: c.price_info || '',
           })),
           faqs: [],
+          prohibitions: (config.prohibitions as string[]) || [],
         });
       } catch (innerError) {
         console.error(`[PriceConfig] Skipping store ID: ${s.id} due to Prisma error:`, innerError);

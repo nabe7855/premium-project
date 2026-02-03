@@ -65,7 +65,8 @@ export interface StoreConfig {
   options: OptionItem[];
   campaigns: Campaign[];
   faqs: FAQItem[];
+  prohibitions: string[];
 }
 
-export type Category = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS';
+export type Category = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS' | 'PROHIBITIONS';
 export type AppView = 'PUBLIC' | 'ADMIN' | 'EDITOR' | 'EDIT';

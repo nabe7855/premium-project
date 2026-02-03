@@ -272,6 +272,7 @@ model PriceConfig {
   id              String          @id @default(uuid())
   store_id        String          @unique
   hero_image_url  String?
+  prohibitions    Json?           @default("[]")
   updated_at      DateTime        @updatedAt
   created_at      DateTime        @default(now())
   campaigns       Campaign[]

@@ -7,6 +7,7 @@ import { Plus, Save, Trash2, Upload, X } from 'lucide-react';
 import { useState } from 'react';
 import CampaignEditor from './CampaignEditor';
 import OptionEditor from './OptionEditor';
+import ProhibitionEditor from './ProhibitionEditor';
 import TransportEditor from './TransportEditor';
 
 interface PriceConfigEditorProps {
@@ -15,7 +16,7 @@ interface PriceConfigEditorProps {
   onSaveComplete: () => void;
 }
 
-type TabType = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'CAMPAIGN';
+type TabType = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'CAMPAIGN' | 'PROHIBITIONS';
 
 export default function PriceConfigEditor({
   storeSlug,
@@ -72,6 +73,7 @@ export default function PriceConfigEditor({
     { id: 'TRANSPORT', label: '送迎' },
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'CAMPAIGN', label: 'キャンペーン' },
+    { id: 'PROHIBITIONS', label: '禁止事項' },
   ];
 
   return (
@@ -193,6 +195,13 @@ export default function PriceConfigEditor({
             campaigns={config.campaigns}
             storeSlug={storeSlug}
             onUpdate={(campaigns) => setConfig({ ...config, campaigns })}
+          />
+        )}
+
+        {activeTab === 'PROHIBITIONS' && (
+          <ProhibitionEditor
+            prohibitions={config.prohibitions}
+            onUpdate={(prohibitions) => setConfig({ ...config, prohibitions })}
           />
         )}
       </div>
