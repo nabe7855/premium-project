@@ -217,8 +217,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               )}
             </div>
           ))}
-          <div className="absolute inset-0 z-10 hidden bg-gradient-to-r from-white/95 via-white/40 to-transparent md:block"></div>
-          <div className="absolute inset-0 z-10 bg-gradient-to-t from-white/90 via-white/10 to-transparent md:hidden"></div>
 
           {/* Add Image Button - Always visible in editing mode */}
           {isEditing && (
@@ -249,7 +247,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               key={index}
               onClick={() => setCurrentHeroSlide(index)}
-              className={`h-2.5 w-2.5 rounded-full border border-black/10 shadow-sm transition-all duration-300 ${
+              className={`h-5 w-5 rounded-full border border-black/10 shadow-sm transition-all duration-300 ${
                 index === currentHeroSlide ? 'bg-slate-700' : 'bg-white/80 hover:bg-white'
               }`}
               aria-label={`Slide ${index + 1}`}
