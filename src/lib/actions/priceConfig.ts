@@ -1,5 +1,6 @@
 'use server';
 
+import { DEFAULT_CANCELLATION_POLICY, DEFAULT_FAQS } from '@/components/admin/price/defaultData';
 import { prisma } from '@/lib/prisma';
 import type { EditablePriceConfig, FullPriceConfig } from '@/types/priceConfig';
 import { revalidatePath } from 'next/cache';
@@ -288,13 +289,9 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           transportAreas: [],
           options: [],
           campaigns: [],
-          faqs: [],
+          faqs: DEFAULT_FAQS,
           prohibitions: [],
-          cancellation_policy: {
-            tokyo23ku: { title: '', rules: [] },
-            outside23ku: { title: '', description: '' },
-            reschedule: '',
-          },
+          cancellation_policy: DEFAULT_CANCELLATION_POLICY,
         };
       }
 
@@ -347,13 +344,11 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           accentText: c.accent_text || '',
           priceInfo: c.price_info || '',
         })),
-        faqs: (config.faqs as any[]) || [],
+        faqs: (config.faqs as any[])?.length > 0 ? (config.faqs as any[]) : DEFAULT_FAQS,
         prohibitions: (config.prohibitions as string[]) || [],
-        cancellation_policy: (config.cancellation_policy as any) || {
-          tokyo23ku: { title: '', rules: [] },
-          outside23ku: { title: '', description: '' },
-          reschedule: '',
-        },
+        cancellation_policy: (config.cancellation_policy as any)?.tokyo23ku?.title
+          ? (config.cancellation_policy as any)
+          : DEFAULT_CANCELLATION_POLICY,
       };
     });
   } catch (error: any) {
