@@ -37,10 +37,19 @@ export default function PriceConfigEditor({
   console.log('StoreSlug:', storeSlug);
   console.log('initialConfig courses count:', initialConfig.courses.length);
 
-  const [config, setConfig] = useState<EditablePriceConfig>({
-    ...initialConfig,
-    faqs: initialConfig.faqs || DEFAULT_FAQS,
-    cancellation_policy: initialConfig.cancellation_policy || DEFAULT_CANCELLATION_POLICY,
+  const [config, setConfig] = useState<EditablePriceConfig>(() => {
+    console.log('[DEBUG] PriceConfigEditor Initializing');
+    console.log('[DEBUG] Initial FAQs:', initialConfig.faqs);
+    console.log('[DEBUG] Initial Policy:', initialConfig.cancellation_policy);
+
+    return {
+      ...initialConfig,
+      faqs: initialConfig.faqs && initialConfig.faqs.length > 0 ? initialConfig.faqs : DEFAULT_FAQS,
+      cancellation_policy:
+        initialConfig.cancellation_policy && initialConfig.cancellation_policy.tokyo23ku
+          ? initialConfig.cancellation_policy
+          : DEFAULT_CANCELLATION_POLICY,
+    };
   });
   const [activeTab, setActiveTab] = useState<TabType>('COURSES');
   const [isSaving, setIsSaving] = useState(false);

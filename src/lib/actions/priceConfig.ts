@@ -280,6 +280,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
     return stores.map((store) => {
       const config = store.price_config;
       if (!config) {
+        console.log('[DEBUG] No config found for store:', store.slug);
         return {
           id: store.id,
           storeName: store.name,
@@ -294,6 +295,16 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           cancellation_policy: DEFAULT_CANCELLATION_POLICY,
         };
       }
+
+      console.log('[DEBUG] Store:', store.slug);
+      console.log('[DEBUG] config.faqs:', config.faqs);
+      console.log('[DEBUG] config.cancellation_policy:', config.cancellation_policy);
+      console.log('[DEBUG] DEFAULT_FAQS length:', DEFAULT_FAQS.length);
+      console.log('[DEBUG] DEFAULT_CANCELLATION_POLICY:', DEFAULT_CANCELLATION_POLICY);
+
+      console.log(`[DEBUG] Processing store: ${store.name}`);
+      console.log(`[DEBUG] Raw config faqs:`, config.faqs);
+      console.log(`[DEBUG] Raw config policy:`, config.cancellation_policy);
 
       return {
         id: store.id,
