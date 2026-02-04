@@ -16,10 +16,12 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/co
 import { Switch } from '@/components/ui/switch';
 
 import { deleteStorageFile } from '@/actions/storage';
+import { PageData } from '@/components/admin/news/types';
 import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { stores } from '@/data/stores';
+import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getAllStores } from '@/lib/store/store-data';
@@ -57,6 +59,7 @@ const SECTION_ORDER = [
 export default function StoreTopManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
   const [config, setConfig] = useState<StoreTopPageConfig>(DEFAULT_STORE_TOP_CONFIG);
+  const [newsPages, setNewsPages] = useState<PageData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
@@ -80,7 +83,19 @@ export default function StoreTopManagement() {
         setIsLoading(false);
       }
     };
+
+    const fetchNews = async () => {
+      try {
+        const pages = await getPublishedPagesByStore(selectedStore);
+        setNewsPages(pages);
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        toast.error('ニュースの取得に失敗しました');
+      }
+    };
+
     fetchConfig();
+    fetchNews();
   }, [selectedStore]);
 
   // 保存処理
@@ -448,6 +463,7 @@ export default function StoreTopManagement() {
               {stores[selectedStore]?.template === 'yokohama' ? (
                 <YokohamaPage
                   config={config}
+                  newsPages={newsPages}
                   isEditing={!isPreviewMode}
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}
@@ -455,6 +471,7 @@ export default function StoreTopManagement() {
               ) : (
                 <FukuokaPage
                   config={config}
+                  newsPages={newsPages}
                   isEditing={!isPreviewMode}
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}

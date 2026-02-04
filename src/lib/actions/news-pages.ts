@@ -46,15 +46,34 @@ export async function getAllPages(): Promise<PageData[]> {
 
 export async function getPublishedPagesByStore(storeSlug: string): Promise<PageData[]> {
   try {
-    const records = await prisma.pageRequest.findMany({
+    const allPublished = await prisma.pageRequest.findMany({
       where: {
         status: 'published',
-        targetStoreSlugs: {
-          has: storeSlug,
-        },
       },
       orderBy: { updatedAt: 'desc' },
     });
+
+    console.log('[getPublishedPagesByStore] All published pages:', allPublished.length);
+    console.log(
+      '[getPublishedPagesByStore] Inspecting targetStoreSlugs type:',
+      allPublished.map((p) => ({
+        id: p.id,
+        type: typeof p.targetStoreSlugs,
+        val: p.targetStoreSlugs,
+      })),
+    );
+
+    // 手動フィルタリング
+    const records = allPublished.filter((record: any) => {
+      const slugs = record.targetStoreSlugs as string[];
+      return Array.isArray(slugs) && slugs.includes(storeSlug);
+    });
+
+    console.log('[getPublishedPagesByStore] Filtered for', storeSlug, ':', records.length);
+    console.log(
+      '[getPublishedPagesByStore] Records:',
+      records.map((r) => ({ id: r.id, title: r.title, targetStoreSlugs: r.targetStoreSlugs })),
+    );
     return records.map(mapPrismaToPageData);
   } catch (error) {
     console.error('Failed to fetch published pages by store:', error);
@@ -95,6 +114,7 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
       },
     });
     revalidatePath('/admin/news-management');
+    revalidatePath('/store/[slug]', 'page');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('createPage Server Action Error:', error);
@@ -123,6 +143,7 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       data: updateData,
     });
     revalidatePath('/admin/news-management');
+    revalidatePath('/store/[slug]', 'page');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('Failed to update page:', error);
@@ -136,6 +157,7 @@ export async function deletePage(id: string): Promise<boolean> {
       where: { id },
     });
     revalidatePath('/admin/news-management');
+    revalidatePath('/store/[slug]', 'page');
     return true;
   } catch (error) {
     console.error('Failed to delete page:', error);
