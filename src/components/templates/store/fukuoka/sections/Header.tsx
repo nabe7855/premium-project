@@ -234,10 +234,10 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     <header
       id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-1.5 shadow-sm backdrop-blur-md' : 'bg-white py-3'
+        scrollY > 20 ? 'bg-white/95 py-1 shadow-sm backdrop-blur-md' : 'bg-white py-2'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-[60px] max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-6">
+      <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
         <Link
           href="/"
           className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
@@ -307,7 +307,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               if (!isMenuOpen) setIsMenuOpen(true);
               else closeMenu();
             }}
-            className={`flex flex-col items-center justify-center gap-1 rounded-full px-4 py-2 transition-all active:scale-95 md:gap-1.5 md:px-5 md:py-3 ${
+            className={`flex flex-col items-center justify-center gap-1 rounded-full px-3.5 py-1.5 transition-all active:scale-95 md:gap-1.5 md:px-4 md:py-2.5 ${
               isMenuOpen
                 ? 'bg-pink-50 text-pink-500'
                 : 'bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-md hover:shadow-lg'
