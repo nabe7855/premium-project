@@ -7,7 +7,7 @@ import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
 import Header from '../sections/Header';
 
-import BeginnerGuideSection from '../../fukuoka/sections/BeginnerGuideSection';
+import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
 import MobileStickyButton from '../sections/MobileStickyButton';
@@ -47,8 +47,8 @@ export default function YokohamaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
+      <BeginnerGuideBanner />
       <QuickAccessMenu />
-      <BeginnerGuideSection />
       <ConceptSection
         config={config?.concept}
         isEditing={isEditing}
