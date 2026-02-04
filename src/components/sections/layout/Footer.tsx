@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { Calendar, CreditCard, Phone, MessageCircle, Heart } from 'lucide-react';
+import { Calendar, CreditCard, Heart, MessageCircle, Phone } from 'lucide-react';
 import { useParams } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 
 interface FooterProps {
   className?: string;
@@ -10,7 +10,7 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const params = useParams();
-  const slug = params?.store ?? 'tokyo'; // fallback
+  const slug = params?.slug ?? 'tokyo'; // fallback
 
   const [isMounted, setIsMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
@@ -50,7 +50,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'pricing',
       label: '料金',
       icon: CreditCard,
-      href: `/store/${slug}/guide/guide#price`, // ✅ 修正
+      href: `/store/${slug}/price`, // ✅ 修正
       ariaLabel: '料金システム・予算確認',
       badge: isFirstVisit ? '初' : null,
     },
