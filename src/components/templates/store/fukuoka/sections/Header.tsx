@@ -261,7 +261,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
         <Link
           href={getAbsoluteHref(config.logoLink || '/')}
-          className="group relative flex h-full items-center gap-2 transition-transform hover:scale-[1.02]"
+          className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
             <img src={config.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
@@ -307,7 +307,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </Link>
           <Link
             href={`/store/${currentStoreId}/first-time`}
-            className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+            className="block h-12 w-auto max-w-[45vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
             <img
               src="/初めてのお客様へバナー.png"
@@ -328,7 +328,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               if (!isMenuOpen) setIsMenuOpen(true);
               else closeMenu();
             }}
-            className={`flex flex-col items-center justify-center gap-1 rounded-full px-3.5 py-1.5 transition-all active:scale-95 md:gap-1.5 md:px-4 md:py-2.5 ${
+            className={`flex flex-shrink-0 flex-col items-center justify-center gap-1 rounded-full px-3.5 py-1.5 transition-all active:scale-95 md:gap-1.5 md:px-4 md:py-2.5 ${
               isMenuOpen
                 ? 'bg-pink-50 text-pink-500'
                 : 'bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-md hover:shadow-lg'
