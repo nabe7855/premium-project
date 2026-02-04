@@ -294,6 +294,83 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
               </div>
             )}
 
+            {/* FAQセクション */}
+            {priceConfig.faqs && priceConfig.faqs.length > 0 && (
+              <div className="mt-16 space-y-6">
+                <div className="text-center">
+                  <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                    よくある質問
+                    <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                      FAQ
+                    </span>
+                  </h2>
+                </div>
+
+                <div className="space-y-4">
+                  {(priceConfig.faqs as any[]).map((faq: any, index: number) => (
+                    <FaqItem key={index} question={faq.question} answer={faq.answer} />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* ご変更・キャンセルについて (新規追加) */}
+            <div className="mt-16 space-y-8">
+              <div className="text-center">
+                <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
+                  ご変更、キャンセルについて
+                  <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
+                    CANCELLATION POLICY
+                  </span>
+                </h2>
+              </div>
+
+              <div className="space-y-6 rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8">
+                <div>
+                  <h3 className="mb-4 text-base font-bold text-rose-900 md:text-lg">
+                    【東京23区内の場合】
+                  </h3>
+                  <div className="mb-4 text-sm leading-relaxed text-rose-700">
+                    <p className="mb-2">
+                      東京23区内の場合、下記の場合はキャンセル料金が発生します。
+                    </p>
+                    <p className="font-bold text-rose-800">
+                      ご変更やキャンセルは分かり次第、必ずお電話にてご連絡してください。
+                    </p>
+                  </div>
+                  <div className="space-y-3 rounded-xl bg-rose-50 p-4">
+                    <div className="flex flex-col justify-between gap-1 border-b border-rose-200/50 pb-2 text-sm sm:flex-row sm:items-center">
+                      <span className="text-rose-800">ご予約後~当日指定時刻の5時間前まで</span>
+                      <span className="shrink-0 font-bold text-rose-900">無料</span>
+                    </div>
+                    <div className="flex flex-col justify-between gap-1 border-b border-rose-200/50 pb-2 text-sm sm:flex-row sm:items-center">
+                      <span className="text-rose-800">5時間前 ~指定時刻まで</span>
+                      <span className="shrink-0 font-bold text-rose-900">施術料の半額</span>
+                    </div>
+                    <div className="flex flex-col justify-between gap-1 text-sm sm:flex-row sm:items-center">
+                      <span className="text-rose-800">指定時刻になっても連絡なしの場合</span>
+                      <span className="shrink-0 font-bold text-rose-900">施術料の全額</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div>
+                  <h3 className="mb-2 text-base font-bold text-rose-900 md:text-lg">
+                    【東京23区外の場合】
+                  </h3>
+                  <p className="text-sm leading-relaxed text-rose-700">
+                    東京23区以外の場合、上記の規定と異なりますのでご注意ください。遠方になるほど、キャンセル料の発生時刻が繰り上がります。ご予約時に確認をお願い致します。
+                  </p>
+                </div>
+
+                <div className="rounded-xl bg-emerald-50 p-4">
+                  <p className="text-sm leading-relaxed text-emerald-900">
+                    ご利用日を変更(延期)される場合は、当日指定時刻の3時間前までにお電話いただければキャンセル料はかかりません。
+                  </p>
+                </div>
+              </div>
+            </div>
+
             {/* 禁止事項セクション (常時表示) */}
             <div className="mt-16 space-y-8 pb-10">
               <div className="mb-10 text-center">
@@ -345,42 +422,6 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
               </div>
             </div>
           </div>
-
-          {/* FAQセクション */}
-          {priceConfig.faqs && priceConfig.faqs.length > 0 && (
-            <div className="mt-16 space-y-6">
-              <div className="text-center">
-                <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
-                  よくある質問
-                  <span className="mt-2 block text-sm font-normal tracking-widest text-rose-400">
-                    FAQ
-                  </span>
-                </h2>
-              </div>
-
-              <div className="space-y-4">
-                {(priceConfig.faqs as any[]).map((faq: any, index: number) => (
-                  <div
-                    key={index}
-                    className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8"
-                  >
-                    <h3 className="mb-3 flex items-start gap-3 text-base font-bold text-rose-900 md:text-lg">
-                      <span className="shrink-0 rounded-full bg-rose-500 px-2 py-0.5 text-xs text-white">
-                        Q
-                      </span>
-                      {faq.question}
-                    </h3>
-                    <p className="flex items-start gap-3 text-sm leading-relaxed text-rose-700 md:text-base">
-                      <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-500">
-                        A
-                      </span>
-                      <span>{faq.answer}</span>
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* キャンセルポリシーセクション */}
           {priceConfig.cancellation_policy && (
@@ -602,6 +643,46 @@ function CourseAccordion({
               </p>
             </div>
           )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// FAQアコーディオンアイテムコンポーネント
+function FaqItem({ question, answer }: { question: string; answer: string }) {
+  const [isOpen, setIsOpen] = useState(false);
+
+  return (
+    <div className="overflow-hidden rounded-[2rem] border-2 border-rose-100 bg-white shadow-lg shadow-rose-100/50 transition-all duration-300">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="flex w-full items-start justify-between gap-4 p-6 text-left transition-colors hover:bg-rose-50/50 md:p-8"
+      >
+        <h3 className="flex items-start gap-3 text-base font-bold text-rose-900 md:text-lg">
+          <span className="shrink-0 rounded-full bg-rose-500 px-2 py-0.5 text-xs text-white">
+            Q
+          </span>
+          {question}
+        </h3>
+        <ChevronDown
+          className={`mt-1 h-5 w-5 shrink-0 text-rose-400 transition-transform duration-300 ${
+            isOpen ? 'rotate-180' : ''
+          }`}
+        />
+      </button>
+      <div
+        className={`transition-all duration-300 ease-in-out ${
+          isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="border-t border-rose-50 px-6 pb-6 pt-0 md:px-8 md:pb-8">
+          <div className="mt-4 flex items-start gap-3 text-sm leading-relaxed text-rose-700 md:text-base">
+            <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-500">
+              A
+            </span>
+            <span>{answer}</span>
+          </div>
         </div>
       </div>
     </div>
