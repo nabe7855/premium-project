@@ -57,33 +57,28 @@ const QuickAccessMenu = () => {
   };
 
   return (
-    <section className="relative z-30 w-full bg-rose-950 shadow-xl">
+    <section className="relative z-30 w-full bg-white shadow-xl">
       <div className="mx-auto w-full">
-        <div className="grid grid-cols-3 gap-[1px] border-b border-rose-900/20 md:grid-cols-6">
+        <div className="grid grid-cols-3 gap-2 px-2 md:grid-cols-6">
           {MENU_ITEMS.map((item, index) => (
             <a
               key={index}
               href={item.href}
               onClick={(e) => scrollToSection(e, item.href)}
-              className="group relative flex flex-col items-center justify-center overflow-hidden bg-rose-950 py-6 text-center transition-all duration-300 hover:bg-rose-900"
+              className="group relative flex flex-col items-center justify-center overflow-hidden rounded-md border border-white/10 bg-rose-950 py-2 text-center shadow-sm transition-all duration-300 hover:bg-rose-900 hover:shadow-md"
             >
               {/* Icon decoration */}
-              <div className="mb-2 text-rose-200/60 transition-colors duration-300 group-hover:text-rose-200">
+              <div className="mb-1 text-rose-200/60 transition-colors duration-300 group-hover:text-rose-200">
                 <item.icon size={20} />
               </div>
 
               {/* Text */}
-              <span className="font-serif text-sm font-bold tracking-widest text-white drop-shadow-sm group-hover:text-rose-100">
+              <span className="font-serif text-sm font-bold tracking-widest text-white drop-shadow-sm transition-colors group-hover:text-rose-100">
                 {item.ja}
               </span>
-              <span className="mt-0.5 text-[0.6rem] font-medium tracking-[0.2em] text-rose-300/80 group-hover:text-rose-200">
+              <span className="mt-0.5 text-[0.6rem] font-medium tracking-[0.2em] text-rose-300/80 transition-colors group-hover:text-rose-200">
                 {item.en}
               </span>
-
-              {/* Horizontal Divider for mobile (every 3 items, except last row) */}
-              <div className="absolute bottom-0 right-0 h-[1px] w-full bg-rose-900/30 md:hidden" />
-              {/* Vertical Divider for mobile */}
-              <div className="absolute right-0 top-0 h-full w-[1px] bg-rose-900/30 md:hidden" />
             </a>
           ))}
         </div>
