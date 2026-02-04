@@ -211,47 +211,50 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   </div>
                 ))}
               </div>
-            </div>
 
-            {/* Trust Badges Area (Keeping separate) */}
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              {config.trustBadges.map((badge, idx) => (
-                <div key={idx} className="group relative">
-                  <a
-                    href={badge.link || '#'}
-                    onClick={(e) => isEditing && e.preventDefault()}
-                    className="block"
-                  >
-                    <img
-                      src={badge.imageUrl}
-                      alt="Badge"
-                      className="h-16 w-auto rounded bg-white/10 p-1"
-                    />
-                  </a>
-                  {isEditing && (
-                    <div className="absolute inset-0 flex items-center justify-center gap-1 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
-                      <label className="cursor-pointer p-1 text-white hover:text-brand-accent">
-                        <ImageIcon size={14} />
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={(e) =>
-                            e.target.files?.[0] &&
-                            onImageUpload?.('footer', e.target.files[0], idx, 'trustBadges')
-                          }
-                        />
-                      </label>
-                      <button
-                        onClick={() => handleLinkUpdate('trustBadges', idx)}
-                        className="p-1 text-white hover:text-brand-accent"
-                      >
-                        <Link2 size={14} />
-                      </button>
-                    </div>
-                  )}
+              {/* Large Square Banner at the Bottom */}
+              <div className="mt-8 border-t border-white/20 pt-8">
+                <div className="mx-auto aspect-square max-w-[400px]">
+                  <div className="group relative h-full w-full">
+                    <a
+                      href={config.largeBanner?.link || '#'}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
+                    >
+                      <img
+                        src={
+                          config.largeBanner?.imageUrl ||
+                          'https://placehold.jp/400x400.png?text=Large%20Banner'
+                        }
+                        alt="Large Banner"
+                        className="h-full w-full object-cover"
+                      />
+                    </a>
+                    {isEditing && (
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                        <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800">
+                          <ImageIcon className="h-5 w-5" />
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) =>
+                              e.target.files?.[0] &&
+                              onImageUpload?.('footer', e.target.files[0], undefined, 'largeBanner')
+                            }
+                          />
+                        </label>
+                        <button
+                          onClick={() => handleLinkUpdate('largeBanner')}
+                          className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800"
+                        >
+                          <Link2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </div>

@@ -1,6 +1,6 @@
 import { useStore } from '@/contexts/StoreContext';
 import { FooterConfig } from '@/lib/store/storeTopConfig';
-import { ImageIcon, Link2, Plus } from 'lucide-react';
+import { ImageIcon, Link2 } from 'lucide-react';
 import React from 'react';
 
 interface FooterProps {
@@ -242,66 +242,49 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   </div>
                 ))}
               </div>
-            </div>
-
-            {/* Trust Badges Area (Keeping separate as it was) */}
-            <div className="mt-8 flex flex-wrap justify-center gap-4">
-              {config.trustBadges.map((badge, idx) => (
-                <div key={idx} className="group relative">
-                  <a
-                    href={badge.link || '#'}
-                    onClick={(e) => isEditing && e.preventDefault()}
-                    className="block flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
-                  >
-                    <img src={badge.imageUrl} alt="Trust Badge" className="h-24 w-auto" />
-                  </a>
-                  {isEditing && (
-                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
-                        <ImageIcon className="h-4 w-4" />
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={(e) =>
-                            e.target.files?.[0] &&
-                            onImageUpload?.('footer', e.target.files[0], idx, 'trustBadges')
-                          }
-                        />
-                      </label>
-                      <button
-                        onClick={() => handleLinkUpdate('trustBadges', idx)}
-                        className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
-                      >
-                        <Link2 className="h-4 w-4" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          const newBadges = [...config.trustBadges];
-                          newBadges.splice(idx, 1);
-                          onUpdate?.('footer', 'trustBadges', newBadges);
-                        }}
-                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  )}
+              {/* Large Square Banner at the Bottom */}
+              <div className="mt-8 border-t border-white/20 pt-8">
+                <div className="mx-auto aspect-square max-w-[400px]">
+                  <div className="group relative h-full w-full">
+                    <a
+                      href={config.largeBanner?.link || '#'}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
+                    >
+                      <img
+                        src={
+                          config.largeBanner?.imageUrl ||
+                          'https://placehold.jp/400x400.png?text=Large%20Banner'
+                        }
+                        alt="Large Banner"
+                        className="h-full w-full object-cover"
+                      />
+                    </a>
+                    {isEditing && (
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                        <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800">
+                          <ImageIcon className="h-5 w-5" />
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) =>
+                              e.target.files?.[0] &&
+                              onImageUpload?.('footer', e.target.files[0], undefined, 'largeBanner')
+                            }
+                          />
+                        </label>
+                        <button
+                          onClick={() => handleLinkUpdate('largeBanner')}
+                          className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800"
+                        >
+                          <Link2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              ))}
-              {isEditing && (
-                <button
-                  onClick={() =>
-                    onUpdate?.('footer', 'trustBadges', [
-                      ...config.trustBadges,
-                      { imageUrl: 'https://placehold.jp/100x120.png', link: '#' },
-                    ])
-                  }
-                  className="flex h-24 w-20 items-center justify-center rounded border-2 border-dashed border-slate-200 text-slate-300 hover:border-slate-400 hover:text-slate-500"
-                >
-                  <Plus size={24} />
-                </button>
-              )}
+              </div>
             </div>
           </div>
         </div>
