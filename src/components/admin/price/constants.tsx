@@ -8,7 +8,7 @@ export const MOCK_BASIC_SERVICES = [
   'クンニ',
   '指入れ',
   'Gスポット',
-  'ボルチオ',
+  'ポルチオ',
 ];
 
 export const MOCK_FREE_OPTIONS = [
@@ -19,7 +19,6 @@ export const MOCK_FREE_OPTIONS = [
   'ボディータッチ',
   'ローター',
   'バイブ',
-  'その他オプション多数',
 ];
 
 export const MOCK_COURSES: Course[] = [

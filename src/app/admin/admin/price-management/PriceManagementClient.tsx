@@ -2,7 +2,7 @@
 
 import AdditionalInfoSection from '@/components/admin/price/AdditionalInfoSection';
 import CampaignCard from '@/components/admin/price/CampaignCard';
-import { MOCK_BASIC_SERVICES } from '@/components/admin/price/constants';
+import { MOCK_BASIC_SERVICES, MOCK_FREE_OPTIONS } from '@/components/admin/price/constants';
 import CourseCard from '@/components/admin/price/CourseCard';
 import FAQSection from '@/components/admin/price/FAQSection';
 import PriceConfigEditor from '@/components/admin/price/PriceConfigEditor';
@@ -10,6 +10,7 @@ import PriceDashboard from '@/components/admin/price/PriceDashboard';
 import SimplePriceList from '@/components/admin/price/SimplePriceList';
 import { AppView, Category, StoreConfig } from '@/components/admin/price/types';
 import { mapStoreConfigToEditableConfig } from '@/lib/mappers/priceMapper';
+import { CheckCircle, Gift, Star } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface PriceManagementClientProps {
@@ -200,22 +201,57 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
 
             {activeTab === 'OPTIONS' && (
               <div className="space-y-8 pb-10">
-                <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8">
-                  <h3 className="font-rounded mb-4 text-lg font-bold text-rose-900">
-                    基本サービス
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {MOCK_BASIC_SERVICES.map((s, i) => (
-                      <span
-                        key={i}
-                        className="rounded-full bg-rose-50 px-4 py-2 text-xs font-bold text-rose-600"
-                      >
-                        {s}
-                      </span>
-                    ))}
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 md:p-8">
+                    <div className="mb-6 flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                        <CheckCircle size={20} />
+                      </div>
+                      <h3 className="font-rounded text-lg font-bold text-rose-900">基本サービス</h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {MOCK_BASIC_SERVICES.map((s, i) => (
+                        <span
+                          key={i}
+                          className="rounded-xl border border-rose-50 bg-rose-50/30 px-3 py-2 text-center text-[11px] font-bold text-rose-600 sm:text-xs"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 md:p-8">
+                    <div className="mb-6 flex items-center gap-3">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                        <Gift size={20} />
+                      </div>
+                      <h3 className="font-rounded text-lg font-bold text-rose-900">
+                        無料オプション
+                      </h3>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {MOCK_FREE_OPTIONS.map((s, i) => (
+                        <span
+                          key={i}
+                          className="rounded-xl border border-rose-50 bg-rose-50/30 px-3 py-2 text-center text-[11px] font-bold text-rose-600 sm:text-xs"
+                        >
+                          {s}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-                <SimplePriceList items={currentStore.options} title="Special Options" />
+
+                <div className="mt-8 space-y-3">
+                  <div className="mb-6 flex items-center gap-3 px-4">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                      <Star size={20} />
+                    </div>
+                    <h3 className="font-rounded text-lg font-bold text-rose-900">有料オプション</h3>
+                  </div>
+                  <SimplePriceList items={currentStore.options} title="" />
+                </div>
               </div>
             )}
 

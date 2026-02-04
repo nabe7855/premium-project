@@ -1,13 +1,26 @@
 'use client';
 
 import type { FullPriceConfig } from '@/types/priceConfig';
-import { ChevronDown } from 'lucide-react';
+import { CheckCircle, ChevronDown, Gift, Star } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
 
 interface PricePageClientProps {
   priceConfig: FullPriceConfig;
 }
+
+const BASIC_SERVICES = [
+  'カウンセリング',
+  '指圧マッサージ',
+  'パウダー性感',
+  '乳首舐め',
+  'クンニ',
+  '指入れ',
+  'Gスポット',
+  'ポルチオ',
+];
+
+const FREE_OPTIONS = ['キス', 'ハグ', 'フェラ', '手コキ', 'ボディータッチ', 'ローター', 'バイブ'];
 
 export default function PricePageClient({ priceConfig }: PricePageClientProps) {
   const [activeTab, setActiveTab] = useState<
@@ -141,7 +154,56 @@ export default function PricePageClient({ priceConfig }: PricePageClientProps) {
                   ご希望に合わせて各サービスをご用命ください。
                 </p>
               </div>
-              <div className="space-y-3">
+
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* 基本サービス */}
+                <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8">
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                      <CheckCircle size={20} />
+                    </div>
+                    <h3 className="font-rounded text-lg font-bold text-rose-900">基本サービス</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {BASIC_SERVICES.map((service) => (
+                      <div
+                        key={service}
+                        className="rounded-xl border border-rose-50 bg-rose-50/30 px-3 py-2 text-center text-[11px] font-bold text-rose-600 sm:text-xs"
+                      >
+                        {service}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* 無料オプション */}
+                <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-6 shadow-lg shadow-rose-100/50 md:p-8">
+                  <div className="mb-6 flex items-center gap-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                      <Gift size={20} />
+                    </div>
+                    <h3 className="font-rounded text-lg font-bold text-rose-900">無料オプション</h3>
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    {FREE_OPTIONS.map((option) => (
+                      <div
+                        key={option}
+                        className="rounded-xl border border-rose-50 bg-rose-50/30 px-3 py-2 text-center text-[11px] font-bold text-rose-600 sm:text-xs"
+                      >
+                        {option}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-8 space-y-3">
+                <div className="mb-6 flex items-center gap-3 px-4">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 text-rose-500">
+                    <Star size={20} />
+                  </div>
+                  <h3 className="font-rounded text-lg font-bold text-rose-900">有料オプション</h3>
+                </div>
                 {priceConfig.options.map((option) => (
                   <div
                     key={option.id}

@@ -1,38 +1,34 @@
 'use client';
-import React, { useState, useEffect } from 'react';
 import {
-  Heart,
-  Shield,
-  Star,
-  Clock,
-  Phone,
-  MessageCircle,
-  Mail,
-  CheckCircle,
+  Award,
+  Calendar,
   //ArrowRight,
   ChevronDown,
   ChevronUp,
-  Award,
-  Users,
-  Newspaper,
-  Lock,
+  Clock,
+  DollarSign,
   FileText,
-  Calendar,
-  Gift,
-  MapPin,
-  AlertTriangle,
-  Ban,
+  Heart,
+  HelpCircle,
+  Home,
+  Lock,
+  Mail,
   //UserX,
   Menu,
+  MessageCircle,
+  Newspaper,
+  Phone,
+  Shield,
+  Star,
+  Users,
   X,
-  Home,
-  DollarSign,
-  Settings,
-  HelpCircle,
-  FileX,
 } from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 function App() {
+  const params = useParams();
   const [activeTab, setActiveTab] = useState('basic');
   const [activeFaq, setActiveFaq] = useState<number | null>(null);
   const [isVisible, setIsVisible] = useState(false);
@@ -66,12 +62,9 @@ function App() {
     { id: 'empathy', label: 'お気持ち', icon: <Heart className="h-4 w-4" /> },
     { id: 'trust', label: '7つの約束', icon: <Shield className="h-4 w-4" /> },
     { id: 'service-flow', label: 'プレリュード', icon: <Star className="h-4 w-4" /> },
-    { id: 'pricing', label: '料金', icon: <DollarSign className="h-4 w-4" /> },
-    { id: 'services', label: 'サービス', icon: <Settings className="h-4 w-4" /> },
-    { id: 'transport', label: '送迎エリア', icon: <MapPin className="h-4 w-4" /> },
+    { id: 'detailed-price', label: '料金・サービス', icon: <DollarSign className="h-4 w-4" /> },
     { id: 'faq', label: 'よくある質問', icon: <HelpCircle className="h-4 w-4" /> },
     { id: 'terms', label: 'お約束', icon: <FileText className="h-4 w-4" /> },
-    { id: 'prohibited', label: '禁止事項', icon: <FileX className="h-4 w-4" /> },
   ];
 
   const scrollToSection = (sectionId: string) => {
@@ -789,186 +782,33 @@ function App() {
           </div>
         </section>
 
-        {/* Pricing Section */}
-        <section id="pricing" className="bg-white py-16 md:py-20">
+        {/* Detailed Price & Options CTA */}
+        <section id="detailed-price" className="bg-white py-16 md:py-24">
           <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-6xl">
-              <h2 className="mb-4 text-center font-serif text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
-                コース別
+            <div className="mx-auto max-w-4xl rounded-[32px] border-2 border-pink-100 bg-gradient-to-br from-pink-50/50 to-white p-8 text-center shadow-xl md:p-16">
+              <div className="mb-6 flex justify-center">
+                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-pink-100 text-pink-500 shadow-inner md:h-20 md:w-20">
+                  <DollarSign size={40} className="md:size-48" />
+                </div>
+              </div>
+              <h2 className="mb-6 font-serif text-3xl font-bold text-gray-800 md:text-5xl">
+                料金・サービス詳細
               </h2>
-              <p
-                id="price"
-                className="mb-12 text-center font-serif text-xl text-pink-600 md:mb-16 md:text-2xl lg:text-3xl"
+              <p className="mb-10 text-pretty text-lg leading-relaxed text-gray-600 md:text-xl">
+                ご利用料金や送迎エリア、各種オプションサービスの詳細は
+                <br className="hidden md:inline" />
+                こちらの専用ページにて詳しくご案内しております。
+              </p>
+              <Link
+                href={`/store/${params.slug}/price`}
+                className="group inline-flex transform items-center gap-4 rounded-full bg-pink-600 px-10 py-5 text-lg font-bold text-white shadow-lg transition-all hover:scale-105 hover:bg-pink-700 hover:shadow-pink-200 active:scale-95 md:px-16 md:py-6"
               >
-                ご利用料金
-              </p>
-
-              {/* Tab Navigation */}
-              <div className="mb-8 flex flex-wrap justify-center rounded-2xl bg-pink-50 p-2 md:mb-12">
-                {[
-                  { id: 'basic', label: '基本コース' },
-                  { id: 'special', label: '特別コース' },
-                  { id: 'couple', label: 'カップル・3P' },
-                  { id: 'overnight', label: 'お泊り' },
-                  { id: 'travel', label: 'トラベル' },
-                ].map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`rounded-xl px-3 py-2 text-sm font-semibold transition-all duration-300 md:px-6 md:py-3 md:text-base ${
-                      activeTab === tab.id
-                        ? 'bg-pink-600 text-white shadow-lg'
-                        : 'text-pink-600 hover:bg-white hover:shadow-md'
-                    }`}
-                  >
-                    {tab.label}
-                  </button>
-                ))}
-              </div>
-
-              {/* Pricing Cards */}
-              <div className="grid gap-4 sm:grid-cols-2 md:gap-6 lg:grid-cols-3">
-                {pricingPlans[activeTab as keyof typeof pricingPlans].map((plan, index) => (
-                  <div
-                    key={index}
-                    className={`transform rounded-2xl border-2 bg-white p-4 shadow-lg transition-all duration-300 hover:-translate-y-2 hover:shadow-xl md:p-6 ${
-                      plan.popular ? 'border-pink-400 ring-2 ring-pink-200' : 'border-pink-200'
-                    }`}
-                  >
-                    {plan.popular && (
-                      <div className="mb-4 inline-block rounded-full bg-pink-600 px-3 py-1 text-xs font-bold text-white md:text-sm">
-                        人気
-                      </div>
-                    )}
-                    {'discount' in plan && plan.discount && (
-                      <div className="mb-4 ml-2 inline-block rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-600 md:text-sm">
-                        {plan.discount}
-                      </div>
-                    )}
-                    <h3 className="mb-4 text-lg font-bold text-gray-800 md:text-xl">{plan.name}</h3>
-                    <div className="mb-2 flex items-baseline">
-                      <span className="text-2xl font-bold text-pink-600 md:text-3xl">
-                        {plan.price}
-                      </span>
-                    </div>
-                    {plan.extension && (
-                      <p className="mb-4 text-xs text-gray-500 md:text-sm">{plan.extension}</p>
-                    )}
-                    <p className="mb-4 text-xs leading-relaxed text-gray-600 md:text-sm">
-                      {plan.note}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Services Section */}
-        <section id="services" className="bg-gradient-to-b from-pink-50 to-white py-16 md:py-20">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-6xl">
-              <h2 className="mb-4 text-center font-serif text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
-                サービス・
-              </h2>
-              <p className="mb-12 text-center font-serif text-xl text-pink-600 md:mb-16 md:text-2xl lg:text-3xl">
-                オプション
-              </p>
-
-              <div className="grid gap-6 md:gap-8 lg:grid-cols-3">
-                {/* Basic Services */}
-                <div className="rounded-2xl bg-white p-4 shadow-lg md:p-6">
-                  <h3 className="mb-4 flex items-center text-lg font-bold text-gray-800 md:text-xl">
-                    <CheckCircle className="mr-2 h-4 w-4 text-green-500 md:h-5 md:w-5" />
-                    基本サービス
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {services.basic.map((service, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg bg-pink-50 p-2 text-xs text-gray-700 md:text-sm"
-                      >
-                        {service}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Free Options */}
-                <div className="rounded-2xl bg-white p-4 shadow-lg md:p-6">
-                  <h3 className="mb-4 flex items-center text-lg font-bold text-gray-800 md:text-xl">
-                    <Gift className="mr-2 h-4 w-4 text-pink-500 md:h-5 md:w-5" />
-                    無料オプション
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {services.free.map((service, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg bg-green-50 p-2 text-xs text-gray-700 md:text-sm"
-                      >
-                        {service}
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Paid Options */}
-                <div className="rounded-2xl bg-white p-4 shadow-lg md:p-6">
-                  <h3 className="mb-4 flex items-center text-lg font-bold text-gray-800 md:text-xl">
-                    <Star className="mr-2 h-4 w-4 text-yellow-500 md:h-5 md:w-5" />
-                    有料オプション
-                  </h3>
-                  <div className="space-y-3">
-                    {services.options.map((option, index) => (
-                      <div key={index} className="rounded-lg border border-pink-200 p-3">
-                        <div className="mb-2 flex items-center justify-between">
-                          <span className="text-sm font-semibold text-gray-800 md:text-base">
-                            {option.name}
-                          </span>
-                          <span className="text-sm font-bold text-pink-600 md:text-base">
-                            {option.price}
-                          </span>
-                        </div>
-                        <p className="text-xs text-gray-600">{option.note}</p>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Transport Section */}
-        <section id="transport" className="bg-white py-16 md:py-20">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl">
-              <h2 className="mb-4 text-center font-serif text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
-                送迎エリア・
-              </h2>
-              <p className="mb-12 text-center font-serif text-xl text-pink-600 md:mb-16 md:text-2xl lg:text-3xl">
-                料金
-              </p>
-              <div className="grid gap-4 sm:grid-cols-2 md:gap-6">
-                {transportAreas.map((area, index) => (
-                  <div
-                    key={index}
-                    className="rounded-2xl border-2 border-pink-200 bg-gradient-to-r from-pink-50 to-white p-4 shadow-lg md:p-6"
-                  >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center">
-                        <MapPin className="mr-3 h-5 w-5 text-pink-600 md:h-6 md:w-6" />
-                        <span className="text-sm font-semibold text-gray-800 md:text-lg">
-                          {area.area}
-                        </span>
-                      </div>
-                      <span className="text-lg font-bold text-pink-600 md:text-xl">
-                        {area.price}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                <span>料金・サービスを詳しく見る</span>
+                <ChevronDown
+                  size={24}
+                  className="-rotate-90 transition-transform group-hover:translate-x-1"
+                />
+              </Link>
             </div>
           </div>
         </section>
@@ -1068,55 +908,7 @@ function App() {
           </div>
         </section>
 
-        {/* Prohibited Items Section */}
-        <section id="prohibited" className="bg-gradient-to-b from-red-50 to-white py-16 md:py-20">
-          <div className="container mx-auto px-4">
-            <div className="mx-auto max-w-4xl">
-              <h2 className="mb-4 text-center font-serif text-3xl font-bold text-gray-800 md:text-4xl lg:text-5xl">
-                禁止事項
-              </h2>
-              <p className="mb-12 text-center text-lg text-gray-600 md:mb-16 md:text-xl">
-                下記に該当、もしくは疑わしい方のご利用をお断りさせていただきます。
-              </p>
-
-              <div className="rounded-2xl border-2 border-red-200 bg-white p-6 shadow-lg md:p-8">
-                <div className="space-y-4">
-                  {prohibitedItems.map((item, index) => (
-                    <div
-                      key={index}
-                      className="flex items-start rounded-lg border-l-4 border-red-400 bg-red-50 p-3 md:p-4"
-                    >
-                      <Ban className="mr-3 mt-0.5 h-4 w-4 flex-shrink-0 text-red-500 md:h-5 md:w-5" />
-                      <p className="text-sm leading-relaxed text-gray-700 md:text-base">{item}</p>
-                    </div>
-                  ))}
-                </div>
-
-                <div className="mt-6 rounded-lg border-2 border-yellow-200 bg-yellow-50 p-4 md:mt-8 md:p-6">
-                  <h4 className="mb-3 flex items-center text-base font-bold text-gray-800 md:text-lg">
-                    <AlertTriangle className="mr-2 h-4 w-4 text-yellow-600 md:h-5 md:w-5" />
-                    セラピストとの直接連絡について
-                  </h4>
-                  <p className="mb-4 text-sm leading-relaxed text-gray-600 md:text-base">
-                    当店セラピストとのツイッターDM、及びLINE@にてセラピストとの直接連絡はあくまでも「ご予約」についてのお問い合わせツールと定めさせて頂いております。
-                  </p>
-                  <p className="mb-4 text-sm leading-relaxed text-gray-600 md:text-base">
-                    直接連絡による精神的な問題についての相談文面、行き過ぎた長文の送信、日常的に過度な連絡の送信などはセラピストの大きな負担となる可能性があり、禁止とさせて頂きます。
-                  </p>
-                  <p className="text-sm font-semibold text-red-600 md:text-base">
-                    事務局の判断にて重くみた場合、当該のお客様の今後の当店のご利用を無期限禁止とさせて頂く場合もございます。
-                  </p>
-                </div>
-
-                <div className="mt-4 rounded-lg bg-gray-50 p-3 md:mt-6 md:p-4">
-                  <p className="text-xs leading-relaxed text-gray-600 md:text-sm">
-                    サービス中に、上記事項に該当する行為が発覚した場合、サービスを中断させていただきます。その際、料金のご返金には応じかねますので、ご了承ください。また、悪質とみなした場合は所轄の警察に通報致します。
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
+        {/* FAQ Section */}
 
         {/* CTA Section */}
         <section className="bg-gradient-to-br from-pink-600 to-pink-700 py-16 text-white md:py-20">

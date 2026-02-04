@@ -261,10 +261,10 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
         <Link
           href={getAbsoluteHref(config.logoLink || '/')}
-          className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
+          className="group relative flex h-full items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
-            <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" />
+            <img src={config.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
           ) : (
             <>
               <span className="text-3xl drop-shadow-sm filter">🍓</span>
