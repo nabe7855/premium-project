@@ -15,10 +15,12 @@ import NewcomerSection from '../sections/NewcomerSection';
 import PriceSection from '../sections/PriceSection';
 import QuickAccessMenu from '../sections/QuickAccessMenu';
 
+import { PageData } from '@/components/admin/news/types';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 
 interface FukuokaPageProps {
   config: StoreTopPageConfig | null;
+  newsPages?: PageData[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
@@ -26,6 +28,7 @@ interface FukuokaPageProps {
 
 export default function FukuokaPage({
   config,
+  newsPages,
   isEditing,
   onUpdate,
   onImageUpload,
@@ -64,6 +67,7 @@ export default function FukuokaPage({
       {(!safeConfig || safeConfig.campaign.isVisible || isEditing) && (
         <CampaignSection
           config={safeConfig?.campaign}
+          newsPages={newsPages}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}

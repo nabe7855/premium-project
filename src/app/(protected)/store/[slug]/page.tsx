@@ -1,6 +1,7 @@
 import CommonTopPage from '@/components/templates/store/common/page-templates/TopPage';
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
+import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -95,6 +96,9 @@ export default async function StorePage({ params }: StorePageProps) {
   // Supabaseから今日のキャストを取得
   const todayCasts = await getTodayCastsByStore(params.slug);
 
+  // ニュースページを取得
+  const newsPages = await getPublishedPagesByStore(params.slug);
+
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -135,15 +139,16 @@ export default async function StorePage({ params }: StorePageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       {store.template === 'fukuoka' ? (
-        <FukuokaTopPage config={topConfig as any} />
+        <FukuokaTopPage config={topConfig as any} newsPages={newsPages} />
       ) : store.template === 'yokohama' ? (
-        <YokohamaTopPage config={topConfig as any} />
+        <YokohamaTopPage config={topConfig as any} newsPages={newsPages} />
       ) : (
         <CommonTopPage
           store={store}
           todayCasts={todayCasts}
           structuredData={structuredData}
           topConfig={topConfig}
+          newsPages={newsPages}
         />
       )}
     </>

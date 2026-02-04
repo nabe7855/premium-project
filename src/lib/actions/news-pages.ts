@@ -44,6 +44,24 @@ export async function getAllPages(): Promise<PageData[]> {
   }
 }
 
+export async function getPublishedPagesByStore(storeSlug: string): Promise<PageData[]> {
+  try {
+    const records = await prisma.pageRequest.findMany({
+      where: {
+        status: 'published',
+        targetStoreSlugs: {
+          has: storeSlug,
+        },
+      },
+      orderBy: { updatedAt: 'desc' },
+    });
+    return records.map(mapPrismaToPageData);
+  } catch (error) {
+    console.error('Failed to fetch published pages by store:', error);
+    return [];
+  }
+}
+
 export async function getPage(id: string): Promise<PageData | null> {
   try {
     const record = await prisma.pageRequest.findUnique({

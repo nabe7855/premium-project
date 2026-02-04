@@ -1,5 +1,6 @@
 'use client';
 
+import { PageData } from '@/components/admin/news/types';
 import { BannerSlideSection } from '@/components/sections/BannerSlideSection';
 import Header from '@/components/sections/layout/Header';
 import AIMatchingSection from '@/components/sections/store/AIMatchingSection';
@@ -23,6 +24,7 @@ interface CommonStorePageProps {
   todayCasts: TodayCast[];
   structuredData: any;
   topConfig?: StoreTopPageConfig | null;
+  newsPages?: PageData[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
@@ -33,6 +35,7 @@ export default function CommonStorePage({
   todayCasts,
   structuredData,
   topConfig,
+  newsPages,
   isEditing,
   onUpdate,
   onImageUpload,

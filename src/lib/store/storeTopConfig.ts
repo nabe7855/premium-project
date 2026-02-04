@@ -66,6 +66,7 @@ export interface CampaignConfig {
   heading: string;
   subHeading: string;
   items: CampaignItem[];
+  orderedNewsPageIds?: string[];
   isVisible: boolean;
 }
 

@@ -1,8 +1,10 @@
-import { Camera, ChevronRight, Gift, Instagram, Plus, Trash2, Zap } from 'lucide-react';
+import { PageData } from '@/components/admin/news/types';
+import { CampaignConfig } from '@/lib/store/storeTopConfig';
+import { ArrowLeft, ArrowRight, ChevronRight, Zap } from 'lucide-react';
+import Link from 'next/link';
+import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
-
-import { CampaignConfig } from '@/lib/store/storeTopConfig';
 
 const defaultCampaigns: any[] = [
   {
@@ -39,6 +41,7 @@ const defaultCampaigns: any[] = [
 
 interface CampaignSectionProps {
   config?: CampaignConfig;
+  newsPages?: PageData[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
@@ -46,11 +49,34 @@ interface CampaignSectionProps {
 
 const CampaignSection: React.FC<CampaignSectionProps> = ({
   config,
+  newsPages = [],
   isEditing,
   onUpdate,
   onImageUpload,
 }) => {
-  const campaigns = config?.items || defaultCampaigns;
+  const params = useParams();
+  const router = useRouter();
+  const storeSlug = params.slug as string;
+
+  // ニュースページのソートロジック
+  const sortedNewsPages = React.useMemo(() => {
+    let pages = [...newsPages];
+    const orderedIds = config?.orderedNewsPageIds || [];
+
+    if (orderedIds.length > 0) {
+      pages.sort((a, b) => {
+        const indexA = orderedIds.indexOf(a.id);
+        const indexB = orderedIds.indexOf(b.id);
+        if (indexA === -1 && indexB === -1) return b.updatedAt - a.updatedAt;
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        return indexA - indexB;
+      });
+    } else {
+      pages.sort((a, b) => b.updatedAt - a.updatedAt);
+    }
+    return pages;
+  }, [newsPages, config?.orderedNewsPageIds]);
 
   const handleTextUpdate = (key: string, value: string) => {
     if (onUpdate) {
@@ -58,42 +84,15 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
     }
   };
 
-  const handleItemUpdate = (index: number, key: string, value: string) => {
-    if (onUpdate) {
-      const newItems = [...campaigns];
-      newItems[index] = { ...newItems[index], [key]: value };
-      onUpdate('campaign', 'items', newItems);
-    }
-  };
+  const moveOrder = (index: number, direction: 'prev' | 'next') => {
+    if (!onUpdate) return;
+    const currentOrder = sortedNewsPages.map((p) => p.id);
+    const newIndex = direction === 'prev' ? index - 1 : index + 1;
+    if (newIndex < 0 || newIndex >= currentOrder.length) return;
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const file = e.target.files?.[0];
-    if (file && onImageUpload) {
-      onImageUpload('campaign', file, index, 'items');
-    }
-  };
-
-  const addItem = () => {
-    if (onUpdate) {
-      const newId = campaigns.length > 0 ? Math.max(...campaigns.map((i: any) => i.id)) + 1 : 1;
-      const newItem = {
-        id: newId,
-        title: '新キャンペーン',
-        desc: '説明文を入力してください',
-        badge: 'NEW',
-        color: 'primary',
-        icon: 'Gift',
-        imageUrl: defaultCampaigns[0].imageUrl,
-      };
-      onUpdate('campaign', 'items', [...campaigns, newItem]);
-    }
-  };
-
-  const removeItem = (index: number) => {
-    if (onUpdate) {
-      const newItems = campaigns.filter((_: any, i: number) => i !== index);
-      onUpdate('campaign', 'items', newItems);
-    }
+    const newOrder = [...currentOrder];
+    [newOrder[index], newOrder[newIndex]] = [newOrder[newIndex], newOrder[index]];
+    onUpdate('campaign', 'orderedNewsPageIds', newOrder);
   };
 
   return (
@@ -123,104 +122,86 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
         </div>
 
         <div className="scrollbar-hide flex snap-x gap-8 overflow-x-auto px-6 pb-8 md:grid md:grid-cols-3 md:px-0">
-          {campaigns.map((camp: any, idx: number) => (
+          {sortedNewsPages.map((page: PageData, idx: number) => (
             <div
-              key={camp.id}
+              key={page.id}
               className="border-primary-100/20 group relative flex min-w-[300px] snap-center flex-col overflow-hidden rounded-[2.5rem] border bg-white shadow-sm transition-all duration-500 hover:shadow-xl md:min-w-0"
             >
               {isEditing && (
-                <button
-                  onClick={() => removeItem(idx)}
-                  className="absolute right-4 top-4 z-50 rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110"
-                >
-                  <Trash2 size={16} />
-                </button>
+                <div className="absolute right-4 top-4 z-50 flex gap-2">
+                  <button
+                    onClick={() => moveOrder(idx, 'prev')}
+                    disabled={idx === 0}
+                    className="rounded-full bg-white/90 p-2 text-slate-600 shadow-lg transition-transform hover:scale-110 disabled:opacity-50"
+                  >
+                    <ArrowLeft size={16} />
+                  </button>
+                  <button
+                    onClick={() => moveOrder(idx, 'next')}
+                    disabled={idx === sortedNewsPages.length - 1}
+                    className="rounded-full bg-white/90 p-2 text-slate-600 shadow-lg transition-transform hover:scale-110 disabled:opacity-50"
+                  >
+                    <ArrowRight size={16} />
+                  </button>
+                </div>
               )}
 
               <div className="relative h-48 overflow-hidden md:h-56">
                 <img
-                  src={camp.imageUrl}
-                  alt={camp.title}
+                  src={
+                    page.thumbnailUrl ||
+                    'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800'
+                  }
+                  alt={page.title}
                   className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute left-4 top-4">
                   <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleItemUpdate(idx, 'badge', e.currentTarget.innerText)}
-                    className={`rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest shadow-lg ${camp.color === 'primary' ? 'bg-primary-500 text-white' : 'bg-pink-400 text-white'} ${isEditing ? 'cursor-text outline-none' : ''}`}
+                    className={`bg-primary-500 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white shadow-lg`}
                   >
-                    {camp.badge}
+                    {page.status === 'published' ? 'NEW' : 'DRAFT'}
                   </span>
                 </div>
                 <div className="absolute bottom-4 left-4 rounded-xl bg-white/20 p-2 text-white backdrop-blur-md">
-                  {camp.icon === 'Gift' ? (
-                    <Gift size={20} />
-                  ) : camp.icon === 'Instagram' ? (
-                    <Instagram size={20} />
-                  ) : (
-                    <Zap size={20} />
-                  )}
+                  <Zap size={20} />
                 </div>
-
-                {isEditing && (
-                  <label className="absolute inset-0 z-40 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
-                    <Camera size={40} className="mb-2" />
-                    <span className="text-xs font-bold">画像を変更</span>
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) => handleImageChange(e, idx)}
-                    />
-                  </label>
-                )}
               </div>
 
               <div className="flex flex-grow flex-col p-6 text-left md:p-8">
                 <h3
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
-                  className={`mb-4 font-serif text-lg font-bold leading-snug tracking-wide text-slate-800 md:text-xl ${isEditing ? 'min-h-[1.2rem] rounded px-1 outline-none hover:bg-slate-50' : ''}`}
+                  className={`mb-4 font-serif text-lg font-bold leading-snug tracking-wide text-slate-800 md:text-xl`}
                 >
-                  {camp.title}
+                  {page.title}
                 </h3>
                 <p
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
-                  className={`mb-6 line-clamp-3 flex-grow text-xs leading-relaxed text-slate-500 md:text-sm ${isEditing ? 'rounded px-1 outline-none hover:bg-slate-50' : ''}`}
+                  className={`mb-6 line-clamp-3 flex-grow text-xs leading-relaxed text-slate-500 md:text-sm`}
                 >
-                  {camp.desc}
+                  {page.shortDescription || '詳細を見る'}
                 </p>
                 {!isEditing && (
-                  <div className="flex items-center justify-between border-t border-neutral-50 pt-4">
+                  <Link
+                    href={`/store/${storeSlug}/news/${page.slug}`}
+                    className="flex items-center justify-between border-t border-neutral-50 pt-4"
+                  >
                     <span className="text-primary-400 group-hover:text-primary-600 text-[10px] font-bold uppercase tracking-widest transition-colors">
                       Read More
                     </span>
                     <div className="bg-primary-50 rounded-full p-2 transition-transform group-hover:translate-x-1">
                       <ChevronRight size={16} className="text-primary-500" />
                     </div>
-                  </div>
+                  </Link>
                 )}
               </div>
             </div>
           ))}
 
-          {isEditing && (
-            <button
-              onClick={addItem}
-              className="border-primary-200 hover:border-primary-400 group flex min-w-[300px] snap-center flex-col items-center justify-center gap-4 overflow-hidden rounded-[2.5rem] border-2 border-dashed bg-white/50 p-8 transition-all hover:bg-white md:min-w-0"
-            >
-              <div className="bg-primary-100 text-primary-500 rounded-full p-4 transition-transform group-hover:scale-110">
-                <Plus size={32} />
-              </div>
-              <span className="group-hover:text-primary-600 font-bold text-slate-400">
-                キャンペーンを追加
-              </span>
-            </button>
+          {isEditing && sortedNewsPages.length === 0 && (
+            <div className="border-primary-200 col-span-3 rounded-[2.5rem] border-2 border-dashed p-12 text-center">
+              <p className="font-bold text-slate-400">
+                ニュース管理ページで作成・公開されたページがここに表示されます。
+              </p>
+            </div>
           )}
         </div>
       </div>
