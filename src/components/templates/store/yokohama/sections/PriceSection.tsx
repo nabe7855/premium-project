@@ -2,7 +2,7 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
-import { AlertCircle, ChevronDown } from 'lucide-react';
+import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import PriceCard from '../components/PriceCard';
@@ -72,47 +72,9 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
     <section id="price" className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en={config?.subHeading || 'Price Menu'} ja={config?.heading || '料金プラン'} />
 
-      <div className="relative flex flex-col gap-8 md:flex-row md:items-start">
-        {/* サイドタブ (Desktop) */}
-        <div className="hidden shrink-0 flex-col gap-3 md:flex md:w-64">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`group relative flex items-center justify-between overflow-hidden rounded-xl border-2 px-6 py-5 transition-all active:scale-95 ${
-                activeTab === tab.id
-                  ? 'border-[#642B2B] bg-[#642B2B] text-white shadow-lg'
-                  : 'border-slate-200 bg-white text-slate-600 hover:border-[#642B2B]/30 hover:bg-slate-50'
-              }`}
-            >
-              <span className="text-left text-sm font-black tracking-wider">{tab.label}</span>
-              <ChevronDown
-                size={18}
-                className={`-rotate-90 transition-transform ${activeTab === tab.id ? 'translate-x-1' : 'opacity-30 group-hover:opacity-100'}`}
-              />
-            </button>
-          ))}
-        </div>
-
-        {/* モバイル用タブ (Horizontal scroll) */}
-        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-4 md:hidden">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-black transition-all ${
-                activeTab === tab.id
-                  ? 'bg-[#642B2B] text-white shadow-md'
-                  : 'border border-slate-200 bg-white text-slate-500'
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
+      <div className="relative flex flex-col gap-8 md:flex-row md:justify-center">
         {/* メインメニューカードエリア */}
-        <div className="relative flex-grow">
+        <div className="relative w-full max-w-lg">
           {/* Navigation Arrows (Floating) */}
           <button
             onClick={prevTab}
