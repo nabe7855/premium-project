@@ -13,6 +13,19 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
   if (!config) return null;
 
+  const getAbsoluteHref = (href: string) => {
+    if (!href) return '#';
+    if (
+      href.startsWith('http') ||
+      href.startsWith('//') ||
+      href.startsWith('#') ||
+      href.startsWith('/')
+    ) {
+      return href;
+    }
+    return `/${href}`;
+  };
+
   const handleShopInfoUpdate = (key: string, value: string) => {
     if (onUpdate) {
       onUpdate('footer', 'shopInfo', { ...config.shopInfo, [key]: value });
@@ -66,7 +79,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           <div className="w-full flex-shrink-0 md:w-[240px]">
             <div className="group relative overflow-hidden rounded-lg border-[3px] border-pink-200 bg-white shadow-sm">
               <a
-                href={config.logoLink || '#'}
+                href={getAbsoluteHref(config.logoLink || '#')}
                 onClick={(e) => isEditing && e.preventDefault()}
                 className="block"
               >
@@ -157,7 +170,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {adjustedMenuButtons.map((btn, idx) => (
                 <div key={idx} className="group relative">
                   <a
-                    href={btn.link || '#'}
+                    href={getAbsoluteHref(btn.link || '#')}
                     onClick={(e) => isEditing && e.preventDefault()}
                     className="flex h-10 items-center justify-center rounded bg-[#333] px-1 text-center text-[11px] font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
                   >
@@ -189,7 +202,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 {[...config.banners, ...config.smallBanners].map((banner, idx) => (
                   <div key={idx} className="group relative flex flex-col items-center">
                     <a
-                      href={banner.link || '#'}
+                      href={getAbsoluteHref(banner.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block w-full overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-[1.02]"
                     >
@@ -247,7 +260,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 <div className="mx-auto aspect-square max-w-[400px]">
                   <div className="group relative h-full w-full">
                     <a
-                      href={config.largeBanner?.link || '#'}
+                      href={getAbsoluteHref(config.largeBanner?.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >

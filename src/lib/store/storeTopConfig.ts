@@ -9,6 +9,7 @@ export interface NavLink {
 export interface HeaderConfig {
   logoText: string;
   logoUrl?: string;
+  logoLink?: string;
   navLinks: NavLink[];
   reserveButtonText: string;
   isVisible: boolean;
@@ -201,6 +202,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
   header: {
     logoText: 'LUMIÈRE',
     logoUrl: '',
+    logoLink: '/',
     navLinks: [
       {
         name: '最新のお知らせ',

@@ -79,6 +79,19 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.click();
   };
 
+  const getAbsoluteHref = (href: string) => {
+    if (!href) return '#';
+    if (
+      href.startsWith('http') ||
+      href.startsWith('//') ||
+      href.startsWith('#') ||
+      href.startsWith('/')
+    ) {
+      return href;
+    }
+    return `/${href}`;
+  };
+
   const BackgroundDecoration = () => (
     <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
       <div
@@ -99,7 +112,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           key={item.href}
           className="group relative overflow-hidden rounded-[40px] bg-white shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-[0.98]"
         >
-          <Link href={item.href} onClick={closeMenu} className="flex items-center gap-6 px-4 py-6">
+          <Link
+            href={getAbsoluteHref(item.href)}
+            onClick={closeMenu}
+            className="flex items-center gap-6 px-4 py-6"
+          >
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
                 <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
@@ -155,7 +172,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       return (
         <div key={item.href} className="transition-transform active:translate-y-[2px]">
           <Link
-            href={item.href}
+            href={getAbsoluteHref(item.href)}
             onClick={closeMenu}
             className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
           >
@@ -190,7 +207,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         key={item.href}
         className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] border border-transparent bg-white px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
       >
-        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center">
+        <Link
+          href={getAbsoluteHref(item.href)}
+          onClick={closeMenu}
+          className="flex w-full flex-col items-center"
+        >
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
@@ -239,7 +260,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     >
       <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
         <Link
-          href="/"
+          href={getAbsoluteHref(config.logoLink || '/')}
           className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
