@@ -2,6 +2,7 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
+import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -47,7 +48,8 @@ interface PriceSectionProps {
 
 const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
   const { store } = useStore();
-  const [activeTab, setActiveTab] = useState(0);
+  const [[page, direction], setPage] = useState([0, 0]);
+  const activeTab = page;
 
   const tabs = [
     { id: 0, label: 'オープニングキャンペーン中' },
@@ -58,8 +60,12 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
   const prices = config?.itemsByTab?.[activeTab] || defaultPricesByTab[activeTab];
   const notes = config?.notes || defaultNotes;
 
-  const nextTab = () => setActiveTab((prev) => (prev + 1) % tabs.length);
-  const prevTab = () => setActiveTab((prev) => (prev - 1 + tabs.length) % tabs.length);
+  const nextTab = () => {
+    setPage([(page + 1) % tabs.length, 1]);
+  };
+  const prevTab = () => {
+    setPage([(page - 1 + tabs.length) % tabs.length, -1]);
+  };
 
   // カテゴリーに応じた説明文（モックまたはConfigから取得）
   const categoryDescriptions = [
@@ -74,7 +80,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
 
       <div className="relative flex flex-col gap-8 md:flex-row md:justify-center">
         {/* メインメニューカードエリア */}
-        <div className="relative w-full max-w-lg">
+        <div className="relative w-full max-w-[476px]">
           {/* Navigation Arrows (Floating) */}
           <button
             onClick={prevTab}
@@ -99,12 +105,25 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
             </svg>
           </button>
 
-          {/* New PriceCard */}
-          <PriceCard
-            title={tabs[activeTab].label}
-            description={categoryDescriptions[activeTab]}
-            items={prices}
-          />
+          {/* New PriceCard with Animation */}
+          <div className="overflow-hidden">
+            <AnimatePresence mode="wait" custom={direction}>
+              <motion.div
+                key={page}
+                custom={direction}
+                initial={{ opacity: 0, x: direction > 0 ? 50 : -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: direction > 0 ? -50 : 50 }}
+                transition={{ duration: 0.3, ease: 'easeInOut' }}
+              >
+                <PriceCard
+                  title={tabs[activeTab].label}
+                  description={categoryDescriptions[activeTab]}
+                  items={prices}
+                />
+              </motion.div>
+            </AnimatePresence>
+          </div>
         </div>
       </div>
 
