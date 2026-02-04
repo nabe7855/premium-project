@@ -162,31 +162,40 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             </div>
 
             {/* Banners Area (Background is now inherited from footer, keeping structure) */}
-            <div className="mt-10 overflow-hidden rounded-2xl p-4 md:p-8">
+            <div className="mt-10 overflow-hidden rounded-2xl">
               {/* Grid of Banners (2 columns as requested) */}
-              <div className="grid grid-cols-2 gap-4 md:gap-8">
+              <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
                 {[...config.banners, ...config.smallBanners].map((banner, idx) => (
-                  <div key={idx} className="group relative flex flex-col items-center">
+                  <div key={idx} className="group relative flex flex-col items-start">
                     <a
                       href={getAbsoluteHref(banner.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
-                      className="block w-full overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-[1.02]"
+                      className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                     >
                       <img
                         src={banner.imageUrl}
                         alt=""
-                        className="aspect-[1.8/1] w-full object-cover"
+                        className="aspect-[2.5/1] w-full object-cover"
                       />
                     </a>
 
-                    {/* Banner Title & Link Icon (Image 3 Style) */}
-                    <div className="mt-3 flex items-center justify-center gap-1.5 text-center font-bold text-white">
-                      <span className="text-xs md:text-sm">バナータイトル</span>
-                      <Link2 className="h-3.5 w-3.5" />
-                    </div>
+                    {/* Banner Title & Link Icon */}
+                    <a
+                      href={getAbsoluteHref(banner.link || '#')}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="mt-2.5 flex w-full items-start gap-1 text-left text-white decoration-white/80 transition-opacity hover:opacity-80"
+                    >
+                      <span className="text-[13px] font-medium leading-tight underline decoration-1 underline-offset-[3px] md:text-sm">
+                        バナータイトル
+                      </span>
+                      <Link2
+                        className="mt-[2px] h-3.5 w-3.5 shrink-0 opacity-80"
+                        strokeWidth={2.5}
+                      />
+                    </a>
 
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute inset-0 top-0 mb-8 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                         <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
                           <ImageIcon className="h-4 w-4" />
                           <input
