@@ -17,4 +17,20 @@
   - [x] Implement `PriceCard` component <!-- id: 17 -->
   - [x] Update `PriceSection` layout and switching logic <!-- id: 18 -->
   - [x] Verify UI on mobile and desktop <!-- id: 19 -->
+- [/] Redesign Footer Banners <!-- id: 20 -->
+  - [x] Research existing implementation <!-- id: 21 -->
+  - [x] Create implementation plan <!-- id: 22 -->
+  - [ ] Implement 2-column banner grid with pink background <!-- id: 23 -->
+  - [ ] Add large square banner at the bottom <!-- id: 24 -->
+  - [ ] Verify UI consistency <!-- id: 25 -->
+- [x] Research the cause of any other errors <!-- id: 9 -->
+- [x] Create an implementation plan <!-- id: 10 -->
+- [x] Apply the fix <!-- id: 11 -->
+- [x] Verify the fix <!-- id: 12 -->
+- [x] Redesign Price Menu UI <!-- id: 14 -->
+  - [x] Research existing implementation <!-- id: 15 -->
+  - [x] Create implementation plan <!-- id: 16 -->
+  - [x] Implement `PriceCard` component <!-- id: 17 -->
+  - [x] Update `PriceSection` layout and switching logic <!-- id: 18 -->
+  - [x] Verify UI on mobile and desktop <!-- id: 19 -->
         anges <!-- id: 4 -->

@@ -283,6 +283,20 @@ export default function StoreTopManagement() {
         };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
+      } else if (section === 'footer' && key === 'largeBanner') {
+        const oldImageUrl = config.footer.largeBanner?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        const newConfig = {
+          ...config,
+          footer: {
+            ...config.footer,
+            largeBanner: { imageUrl: publicUrl, link: config.footer.largeBanner?.link || '#' },
+          },
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
       } else {
         const sectionKey = key || 'imageUrl';
         const oldImageUrl = (config[section as keyof StoreTopPageConfig] as any)?.[sectionKey];

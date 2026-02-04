@@ -182,34 +182,57 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               ))}
             </div>
 
-            {/* Middle Banners (3 Large ones) */}
-            <div className="mt-6 space-y-3">
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-                {config.banners.map((banner, idx) => (
-                  <div key={idx} className="group relative">
+            {/* Banners Area with Pink Background */}
+            <div className="mt-8 overflow-hidden rounded-2xl bg-[#F47575] p-4 md:p-6">
+              {/* Grid of Banners (2 columns as requested) */}
+              <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-8">
+                {[...config.banners, ...config.smallBanners].map((banner, idx) => (
+                  <div key={idx} className="group relative flex flex-col items-center">
                     <a
                       href={banner.link || '#'}
                       onClick={(e) => isEditing && e.preventDefault()}
-                      className="block aspect-[4/1] overflow-hidden rounded bg-slate-100 shadow-sm"
+                      className="block w-full overflow-hidden rounded-lg bg-white shadow-md transition-transform hover:scale-[1.02]"
                     >
-                      <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
+                      <img
+                        src={banner.imageUrl}
+                        alt=""
+                        className="aspect-[1.8/1] w-full object-cover"
+                      />
                     </a>
+
+                    {/* Banner Title & Link Icon (Image 3 Style) */}
+                    <div className="mt-2 flex items-center justify-center gap-1 text-center font-bold text-white">
+                      <span className="text-[10px] md:text-xs">バナータイトル</span>
+                      <Link2 className="h-3 w-3" />
+                    </div>
+
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
                         <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
                           <ImageIcon className="h-4 w-4" />
                           <input
                             type="file"
                             className="hidden"
                             accept="image/*"
-                            onChange={(e) =>
-                              e.target.files?.[0] &&
-                              onImageUpload?.('footer', e.target.files[0], idx, 'banners')
-                            }
+                            onChange={(e) => {
+                              if (!e.target.files?.[0]) return;
+                              const isSmall = idx >= config.banners.length;
+                              const realIdx = isSmall ? idx - config.banners.length : idx;
+                              onImageUpload?.(
+                                'footer',
+                                e.target.files[0],
+                                realIdx,
+                                isSmall ? 'smallBanners' : 'banners',
+                              );
+                            }}
                           />
                         </label>
                         <button
-                          onClick={() => handleLinkUpdate('banners', idx)}
+                          onClick={() => {
+                            const isSmall = idx >= config.banners.length;
+                            const realIdx = isSmall ? idx - config.banners.length : idx;
+                            handleLinkUpdate(isSmall ? 'smallBanners' : 'banners', realIdx);
+                          }}
                           className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
                         >
                           <Link2 className="h-4 w-4" />
@@ -218,106 +241,111 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     )}
                   </div>
                 ))}
+              </div>
+
+              {/* Large Square Banner at the Bottom */}
+              <div className="mt-8 border-t border-white/20 pt-8">
+                <div className="mx-auto aspect-square max-w-[400px]">
+                  <div className="group relative h-full w-full">
+                    <a
+                      href={config.largeBanner?.link || '#'}
+                      onClick={(e) => isEditing && e.preventDefault()}
+                      className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
+                    >
+                      <img
+                        src={
+                          config.largeBanner?.imageUrl ||
+                          'https://placehold.jp/400x400.png?text=Large%20Banner'
+                        }
+                        alt="Large Banner"
+                        className="h-full w-full object-cover"
+                      />
+                    </a>
+                    {isEditing && (
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                        <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800">
+                          <ImageIcon className="h-5 w-5" />
+                          <input
+                            type="file"
+                            className="hidden"
+                            accept="image/*"
+                            onChange={(e) =>
+                              e.target.files?.[0] &&
+                              onImageUpload?.('footer', e.target.files[0], undefined, 'largeBanner')
+                            }
+                          />
+                        </label>
+                        <button
+                          onClick={() => handleLinkUpdate('largeBanner')}
+                          className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800"
+                        >
+                          <Link2 className="h-5 w-5" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Lower Banners and Trust Badges Layer */}
-            <div className="mt-4 flex flex-col items-start gap-4 sm:flex-row">
-              <div className="grid flex-grow grid-cols-1 gap-2">
-                {config.smallBanners.map((banner, idx) => (
-                  <div key={idx} className="group relative w-full max-w-[300px]">
-                    <a
-                      href={banner.link || '#'}
-                      onClick={(e) => isEditing && e.preventDefault()}
-                      className="block h-16 overflow-hidden rounded bg-slate-100 shadow-sm"
-                    >
-                      <img src={banner.imageUrl} alt="" className="h-full w-full object-cover" />
-                    </a>
-                    {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                        <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
-                          <ImageIcon className="h-4 w-4" />
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={(e) =>
-                              e.target.files?.[0] &&
-                              onImageUpload?.('footer', e.target.files[0], idx, 'smallBanners')
-                            }
-                          />
-                        </label>
-                        <button
-                          onClick={() => handleLinkUpdate('smallBanners', idx)}
-                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
-                        >
-                          <Link2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-
-              {/* Trust Badges Area */}
-              <div className="flex flex-wrap justify-center gap-2 sm:justify-start">
-                {config.trustBadges.map((badge, idx) => (
-                  <div key={idx} className="group relative">
-                    <a
-                      href={badge.link || '#'}
-                      onClick={(e) => isEditing && e.preventDefault()}
-                      className="block flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
-                    >
-                      <img src={badge.imageUrl} alt="Trust Badge" className="h-24 w-auto" />
-                    </a>
-                    {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                        <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
-                          <ImageIcon className="h-4 w-4" />
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={(e) =>
-                              e.target.files?.[0] &&
-                              onImageUpload?.('footer', e.target.files[0], idx, 'trustBadges')
-                            }
-                          />
-                        </label>
-                        <button
-                          onClick={() => handleLinkUpdate('trustBadges', idx)}
-                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
-                        >
-                          <Link2 className="h-4 w-4" />
-                        </button>
-                        <button
-                          onClick={() => {
-                            const newBadges = [...config.trustBadges];
-                            newBadges.splice(idx, 1);
-                            onUpdate?.('footer', 'trustBadges', newBadges);
-                          }}
-                          className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                ))}
-                {isEditing && (
-                  <button
-                    onClick={() =>
-                      onUpdate?.('footer', 'trustBadges', [
-                        ...config.trustBadges,
-                        { imageUrl: 'https://placehold.jp/100x120.png', link: '#' },
-                      ])
-                    }
-                    className="flex h-24 w-20 items-center justify-center rounded border-2 border-dashed border-slate-200 text-slate-300 hover:border-slate-400 hover:text-slate-500"
+            {/* Trust Badges Area (Keeping separate as it was) */}
+            <div className="mt-8 flex flex-wrap justify-center gap-4">
+              {config.trustBadges.map((badge, idx) => (
+                <div key={idx} className="group relative">
+                  <a
+                    href={badge.link || '#'}
+                    onClick={(e) => isEditing && e.preventDefault()}
+                    className="block flex-shrink-0 rounded border border-neutral-200 bg-white p-1"
                   >
-                    <Plus size={24} />
-                  </button>
-                )}
-              </div>
+                    <img src={badge.imageUrl} alt="Trust Badge" className="h-24 w-auto" />
+                  </a>
+                  {isEditing && (
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
+                        <ImageIcon className="h-4 w-4" />
+                        <input
+                          type="file"
+                          className="hidden"
+                          accept="image/*"
+                          onChange={(e) =>
+                            e.target.files?.[0] &&
+                            onImageUpload?.('footer', e.target.files[0], idx, 'trustBadges')
+                          }
+                        />
+                      </label>
+                      <button
+                        onClick={() => handleLinkUpdate('trustBadges', idx)}
+                        className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                      >
+                        <Link2 className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => {
+                          const newBadges = [...config.trustBadges];
+                          newBadges.splice(idx, 1);
+                          onUpdate?.('footer', 'trustBadges', newBadges);
+                        }}
+                        className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] text-white"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+              {isEditing && (
+                <button
+                  onClick={() =>
+                    onUpdate?.('footer', 'trustBadges', [
+                      ...config.trustBadges,
+                      { imageUrl: 'https://placehold.jp/100x120.png', link: '#' },
+                    ])
+                  }
+                  className="flex h-24 w-20 items-center justify-center rounded border-2 border-dashed border-slate-200 text-slate-300 hover:border-slate-400 hover:text-slate-500"
+                >
+                  <Plus size={24} />
+                </button>
+              )}
             </div>
           </div>
         </div>

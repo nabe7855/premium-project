@@ -177,6 +177,7 @@ export interface FooterConfig {
     businessHours: string;
   };
   trustBadges: { imageUrl: string; link: string }[];
+  largeBanner?: { imageUrl: string; link: string };
   copyright: string;
   isVisible: boolean;
 }
