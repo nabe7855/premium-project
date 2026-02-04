@@ -1,4 +1,5 @@
 import { getPriceConfig } from '@/lib/actions/priceConfig';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { notFound } from 'next/navigation';
 import PricePageClient from './PricePageClient';
@@ -25,7 +26,11 @@ export default async function PricePage({ params }: PricePageProps) {
     notFound();
   }
 
-  return <PricePageClient priceConfig={priceConfig} />;
+  // 店舗トップページの設定を取得 (ヘッダー用)
+  const configResponse = await getStoreTopConfig(slug);
+  const config = configResponse.success ? configResponse.config : null;
+
+  return <PricePageClient priceConfig={priceConfig} config={config} />;
 }
 
 // 静的生成用のパラメータ生成
