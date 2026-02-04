@@ -2,9 +2,10 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
-import { AlertCircle } from 'lucide-react';
+import { AlertCircle, ChevronDown } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import PriceCard from '../components/PriceCard';
 import SectionTitle from '../components/SectionTitle';
 
 const defaultPricesByTab = [
@@ -28,7 +29,7 @@ const defaultPricesByTab = [
   // ロングコース
   [
     { title: 'LUXURY', duration: 150, price: 28000, description: '最高級のトリートメント' },
-    { title: 'ROYAL', duration: 180, price: 33000, description: '究極の癒やし体験' },
+    { title: 'ROYAL', duration: 180, price: 33000, description: '究極의 癒やし体験' },
     { title: 'VIP', duration: 210, price: 38000, description: '完全オーダーメイド' },
   ],
 ];
@@ -57,21 +58,52 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
   const prices = config?.itemsByTab?.[activeTab] || defaultPricesByTab[activeTab];
   const notes = config?.notes || defaultNotes;
 
+  const nextTab = () => setActiveTab((prev) => (prev + 1) % tabs.length);
+  const prevTab = () => setActiveTab((prev) => (prev - 1 + tabs.length) % tabs.length);
+
+  // カテゴリーに応じた説明文（モックまたはConfigから取得）
+  const categoryDescriptions = [
+    'オープンを記念して、期間限定の特別価格でご提供いたします。この機会にぜひ当店のトリートメントをご体験ください。',
+    'オイルトリートメント・タイ古式・ヘッド＆フェイシャル・リフレクソロジーの中から、お客様のお好みのコースをお好きな配分でご利用頂けます。',
+    '至福の時間をお約束するロングコース。熟練のセラピストが、お疲れの箇所を重点的に、ゆったりと丁寧に解きほぐします。',
+  ];
+
   return (
-    <section id="price" className="mx-auto max-w-5xl px-4 py-16 md:px-6 md:py-24">
+    <section id="price" className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
       <SectionTitle en={config?.subHeading || 'Price Menu'} ja={config?.heading || '料金プラン'} />
 
-      <div className="overflow-hidden rounded-[2.5rem] border-2 border-slate-200 bg-gradient-to-b from-slate-50 to-white p-6 shadow-2xl md:p-12">
-        {/* タブ */}
-        <div className="mb-10 flex flex-wrap justify-center gap-3">
+      <div className="relative flex flex-col gap-8 md:flex-row md:items-start">
+        {/* サイドタブ (Desktop) */}
+        <div className="hidden shrink-0 flex-col gap-3 md:flex md:w-64">
           {tabs.map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
-              className={`transform rounded-full px-6 py-3.5 text-sm font-black transition-all active:scale-95 md:px-8 md:text-base ${
+              className={`group relative flex items-center justify-between overflow-hidden rounded-xl border-2 px-6 py-5 transition-all active:scale-95 ${
                 activeTab === tab.id
-                  ? 'bg-primary-500 shadow-primary-300/50 text-white shadow-lg'
-                  : 'hover:border-primary-300 hover:bg-primary-50 border-2 border-slate-300 bg-white text-slate-600'
+                  ? 'border-[#642B2B] bg-[#642B2B] text-white shadow-lg'
+                  : 'border-slate-200 bg-white text-slate-600 hover:border-[#642B2B]/30 hover:bg-slate-50'
+              }`}
+            >
+              <span className="text-left text-sm font-black tracking-wider">{tab.label}</span>
+              <ChevronDown
+                size={18}
+                className={`-rotate-90 transition-transform ${activeTab === tab.id ? 'translate-x-1' : 'opacity-30 group-hover:opacity-100'}`}
+              />
+            </button>
+          ))}
+        </div>
+
+        {/* モバイル用タブ (Horizontal scroll) */}
+        <div className="scrollbar-hide flex gap-2 overflow-x-auto pb-4 md:hidden">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`whitespace-nowrap rounded-full px-5 py-2.5 text-xs font-black transition-all ${
+                activeTab === tab.id
+                  ? 'bg-[#642B2B] text-white shadow-md'
+                  : 'border border-slate-200 bg-white text-slate-500'
               }`}
             >
               {tab.label}
@@ -79,97 +111,72 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
           ))}
         </div>
 
-        {/* 料金グリッド */}
-        <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-3 md:gap-8">
-          {Array.isArray(prices) &&
-            prices.map((item: any, idx: number) => {
-              if (!item) return null;
-              const isMain = idx === 1; // 中央を強調
-              return (
-                <div
-                  key={idx}
-                  className={`relative flex flex-col items-center rounded-[2rem] border-2 p-8 transition-all duration-500 ${
-                    isMain
-                      ? 'border-primary-400 from-primary-100 z-10 scale-105 bg-gradient-to-b to-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)]'
-                      : 'border-slate-200 bg-white hover:border-slate-300 hover:shadow-lg'
-                  }`}
-                >
-                  {isMain && (
-                    <div className="bg-primary-500 absolute -top-4 left-1/2 -translate-x-1/2 rounded-full px-5 py-2 text-[10px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
-                      Popular No.1
-                    </div>
-                  )}
-                  <span
-                    className={`mb-4 text-xs font-black uppercase tracking-[0.25em] md:text-sm ${isMain ? 'text-primary-600' : 'text-slate-500'}`}
-                  >
-                    {item.title}
-                  </span>
-                  <div className="mb-2 flex items-baseline gap-1">
-                    <span
-                      className={`font-serif font-black leading-none ${isMain ? 'text-6xl text-slate-900' : 'text-5xl text-slate-800'}`}
-                    >
-                      {item.duration}
-                    </span>
-                    <span
-                      className={`text-sm font-bold md:text-base ${isMain ? 'text-slate-600' : 'text-slate-500'}`}
-                    >
-                      min
-                    </span>
-                  </div>
-                  <div className="mb-6 flex items-baseline">
-                    <span
-                      className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
-                    >
-                      ¥
-                    </span>
-                    <span
-                      className={`font-black ${isMain ? 'text-primary-600 text-3xl' : 'text-2xl text-slate-800'}`}
-                    >
-                      {(item.price || 0).toLocaleString()}
-                    </span>
-                  </div>
-                  <p
-                    className={`min-h-[2.5rem] text-center text-xs font-semibold leading-relaxed md:text-sm ${isMain ? 'text-slate-700' : 'text-slate-600'}`}
-                  >
-                    {item.description}
-                  </p>
-                </div>
-              );
-            })}
-        </div>
-
-        {/* 注意事項 */}
-        <div className="mt-10 space-y-3 rounded-[2rem] border-2 border-slate-200 bg-slate-50 p-6 text-left text-xs text-slate-600 md:p-8 md:text-sm">
-          {notes.map((note: string, idx: number) => (
-            <div key={idx} className="flex items-start gap-3">
-              <AlertCircle size={16} className="text-primary-400 mt-0.5 shrink-0" />
-              <p className="flex-grow font-medium leading-relaxed">{note}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* 詳細ボタン */}
-        <div className="mt-12 text-center">
-          <Link
-            href={`/store/${store.slug}/price`}
-            className="bg-primary-500 hover:bg-primary-600 group inline-flex transform items-center gap-3 rounded-full px-12 py-5 font-black text-white shadow-xl transition-all hover:scale-105 active:scale-95"
+        {/* メインメニューカードエリア */}
+        <div className="relative flex-grow">
+          {/* Navigation Arrows (Floating) */}
+          <button
+            onClick={prevTab}
+            className="absolute left-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:left-[-24px] md:h-12 md:w-12"
           >
-            <span>詳しいコースはこちら</span>
-            <svg
-              className="h-5 w-5 transition-transform group-hover:translate-x-1"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 strokeWidth={3}
-                d="M14 5l7 7m0 0l-7 7m7-7H3"
+                d="M15 19l-7-7 7-7"
               />
             </svg>
-          </Link>
+          </button>
+
+          <button
+            onClick={nextTab}
+            className="absolute right-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:right-[-24px] md:h-12 md:w-12"
+          >
+            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+
+          {/* New PriceCard */}
+          <PriceCard
+            title={tabs[activeTab].label}
+            description={categoryDescriptions[activeTab]}
+            items={prices}
+          />
         </div>
+      </div>
+
+      {/* 注意事項 */}
+      <div className="mx-auto mt-12 max-w-lg space-y-3 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-left text-xs text-slate-600 md:p-8 md:text-sm">
+        {notes.map((note: string, idx: number) => (
+          <div key={idx} className="flex items-start gap-3">
+            <AlertCircle size={16} className="mt-0.5 shrink-0 text-[#642B2B]/40" />
+            <p className="flex-grow font-medium leading-relaxed">{note}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* 詳細ボタン */}
+      <div className="mt-12 text-center">
+        <Link
+          href={`/store/${store.slug}/price`}
+          className="group inline-flex transform items-center gap-3 rounded-full bg-[#642B2B] px-12 py-5 font-black text-white shadow-xl transition-all hover:scale-105 active:scale-95"
+        >
+          <span>詳しいコースはこちら</span>
+          <svg
+            className="h-5 w-5 transition-transform group-hover:translate-x-1"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={3}
+              d="M14 5l7 7m0 0l-7 7m7-7H3"
+            />
+          </svg>
+        </Link>
       </div>
     </section>
   );

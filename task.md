@@ -6,9 +6,15 @@
   - [x] Add `dotenv` to `scripts/check_price_data.ts` or install types <!-- id: 6 -->
   - [x] Fix `Banknote` icon import in Header components <!-- id: 7 -->
 - [x] Adjust UI: Increase indicator space as requested <!-- id: 8 -->
-- [/] Refine UI: Place indicators below hero image to avoid overlap <!-- id: 13 -->
+- [x] Refine UI: Place indicators below hero image to avoid overlap <!-- id: 13 -->
 - [x] Research the cause of any other errors <!-- id: 9 -->
 - [x] Create an implementation plan <!-- id: 10 -->
 - [x] Apply the fix <!-- id: 11 -->
 - [x] Verify the fix <!-- id: 12 -->
-      anges <!-- id: 4 -->
+- [x] Redesign Price Menu UI <!-- id: 14 -->
+  - [x] Research existing implementation <!-- id: 15 -->
+  - [x] Create implementation plan <!-- id: 16 -->
+  - [x] Implement `PriceCard` component <!-- id: 17 -->
+  - [x] Update `PriceSection` layout and switching logic <!-- id: 18 -->
+  - [x] Verify UI on mobile and desktop <!-- id: 19 -->
+        anges <!-- id: 4 -->
