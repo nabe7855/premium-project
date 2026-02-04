@@ -54,51 +54,11 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   };
 
   return (
-    <footer id="footer" className="bg-slate-900 py-12 text-slate-400 md:py-20">
+    <footer id="footer" className="bg-[#EE827C] py-12 text-slate-400 md:py-20">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid grid-cols-1 gap-12 md:gap-16 lg:grid-cols-4">
           <div className="col-span-1 lg:col-span-2">
-            <div className="group relative mb-6 inline-block">
-              <a
-                href={getAbsoluteHref(config.logoLink || '#')}
-                onClick={(e) => isEditing && e.preventDefault()}
-                className="flex items-center gap-3"
-              >
-                {config.logoImageUrl ? (
-                  <img
-                    src={config.logoImageUrl}
-                    alt="Logo"
-                    className="h-12 w-auto object-contain"
-                  />
-                ) : (
-                  <span className="font-serif text-2xl font-bold tracking-tighter text-white">
-                    {config.shopInfo.name}
-                  </span>
-                )}
-              </a>
-              {isEditing && (
-                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                  <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
-                    <ImageIcon className="h-4 w-4" />
-                    <input
-                      type="file"
-                      className="hidden"
-                      accept="image/*"
-                      onChange={(e) =>
-                        e.target.files?.[0] &&
-                        onImageUpload?.('footer', e.target.files[0], undefined, 'logoImageUrl')
-                      }
-                    />
-                  </label>
-                  <button
-                    onClick={() => handleLinkUpdate('logoLink')}
-                    className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
-                  >
-                    <Link2 className="h-4 w-4" />
-                  </button>
-                </div>
-              )}
-            </div>
+            {/* Logo Image Wrapper Removed */}
             <div className="space-y-4 text-sm leading-relaxed">
               <p
                 contentEditable={isEditing}
@@ -129,13 +89,13 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
 
           <div>
             <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-white">Menu</h4>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-5 text-sm">
               {config.menuButtons.map((btn, idx) => (
-                <li key={idx} className="group flex items-center gap-1">
+                <li key={idx} className="group flex items-center gap-2">
                   <a
                     href={getAbsoluteHref(btn.link || '#')}
                     onClick={(e) => isEditing && e.preventDefault()}
-                    className="transition-colors hover:text-white"
+                    className="py-1 transition-colors hover:text-white"
                   >
                     <span
                       contentEditable={isEditing}
@@ -164,10 +124,10 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           </div>
 
           <div className="lg:col-span-2">
-            {/* Banners Area with Pink Background */}
-            <div className="overflow-hidden rounded-2xl bg-[#F47575] p-4 md:p-6">
+            {/* Banners Area */}
+            <div className="overflow-hidden rounded-2xl p-4 md:p-8">
               {/* Grid of Banners (2 columns as requested) */}
-              <div className="grid grid-cols-2 gap-x-3 gap-y-6 md:gap-x-6 md:gap-y-8">
+              <div className="grid grid-cols-2 gap-4 md:gap-8">
                 {[...config.banners, ...config.smallBanners].map((banner, idx) => (
                   <div key={idx} className="group relative flex flex-col items-center">
                     <a
@@ -183,9 +143,9 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     </a>
 
                     {/* Banner Title & Link Icon (Image 3 Style) */}
-                    <div className="mt-2 flex items-center justify-center gap-1 text-center font-bold text-white">
-                      <span className="text-[10px] md:text-xs">バナータイトル</span>
-                      <Link2 className="h-3 w-3" />
+                    <div className="mt-3 flex items-center justify-center gap-1.5 text-center font-bold text-white">
+                      <span className="text-xs md:text-sm">バナータイトル</span>
+                      <Link2 className="h-3.5 w-3.5" />
                     </div>
 
                     {isEditing && (
