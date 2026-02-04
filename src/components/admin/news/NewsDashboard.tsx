@@ -30,6 +30,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
     if (!editingPage) return;
     onUpdatePage(editingPage.id, {
       title: editingPage.title,
+      slug: editingPage.slug,
       shortDescription: editingPage.shortDescription,
       thumbnailUrl: editingPage.thumbnailUrl,
     });
@@ -364,6 +365,23 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     className="w-full rounded-2xl bg-slate-50 px-6 py-4 font-bold text-slate-900 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/10"
                     placeholder="ページタイトルを入力"
                   />
+                </div>
+
+                {/* Slug Edit */}
+                <div>
+                  <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                    URLスラッグ
+                  </label>
+                  <div className="flex items-center gap-2 rounded-2xl bg-slate-50 px-6 py-4 transition-all focus-within:bg-white focus-within:ring-4 focus-within:ring-rose-500/10">
+                    <span className="text-sm font-bold text-slate-400">/news/</span>
+                    <input
+                      type="text"
+                      value={editingPage.slug}
+                      onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
+                      className="flex-1 bg-transparent font-bold text-slate-900 outline-none"
+                      placeholder="url-slug"
+                    />
+                  </div>
                 </div>
 
                 {/* Description Edit */}

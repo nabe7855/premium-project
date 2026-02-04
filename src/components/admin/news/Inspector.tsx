@@ -99,6 +99,25 @@ const Inspector: React.FC<InspectorProps> = ({
 
           <div>
             <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+              URLスラッグ
+            </label>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-bold text-slate-400">/news/</span>
+              <input
+                type="text"
+                value={page.slug}
+                onChange={(e) => onUpdatePage({ slug: e.target.value })}
+                className="flex-1 rounded-2xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                placeholder="url-slug"
+              />
+            </div>
+            <p className="mt-2 text-[9px] text-slate-400">
+              URLの一部として使用されます（例: strawberry-boy.com/news/url-slug）
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
               一覧用サムネイル
             </label>
             <p className="mb-3 text-[10px] leading-tight text-slate-400">

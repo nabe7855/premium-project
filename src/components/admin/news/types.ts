@@ -42,6 +42,7 @@ export interface SectionData {
 
 export interface PageData {
   id: string;
+  slug: string;
   title: string;
   status: 'published' | 'private';
   updatedAt: number;

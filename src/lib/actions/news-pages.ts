@@ -9,6 +9,7 @@ import { revalidatePath } from 'next/cache';
 const mapPrismaToPageData = (record: any): PageData => {
   return {
     id: record.id,
+    slug: record.slug,
     title: record.title,
     status: record.status as 'published' | 'private',
     updatedAt: record.updatedAt.getTime(),
@@ -58,7 +59,8 @@ export async function getPage(id: string): Promise<PageData | null> {
 
 export async function createPage(data: Partial<PageData>): Promise<PageData | null> {
   try {
-    const { title, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } = data;
+    const { title, slug, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } =
+      data;
 
     // Use referenceUrls to store shortDescription for now since I didn't add it to schema explicitly
     const miscData = { shortDescription };
@@ -66,7 +68,7 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
     const record = await prisma.pageRequest.create({
       data: {
         title: title || '名称未設定',
-        slug: `news-${Date.now()}`, // Temporary slug generation
+        slug: slug || `news-${Date.now()}`,
         status: status || 'private',
         sections: sections ? JSON.parse(JSON.stringify(sections)) : [],
         thumbnailUrl: thumbnailUrl,
@@ -84,10 +86,12 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
 
 export async function updatePage(id: string, data: Partial<PageData>): Promise<PageData | null> {
   try {
-    const { title, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } = data;
+    const { title, slug, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } =
+      data;
 
     const updateData: any = {};
     if (title !== undefined) updateData.title = title;
+    if (slug !== undefined) updateData.slug = slug;
     if (sections !== undefined) updateData.sections = JSON.parse(JSON.stringify(sections));
     if (status !== undefined) updateData.status = status;
     if (thumbnailUrl !== undefined) updateData.thumbnailUrl = thumbnailUrl;
