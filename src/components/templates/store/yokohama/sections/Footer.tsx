@@ -136,11 +136,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                     >
-                      <img
-                        src={banner.imageUrl}
-                        alt=""
-                        className="aspect-[2.5/1] w-full object-cover"
-                      />
+                      <img src={banner.imageUrl} alt="" className="h-auto w-full" />
                     </a>
 
                     {/* Banner Title & Link Icon */}
