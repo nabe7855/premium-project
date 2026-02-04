@@ -662,28 +662,28 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     ],
     banners: [
       {
-        imageUrl: 'https://placehold.jp/24/22c55e/ffffff/400x100.png?text=LINE@友だち追加',
-        link: '#',
+        imageUrl: '/フッターバナー/ライン公式.jpg',
+        link: 'https://line.me',
       },
       {
-        imageUrl: 'https://placehold.jp/24/e11d48/ffffff/400x100.png?text=050-5212-5818',
-        link: '#',
+        imageUrl: '/フッターバナー/電話番号.jpg',
+        link: 'tel:050-5212-5818',
       },
       {
-        imageUrl: 'https://placehold.jp/24/db2777/ffffff/400x100.png?text=セラピスト大募集',
-        link: '#',
+        imageUrl: '/フッターバナー/セラピスト大募集.jpg',
+        link: '/recruit',
       },
     ],
     smallBanners: [
       {
-        imageUrl: 'https://placehold.jp/24/f43f5e/ffffff/300x80.png?text=モニターさん大募集',
-        link: '#',
+        imageUrl: '/フッターバナー/モニター募集.jpg',
+        link: '/recruit/monitor',
       },
       {
-        imageUrl: 'https://placehold.jp/24/ec4899/ffffff/300x80.png?text=マッサージ女性講師大募集',
-        link: '#',
+        imageUrl: '/フッターバナー/講師募集.jpg',
+        link: '/recruit/instructor',
       },
-      { imageUrl: 'https://placehold.jp/24/e11d48/ffffff/300x80.png?text=STOP AIDS', link: '#' },
+      { imageUrl: '/フッターバナー/レッドリボン.jpg', link: '/stop-aids' },
     ],
     shopInfo: {
       name: 'ストロベリーボーイズ',
