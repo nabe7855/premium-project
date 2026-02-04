@@ -1,4 +1,5 @@
 // @ts-nocheck
+// @ts-ignore
 import dotenv from 'dotenv';
 import path from 'path';
 

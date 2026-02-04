@@ -123,7 +123,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="absolute inset-0 bg-neutral-100">
+        <div className="absolute bottom-10 left-0 right-0 top-0 bg-neutral-100">
           {images.map((img, index) => (
             <div
               key={index}
@@ -242,13 +242,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
 
         {/* Slider Indicators - Moved inside hero section and styled as circles */}
-        <div className="absolute bottom-10 left-1/2 z-30 flex -translate-x-1/2 justify-center space-x-3">
+        <div className="absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 justify-center space-x-6">
           {images.map((_, index) => (
             <button
               key={index}
               onClick={() => setCurrentHeroSlide(index)}
-              className={`h-5 w-5 rounded-full border border-black/10 shadow-sm transition-all duration-300 ${
-                index === currentHeroSlide ? 'bg-slate-700' : 'bg-white/80 hover:bg-white'
+              className={`border-transparet h-4 w-4 rounded-full border transition-all duration-300 ${
+                index === currentHeroSlide
+                  ? 'scale-110 bg-rose-500 shadow-md'
+                  : 'bg-gray-300 hover:bg-gray-400'
               }`}
               aria-label={`Slide ${index + 1}`}
             />
