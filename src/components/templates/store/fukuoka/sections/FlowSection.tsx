@@ -10,25 +10,25 @@ const defaultSteps = [
     title: 'キャスト選択',
     desc: '当サイトのプロフィールを参考に、お気に入りのセラピストを選びます。',
     icon: 'User',
-    image: '/キャスト選択.jpg',
+    image: '/ご利用までのステップ１.jpg',
   },
   {
     title: 'ご予約確定',
     desc: 'WEBまたはLINEで簡単予約。場所と時間を伝えて、予約完了です。',
     icon: 'Calendar',
-    image: '/ご予約確定.jpg',
+    image: '/ご利用までのステップ２.jpg',
   },
   {
     title: 'ご訪問',
     desc: 'セラピストが到着しましたら、簡単なカウンセリングを行います。',
     icon: 'MapPin',
-    image: '/ご訪問.jpg',
+    image: '/ご利用までのステップ３.jpg',
   },
   {
     title: '施術開始',
     desc: '最高のリラクゼーションをご堪能ください。お支払いは事前精算です。',
     icon: 'Heart',
-    image: '/施術開始.jpg',
+    image: '/ご利用までのステップ４.jpg',
   },
 ];
 
@@ -56,7 +56,12 @@ const getIcon = (iconName: string) => {
 const FlowSection: React.FC<FlowSectionProps> = ({ config, isEditing, onUpdate }) => {
   const steps = config?.steps || defaultSteps;
 
-  const stepImages = ['/キャスト選択.jpg', '/ご予約確定.jpg', '/ご訪問.jpg', '/施術開始.jpg'];
+  const stepImages = [
+    '/ご利用までのステップ１.jpg',
+    '/ご利用までのステップ２.jpg',
+    '/ご利用までのステップ３.jpg',
+    '/ご利用までのステップ４.jpg',
+  ];
 
   const handleStepUpdate = (index: number, key: string, value: string) => {
     if (onUpdate) {
