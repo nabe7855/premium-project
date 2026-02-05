@@ -1,4 +1,5 @@
 import { ImageIcon, Link2 } from 'lucide-react';
+import NextImage from 'next/image';
 import React from 'react';
 
 import { FooterConfig } from '@/lib/store/storeTopConfig';
@@ -143,7 +144,15 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                     >
-                      <img src={banner.imageUrl} alt="" className="h-auto w-full" />
+                      <NextImage
+                        src={banner.imageUrl}
+                        alt=""
+                        width={0}
+                        height={0}
+                        sizes="(max-width: 768px) 50vw, 25vw"
+                        className="h-auto w-full"
+                        loading="lazy"
+                      />
                     </a>
 
                     {/* Banner Title & Link Icon */}
@@ -207,13 +216,16 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       onClick={(e) => isEditing && e.preventDefault()}
                       className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >
-                      <img
+                      <NextImage
                         src={
                           config.largeBanner?.imageUrl ||
                           'https://placehold.jp/400x400.png?text=Large%20Banner'
                         }
                         alt="Large Banner"
-                        className="h-full w-full object-cover"
+                        fill
+                        className="object-cover"
+                        loading="lazy"
+                        sizes="(max-width: 768px) 90vw, 400px"
                       />
                     </a>
                     {isEditing && (

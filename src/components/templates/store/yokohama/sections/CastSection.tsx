@@ -3,6 +3,7 @@ import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDown, Heart, RotateCcw, Search, Star } from 'lucide-react';
+import NextImage from 'next/image';
 import React, { useEffect, useMemo, useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
 
@@ -152,7 +153,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         <div className="mb-12 space-y-8">
           {/* 1. 日付検索 */}
           <div className="rounded-[2.5rem] border border-rose-50/50 bg-white p-2 shadow-sm">
-            <div className="scrollbar-hide flex gap-2 overflow-x-auto p-1">
+            <div className="flex gap-2 overflow-x-auto p-1 scrollbar-hide">
               {dates.map((d) => (
                 <button
                   key={d.date}
@@ -223,7 +224,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         </div>
 
         {/* キャストカード一覧 */}
-        <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+        <div className="-mx-4 overflow-x-auto px-4 scrollbar-hide md:mx-0 md:overflow-visible md:px-0">
           <div className="flex min-h-[300px] gap-4 md:grid md:grid-cols-3 md:gap-6 lg:grid-cols-4 lg:gap-8">
             {isLoading ? (
               <div className="col-span-full flex h-60 items-center justify-center">
@@ -241,10 +242,13 @@ const CastSection: React.FC<CastSectionProps> = ({
                     className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
                   >
                     <div className="relative aspect-[1/1.2] overflow-hidden">
-                      <img
+                      <NextImage
                         src={cast.imageUrl}
                         alt={cast.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        fill
+                        className="object-cover transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        loading="lazy"
                       />
 
                       {/* バッジ装飾 */}

@@ -1,4 +1,5 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -29,16 +30,19 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) 
         )}
 
         {/* Horizontal Slider / Grid */}
-        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {config.items.map((item) => (
             <div key={item.id} className="min-w-[140px] snap-center md:min-w-0">
               <div className="group relative mb-2">
                 {/* Image with brown/gold border matching the image */}
                 <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
-                  <img
+                  <NextImage
                     src={item.imageUrl}
                     alt={item.name}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 150px, 200px"
+                    loading="lazy"
                   />
                   {/* "New Face" Badge */}
                   <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">

@@ -1,4 +1,5 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -45,7 +46,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
         </div>
 
         {/* Horizontal Slider / Grid */}
-        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {items.map((item) => (
             <div key={item.id} className="group relative min-w-[140px] snap-center md:min-w-0">
               {/* Manual Removal Disabled for dynamic Newcomer section */}
@@ -60,10 +61,13 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
 
               <div className="relative mb-2">
                 <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
-                  <img
+                  <NextImage
                     src={item.imageUrl}
                     alt={item.name}
-                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-105"
+                    sizes="(max-width: 768px) 150px, 200px"
+                    loading="lazy"
                   />
 
                   {/* Manual Image Change Disabled for dynamic Newcomer section */}

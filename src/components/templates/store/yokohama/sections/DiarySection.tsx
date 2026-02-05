@@ -1,4 +1,5 @@
 import { DiaryConfig } from '@/lib/store/storeTopConfig';
+import NextImage from 'next/image';
 import { useParams } from 'next/navigation';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
@@ -26,7 +27,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
           </div>
         )}
 
-        <div className="scrollbar-hide -mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
           {config.items.slice(0, 4).map((item) => (
             <a
               key={item.id}
@@ -34,10 +35,13 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
               className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
             >
               <div className="relative aspect-square overflow-hidden">
-                <img
+                <NextImage
                   src={item.image}
                   alt={item.title}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 240px, 25vw"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0"></div>
                 <div className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-slate-800 backdrop-blur">
