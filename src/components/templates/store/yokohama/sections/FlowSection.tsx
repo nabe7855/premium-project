@@ -25,7 +25,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({ isEditing }) => {
           <StepCard
             num={1}
             icon={<User size={28} />}
-            imageSrc="/ご利用までのステップ１.jpg"
+            imageSrc="/images/flow/ご利用までのステップ１.jpg"
             title="キャスト選択"
             desc="当サイトのプロフィールを参考に、お気に入りのセラピストを選びます。"
           />
@@ -35,7 +35,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({ isEditing }) => {
           <StepCard
             num={2}
             icon={<Calendar size={28} />}
-            imageSrc="/ご利用までのステップ２.jpg"
+            imageSrc="/images/flow/ご利用までのステップ２.jpg"
             title="ご予約確定"
             desc="WEBまたはLINEで簡単予約。場所と時間を伝えて、予約完了です。"
           />
@@ -45,7 +45,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({ isEditing }) => {
           <StepCard
             num={3}
             icon={<MapPin size={28} />}
-            imageSrc="/ご利用までのステップ３.jpg"
+            imageSrc="/images/flow/ご利用までのステップ３.jpg"
             title="ご訪問"
             desc="セラピストが到着しましたら、簡単なカウンセリングを行います。"
           />
@@ -55,7 +55,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({ isEditing }) => {
           <StepCard
             num={4}
             icon={<Heart size={28} />}
-            imageSrc="/ご利用までのステップ４.jpg"
+            imageSrc="/images/flow/ご利用までのステップ４.jpg"
             title="施術開始"
             desc="最高のリラクゼーションをご堪能ください。お支払いは事前精算です。"
           />

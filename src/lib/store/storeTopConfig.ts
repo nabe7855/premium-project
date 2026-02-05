@@ -207,42 +207,42 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         name: '最新のお知らせ',
         href: '#news',
-        imageUrl: '/福岡お知らせ.png',
+        imageUrl: '/images/fukuoka/福岡お知らせ.png',
       },
       {
         name: 'はじめての方へ',
         href: '#flow',
-        imageUrl: '/福岡初めての方へ.png',
+        imageUrl: '/images/fukuoka/福岡初めての方へ.png',
       },
       {
         name: 'おすすめホテル一覧',
         href: '#hotels',
-        imageUrl: '/福岡おすすめホテル一覧.png',
+        imageUrl: '/images/fukuoka/福岡おすすめホテル一覧.png',
       },
       {
         name: 'セラピスト一覧',
         href: '#casts',
-        imageUrl: '/福岡セラピスト一覧.png',
+        imageUrl: '/images/fukuoka/福岡セラピスト一覧.png',
       },
       {
         name: '本日の出勤情報',
         href: '#schedules',
-        imageUrl: '/福岡本日の出勤.png',
+        imageUrl: '/images/fukuoka/福岡本日の出勤.png',
       },
       {
         name: '口コミ・レビュー',
         href: '#reviews',
-        imageUrl: '/福岡セラピスト一覧.png',
+        imageUrl: '/images/fukuoka/福岡セラピスト一覧.png',
       },
       {
         name: '写メ日記（更新中）',
         href: '#diary',
-        imageUrl: '/福岡出勤情報.png',
+        imageUrl: '/images/fukuoka/福岡出勤情報.png',
       },
       {
         name: 'プライバシーポリシー',
         href: '/privacy',
-        imageUrl: '/プライバシーポリシー.png',
+        imageUrl: '/images/fukuoka/プライバシーポリシー.png',
       },
       {
         name: 'メディア取材のご連絡',
@@ -266,7 +266,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     receptionHours: '12:00〜23:00',
     businessHours: '12:00〜翌朝4時',
     specialBanner: {
-      imageUrl: '/福岡募集バナー.png',
+      imageUrl: '/images/fukuoka/福岡募集バナー.png',
       subHeading: 'Strawberry Boys Premium',
       mainHeading: '甘い誘惑を、今夜貴女に。',
       link: '#recruit',

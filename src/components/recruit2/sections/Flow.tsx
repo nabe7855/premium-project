@@ -26,7 +26,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'まずはリラックスして、あなたのご希望やお悩みをお聞かせください。履歴書は不要です。',
       color: 'bg-rose-50 border-rose-100',
       numColor: 'text-rose-200',
-      image: '/01カウンセリング面談.png',
+      image: '/images/recruit/01カウンセリング面談.png',
     },
     {
       step: '02',
@@ -35,7 +35,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '面談を行い、お互いの条件が合えばその場で仮エントリー。必要な書類の手続きを行います。',
       color: 'bg-blue-50 border-blue-100',
       numColor: 'text-blue-200',
-      image: '/02仮エントリー.png',
+      image: '/images/recruit/02仮エントリー.png',
     },
     {
       step: '03',
@@ -44,7 +44,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'お仕事を開始するにあたっての不安解消や、法律・ルールの確認をしっかり行います。',
       color: 'bg-amber-50 border-amber-100',
       numColor: 'text-amber-200',
-      image: '/03安心サポートチェック.png',
+      image: '/images/recruit/03安心サポートチェック.png',
     },
     {
       step: '04',
@@ -53,7 +53,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '未経験でも安心。専属スタッフが接客の基本から、稼げるコツまで丁寧にレクチャーします。',
       color: 'bg-emerald-50 border-emerald-100',
       numColor: 'text-emerald-200',
-      image: '/04専属育成サポート.png',
+      image: '/images/recruit/04専属育成サポート.png',
     },
     {
       step: '05',
@@ -62,7 +62,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: '実際の店舗やオンライン環境でリハーサル。自信を持って本番を迎えられるようサポートします。',
       color: 'bg-purple-50 border-purple-100',
       numColor: 'text-purple-200',
-      image: '/05デビュー前サポート.png',
+      image: '/images/recruit/05デビュー前サポート.png',
     },
     {
       step: '06',
@@ -71,7 +71,7 @@ const Flow: React.FC<FlowProps> = ({
       desc: 'いよいよキャストデビュー！デビュー後も継続的なフォローアップで、あなたの活躍を支えます。',
       color: 'bg-pink-50 border-pink-100',
       numColor: 'text-pink-200',
-      image: '/06デビュー.png',
+      image: '/images/recruit/06デビュー.png',
     },
   ],
   onOpenChat,
