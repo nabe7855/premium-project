@@ -2,6 +2,7 @@
 
 import { EditableImage } from '@/components/admin/EditableImage';
 import { motion, Variants } from 'framer-motion';
+import NextImage from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 interface OpenCastRecruitmentProps {
@@ -77,16 +78,27 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
           className="flex w-full max-w-5xl flex-col items-center px-4"
         >
           <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
-            <EditableImage
-              src={openCastImage || '/オープンキャスト募集.png'}
-              alt="オープンキャスト募集 - 10名限定超好待遇"
-              className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
-              isEditing={isEditing}
-              onUpload={(file) => {
-                console.log('📸 OpenCastRecruitment: Image selected', file.name);
-                if (onUpdate) onUpdate('openCastImage', file);
-              }}
-            />
+            {isEditing ? (
+              <EditableImage
+                src={openCastImage || '/オープンキャスト募集.png'}
+                alt="オープンキャスト募集 - 10名限定超好待遇"
+                className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+                isEditing={isEditing}
+                onUpload={(file) => {
+                  console.log('📸 OpenCastRecruitment: Image selected', file.name);
+                  if (onUpdate) onUpdate('openCastImage', file);
+                }}
+              />
+            ) : (
+              <NextImage
+                src={openCastImage || '/オープンキャスト募集.png'}
+                alt="オープンキャスト募集 - 10名限定超好待遇"
+                width={0}
+                height={0}
+                sizes="(max-width: 768px) 100vw, 1024px"
+                className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+              />
+            )}
             {isEditing && (
               <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/60 px-4 py-2 text-white hover:bg-black/80">
                 <span className="text-sm font-bold text-white">画像を変更</span>

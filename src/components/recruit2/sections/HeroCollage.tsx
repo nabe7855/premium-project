@@ -1,6 +1,7 @@
 'use client';
 
 import { motion, Variants } from 'framer-motion';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface HeroCollageProps {
@@ -75,7 +76,15 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
           className="relative"
         >
           {/* Main Hero Image */}
-          <img src={imageUrl} alt="Main Hero" className="block h-auto w-full object-contain" />
+          <NextImage
+            src={imageUrl}
+            alt="Main Hero"
+            width={0}
+            height={0}
+            sizes="100vw"
+            priority
+            className="block h-auto w-full object-contain"
+          />
 
           {/* Subtle sheen overlay effect */}
           <motion.div

@@ -2,6 +2,7 @@
 
 import { EditableImage } from '@/components/admin/EditableImage';
 import { motion } from 'framer-motion';
+import NextImage from 'next/image';
 import React, { useState } from 'react';
 
 interface RoutineSegment {
@@ -222,13 +223,23 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 className="group relative aspect-[3/4] w-full overflow-hidden rounded-sm shadow-2xl"
               >
                 <div className="h-full w-full">
-                  <EditableImage
-                    src={currentImage}
-                    alt={activeProfile.name}
-                    className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                    isEditing={isEditing}
-                    onUpload={handleUpload(activeProfile.id)}
-                  />
+                  {isEditing ? (
+                    <EditableImage
+                      src={currentImage}
+                      alt={activeProfile.name}
+                      className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                      isEditing={isEditing}
+                      onUpload={handleUpload(activeProfile.id)}
+                    />
+                  ) : (
+                    <NextImage
+                      src={currentImage}
+                      alt={activeProfile.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
+                  )}
                 </div>
                 <div className="pointer-events-none absolute inset-0 bg-slate-900/10 transition-colors duration-500 group-hover:bg-transparent"></div>
 

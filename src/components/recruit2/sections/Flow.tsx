@@ -1,3 +1,4 @@
+import NextImage from 'next/image';
 import React, { useState } from 'react';
 
 interface FlowProps {
@@ -182,10 +183,12 @@ const Flow: React.FC<FlowProps> = ({
                         {/* Image Column */}
                         <div className="w-full flex-1">
                           <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
-                            <img
+                            <NextImage
                               src={s.image}
                               alt={s.title}
-                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              fill
+                              sizes="(max-width: 768px) 100vw, 400px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
                               loading="lazy"
                             />
                           </div>

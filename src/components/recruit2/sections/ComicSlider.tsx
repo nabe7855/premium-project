@@ -1,6 +1,7 @@
 'use client';
 
 import { EditableImage } from '@/components/admin/EditableImage';
+import NextImage from 'next/image';
 import React, { useRef } from 'react';
 
 interface ComicSlide {
@@ -152,13 +153,25 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
               >
                 <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
                   <div className="relative w-full border-b border-slate-100">
-                    <EditableImage
-                      src={step.img}
-                      alt={step.title}
-                      className="h-auto w-full"
-                      isEditing={isEditing}
-                      onUpload={handleImageUpload(idx)}
-                    />
+                    {isEditing ? (
+                      <EditableImage
+                        src={step.img}
+                        alt={step.title}
+                        className="h-auto w-full"
+                        isEditing={isEditing}
+                        onUpload={handleImageUpload(idx)}
+                      />
+                    ) : (
+                      <NextImage
+                        src={step.img}
+                        alt={step.title}
+                        width={0}
+                        height={0}
+                        sizes="(max-width: 640px) 280px, 350px"
+                        className="h-auto w-full"
+                        loading="lazy"
+                      />
+                    )}
                   </div>
                   <div className="flex flex-col p-6">
                     <div className="mb-3 flex items-center gap-3">
