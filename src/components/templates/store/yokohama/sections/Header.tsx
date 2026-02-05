@@ -296,22 +296,26 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Header Banner Image (Horizontal) */}
           <Link
-            href={`/store/${currentStoreId}/first-time`}
+            href={getAbsoluteHref(
+              config.specialBanner?.link || `/store/${currentStoreId}/first-time`,
+            )}
             className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
           >
             <img
-              src="/初めてのお客様へバナー.png"
-              alt="初めてのお客様へ"
+              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+              alt="Recruit Banner"
               className="h-full w-full object-cover"
             />
           </Link>
           <Link
-            href={`/store/${currentStoreId}/first-time`}
+            href={getAbsoluteHref(
+              config.specialBanner?.link || `/store/${currentStoreId}/first-time`,
+            )}
             className="block h-12 w-auto max-w-[45vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
             <img
-              src="/初めてのお客様へバナー.png"
-              alt="初めてのお客様へ"
+              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+              alt="Recruit Banner"
               className="h-full w-full object-cover"
             />
           </Link>
