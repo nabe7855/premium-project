@@ -24,6 +24,7 @@ interface FukuokaPageProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  hideHeader?: boolean;
 }
 
 export default function FukuokaPage({
@@ -32,13 +33,14 @@ export default function FukuokaPage({
   isEditing,
   onUpdate,
   onImageUpload,
+  hideHeader,
 }: FukuokaPageProps) {
   // 設定がない場合はデフォルト値を使用
   const safeConfig = config || undefined;
 
   return (
     <div className="selection:bg-primary-100 selection:text-primary-800 relative min-h-screen font-sans text-slate-600">
-      {(!safeConfig || safeConfig.header.isVisible || isEditing) && (
+      {!hideHeader && (!safeConfig || safeConfig.header.isVisible || isEditing) && (
         <Header
           config={safeConfig?.header}
           isEditing={isEditing}

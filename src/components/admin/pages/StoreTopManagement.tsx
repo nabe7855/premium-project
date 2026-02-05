@@ -29,7 +29,6 @@ import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeT
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
 const SECTION_LABELS: Record<string, string> = {
-  header: '共通ヘッダー',
   hero: 'メインビジュアル',
   concept: 'コンセプト',
   campaign: 'キャンペーン',
@@ -43,7 +42,6 @@ const SECTION_LABELS: Record<string, string> = {
 };
 
 const SECTION_ORDER = [
-  'header',
   'hero',
   'concept',
   'campaign',
@@ -481,6 +479,7 @@ export default function StoreTopManagement() {
                   isEditing={!isPreviewMode}
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}
+                  hideHeader={true}
                 />
               ) : (
                 <FukuokaPage
@@ -489,6 +488,7 @@ export default function StoreTopManagement() {
                   isEditing={!isPreviewMode}
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}
+                  hideHeader={true}
                 />
               )}
             </StoreProvider>

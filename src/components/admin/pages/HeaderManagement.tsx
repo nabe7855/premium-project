@@ -436,7 +436,6 @@ export default function HeaderManagement() {
                   </div>
                 </div>
               ))}
-
               <Button
                 variant="outline"
                 size="sm"
@@ -452,6 +451,73 @@ export default function HeaderManagement() {
                 <Plus size={14} className="mr-2" />
                 メニューを追加
               </Button>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+              <Camera className="h-3 w-3" />
+              特別バナー設定
+            </h2>
+            <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
+                <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
+                  <img
+                    src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
+                    alt="Special Banner"
+                    className="h-full w-full object-cover opacity-60"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) handleImageUpload('header', file, 0, 'specialBanner');
+                        };
+                        input.click();
+                      }}
+                      className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
+                    >
+                      <Camera size={16} />
+                    </button>
+                    {config.header.specialBanner?.imageUrl &&
+                      config.header.specialBanner.imageUrl !== '/福岡募集バナー.png' && (
+                        <button
+                          onClick={handleBannerDelete}
+                          className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
+                <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                  <Link2 size={12} className="text-gray-500" />
+                  <input
+                    className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                    value={config.header.specialBanner?.link || ''}
+                    onChange={(e) => {
+                      const newBanner = {
+                        ...(config.header.specialBanner || {
+                          imageUrl: '',
+                          subHeading: '',
+                          mainHeading: '',
+                        }),
+                        link: e.target.value,
+                      };
+                      handleUpdate('header', 'specialBanner', newBanner);
+                    }}
+                    placeholder="/store/slug/recruit"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
@@ -524,6 +590,36 @@ export default function HeaderManagement() {
                       </div>
                     )}
                   </div>
+
+                  {/* Special Banner Preview in Header */}
+                  <div className="group relative mx-2 h-8 w-auto flex-shrink-0 overflow-hidden rounded-md border border-gray-100 bg-gray-50 md:h-10">
+                    <img
+                      src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
+                      alt="Banner Preview"
+                      className="h-full w-full object-cover opacity-80"
+                    />
+                    {!isPreviewMode && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          onClick={() => {
+                            const input = document.createElement('input');
+                            input.type = 'file';
+                            input.accept = 'image/*';
+                            input.onchange = (e) => {
+                              const file = (e.target as HTMLInputElement).files?.[0];
+                              if (file) handleImageUpload('header', file, 0, 'specialBanner');
+                            };
+                            input.click();
+                          }}
+                          className="rounded bg-white/20 p-1 text-white backdrop-blur-sm hover:bg-white/30"
+                          title="バナー画像をアップロード"
+                        >
+                          <Camera className="h-3 w-3" />
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
                   <div className="rounded-xl bg-pink-50 px-3 py-1.5 text-sm font-bold text-pink-500">
                     {config.header.reserveButtonText}
                   </div>
