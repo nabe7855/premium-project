@@ -115,7 +115,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     <>
       <section
         id="hero"
-        className="relative w-full overflow-hidden pt-20"
+        className="relative w-full overflow-hidden"
         style={{
           height: 'calc(100svh - 80px)', // フッター(80px)を引く
           minHeight: '500px', // 最小高さを確保
@@ -124,7 +124,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="absolute bottom-10 left-0 right-0 top-[54px] bg-neutral-100 md:top-[65px]">
+        <div className="absolute bottom-10 left-0 right-0 top-0 bg-neutral-100">
           {images.map((img, index) => (
             <div
               key={index}

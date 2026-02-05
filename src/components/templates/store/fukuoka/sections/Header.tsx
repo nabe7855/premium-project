@@ -273,7 +273,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   return (
     <header
       id="header"
-      className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
+      className={`sticky top-0 z-[100] w-full transition-all duration-300 ${
         scrollY > 20 ? 'bg-white/95 py-1 shadow-sm backdrop-blur-md' : 'bg-white py-2'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
