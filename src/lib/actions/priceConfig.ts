@@ -88,7 +88,7 @@ export async function savePriceConfig(
 
     // Prisma Transaction を使用して一括更新
     await prisma.$transaction(
-      async (tx) => {
+      async (tx: any) => {
         const txStartTime = performance.now();
         console.log('[Transaction] Started');
 
@@ -277,7 +277,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
       orderBy: { name: 'asc' },
     });
 
-    return stores.map((store) => {
+    return stores.map((store: any) => {
       const config = store.price_config;
       if (!config) {
         console.log('[DEBUG] No config found for store:', store.slug);

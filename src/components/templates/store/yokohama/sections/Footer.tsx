@@ -28,8 +28,15 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
 
   const handleShopInfoUpdate = (key: string, value: string) => {
     if (onUpdate) {
-      onUpdate('footer', 'shopInfo', { ...config.shopInfo, [key]: value });
+      const currentShopInfo = config.shopInfo || DEFAULT_SHOP_INFO;
+      onUpdate('footer', 'shopInfo', { ...currentShopInfo, [key]: value });
     }
+  };
+
+  const DEFAULT_SHOP_INFO = {
+    address: '',
+    phone: '',
+    businessHours: '',
   };
 
   const handleLinkUpdate = (key: string, index?: number) => {
@@ -66,7 +73,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
                 className={isEditing ? 'rounded px-1 hover:bg-white/5' : ''}
               >
-                {config.shopInfo.address}
+                {config.shopInfo?.address || ''}
               </p>
               <p
                 contentEditable={isEditing}
@@ -74,7 +81,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 onBlur={(e) => handleShopInfoUpdate('phone', e.currentTarget.innerText)}
                 className={`text-xl font-bold text-white ${isEditing ? 'rounded px-1 hover:bg-white/5' : ''}`}
               >
-                {config.shopInfo.phone}
+                {config.shopInfo?.phone || ''}
               </p>
               <p
                 contentEditable={isEditing}
@@ -82,7 +89,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 onBlur={(e) => handleShopInfoUpdate('businessHours', e.currentTarget.innerText)}
                 className={`whitespace-pre-line ${isEditing ? 'rounded px-1 hover:bg-white/5' : ''}`}
               >
-                {config.shopInfo.businessHours}
+                {config.shopInfo?.businessHours || ''}
               </p>
             </div>
           </div>
@@ -90,7 +97,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           <div>
             <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-white">Menu</h4>
             <ul className="grid grid-cols-2 gap-x-4 gap-y-5 text-sm">
-              {config.menuButtons.map((btn, idx) => (
+              {(config.menuButtons || []).map((btn, idx) => (
                 <li key={idx} className="group flex items-center gap-2">
                   <a
                     href={getAbsoluteHref(btn.link || '#')}
@@ -129,7 +136,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               {/* Grid of Banners (2 columns as requested) */}
               {/* Grid of Banners (2 columns as requested) */}
               <div className="mx-auto grid max-w-[600px] grid-cols-2 gap-x-3 gap-y-7 px-1 md:gap-x-4 md:gap-y-8">
-                {[...config.banners, ...config.smallBanners].map((banner, idx) => (
+                {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => (
                   <div key={idx} className="group relative flex flex-col items-start">
                     <a
                       href={getAbsoluteHref(banner.link || '#')}

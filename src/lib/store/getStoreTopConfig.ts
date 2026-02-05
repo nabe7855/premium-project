@@ -26,7 +26,31 @@ export async function getStoreTopConfig(storeSlug: string) {
     }
 
     // Prisma の Json 型を StoreTopPageConfig にキャスト
-    let finalConfig = config.config as any;
+    let dbConfig = config.config as any;
+
+    // 🆕 ディープマージ関数の定義 (既存のデータを尊重しつつ、不足分をデフォルトで補填)
+    function deepMerge(target: any, source: any) {
+      const output = { ...target };
+      if (source && typeof source === 'object' && !Array.isArray(source)) {
+        Object.keys(source).forEach((key) => {
+          if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+            if (!(key in target)) {
+              output[key] = source[key];
+            } else {
+              output[key] = deepMerge(target[key], source[key]);
+            }
+          } else {
+            if (!(key in target)) {
+              output[key] = source[key];
+            }
+          }
+        });
+      }
+      return output;
+    }
+
+    // デフォルト値をベースにDBの値をマージする（DBにない項目はデフォルトが使われる）
+    let finalConfig = deepMerge(dbConfig, DEFAULT_STORE_TOP_CONFIG);
 
     // 🆕 新人キャストを動的に取得して上書き
     try {

@@ -56,7 +56,7 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
     console.log('[getPublishedPagesByStore] All published pages:', allPublished.length);
     console.log(
       '[getPublishedPagesByStore] Inspecting targetStoreSlugs type:',
-      allPublished.map((p) => ({
+      allPublished.map((p: any) => ({
         id: p.id,
         type: typeof p.targetStoreSlugs,
         val: p.targetStoreSlugs,
@@ -72,7 +72,7 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
     console.log('[getPublishedPagesByStore] Filtered for', storeSlug, ':', records.length);
     console.log(
       '[getPublishedPagesByStore] Records:',
-      records.map((r) => ({ id: r.id, title: r.title, targetStoreSlugs: r.targetStoreSlugs })),
+      records.map((r: any) => ({ id: r.id, title: r.title, targetStoreSlugs: r.targetStoreSlugs })),
     );
     return records.map(mapPrismaToPageData);
   } catch (error) {
