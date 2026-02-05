@@ -1,6 +1,7 @@
 import { PageData } from '@/components/admin/news/types';
 import { CampaignConfig } from '@/lib/store/storeTopConfig';
 import { ArrowLeft, ArrowRight, ChevronRight, Zap } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
@@ -121,7 +122,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
           )}
         </div>
 
-        <div className="scrollbar-hide flex snap-x gap-8 overflow-x-auto px-6 pb-8 md:grid md:grid-cols-3 md:px-0">
+        <div className="flex snap-x gap-8 overflow-x-auto px-6 pb-8 scrollbar-hide md:grid md:grid-cols-3 md:px-0">
           {sortedNewsPages.map((page: PageData, idx: number) => (
             <div
               key={page.id}
@@ -147,13 +148,16 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
               )}
 
               <div className="relative h-48 overflow-hidden md:h-56">
-                <img
+                <NextImage
                   src={
                     page.thumbnailUrl ||
                     'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800'
                   }
                   alt={page.title}
-                  className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute left-4 top-4">
