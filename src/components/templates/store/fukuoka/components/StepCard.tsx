@@ -15,7 +15,7 @@ const StepCard: React.FC<StepCardProps> = ({ num, icon, title, desc, imageSrc })
         {num}
       </div>
       {imageSrc ? (
-        <div className="mb-4 h-32 w-full overflow-hidden rounded-lg">
+        <div className="mb-4 aspect-video w-full overflow-hidden rounded-lg">
           <img src={imageSrc} alt="" className="h-full w-full object-cover" />
         </div>
       ) : (
