@@ -124,7 +124,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="absolute bottom-10 left-0 right-0 top-0 bg-neutral-100">
+        <div className="absolute bottom-10 left-0 right-0 top-[54px] bg-neutral-100 md:top-[65px]">
           {images.map((img, index) => (
             <div
               key={index}
@@ -138,7 +138,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className="scale-105 transform object-cover"
+                className="scale-105 transform object-contain"
               />
 
               {isEditing && index === currentHeroSlide && (
