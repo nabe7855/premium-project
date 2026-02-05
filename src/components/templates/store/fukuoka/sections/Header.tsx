@@ -1,5 +1,6 @@
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { Camera, ChevronDown, MapPin, Menu, Users, X } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -119,7 +120,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           >
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
-                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+                <NextImage
+                  src={item.imageUrl}
+                  alt={item.name}
+                  fill
+                  className="object-contain"
+                  sizes="96px"
+                />
               )}
               {isEditing && (
                 <button
@@ -178,7 +185,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           >
             <div className="h-10 w-10 flex-shrink-0">
               {item.imageUrl ? (
-                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+                <NextImage
+                  src={item.imageUrl}
+                  alt={item.name}
+                  fill
+                  className="object-contain"
+                  sizes="40px"
+                />
               ) : (
                 <Users className={isYellow ? 'text-black' : 'text-white'} size={32} />
               )}
@@ -214,7 +227,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         >
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
-              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
+              <NextImage
+                src={item.imageUrl}
+                alt={item.name}
+                fill
+                className="object-contain"
+                sizes="112px"
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center rounded-3xl bg-pink-50">
                 <span className="text-2xl font-bold text-pink-300">{item.name.charAt(0)}</span>
@@ -264,7 +283,16 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
-            <img src={config.logoUrl} alt="Logo" className="h-full w-auto object-contain" />
+            <div className="relative h-full w-32">
+              <NextImage
+                src={config.logoUrl}
+                alt="Logo"
+                fill
+                priority
+                className="object-contain object-left"
+                sizes="(max-width: 768px) 120px, 140px"
+              />
+            </div>
           ) : (
             <>
               <span className="text-3xl drop-shadow-sm filter">🍓</span>
@@ -301,11 +329,16 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             )}
             className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
           >
-            <img
-              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-              alt="Recruit Banner"
-              className="h-full w-full object-cover"
-            />
+            <div className="relative h-full w-32 md:w-40">
+              <NextImage
+                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                alt="Recruit Banner"
+                fill
+                className="object-cover"
+                priority
+                sizes="(max-width: 768px) 160px, 200px"
+              />
+            </div>
           </Link>
           <Link
             href={getAbsoluteHref(
@@ -313,11 +346,16 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             )}
             className="block h-12 w-auto max-w-[45vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
-            <img
-              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-              alt="Recruit Banner"
-              className="h-full w-full object-cover"
-            />
+            <div className="relative h-full w-28">
+              <NextImage
+                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                alt="Recruit Banner"
+                fill
+                className="object-cover"
+                priority
+                sizes="150px"
+              />
+            </div>
           </Link>
 
           <Link
@@ -473,10 +511,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                       onClick={closeMenu}
                       className="group relative block aspect-[16/7]"
                     >
-                      <img
+                      <NextImage
                         src={config.specialBanner?.imageUrl || '/福岡募集バナー.png'}
                         alt="Special Banner"
-                        className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                        fill
+                        className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                        sizes="(max-width: 768px) 100vw, 400px"
                       />
                       <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
                         <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
