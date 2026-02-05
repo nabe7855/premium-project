@@ -1,4 +1,5 @@
 import { Camera } from 'lucide-react';
+import NextImage from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
@@ -131,7 +132,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 index === currentHeroSlide ? 'opacity-100' : 'opacity-0'
               }`}
             >
-              <img src={img} alt="" className="h-full w-full scale-105 transform object-cover" />
+              <NextImage
+                src={img}
+                alt="Hero Image"
+                fill
+                priority={index === 0}
+                sizes="100vw"
+                className="scale-105 transform object-cover"
+              />
 
               {isEditing && index === currentHeroSlide && (
                 <div className="absolute right-4 top-20 z-50 flex flex-col gap-2 md:right-10 md:top-10">
