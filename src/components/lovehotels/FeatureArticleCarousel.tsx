@@ -4,6 +4,7 @@ import { MOCK_FEATURES } from '@/data/lovehotels';
 import Autoplay from 'embla-carousel-autoplay';
 import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight, Tag } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { useCallback } from 'react';
 
@@ -58,10 +59,12 @@ export default function FeatureArticleCarousel({ slug }: FeatureArticleCarouselP
                     className="group/card block h-full"
                   >
                     <div className="relative h-64 overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl">
-                      <img
+                      <NextImage
                         src={article.imageUrl}
                         alt={article.title}
-                        className="h-full w-full object-cover transition-transform duration-500 group-hover/card:scale-110"
+                        fill
+                        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        className="object-cover transition-transform duration-500 group-hover/card:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-gray-900/90 via-gray-900/50 to-transparent" />
 

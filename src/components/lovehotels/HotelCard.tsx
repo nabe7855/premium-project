@@ -1,6 +1,7 @@
 'use client';
 
 import { Hotel } from '@/types/lovehotels';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React from 'react';
@@ -19,10 +20,12 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
       className="group block overflow-hidden rounded-2xl border border-gray-200 bg-white transition-all hover:-translate-y-1 hover:shadow-xl"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img
+        <NextImage
           src={hotel.imageUrl}
           alt={hotel.name}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
         <div className="absolute left-3 top-3 rounded bg-black/60 px-2 py-1 text-[10px] font-bold text-white backdrop-blur-md">
           {hotel.area}
