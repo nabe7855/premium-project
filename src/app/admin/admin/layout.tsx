@@ -35,6 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // 現在のページタイトルを算出
   const getPageTitle = () => {
     if (pathname === '/admin/admin') return 'ダッシュボード';
+    if (pathname.includes('/general-settings')) return '一般設定';
     if (pathname.includes('/all-cast')) return '全キャスト管理';
     if (pathname.includes('/stores/casts')) return '店舗別キャスト管理';
     if (pathname === '/admin/admin/stores') return '店舗管理';
