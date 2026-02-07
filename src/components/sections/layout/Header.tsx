@@ -414,15 +414,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   {/* Main Grid */}
                   <div className="grid grid-cols-2 gap-4">
                     {adjustedNavLinks
-                      .slice(1, 7)
+                      .slice(1, 9)
                       .map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
                   </div>
 
                   {/* Secondary Buttons */}
                   <div className="space-y-4 pt-4">
                     {adjustedNavLinks
-                      .slice(7)
-                      .map((item, idx) => renderNavItem(item, idx + 7, 'full'))}
+                      .slice(9)
+                      .map((item, idx) => renderNavItem(item, idx + 9, 'full'))}
                   </div>
 
                   {/* Phone Section */}

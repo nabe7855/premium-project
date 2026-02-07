@@ -27,6 +27,7 @@ export default function HeaderManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [activeView, setActiveView] = useState<'settings' | 'preview'>('settings');
 
   // 設定の取得
   useEffect(() => {
@@ -308,29 +309,43 @@ export default function HeaderManagement() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-120px)] flex-col gap-4 overflow-hidden">
+    <div className="flex h-[calc(100vh-100px)] flex-col gap-3 overflow-hidden p-2 sm:gap-4 sm:p-0 lg:h-[calc(100vh-120px)]">
       {/* Header */}
-      <div className="flex flex-shrink-0 items-center justify-between rounded-2xl border border-gray-700/50 bg-brand-secondary px-6 py-3">
-        <div className="flex items-center gap-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="text-gray-400"
-            onClick={() => window.history.back()}
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <h1 className="text-lg font-bold text-white">共通ヘッダー管理</h1>
-            <p className="text-[10px] text-brand-text-secondary">
-              ナビゲーションメニューとロゴを編集できます
-            </p>
+      <div className="flex flex-shrink-0 flex-col gap-3 rounded-2xl border border-gray-700/50 bg-brand-secondary p-4 text-white lg:flex-row lg:items-center lg:justify-between lg:px-6 lg:py-3">
+        <div className="flex items-center justify-between lg:justify-start lg:gap-4">
+          <div className="flex items-center gap-3 lg:gap-4">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 text-gray-400 hover:bg-white/10 lg:h-9 lg:w-9 lg:p-2"
+              onClick={() => window.history.back()}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
+            <div>
+              <h1 className="text-sm font-bold text-white lg:text-lg">共通ヘッダー管理</h1>
+              <p className="hidden text-[10px] text-brand-text-secondary lg:block">
+                ナビゲーションメニューとロゴを編集できます
+              </p>
+            </div>
+          </div>
+
+          <div className="lg:hidden">
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              size="sm"
+              className="h-8 bg-brand-accent px-3 text-xs font-bold hover:bg-brand-accent/90"
+            >
+              <Save className="mr-1.5 h-3.5 w-3.5" />
+              {isSaving ? '保存中' : '保存'}
+            </Button>
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center lg:gap-4">
           <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="h-9 w-[160px] border-gray-700 bg-brand-primary text-xs text-white">
+            <SelectTrigger className="h-8 w-full border-gray-700 bg-brand-primary text-[10px] text-white lg:h-9 lg:w-[160px] lg:text-xs">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -342,43 +357,76 @@ export default function HeaderManagement() {
             </SelectContent>
           </Select>
 
-          <div className="h-6 w-px bg-gray-700"></div>
+          <div className="hidden h-6 w-px bg-gray-700 lg:block"></div>
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleReset}
-            className="h-9 border-gray-700 text-gray-300 hover:bg-red-500/10 hover:text-red-400"
-          >
-            <Trash2 className="mr-2 h-4 w-4" />
-            リセット
-          </Button>
+          <div className="flex w-full items-center gap-2 sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleReset}
+              className="h-8 flex-1 border-gray-700 px-2 text-[10px] text-gray-300 hover:bg-red-500/10 hover:text-red-400 lg:h-9 lg:flex-none lg:px-3 lg:text-xs"
+            >
+              <Trash2 className="mr-1 h-3 w-3 lg:mr-2 lg:h-4 lg:w-4" />
+              リセット
+            </Button>
 
-          <Button
-            variant={isPreviewMode ? 'secondary' : 'outline'}
-            size="sm"
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={isPreviewMode ? 'h-9 bg-white/10' : 'h-9 border-gray-700 text-gray-300'}
-          >
-            <Eye className="mr-2 h-4 w-4" />
-            {isPreviewMode ? '編集モードに戻る' : 'プレビュー'}
-          </Button>
+            <Button
+              variant={isPreviewMode ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => {
+                setIsPreviewMode(!isPreviewMode);
+                if (!isPreviewMode) setActiveView('preview');
+              }}
+              className={`h-8 flex-1 border-gray-700 px-2 text-[10px] lg:h-9 lg:flex-none lg:px-3 lg:text-xs ${isPreviewMode ? 'bg-white/10' : 'text-gray-300'}`}
+            >
+              <Eye className="mr-1 h-3 w-3 lg:mr-2 lg:h-4 lg:w-4" />
+              <span className="inline">{isPreviewMode ? '戻る' : 'プレビュー'}</span>
+            </Button>
 
-          <Button
-            onClick={handleSave}
-            disabled={isSaving}
-            size="sm"
-            className="h-9 bg-brand-accent font-bold hover:bg-brand-accent/90"
-          >
-            <Save className="mr-2 h-4 w-4" />
-            {isSaving ? '保存中...' : '設定を保存'}
-          </Button>
+            <Button
+              onClick={handleSave}
+              disabled={isSaving}
+              size="sm"
+              className="hidden h-9 bg-brand-accent font-bold hover:bg-brand-accent/90 lg:flex"
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isSaving ? '保存中...' : '設定を保存'}
+            </Button>
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-grow gap-4 overflow-hidden">
+      <div className="flex flex-grow flex-col gap-3 overflow-hidden lg:flex-row lg:gap-4">
+        {/* View Switcher for Mobile */}
+        <div className="flex lg:hidden">
+          <div className="grid w-full grid-cols-2 gap-1 rounded-xl bg-brand-secondary p-1">
+            <button
+              onClick={() => setActiveView('settings')}
+              className={`rounded-lg py-2 text-xs font-bold transition-all ${
+                activeView === 'settings'
+                  ? 'bg-brand-accent text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              設定項目
+            </button>
+            <button
+              onClick={() => setActiveView('preview')}
+              className={`rounded-lg py-2 text-xs font-bold transition-all ${
+                activeView === 'preview'
+                  ? 'bg-brand-accent text-white shadow-sm'
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              プレビュー
+            </button>
+          </div>
+        </div>
+
         {/* Sidebar: Controls */}
-        <div className="w-80 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4">
+        <div
+          className={`flex flex-col gap-4 overflow-y-auto lg:h-full lg:w-80 lg:flex-shrink-0 lg:rounded-2xl lg:border lg:border-gray-700/50 lg:bg-brand-secondary lg:p-4 ${activeView === 'settings' ? 'flex flex-grow' : 'hidden lg:flex'}`}
+        >
           <div className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3">
             <span className="text-sm font-medium text-gray-200">ヘッダーを表示する</span>
             <Switch
@@ -530,8 +578,10 @@ export default function HeaderManagement() {
         </div>
 
         {/* Preview Area */}
-        <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
-          <div className="absolute inset-0 overflow-y-auto bg-white p-8">
+        <div
+          className={`relative flex-grow overflow-hidden bg-white lg:rounded-2xl lg:border lg:border-gray-700/50 ${activeView === 'preview' ? 'flex flex-grow' : 'hidden lg:block'}`}
+        >
+          <div className="absolute inset-0 overflow-y-auto bg-white p-4 sm:p-8">
             <div className="mx-auto max-w-md space-y-6">
               {/* Header Preview */}
               <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
@@ -715,9 +765,8 @@ export default function HeaderManagement() {
                   </div>
                 )}
 
-                {/* Main Grid */}
                 <div className="grid grid-cols-2 gap-4">
-                  {config.header.navLinks.slice(1, 7).map((item, idx) => (
+                  {config.header.navLinks.slice(1, 9).map((item, idx) => (
                     <div
                       key={idx}
                       className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] border border-transparent bg-white px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)]"
@@ -803,7 +852,7 @@ export default function HeaderManagement() {
 
                 {/* Secondary Buttons */}
                 <div className="space-y-4">
-                  {config.header.navLinks.slice(7).map((item, idx) => {
+                  {config.header.navLinks.slice(9).map((item, idx) => {
                     const getButtonColor = (name: string) => {
                       if (name.includes('プライバシー')) return 'bg-[#9BA3AF] border-[#818B9A]';
                       if (name.includes('メディア')) return 'bg-[#C5A368] border-[#A88B5A]';
@@ -838,7 +887,7 @@ export default function HeaderManagement() {
                                     input.onchange = (e) => {
                                       const file = (e.target as HTMLInputElement).files?.[0];
                                       if (file)
-                                        handleImageUpload('header', file, idx + 7, 'navLinks');
+                                        handleImageUpload('header', file, idx + 9, 'navLinks');
                                     };
                                     input.click();
                                   }}
@@ -866,7 +915,7 @@ export default function HeaderManagement() {
                                 </button>
                                 {item.imageUrl && (
                                   <button
-                                    onClick={() => handleImageDelete(idx + 7)}
+                                    onClick={() => handleImageDelete(idx + 9)}
                                     className="rounded bg-red-500/80 p-1 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
                                   >
                                     <svg
