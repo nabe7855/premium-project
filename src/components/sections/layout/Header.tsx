@@ -1,5 +1,5 @@
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
-import { Camera, ChevronDown, MapPin, Menu, Users, X } from 'lucide-react';
+import { Camera, ChevronDown, Menu, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -363,51 +363,6 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 <BackgroundDecoration />
 
                 <div className="relative z-10 mx-auto max-w-md space-y-6 px-5">
-                  {/* 店舗選択 */}
-                  <section>
-                    <button
-                      onClick={() => setIsStoreDropdownOpen(!isStoreDropdownOpen)}
-                      className="flex w-full items-center justify-between rounded-3xl border border-gray-100 bg-white px-6 py-5 text-[#4A2B2F] shadow-[0_8px_16px_-4px_rgba(0,0,0,0.05)] transition-all active:scale-[0.98]"
-                    >
-                      <div className="flex items-center gap-3">
-                        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-50 text-pink-500 shadow-inner">
-                          <MapPin size={22} />
-                        </div>
-                        <span className="text-lg font-bold">店舗を選ぶ</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="rounded-full bg-pink-50 px-4 py-1.5 text-sm font-bold text-pink-600">
-                          {currentStore?.displayName}
-                        </span>
-                        <ChevronDown
-                          size={20}
-                          className={`text-pink-300 transition-transform duration-300 ${isStoreDropdownOpen ? 'rotate-180' : ''}`}
-                        />
-                      </div>
-                    </button>
-
-                    <div
-                      className={`overflow-hidden transition-all duration-500 ${isStoreDropdownOpen ? 'mt-3 max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}
-                    >
-                      <div className="grid grid-cols-2 gap-3 p-1">
-                        {Object.values(stores).map((store) => (
-                          <button
-                            key={store.id}
-                            onClick={() => handleStoreChange(store.id)}
-                            className={`flex items-center gap-3 rounded-2xl border-2 px-4 py-4 transition-all ${
-                              currentStoreId === store.id
-                                ? 'border-pink-400 bg-pink-50 shadow-md'
-                                : 'border-gray-50 bg-white shadow-sm'
-                            }`}
-                          >
-                            <span className="text-2xl">{store.emoji}</span>
-                            <span className="font-bold text-[#4A2B2F]">{store.displayName}</span>
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                  </section>
-
                   {/* Highlights (News) */}
                   {adjustedNavLinks[0] && renderNavItem(adjustedNavLinks[0], 0, 'highlight')}
 
