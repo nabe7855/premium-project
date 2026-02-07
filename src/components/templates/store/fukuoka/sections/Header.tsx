@@ -183,7 +183,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             onClick={closeMenu}
             className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
           >
-            <div className="h-10 w-10 flex-shrink-0">
+            <div className="relative h-10 w-10 flex-shrink-0">
               {item.imageUrl ? (
                 <NextImage
                   src={item.imageUrl}

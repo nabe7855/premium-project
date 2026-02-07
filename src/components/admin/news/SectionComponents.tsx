@@ -21,34 +21,27 @@ export const HeroSection: React.FC<SectionComponentProps> = ({ data, active, inn
       )}
       <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/70" />
       <div className="pointer-events-none relative z-10 max-w-5xl px-8">
-        <h1
-          className="mb-6 font-black leading-[1.1] text-white drop-shadow-2xl"
-          style={{
-            fontSize: `${titleStyle?.size || 64}px`,
-            transform: `translate(${(titleStyle?.x || 50) - 50}%, ${(titleStyle?.y || 35) - 35}%)`,
-          }}
-        >
-          {title || 'Luxury Moments'}
-        </h1>
-        <p
-          className="mb-12 font-medium uppercase tracking-[0.2em] text-white/95 drop-shadow-xl"
-          style={{
-            fontSize: `${subtitleStyle?.size || 22}px`,
-            transform: `translate(${(subtitleStyle?.x || 50) - 50}%, ${(subtitleStyle?.y || 50) - 50}%)`,
-          }}
-        >
-          {subtitle || 'Exceptional Premium Service'}
-        </p>
-        {buttonText && (
-          <div
+        {title && (
+          <h1
+            className="mb-6 font-black leading-[1.1] text-white drop-shadow-2xl"
             style={{
-              transform: `translate(${(buttonStyle?.x || 50) - 50}%, ${(buttonStyle?.y || 72) - 72}%)`,
+              fontSize: `${titleStyle?.size || 64}px`,
+              transform: `translate(${(titleStyle?.x || 50) - 50}%, ${(titleStyle?.y || 35) - 35}%)`,
             }}
           >
-            <button className="transform rounded-full bg-white px-14 py-5 font-black text-slate-900 shadow-[0_25px_60px_rgba(0,0,0,0.5)] transition-transform hover:scale-110">
-              {buttonText}
-            </button>
-          </div>
+            {title}
+          </h1>
+        )}
+        {subtitle && (
+          <p
+            className="mb-12 font-medium uppercase tracking-[0.2em] text-white/95 drop-shadow-xl"
+            style={{
+              fontSize: `${subtitleStyle?.size || 22}px`,
+              transform: `translate(${(subtitleStyle?.x || 50) - 50}%, ${(subtitleStyle?.y || 50) - 50}%)`,
+            }}
+          >
+            {subtitle}
+          </p>
         )}
       </div>
     </div>
@@ -64,16 +57,21 @@ export const CampaignSection: React.FC<SectionComponentProps> = ({ data, active,
     >
       <div className="mx-auto flex max-w-6xl flex-col items-center gap-20 lg:flex-row">
         <div className="flex-1 text-left">
-          <p className="mb-6 border-l-4 border-rose-500 pl-4 text-xs font-black uppercase tracking-[0.4em] text-rose-500">
-            {subtitle || 'Limited Campaign'}
-          </p>
-          <h2 className="mb-10 text-5xl font-black leading-tight tracking-tighter text-slate-900 lg:text-6xl">
-            {title || 'Special Seasonal Offer'}
-          </h2>
-          <p className="mb-12 whitespace-pre-wrap text-xl font-medium leading-loose text-slate-500">
-            {description ||
-              'Experience our exclusive bespoke events designed for those who appreciate the absolute finer things in life.'}
-          </p>
+          {subtitle && (
+            <p className="mb-6 border-l-4 border-rose-500 pl-4 text-xs font-black uppercase tracking-[0.4em] text-rose-500">
+              {subtitle}
+            </p>
+          )}
+          {title && (
+            <h2 className="mb-10 text-5xl font-black leading-tight tracking-tighter text-slate-900 lg:text-6xl">
+              {title}
+            </h2>
+          )}
+          {description && (
+            <p className="mb-12 whitespace-pre-wrap text-xl font-medium leading-loose text-slate-500">
+              {description}
+            </p>
+          )}
           {buttonText && (
             <button className="rounded-[1.5rem] bg-slate-900 px-12 py-5 font-black text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transition-all hover:bg-rose-600">
               {buttonText}
@@ -109,21 +107,26 @@ export const CastSection: React.FC<SectionComponentProps> = ({ data, active, inn
           />
         </div>
         <div className="relative z-10 flex-1 text-center lg:text-left">
-          <div className="mb-8 inline-block rounded-full bg-rose-50 px-8 py-2.5 text-xs font-black uppercase tracking-[0.3em] text-rose-600 shadow-sm">
-            {subtitle || 'Featured Talent'}
-          </div>
-          <h2 className="mb-10 text-6xl font-black leading-none tracking-tighter text-slate-900">
-            {title || 'Premium Artist'}
-          </h2>
-          <div className="relative mb-12">
-            <span className="absolute -left-12 -top-16 select-none font-serif text-9xl text-rose-100 opacity-30">
-              “
-            </span>
-            <p className="relative z-10 text-2xl font-medium italic leading-relaxed text-slate-500">
-              {description ||
-                'Dedication to providing an absolutely unforgettable experience tailored precisely to your unique and most sophisticated desires.'}
-            </p>
-          </div>
+          {subtitle && (
+            <div className="mb-8 inline-block rounded-full bg-rose-50 px-8 py-2.5 text-xs font-black uppercase tracking-[0.3em] text-rose-600 shadow-sm">
+              {subtitle}
+            </div>
+          )}
+          {title && (
+            <h2 className="mb-10 text-6xl font-black leading-none tracking-tighter text-slate-900">
+              {title}
+            </h2>
+          )}
+          {description && (
+            <div className="relative mb-12">
+              <span className="absolute -left-12 -top-16 select-none font-serif text-9xl text-rose-100 opacity-30">
+                “
+              </span>
+              <p className="relative z-10 text-2xl font-medium italic leading-relaxed text-slate-500">
+                {description}
+              </p>
+            </div>
+          )}
           {buttonText && (
             <button className="rounded-2xl bg-slate-900 px-12 py-5 font-black text-white shadow-2xl transition-all hover:bg-rose-600">
               {buttonText}
@@ -143,9 +146,11 @@ export const RankingSection: React.FC<SectionComponentProps> = ({ data, active, 
       className={`bg-white px-10 py-32 ${active ? 'z-10 ring-8 ring-inset ring-rose-500' : ''}`}
     >
       <div className="mx-auto max-w-6xl">
-        <h2 className="mb-24 text-center text-5xl font-black uppercase tracking-tighter text-slate-900">
-          {title || 'Exquisite Selection'}
-        </h2>
+        {title && (
+          <h2 className="mb-24 text-center text-5xl font-black uppercase tracking-tighter text-slate-900">
+            {title}
+          </h2>
+        )}
         <div className="grid grid-cols-1 gap-16 md:grid-cols-3">
           {(items || []).map((item: any, i: number) => (
             <div key={i} className="group flex flex-col items-center">
@@ -186,9 +191,11 @@ export const GallerySection: React.FC<SectionComponentProps> = ({ data, active, 
       className={`bg-slate-900 px-6 py-32 ${active ? 'z-10 ring-8 ring-inset ring-rose-500' : ''}`}
     >
       <div className="mx-auto max-w-7xl">
-        <h2 className="mb-24 text-center text-4xl font-black uppercase italic tracking-[0.4em] text-white opacity-90">
-          {title || 'Visual Narrative'}
-        </h2>
+        {title && (
+          <h2 className="mb-24 text-center text-4xl font-black uppercase italic tracking-[0.4em] text-white opacity-90">
+            {title}
+          </h2>
+        )}
         <div className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-8">
           {(items || []).map((item: any, i: number) => (
             <div
@@ -226,8 +233,7 @@ export const TextSection: React.FC<SectionComponentProps> = ({ data, active, inn
           </div>
         )}
         <div className="whitespace-pre-wrap text-2xl font-light italic leading-[2] tracking-wide text-slate-500">
-          {description ||
-            'Elevate your ultimate expectations with our bespoke solutions designed for the most discerning individual seeking perfection.'}
+          {description}
         </div>
       </div>
     </div>
@@ -246,13 +252,16 @@ export const CTASection: React.FC<SectionComponentProps> = ({ data, active, inne
         <div className="absolute bottom-0 left-0 -mb-48 -ml-48 h-[600px] w-[600px] rounded-full bg-rose-900 opacity-20 blur-[150px]" />
       </div>
       <div className="relative z-10 mx-auto max-w-4xl text-center">
-        <h2 className="mb-10 text-6xl font-black leading-tight tracking-tighter text-white drop-shadow-2xl md:text-7xl">
-          {title || 'Begin Your New Story'}
-        </h2>
-        <p className="mx-auto mb-20 max-w-3xl text-2xl font-medium leading-relaxed tracking-wide text-slate-400">
-          {subtitle ||
-            'Join an elite community and experience the absolute pinnacle of luxury and personalized service.'}
-        </p>
+        {title && (
+          <h2 className="mb-10 text-6xl font-black leading-tight tracking-tighter text-white drop-shadow-2xl md:text-7xl">
+            {title}
+          </h2>
+        )}
+        {subtitle && (
+          <p className="mx-auto mb-20 max-w-3xl text-2xl font-medium leading-relaxed tracking-wide text-slate-400">
+            {subtitle}
+          </p>
+        )}
         {buttonText && (
           <button className="transform rounded-full bg-rose-600 px-20 py-7 text-2xl font-black text-white shadow-[0_30px_80px_rgba(225,29,72,0.4)] transition-all hover:scale-110 hover:bg-white hover:text-slate-900 hover:shadow-none active:scale-95">
             {buttonText}
@@ -355,12 +364,16 @@ export const PriceSection: React.FC<SectionComponentProps> = ({ data, active, in
     >
       <div className="mx-auto max-w-5xl">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
-            {title || 'Price Menu'}
-          </h2>
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-slate-400 md:text-base">
-            {subtitle || '料金プラン'}
-          </p>
+          {title && (
+            <h2 className="mb-4 text-3xl font-black tracking-tight text-slate-900 md:text-5xl">
+              {title}
+            </h2>
+          )}
+          {subtitle && (
+            <p className="text-sm font-bold uppercase tracking-[0.3em] text-slate-400 md:text-base">
+              {subtitle}
+            </p>
+          )}
         </div>
 
         <div className="relative overflow-hidden rounded-[2rem] border border-slate-50 bg-white p-6 shadow-[0_40px_100px_-20px_rgba(0,0,0,0.1)] md:rounded-[3rem] md:p-12">

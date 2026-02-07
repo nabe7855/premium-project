@@ -69,7 +69,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({
         title: '',
         subtitle: '',
         description: '',
-        buttonText: '詳しく見る',
+        buttonText: type === 'hero' ? '' : '詳しく見る',
         items: initialItems,
         ...initialStyle,
       },

@@ -293,17 +293,19 @@ const Inspector: React.FC<InspectorProps> = ({
             />
           </div>
         )}
-        <div>
-          <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
-            アクションボタン文言
-          </label>
-          <input
-            type="text"
-            value={section.content.buttonText || ''}
-            onChange={(e) => handleFieldChange('buttonText', e.target.value)}
-            className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:ring-2 focus:ring-rose-100"
-          />
-        </div>
+        {section.type !== 'hero' && (
+          <div>
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+              アクションボタン文言
+            </label>
+            <input
+              type="text"
+              value={section.content.buttonText || ''}
+              onChange={(e) => handleFieldChange('buttonText', e.target.value)}
+              className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:ring-2 focus:ring-rose-100"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
