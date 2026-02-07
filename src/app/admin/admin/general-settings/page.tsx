@@ -26,6 +26,7 @@ interface StoreContactInfo {
   businessHours: string;
   lineUrl: string;
   lineId: string;
+  notificationEmail: string;
 }
 
 export default function GeneralSettingsPage() {
@@ -38,6 +39,7 @@ export default function GeneralSettingsPage() {
     businessHours: '',
     lineUrl: '',
     lineId: '',
+    notificationEmail: '',
   });
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -61,6 +63,7 @@ export default function GeneralSettingsPage() {
           businessHours: config.header.businessHours || '',
           lineUrl: config.header.specialBanner?.link || '',
           lineId: '', // LINEIDは別途管理が必要な場合は追加
+          notificationEmail: (config as any).notificationEmail || '',
         });
       } catch (error) {
         console.error('Error fetching config:', error);
@@ -92,7 +95,8 @@ export default function GeneralSettingsPage() {
             link: contactInfo.lineUrl,
           },
         },
-      };
+        notificationEmail: contactInfo.notificationEmail,
+      } as StoreTopPageConfig;
 
       const saveResult = await saveStoreTopConfig(selectedStore, updatedConfig);
       if (saveResult.success) {
@@ -124,7 +128,7 @@ export default function GeneralSettingsPage() {
           <div>
             <h1 className="text-lg font-bold text-white">一般設定</h1>
             <p className="text-[10px] text-brand-text-secondary">
-              店舗ごとの電話番号・LINE情報を管理できます
+              店舗ごとの電話番号・LINE情報・通知メールアドレスを管理できます
             </p>
           </div>
         </div>
@@ -250,6 +254,87 @@ export default function GeneralSettingsPage() {
                   <p className="mt-1 text-xs text-gray-500">
                     表示用のIDです（現在は保存されません）
                   </p>
+                </div>
+              </div>
+            </div>
+
+            {/* 通知メールアドレス設定 */}
+            <div className="space-y-4 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-6">
+              <div className="flex items-center gap-3 border-b border-gray-700/30 pb-3">
+                <svg
+                  className="h-5 w-5 text-yellow-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <h2 className="text-lg font-bold text-white">通知メールアドレス設定</h2>
+              </div>
+
+              <div className="space-y-4">
+                <div>
+                  <label className="mb-2 block text-sm font-medium text-gray-300">
+                    通知先メールアドレス
+                  </label>
+                  <input
+                    type="email"
+                    value={contactInfo.notificationEmail}
+                    onChange={(e) =>
+                      setContactInfo({ ...contactInfo, notificationEmail: e.target.value })
+                    }
+                    placeholder="notifications@example.com"
+                    className="w-full rounded-lg border border-gray-700 bg-brand-primary px-4 py-2.5 text-white placeholder-gray-500 outline-none transition-colors focus:border-brand-accent"
+                  />
+                  <p className="mt-1 text-xs text-gray-500">
+                    採用応募や予約が入った際の通知を受け取るメールアドレス
+                  </p>
+                </div>
+
+                {/* メール送信の仕組みについての説明 */}
+                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-4">
+                  <h4 className="mb-2 flex items-center gap-2 text-sm font-bold text-yellow-300">
+                    <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                      <path
+                        fillRule="evenodd"
+                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    メール送信の設定について
+                  </h4>
+                  <div className="space-y-2 text-xs text-yellow-200/80">
+                    <p>
+                      <strong>現在の状態:</strong>{' '}
+                      このメールアドレスは設定として保存されますが、実際のメール送信機能はまだ実装されていません。
+                    </p>
+                    <p>
+                      <strong>実装方法:</strong>
+                    </p>
+                    <ul className="ml-4 list-disc space-y-1">
+                      <li>
+                        <strong>Supabase Edge Functions:</strong>{' '}
+                        Supabaseのデータベーストリガーと組み合わせて、新規レコード挿入時に自動でメールを送信
+                      </li>
+                      <li>
+                        <strong>Resend / SendGrid:</strong> Next.jsのAPI
+                        Routeから呼び出してメール送信（採用応募や予約作成時にサーバーサイドで実行）
+                      </li>
+                      <li>
+                        <strong>推奨:</strong> Resend + SupabaseのDatabase
+                        Webhooksを使用すると、アプリケーションコードを変更せずにメール通知を実装可能
+                      </li>
+                    </ul>
+                    <p className="mt-2 text-yellow-300">
+                      💡
+                      ここで設定したメールアドレスは、将来的にメール送信機能を実装する際に使用されます。
+                    </p>
+                  </div>
                 </div>
               </div>
             </div>
