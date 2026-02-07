@@ -195,10 +195,12 @@ export interface StoreTopPageConfig {
   newcomer: NewcomerConfig;
   faq: FAQConfig;
   footer: FooterConfig;
+  notificationEmail?: string;
 }
 
 // デフォルト設定
 export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
+  notificationEmail: '',
   header: {
     logoText: 'LUMIÈRE',
     logoUrl: '',

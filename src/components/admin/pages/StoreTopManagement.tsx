@@ -297,14 +297,15 @@ export default function StoreTopManagement() {
         await saveStoreTopConfig(selectedStore, newConfig);
       } else {
         const sectionKey = key || 'imageUrl';
-        const oldImageUrl = (config[section as keyof StoreTopPageConfig] as any)?.[sectionKey];
+        const sectionName = section as Exclude<keyof StoreTopPageConfig, 'notificationEmail'>;
+        const oldImageUrl = (config[sectionName] as any)?.[sectionKey];
         if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.startsWith('http')) {
           await deleteStorageFile(oldImageUrl);
         }
 
         const newConfig = {
           ...config,
-          [section]: { ...config[section as keyof StoreTopPageConfig], [sectionKey]: publicUrl },
+          [sectionName]: { ...config[sectionName], [sectionKey]: publicUrl },
         };
         setConfig(newConfig);
         await saveStoreTopConfig(selectedStore, newConfig);
