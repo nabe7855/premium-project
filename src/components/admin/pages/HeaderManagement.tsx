@@ -487,7 +487,7 @@ export default function HeaderManagement() {
                       <label className="text-[10px] font-bold uppercase text-gray-500">
                         ボタン画像 (任意)
                       </label>
-                      <div className="group relative aspect-[7/1] w-full overflow-hidden rounded-md bg-black/40">
+                      <div className="group relative aspect-[4/1] w-full overflow-hidden rounded-md bg-black/40">
                         {link.imageUrl ? (
                           <img
                             src={link.imageUrl}
@@ -913,11 +913,11 @@ export default function HeaderManagement() {
                       <div key={idx} className="group relative">
                         {item.imageUrl ? (
                           <div className="w-full overflow-hidden rounded-2xl shadow-lg transition-transform active:translate-y-[2px]">
-                            <div className="relative aspect-[16/4] w-full lg:aspect-[7/1]">
+                            <div className="relative aspect-[4/1] w-full">
                               <img
                                 src={item.imageUrl}
                                 alt={item.name}
-                                className="h-full w-full object-cover"
+                                className="h-full w-full object-contain"
                               />
                               {!isPreviewMode && (
                                 <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">

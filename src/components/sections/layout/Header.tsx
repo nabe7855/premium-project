@@ -176,7 +176,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             }
           >
             {item.imageUrl ? (
-              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
+              <div className="relative aspect-[4/1] w-full">
+                <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
+              </div>
             ) : (
               <>
                 <div className="h-10 w-10 flex-shrink-0">

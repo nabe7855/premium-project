@@ -188,12 +188,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             }
           >
             {item.imageUrl ? (
-              <div className="relative aspect-[16/4] w-full lg:aspect-[7/1]">
+              <div className="relative aspect-[4/1] w-full">
                 <NextImage
                   src={item.imageUrl}
                   alt={item.name}
                   fill
-                  className="object-cover"
+                  className="object-contain"
                   sizes="(max-width: 768px) 100vw, 400px"
                 />
               </div>
