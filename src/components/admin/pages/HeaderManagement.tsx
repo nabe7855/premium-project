@@ -448,39 +448,84 @@ export default function HeaderManagement() {
                   key={idx}
                   className="space-y-2 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3"
                 >
-                  <div className="flex items-center justify-between gap-2">
-                    <input
-                      className="flex-grow bg-transparent text-sm font-bold text-white outline-none transition-colors focus:text-brand-accent"
-                      value={link.name}
-                      onChange={(e) => {
-                        const newLinks = [...config.header.navLinks];
-                        newLinks[idx] = { ...newLinks[idx], name: e.target.value };
-                        handleUpdate('header', 'navLinks', newLinks);
-                      }}
-                      placeholder="メニュー名"
-                    />
-                    <button
-                      onClick={() => {
-                        const newLinks = config.header.navLinks.filter((_, i) => i !== idx);
-                        handleUpdate('header', 'navLinks', newLinks);
-                      }}
-                      className="text-gray-500 transition-colors hover:text-red-400"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                  <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
-                    <ExternalLink size={12} className="text-gray-500" />
-                    <input
-                      className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
-                      value={link.href}
-                      onChange={(e) => {
-                        const newLinks = [...config.header.navLinks];
-                        newLinks[idx] = { ...newLinks[idx], href: e.target.value };
-                        handleUpdate('header', 'navLinks', newLinks);
-                      }}
-                      placeholder="/store/slug/..."
-                    />
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center justify-between gap-2">
+                      <input
+                        className="flex-grow bg-transparent text-sm font-bold text-white outline-none transition-colors focus:text-brand-accent"
+                        value={link.name}
+                        onChange={(e) => {
+                          const newLinks = [...config.header.navLinks];
+                          newLinks[idx] = { ...newLinks[idx], name: e.target.value };
+                          handleUpdate('header', 'navLinks', newLinks);
+                        }}
+                        placeholder="メニュー名"
+                      />
+                      <button
+                        onClick={() => {
+                          const newLinks = config.header.navLinks.filter((_, i) => i !== idx);
+                          handleUpdate('header', 'navLinks', newLinks);
+                        }}
+                        className="text-gray-500 transition-colors hover:text-red-400"
+                      >
+                        <Trash2 size={14} />
+                      </button>
+                    </div>
+                    <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                      <ExternalLink size={12} className="text-gray-500" />
+                      <input
+                        className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                        value={link.href}
+                        onChange={(e) => {
+                          const newLinks = [...config.header.navLinks];
+                          newLinks[idx] = { ...newLinks[idx], href: e.target.value };
+                          handleUpdate('header', 'navLinks', newLinks);
+                        }}
+                        placeholder="/store/slug/..."
+                      />
+                    </div>
+                    <div className="mt-2 space-y-1">
+                      <label className="text-[10px] font-bold uppercase text-gray-500">
+                        ボタン画像 (任意)
+                      </label>
+                      <div className="group relative aspect-[7/1] w-full overflow-hidden rounded-md bg-black/40">
+                        {link.imageUrl ? (
+                          <img
+                            src={link.imageUrl}
+                            alt=""
+                            className="h-full w-full object-contain"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-[10px] text-gray-600">
+                            画像なし（デフォルトUI使用）
+                          </div>
+                        )}
+                        <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button
+                            onClick={() => {
+                              const input = document.createElement('input');
+                              input.type = 'file';
+                              input.accept = 'image/*';
+                              input.onchange = (e) => {
+                                const file = (e.target as HTMLInputElement).files?.[0];
+                                if (file) handleImageUpload('header', file, idx, 'navLinks');
+                              };
+                              input.click();
+                            }}
+                            className="rounded bg-white/20 p-1 text-white backdrop-blur-sm hover:bg-white/30"
+                          >
+                            <Camera size={12} />
+                          </button>
+                          {link.imageUrl && (
+                            <button
+                              onClick={() => handleImageDelete(idx)}
+                              className="rounded bg-red-500/80 p-1 text-white backdrop-blur-sm hover:bg-red-600"
+                            >
+                              <Trash2 size={12} />
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -866,82 +911,75 @@ export default function HeaderManagement() {
 
                     return (
                       <div key={idx} className="group relative">
-                        <div
-                          className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
-                        >
-                          <div className="relative h-10 w-10 flex-shrink-0">
-                            {item.imageUrl && (
+                        {item.imageUrl ? (
+                          <div className="w-full overflow-hidden rounded-2xl shadow-lg transition-transform active:translate-y-[2px]">
+                            <div className="relative aspect-[16/4] w-full lg:aspect-[7/1]">
                               <img
                                 src={item.imageUrl}
-                                alt=""
-                                className="h-full w-full object-contain"
+                                alt={item.name}
+                                className="h-full w-full object-cover"
                               />
-                            )}
-                            {!isPreviewMode && (
-                              <div className="absolute inset-0 flex items-center justify-center gap-1 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                                <button
-                                  onClick={() => {
-                                    const input = document.createElement('input');
-                                    input.type = 'file';
-                                    input.accept = 'image/*';
-                                    input.onchange = (e) => {
-                                      const file = (e.target as HTMLInputElement).files?.[0];
-                                      if (file)
-                                        handleImageUpload('header', file, idx + 9, 'navLinks');
-                                    };
-                                    input.click();
-                                  }}
-                                  className="rounded bg-white/20 p-1 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
-                                >
-                                  <svg
-                                    className="h-4 w-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
+                              {!isPreviewMode && (
+                                <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                  <button
+                                    onClick={() => {
+                                      const input = document.createElement('input');
+                                      input.type = 'file';
+                                      input.accept = 'image/*';
+                                      input.onchange = (e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file)
+                                          handleImageUpload('header', file, idx + 9, 'navLinks');
+                                      };
+                                      input.click();
+                                    }}
+                                    className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
                                   >
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                                    />
-                                    <path
-                                      strokeLinecap="round"
-                                      strokeLinejoin="round"
-                                      strokeWidth={2}
-                                      d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                                    />
-                                  </svg>
-                                </button>
-                                {item.imageUrl && (
+                                    <Camera size={16} />
+                                  </button>
                                   <button
                                     onClick={() => handleImageDelete(idx + 9)}
-                                    className="rounded bg-red-500/80 p-1 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
+                                    className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
                                   >
-                                    <svg
-                                      className="h-4 w-4"
-                                      fill="none"
-                                      stroke="currentColor"
-                                      viewBox="0 0 24 24"
-                                    >
-                                      <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth={2}
-                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                      />
-                                    </svg>
+                                    <Trash2 size={16} />
                                   </button>
-                                )}
-                              </div>
-                            )}
+                                </div>
+                              )}
+                            </div>
                           </div>
-                          <span
-                            className={`flex-1 text-center text-lg font-black tracking-widest ${isYellow ? 'text-black' : 'text-white'}`}
+                        ) : (
+                          <div
+                            className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg transition-transform active:translate-y-[2px]`}
                           >
-                            {item.name}
-                          </span>
-                        </div>
+                            <div className="relative h-10 w-10 flex-shrink-0">
+                              {!isPreviewMode && (
+                                <div className="absolute inset-0 flex items-center justify-center gap-1 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                  <button
+                                    onClick={() => {
+                                      const input = document.createElement('input');
+                                      input.type = 'file';
+                                      input.accept = 'image/*';
+                                      input.onchange = (e) => {
+                                        const file = (e.target as HTMLInputElement).files?.[0];
+                                        if (file)
+                                          handleImageUpload('header', file, idx + 9, 'navLinks');
+                                      };
+                                      input.click();
+                                    }}
+                                    className="rounded bg-white/20 p-1 text-white backdrop-blur-sm transition-colors hover:bg-white/30"
+                                  >
+                                    <Camera size={14} />
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                            <span
+                              className={`flex-1 text-center text-lg font-black tracking-widest ${isYellow ? 'text-black' : 'text-white'}`}
+                            >
+                              {item.name}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     );
                   })}

@@ -169,28 +169,34 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           <Link
             href={item.href}
             onClick={closeMenu}
-            className={`flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`}
+            className={
+              item.imageUrl
+                ? 'block w-full overflow-hidden rounded-2xl shadow-lg'
+                : `flex w-full items-center gap-4 rounded-2xl border-b-[6px] ${colorClass} px-6 py-4 shadow-lg`
+            }
           >
-            <div className="h-10 w-10 flex-shrink-0">
-              {item.imageUrl ? (
-                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
-              ) : (
-                <Users className={isYellow ? 'text-black' : 'text-white'} size={32} />
-              )}
-            </div>
-            <span
-              className={`flex-1 text-center text-lg font-black tracking-widest outline-none ${isYellow ? 'text-black' : 'text-white'}`}
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => {
-                if (!isEditing) return;
-                const newLinks = [...navLinks];
-                newLinks[idx] = { ...newLinks[idx], name: e.currentTarget.innerText };
-                onUpdate?.('header', 'navLinks', newLinks);
-              }}
-            >
-              {item.name}
-            </span>
+            {item.imageUrl ? (
+              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-cover" />
+            ) : (
+              <>
+                <div className="h-10 w-10 flex-shrink-0">
+                  <Users className={isYellow ? 'text-black' : 'text-white'} size={32} />
+                </div>
+                <span
+                  className={`flex-1 text-center text-lg font-black tracking-widest outline-none ${isYellow ? 'text-black' : 'text-white'}`}
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    if (!isEditing) return;
+                    const newLinks = [...navLinks];
+                    newLinks[idx] = { ...newLinks[idx], name: e.currentTarget.innerText };
+                    onUpdate?.('header', 'navLinks', newLinks);
+                  }}
+                >
+                  {item.name}
+                </span>
+              </>
+            )}
           </Link>
         </div>
       );
