@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const Welcome: React.FC = () => {
+interface WelcomeProps {
+  storeName?: string;
+}
+
+export const Welcome: React.FC<WelcomeProps> = ({ storeName = 'ストロベリーボーイズ' }) => {
   return (
     <section className="overflow-hidden bg-white py-16 md:py-24">
       <div className="container mx-auto max-w-4xl px-4">
@@ -32,12 +36,12 @@ export const Welcome: React.FC = () => {
 
               <div className="space-y-6 text-gray-600">
                 <p className="text-sm leading-relaxed md:text-base">
-                  ストロベリーボーイズは、ただの刺激ではなく、
+                  {storeName}は、ただの刺激ではなく、
                   <br className="hidden md:block" />
                   <span className="font-bold text-[#FF4B5C]">「明日からまた頑張れる自分」</span>
                   になれる場所。
                   <br />
-                  新宿や渋谷の喧騒を離れ、極上のプライベート空間で
+                  都会の喧騒を離れ、極上のプライベート空間で
                   <br className="hidden md:block" />
                   心も体も解き放たれる瞬間をお約束します。
                 </p>
@@ -73,7 +77,7 @@ export const Welcome: React.FC = () => {
                   <p className="mb-2 text-sm text-gray-400">貴女に寄り添うパートナーとして</p>
                   <div className="flex items-center gap-3">
                     <span className="text-xl font-bold text-gray-800 md:text-2xl">
-                      ストロベリーボーイズ 一同
+                      {storeName} 一同
                     </span>
                     <div className="flex h-12 w-12 rotate-12 transform items-center justify-center rounded-full border-2 border-white bg-[#FF4B5C] text-white shadow-lg">
                       <span className="text-2xl">🍓</span>

@@ -1,12 +1,20 @@
 import React from 'react';
 
-export const Hero: React.FC = () => {
+interface HeroProps {
+  storeName?: string;
+  description?: string;
+}
+
+export const Hero: React.FC<HeroProps> = ({
+  storeName = 'STRAWBERRY BOYS',
+  description = 'ストロベリーボーイズは、新宿・渋谷・池袋といった都心を中心に、貴女の「女風デビュー」を徹底支援します。',
+}) => {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 pb-20 pt-8 md:pb-32 md:pt-12">
       <div className="container relative z-10 mx-auto px-4">
         <div className="flex flex-col items-center text-center">
           <div className="mb-4 inline-block rounded-full bg-[#FF4B5C] px-4 py-1 text-sm font-bold tracking-wider text-white">
-            🍓 STRAWBERRY BOYS
+            🍓 {storeName.toUpperCase()}
           </div>
           <h1 className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-6xl">
             全ての女性が、
@@ -14,7 +22,7 @@ export const Hero: React.FC = () => {
             <span className="text-[#FF4B5C]">安心して楽しめる場所へ!!</span>
           </h1>
           <p className="mb-8 max-w-2xl text-lg font-medium text-gray-600 md:text-xl">
-            ストロベリーボーイズは、新宿・渋谷・池袋といった都心を中心に、貴女の「女風デビュー」を徹底支援します。
+            {description}
             <br />
             業界最安値かつ最高レベルのセラピストが、日常を忘れる最高の癒やしと潤いをお約束します。
           </p>

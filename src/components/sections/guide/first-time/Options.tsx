@@ -1,6 +1,20 @@
 import React from 'react';
 
-export const Options: React.FC = () => {
+interface AreaItem {
+  name: string;
+  price: string;
+}
+
+interface OptionsProps {
+  areas?: AreaItem[];
+}
+
+export const Options: React.FC<OptionsProps> = ({
+  areas = [
+    { name: '新宿・渋谷・池袋・上野・錦糸町', price: '4,000円〜' },
+    { name: '鶯谷', price: '3,000円〜' },
+  ],
+}) => {
   return (
     <section className="bg-gray-50 py-20">
       <div className="container mx-auto max-w-5xl px-4">
@@ -72,14 +86,12 @@ export const Options: React.FC = () => {
             出張費・ホテル代目安
           </h3>
           <div className="grid gap-8 text-sm md:grid-cols-2">
-            <div>
-              <span className="mb-1 block font-bold">新宿・渋谷・池袋・上野・錦糸町</span>
-              <span className="text-gray-600">4,000円〜</span>
-            </div>
-            <div>
-              <span className="mb-1 block font-bold">鶯谷</span>
-              <span className="text-gray-600">3,000円〜</span>
-            </div>
+            {areas.map((area, idx) => (
+              <div key={idx}>
+                <span className="mb-1 block font-bold">{area.name}</span>
+                <span className="text-gray-600">{area.price}</span>
+              </div>
+            ))}
           </div>
         </div>
       </div>

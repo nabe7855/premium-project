@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const CTA: React.FC = () => {
+interface CTAProps {
+  lineId?: string;
+}
+
+export const CTA: React.FC<CTAProps> = ({ lineId = '@204ynfuu' }) => {
   return (
     <section className="relative overflow-hidden bg-white py-24">
       <div className="container relative z-10 mx-auto max-w-4xl px-4 text-center">
@@ -14,7 +18,7 @@ export const CTA: React.FC = () => {
         </div>
 
         <h2 className="mb-6 text-2xl font-black leading-tight md:text-4xl">
-          まずは相談だけ、という方もお気軽に。
+          まずは相談だけ、という方もお気軽に.
           <br />
           私たちが貴女のデビューを
           <br className="md:hidden" />
@@ -23,7 +27,7 @@ export const CTA: React.FC = () => {
 
         <div className="flex flex-col items-center gap-6">
           <a
-            href="https://line.me"
+            href={`https://line.me/R/ti/p/${lineId.replace('@', '')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-full max-w-lg"
@@ -48,7 +52,7 @@ export const CTA: React.FC = () => {
           </a>
 
           <div className="text-sm font-medium text-gray-500">
-            LINE ID: <span className="font-bold text-gray-800">@204ynfuu</span>
+            LINE ID: <span className="font-bold text-gray-800">{lineId}</span>
           </div>
 
           <p className="text-xs text-gray-400">24時間受付中 / 相談だけでもOKです</p>

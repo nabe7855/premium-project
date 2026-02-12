@@ -30,7 +30,11 @@ const castSamples = [
   },
 ];
 
-export const CastSampler: React.FC = () => {
+interface CastSamplerProps {
+  storeSlug?: string;
+}
+
+export const CastSampler: React.FC<CastSamplerProps> = ({ storeSlug = 'tokyo' }) => {
   return (
     <section className="overflow-hidden bg-stone-50 py-20">
       <div className="container mx-auto max-w-5xl px-4">
@@ -75,7 +79,7 @@ export const CastSampler: React.FC = () => {
 
         <div className="text-center">
           <a
-            href="#"
+            href={`/store/${storeSlug}/cast`}
             className="inline-flex items-center gap-2 rounded-full bg-[#FF4B5C] px-10 py-4 font-bold text-white shadow-lg transition-all hover:bg-[#ff3548] hover:shadow-xl active:scale-95"
           >
             すべてのセラピストを見る

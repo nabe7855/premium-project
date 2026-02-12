@@ -1,6 +1,10 @@
 import React from 'react';
 
-export const SevenReasons: React.FC = () => {
+interface SevenReasonsProps {
+  groupName?: string;
+}
+
+export const SevenReasons: React.FC<SevenReasonsProps> = ({ groupName = 'SBグループ' }) => {
   const reasons = [
     {
       title: '業界初！200件以上の受付口コミ！',
@@ -38,7 +42,7 @@ export const SevenReasons: React.FC = () => {
         <div className="mb-16 text-center">
           <p className="mb-2 font-bold tracking-widest text-[#FF4B5C]">WHY CHOOSE US</p>
           <h2 className="text-2xl font-bold md:text-3xl">
-            SBグループが初めての女風に選ばれる
+            {groupName}が初めての女風に選ばれる
             <br className="md:hidden" /> <span className="text-[#FF4B5C]">7つの理由</span>
           </h2>
         </div>
