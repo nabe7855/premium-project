@@ -12,6 +12,13 @@ export interface Store {
   description: string;
   emoji?: string;
   subtext?: string;
+  phone?: string;
+  contact?: {
+    phone?: string;
+    line?: string;
+    email?: string;
+  };
+
   colors: {
     primary: string;
     secondary: string;
