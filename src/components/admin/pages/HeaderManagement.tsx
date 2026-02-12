@@ -162,6 +162,26 @@ export default function HeaderManagement() {
             ...config.header.specialBanner,
             imageUrl: publicUrl,
           };
+        } else if (key === 'menuBottomBanner') {
+          // ハンバーガーメニュー最下部バナー画像の更新
+          const oldImageUrl = config.header.menuBottomBanner?.imageUrl;
+          if (
+            oldImageUrl &&
+            oldImageUrl.startsWith('http') &&
+            !oldImageUrl.includes('placehold') &&
+            !oldImageUrl.includes('福岡募集バナー')
+          ) {
+            const deleteResult = await deleteStorageFile(oldImageUrl);
+            if (!deleteResult.success) {
+              console.warn('⚠️ Menu bottom banner deletion failed:', deleteResult.error);
+              toast.error('古いバナー画像の削除に失敗しました', { id: toastId });
+            }
+          }
+
+          newHeader.menuBottomBanner = {
+            ...config.header.menuBottomBanner,
+            imageUrl: publicUrl,
+          };
         }
 
         const newConfig = {
@@ -610,6 +630,148 @@ export default function HeaderManagement() {
                     placeholder="/store/slug/recruit"
                   />
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+              <Camera className="h-3 w-3" />
+              ハンバーガーメニュー最下部バナー
+            </h2>
+            <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
+                <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
+                  <img
+                    src={config.header.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
+                    alt="Menu Bottom Banner"
+                    className="h-full w-full object-cover opacity-60"
+                  />
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                    <button
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file) handleImageUpload('header', file, 0, 'menuBottomBanner');
+                        };
+                        input.click();
+                      }}
+                      className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
+                    >
+                      <Camera size={16} />
+                    </button>
+                    {config.header.menuBottomBanner?.imageUrl &&
+                      config.header.menuBottomBanner.imageUrl !== '/福岡募集バナー.png' && (
+                        <button
+                          onClick={async () => {
+                            if (!selectedStore) return;
+                            const imageUrl = config.header.menuBottomBanner?.imageUrl;
+                            if (!imageUrl || imageUrl === '/福岡募集バナー.png') {
+                              toast.error('この画像は削除できません');
+                              return;
+                            }
+                            const toastId = toast.loading('画像を削除中...');
+                            try {
+                              if (imageUrl.startsWith('http')) {
+                                const deleteResult = await deleteStorageFile(imageUrl);
+                                if (!deleteResult.success) {
+                                  toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, {
+                                    id: toastId,
+                                  });
+                                  return;
+                                }
+                              }
+                              const newConfig = {
+                                ...config,
+                                header: {
+                                  ...config.header,
+                                  menuBottomBanner: {
+                                    ...config.header.menuBottomBanner,
+                                    imageUrl: '',
+                                  },
+                                },
+                              };
+                              setConfig(newConfig);
+                              await saveStoreTopConfig(selectedStore, newConfig);
+                              toast.success('画像を削除しました', { id: toastId });
+                            } catch (error) {
+                              console.error('Banner delete failed:', error);
+                              toast.error('画像の削除に失敗しました', { id: toastId });
+                            }
+                          }}
+                          className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
+                <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                  <Link2 size={12} className="text-gray-500" />
+                  <input
+                    className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                    value={config.header.menuBottomBanner?.link || ''}
+                    onChange={(e) => {
+                      const newBanner = {
+                        ...(config.header.menuBottomBanner || {
+                          imageUrl: '',
+                          subHeading: '',
+                          mainHeading: '',
+                        }),
+                        link: e.target.value,
+                      };
+                      handleUpdate('header', 'menuBottomBanner', newBanner);
+                    }}
+                    placeholder="/store/slug/recruit"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">サブ見出し</label>
+                <input
+                  className="w-full rounded-md bg-black/20 px-2 py-1 text-[10px] text-gray-400 outline-none"
+                  value={config.header.menuBottomBanner?.subHeading || ''}
+                  onChange={(e) => {
+                    const newBanner = {
+                      ...(config.header.menuBottomBanner || {
+                        imageUrl: '',
+                        mainHeading: '',
+                        link: '',
+                      }),
+                      subHeading: e.target.value,
+                    };
+                    handleUpdate('header', 'menuBottomBanner', newBanner);
+                  }}
+                  placeholder="Strawberry Boys Premium"
+                />
+              </div>
+              <div className="space-y-2">
+                <label className="text-[10px] font-bold uppercase text-gray-500">
+                  メイン見出し
+                </label>
+                <input
+                  className="w-full rounded-md bg-black/20 px-2 py-1 text-[10px] text-gray-400 outline-none"
+                  value={config.header.menuBottomBanner?.mainHeading || ''}
+                  onChange={(e) => {
+                    const newBanner = {
+                      ...(config.header.menuBottomBanner || {
+                        imageUrl: '',
+                        subHeading: '',
+                        link: '',
+                      }),
+                      mainHeading: e.target.value,
+                    };
+                    handleUpdate('header', 'menuBottomBanner', newBanner);
+                  }}
+                  placeholder="甘い誘惑を、今夜貴女に。"
+                />
               </div>
             </div>
           </div>

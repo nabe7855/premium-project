@@ -434,24 +434,24 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     </div>
                   </div>
 
-                  {/* Special Banner */}
+                  {/* Menu Bottom Banner */}
                   <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
                     <Link
-                      href={config.specialBanner?.link || '#recruit'}
+                      href={config.menuBottomBanner?.link || '#recruit'}
                       onClick={closeMenu}
                       className="group relative block aspect-[16/7]"
                     >
                       <img
-                        src={config.specialBanner?.imageUrl || '/福岡募集バナー.png'}
-                        alt="Special Banner"
+                        src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
+                        alt="Menu Bottom Banner"
                         className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
                         <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                          {config.specialBanner?.subHeading || 'Strawberry Boys Premium'}
+                          {config.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
                         </p>
                         <h3 className="text-xl font-black leading-tight text-white">
-                          {config.specialBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
+                          {config.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                         </h3>
                       </div>
                     </Link>

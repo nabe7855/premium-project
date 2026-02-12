@@ -22,6 +22,12 @@ export interface HeaderConfig {
     mainHeading: string;
     link: string;
   };
+  menuBottomBanner: {
+    imageUrl: string;
+    subHeading: string;
+    mainHeading: string;
+    link: string;
+  };
 }
 
 export interface HeroConfig {
@@ -268,7 +274,13 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     receptionHours: '12:00〜23:00',
     businessHours: '12:00〜翌朝4時',
     specialBanner: {
-      imageUrl: '/images/fukuoka/福岡募集バナー.png',
+      imageUrl: '/初めてのお客様へバナー.png',
+      subHeading: 'First Time',
+      mainHeading: '初めての方へ',
+      link: '/store/fukuoka/first-time',
+    },
+    menuBottomBanner: {
+      imageUrl: '/福岡募集バナー.png',
       subHeading: 'Strawberry Boys Premium',
       mainHeading: '甘い誘惑を、今夜貴女に。',
       link: '#recruit',
