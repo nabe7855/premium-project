@@ -11,7 +11,7 @@ model Cast {
   id            String                @id @default(uuid())
   name          String
   age           Int
-  profile       String
+  profile       String?
   image_url     String
   created_at    DateTime              @default(now())
   blogs         Blog[]
@@ -23,6 +23,8 @@ model Cast {
   reviews       Review[]
   schedules     Schedule[]
   video_casts   VideoCast[]
+
+  @@map("casts")
 }
 
 model Store {
@@ -119,12 +121,16 @@ model Review {
   created_at DateTime    @default(now())
   cast       Cast        @relation(fields: [cast_id], references: [id])
   tags       ReviewTag[] @relation("ReviewToReviewTag")
+
+  @@map("reviews")
 }
 
 model ReviewTag {
   id      String   @id @default(uuid())
   name    String   @unique
   reviews Review[] @relation("ReviewToReviewTag")
+
+  @@map("review_tags")
 }
 
 model GalleryItem {
@@ -154,6 +160,8 @@ model FeatureMaster {
   cast_faces         CastFeatures[] @relation("Face")
   cast_mbtis         CastFeatures[] @relation("Mbti")
   cast_personalities CastFeatures[] @relation("Personality")
+
+  @@map("feature_master")
 }
 
 model CastFeatures {
@@ -169,18 +177,22 @@ model CastFeatures {
   face           FeatureMaster? @relation("Face", fields: [face_id], references: [id])
   mbti           FeatureMaster? @relation("Mbti", fields: [mbti_id], references: [id])
   personality    FeatureMaster? @relation("Personality", fields: [personality_id], references: [id])
+
+  @@map("cast_features")
 }
 
 model CastStoreMembership {
   id         String    @id @default(uuid())
   cast_id    String
   store_id   String
-  is_primary Boolean   @default(false)
-  start_date DateTime
-  end_date   DateTime?
-  created_at DateTime  @default(now())
+  is_main    Boolean   @default(false)
+  priority   Int?
+  start_date DateTime  @db.Date
+  end_date   DateTime? @db.Date
   cast       Cast      @relation(fields: [cast_id], references: [id])
   store      Store     @relation(fields: [store_id], references: [id])
+
+  @@map("cast_store_memberships")
 }
 
 model Badge {
@@ -557,10 +569,10 @@ model review_tag_master {
   name       String?
 }
 
-model review_tags {
-  id   String  @id @db.Uuid
-  name String?
-}
+// model review_tags {
+//   id   String  @id @db.Uuid
+//   name String?
+// }
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model reviews_with_tags_temp {

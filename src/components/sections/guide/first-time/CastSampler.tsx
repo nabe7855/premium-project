@@ -14,8 +14,10 @@ export const CastSampler: React.FC<CastSamplerProps> = ({ storeSlug = 'fukuoka' 
 
   useEffect(() => {
     const fetchCasts = async () => {
+      console.log(`[CastSampler] Fetching casts for slug: ${storeSlug}`);
       setIsLoading(true);
       const result = await getCastsByStore(storeSlug, 3);
+      console.log('[CastSampler] Result:', result);
       if (result.success && result.casts) {
         setCasts(result.casts);
       }
