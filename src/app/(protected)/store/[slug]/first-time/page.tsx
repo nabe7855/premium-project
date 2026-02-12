@@ -1,10 +1,12 @@
 'use client';
 
+import AnchorNav from '@/components/sections/guide/first-time/AnchorNav';
 import { CastSampler } from '@/components/sections/guide/first-time/CastSampler';
 import { CTA } from '@/components/sections/guide/first-time/CTA';
 import { DayFlow } from '@/components/sections/guide/first-time/DayFlow';
 import { FAQ } from '@/components/sections/guide/first-time/FAQ';
 import { FirstTimeBanner } from '@/components/sections/guide/first-time/FirstTimeBanner';
+import { ForbiddenItems } from '@/components/sections/guide/first-time/ForbiddenItems';
 import { Hero } from '@/components/sections/guide/first-time/Hero';
 import { Options } from '@/components/sections/guide/first-time/Options';
 import { Pricing } from '@/components/sections/guide/first-time/Pricing';
@@ -32,6 +34,9 @@ export default function FirstTimePage() {
       <style
         dangerouslySetInnerHTML={{
           __html: `
+        html {
+          scroll-behavior: smooth;
+        }
         @keyframes float {
           0% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }
@@ -46,33 +51,44 @@ export default function FirstTimePage() {
 
       <FirstTimeBanner />
       <Hero storeName={storeName} />
-      <Welcome storeName={storeName} />
-      <CastSampler storeSlug={slug as string} />
+      <AnchorNav slug={slug as string} />
+
+      <div id="welcome">
+        <Welcome storeName={storeName} />
+      </div>
+      <div id="cast-list">
+        <CastSampler storeSlug={slug as string} />
+      </div>
       <ThreePoints />
       <SevenReasons groupName="SBグループ" />
-      <ReservationFlow />
-      <DayFlow />
-      <Pricing />
-      <Options
-        areas={
-          slug === 'osaka'
-            ? [
-                { name: '梅田・難波・心斎橋', price: '4,000円〜' },
-                { name: 'その他大阪市内', price: '3,000円〜' },
-              ]
-            : slug === 'nagoya'
+      <div id="flow">
+        <ReservationFlow />
+        <DayFlow />
+      </div>
+      <div id="pricing">
+        <Pricing />
+        <Options
+          areas={
+            slug === 'osaka'
               ? [
-                  { name: '栄・名古屋駅周辺', price: '4,000円〜' },
-                  { name: 'その他名古屋市内', price: '3,000円〜' },
+                  { name: '梅田・難波・心斎橋', price: '4,000円〜' },
+                  { name: 'その他大阪市内', price: '3,000円〜' },
                 ]
-              : slug === 'fukuoka'
+              : slug === 'nagoya'
                 ? [
-                    { name: '中洲・天神・博多駅周辺', price: '4,000円〜' },
-                    { name: 'その他福岡市内', price: '3,000円〜' },
+                    { name: '栄・名古屋駅周辺', price: '4,000円〜' },
+                    { name: 'その他名古屋市内', price: '3,000円〜' },
                   ]
-                : undefined
-        }
-      />
+                : slug === 'fukuoka'
+                  ? [
+                      { name: '中洲・天神・博多駅周辺', price: '4,000円〜' },
+                      { name: 'その他福岡市内', price: '3,000円〜' },
+                    ]
+                  : undefined
+          }
+        />
+      </div>
+      <ForbiddenItems />
       <FAQ />
       <CTA />
 

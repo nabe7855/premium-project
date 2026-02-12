@@ -1,0 +1,136 @@
+﻿
+> premium-project@0.1.0 build
+> prisma generate && next build --no-lint
+
+Prisma schema loaded from prisma\schema.prisma
+
+笨・Generated Prisma Client (v5.22.0) to .\node_modules\@prisma\client in 198ms
+
+Start by importing your Prisma Client (See: https://pris.ly/d/importing-client)
+
+Tip: Want to react to database changes in your app as they happen? Discover how with Pulse: https://pris.ly/tip-1-pulse
+
+node.exe :  笞 Linting is di
+sabled.
+発生場所 行:1 文字:1
++ & "C:\Program Files\nodejs
+/node.exe" "C:\Program Files
+\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecified: ( 笞 L  
+  inting is disabled.:Str   
+ ing) [], RemoteExceptio    
+n
+    + FullyQualifiedErrorId 
+    : NativeCommandError
+ 
+  笆ｲ Next.js 14.2.35
+  - Environments: .env.local, .env.production
+
+   Creating an optimized production build ...
+Browserslist: caniuse-lite i
+s outdated. Please run:
+  npx update-browserslist-db
+@latest
+  Why you should do it regul
+arly: https://github.com/bro
+wserslist/update-db#readme
+Browserslist: browsers data 
+(caniuse-lite) is 8 months o
+ld. Please run:
+  npx update-browserslist-db
+@latest
+  Why you should do it regul
+arly: https://github.com/bro
+wserslist/update-db#readme
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[1500ms]` 
+is ambiguous and matches mul
+tiple utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;1500ms&rsqb;` to s
+ilence this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[20s]` is 
+ambiguous and matches multip
+le utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;20s&rsqb;` to sile
+nce this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[2s]` is a
+mbiguous and matches multipl
+e utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;2s&rsqb;` to silen
+ce this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[3s]` is a
+mbiguous and matches multipl
+e utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;3s&rsqb;` to silen
+ce this warning.
+ 笨・Compiled successfully
+   Checking validity of types ...
+Failed to compile.
+
+./src/app/(protected)/store/
+[slug]/reservation/page.tsx:
+96:32
+Type error: Property 'contac
+t' does not exist on type 'S
+tore'.
+
+[0m [90m 94 |[39m        
+ [33m<[39m[33mdiv[39m cl
+assName[33m=[39m[32m"mb-1
+2 grid gap-4 md:grid-cols-3"
+[39m[33m>[39m[0m
+[0m [90m 95 |[39m        
+   [33m<[39m[33ma[39m[0
+m
+[0m[31m[1m>[22m[39m[90
+m 96 |[39m             href
+[33m=[39m{[32m`tel:${stor
+e.contact?.phone || ''}`[39
+m}[0m
+[0m [90m    |[39m        
+                        [31
+m[1m^[22m[39m[0m
+[0m [90m 97 |[39m        
+     className[33m=[39m[3
+2m"group flex flex-col items
+-center gap-3 rounded-2xl bo
+rder-2 border-rose-100 bg-wh
+ite p-6 transition-all hover
+:border-rose-300 hover:shado
+w-lg"[39m[0m
+[0m [90m 98 |[39m        
+   [33m>[39m[0m
+[0m [90m 99 |[39m        
+     [33m<[39m[33mdiv[39
+m className[33m=[39m[32m"
+rounded-full bg-gradient-to-
+br from-rose-100 to-pink-100
+ p-4 transition-transform gr
+oup-hover:scale-110"[39m[3
+3m>[39m[0m
+Next.js build worker exited 
+with code: 1 and signal: nul
+l
