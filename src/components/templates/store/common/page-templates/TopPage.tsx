@@ -8,6 +8,7 @@ import CastSliderSection, { TodayCast } from '@/components/sections/store/CastSl
 import ClosingCTA from '@/components/sections/store/ClosingCTA';
 import DiarySection from '@/components/sections/store/DiarySection';
 import EventSection from '@/components/sections/store/EventSection';
+import FAQSection from '@/components/sections/store/FAQSection';
 import HeroSection from '@/components/sections/store/HeroSection';
 import MediaSection from '@/components/sections/store/MediaSection';
 import NewcomerSection from '@/components/sections/store/NewcomerSection';
@@ -16,7 +17,7 @@ import ReviewSection from '@/components/sections/store/ReviewSection';
 import VideoSection from '@/components/sections/store/VideoSection';
 import { TestimonialSection } from '@/components/sections/TestimonialSection';
 import { Store } from '@/lib/store/store-data';
-import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig'; // Added import for DEFAULT_STORE_TOP_CONFIG
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import Footer from '../../fukuoka/sections/Footer';
 
 interface CommonStorePageProps {
@@ -75,6 +76,7 @@ export default function CommonStorePage({
         <ReviewSection />
         <PlanSection />
         <AIMatchingSection />
+        <FAQSection config={safeConfig.faq} />
         <ClosingCTA />
       </main>
       <Footer config={topConfig?.footer} />

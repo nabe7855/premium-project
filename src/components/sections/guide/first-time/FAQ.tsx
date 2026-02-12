@@ -38,7 +38,7 @@ export const FAQ: React.FC = () => {
   };
 
   return (
-    <section className="border-t border-gray-50 bg-white py-20">
+    <section id="faq" className="border-t border-gray-50 bg-white py-20">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}

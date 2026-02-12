@@ -49,6 +49,21 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       if (link.href === '#price' || link.name.includes('料金')) {
         return { ...link, href: `/store/${currentStoreId}/price` };
       }
+      if (
+        link.href === '#faq' ||
+        link.name.toLowerCase().includes('qa') ||
+        link.name.includes('よくあるご質問')
+      ) {
+        return { ...link, href: `/store/${currentStoreId}#faq` };
+      }
+      if (
+        link.href === '#campaign' ||
+        link.name.includes('ニュース') ||
+        link.name.includes('キャンペーン') ||
+        link.name.includes('最新情報')
+      ) {
+        return { ...link, href: `/store/${currentStoreId}#campaign` };
+      }
       return link;
     });
   };

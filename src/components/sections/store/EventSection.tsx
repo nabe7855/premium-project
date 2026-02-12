@@ -1,9 +1,9 @@
 'use client';
 
-import { useStore } from '@/contexts/StoreContext';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, Clock, Zap, Gift, Radio } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useStore } from '@/contexts/StoreContext';
+import { Calendar, Clock, Gift, Radio, Zap } from 'lucide-react';
 
 const getEventIcon = (type: string) => {
   switch (type) {
@@ -39,7 +39,7 @@ export default function EventSection() {
   }
 
   return (
-    <section className="px-4 py-16">
+    <section id="campaign" className="px-4 py-16">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">{store.city}店限定イベント</h2>
