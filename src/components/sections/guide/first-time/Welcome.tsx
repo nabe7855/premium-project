@@ -1,12 +1,42 @@
+import { WelcomeConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
 interface WelcomeProps {
   storeName?: string;
+  config?: WelcomeConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-export const Welcome: React.FC<WelcomeProps> = ({ storeName = 'ストロベリーボーイズ' }) => {
+export const Welcome: React.FC<WelcomeProps> = ({
+  storeName = 'ストロベリーボーイズ',
+  config,
+  isEditing,
+  onUpdate,
+}) => {
+  const data = config || {
+    heading: 'ストロベリーボーイズへ、ようこそ。',
+    subHeading: 'ABOUT STRAWBERRY BOYS',
+    content: [
+      '日々、忙しく働く女性の皆様。',
+      'たまには自分を甘やかして、心も身体もとろけるような最高の癒やしを体験してみませんか？',
+      'ストロベリーボーイズは、そんな貴女のために誕生した、福岡随一のプレミアム・メンズエステです。',
+    ],
+    isVisible: true,
+  };
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('welcome', key, e.currentTarget.innerText);
+    }
+  };
+
+  if (data.isVisible === false && !isEditing) return null;
+
   return (
-    <section className="overflow-hidden bg-white py-16 md:py-24">
+    <section
+      className={`overflow-hidden bg-white py-16 md:py-24 ${!data.isVisible ? 'opacity-50' : ''}`}
+    >
       <div className="container mx-auto max-w-4xl px-4">
         <div className="relative">
           <div className="absolute inset-0 translate-x-2 translate-y-2 transform rounded-lg bg-stone-100 opacity-50"></div>
@@ -22,54 +52,42 @@ export const Welcome: React.FC<WelcomeProps> = ({ storeName = 'ストロベリ�
             ></div>
 
             <div className="relative z-10 mb-12 inline-block border-b-2 border-[#FF4B5C]/20 pb-4">
-              <h2 className="text-xl font-bold tracking-widest text-gray-700 md:text-3xl">
-                初めてのご利用のお客様へ
+              <h2
+                contentEditable={isEditing}
+                onBlur={(e) => handleTextUpdate('heading', e)}
+                suppressContentEditableWarning
+                className="text-xl font-bold tracking-widest text-gray-700 md:text-3xl"
+              >
+                {data.heading}
               </h2>
+              <div
+                contentEditable={isEditing}
+                onBlur={(e) => handleTextUpdate('subHeading', e)}
+                suppressContentEditableWarning
+                className="mt-2 text-sm font-bold text-[#FF4B5C]"
+              >
+                {data.subHeading}
+              </div>
             </div>
 
             <div className="relative z-10 space-y-8 text-base md:text-lg">
-              <p className="text-lg font-bold leading-relaxed text-[#FF4B5C] md:text-xl">
-                「全ての女性が安心安全にご利用できる女風店」
-                <br />
-                をコンセプトに運営しています☆
-              </p>
-
               <div className="space-y-6 text-gray-600">
-                <p className="text-sm leading-relaxed md:text-base">
-                  {storeName}は、ただの刺激ではなく、
-                  <br className="hidden md:block" />
-                  <span className="font-bold text-[#FF4B5C]">「明日からまた頑張れる自分」</span>
-                  になれる場所。
-                  <br />
-                  都会の喧騒を離れ、極上のプライベート空間で
-                  <br className="hidden md:block" />
-                  心も体も解き放たれる瞬間をお約束します。
-                </p>
-
-                <p>
-                  女風を初めてご利用されるにあたり、不安や懸念をお持ちのお客様も多くいらっしゃると思います。
-                  <br />
-                  特によくいただくご相談内容として...
-                </p>
-
-                <div className="space-y-2 rounded-xl border-l-4 border-[#FF4B5C] bg-red-50/70 p-6 text-sm italic md:text-base">
-                  <p>・密室で初めて会う男性から施術を受ける怖さ</p>
-                  <p>・ご自身の年齢や容姿などを気にされて一歩踏み出せない</p>
-                  <p>・女風店が多すぎてどこを選べばいいか分からない</p>
-                  <p>・思い描いたサービスが受けられるか、安心して利用できるお店なのか...</p>
-                </div>
-
-                <p>
-                  こうした懸念を払拭し、リラックスして素晴らしい時間をお過ごしいただけるよう、様々な対策を講じ、7年にわたってお客様と共に歩んで参りました。
-                  <br />
-                  1人ひとりの女性に深く寄り添い、その笑顔を増やすことに全力を尽くしてまいります。
-                </p>
-
-                <p>
-                  そして、ご興味はあるけれどもまだ一歩を踏み出せていない全ての女性に我々の理念をお届けしたく、当店では初回ご利用時の割引をさらに充実させ、新初回料金としてこの度ご用意をさせていただきました。
-                  <br />
-                  ぜひこの機会に女風デビューのお手伝いをさせていただければ幸いです♪
-                </p>
+                {data.content.map((para, idx) => (
+                  <p
+                    key={idx}
+                    contentEditable={isEditing}
+                    onBlur={(e) => {
+                      if (onUpdate) {
+                        const newContent = [...data.content];
+                        newContent[idx] = e.currentTarget.innerText;
+                        onUpdate('welcome', 'content', newContent);
+                      }
+                    }}
+                    suppressContentEditableWarning
+                  >
+                    {para}
+                  </p>
+                ))}
               </div>
 
               <div className="flex flex-col items-end pt-12">

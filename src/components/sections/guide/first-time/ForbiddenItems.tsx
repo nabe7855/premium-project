@@ -1,57 +1,139 @@
-import { Ban, ImageOff, ShieldAlert, UserMinus } from 'lucide-react';
+import { ForbiddenConfig } from '@/lib/store/firstTimeConfig';
+import { AlertCircle, Ban, Beer, ShieldAlert, UserMinus } from 'lucide-react';
 import React from 'react';
 
-export const ForbiddenItems: React.FC = () => {
-  const items = [
-    {
-      title: '写真・動画撮影の禁止',
-      desc: 'キャストのプライバシー保護のため、無断での写真撮影や動画撮影、録音行為は固くお断りしております。',
-      icon: <ImageOff className="h-6 w-6" />,
-    },
-    {
-      title: '過度な身体的負担',
-      desc: 'キャストが苦痛を感じる行為や、怪我を負わせる可能性のある行為、公序良俗に反する行為は禁止です。',
-      icon: <Ban className="h-6 w-6" />,
-    },
-    {
-      title: '個人情報の交換禁止',
-      desc: 'キャストと直接の連絡先（LINE、電話番号等）を交換すること、およびSNSでの接触は禁止事項となります。',
-      icon: <UserMinus className="h-6 w-6" />,
-    },
-    {
-      title: '薬物・アルコールの強要',
-      desc: '違法薬物の使用や、キャストへの過度な飲酒の強要は即時サービス停止の対象となります。',
-      icon: <ShieldAlert className="h-6 w-6" />,
-    },
-  ];
+const iconMap: any = {
+  Ban,
+  AlertCircle,
+  UserMinus,
+  Beer,
+  ShieldAlert,
+};
+
+interface ForbiddenItemsProps {
+  config?: ForbiddenConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+}
+
+export const ForbiddenItems: React.FC<ForbiddenItemsProps> = ({ config, isEditing, onUpdate }) => {
+  const data = config || {
+    heading: '安心・安全のために',
+    subHeading: 'FORBIDDEN ITEMS',
+    items: [
+      {
+        id: '1',
+        title: '性的サービスの要求',
+        description:
+          '当店は健全なリラクゼーション・マッサージを提供する店舗です。それ以外の目的でのご利用は固くお断りしております。',
+        icon: 'Ban',
+      },
+      {
+        id: '2',
+        title: 'セラピストへの嫌がらせ',
+        description:
+          '言葉や行動によるセクシャルハラスメント、暴力、暴言などは絶対におやめください。',
+        icon: 'AlertCircle',
+      },
+      {
+        id: '3',
+        title: '店外での接触要求',
+        description:
+          'セラピストとの店外での接触、個人的な連絡先の交換、SNS等での執拗なコンタクトは禁止しております。',
+        icon: 'UserMinus',
+      },
+      {
+        id: '4',
+        title: '過度の飲酒状態でのご利用',
+        description: '安全のため、泥酔状態でのご利用はお断りさせていただく場合がございます。',
+        icon: 'Beer',
+      },
+      {
+        id: '5',
+        title: '違法行為・公序良俗に反する行為',
+        description:
+          'その他、法律に抵触する恐れのある行為や、運営が不適切と判断した場合は即刻中断させていただきます。',
+        icon: 'ShieldAlert',
+      },
+    ],
+    isVisible: true,
+  };
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('forbidden', key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleItemUpdate = (index: number, key: string, value: string) => {
+    if (onUpdate) {
+      const newItems = [...data.items];
+      newItems[index] = { ...newItems[index], [key]: value };
+      onUpdate('forbidden', 'items', newItems);
+    }
+  };
+
+  if (data.isVisible === false && !isEditing) return null;
 
   return (
-    <section id="forbidden" className="bg-stone-50 py-20">
-      <div className="container mx-auto max-w-4xl px-4">
+    <section
+      id="forbidden"
+      className={`bg-gray-50 py-16 md:py-24 ${!data.isVisible ? 'opacity-50' : ''}`}
+    >
+      <div className="container mx-auto px-4">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-3xl font-black text-gray-800 md:text-4xl">
-            安心・安全のための<span className="text-[#FF4B5C]">禁止事項</span>
+          <h2
+            contentEditable={isEditing}
+            onBlur={(e) => handleTextUpdate('heading', e)}
+            suppressContentEditableWarning
+            className="mb-2 text-3xl font-black text-gray-900 md:text-4xl"
+          >
+            {data.heading}
           </h2>
-          <p className="font-medium text-gray-500">
-            皆様に気持ちよくご利用いただくため、以下の行為はご遠慮いただいております。
+          <p
+            contentEditable={isEditing}
+            onBlur={(e) => handleTextUpdate('subHeading', e)}
+            suppressContentEditableWarning
+            className="text-sm font-bold tracking-widest text-[#FF4B5C]"
+          >
+            {data.subHeading}
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="group flex gap-4 rounded-3xl border border-stone-100 bg-white p-6 shadow-sm transition-all hover:shadow-md md:p-8"
-            >
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-red-50 text-[#FF4B5C] transition-colors group-hover:bg-[#FF4B5C] group-hover:text-white">
-                {item.icon}
+        <div className="mx-auto max-w-4xl space-y-4">
+          {data.items.map((item, index) => {
+            const IconComponent = iconMap[item.icon] || Ban;
+            return (
+              <div
+                key={item.id}
+                className="flex flex-col items-center gap-4 rounded-2xl bg-white p-6 shadow-md transition-shadow hover:shadow-lg md:flex-row md:p-8"
+              >
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-[#FF4B5C]">
+                  <IconComponent className="h-8 w-8" />
+                </div>
+                <div className="text-center md:text-left">
+                  <h3
+                    contentEditable={isEditing}
+                    onBlur={(e) => handleItemUpdate(index, 'title', e.currentTarget.innerText)}
+                    suppressContentEditableWarning
+                    className="mb-2 text-xl font-bold text-gray-900"
+                  >
+                    {item.title}
+                  </h3>
+                  <p
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleItemUpdate(index, 'description', e.currentTarget.innerText)
+                    }
+                    suppressContentEditableWarning
+                    className="leading-relaxed text-gray-600"
+                  >
+                    {item.description}
+                  </p>
+                </div>
               </div>
-              <div>
-                <h3 className="mb-2 font-bold text-gray-800">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-600">{item.desc}</p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>

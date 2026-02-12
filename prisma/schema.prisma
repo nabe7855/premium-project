@@ -43,6 +43,7 @@ model Store {
   price_config     PriceConfig?
   recruit_pages    RecruitPage[]
   store_top_config StoreTopConfig?
+  first_time_config FirstTimeConfig?
 
   @@map("stores")
 }
@@ -85,6 +86,18 @@ model StoreTopConfig {
 
   @@map("store_top_configs")
 }
+
+model FirstTimeConfig {
+  id         String   @id @default(uuid())
+  store_id   String   @unique
+  config     Json
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  store      Store    @relation(fields: [store_id], references: [id])
+
+  @@map("first_time_configs")
+}
+
 
 model Schedule {
   id         String   @id @default(uuid())

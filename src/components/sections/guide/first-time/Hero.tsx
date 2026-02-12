@@ -1,31 +1,67 @@
+import { FirstTimeHeroConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
 interface HeroProps {
   storeName?: string;
-  description?: string;
+  config?: FirstTimeHeroConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
 }
 
 export const Hero: React.FC<HeroProps> = ({
   storeName = 'STRAWBERRY BOYS',
-  description = 'ストロベリーボーイズは、新宿・渋谷・池袋といった都心を中心に、貴女の「女風デビュー」を徹底支援します。',
+  config,
+  isEditing,
+  onUpdate,
 }) => {
+  const data = config || {
+    badge: 'FOR FIRST TIME VISITORS',
+    mainHeading: '頑張るあなたの心に、',
+    subHeading: '一粒のご褒美を。',
+    subHeadingAccent: '一粒のご褒美を。',
+    isVisible: true,
+  };
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('hero', key, e.currentTarget.innerText);
+    }
+  };
+
+  if (data.isVisible === false && !isEditing) return null;
+
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 pb-20 pt-8 md:pb-32 md:pt-12">
+    <section
+      className={`relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 pb-20 pt-8 md:pb-32 md:pt-12 ${!data.isVisible ? 'opacity-50' : ''}`}
+    >
       <div className="container relative z-10 mx-auto px-4">
         <div className="flex flex-col items-center text-center">
-          <div className="mb-4 inline-block rounded-full bg-[#FF4B5C] px-4 py-1 text-sm font-bold tracking-wider text-white">
-            🍓 {storeName.toUpperCase()}
+          <div
+            contentEditable={isEditing}
+            onBlur={(e) => handleTextUpdate('badge', e)}
+            suppressContentEditableWarning
+            className="mb-4 inline-block rounded-full bg-[#FF4B5C] px-4 py-1 text-sm font-bold tracking-wider text-white"
+          >
+            {data.badge}
           </div>
-          <h1 className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-6xl">
-            全ての女性が、
-            <br />
-            <span className="text-[#FF4B5C]">安心して楽しめる場所へ!!</span>
+          <h1
+            contentEditable={isEditing}
+            onBlur={(e) => handleTextUpdate('mainHeading', e)}
+            suppressContentEditableWarning
+            className="mb-4 text-3xl font-extrabold leading-tight text-gray-900 md:text-5xl lg:text-6xl"
+          >
+            {data.mainHeading}
           </h1>
-          <p className="mb-8 max-w-2xl text-lg font-medium text-gray-600 md:text-xl">
-            {description}
-            <br />
-            業界最安値かつ最高レベルのセラピストが、日常を忘れる最高の癒やしと潤いをお約束します。
-          </p>
+          <h2 className="mb-8 text-2xl font-black text-gray-800 md:text-4xl">
+            <span
+              contentEditable={isEditing}
+              onBlur={(e) => handleTextUpdate('subHeadingAccent', e)}
+              suppressContentEditableWarning
+              className="text-[#FF4B5C]"
+            >
+              {data.subHeadingAccent}
+            </span>
+          </h2>
 
           <div className="group relative cursor-pointer transition-transform duration-300 hover:scale-105">
             <div className="absolute inset-0 bg-[#FF4B5C] opacity-20 blur-xl transition-opacity group-hover:opacity-40"></div>

@@ -115,6 +115,12 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       label: 'トップページ管理',
     },
     {
+      href: '/admin/admin/first-time-management',
+      icon: <SparklesIcon />,
+      label: '初めての方へページ管理',
+    },
+
+    {
       href: '/admin/admin/page-request',
       icon: <PencilIcon />,
       label: 'ページ制作依頼',
