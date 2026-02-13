@@ -1,0 +1,85 @@
+﻿--- Checking Couples.jp Area List ---
+Couples Areas: [
+  {
+    name: '螟ｩ逾槭・荳ｭ豢ｲ繝ｻ蜊壼､壹お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/514'
+  },
+  {
+    name: '遖丞ｲ｡遨ｺ貂ｯ蜻ｨ霎ｺ繝ｻ螟ｧ驥主沁繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/513'
+  },
+  {
+    name: '蟷ｳ蟆ｾ繝ｻ阮ｬ髯｢繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/509'
+  },
+  {
+    name: '驍｣縺ｮ豢･繝ｻ貂ｯ繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/774'
+  },
+  {
+    name: '蟋ｪ豬懊・邉ｸ蟲ｶ繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/515'
+  },
+  {
+    name: '隘ｿ譁ｰ繝ｻ蝓主漉繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/775'
+  },
+  {
+    name: '蟆丞峨・髢蜿ｸ繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/510'
+  },
+  {
+    name: '鮟貞ｴ弱・蜈ｫ蟷｡繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/512'
+  },
+  {
+    name: '荵・蕗邀ｳ繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/516'
+  },
+  {
+    name: '驕雉繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/520'
+  },
+  {
+    name: '鬟ｯ蝪壹お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/517'
+  },
+  {
+    name: '螟ｧ迚溽伐繝ｻ譟ｳ蟾昴お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/508'
+  },
+  {
+    name: '陦梧ｩ九・莠ｬ遽峨お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/581'
+  },
+  {
+    name: '蜈ｫ螂ｳ繝ｻ遲大ｾ後お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/518'
+  },
+  {
+    name: '譁ｰ螳ｮ繝ｻ邉溷ｱ九お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/504'
+  },
+  {
+    name: '螳怜ワ繝ｻ遖乗ｴ･繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/507'
+  },
+  {
+    name: '譛晏峨・蟆城Γ繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/503'
+  },
+  {
+    name: '遲醍ｴｫ驥弱・驍｣迴ょｷ昴お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/519'
+  },
+  {
+    name: '逶ｴ譁ｹ繝ｻ髷肴焔繧ｨ繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/776'
+  },
+  {
+    name: '逕ｰ蟾昴お繝ｪ繧｢',
+    href: 'https://couples.jp/hotels/search-by/hotelareas/777'
+  }
+]
+--- Checking HappyHotel Pref List ---
+HappyHotel Areas: []
