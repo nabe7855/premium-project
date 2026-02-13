@@ -140,8 +140,38 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
     }
   };
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'LodgingBusiness',
+    name: hotel.name,
+    description: hotel.description,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: hotel.address,
+      addressLocality: hotel.city,
+      addressRegion: hotel.prefecture,
+      addressCountry: 'JP',
+    },
+    telephone: hotel.phone,
+    url: hotel.website,
+    image: hotel.imageUrl,
+    starRating: {
+      '@type': 'Rating',
+      ratingValue: hotel.rating,
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: hotel.rating,
+      reviewCount: reviews.length || hotel.reviewCount || 1,
+    },
+  };
+
   return (
     <div className="min-h-screen bg-white pb-20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       <div className="relative h-[400px] md:h-[500px]">
         <img src={hotel.imageUrl} alt={hotel.name} className="h-full w-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
@@ -191,7 +221,33 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
               <h2 className="mb-6 border-l-8 border-rose-500 pl-4 text-2xl font-black tracking-tighter">
                 HOTEL INFO
               </h2>
-              <p className="mb-8 text-lg font-medium leading-loose text-gray-600">
+
+              <div className="mb-10 grid grid-cols-2 gap-4 md:grid-cols-4">
+                <div className="rounded-2xl bg-gray-50 p-6 transition-all hover:bg-gray-100">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    客室数
+                  </span>
+                  <p className="mt-1 text-2xl font-black text-gray-900">
+                    {hotel.roomCount || '-'}室
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-6 transition-all hover:bg-gray-100">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-gray-400">
+                    駐車場
+                  </span>
+                  <p className="mt-1 text-2xl font-black text-gray-900">完備</p>
+                </div>
+                <div className="col-span-2 rounded-2xl bg-rose-50 p-6 transition-all hover:bg-rose-100">
+                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                    アクセス
+                  </span>
+                  <p className="mt-1 line-clamp-2 text-sm font-black text-rose-900">
+                    {hotel.distanceFromStation || '最寄り駅より好アクセス'}
+                  </p>
+                </div>
+              </div>
+
+              <p className="mb-8 whitespace-pre-wrap text-lg font-medium leading-loose text-gray-600">
                 {hotel.description}
               </p>
               <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -213,6 +269,80 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                     </span>
                   </div>
                 ))}
+              </div>
+            </section>
+
+            <section>
+              <h2 className="mb-6 border-l-8 border-rose-500 pl-4 text-2xl font-black tracking-tighter">
+                PRICING
+              </h2>
+              <div className="overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="bg-gray-950 text-white">
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                        利用タイプ
+                      </th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                        平日 最安料金
+                      </th>
+                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                        休日 最安料金
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    <tr>
+                      <td className="px-8 py-6">
+                        <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600">
+                          REST
+                        </span>
+                        <p className="mt-2 font-black text-gray-900">休憩</p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="text-2xl font-black text-rose-500">
+                          {hotel.restPriceMinWeekday
+                            ? `¥${hotel.restPriceMinWeekday.toLocaleString()}〜`
+                            : 'ASK'}
+                        </p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="text-2xl font-black text-rose-500">
+                          {hotel.restPriceMinWeekend
+                            ? `¥${hotel.restPriceMinWeekend.toLocaleString()}〜`
+                            : 'ASK'}
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="px-8 py-6">
+                        <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-black text-blue-600">
+                          STAY
+                        </span>
+                        <p className="mt-2 font-black text-gray-900">宿泊</p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="text-2xl font-black text-rose-500">
+                          {hotel.stayPriceMinWeekday
+                            ? `¥${hotel.stayPriceMinWeekday.toLocaleString()}〜`
+                            : 'ASK'}
+                        </p>
+                      </td>
+                      <td className="px-8 py-6">
+                        <p className="text-2xl font-black text-rose-500">
+                          {hotel.stayPriceMinWeekend
+                            ? `¥${hotel.stayPriceMinWeekend.toLocaleString()}〜`
+                            : 'ASK'}
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div className="bg-gray-50 px-8 py-4">
+                  <p className="text-[10px] font-bold italic text-gray-400">
+                    ※料金は時期やプランにより変動する場合があります。詳細はホテルへお問い合わせください。
+                  </p>
+                </div>
               </div>
             </section>
 

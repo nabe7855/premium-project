@@ -1,0 +1,217 @@
+[
+  {
+    "id": "higashi-ku",
+    "name": "東区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Chuo-ku",
+    "name": "中央区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Hakata-ku",
+    "name": "博多区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Nishi-ku",
+    "name": "西区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Kokurakita-ku",
+    "name": "小倉北区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Naka-ku",
+    "name": "中区",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "[nishi-ku]",
+    "name": "西区",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "[Kita-ku]中区",
+    "name": "北区",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "[MInatoKita-ku]",
+    "name": "港北区",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "[Nishi-ku]",
+    "name": "鶴見区",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "[Tobata-ku]",
+    "name": "戸畑区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "[Yahatanishi-ku]",
+    "name": "八幡西区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "[Moji-ku]",
+    "name": "門司区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Oguraminami-ku",
+    "name": "小倉南区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Miihatazaki",
+    "name": "御井旗崎",
+    "city_id": "Kurume-shi"
+  },
+  {
+    "id": "Higashi-ku",
+    "name": "東区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Minami-ku",
+    "name": "南区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Jonan-ku",
+    "name": "城南区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Sawara-ku",
+    "name": "早良区",
+    "city_id": "fukuoka-city"
+  },
+  {
+    "id": "Kokuraminami-ku",
+    "name": "小倉南区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Yahatanishi-ku",
+    "name": "八幡西区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Yahatahigashi-ku",
+    "name": "八幡東区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Moji-ku",
+    "name": "門司区",
+    "city_id": "kitakyushu-city"
+  },
+  {
+    "id": "Kurume",
+    "name": "久留米市街",
+    "city_id": "Kurume-shi"
+  },
+  {
+    "id": "Iizuka",
+    "name": "飯塚・筑豊",
+    "city_id": "Iizuka-shi"
+  },
+  {
+    "id": "Omuta",
+    "name": "大牟田・柳川",
+    "city_id": "Omuta-shi"
+  },
+  {
+    "id": "Chikushino",
+    "name": "筑紫野・那珂川",
+    "city_id": "Chikushino-shi"
+  },
+  {
+    "id": "Nogata",
+    "name": "直方・鞍手",
+    "city_id": "Nogata-shi"
+  },
+  {
+    "id": "Yukuhashi",
+    "name": "行橋・京築",
+    "city_id": "Yukuhashi-shi"
+  },
+  {
+    "id": "Yame",
+    "name": "八女・筑後",
+    "city_id": "Yame-shi"
+  },
+  {
+    "id": "Asakura",
+    "name": "朝倉・小郡",
+    "city_id": "Asakura-shi"
+  },
+  {
+    "id": "Onga",
+    "name": "遠賀・中間",
+    "city_id": "Nakama-shi"
+  },
+  {
+    "id": "Tagawa",
+    "name": "田川",
+    "city_id": "Tagawa-shi"
+  },
+  {
+    "id": "yokohama-station",
+    "name": "横浜駅周辺",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "shin-yokohama",
+    "name": "新横浜",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "kannai",
+    "name": "関内・伊勢佐木町",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "motomachi",
+    "name": "元町・中華街",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "minatomirai",
+    "name": "桜木町・みなとみらい",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "totsuka",
+    "name": "戸塚・東戸塚",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "kohoku",
+    "name": "港北・都筑",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "kanazawa",
+    "name": "金沢・磯子",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "hodogaya",
+    "name": "保土ヶ谷",
+    "city_id": "Yokohama-shi"
+  },
+  {
+    "id": "midori",
+    "name": "緑・青葉",
+    "city_id": "Yokohama-shi"
+  }
+]
