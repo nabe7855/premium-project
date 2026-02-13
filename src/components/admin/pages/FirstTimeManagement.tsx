@@ -91,16 +91,31 @@ export default function FirstTimeManagement() {
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Upload failed');
+      }
 
       const data = await response.json();
       const imageUrl = data.url;
 
+      // 古い画像を削除（オプション。もしあれば）
+      const oldImageUrl = (config[section as keyof FirstTimeConfig] as any)?.imageUrl;
+      if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.startsWith('http')) {
+        try {
+          // server actionを介して削除
+          const { deleteStorageFile } = await import('@/actions/storage');
+          await deleteStorageFile(oldImageUrl);
+        } catch (e) {
+          console.warn('Failed to delete old image:', e);
+        }
+      }
+
       handleUpdate(section, 'imageUrl', imageUrl);
       toast.success('画像をアップロードしました');
-    } catch (error) {
+    } catch (error: any) {
       console.error('Upload error:', error);
-      toast.error('画像のアップロードに失敗しました');
+      toast.error(`画像のアップロードに失敗しました: ${error.message}`);
     }
   };
 

@@ -6,6 +6,7 @@ import Layout from '@/components/lovehotels/Layout';
 import SearchHero from '@/components/lovehotels/SearchHero';
 import { stores } from '@/data/stores';
 import { getHotels, getPrefectureDetails, mapDbHotelToHotel } from '@/lib/lovehotelApi';
+import { getHotelCounts } from '@/lib/lovehotelCounts';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
@@ -54,9 +55,6 @@ export default async function StoreHotelRootPage({ params }: Props) {
   };
 
   // Fetch hotels from DB
-  // Make sure getHotels is called dynamically to avoid static build scaling issues if data changes often
-  // Next.js might cache this, user can add `export const revalidate = 0;` if they want real-time.
-  // For now, let's assume default caching is fine or add specific revalidation if requested.
   const dbHotels = await getHotels({
     prefectureId: location.prefectureId,
     cityId: location.cityId, // Optional, works if defined (e.g. yokohama)
@@ -65,18 +63,8 @@ export default async function StoreHotelRootPage({ params }: Props) {
   const hotels = dbHotels.map(mapDbHotelToHotel);
 
   // 福岡店の場合はホテル件数を取得（新UIで使用）
-  let hotelCounts;
-  if (params.slug === 'fukuoka') {
-    try {
-      const countsRes = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/hotels/count?prefecture=${location.prefectureId}`,
-        { next: { revalidate: 3600 } },
-      );
-      hotelCounts = await countsRes.json();
-    } catch (error) {
-      console.error('Failed to fetch hotel counts:', error);
-    }
-  }
+  const hotelCounts =
+    params.slug === 'fukuoka' ? await getHotelCounts(location.prefectureId) : undefined;
 
   return (
     <Layout>
