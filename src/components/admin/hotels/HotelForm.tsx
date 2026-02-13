@@ -60,6 +60,7 @@ export default function HotelForm({ id }: HotelFormProps) {
     room_count: '',
     place_id: '',
     status: 'draft',
+    price_details: [],
   });
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -147,6 +148,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         room_count: hotel.room_count || '',
         place_id: hotel.place_id || '',
         status: hotel.status || 'draft',
+        price_details: hotel.price_details || [],
       });
       setSelectedAmenities(hotel.lh_hotel_amenities.map((a: any) => a.amenity_id));
       setSelectedServices(hotel.lh_hotel_services.map((s: any) => s.service_id));
@@ -623,6 +625,170 @@ export default function HotelForm({ id }: HotelFormProps) {
               </div>
             </div>
           </div>
+
+          {/* 詳細料金エディタ */}
+          <div className="mt-8 space-y-4 rounded-lg bg-white/5 p-4 md:col-span-3">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-bold text-white">詳細料金プラン (Couples形式)</h3>
+              <button
+                type="button"
+                onClick={() => {
+                  const newDetails = [...(formData.price_details || [])];
+                  newDetails.push({ category: '新規カテゴリ', plans: [] });
+                  setFormData({ ...formData, price_details: newDetails });
+                }}
+                className="rounded bg-brand-accent px-3 py-1 text-[10px] font-bold text-white transition-opacity hover:opacity-80"
+              >
+                カテゴリを追加
+              </button>
+            </div>
+
+            <div className="space-y-6">
+              {(formData.price_details || []).map((cat: any, catIdx: number) => (
+                <div key={catIdx} className="rounded-lg border border-white/5 bg-black/20 p-4">
+                  <div className="mb-4 flex items-center gap-4">
+                    <input
+                      type="text"
+                      className="flex-1 rounded border border-white/10 bg-brand-primary px-3 py-1 text-sm text-white"
+                      placeholder="カテゴリ名 (例: 休憩, 宿泊)"
+                      value={cat.category}
+                      onChange={(e) => {
+                        const newDetails = [...formData.price_details];
+                        newDetails[catIdx].category = e.target.value;
+                        setFormData({ ...formData, price_details: newDetails });
+                      }}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newDetails = formData.price_details.filter(
+                          (_: any, i: number) => i !== catIdx,
+                        );
+                        setFormData({ ...formData, price_details: newDetails });
+                      }}
+                      className="text-[10px] text-red-400 hover:underline"
+                    >
+                      カテゴリ削除
+                    </button>
+                  </div>
+
+                  <div className="space-y-2">
+                    <table className="w-full text-left text-[10px]">
+                      <thead>
+                        <tr className="text-brand-text-secondary">
+                          <th className="pb-2">タイトル</th>
+                          <th className="pb-2">時間</th>
+                          <th className="pb-2">滞在</th>
+                          <th className="pb-2">料金</th>
+                          <th className="pb-2">備考</th>
+                          <th className="pb-2"></th>
+                        </tr>
+                      </thead>
+                      <tbody className="space-y-2">
+                        {cat.plans.map((plan: any, planIdx: number) => (
+                          <tr key={planIdx}>
+                            <td className="pr-2">
+                              <input
+                                type="text"
+                                className="w-full rounded border border-white/5 bg-brand-secondary px-2 py-1 text-white"
+                                value={plan.title}
+                                onChange={(e) => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans[planIdx].title = e.target.value;
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                              />
+                            </td>
+                            <td className="pr-2">
+                              <input
+                                type="text"
+                                className="w-full rounded border border-white/5 bg-brand-secondary px-2 py-1 text-white"
+                                value={plan.time}
+                                onChange={(e) => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans[planIdx].time = e.target.value;
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                              />
+                            </td>
+                            <td className="pr-2">
+                              <input
+                                type="text"
+                                className="w-full rounded border border-white/5 bg-brand-secondary px-2 py-1 text-white"
+                                value={plan.stay}
+                                onChange={(e) => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans[planIdx].stay = e.target.value;
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                              />
+                            </td>
+                            <td className="pr-2">
+                              <input
+                                type="text"
+                                className="w-full rounded border border-white/5 bg-brand-secondary px-2 py-1 text-white"
+                                value={plan.price}
+                                onChange={(e) => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans[planIdx].price = e.target.value;
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                              />
+                            </td>
+                            <td className="pr-2">
+                              <input
+                                type="text"
+                                className="w-full rounded border border-white/5 bg-brand-secondary px-2 py-1 text-white"
+                                value={plan.note}
+                                onChange={(e) => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans[planIdx].note = e.target.value;
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                              />
+                            </td>
+                            <td>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const newDetails = [...formData.price_details];
+                                  newDetails[catIdx].plans = newDetails[catIdx].plans.filter(
+                                    (_: any, i: number) => i !== planIdx,
+                                  );
+                                  setFormData({ ...formData, price_details: newDetails });
+                                }}
+                                className="text-red-400 hover:underline"
+                              >
+                                ×
+                              </button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newDetails = [...formData.price_details];
+                        newDetails[catIdx].plans.push({
+                          title: '',
+                          time: '',
+                          stay: '',
+                          price: '',
+                          note: '',
+                        });
+                        setFormData({ ...formData, price_details: newDetails });
+                      }}
+                      className="mt-2 text-[10px] text-brand-accent hover:underline"
+                    >
+                      + プランを追加
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
           <div>
             <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
               客室数
