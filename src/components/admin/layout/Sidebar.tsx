@@ -130,6 +130,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       icon: <DocumentTextIcon />,
       label: 'ニュースページ管理',
     },
+    {
+      href: '/admin/admin/auto-post',
+      icon: <SparklesIcon />,
+      label: 'AI自動投稿管理',
+    },
   ];
 
   return (
