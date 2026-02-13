@@ -10,6 +10,12 @@ export default function AutoPostPage() {
   const [activeTab, setActiveTab] = useState<'generate' | 'scheduled' | 'history' | 'status'>(
     'generate',
   );
+  const [editingPost, setEditingPost] = useState<any>(null);
+
+  const handleEditPost = (post: any) => {
+    setEditingPost(post);
+    setActiveTab('generate');
+  };
 
   const tabs = [
     { id: 'generate', label: 'AI記事生成', icon: Sparkles },
@@ -53,11 +59,19 @@ export default function AutoPostPage() {
 
       {/* コンテンツエリア */}
       <div className="min-h-[400px] rounded-2xl border border-white/5 bg-brand-secondary/50 p-6 backdrop-blur-sm">
-        {activeTab === 'generate' && <PostGenerator />}
+        {activeTab === 'generate' && (
+          <PostGenerator
+            initialData={editingPost}
+            onCancel={() => {
+              setEditingPost(null);
+              setActiveTab('scheduled');
+            }}
+          />
+        )}
 
-        {activeTab === 'scheduled' && <PostList type="scheduled" />}
+        {activeTab === 'scheduled' && <PostList type="scheduled" onEdit={handleEditPost} />}
 
-        {activeTab === 'history' && <PostList type="history" />}
+        {activeTab === 'history' && <PostList type="history" onEdit={handleEditPost} />}
 
         {activeTab === 'status' && <StatusBoard />}
       </div>

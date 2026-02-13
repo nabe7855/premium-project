@@ -24,9 +24,22 @@ interface GeneratedPost {
 
 type PostSiteType = 'kaikan' | 'kaikanwork' | 'kaikanwork_news';
 
-export default function PostGenerator() {
+interface PostGeneratorProps {
+  initialData?: any;
+  onCancel?: () => void;
+}
+
+export default function PostGenerator({ initialData, onCancel }: PostGeneratorProps) {
   const [topic, setTopic] = useState('');
-  const [siteType, setSiteType] = useState<PostSiteType>('kaikan');
+  const [siteType, setSiteType] = useState<PostSiteType>(() => {
+    if (initialData) {
+      if (initialData.target_site === 'kaikanwork') {
+        return initialData.content_type === 'news' ? 'kaikanwork_news' : 'kaikanwork';
+      }
+      return 'kaikan';
+    }
+    return 'kaikan';
+  });
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -45,12 +58,30 @@ export default function PostGenerator() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const genres = ['なし', 'お得情報', 'お店情報', 'セラピ情報'];
 
+  // 編集モードの初期化
+  useEffect(() => {
+    if (initialData) {
+      setGenre(initialData.genre || 'なし');
+      setScheduledDate(initialData.scheduled_at ? initialData.scheduled_at.slice(0, 16) : '');
+      setImageUrl(initialData.images?.[0] || null);
+      setGeneratedPost({
+        title: initialData.title,
+        body: initialData.body,
+        genre: initialData.genre,
+      });
+      // 編集時は手動モードをデフォルトに
+      setIsManualMode(true);
+      setManualTitle(initialData.title);
+      setManualBody(initialData.body);
+    }
+  }, [initialData]);
+
   // サイトタイプが変わったらジャンルをリセット
   useEffect(() => {
-    if (siteType !== 'kaikan') {
+    if (!initialData && siteType !== 'kaikan') {
       setGenre('なし');
     }
-  }, [siteType]);
+  }, [siteType, initialData]);
 
   const handleGenerate = async () => {
     if (!topic) return;
@@ -124,6 +155,7 @@ export default function PostGenerator() {
       }
 
       const payload = {
+        id: initialData?.id, // IDがあれば更新
         target_site,
         content_type,
         title: generatedPost.title,
@@ -148,9 +180,13 @@ export default function PostGenerator() {
       setSaveSuccess(true);
       setTimeout(() => {
         setSaveSuccess(false);
-        setGeneratedPost(null);
-        setTopic('');
-        setImageUrl(null);
+        if (onCancel) {
+          onCancel(); // 編集完了後に一覧に戻る
+        } else {
+          setGeneratedPost(null);
+          setTopic('');
+          setImageUrl(null);
+        }
       }, 3000);
     } catch (error: any) {
       console.error(error);
@@ -492,12 +528,27 @@ export default function PostGenerator() {
 
                 <div className="flex items-end gap-2">
                   <button
-                    onClick={() => handleSave(false)}
+                    onClick={() => {
+                      if (onCancel) {
+                        onCancel();
+                      } else {
+                        handleSave(false);
+                      }
+                    }}
                     disabled={isSaving}
                     className="flex-1 rounded-xl border border-white/10 bg-brand-primary py-3 text-xs font-bold text-white transition-all hover:border-white/30 disabled:opacity-50"
                   >
-                    下書き
+                    {onCancel ? 'キャンセル' : '下書き'}
                   </button>
+                  {!onCancel && (
+                    <button
+                      onClick={() => handleSave(false)}
+                      disabled={isSaving}
+                      className="hidden rounded-xl border border-white/10 bg-brand-primary py-3 text-xs font-bold text-white transition-all hover:border-white/30 disabled:opacity-50 md:block"
+                    >
+                      下書き保存
+                    </button>
+                  )}
                   <button
                     onClick={() => handleSave(true)}
                     disabled={isSaving}
@@ -508,7 +559,7 @@ export default function PostGenerator() {
                     ) : (
                       <Save className="h-4 w-4" />
                     )}
-                    承認して予約
+                    {initialData ? '変更を保存' : '承認して予約'}
                   </button>
                 </div>
               </div>

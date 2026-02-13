@@ -18,9 +18,10 @@ interface Post {
 
 interface PostListProps {
   type: 'scheduled' | 'history';
+  onEdit?: (post: Post) => void;
 }
 
-export default function PostList({ type }: PostListProps) {
+export default function PostList({ type, onEdit }: PostListProps) {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -157,6 +158,7 @@ export default function PostList({ type }: PostListProps) {
 
             <div className="flex shrink-0 items-center gap-2">
               <button
+                onClick={() => onEdit?.(post)}
                 className="rounded-lg p-2 text-brand-text-secondary transition-colors hover:bg-white/5 hover:text-white"
                 title="プレビュー・編集"
               >
