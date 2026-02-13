@@ -1,6 +1,14 @@
 'use client';
 
-import { AlertCircle, Calendar, Clock, ExternalLink, MoreHorizontal, Trash2 } from 'lucide-react';
+import {
+  Activity,
+  AlertCircle,
+  Calendar,
+  Clock,
+  ExternalLink,
+  MoreHorizontal,
+  Trash2,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface Post {
@@ -76,116 +84,128 @@ export default function PostList({ type, onEdit }: PostListProps) {
   }
 
   return (
-    <div className="space-y-4 duration-500 animate-in fade-in slide-in-from-bottom-2">
+    <div className="space-y-3 duration-500 animate-in fade-in slide-in-from-bottom-2 md:space-y-4">
       {posts.map((post) => (
         <div
           key={post.id}
-          className="group relative rounded-xl border border-white/5 bg-brand-primary/40 p-5 transition-all hover:border-brand-accent/30"
+          className="group relative overflow-hidden rounded-xl border border-white/5 bg-brand-primary/40 p-3 transition-all hover:border-brand-accent/30 md:p-5"
         >
-          <div className="flex flex-col justify-between gap-4 md:flex-row md:items-center">
-            <div className="flex-1 space-y-2">
-              <div className="flex items-center gap-2">
-                <span
-                  className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                    post.target_site === 'kaikan'
-                      ? 'bg-blue-500/20 text-blue-400'
-                      : 'bg-purple-500/20 text-purple-400'
-                  }`}
-                >
-                  {post.target_site}
-                </span>
-                <span
-                  className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
-                    post.content_type === 'news'
-                      ? 'bg-amber-500/20 text-amber-400'
-                      : 'bg-green-500/20 text-green-400'
-                  }`}
-                >
-                  {post.content_type === 'news' ? 'NEWS' : 'BLOG'}
-                </span>
-                <span
-                  className={`rounded px-2 py-0.5 text-[10px] font-bold ${
-                    post.status === 'approved'
-                      ? 'bg-green-500/20 text-green-400'
-                      : post.status === 'posted'
-                        ? 'bg-brand-accent/20 text-brand-accent'
-                        : post.status === 'failed'
-                          ? 'bg-red-500/20 text-red-400'
-                          : 'bg-white/10 text-brand-text-secondary'
-                  }`}
-                >
-                  {post.status === 'approved'
-                    ? '予約済み'
-                    : post.status === 'posted'
-                      ? '投稿完了'
-                      : post.status === 'failed'
-                        ? '投稿失敗'
-                        : '下書き'}
-                </span>
-                {post.genre && post.genre !== 'なし' && (
-                  <span className="rounded border border-white/10 px-2 py-0.5 text-[10px] text-brand-text-secondary">
-                    {post.genre}
-                  </span>
-                )}
-              </div>
-
-              <div className="flex gap-4">
-                {post.images && post.images.length > 0 && (
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-white/5">
-                    <img src={post.images[0]} alt="" className="h-full w-full object-cover" />
-                  </div>
-                )}
-                <h4 className="line-clamp-2 font-medium text-white">{post.title}</h4>
-              </div>
-
-              <div className="flex items-center gap-4 text-xs text-brand-text-secondary">
-                <div className="flex items-center gap-1.5 font-mono">
-                  <Clock className="h-3.5 w-3.5" />
-                  {post.scheduled_at
-                    ? new Date(post.scheduled_at).toLocaleString('ja-JP', {
-                        month: 'numeric',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })
-                    : '日時未設定'}
+          <div className="flex gap-3 md:gap-5">
+            {/* 画像サムネイル */}
+            <div className="h-14 w-14 shrink-0 overflow-hidden rounded-lg bg-white/5 md:h-20 md:w-20 md:rounded-xl">
+              {post.images?.[0] ? (
+                <img src={post.images[0]} alt="" className="h-full w-full object-cover" />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center text-brand-text-secondary">
+                  <Activity className="h-5 w-5 opacity-20 md:h-8 md:w-8" />
                 </div>
-                <div className="hidden items-center gap-1.5 italic md:flex">
-                  作成: {new Date(post.created_at).toLocaleDateString()}
-                </div>
-              </div>
+              )}
             </div>
 
-            <div className="flex shrink-0 items-center gap-2">
-              <button
-                onClick={() => onEdit?.(post)}
-                className="rounded-lg p-2 text-brand-text-secondary transition-colors hover:bg-white/5 hover:text-white"
-                title="プレビュー・編集"
-              >
-                <MoreHorizontal className="h-5 w-5" />
-              </button>
-              {type === 'scheduled' && (
-                <button
-                  onClick={() => handleDelete(post.id)}
-                  className="rounded-lg p-2 text-red-400/50 transition-colors hover:bg-red-400/10 hover:text-red-400"
-                  title="削除"
-                >
-                  <Trash2 className="h-5 w-5" />
-                </button>
-              )}
-              {post.status === 'posted' && (
-                <button className="rounded-lg p-2 text-brand-accent transition-colors hover:bg-brand-accent/10">
-                  <ExternalLink className="h-5 w-5" />
-                </button>
-              )}
+            {/* 記事情報 */}
+            <div className="flex min-w-0 flex-1 flex-col justify-between py-0.5">
+              <div className="space-y-1">
+                <div className="flex flex-wrap items-center gap-1.5 md:gap-2">
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider md:px-2 md:text-[10px] ${
+                      post.target_site === 'kaikan'
+                        ? 'bg-blue-500/10 text-blue-400'
+                        : 'bg-indigo-500/10 text-indigo-400'
+                    }`}
+                  >
+                    {post.target_site}
+                  </span>
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-wider md:px-2 md:text-[10px] ${
+                      post.content_type === 'news'
+                        ? 'bg-amber-500/10 text-amber-400'
+                        : 'bg-green-500/10 text-green-400'
+                    }`}
+                  >
+                    {post.content_type === 'news' ? 'NEWS' : 'BLOG'}
+                  </span>
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-[8px] font-bold md:px-2 md:text-[10px] ${
+                      post.status === 'approved'
+                        ? 'bg-green-500/10 text-green-400'
+                        : post.status === 'posted'
+                          ? 'bg-brand-accent/10 text-brand-accent'
+                          : post.status === 'failed'
+                            ? 'bg-red-500/10 text-red-400'
+                            : 'bg-white/5 text-brand-text-secondary'
+                    }`}
+                  >
+                    {post.status === 'approved'
+                      ? '予約済み'
+                      : post.status === 'posted'
+                        ? '投稿完了'
+                        : post.status === 'failed'
+                          ? '失敗'
+                          : '下書き'}
+                  </span>
+                </div>
+                <h4 className="truncate text-sm font-bold text-white transition-colors group-hover:text-brand-accent md:text-base">
+                  {post.title}
+                </h4>
+              </div>
+
+              <div className="mt-2 flex items-center justify-between text-[10px] text-brand-text-secondary md:text-xs">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <Clock className="h-3 w-3" />
+                    <span className="font-mono">
+                      {post.scheduled_at
+                        ? new Date(post.scheduled_at).toLocaleDateString('ja-JP', {
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit',
+                          })
+                        : '日時未設定'}
+                    </span>
+                  </div>
+                  {post.genre && post.genre !== 'なし' && (
+                    <div className="hidden items-center gap-1 sm:flex">
+                      <AlertCircle className="h-3 w-3" />
+                      <span>{post.genre}</span>
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex shrink-0 items-center gap-1 md:gap-2">
+                  <button
+                    onClick={() => onEdit?.(post)}
+                    className="rounded-lg p-1.5 text-brand-text-secondary transition-colors hover:bg-white/5 hover:text-white md:p-2"
+                    title="プレビュー・編集"
+                  >
+                    <MoreHorizontal className="h-4 w-4 md:h-5 md:w-5" />
+                  </button>
+                  {type === 'scheduled' && (
+                    <button
+                      onClick={() => handleDelete(post.id)}
+                      className="rounded-lg p-1.5 text-red-400/30 transition-colors hover:bg-red-400/10 hover:text-red-400 md:p-2"
+                      title="削除"
+                    >
+                      <Trash2 className="h-4 w-4 md:h-5 md:w-5" />
+                    </button>
+                  )}
+                  {post.status === 'posted' && (
+                    <button className="rounded-lg p-1.5 text-brand-accent/60 transition-colors hover:bg-brand-accent/10 hover:text-brand-accent md:p-2">
+                      <ExternalLink className="h-4 w-4 md:h-5 md:w-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
 
           {/* 失敗時のメッセージ */}
           {post.status === 'failed' && (
-            <div className="mt-3 flex items-center gap-2 rounded-lg border border-red-400/20 bg-red-400/10 p-2 text-[10px] text-red-400">
-              <AlertCircle className="h-3 w-3" />
-              <span>投稿に失敗しました。認証エラーまたはサイトの仕様変更の可能性があります。</span>
+            <div className="mt-2 flex items-center gap-1.5 rounded-lg border border-red-400/10 bg-red-400/5 p-2 text-[8px] text-red-400 md:text-[10px]">
+              <AlertCircle className="h-3 w-3 shrink-0" />
+              <span className="truncate">
+                投稿に失敗しました。認証エラーまたはサイト仕様変更の可能性があります。
+              </span>
             </div>
           )}
         </div>

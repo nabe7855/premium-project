@@ -197,25 +197,25 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
   };
 
   return (
-    <div className="grid grid-cols-1 gap-8 duration-500 animate-in fade-in slide-in-from-bottom-4 lg:grid-cols-2">
+    <div className="grid grid-cols-1 gap-6 duration-500 animate-in fade-in slide-in-from-bottom-4 lg:grid-cols-2 lg:gap-8">
       {/* 入力設定エリア */}
-      <div className="space-y-6">
-        <div className="space-y-6 rounded-2xl border border-white/5 bg-brand-primary/40 p-6">
-          <div className="mb-2 flex items-center gap-2 font-medium text-white">
-            <Layout className="h-5 w-5 text-brand-accent" />
-            <h3>投稿設定</h3>
+      <div className="space-y-4 md:space-y-6">
+        <div className="space-y-4 rounded-xl border border-white/5 bg-brand-primary/40 p-4 md:space-y-6 md:rounded-2xl md:p-6">
+          <div className="mb-1 flex items-center gap-2 font-medium text-white md:mb-2">
+            <Layout className="h-4 w-4 text-brand-accent md:h-5 md:w-5" />
+            <h3 className="text-sm md:text-base">投稿設定</h3>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-text-secondary">
+              <label className="mb-2 block text-[10px] font-semibold uppercase tracking-wider text-brand-text-secondary md:text-xs">
                 投稿先サイト・種別
               </label>
-              <div className="flex flex-col gap-3">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2 md:gap-3">
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
                   <button
                     onClick={() => setSiteType('kaikan')}
-                    className={`rounded-xl border px-4 py-3 text-sm font-medium transition-all ${
+                    className={`rounded-lg border px-3 py-2.5 text-xs font-medium transition-all md:rounded-xl md:px-4 md:py-3 md:text-sm ${
                       siteType === 'kaikan'
                         ? 'border-brand-accent bg-brand-accent/10 text-white shadow-[0_0_15px_rgba(var(--brand-accent-rgb),0.2)]'
                         : 'border-white/5 bg-brand-primary text-brand-text-secondary hover:border-white/20'
@@ -225,7 +225,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                   </button>
                   <button
                     onClick={() => setSiteType('kaikanwork')}
-                    className={`rounded-xl border px-4 py-3 text-sm font-medium transition-all ${
+                    className={`rounded-lg border px-3 py-2.5 text-xs font-medium transition-all md:rounded-xl md:px-4 md:py-3 md:text-sm ${
                       siteType === 'kaikanwork'
                         ? 'border-brand-accent bg-brand-accent/10 text-white shadow-[0_0_15px_rgba(var(--brand-accent-rgb),0.2)]'
                         : 'border-white/5 bg-brand-primary text-brand-text-secondary hover:border-white/20'
@@ -236,7 +236,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                 </div>
                 <button
                   onClick={() => setSiteType('kaikanwork_news')}
-                  className={`w-full rounded-xl border px-4 py-3 text-sm font-medium transition-all ${
+                  className={`w-full rounded-lg border px-3 py-2.5 text-xs font-medium transition-all md:rounded-xl md:px-4 md:py-3 md:text-sm ${
                     siteType === 'kaikanwork_news'
                       ? 'border-brand-accent bg-brand-accent/10 text-white shadow-[0_0_15px_rgba(var(--brand-accent-rgb),0.2)]'
                       : 'border-white/5 bg-brand-primary text-brand-text-secondary hover:border-white/20'
@@ -354,16 +354,16 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
       </div>
 
       {/* プレビューエリア */}
-      <div className="space-y-6">
-        <div className="relative flex h-full min-h-[500px] flex-col rounded-2xl border border-white/5 bg-brand-primary/40 p-6">
-          <div className="mb-6 flex items-center justify-between">
+      <div className="space-y-4 md:space-y-6">
+        <div className="relative flex h-full min-h-[400px] flex-col rounded-xl border border-white/5 bg-brand-primary/40 p-4 md:min-h-[500px] md:rounded-2xl md:p-6">
+          <div className="mb-4 flex items-center justify-between md:mb-6">
             <div className="flex items-center gap-2 font-medium text-white">
-              <Eye className="h-5 w-5 text-brand-accent" />
-              <h3>プレビュー・修正</h3>
+              <Eye className="h-4 w-4 text-brand-accent md:h-5 md:w-5" />
+              <h3 className="text-sm md:text-base">プレビュー・修正</h3>
             </div>
             {generatedPost && (
               <div className="flex gap-2">
-                <span className="animate-pulse rounded bg-brand-accent/20 px-2 py-1 text-[10px] font-bold uppercase tracking-widest text-brand-accent">
+                <span className="animate-pulse rounded bg-brand-accent/20 px-2 py-1 text-[9px] font-bold uppercase tracking-widest text-brand-accent md:text-[10px]">
                   AI Generated
                 </span>
               </div>
@@ -372,21 +372,23 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
 
           {/* 保存成功メッセージ */}
           {saveSuccess && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-brand-primary/95 duration-300 animate-in fade-in">
-              <div className="space-y-4 text-center">
+            <div className="absolute inset-0 z-10 flex flex-col items-center justify-center rounded-xl bg-brand-primary/95 duration-300 animate-in fade-in md:rounded-2xl">
+              <div className="space-y-3 text-center md:space-y-4">
                 <div className="flex justify-center">
-                  <CheckCircle2 className="h-16 w-16 animate-bounce text-green-500" />
+                  <CheckCircle2 className="h-12 w-12 animate-bounce text-green-500 md:h-16 md:w-16" />
                 </div>
-                <h4 className="text-xl font-bold text-white">保存完了！</h4>
-                <p className="text-sm text-brand-text-secondary">予約リストに追加されました。</p>
+                <h4 className="text-lg font-bold text-white md:text-xl">保存完了！</h4>
+                <p className="text-xs text-brand-text-secondary md:text-sm">
+                  予約リストに追加されました。
+                </p>
               </div>
             </div>
           )}
 
           {!generatedPost && !isGenerating && (
-            <div className="flex flex-1 flex-col items-center justify-center space-y-4 italic text-brand-text-secondary opacity-50">
-              <Sparkles className="h-12 w-12 stroke-[1]" />
-              <p className="px-10 text-center text-sm">
+            <div className="flex flex-1 flex-col items-center justify-center space-y-3 italic text-brand-text-secondary opacity-50 md:space-y-4">
+              <Sparkles className="h-10 w-10 stroke-[1] md:h-12 md:w-12" />
+              <p className="px-6 text-center text-xs md:px-10 md:text-sm">
                 左側の設定を入力して生成ボタンを押すと、
                 <br />
                 具体的な投稿内容をプレビューできます。
@@ -395,29 +397,29 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
           )}
 
           {isGenerating && (
-            <div className="flex-1 space-y-6">
+            <div className="flex-1 space-y-4 md:space-y-6">
               <div className="space-y-2">
-                <div className="h-4 w-20 animate-pulse rounded bg-white/5" />
-                <div className="h-10 w-full animate-pulse rounded-lg bg-white/5" />
+                <div className="h-3 w-16 animate-pulse rounded bg-white/5 md:h-4 md:w-20" />
+                <div className="h-8 w-full animate-pulse rounded-lg bg-white/5 md:h-10" />
               </div>
               <div className="space-y-2">
-                <div className="h-4 w-20 animate-pulse rounded bg-white/5" />
-                <div className="h-64 w-full animate-pulse rounded-xl bg-white/5" />
+                <div className="h-3 w-16 animate-pulse rounded bg-white/5 md:h-4 md:w-20" />
+                <div className="h-48 w-full animate-pulse rounded-xl bg-white/5 md:h-64" />
               </div>
             </div>
           )}
 
           {generatedPost && !isGenerating && (
-            <div className="flex flex-1 flex-col space-y-6 duration-300 animate-in fade-in zoom-in-95">
+            <div className="flex flex-1 flex-col space-y-4 duration-300 animate-in fade-in zoom-in-95 md:space-y-6">
               {/* タイトル入力 */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                  <label className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-brand-text-secondary md:gap-2 md:text-[10px]">
                     <Type className="h-3 w-3 text-brand-accent" /> タイトル
                   </label>
                   {(siteType === 'kaikan' || siteType === 'kaikanwork_news') && (
                     <span
-                      className={`text-[10px] font-bold ${generatedPost.title.length > 60 ? 'text-red-500' : 'text-brand-text-secondary'}`}
+                      className={`text-[9px] font-bold md:text-[10px] ${generatedPost.title.length > 60 ? 'text-red-500' : 'text-brand-text-secondary'}`}
                     >
                       {generatedPost.title.length} / 60文字
                     </span>
@@ -427,13 +429,13 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                   type="text"
                   value={generatedPost.title}
                   onChange={(e) => setGeneratedPost({ ...generatedPost, title: e.target.value })}
-                  className="w-full rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-white transition-all focus:border-brand-accent/50 focus:outline-none"
+                  className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2.5 text-xs font-bold text-white transition-all focus:border-brand-accent/50 focus:outline-none md:px-4 md:py-3 md:text-sm"
                 />
               </div>
 
               {/* 画像アップロード */}
               <div className="space-y-2">
-                <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                <label className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-brand-text-secondary md:gap-2 md:text-[10px]">
                   <ImageIcon className="h-3 w-3 text-brand-accent" /> 投稿画像
                 </label>
                 <div className="group/img relative aspect-video overflow-hidden rounded-xl border-2 border-dashed border-white/10 bg-white/5">
@@ -454,12 +456,14 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                       className="absolute inset-0 flex flex-col items-center justify-center gap-2 text-brand-text-secondary transition-colors hover:text-white"
                     >
                       {isUploading ? (
-                        <Loader2 className="h-8 w-8 animate-spin" />
+                        <Loader2 className="h-6 w-6 animate-spin md:h-8 md:w-8" />
                       ) : (
                         <>
-                          <ImagePlus className="h-8 w-8 stroke-[1]" />
-                          <span className="text-xs">クリックして画像をアップロード</span>
-                          <span className="text-[10px] opacity-50">
+                          <ImagePlus className="h-6 w-6 stroke-[1] md:h-8 md:w-8" />
+                          <span className="text-[10px] md:text-xs">
+                            クリックして画像をアップロード
+                          </span>
+                          <span className="text-[9px] opacity-50 md:text-[10px]">
                             推奨: {siteType === 'kaikanwork_news' ? '700x300' : '500x500'}
                           </span>
                         </>
@@ -478,34 +482,34 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
 
               {/* 本文入力 */}
               <div className="flex flex-1 flex-col space-y-2">
-                <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                <label className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-brand-text-secondary md:gap-2 md:text-[10px]">
                   <Layout className="h-3 w-3 text-brand-accent" />{' '}
                   {siteType === 'kaikanwork_news' ? '求人ニュース内容' : '本文内容'}
                 </label>
                 <textarea
                   value={generatedPost.body}
                   onChange={(e) => setGeneratedPost({ ...generatedPost, body: e.target.value })}
-                  className="min-h-[120px] w-full flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm leading-relaxed text-white transition-all focus:border-brand-accent/50 focus:outline-none"
+                  className="min-h-[100px] w-full flex-1 resize-none rounded-xl border border-white/10 bg-white/5 px-3 py-2.5 text-xs leading-relaxed text-white transition-all focus:border-brand-accent/50 focus:outline-none md:min-h-[120px] md:px-4 md:py-3 md:text-sm"
                 />
               </div>
 
               {/* 予約設定 または ステータス */}
-              <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+              <div className="grid grid-cols-1 gap-4 border-t border-white/5 pt-4 md:grid-cols-2">
                 {siteType === 'kaikan' || siteType === 'kaikanwork_news' ? (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                    <label className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-brand-text-secondary md:gap-2 md:text-[10px]">
                       <CalendarIcon className="h-3 w-3 text-brand-accent" /> 予約日時
                     </label>
                     <input
                       type="datetime-local"
                       value={scheduledDate}
                       onChange={(e) => setScheduledDate(e.target.value)}
-                      className="w-full rounded-lg border border-white/10 bg-white/5 px-3 py-2 font-mono text-xs text-white focus:outline-none focus:ring-1 focus:ring-brand-accent/50"
+                      className="w-full rounded-lg border border-white/10 bg-white/5 px-2 py-2 font-mono text-[10px] text-white focus:outline-none focus:ring-1 focus:ring-brand-accent/50 md:px-3 md:text-xs"
                     />
                   </div>
                 ) : (
                   <div className="space-y-2">
-                    <label className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                    <label className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-widest text-brand-text-secondary md:gap-2 md:text-[10px]">
                       <Clock className="h-3 w-3 text-brand-accent" /> 公開ステータス
                     </label>
                     <div className="flex gap-2">
@@ -513,7 +517,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                         <button
                           key={s}
                           onClick={() => setStatus(s as any)}
-                          className={`flex-1 rounded-lg border py-1.5 text-[10px] font-bold transition-all ${
+                          className={`flex-1 rounded-lg border py-1.5 text-[9px] font-bold transition-all md:text-[10px] ${
                             status === s
                               ? 'border-brand-accent bg-brand-accent text-white'
                               : 'border-white/5 bg-brand-primary text-brand-text-secondary hover:border-white/20'
@@ -536,7 +540,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                       }
                     }}
                     disabled={isSaving}
-                    className="flex-1 rounded-xl border border-white/10 bg-brand-primary py-3 text-xs font-bold text-white transition-all hover:border-white/30 disabled:opacity-50"
+                    className="flex-1 rounded-lg border border-white/10 bg-brand-primary py-3 text-[10px] font-bold text-white transition-all hover:border-white/30 disabled:opacity-50 md:rounded-xl md:text-xs"
                   >
                     {onCancel ? 'キャンセル' : '下書き'}
                   </button>
@@ -544,7 +548,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                     <button
                       onClick={() => handleSave(false)}
                       disabled={isSaving}
-                      className="hidden rounded-xl border border-white/10 bg-brand-primary py-3 text-xs font-bold text-white transition-all hover:border-white/30 disabled:opacity-50 md:block"
+                      className="hidden rounded-lg border border-white/10 bg-brand-primary py-3 text-[10px] font-bold text-white transition-all hover:border-white/30 disabled:opacity-50 md:block md:rounded-xl md:text-xs"
                     >
                       下書き保存
                     </button>
@@ -552,7 +556,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
                   <button
                     onClick={() => handleSave(true)}
                     disabled={isSaving}
-                    className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-brand-accent to-brand-accent/80 py-3 text-xs font-bold text-white transition-all hover:shadow-lg hover:shadow-brand-accent/20 disabled:opacity-50"
+                    className="flex flex-[2] items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-brand-accent to-brand-accent/80 py-3 text-[10px] font-bold text-white transition-all hover:shadow-lg hover:shadow-brand-accent/20 disabled:opacity-50 md:rounded-xl md:text-xs"
                   >
                     {isSaving ? (
                       <Loader2 className="h-4 w-4 animate-spin" />
