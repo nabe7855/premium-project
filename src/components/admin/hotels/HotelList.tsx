@@ -1,6 +1,6 @@
 'use client';
 
-import { deleteHotel, getHotels } from '@/lib/lovehotelApi';
+import { deleteHotel, getAreas, getCities, getHotels, getPrefectures } from '@/lib/lovehotelApi';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -17,11 +17,71 @@ export default function HotelList() {
   const [filterMaxPrice, setFilterMaxPrice] = useState('');
   const [filterRating, setFilterRating] = useState('');
 
+  // Location Filters
+  const [prefectures, setPrefectures] = useState<any[]>([]);
+  const [cities, setCities] = useState<any[]>([]);
+  const [areas, setAreas] = useState<any[]>([]);
+
+  const [filterPrefecture, setFilterPrefecture] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+  const [filterArea, setFilterArea] = useState('');
+
   // Sort
   const [sortConfig, setSortConfig] = useState<{ column: string; ascending: boolean }>({
     column: 'created_at',
     ascending: false,
   });
+
+  // Load Prefectures on mount
+  useEffect(() => {
+    const loadPrefs = async () => {
+      try {
+        const data = await getPrefectures();
+        setPrefectures(data);
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadPrefs();
+  }, []);
+
+  // Load Cities when Prefecture changes
+  useEffect(() => {
+    const loadCitiesData = async () => {
+      if (!filterPrefecture) {
+        setCities([]);
+        setFilterCity('');
+        return;
+      }
+      try {
+        const data = await getCities(filterPrefecture);
+        setCities(data);
+        setFilterCity(''); // Reset city selection
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadCitiesData();
+  }, [filterPrefecture]);
+
+  // Load Areas when City changes
+  useEffect(() => {
+    const loadAreasData = async () => {
+      if (!filterCity) {
+        setAreas([]);
+        setFilterArea('');
+        return;
+      }
+      try {
+        const data = await getAreas(filterCity);
+        setAreas(data);
+        setFilterArea(''); // Reset area selection
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    loadAreasData();
+  }, [filterCity]);
 
   useEffect(() => {
     // Debounce search
@@ -29,7 +89,17 @@ export default function HotelList() {
       loadHotels();
     }, 500);
     return () => clearTimeout(timer);
-  }, [filterKeyword, filterStatus, filterMinPrice, filterMaxPrice, filterRating, sortConfig]);
+  }, [
+    filterKeyword,
+    filterStatus,
+    filterMinPrice,
+    filterMaxPrice,
+    filterRating,
+    filterPrefecture,
+    filterCity,
+    filterArea,
+    sortConfig,
+  ]);
 
   const loadHotels = async () => {
     setLoading(true);
@@ -40,6 +110,9 @@ export default function HotelList() {
         minRestPrice: filterMinPrice ? Number(filterMinPrice) : undefined,
         maxRestPrice: filterMaxPrice ? Number(filterMaxPrice) : undefined,
         minRating: filterRating ? Number(filterRating) : undefined,
+        prefectureId: filterPrefecture || undefined,
+        cityId: filterCity || undefined,
+        areaId: filterArea || undefined,
         sort: sortConfig,
       });
       setHotels(data);
@@ -123,7 +196,49 @@ export default function HotelList() {
           </div>
         </div>
 
-        {/* Row 2: Price & Rating */}
+        {/* Row 2: Location Filters */}
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+          <select
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            value={filterPrefecture}
+            onChange={(e) => setFilterPrefecture(e.target.value)}
+          >
+            <option value="">都道府県を選択</option>
+            {prefectures.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            value={filterCity}
+            onChange={(e) => setFilterCity(e.target.value)}
+            disabled={!filterPrefecture}
+          >
+            <option value="">市区町村を選択</option>
+            {cities.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+          <select
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            value={filterArea}
+            onChange={(e) => setFilterArea(e.target.value)}
+            disabled={!filterCity}
+          >
+            <option value="">エリアを選択</option>
+            {areas.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Row 3: Price & Rating */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
           <div className="flex items-center gap-2">
             <span className="shrink-0 text-xs text-brand-text-secondary">休憩料金:</span>

@@ -20,6 +20,10 @@ export default function MasterManagement() {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // Filters
+  const [filterPrefecture, setFilterPrefecture] = useState('');
+  const [filterCity, setFilterCity] = useState('');
+
   // Selection for child items
   const [prefectures, setPrefectures] = useState<any[]>([]);
   const [cities, setCities] = useState<any[]>([]);
@@ -30,10 +34,24 @@ export default function MasterManagement() {
   const [formData, setFormData] = useState<any>({});
 
   useEffect(() => {
-    loadItems();
+    // Reset filters
+    setFilterPrefecture('');
+    setFilterCity('');
+
     if (activeTab === 'cities' || activeTab === 'areas') loadPrefs();
-    if (activeTab === 'areas') loadCities();
   }, [activeTab]);
+
+  useEffect(() => {
+    loadItems();
+  }, [activeTab, filterPrefecture, filterCity]);
+
+  // Load cities options
+  useEffect(() => {
+    if (activeTab === 'areas') {
+      loadCities(filterPrefecture);
+      setFilterCity('');
+    }
+  }, [filterPrefecture, activeTab]);
 
   const loadItems = async () => {
     setLoading(true);
@@ -44,10 +62,10 @@ export default function MasterManagement() {
           data = await getPrefectures();
           break;
         case 'cities':
-          data = await getCities();
+          data = await getCities(filterPrefecture || undefined);
           break;
         case 'areas':
-          data = await getAreas();
+          data = await getAreas(filterCity || undefined);
           break;
         case 'amenities':
           data = await getAmenities();
@@ -72,9 +90,9 @@ export default function MasterManagement() {
     } catch (e) {}
   };
 
-  const loadCities = async () => {
+  const loadCities = async (prefId?: string) => {
     try {
-      const data = await getCities();
+      const data = await getCities(prefId);
       setCities(data);
     } catch (e) {}
   };
@@ -179,6 +197,55 @@ export default function MasterManagement() {
         <h2 className="text-xl font-bold text-white">
           {tabs.find((t) => t.id === activeTab)?.label}一覧
         </h2>
+
+        {/* Filters for Cities and Areas */}
+        <div className="flex flex-1 justify-end gap-3 px-4">
+          {activeTab === 'cities' && (
+            <select
+              className="rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              value={filterPrefecture}
+              onChange={(e) => setFilterPrefecture(e.target.value)}
+            >
+              <option value="">都道府県で絞り込み</option>
+              {prefectures.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+            </select>
+          )}
+
+          {activeTab === 'areas' && (
+            <>
+              <select
+                className="rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                value={filterPrefecture}
+                onChange={(e) => setFilterPrefecture(e.target.value)}
+              >
+                <option value="">都道府県を選択</option>
+                {prefectures.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name}
+                  </option>
+                ))}
+              </select>
+              <select
+                className="rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                value={filterCity}
+                onChange={(e) => setFilterCity(e.target.value)}
+                disabled={!filterPrefecture}
+              >
+                <option value="">市区町村で絞り込み</option>
+                {cities.map((c) => (
+                  <option key={c.id} value={c.id}>
+                    {c.name}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
+        </div>
+
         <button
           onClick={() => openModal()}
           className="flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2 text-white transition-opacity hover:opacity-90"
