@@ -112,7 +112,27 @@ export default function FirstTimeManagement() {
       }
 
       handleUpdate(section, 'imageUrl', imageUrl);
-      toast.success('画像をアップロードしました');
+
+      // 設定を自動保存（永続化を確実にするため）
+      const newConfig = {
+        ...config,
+        [section]: {
+          ...(config[section as keyof FirstTimeConfig] as any),
+          imageUrl: imageUrl,
+        },
+      };
+
+      try {
+        const saveResult = await saveFirstTimeConfig(selectedStore, newConfig);
+        if (saveResult.success) {
+          toast.success('画像を保存しました');
+        } else {
+          console.error('Auto-save failed:', saveResult.error);
+          toast.error('DBへの保存に失敗しました。公開ボタンを押してください。');
+        }
+      } catch (saveError) {
+        console.error('Auto-save unexpected error:', saveError);
+      }
     } catch (error: any) {
       console.error('Upload error:', error);
       toast.error(`画像のアップロードに失敗しました: ${error.message}`);
