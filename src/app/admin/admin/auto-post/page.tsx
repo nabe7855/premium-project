@@ -1,15 +1,16 @@
 'use client';
 
+import PostCalendar from '@/components/admin/auto-post/PostCalendar';
 import PostGenerator from '@/components/admin/auto-post/PostGenerator';
 import PostList from '@/components/admin/auto-post/PostList';
 import StatusBoard from '@/components/admin/auto-post/StatusBoard';
-import { Activity, Calendar, History, Sparkles } from 'lucide-react';
+import { Calendar, Clock, History, Sparkles, Terminal } from 'lucide-react';
 import { useState } from 'react';
 
 export default function AutoPostPage() {
-  const [activeTab, setActiveTab] = useState<'generate' | 'scheduled' | 'history' | 'status'>(
-    'generate',
-  );
+  const [activeTab, setActiveTab] = useState<
+    'generate' | 'scheduled' | 'calendar' | 'history' | 'status'
+  >('generate');
   const [editingPost, setEditingPost] = useState<any>(null);
 
   const handleEditPost = (post: any) => {
@@ -19,9 +20,10 @@ export default function AutoPostPage() {
 
   const tabs = [
     { id: 'generate', label: 'AI記事生成', icon: Sparkles },
-    { id: 'scheduled', label: '予約一覧', icon: Calendar },
-    { id: 'history', label: '履歴', icon: History },
-    { id: 'status', label: 'システム状態', icon: Activity },
+    { id: 'scheduled', label: '予約リスト', icon: Clock },
+    { id: 'calendar', label: 'カレンダー', icon: Calendar },
+    { id: 'history', label: '投稿履歴', icon: History },
+    { id: 'status', label: '稼働状況', icon: Terminal },
   ];
 
   return (
@@ -72,6 +74,8 @@ export default function AutoPostPage() {
         )}
 
         {activeTab === 'scheduled' && <PostList type="scheduled" onEdit={handleEditPost} />}
+
+        {activeTab === 'calendar' && <PostCalendar onEdit={handleEditPost} />}
 
         {activeTab === 'history' && <PostList type="history" onEdit={handleEditPost} />}
 
