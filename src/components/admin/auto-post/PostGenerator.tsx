@@ -9,6 +9,7 @@ import {
   ImagePlus,
   Layout,
   Loader2,
+  PenLine,
   Save,
   Sparkles,
   Type,
@@ -271,61 +272,86 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
               </div>
             )}
 
-            <div className="flex items-center justify-between">
-              <label className="text-xs font-semibold uppercase tracking-wider text-brand-text-secondary">
-                生成テーマ / プロンプト
-              </label>
+            {/* モード切替タブ */}
+            <div className="flex rounded-xl bg-brand-primary p-1">
               <button
-                onClick={() => setIsManualMode(!isManualMode)}
-                className={`rounded px-2 py-1 text-[10px] font-bold transition-colors ${
-                  isManualMode
-                    ? 'bg-brand-accent text-white'
-                    : 'bg-white/5 text-brand-text-secondary hover:bg-white/10'
+                onClick={() => setIsManualMode(false)}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-bold transition-all ${
+                  !isManualMode
+                    ? 'bg-brand-accent text-white shadow-lg'
+                    : 'text-brand-text-secondary hover:bg-white/5 hover:text-white'
                 }`}
               >
-                {isManualMode ? '✍️ 手動入力モード' : '🪄 AI生成モード'}
+                <Sparkles className={`h-3.5 w-3.5 ${!isManualMode ? 'animate-pulse' : ''}`} />
+                AI生成
+              </button>
+              <button
+                onClick={() => setIsManualMode(true)}
+                className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2.5 text-xs font-bold transition-all ${
+                  isManualMode
+                    ? 'bg-amber-500 text-white shadow-lg'
+                    : 'text-brand-text-secondary hover:bg-white/5 hover:text-white'
+                }`}
+              >
+                <PenLine className="h-3.5 w-3.5" />
+                手動入力
               </button>
             </div>
 
             {isManualMode ? (
-              <div className="space-y-4 duration-300 animate-in fade-in">
-                <input
-                  type="text"
-                  value={manualTitle}
-                  onChange={(e) => setManualTitle(e.target.value)}
-                  placeholder="タイトルを手動で入力..."
-                  className="w-full rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
-                />
-                <textarea
-                  value={manualBody}
-                  onChange={(e) => setManualBody(e.target.value)}
-                  placeholder="本文を手動で入力..."
-                  className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
-                />
+              <div className="space-y-3 duration-300 animate-in fade-in slide-in-from-top-2">
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                    記事タイトル
+                  </label>
+                  <input
+                    type="text"
+                    value={manualTitle}
+                    onChange={(e) => setManualTitle(e.target.value)}
+                    placeholder="タイトルを入力してください..."
+                    className="w-full rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/50"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                    記事本文
+                  </label>
+                  <textarea
+                    value={manualBody}
+                    onChange={(e) => setManualBody(e.target.value)}
+                    placeholder="本文を入力してください..."
+                    className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:border-amber-500/50 focus:outline-none focus:ring-1 focus:ring-amber-500/50 md:h-40"
+                  />
+                </div>
                 <button
                   onClick={() => {
                     setGeneratedPost({ title: manualTitle, body: manualBody });
                     setSaveSuccess(false);
                   }}
                   disabled={!manualTitle || !manualBody}
-                  className="w-full rounded-xl bg-white/10 py-3 text-xs font-bold text-white transition-all hover:bg-white/20 disabled:opacity-50"
+                  className="w-full rounded-xl bg-amber-500/20 py-3 text-xs font-bold text-amber-500 transition-all hover:bg-amber-500/30 disabled:opacity-50"
                 >
                   プレビューに反映
                 </button>
               </div>
             ) : (
-              <textarea
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                placeholder={
-                  siteType === 'kaikan'
-                    ? '例：タイムサービス開始の告知。60分コースがお得なことを強調。'
-                    : siteType === 'kaikanwork_news'
-                      ? '例：【急募】週末入れるセラピストさん大募集！バック率アップ中。'
-                      : '例：最近の店内の雰囲気や、スタッフの何気ない日常について。'
-                }
-                className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white transition-all focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
-              />
+              <div className="space-y-3 duration-300 animate-in fade-in slide-in-from-top-2">
+                <label className="text-[10px] font-bold uppercase tracking-widest text-brand-text-secondary">
+                  生成テーマ / プロンプト
+                </label>
+                <textarea
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  placeholder={
+                    siteType === 'kaikan'
+                      ? '例：タイムサービス開始の告知。60分コースがお得なことを強調。'
+                      : siteType === 'kaikanwork_news'
+                        ? '例：【急募】週末入れるセラピストさん大募集！バック率アップ中。'
+                        : '例：最近の店内の雰囲気や, スタッフの何気ない日常について。'
+                  }
+                  className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white transition-all focus:border-brand-accent/50 focus:outline-none focus:ring-1 focus:ring-brand-accent/50 md:h-40"
+                />
+              </div>
             )}
 
             <button
