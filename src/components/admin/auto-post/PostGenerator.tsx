@@ -38,6 +38,9 @@ export default function PostGenerator() {
   const [scheduledDate, setScheduledDate] = useState('');
   const [status, setStatus] = useState<'公開' | '下書き'>('公開');
   const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isManualMode, setIsManualMode] = useState(false);
+  const [manualTitle, setManualTitle] = useState('');
+  const [manualBody, setManualBody] = useState('');
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const genres = ['なし', 'お得情報', 'お店情報', 'セラピ情報'];
@@ -232,10 +235,49 @@ export default function PostGenerator() {
               </div>
             )}
 
-            <div>
-              <label className="mb-2 block text-xs font-semibold uppercase tracking-wider text-brand-text-secondary">
+            <div className="flex items-center justify-between">
+              <label className="text-xs font-semibold uppercase tracking-wider text-brand-text-secondary">
                 生成テーマ / プロンプト
               </label>
+              <button
+                onClick={() => setIsManualMode(!isManualMode)}
+                className={`rounded px-2 py-1 text-[10px] font-bold transition-colors ${
+                  isManualMode
+                    ? 'bg-brand-accent text-white'
+                    : 'bg-white/5 text-brand-text-secondary hover:bg-white/10'
+                }`}
+              >
+                {isManualMode ? '✍️ 手動入力モード' : '🪄 AI生成モード'}
+              </button>
+            </div>
+
+            {isManualMode ? (
+              <div className="space-y-4 duration-300 animate-in fade-in">
+                <input
+                  type="text"
+                  value={manualTitle}
+                  onChange={(e) => setManualTitle(e.target.value)}
+                  placeholder="タイトルを手動で入力..."
+                  className="w-full rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
+                />
+                <textarea
+                  value={manualBody}
+                  onChange={(e) => setManualBody(e.target.value)}
+                  placeholder="本文を手動で入力..."
+                  className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
+                />
+                <button
+                  onClick={() => {
+                    setGeneratedPost({ title: manualTitle, body: manualBody });
+                    setSaveSuccess(false);
+                  }}
+                  disabled={!manualTitle || !manualBody}
+                  className="w-full rounded-xl bg-white/10 py-3 text-xs font-bold text-white transition-all hover:bg-white/20 disabled:opacity-50"
+                >
+                  プレビューに反映
+                </button>
+              </div>
+            ) : (
               <textarea
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
@@ -248,7 +290,7 @@ export default function PostGenerator() {
                 }
                 className="h-32 w-full resize-none rounded-xl border border-white/10 bg-brand-primary px-4 py-3 text-sm text-white transition-all focus:outline-none focus:ring-2 focus:ring-brand-accent/50"
               />
-            </div>
+            )}
 
             <button
               onClick={handleGenerate}
