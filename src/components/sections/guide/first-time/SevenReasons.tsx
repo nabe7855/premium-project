@@ -1,10 +1,27 @@
+import { EditableImage } from '@/components/admin/EditableImage';
+import { SevenReasonsConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
 interface SevenReasonsProps {
   groupName?: string;
+  config?: SevenReasonsConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File) => void;
 }
 
-export const SevenReasons: React.FC<SevenReasonsProps> = ({ groupName = 'SBグループ' }) => {
+export const SevenReasons: React.FC<SevenReasonsProps> = ({
+  groupName = 'SBグループ',
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
+  const data = config || {
+    imageUrl: '',
+    isVisible: true,
+  };
+
   const reasons = [
     {
       title: '業界初！200件以上の受付口コミ！',
@@ -36,15 +53,78 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({ groupName = 'SBグ�
     },
   ];
 
+  if (data.isVisible === false && !isEditing) return null;
+
   return (
-    <section className="bg-gray-50 py-20">
+    <section className={`bg-gray-50 py-20 ${!data.isVisible ? 'opacity-50' : ''}`}>
       <div className="container mx-auto max-w-6xl px-4">
         <div className="mb-16 text-center">
-          <p className="mb-2 font-bold tracking-widest text-[#FF4B5C]">WHY CHOOSE US</p>
-          <h2 className="text-2xl font-bold md:text-3xl">
-            {groupName}が初めての女風に選ばれる
-            <br className="md:hidden" /> <span className="text-[#FF4B5C]">7つの理由</span>
-          </h2>
+          {data.imageUrl ? (
+            <div className="relative mx-auto mb-4 max-w-2xl">
+              <EditableImage
+                isEditing={isEditing}
+                src={data.imageUrl}
+                alt="7つの理由"
+                onUpload={(file) => onImageUpload?.('sevenReasons', file)}
+                className="h-auto w-full object-contain"
+              />
+              {isEditing && (
+                <button
+                  onClick={() => onUpdate?.('sevenReasons', 'imageUrl', '')}
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-lg"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <p className="mb-2 font-bold tracking-widest text-[#FF4B5C]">WHY CHOOSE US</p>
+              <h2 className="text-2xl font-bold md:text-3xl">
+                {groupName}が初めての女風に選ばれる
+                <br className="md:hidden" /> <span className="text-[#FF4B5C]">7つの理由</span>
+              </h2>
+              {isEditing && (
+                <div className="mt-4">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-stone-100 px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-stone-200">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    画像ヘッダーを使用する
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) onImageUpload?.('sevenReasons', file);
+                      }}
+                    />
+                  </label>
+                </div>
+              )}
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -53,11 +133,6 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({ groupName = 'SBグ�
               key={i}
               className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors hover:border-[#FF4B5C]/30"
             >
-              {r.title === '定期的な性病検査の義務付け！' && (
-                <div className="absolute right-2 top-2 animate-pulse rounded-full bg-green-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
-                  検査済証発行可
-                </div>
-              )}
               <div className="flex-shrink-0 text-xl">✅</div>
               <div>
                 <h3 className="mb-2 font-bold leading-tight text-gray-800">{r.title}</h3>

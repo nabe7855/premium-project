@@ -9,6 +9,7 @@ export interface FirstTimeHeroConfig {
 export interface WelcomeConfig {
   heading: string;
   subHeading: string;
+  imageUrl?: string;
   content: string[];
   isVisible: boolean;
 }
@@ -23,7 +24,23 @@ export interface ForbiddenItem {
 export interface ForbiddenConfig {
   heading: string;
   subHeading: string;
+  imageUrl?: string;
   items: ForbiddenItem[];
+  isVisible: boolean;
+}
+
+export interface CastSectionConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
+export interface ThreePointsConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
+export interface SevenReasonsConfig {
+  imageUrl?: string;
   isVisible: boolean;
 }
 
@@ -35,6 +52,9 @@ export interface FirstTimeConfig {
   hero: FirstTimeHeroConfig;
   welcome: WelcomeConfig;
   forbidden: ForbiddenConfig;
+  casts: CastSectionConfig;
+  threePoints: ThreePointsConfig;
+  sevenReasons: SevenReasonsConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -53,6 +73,7 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   welcome: {
     heading: 'ストロベリーボーイズへ、ようこそ。',
     subHeading: 'ABOUT STRAWBERRY BOYS',
+    imageUrl: '',
     content: [
       '日々、忙しく働く女性の皆様。',
       'たまには自分を甘やかして、心も身体もとろけるような最高の癒やしを体験してみませんか？',
@@ -63,6 +84,7 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   forbidden: {
     heading: '安心・安全のために',
     subHeading: 'FORBIDDEN ITEMS',
+    imageUrl: '',
     items: [
       {
         id: '1',
@@ -99,6 +121,18 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
         icon: 'ShieldAlert',
       },
     ],
+    isVisible: true,
+  },
+  casts: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  threePoints: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  sevenReasons: {
+    imageUrl: '',
     isVisible: true,
   },
 };

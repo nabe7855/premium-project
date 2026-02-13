@@ -111,13 +111,31 @@ export default function FirstTimePageContent({
           config={config.welcome}
           isEditing={isEditing}
           onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
         />
       </div>
       <div id="cast-list">
-        <CastSampler storeSlug={slug} />
+        <CastSampler
+          storeSlug={slug}
+          config={config.casts}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
       </div>
-      <ThreePoints />
-      <SevenReasons groupName="SBグループ" />
+      <ThreePoints
+        config={config.threePoints}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
+      <SevenReasons
+        groupName="SBグループ"
+        config={config.sevenReasons}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
       <div id="flow">
         <ReservationFlow />
         <DayFlow />
@@ -145,7 +163,12 @@ export default function FirstTimePageContent({
           }
         />
       </div>
-      <ForbiddenItems config={config.forbidden} isEditing={isEditing} onUpdate={onUpdate} />
+      <ForbiddenItems
+        config={config.forbidden}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
       <FAQ />
       <CTA />
 

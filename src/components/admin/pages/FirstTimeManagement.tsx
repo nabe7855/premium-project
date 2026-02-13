@@ -26,10 +26,21 @@ const SECTION_LABELS: Record<string, string> = {
   banner: 'バナー',
   hero: 'メインビジュアル',
   welcome: 'ストロベリーボーイズとは',
+  threePoints: '3つの安心ポイント',
+  casts: '自慢のセラピストたち',
+  sevenReasons: '7つの理由',
   forbidden: '禁止事項',
 };
 
-const SECTION_ORDER = ['banner', 'hero', 'welcome', 'forbidden'];
+const SECTION_ORDER = [
+  'banner',
+  'hero',
+  'welcome',
+  'threePoints',
+  'casts',
+  'sevenReasons',
+  'forbidden',
+];
 
 export default function FirstTimeManagement() {
   const [selectedStore, setSelectedStore] = useState('fukuoka');
