@@ -1,20 +1,100 @@
+import { EditableImage } from '@/components/admin/EditableImage';
+import { CTAConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
 interface CTAProps {
   lineId?: string;
+  config?: CTAConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File) => void;
 }
 
-export const CTA: React.FC<CTAProps> = ({ lineId = '@204ynfuu' }) => {
+export const CTA: React.FC<CTAProps> = ({
+  lineId = '@204ynfuu',
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
+  const data = config || {
+    imageUrl: '',
+    isVisible: true,
+  };
+
+  if (data.isVisible === false && !isEditing) return null;
+
   return (
-    <section className="relative overflow-hidden bg-white py-24">
+    <section
+      className={`relative overflow-hidden bg-white py-24 ${!data.isVisible ? 'opacity-50' : ''}`}
+    >
       <div className="container relative z-10 mx-auto max-w-4xl px-4 text-center">
         <div className="mb-8 flex justify-center">
-          <div className="relative">
-            <span className="inline-block animate-bounce text-6xl">🍓</span>
-            <div className="absolute -right-4 -top-4 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
-              ご相談ください!
+          {data.imageUrl ? (
+            <div className="relative mx-auto max-w-[120px]">
+              <EditableImage
+                isEditing={isEditing}
+                src={data.imageUrl}
+                alt="CTA"
+                onUpload={(file) => onImageUpload?.('cta', file)}
+                className="h-auto w-full object-contain"
+              />
+              {isEditing && (
+                <button
+                  onClick={() => onUpdate?.('cta', 'imageUrl', '')}
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-lg"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
             </div>
-          </div>
+          ) : (
+            <div className="relative">
+              <span className="inline-block animate-bounce text-6xl">🍓</span>
+              <div className="absolute -right-4 -top-4 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
+                ご相談ください!
+              </div>
+              {isEditing && (
+                <div className="mt-4">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-stone-100 px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-stone-200">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    画像を設置する
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) onImageUpload?.('cta', file);
+                      }}
+                    />
+                  </label>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <h2 className="mb-6 text-2xl font-black leading-tight md:text-4xl">

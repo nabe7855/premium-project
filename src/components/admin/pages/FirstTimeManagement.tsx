@@ -34,6 +34,7 @@ const SECTION_LABELS: Record<string, string> = {
   pricing: 'ご利用プランの一覧',
   forbidden: '禁止事項',
   faq: 'よくあるご質問',
+  cta: 'フッター問い合わせ内容',
 };
 
 const SECTION_ORDER = [
@@ -48,6 +49,7 @@ const SECTION_ORDER = [
   'pricing',
   'forbidden',
   'faq',
+  'cta',
 ];
 
 export default function FirstTimeManagement() {

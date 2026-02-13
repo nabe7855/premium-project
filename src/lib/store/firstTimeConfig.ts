@@ -64,6 +64,11 @@ export interface PricingConfig {
   isVisible: boolean;
 }
 
+export interface CTAConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
 export interface FirstTimeConfig {
   banner: {
     imageUrl: string;
@@ -79,6 +84,7 @@ export interface FirstTimeConfig {
   reservationFlow: ReservationFlowConfig;
   faq: FAQConfig;
   pricing: PricingConfig;
+  cta: CTAConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -172,6 +178,10 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     isVisible: true,
   },
   pricing: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  cta: {
     imageUrl: '',
     isVisible: true,
   },

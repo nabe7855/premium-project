@@ -190,7 +190,12 @@ export default function FirstTimePageContent({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      <CTA />
+      <CTA
+        config={config.cta}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
 
       {/* Sticky Bottom CTA for Mobile */}
       {!isEditing && (
