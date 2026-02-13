@@ -137,8 +137,18 @@ export default function FirstTimePageContent({
         onImageUpload={onImageUpload}
       />
       <div id="flow">
-        <ReservationFlow />
-        <DayFlow />
+        <ReservationFlow
+          config={config.reservationFlow}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
+        <DayFlow
+          config={config.dayFlow}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
       </div>
       <div id="pricing">
         <Pricing />

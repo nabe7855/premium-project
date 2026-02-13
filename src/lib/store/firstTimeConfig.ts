@@ -44,6 +44,16 @@ export interface SevenReasonsConfig {
   isVisible: boolean;
 }
 
+export interface DayFlowConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
+export interface ReservationFlowConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
 export interface FirstTimeConfig {
   banner: {
     imageUrl: string;
@@ -55,6 +65,8 @@ export interface FirstTimeConfig {
   casts: CastSectionConfig;
   threePoints: ThreePointsConfig;
   sevenReasons: SevenReasonsConfig;
+  dayFlow: DayFlowConfig;
+  reservationFlow: ReservationFlowConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -132,6 +144,14 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     isVisible: true,
   },
   sevenReasons: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  dayFlow: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  reservationFlow: {
     imageUrl: '',
     isVisible: true,
   },

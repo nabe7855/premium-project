@@ -29,6 +29,8 @@ const SECTION_LABELS: Record<string, string> = {
   threePoints: '3つの安心ポイント',
   casts: '自慢のセラピストたち',
   sevenReasons: '7つの理由',
+  reservationFlow: 'ご利用までの流れ',
+  dayFlow: 'ご予約当日の流れ',
   forbidden: '禁止事項',
 };
 
@@ -39,6 +41,8 @@ const SECTION_ORDER = [
   'threePoints',
   'casts',
   'sevenReasons',
+  'reservationFlow',
+  'dayFlow',
   'forbidden',
 ];
 
