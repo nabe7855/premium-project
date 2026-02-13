@@ -32,7 +32,7 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
     const fetchCasts = async () => {
       console.log(`[CastSampler] Fetching casts for slug: ${storeSlug}`);
       setIsLoading(true);
-      const result = await getCastsByStore(storeSlug, 3);
+      const result = await getCastsByStore(storeSlug, 6);
       console.log('[CastSampler] Result:', result);
       if (result.success && result.casts) {
         setCasts(result.casts);
@@ -156,11 +156,11 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
       <div className="container mx-auto max-w-5xl px-4">
         {renderHeader()}
 
-        <div className="mb-12 flex gap-6 overflow-x-auto pb-6 md:grid md:grid-cols-3 md:gap-8 md:pb-0">
+        <div className="mb-12 flex gap-4 overflow-x-auto pb-6 md:grid md:grid-cols-6 md:gap-4 md:pb-0">
           {casts.map((cast: CastData) => (
             <div
               key={cast.id}
-              className="group relative w-[280px] flex-shrink-0 overflow-hidden rounded-3xl bg-white shadow-xl transition-all hover:-translate-y-2 md:w-full"
+              className="group relative w-[160px] flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg transition-all hover:-translate-y-1 md:w-full"
             >
               <div className="aspect-[3/4] overflow-hidden">
                 <img
@@ -169,13 +169,13 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
-              <div className="p-6">
-                <div className="mb-2 flex items-end justify-between">
-                  <span className="text-2xl font-black text-gray-800">{cast.name}</span>
-                  <span className="text-sm font-bold text-gray-400">{cast.age}歳</span>
+              <div className="p-3">
+                <div className="mb-1 flex items-end justify-between gap-1">
+                  <span className="truncate text-base font-black text-gray-800">{cast.name}</span>
+                  <span className="shrink-0 text-[10px] font-bold text-gray-400">{cast.age}歳</span>
                 </div>
                 {cast.features?.personality && (
-                  <div className="inline-block rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-[#FF4B5C]">
+                  <div className="inline-block rounded-full bg-red-50 px-2 py-0.5 text-[10px] font-bold text-[#FF4B5C]">
                     {cast.features.personality.name}
                   </div>
                 )}
