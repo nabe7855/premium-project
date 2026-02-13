@@ -1,6 +1,6 @@
 'use client';
 
-import { SERVICES } from '@/data/lovehotels';
+import { AMENITIES, SERVICES } from '@/data/lovehotels';
 import { getReviews, submitReview } from '@/lib/lovehotelApi';
 import { Hotel, Review } from '@/types/lovehotels';
 import { useRouter } from 'next/navigation';
@@ -238,10 +238,42 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                   <p className="mt-1 text-2xl font-black text-gray-900">完備</p>
                 </div>
                 <div className="col-span-2 rounded-2xl bg-rose-50 p-6 transition-all hover:bg-rose-100">
-                  <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
-                    アクセス
-                  </span>
-                  <p className="mt-1 line-clamp-2 text-sm font-black text-rose-900">
+                  <div className="mb-2 flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                      アクセス & 住所
+                    </span>
+                    <a
+                      href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.name + ' ' + hotel.address)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 text-[8px] font-black uppercase tracking-widest text-rose-500 shadow-sm transition-all hover:bg-rose-500 hover:text-white"
+                    >
+                      <svg
+                        className="h-3 w-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                      </svg>
+                      Google Map
+                    </a>
+                  </div>
+                  <p className="line-clamp-1 text-sm font-black text-rose-900">
+                    {hotel.address || '住所情報'}
+                  </p>
+                  <p className="mt-1 line-clamp-1 text-[10px] font-bold text-rose-400">
                     {hotel.distanceFromStation || '最寄り駅より好アクセス'}
                   </p>
                 </div>
@@ -250,25 +282,104 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
               <p className="mb-8 whitespace-pre-wrap text-lg font-medium leading-loose text-gray-600">
                 {hotel.description}
               </p>
-              <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-                {SERVICES.map((service, idx) => (
-                  <div
-                    key={idx}
-                    className={`flex items-center gap-2 rounded-2xl border p-3 transition-all ${hotel.services.includes(service) ? 'border-rose-100 bg-rose-50 text-rose-600' : 'border-gray-100 bg-gray-50 text-gray-300 opacity-50'}`}
-                  >
-                    <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    <span className="text-[10px] font-black uppercase tracking-tight">
-                      {service}
-                    </span>
-                  </div>
-                ))}
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                {[...SERVICES, ...AMENITIES].map((item, idx) => {
+                  const isActive =
+                    hotel.services?.includes(item) || hotel.amenities?.includes(item);
+                  return (
+                    <div
+                      key={idx}
+                      className={`flex items-center gap-3 rounded-2xl border p-4 transition-all ${
+                        isActive
+                          ? 'border-rose-100 bg-rose-50/50 text-rose-600 shadow-sm'
+                          : 'border-gray-50 bg-gray-50/30 text-gray-300 opacity-40'
+                      }`}
+                    >
+                      <div className="flex-shrink-0">
+                        {item.includes('Wi-Fi') && (
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071c3.904-3.905 10.236-3.905 14.141 0M1.394 9.393c5.857-5.857 15.355-5.857 21.213 0"
+                            ></path>
+                          </svg>
+                        )}
+                        {item.includes('駐車場') && (
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                            ></path>
+                          </svg>
+                        )}
+                        {item.includes('カード') && (
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"
+                            ></path>
+                          </svg>
+                        )}
+                        {item.includes('サウナ') && (
+                          <svg
+                            className="h-5 w-5"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M13 10V3L4 14h7v7l9-11h-7z"
+                            ></path>
+                          </svg>
+                        )}
+                        {!['Wi-Fi', '駐車場', 'カード', 'サウナ'].some((keyword) =>
+                          item.includes(keyword),
+                        ) && (
+                          <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth="2"
+                              d="M5 13l4 4L19 7"
+                            ></path>
+                          </svg>
+                        )}
+                      </div>
+                      <span className="text-[11px] font-black leading-tight tracking-tight">
+                        {item}
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </section>
 
