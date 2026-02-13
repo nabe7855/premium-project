@@ -33,7 +33,6 @@ export default function ReservationPage() {
     usageStatus: '',
     meetingPlace: '',
     course: '',
-    nomination: '',
     outfit: '',
     discount: '',
     message: '',
@@ -310,19 +309,6 @@ export default function ReservationPage() {
               <p className="mt-2 text-xs text-rose-600">
                 💡 初回の方は初回限定120分コースがとてもお得です
               </p>
-            </div>
-
-            {/* ご指名は */}
-            <div>
-              <label className="mb-2 block text-sm font-bold text-gray-700">ご指名は？</label>
-              <input
-                type="text"
-                name="nomination"
-                value={formData.nomination}
-                onChange={handleChange}
-                className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-colors focus:border-rose-400 focus:outline-none"
-                placeholder="例：指名有りイチゴくん初めての指名、指名有りいちごくん二回目以上、指名無し 30代 20代希望等"
-              />
             </div>
 
             {/* 当日の服装 */}

@@ -1,14 +1,14 @@
 'use client';
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { AnimatePresence } from 'framer-motion';
-import { Search, Filter, Heart, Star, Clock, User, MessageCircle } from 'lucide-react';
+import { flavorTags, mockCasts, mockReviews } from '@/data/castdata';
 import { Cast } from '@/types/casts';
-import { mockCasts, flavorTags, mockReviews } from '@/data/castdata';
+import { AnimatePresence, motion } from 'framer-motion';
+import { Clock, Filter, Heart, MessageCircle, Search, Star, User } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import React, { useMemo, useState } from 'react';
 import BookingModal from './BookingModal';
-import router from 'next/router';
 
 const CastList: React.FC = () => {
+  const router = useRouter();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
