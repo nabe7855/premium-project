@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 600" class="fukuoka-map">
+  <defs>
+    <style>
+      .area-region {
+        fill: #F3F4F6;
+        stroke: #E5E7EB;
+        stroke-width: 2;
+        transition: all 0.2s ease;
+        cursor: pointer;
+      }
+      .area-region:hover {
+        fill: #FEE2E2;
+        stroke: #F43F5E;
+        stroke-width: 3;
+        filter: drop-shadow(0 4px 6px rgba(244, 63, 94, 0.2));
+      }
+      .area-region.selected {
+        fill: #FECDD3;
+        stroke: #F43F5E;
+        stroke-width: 4;
+        filter: drop-shadow(0 8px 12px rgba(244, 63, 94, 0.3));
+      }
+      .area-label {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 16px;
+        font-weight: 900;
+        fill: #1F2937;
+        pointer-events: none;
+        user-select: none;
+      }
+      .area-count {
+        font-family: 'Noto Sans JP', sans-serif;
+        font-size: 11px;
+        font-weight: 700;
+        fill: #DC2626;
+        pointer-events: none;
+        user-select: none;
+      }
+    </style>
+  </defs>
+
+  <!-- 北九州市エリア（北東部） -->
+  <path 
+    id="kitakyushu-region" 
+    class="area-region"
+    data-area-id="kitakyushu"
+    d="M 280,40 L 460,30 L 480,80 L 490,140 L 470,180 L 420,200 L 360,190 L 320,160 L 300,120 L 280,80 Z"
+  />
+  <text class="area-label" x="380" y="120" text-anchor="middle">北九州市</text>
+  <text class="area-count" x="380" y="140" text-anchor="middle" data-count="kitakyushu">0 HOTELS</text>
+
+  <!-- 福岡市エリア（西部沿岸） -->
+  <path 
+    id="fukuoka-city-region" 
+    class="area-region"
+    data-area-id="fukuoka-city"
+    d="M 20,200 L 100,180 L 160,190 L 200,220 L 210,280 L 190,340 L 140,360 L 80,350 L 40,320 L 20,270 Z"
+  />
+  <text class="area-label" x="120" y="270" text-anchor="middle">福岡市</text>
+  <text class="area-count" x="120" y="290" text-anchor="middle" data-count="fukuoka-city">0 HOTELS</text>
+
+  <!-- 筑豊エリア（中央部） -->
+  <path 
+    id="chikuho-region" 
+    class="area-region"
+    data-area-id="chikuho"
+    d="M 220,200 L 320,180 L 380,210 L 400,260 L 380,310 L 320,330 L 260,320 L 220,290 L 210,240 Z"
+  />
+  <text class="area-label" x="300" y="260" text-anchor="middle">筑豊</text>
+  <text class="area-count" x="300" y="280" text-anchor="middle" data-count="chikuho">0 HOTELS</text>
+
+  <!-- 筑後エリア（南部） -->
+  <path 
+    id="chikugo-region" 
+    class="area-region"
+    data-area-id="chikugo"
+    d="M 100,380 L 200,370 L 260,390 L 280,440 L 270,500 L 220,540 L 150,550 L 90,530 L 70,480 L 80,420 Z"
+  />
+  <text class="area-label" x="180" y="470" text-anchor="middle">筑後</text>
+  <text class="area-count" x="180" y="490" text-anchor="middle" data-count="chikugo">0 HOTELS</text>
+
+  <!-- その他福岡県エリア（東部・周辺） -->
+  <path 
+    id="fukuoka-other-region" 
+    class="area-region"
+    data-area-id="fukuoka-other"
+    d="M 210,340 L 280,330 L 340,350 L 380,390 L 400,450 L 380,510 L 320,540 L 280,520 L 260,470 L 250,410 L 230,370 Z"
+  />
+  <text class="area-label" x="310" y="430" text-anchor="middle">その他</text>
+  <text class="area-label" x="310" y="448" text-anchor="middle" font-size="14">福岡県</text>
+  <text class="area-count" x="310" y="468" text-anchor="middle" data-count="fukuoka-other">0 HOTELS</text>
+
+  <!-- 海岸線の装飾（任意） -->
+  <path 
+    d="M 20,200 Q 10,230 20,270 L 40,320 L 80,350 L 140,360 L 190,340 L 210,280 L 200,220"
+    fill="none" 
+    stroke="#93C5FD" 
+    stroke-width="3" 
+    stroke-dasharray="5,5"
+    opacity="0.3"
+    pointer-events="none"
+  />
+</svg>

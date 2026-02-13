@@ -1,4 +1,5 @@
 import AreaExplorer from '@/components/lovehotels/AreaExplorer';
+import AreaMapSelector from '@/components/lovehotels/AreaMapSelector';
 import FeatureArticleCarousel from '@/components/lovehotels/FeatureArticleCarousel';
 import HotelCard from '@/components/lovehotels/HotelCard';
 import Layout from '@/components/lovehotels/Layout';
@@ -63,6 +64,20 @@ export default async function StoreHotelRootPage({ params }: Props) {
 
   const hotels = dbHotels.map(mapDbHotelToHotel);
 
+  // 福岡店の場合はホテル件数を取得（新UIで使用）
+  let hotelCounts;
+  if (params.slug === 'fukuoka') {
+    try {
+      const countsRes = await fetch(
+        `${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}/api/hotels/count?prefecture=${location.prefectureId}`,
+        { next: { revalidate: 3600 } },
+      );
+      hotelCounts = await countsRes.json();
+    } catch (error) {
+      console.error('Failed to fetch hotel counts:', error);
+    }
+  }
+
   return (
     <Layout>
       <div className="duration-500 animate-in fade-in">
@@ -71,7 +86,12 @@ export default async function StoreHotelRootPage({ params }: Props) {
         {/* Feature Articles Carousel */}
         <FeatureArticleCarousel slug={params.slug} />
 
-        <AreaExplorer prefecture={dynamicPrefecture} />
+        {/* 福岡店のみ新しいSVG地図UI、他の店舗は既存UI */}
+        {params.slug === 'fukuoka' ? (
+          <AreaMapSelector prefectureId={location.prefectureId} hotelCounts={hotelCounts} />
+        ) : (
+          <AreaExplorer prefecture={dynamicPrefecture} />
+        )}
 
         <section className="bg-gray-50 py-16">
           <div className="container mx-auto px-4">
