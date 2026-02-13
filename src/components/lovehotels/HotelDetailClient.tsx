@@ -274,76 +274,170 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
 
             <section>
               <h2 className="mb-6 border-l-8 border-rose-500 pl-4 text-2xl font-black tracking-tighter">
-                PRICING
+                PRICING & PLANS
               </h2>
-              <div className="overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl">
-                <table className="w-full text-left">
-                  <thead>
-                    <tr className="bg-gray-950 text-white">
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
-                        利用タイプ
-                      </th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
-                        平日 最安料金
-                      </th>
-                      <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
-                        休日 最安料金
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-100">
-                    <tr>
-                      <td className="px-8 py-6">
-                        <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600">
-                          REST
+              {hotel.priceDetails && hotel.priceDetails.length > 0 ? (
+                <div className="space-y-8">
+                  {hotel.priceDetails.map((cat: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl"
+                    >
+                      <div className="bg-gray-950 px-8 py-4">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                          Category
                         </span>
-                        <p className="mt-2 font-black text-gray-900">休憩</p>
-                      </td>
-                      <td className="px-8 py-6">
-                        <p className="text-2xl font-black text-rose-500">
-                          {hotel.restPriceMinWeekday
-                            ? `¥${hotel.restPriceMinWeekday.toLocaleString()}〜`
-                            : 'ASK'}
-                        </p>
-                      </td>
-                      <td className="px-8 py-6">
-                        <p className="text-2xl font-black text-rose-500">
-                          {hotel.restPriceMinWeekend
-                            ? `¥${hotel.restPriceMinWeekend.toLocaleString()}〜`
-                            : 'ASK'}
-                        </p>
-                      </td>
-                    </tr>
-                    <tr>
-                      <td className="px-8 py-6">
-                        <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-black text-blue-600">
-                          STAY
-                        </span>
-                        <p className="mt-2 font-black text-gray-900">宿泊</p>
-                      </td>
-                      <td className="px-8 py-6">
-                        <p className="text-2xl font-black text-rose-500">
-                          {hotel.stayPriceMinWeekday
-                            ? `¥${hotel.stayPriceMinWeekday.toLocaleString()}〜`
-                            : 'ASK'}
-                        </p>
-                      </td>
-                      <td className="px-8 py-6">
-                        <p className="text-2xl font-black text-rose-500">
-                          {hotel.stayPriceMinWeekend
-                            ? `¥${hotel.stayPriceMinWeekend.toLocaleString()}〜`
-                            : 'ASK'}
-                        </p>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-                <div className="bg-gray-50 px-8 py-4">
-                  <p className="text-[10px] font-bold italic text-gray-400">
-                    ※料金は時期やプランにより変動する場合があります。詳細はホテルへお問い合わせください。
-                  </p>
+                        <h3 className="text-lg font-black text-white">{cat.category}</h3>
+                      </div>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left">
+                          <thead>
+                            <tr className="border-b border-gray-50 bg-gray-50/50">
+                              <th className="whitespace-nowrap px-8 py-4 text-[10px] font-black tracking-widest text-gray-400">
+                                プラン名
+                              </th>
+                              <th className="whitespace-nowrap px-8 py-4 text-[10px] font-black tracking-widest text-gray-400">
+                                時間帯 / 滞在
+                              </th>
+                              <th className="whitespace-nowrap px-8 py-4 text-[10px] font-black tracking-widest text-gray-400">
+                                料金
+                              </th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-gray-50">
+                            {cat.plans.map((plan: any, pIdx: number) => (
+                              <tr key={pIdx} className="transition-colors hover:bg-gray-50/80">
+                                <td className="px-8 py-6">
+                                  <p className="font-black text-gray-900">{plan.title}</p>
+                                  {plan.note && (
+                                    <p className="mt-1 text-[10px] font-bold text-rose-500">
+                                      {plan.note}
+                                    </p>
+                                  )}
+                                </td>
+                                <td className="px-8 py-6">
+                                  <div className="flex flex-col gap-1 text-sm font-bold text-gray-600">
+                                    {plan.time && (
+                                      <div className="flex items-center gap-1">
+                                        <svg
+                                          className="h-3 w-3 opacity-50"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                                          ></path>
+                                        </svg>
+                                        {plan.time}
+                                      </div>
+                                    )}
+                                    {plan.stay && (
+                                      <div className="flex items-center gap-1">
+                                        <svg
+                                          className="h-3 w-3 opacity-50"
+                                          fill="none"
+                                          stroke="currentColor"
+                                          viewBox="0 0 24 24"
+                                        >
+                                          <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M13 10V3L4 14h7v7l9-11h-7z"
+                                          ></path>
+                                        </svg>
+                                        最大 {plan.stay}
+                                      </div>
+                                    )}
+                                  </div>
+                                </td>
+                                <td className="px-8 py-6">
+                                  <p className="text-2xl font-black text-rose-500">
+                                    {plan.price ? `${plan.price}` : '-'}
+                                  </p>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-              </div>
+              ) : (
+                <div className="overflow-hidden rounded-[2rem] border border-gray-100 bg-white shadow-xl">
+                  <table className="w-full text-left">
+                    <thead>
+                      <tr className="bg-gray-950 text-white">
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                          利用タイプ
+                        </th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                          平日 最安料金
+                        </th>
+                        <th className="px-8 py-5 text-[10px] font-black uppercase tracking-widest">
+                          休日 最安料金
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      <tr>
+                        <td className="px-8 py-6">
+                          <span className="rounded-lg bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-600">
+                            REST
+                          </span>
+                          <p className="mt-2 font-black text-gray-900">休憩</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-2xl font-black text-rose-500">
+                            {hotel.restPriceMinWeekday
+                              ? `¥${hotel.restPriceMinWeekday.toLocaleString()}〜`
+                              : 'ASK'}
+                          </p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-2xl font-black text-rose-500">
+                            {hotel.restPriceMinWeekend
+                              ? `¥${hotel.restPriceMinWeekend.toLocaleString()}〜`
+                              : 'ASK'}
+                          </p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-8 py-6">
+                          <span className="rounded-lg bg-blue-50 px-3 py-1 text-xs font-black text-blue-600">
+                            STAY
+                          </span>
+                          <p className="mt-2 font-black text-gray-900">宿泊</p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-2xl font-black text-rose-500">
+                            {hotel.stayPriceMinWeekday
+                              ? `¥${hotel.stayPriceMinWeekday.toLocaleString()}〜`
+                              : 'ASK'}
+                          </p>
+                        </td>
+                        <td className="px-8 py-6">
+                          <p className="text-2xl font-black text-rose-500">
+                            {hotel.stayPriceMinWeekend
+                              ? `¥${hotel.stayPriceMinWeekend.toLocaleString()}〜`
+                              : 'ASK'}
+                          </p>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className="bg-gray-50 px-8 py-4">
+                    <p className="text-[10px] font-bold italic text-gray-400">
+                      ※料金は時期やプランにより変動する場合があります。詳細はホテルへお問い合わせください。
+                    </p>
+                  </div>
+                </div>
+              )}
             </section>
 
             <section>

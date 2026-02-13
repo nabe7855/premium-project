@@ -126,6 +126,7 @@ async function main() {
         room_count: h.roomCount ? parseInt(h.roomCount.replace(/\D/g, ''), 10) : null,
         distance_from_station: h.accessRaw,
         status: 'active',
+        price_details: h.prices,
         ...parsedPrices,
       };
 

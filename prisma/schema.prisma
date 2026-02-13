@@ -494,6 +494,7 @@ model lh_hotels {
   stay_price_min_weekday Int?
   stay_price_min_weekend Int?
   website                String?
+  price_details          Json?
 }
 
 model lh_prefectures {

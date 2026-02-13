@@ -364,6 +364,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     distanceFromStation: dbHotel.distance_from_station || '',
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
+    priceDetails: dbHotel.price_details,
     status: dbHotel.status || 'draft',
   };
 };

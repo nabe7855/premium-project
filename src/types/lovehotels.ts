@@ -27,6 +27,7 @@ export interface Hotel {
   distanceFromStation: string;
   roomCount: number;
   description?: string;
+  priceDetails?: any;
   status?: 'published' | 'unpublished' | 'draft';
 }
 
