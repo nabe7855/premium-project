@@ -6,11 +6,12 @@ import { useEffect, useState } from 'react';
 interface Post {
   id: string;
   target_site: 'kaikan' | 'kaikanwork';
-  content_type: string;
+  content_type: 'news' | 'blog';
   title: string;
   body: string;
   status: 'draft' | 'approved' | 'posted' | 'failed';
   genre?: string;
+  images?: string[];
   scheduled_at: string | null;
   created_at: string;
 }
@@ -93,6 +94,15 @@ export default function PostList({ type }: PostListProps) {
                   {post.target_site}
                 </span>
                 <span
+                  className={`rounded px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${
+                    post.content_type === 'news'
+                      ? 'bg-amber-500/20 text-amber-400'
+                      : 'bg-green-500/20 text-green-400'
+                  }`}
+                >
+                  {post.content_type === 'news' ? 'NEWS' : 'BLOG'}
+                </span>
+                <span
                   className={`rounded px-2 py-0.5 text-[10px] font-bold ${
                     post.status === 'approved'
                       ? 'bg-green-500/20 text-green-400'
@@ -118,7 +128,14 @@ export default function PostList({ type }: PostListProps) {
                 )}
               </div>
 
-              <h4 className="line-clamp-1 font-medium text-white">{post.title}</h4>
+              <div className="flex gap-4">
+                {post.images && post.images.length > 0 && (
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-lg bg-white/5">
+                    <img src={post.images[0]} alt="" className="h-full w-full object-cover" />
+                  </div>
+                )}
+                <h4 className="line-clamp-2 font-medium text-white">{post.title}</h4>
+              </div>
 
               <div className="flex items-center gap-4 text-xs text-brand-text-secondary">
                 <div className="flex items-center gap-1.5 font-mono">
