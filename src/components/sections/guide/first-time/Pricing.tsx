@@ -1,13 +1,92 @@
+import { EditableImage } from '@/components/admin/EditableImage';
+import { PricingConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
-export const Pricing: React.FC = () => {
+interface PricingProps {
+  config?: PricingConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File) => void;
+}
+
+export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
+  const data = config || {
+    imageUrl: '',
+    isVisible: true,
+  };
+
+  if (data.isVisible === false && !isEditing) return null;
+
   return (
-    <section className="bg-white py-20">
+    <section className={`bg-white py-20 ${!data.isVisible ? 'opacity-50' : ''}`}>
       <div className="container mx-auto max-w-5xl px-4">
-        <h2 className="mb-4 text-center text-3xl font-black">ご利用プランの一覧</h2>
-        <p className="mb-12 text-center text-gray-500">
-          当店一番人気の初回120分コースを推奨しております♪
-        </p>
+        <div className="mb-12 text-center">
+          {data.imageUrl ? (
+            <div className="relative mx-auto mb-4 max-w-2xl">
+              <EditableImage
+                isEditing={isEditing}
+                src={data.imageUrl}
+                alt="ご利用プランの一覧"
+                onUpload={(file) => onImageUpload?.('pricing', file)}
+                className="h-auto w-full object-contain"
+              />
+              {isEditing && (
+                <button
+                  onClick={() => onUpdate?.('pricing', 'imageUrl', '')}
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white shadow-lg"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <h2 className="mb-4 text-center text-3xl font-black">ご利用プランの一覧</h2>
+              <p className="mb-4 text-center text-gray-500">
+                当店一番人気の初回120分コースを推奨しております♪
+              </p>
+              {isEditing && (
+                <div className="mt-4">
+                  <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-stone-100 px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-stone-200">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                    画像ヘッダーを使用する
+                    <input
+                      type="file"
+                      className="hidden"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) onImageUpload?.('pricing', file);
+                      }}
+                    />
+                  </label>
+                </div>
+              )}
+            </>
+          )}
+        </div>
 
         <div className="mb-16 grid grid-cols-1 gap-8">
           {/* Main 120min Course (Focused) */}

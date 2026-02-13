@@ -151,7 +151,12 @@ export default function FirstTimePageContent({
         />
       </div>
       <div id="pricing">
-        <Pricing />
+        <Pricing
+          config={config.pricing}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
         <Options
           areas={
             slug === 'osaka'
@@ -179,7 +184,12 @@ export default function FirstTimePageContent({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      <FAQ />
+      <FAQ
+        config={config.faq}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
       <CTA />
 
       {/* Sticky Bottom CTA for Mobile */}

@@ -31,7 +31,9 @@ const SECTION_LABELS: Record<string, string> = {
   sevenReasons: '7つの理由',
   reservationFlow: 'ご利用までの流れ',
   dayFlow: 'ご予約当日の流れ',
+  pricing: 'ご利用プランの一覧',
   forbidden: '禁止事項',
+  faq: 'よくあるご質問',
 };
 
 const SECTION_ORDER = [
@@ -43,7 +45,9 @@ const SECTION_ORDER = [
   'sevenReasons',
   'reservationFlow',
   'dayFlow',
+  'pricing',
   'forbidden',
+  'faq',
 ];
 
 export default function FirstTimeManagement() {

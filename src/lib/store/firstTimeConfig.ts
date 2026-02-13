@@ -54,6 +54,16 @@ export interface ReservationFlowConfig {
   isVisible: boolean;
 }
 
+export interface FAQConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
+export interface PricingConfig {
+  imageUrl?: string;
+  isVisible: boolean;
+}
+
 export interface FirstTimeConfig {
   banner: {
     imageUrl: string;
@@ -67,6 +77,8 @@ export interface FirstTimeConfig {
   sevenReasons: SevenReasonsConfig;
   dayFlow: DayFlowConfig;
   reservationFlow: ReservationFlowConfig;
+  faq: FAQConfig;
+  pricing: PricingConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -152,6 +164,14 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     isVisible: true,
   },
   reservationFlow: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  faq: {
+    imageUrl: '',
+    isVisible: true,
+  },
+  pricing: {
     imageUrl: '',
     isVisible: true,
   },
