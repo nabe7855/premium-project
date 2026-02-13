@@ -21,7 +21,8 @@ export async function GET() {
 
     if (postError) throw postError;
 
-    // 3. ワーカーの稼働状態を判定 (直近30分以内にログがあれば稼稼働中とする)
+    // 3. ワーカーの稼働状態を判定
+    // 直近5分以内にログ（ハートビートまたは更新ボタン）があれば稼働中とする
     const latestLog = updateLogs?.[0];
     let isWorkerActive = false;
     let lastActiveAt = null;
@@ -31,7 +32,8 @@ export async function GET() {
       const lastSeen = new Date(latestLog.created_at).getTime();
       const now = new Date().getTime();
       const diffMinutes = (now - lastSeen) / (1000 * 60);
-      if (diffMinutes < 30) {
+      // 10分以内なら稼働中とみなす（ハートビートは5分間隔なので余裕を持たせる）
+      if (diffMinutes < 10) {
         isWorkerActive = true;
       }
     }
