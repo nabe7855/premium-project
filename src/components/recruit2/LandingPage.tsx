@@ -150,6 +150,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             mainHeading={config.hero.mainHeading}
             subHeading={config.hero.subHeading}
             heroImage={config.hero.heroImage}
+            stats={config.hero.stats}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('hero', key, value)}
           />
@@ -184,6 +185,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('openCast', key, value)}
             openCastImage={config.openCast.openCastImage}
+            benefits={config.openCast.benefits}
           />
         </div>
       )}
@@ -243,7 +245,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <Trust />
+        <Trust
+          config={config?.trust}
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('trust', key, value)}
+        />
       </div>
 
       {/* Achievements Section */}

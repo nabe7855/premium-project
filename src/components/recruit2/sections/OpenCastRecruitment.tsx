@@ -10,6 +10,7 @@ interface OpenCastRecruitmentProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   openCastImage?: string;
+  benefits?: { title: string; desc: string }[];
 }
 
 const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
@@ -17,6 +18,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   isEditing = false,
   onUpdate,
   openCastImage,
+  benefits,
 }) => {
   const [timeLeft, setTimeLeft] = useState(0);
 
@@ -189,134 +191,68 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                   オープンキャスト限定特典
                 </h3>
                 <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-                  {[
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">専属プロデューサー</span>
-                          <span className="inline-block">制度</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">業界経験豊富な</span>
-                          <span className="inline-block">専任担当者が、</span>
-                          <span className="inline-block">あなたの個性を</span>
-                          <span className="inline-block">見極め、</span>
-                          <span className="inline-block">最短ルートでの</span>
-                          <span className="inline-block">成功を</span>
-                          <span className="inline-block">マンツーマンで</span>
-                          <span className="inline-block">徹底サポート</span>
-                          <span className="inline-block">します。</span>
-                        </>
-                      ),
-                    },
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">最短1ヶ月で</span>
-                          <span className="inline-block">デビュー</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">実践重視の</span>
-                          <span className="inline-block">独自プログラム</span>
-                          <span className="inline-block">により、</span>
-                          <span className="inline-block">未経験からでも</span>
-                          <span className="inline-block">短期間で</span>
-                          <span className="inline-block">プロとしての</span>
-                          <span className="inline-block">自信と実力を</span>
-                          <span className="inline-block">身につけられます。</span>
-                        </>
-                      ),
-                    },
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">未経験者</span>
-                          <span className="inline-block">専用カリキュラム</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">接客の基礎から</span>
-                          <span className="inline-block">心理学まで、</span>
-                          <span className="inline-block">ゼロから</span>
-                          <span className="inline-block">プロフェッショナルを</span>
-                          <span className="inline-block">目指すための</span>
-                          <span className="inline-block">体系化された研修を</span>
-                          <span className="inline-block">ご用意しています。</span>
-                        </>
-                      ),
-                    },
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">3ヶ月間の</span>
-                          <span className="inline-block">最低保証</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">デビュー直後でも</span>
-                          <span className="inline-block">安心して</span>
-                          <span className="inline-block">働けるよう、</span>
-                          <span className="inline-block">安定した</span>
-                          <span className="inline-block">収入を保証。</span>
-                          <span className="inline-block">焦らずじっくりと</span>
-                          <span className="inline-block">実力を磨ける</span>
-                          <span className="inline-block">環境です。</span>
-                        </>
-                      ),
-                    },
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">初期費用</span>
-                          <span className="inline-block">完全無料</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">宣材写真撮影や</span>
-                          <span className="inline-block">レッスン費用など、</span>
-                          <span className="inline-block">スタートに</span>
-                          <span className="inline-block">かかる費用は</span>
-                          <span className="inline-block">すべて店舗が負担。</span>
-                          <span className="inline-block">リスクゼロで</span>
-                          <span className="inline-block">挑戦できます。</span>
-                        </>
-                      ),
-                    },
-                    {
-                      title: (
-                        <>
-                          <span className="inline-block">プロフェッショナル</span>
-                          <span className="inline-block">育成</span>
-                        </>
-                      ),
-                      desc: (
-                        <>
-                          <span className="inline-block">業界トップクラスの</span>
-                          <span className="inline-block">教育環境で、</span>
-                          <span className="inline-block">一流のホストとして</span>
-                          <span className="inline-block">必要なマインドと</span>
-                          <span className="inline-block">スキルを</span>
-                          <span className="inline-block">余すことなく</span>
-                          <span className="inline-block">伝授します。</span>
-                        </>
-                      ),
-                    },
-                  ].map((benefit, idx) => (
+                  {(
+                    benefits || [
+                      {
+                        title: '専属プロデューサー\n制度',
+                        desc: '業界経験豊富な\n専任担当者が、\nあなたの個性を\n見極め、\n最短ルートでの\n成功を\nマンツーマンで\n徹底サポート\nします。',
+                      },
+                      {
+                        title: '最短1ヶ月で\nデビュー',
+                        desc: '実践重視の\n独自プログラム\nにより、\n未経験からでも\n短期間で\nプロとしての\n自信と実力を\n身につけられます。',
+                      },
+                      {
+                        title: '未経験者\n専用カリキュラム',
+                        desc: '接客の基礎から\n心理学まで、\nゼロから\nプロフェッショナルを\n目指すための\n体系化された研修を\nご用意しています。',
+                      },
+                      {
+                        title: '3ヶ月間の\n最低保証',
+                        desc: 'デビュー直後でも\n安心して\n働けるよう、\n安定した\n収入を保証。\n焦らずじっくりと\n実力を磨ける\n環境です。',
+                      },
+                      {
+                        title: '初期費用\n完全無料',
+                        desc: '宣材写真撮影や\nレッスン費用など、\nスタートに\nかかる費用は\nすべて店舗が負担。\nリスクゼロで\n挑戦できます。',
+                      },
+                      {
+                        title: 'プロフェッショナル\n育成',
+                        desc: '業界トップクラスの\n教育環境で、\n一流のホストとして\n必要なマインドと\nスキルを\n余すことなく\n伝授します。',
+                      },
+                    ]
+                  ).map((benefit, idx) => (
                     <div
                       key={idx}
                       className="group flex flex-col items-center justify-start rounded-xl border border-orange-500/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-3 text-center backdrop-blur-sm transition-all hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)] sm:p-4"
                     >
-                      <h4 className="mb-2 break-words text-sm font-bold text-orange-500 sm:text-lg">
+                      <h4
+                        className="mb-2 whitespace-pre-wrap break-words text-sm font-bold text-orange-500 outline-none sm:text-lg"
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onBlur={(e) => {
+                          if (!onUpdate || !benefits) return;
+                          const newBenefits = [...benefits];
+                          newBenefits[idx] = {
+                            ...newBenefits[idx],
+                            title: e.currentTarget.innerText,
+                          };
+                          onUpdate('benefits', newBenefits);
+                        }}
+                      >
                         {benefit.title}
                       </h4>
-                      <p className="break-words text-[10px] leading-relaxed text-orange-300/80 sm:text-sm">
+                      <p
+                        className="whitespace-pre-wrap break-words text-[10px] leading-relaxed text-orange-300/80 outline-none sm:text-sm"
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onBlur={(e) => {
+                          if (!onUpdate || !benefits) return;
+                          const newBenefits = [...benefits];
+                          newBenefits[idx] = {
+                            ...newBenefits[idx],
+                            desc: e.currentTarget.innerText,
+                          };
+                          onUpdate('benefits', newBenefits);
+                        }}
+                      >
                         {benefit.desc}
                       </p>
                     </div>

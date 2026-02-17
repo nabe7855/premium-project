@@ -3,7 +3,17 @@
 import { motion } from 'framer-motion';
 import React from 'react';
 
-const Trust: React.FC = () => {
+interface TrustProps {
+  config?: {
+    sectionTitle?: string;
+    mainHeading?: string;
+    description?: string;
+  };
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
+}
+
+const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
   const locations = [
     {
       city: '東京本店',
@@ -102,23 +112,31 @@ const Trust: React.FC = () => {
             initial={{ scale: 0.9, opacity: 0 }}
             whileInView={{ scale: 1, opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="mb-6 font-serif text-6xl font-black tracking-widest text-amber-400 drop-shadow-lg sm:text-8xl md:text-9xl"
+            className="mb-6 font-serif text-6xl font-black tracking-widest text-amber-400 outline-none drop-shadow-lg sm:text-8xl md:text-9xl"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('sectionTitle', e.currentTarget.innerText)}
           >
-            8 YEARS
+            {config?.sectionTitle || '8 YEARS'}
           </motion.h2>
-          <h3 className="mb-8 font-serif text-xl font-bold leading-relaxed text-white sm:text-3xl md:text-4xl">
-            私たちは「刹那的な稼ぎ」を提供しません。
-            <br className="hidden sm:block" />
-            「一生モノの価値」を共に創るパートナーです。
+          <h3
+            className="mb-8 whitespace-pre-wrap font-serif text-xl font-bold leading-relaxed text-white outline-none sm:text-3xl md:text-4xl"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('mainHeading', e.currentTarget.innerText)}
+          >
+            {config?.mainHeading ||
+              '私たちは「刹那的な稼ぎ」を提供しません。\n「一生モノの価値」を共に創るパートナーです。'}
           </h3>
           <div className="mx-auto mb-8 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
-          <p className="mx-auto max-w-3xl text-base leading-loose text-slate-300 sm:text-lg">
-            単に高収入を得るだけの場所なら、他にあるかもしれません。
-            <br />
-            しかし、私たちが8年間一貫して追求してきたのは、
-            <br className="hidden sm:block" />
-            未経験の方がここで得た経験をその後の人生を支える
-            <strong className="text-white">「確かなスキルと自信」</strong>に変えていただくことです。
+          <p
+            className="mx-auto max-w-3xl whitespace-pre-wrap text-base leading-loose text-slate-300 outline-none sm:text-lg"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
+          >
+            {config?.description ||
+              '単に高収入を得るだけの場所なら、他にあるかもしれません。\nしかし、私たちが8年間一貫して追求してきたのは、\n未経験の方がここで得た経験をその後の人生を支える\n「確かなスキルと自信」に変えていただくことです。'}
           </p>
         </motion.div>
 

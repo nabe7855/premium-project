@@ -11,6 +11,7 @@ interface HeroCollageProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   heroImage?: string;
+  stats?: { label: string; val: string }[];
 }
 
 const HeroCollage: React.FC<HeroCollageProps> = ({
@@ -20,6 +21,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   isEditing = false,
   onUpdate,
   heroImage,
+  stats,
 }) => {
   // ContentEditable handling helper
   const handleInput = (
@@ -191,21 +193,45 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
           variants={itemVariants}
           className="mx-auto mb-10 grid w-full max-w-5xl grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3"
         >
-          {[
-            { label: '割引', val: '全て店舗負担' },
-            { label: '勤務時間', val: '自由出勤' },
-            { label: 'お酒/ノルマ', val: '一切なし' },
-            { label: '全額日払い', val: '当日OK' },
-            { label: '副業・兼業', val: '大歓迎' },
-            { label: '移籍・掛け持ちOK', val: '経験者優遇' },
-          ].map((item, idx) => (
+          {(
+            stats || [
+              { label: '割引', val: '全て店舗負担' },
+              { label: '勤務時間', val: '自由出勤' },
+              { label: 'お酒/ノルマ', val: '一切なし' },
+              { label: '全額日払い', val: '当日OK' },
+              { label: '副業・兼業', val: '大歓迎' },
+              { label: '移籍・掛け持ちOK', val: '経験者優遇' },
+            ]
+          ).map((item, idx) => (
             <div
               key={idx}
               className="group relative overflow-hidden rounded-xl border border-slate-700/50 bg-slate-900/60 p-4 backdrop-blur-md transition-all hover:border-amber-500/50 sm:p-6"
             >
               <div className="relative z-10">
-                <div className="mb-2 text-xs text-slate-400 sm:text-sm">{item.label}</div>
-                <div className="whitespace-nowrap text-xl font-bold text-amber-500 sm:text-2xl md:text-3xl">
+                <div
+                  className="mb-2 text-xs text-slate-400 outline-none sm:text-sm"
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    if (!onUpdate || !stats) return;
+                    const newStats = [...stats];
+                    newStats[idx] = { ...newStats[idx], label: e.currentTarget.innerText };
+                    onUpdate('stats', newStats);
+                  }}
+                >
+                  {item.label}
+                </div>
+                <div
+                  className="whitespace-nowrap text-xl font-bold text-amber-500 outline-none sm:text-2xl md:text-3xl"
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    if (!onUpdate || !stats) return;
+                    const newStats = [...stats];
+                    newStats[idx] = { ...newStats[idx], val: e.currentTarget.innerText };
+                    onUpdate('stats', newStats);
+                  }}
+                >
                   {item.val}
                 </div>
               </div>
