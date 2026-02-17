@@ -1,42 +1,42 @@
-import { Calendar, CreditCard, Home, MapPin, Phone, Users } from 'lucide-react';
+import { CalendarCheck, Camera, HelpCircle, MessageCircle, Sparkles, Users } from 'lucide-react';
 import React from 'react';
 
 const MENU_ITEMS = [
   {
-    ja: 'ホーム',
-    en: 'HOME',
-    href: '#hero',
-    icon: Home,
-  },
-  {
-    ja: 'スケジュール',
-    en: 'SCHEDULE',
-    href: '#cast',
-    icon: Calendar,
-  },
-  {
-    ja: 'セラピスト',
+    ja: 'セラピスト一覧',
     en: 'THERAPIST',
     href: '#cast',
     icon: Users,
   },
   {
-    ja: 'システム',
-    en: 'SYSTEM',
-    href: '#price',
-    icon: CreditCard,
+    ja: '当日出勤',
+    en: 'TODAY',
+    href: '#cast',
+    icon: CalendarCheck,
   },
   {
-    ja: 'アクセス',
-    en: 'ACCESS',
-    href: '#footer',
-    icon: MapPin,
+    ja: 'イベント',
+    en: 'EVENT',
+    href: '#campaign',
+    icon: Sparkles,
   },
   {
-    ja: 'ご予約',
-    en: 'RESERVATION',
-    href: '#hero',
-    icon: Phone,
+    ja: '写メ日記',
+    en: 'DIARY',
+    href: '#diary',
+    icon: Camera,
+  },
+  {
+    ja: '口コミ',
+    en: 'REVIEW',
+    href: '#review',
+    icon: MessageCircle,
+  },
+  {
+    ja: 'QA',
+    en: 'Q&A',
+    href: '#faq',
+    icon: HelpCircle,
   },
 ];
 
