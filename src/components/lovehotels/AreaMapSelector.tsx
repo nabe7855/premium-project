@@ -94,25 +94,43 @@ const AreaMapSelector: React.FC<AreaMapSelectorProps> = ({ prefectureId, hotelCo
               <svg viewBox="0 0 498 526" className="h-auto w-full drop-shadow-xl">
                 <style>{`
                   .region-path {
-                    stroke: #FFFFFF;
-                    stroke-width: 1.5;
+                    stroke: rgba(255, 255, 255, 0.8);
+                    stroke-width: 1;
+                    stroke-linejoin: round;
                     transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
                     cursor: pointer;
-                    opacity: 0.9;
                   }
                   .region-path:hover {
-                    opacity: 1;
-                    stroke-width: 3;
-                    filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.15));
+                    stroke-width: 2.5;
+                    stroke: #FFFFFF;
+                    filter: drop-shadow(0 0 12px rgba(225, 29, 72, 0.3));
+                    transform: scale(1.01);
+                    z-index: 10;
+                  }
+                  .region-group:hover .region-label {
+                    fill: #E11D48;
+                    transform: scale(1.1);
                   }
                   .region-label {
-                    font-family: 'Noto Sans JP', sans-serif;
+                    font-family: 'Inter', 'Noto Sans JP', sans-serif;
                     font-size: 16px;
                     font-weight: 900;
                     fill: #1F2937;
                     pointer-events: none;
                     user-select: none;
-                    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+                    paint-order: stroke;
+                    stroke: #FFFFFF;
+                    stroke-width: 3px;
+                    transition: all 0.3s ease;
+                  }
+                  .hotel-count-label {
+                    font-family: 'Inter', sans-serif;
+                    font-size: 13px;
+                    font-weight: 800;
+                    fill: #E11D48;
+                    paint-order: stroke;
+                    stroke: #FFFFFF;
+                    stroke-width: 2.5px;
                   }
                 `}</style>
 
@@ -126,7 +144,7 @@ const AreaMapSelector: React.FC<AreaMapSelectorProps> = ({ prefectureId, hotelCo
                       onMouseEnter={() => setHoveredAreaId(area.id)}
                       onMouseLeave={() => setHoveredAreaId(null)}
                       onClick={() => handleAreaSelect(area.id)}
-                      className="group"
+                      className="region-group"
                     >
                       <path
                         d={area.d}
@@ -136,6 +154,9 @@ const AreaMapSelector: React.FC<AreaMapSelectorProps> = ({ prefectureId, hotelCo
                             : area.color
                         }
                         className="region-path"
+                        style={{
+                          transformOrigin: 'center center',
+                        }}
                       />
                       <text
                         x={area.labelX}
@@ -148,11 +169,9 @@ const AreaMapSelector: React.FC<AreaMapSelectorProps> = ({ prefectureId, hotelCo
                       {(isHovered || (step === 'city' && isSelected)) && (
                         <text
                           x={area.labelX}
-                          y={area.labelY + 20}
+                          y={area.labelY + 22}
                           textAnchor="middle"
-                          fill="#E11D48"
-                          fontSize="12"
-                          fontWeight="900"
+                          className="hotel-count-label"
                         >
                           {getDisplayAreaCount(area.id)} Hotels
                         </text>

@@ -63,7 +63,21 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
   useEffect(() => {
     if (initialData) {
       setGenre(initialData.genre || 'なし');
-      setScheduledDate(initialData.scheduled_at ? initialData.scheduled_at.slice(0, 16) : '');
+
+      // タイムゾーンを考慮して、UTC文字列をローカルの datetime-local 形式に変換
+      if (initialData.scheduled_at) {
+        const d = new Date(initialData.scheduled_at);
+        // ローカル時間に変換して YYYY-MM-DDTHH:mm 形式にする
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        setScheduledDate(`${year}-${month}-${day}T${hours}:${minutes}`);
+      } else {
+        setScheduledDate('');
+      }
+
       setImageUrl(initialData.images?.[0] || null);
       setGeneratedPost({
         title: initialData.title,
@@ -164,7 +178,7 @@ export default function PostGenerator({ initialData, onCancel }: PostGeneratorPr
         genre: siteType === 'kaikan' ? genre : null,
         scheduled_at:
           (siteType === 'kaikan' || siteType === 'kaikanwork_news') && scheduledDate
-            ? scheduledDate
+            ? new Date(scheduledDate).toISOString()
             : null,
         status: isApproved ? 'approved' : 'draft',
         images: imageUrl ? [imageUrl] : [],

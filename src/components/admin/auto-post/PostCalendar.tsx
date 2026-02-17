@@ -25,7 +25,7 @@ export default function PostCalendar({ onEdit }: PostCalendarProps) {
     setIsLoading(true);
     try {
       // 全ての投稿を取得してカレンダーにマッピング
-      const response = await fetch(`/api/ai/get-posts?status=all`);
+      const response = await fetch(`/api/ai/get-posts`);
       if (!response.ok) throw new Error('取得に失敗しました');
       const data = await response.json();
       setPosts(data);

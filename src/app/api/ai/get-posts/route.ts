@@ -12,7 +12,7 @@ export async function GET(req: Request) {
       .order('scheduled_at', { ascending: true })
       .order('created_at', { ascending: false });
 
-    if (status) {
+    if (status && status !== 'all') {
       if (status === 'scheduled') {
         query = query.in('status', ['approved', 'draft']);
       } else if (status === 'history') {
