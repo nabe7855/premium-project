@@ -1,3 +1,5 @@
+'use client';
+
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { Camera, ChevronDown, Menu, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
