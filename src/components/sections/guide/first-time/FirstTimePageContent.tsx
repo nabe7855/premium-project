@@ -196,25 +196,6 @@ export default function FirstTimePageContent({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-
-      {/* Sticky Bottom CTA for Mobile */}
-      {!isEditing && (
-        <div className="fixed bottom-24 left-4 right-4 z-50 md:hidden">
-          <a
-            href="https://line.me"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex animate-bounce items-center justify-center gap-2 rounded-full border-2 border-white bg-[#06C755] py-4 text-lg font-bold text-white shadow-xl"
-          >
-            <img
-              src="https://cdn-icons-png.flaticon.com/512/124/124034.png"
-              alt="LINE"
-              className="h-6 w-6"
-            />
-            LINEで無料相談・予約
-          </a>
-        </div>
-      )}
     </div>
   );
 }

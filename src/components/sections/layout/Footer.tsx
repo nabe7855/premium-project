@@ -1,7 +1,7 @@
 'use client';
 
 import { Calendar, CreditCard, Heart, MessageCircle, Phone } from 'lucide-react';
-import { useParams } from 'next/navigation';
+import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 interface FooterProps {
@@ -10,11 +10,15 @@ interface FooterProps {
 
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const params = useParams();
-  const slug = params?.slug ?? 'tokyo'; // fallback
+  const pathname = usePathname();
+  const slug = params?.slug ?? 'tokyo';
 
   const [isMounted, setIsMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [isBusinessHours, setIsBusinessHours] = useState(true);
+
+  // 初めての方へページかどうかを判定
+  const isFirstTimePage = pathname?.includes('/first-time');
 
   useEffect(() => {
     setIsMounted(true);
@@ -36,6 +40,13 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     return () => clearInterval(interval);
   }, []);
 
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
   if (!isMounted) return null;
 
   const footerItems = [
@@ -43,14 +54,14 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'schedule',
       label: '出勤',
       icon: Calendar,
-      href: `/store/${slug}/schedule/schedule`, // ✅ 修正
+      href: `/store/${slug}/schedule/schedule`,
       ariaLabel: '今日明日の出勤スケジュール確認',
     },
     {
       id: 'pricing',
       label: '料金',
       icon: CreditCard,
-      href: `/store/${slug}/price`, // ✅ 修正
+      href: `/store/${slug}/price`,
       ariaLabel: '料金システム・予算確認',
       badge: isFirstVisit ? '初' : null,
     },
@@ -76,7 +87,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'cast',
       label: '推し達',
       icon: Heart,
-      href: `/store/${slug}/cast-list?sort=popular`, // ✅ 修正
+      href: `/store/${slug}/cast-list?sort=popular`,
       ariaLabel: '人気キャスト一覧・お気に入り確認',
     },
   ];
@@ -91,6 +102,28 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     >
       <meta itemProp="name" content="ストロベリーボーイズ" />
       <meta itemProp="telephone" content="050-5212-5818" />
+
+      {/* ✅ 1段目（上段）: 初めての方へページのみ表示 */}
+      {isFirstTimePage && (
+        <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 pb-2 md:hidden">
+          <a
+            href="https://line.me"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#06C755] py-3 text-sm font-bold text-white shadow-md transition-transform active:scale-95"
+          >
+            <MessageCircle size={18} fill="currentColor" />
+            <span>LINEで無料相談・予約</span>
+          </a>
+          <button
+            onClick={scrollToTop}
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800 text-white shadow-md transition-transform active:scale-95"
+            aria-label="ページトップに戻る"
+          >
+            <span className="text-xl font-bold">↑</span>
+          </button>
+        </div>
+      )}
 
       <nav className="footer-nav__container">
         <ul className="footer-nav__list">
