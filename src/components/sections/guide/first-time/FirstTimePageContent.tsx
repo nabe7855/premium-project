@@ -77,7 +77,7 @@ export default function FirstTimePageContent({
   }
 
   return (
-    <div className={`${zenMaruGothic.className} min-h-screen bg-[#FFFAFA] pt-20 md:pt-24`}>
+    <div className={`${zenMaruGothic.className} min-h-screen bg-[#FFFAFA]`}>
       <style
         dangerouslySetInnerHTML={{
           __html: `

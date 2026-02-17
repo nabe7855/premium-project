@@ -27,13 +27,13 @@ export const FirstTimeBanner: React.FC<FirstTimeBannerProps> = ({
   return (
     <section className={`w-full bg-white ${!data.isVisible ? 'opacity-50' : ''}`}>
       <div className="container mx-auto px-0 md:px-4">
-        <div className="relative aspect-[16/5] w-full overflow-hidden shadow-lg md:rounded-2xl">
+        <div className="relative w-full overflow-hidden md:rounded-2xl">
           <EditableImage
             isEditing={isEditing}
             src={data.imageUrl}
             alt="初めての方限定特典 特別割引キャンペーン"
             onUpload={(file) => onImageUpload?.('banner', file)}
-            className="h-full w-full object-cover"
+            className="block h-auto w-full"
           />
         </div>
       </div>
