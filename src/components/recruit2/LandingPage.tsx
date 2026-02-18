@@ -90,6 +90,7 @@ export interface LandingPageConfig {
     metricsValue?: string;
     heading?: string;
     description?: string;
+    features?: { title: string; desc: string }[];
   };
   ideal?: {
     isVisible?: boolean;
@@ -542,6 +543,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           onUpdate={(key, value) => onUpdate?.('branding', key, value)}
           heading={config?.branding?.heading}
           description={config?.branding?.description}
+          features={config?.branding?.features}
         />
       </div>
 

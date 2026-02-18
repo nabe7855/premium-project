@@ -3,11 +3,17 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+interface Feature {
+  title: string;
+  desc: string;
+}
+
 interface BrandingSupportProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   heading?: string;
   description?: string;
+  features?: Feature[];
 }
 
 const DEFAULT_HEADING =
@@ -16,32 +22,40 @@ const DEFAULT_HEADING =
 const DEFAULT_DESCRIPTION =
   '今の環境に満足していますか？あなたの実績を正当に評価し、前職を上回る最高の条件を約束します。福岡完全新規店だからこそ可能な、しがらみのないリスタートを。';
 
+const DEFAULT_FEATURES: Feature[] = [
+  {
+    title: '最大級の還元率と移籍ボーナス',
+    desc: '前職の給与・指名数を考慮。移籍に伴う準備金制度あり。あなたの実績を『数字』で100%評価します。',
+  },
+  {
+    title: '芸能・インフルエンサー特化サポート',
+    desc: '完全顔出しなし、SNS対策、アリバイ対策完備。活動に支障をきたさない徹底したプライバシー管理を約束します。',
+  },
+  {
+    title: '富裕層・V.I.P客限定の集客力',
+    desc: '業界屈指のブランド力で、客層の良さは折り紙付き。無駄な待機を減らし、短時間で効率よく稼げる環境です。',
+  },
+  {
+    title: '次世代へのキャリアデザイン',
+    desc: '店舗運営への参画、独立支援、あるいは芸能活動のバックアップ。単なる『キャスト』で終わらせない、次のステージへの投資を行います。',
+  },
+];
+
 const BrandingSupport: React.FC<BrandingSupportProps> = ({
   isEditing = false,
   onUpdate,
   heading = DEFAULT_HEADING,
   description = DEFAULT_DESCRIPTION,
+  features,
 }) => {
   const navigate = useNavigate();
+  const displayFeatures = features ?? DEFAULT_FEATURES;
 
-  const features = [
-    {
-      title: '最大級の還元率と移籍ボーナス',
-      desc: '前職の給与・指名数を考慮。移籍に伴う準備金制度あり。あなたの実績を『数字』で100%評価します。',
-    },
-    {
-      title: '芸能・インフルエンサー特化サポート',
-      desc: '完全顔出しなし、SNS対策、アリバイ対策完備。活動に支障をきたさない徹底したプライバシー管理を約束します。',
-    },
-    {
-      title: '富裕層・V.I.P客限定の集客力',
-      desc: '業界屈指のブランド力で、客層の良さは折り紙付き。無駄な待機を減らし、短時間で効率よく稼げる環境です。',
-    },
-    {
-      title: '次世代へのキャリアデザイン',
-      desc: '店舗運営への参画、独立支援、あるいは芸能活動のバックアップ。単なる『キャスト』で終わらせない、次のステージへの投資を行います。',
-    },
-  ];
+  const handleFeatureUpdate = (idx: number, field: 'title' | 'desc', value: string) => {
+    if (!onUpdate) return;
+    const updated = displayFeatures.map((f, i) => (i === idx ? { ...f, [field]: value } : f));
+    onUpdate('features', updated);
+  };
 
   return (
     <section className="relative overflow-hidden bg-black py-24 text-white">
@@ -89,13 +103,35 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
           )}
 
           <div className="grid grid-cols-1 gap-8 text-left md:grid-cols-2">
-            {features.map((f, i) => (
+            {displayFeatures.map((f, i) => (
               <div
                 key={i}
                 className="group rounded-xl border border-white/10 bg-white/5 p-8 backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10"
               >
-                <h4 className="mb-4 font-serif text-xl text-amber-50">{f.title}</h4>
-                <p className="text-base font-light leading-relaxed text-slate-400">{f.desc}</p>
+                {isEditing ? (
+                  <h4
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleFeatureUpdate(i, 'title', e.currentTarget.innerText)}
+                    className="mb-4 cursor-text rounded font-serif text-xl text-amber-50 outline-none hover:bg-white/5"
+                  >
+                    {f.title}
+                  </h4>
+                ) : (
+                  <h4 className="mb-4 font-serif text-xl text-amber-50">{f.title}</h4>
+                )}
+                {isEditing ? (
+                  <p
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleFeatureUpdate(i, 'desc', e.currentTarget.innerText)}
+                    className="cursor-text rounded text-base font-light leading-relaxed text-slate-400 outline-none hover:bg-white/5"
+                  >
+                    {f.desc}
+                  </p>
+                ) : (
+                  <p className="text-base font-light leading-relaxed text-slate-400">{f.desc}</p>
+                )}
               </div>
             ))}
           </div>
