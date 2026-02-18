@@ -5,9 +5,14 @@ import React from 'react';
 
 interface TrustProps {
   config?: {
+    isVisible?: boolean;
     sectionTitle?: string;
     mainHeading?: string;
     description?: string;
+    pillars?: Array<{ title: string; sub: string; desc: string }>;
+    statsHeaderTitle?: string;
+    statsHeaderDesc?: string;
+    stats?: Array<{ label: string; value: string; unit: string; desc: string }>;
   };
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
@@ -32,40 +37,37 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
     },
   ];
 
-  const pillars = [
+  const pillarIcons = [
+    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
+    </svg>,
+    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M9 21c0 .5.5 1 1 1h4c.55 0 1-.5 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
+    </svg>,
+    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm6 10H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V17z" />
+    </svg>,
+  ];
+
+  const pillars = config?.pillars || [
     {
       title: '盤石な土台',
       sub: '創業8年の信頼',
       desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
-      icon: (
-        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
-        </svg>
-      ),
     },
     {
       title: '能力の開花',
       sub: '徹底した教育サポート',
       desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
-      icon: (
-        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M9 21c0 .5.5 1 1 1h4c.55 0 1-.5 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
-        </svg>
-      ),
     },
     {
       title: '継続的な成功',
       sub: '個人の価値を資産へ',
       desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
-      icon: (
-        <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm6 10H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V17z" />
-        </svg>
-      ),
     },
   ];
 
-  const stats = [
+  const stats = config?.stats || [
     {
       label: '継続年数',
       value: '8',
@@ -152,13 +154,42 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
               className="group relative flex flex-col items-center rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-sm transition-all hover:border-amber-500/50 hover:bg-white/10 hover:shadow-2xl hover:shadow-amber-900/20"
             >
               <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-slate-800 to-slate-900 shadow-xl ring-1 ring-white/10 transition-transform duration-500 group-hover:scale-110 group-hover:ring-amber-500/50">
-                {pillar.icon}
+                {pillarIcons[idx % pillarIcons.length]}
               </div>
-              <div className="mb-2 text-xs font-bold uppercase tracking-widest text-amber-400">
+              <div
+                className="mb-2 text-xs font-bold uppercase tracking-widest text-amber-400 outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  const newPillars = [...pillars];
+                  newPillars[idx].sub = e.currentTarget.innerText;
+                  onUpdate?.('pillars', newPillars);
+                }}
+              >
                 {pillar.sub}
               </div>
-              <h4 className="mb-4 font-serif text-2xl font-bold text-white">{pillar.title}</h4>
-              <p className="text-sm leading-relaxed text-slate-400 group-hover:text-slate-200">
+              <h4
+                className="mb-4 font-serif text-2xl font-bold text-white outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  const newPillars = [...pillars];
+                  newPillars[idx].title = e.currentTarget.innerText;
+                  onUpdate?.('pillars', newPillars);
+                }}
+              >
+                {pillar.title}
+              </h4>
+              <p
+                className="text-sm leading-relaxed text-slate-400 outline-none group-hover:text-slate-200"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  const newPillars = [...pillars];
+                  newPillars[idx].desc = e.currentTarget.innerText;
+                  onUpdate?.('pillars', newPillars);
+                }}
+              >
                 {pillar.desc}
               </p>
             </motion.div>
@@ -172,10 +203,22 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           viewport={{ once: true }}
           className="mb-16 text-center"
         >
-          <h3 className="mb-4 font-serif text-3xl font-bold text-white sm:text-5xl">
-            なぜ、8年も選ばれ続けるのか
+          <h3
+            className="mb-4 font-serif text-3xl font-bold text-white outline-none sm:text-5xl"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('statsHeaderTitle', e.currentTarget.innerText)}
+          >
+            {config?.statsHeaderTitle || 'なぜ、8年も選ばれ続けるのか'}
           </h3>
-          <p className="text-slate-400">数字が証明する、私たちの実績。</p>
+          <p
+            className="text-slate-400 outline-none"
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('statsHeaderDesc', e.currentTarget.innerText)}
+          >
+            {config?.statsHeaderDesc || '数字が証明する、私たちの実績。'}
+          </p>
         </motion.div>
 
         {/* 4. Evidence Data Grid */}
@@ -194,18 +237,54 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
               viewport={{ once: true }}
               className="relative overflow-hidden rounded-xl border border-white/10 bg-white p-6 shadow-lg sm:p-8"
             >
-              <div className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <div
+                className="mb-2 text-xs font-bold uppercase tracking-wider text-slate-500 outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  const newStats = [...stats];
+                  newStats[idx].label = e.currentTarget.innerText;
+                  onUpdate?.('stats', newStats);
+                }}
+              >
                 {stat.label}
               </div>
               <div className="mb-3 flex items-baseline gap-1">
-                <span className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-black text-transparent md:text-5xl">
+                <span
+                  className="bg-gradient-to-br from-slate-900 to-slate-700 bg-clip-text font-serif text-4xl font-black text-transparent outline-none md:text-5xl"
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    const newStats = [...stats];
+                    newStats[idx].value = e.currentTarget.innerText;
+                    onUpdate?.('stats', newStats);
+                  }}
+                >
                   {stat.value}
                 </span>
-                <span className="font-serif text-sm font-bold text-amber-600 md:text-lg">
+                <span
+                  className="font-serif text-sm font-bold text-amber-600 outline-none md:text-lg"
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    const newStats = [...stats];
+                    newStats[idx].unit = e.currentTarget.innerText;
+                    onUpdate?.('stats', newStats);
+                  }}
+                >
                   {stat.unit}
                 </span>
               </div>
-              <p className="text-xs font-medium leading-relaxed text-slate-600 md:text-sm">
+              <p
+                className="text-xs font-medium leading-relaxed text-slate-600 outline-none md:text-sm"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  const newStats = [...stats];
+                  newStats[idx].desc = e.currentTarget.innerText;
+                  onUpdate?.('stats', newStats);
+                }}
+              >
                 {stat.desc}
               </p>
               {/* Highlight Deco */}
