@@ -120,17 +120,33 @@ const PROFILES: CastProfile[] = [
 ];
 
 interface AchievementsAndLifestyleProps {
+  isVisible?: boolean;
+  heading?: string;
+  subHeading?: string;
+  description?: string;
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   castImages?: Record<string, string>;
 }
 
 const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
+  isVisible = true,
+  heading = '理想を形にする、実績のカタチ。',
+  subHeading = '「なりたい自分」を叶える1日',
+  description = '単なる仕事ではありません。理想のライフスタイルを実現するためのルーティン。<br class="hidden md:block" />あなたのステージに合わせた、リアルなシミュレーションをご覧ください。',
   isEditing = false,
   onUpdate,
   castImages,
 }) => {
   const [activeProfile, setActiveProfile] = useState<CastProfile>(PROFILES[0]);
+
+  if (!isVisible && !isEditing) return null;
+
+  const handleInput = (key: string, value: any) => {
+    if (onUpdate) {
+      onUpdate(key, value);
+    }
+  };
 
   const handleUpload = (id: string) => (file: File) => {
     if (onUpdate) onUpdate(id, file);
@@ -166,17 +182,48 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
           viewport={{ once: true }}
           className="mb-12 text-center md:mb-20"
         >
-          <h1 className="mb-4 font-serif text-3xl font-bold leading-tight tracking-wide text-white md:text-5xl md:tracking-wider">
-            理想を形にする、実績のカタチ。
-          </h1>
-          <p className="mb-2 text-lg font-bold text-amber-500 md:text-2xl">
-            「なりたい自分」を叶える1日
-          </p>
-          <p className="mx-auto max-w-2xl text-sm text-slate-400 md:text-base">
-            単なる仕事ではありません。理想のライフスタイルを実現するためのルーティン。
-            <br className="hidden md:block" />
-            あなたのステージに合わせた、リアルなシミュレーションをご覧ください。
-          </p>
+          {isEditing ? (
+            <h1
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
+              className="mb-4 cursor-text rounded font-serif text-3xl font-bold leading-tight tracking-wide text-white outline-none hover:bg-white/5 md:text-5xl md:tracking-wider"
+            >
+              {heading}
+            </h1>
+          ) : (
+            <h1 className="mb-4 font-serif text-3xl font-bold leading-tight tracking-wide text-white md:text-5xl md:tracking-wider">
+              {heading}
+            </h1>
+          )}
+
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('subHeading', e.currentTarget.innerText)}
+              className="mb-2 cursor-text rounded text-lg font-bold text-amber-500 outline-none hover:bg-white/5 md:text-2xl"
+            >
+              {subHeading}
+            </p>
+          ) : (
+            <p className="mb-2 text-lg font-bold text-amber-500 md:text-2xl">{subHeading}</p>
+          )}
+
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('description', e.currentTarget.innerHTML)}
+              className="mx-auto max-w-2xl cursor-text rounded text-sm text-slate-400 outline-none hover:bg-white/5 md:text-base"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          ) : (
+            <p
+              className="mx-auto max-w-2xl text-sm text-slate-400 md:text-base"
+              dangerouslySetInnerHTML={{ __html: description }}
+            />
+          )}
 
           <div className="mt-8 flex justify-center md:mt-12">
             <motion.div

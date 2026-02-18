@@ -65,6 +65,9 @@ export interface LandingPageConfig {
   achievements?: {
     castImages?: Record<string, string>;
     isVisible?: boolean;
+    heading?: string;
+    subHeading?: string;
+    description?: string;
   };
   comic?: {
     slides?: any[];
@@ -313,8 +316,18 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </div>
           )}
           <AchievementsAndLifestyle
+            isVisible={config?.achievements?.isVisible}
+            heading={config?.achievements?.heading}
+            subHeading={config?.achievements?.subHeading}
+            description={config?.achievements?.description}
             isEditing={isEditing}
-            onUpdate={(key, value) => onUpdate?.('achievements', `castImages.${key}`, value)}
+            onUpdate={(key, value) => {
+              if (['heading', 'subHeading', 'description'].includes(key)) {
+                onUpdate?.('achievements', key, value);
+              } else {
+                onUpdate?.('achievements', `castImages.${key}`, value);
+              }
+            }}
             castImages={config?.achievements?.castImages}
           />
         </div>
