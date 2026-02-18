@@ -82,6 +82,21 @@ export interface LandingPageConfig {
   };
   comparison?: {
     isVisible?: boolean;
+    heading?: string;
+    description?: string;
+    ourStoreLabel?: string;
+    ourStoreSub?: string;
+    storeALabel?: string;
+    storeASub?: string;
+    storeBLabel?: string;
+    storeBSub?: string;
+    features?: {
+      label: string;
+      us: string;
+      otherA: string;
+      otherB: string;
+    }[];
+    footnote?: string;
   };
   branding?: {
     images?: Record<string, string>;
@@ -461,7 +476,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <Comparison />
+        <Comparison
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('comparison', key, value)}
+          {...config?.comparison}
+        />
       </div>
 
       {/* Check Sheet Section */}
