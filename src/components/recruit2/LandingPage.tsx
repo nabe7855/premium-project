@@ -68,6 +68,7 @@ export interface LandingPageConfig {
     heading?: string;
     subHeading?: string;
     description?: string;
+    profiles?: any[];
   };
   comic?: {
     slides?: any[];
@@ -322,12 +323,13 @@ const LandingPage: React.FC<LandingPageProps> = ({
             description={config?.achievements?.description}
             isEditing={isEditing}
             onUpdate={(key, value) => {
-              if (['heading', 'subHeading', 'description'].includes(key)) {
+              if (['heading', 'subHeading', 'description', 'profiles'].includes(key)) {
                 onUpdate?.('achievements', key, value);
               } else {
                 onUpdate?.('achievements', `castImages.${key}`, value);
               }
             }}
+            profiles={config?.achievements?.profiles}
             castImages={config?.achievements?.castImages}
           />
         </div>

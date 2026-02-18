@@ -126,6 +126,7 @@ interface AchievementsAndLifestyleProps {
   description?: string;
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
+  profiles?: CastProfile[];
   castImages?: Record<string, string>;
 }
 
@@ -136,13 +137,40 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
   description = '単なる仕事ではありません。理想のライフスタイルを実現するためのルーティン。<br class="hidden md:block" />あなたのステージに合わせた、リアルなシミュレーションをご覧ください。',
   isEditing = false,
   onUpdate,
+  profiles: incomingProfiles,
   castImages,
 }) => {
-  const [activeProfile, setActiveProfile] = useState<CastProfile>(PROFILES[0]);
+  const displayProfiles = incomingProfiles || PROFILES;
+  const [activeProfileId, setActiveProfileId] = useState<string>(displayProfiles[0].id);
+
+  const activeProfile = displayProfiles.find((p) => p.id === activeProfileId) || displayProfiles[0];
+  const activeProfileIdx = displayProfiles.findIndex((p) => p.id === activeProfileId);
+  const safeIdx = activeProfileIdx === -1 ? 0 : activeProfileIdx;
 
   if (!isVisible && !isEditing) return null;
 
-  const handleInput = (key: string, value: any) => {
+  const handleProfileUpdate = (idx: number, key: string, value: any) => {
+    if (!onUpdate) return;
+    const newProfiles = [...displayProfiles];
+    if (key.includes('.')) {
+      const [parent, child] = key.split('.');
+      newProfiles[idx] = {
+        ...newProfiles[idx],
+        [parent]: {
+          ...(newProfiles[idx] as any)[parent],
+          [child]: value,
+        },
+      };
+    } else {
+      newProfiles[idx] = {
+        ...newProfiles[idx],
+        [key]: value,
+      };
+    }
+    onUpdate('profiles', newProfiles);
+  };
+
+  const handleSectionUpdate = (key: string, value: any) => {
     if (onUpdate) {
       onUpdate(key, value);
     }
@@ -186,7 +214,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
             <h1
               contentEditable
               suppressContentEditableWarning
-              onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
+              onBlur={(e) => handleSectionUpdate('heading', e.currentTarget.innerText)}
               className="mb-4 cursor-text rounded font-serif text-3xl font-bold leading-tight tracking-wide text-white outline-none hover:bg-white/5 md:text-5xl md:tracking-wider"
             >
               {heading}
@@ -201,7 +229,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
             <p
               contentEditable
               suppressContentEditableWarning
-              onBlur={(e) => handleInput('subHeading', e.currentTarget.innerText)}
+              onBlur={(e) => handleSectionUpdate('subHeading', e.currentTarget.innerText)}
               className="mb-2 cursor-text rounded text-lg font-bold text-amber-500 outline-none hover:bg-white/5 md:text-2xl"
             >
               {subHeading}
@@ -214,7 +242,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
             <p
               contentEditable
               suppressContentEditableWarning
-              onBlur={(e) => handleInput('description', e.currentTarget.innerHTML)}
+              onBlur={(e) => handleSectionUpdate('description', e.currentTarget.innerHTML)}
               className="mx-auto max-w-2xl cursor-text rounded text-sm text-slate-400 outline-none hover:bg-white/5 md:text-base"
               dangerouslySetInnerHTML={{ __html: description }}
             />
@@ -239,17 +267,35 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
         {/* Profile Tabs */}
         <div className="mb-12 overflow-x-auto md:mb-16">
           <div className="flex justify-center gap-3 px-4 md:flex-wrap md:px-0">
-            {PROFILES.map((p) => (
+            {displayProfiles.map((p) => (
               <button
                 key={p.id}
-                onClick={() => setActiveProfile(p)}
+                onClick={() => setActiveProfileId(p.id)}
                 className={`whitespace-nowrap rounded-full border px-4 py-2.5 text-sm font-bold transition-all md:px-6 md:py-3 md:text-base ${
                   activeProfile.id === p.id
                     ? 'border-amber-600 bg-amber-600 text-white shadow-lg shadow-amber-900/40'
                     : 'border-slate-800 bg-slate-900 text-slate-400 hover:border-slate-600'
                 }`}
               >
-                {p.name}
+                {isEditing ? (
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) =>
+                      handleProfileUpdate(
+                        displayProfiles.indexOf(p),
+                        'name',
+                        e.currentTarget.innerText,
+                      )
+                    }
+                    className="outline-none"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {p.name}
+                  </span>
+                ) : (
+                  p.name
+                )}
               </button>
             ))}
           </div>
@@ -417,7 +463,24 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 <div className="pointer-events-none absolute right-0 top-0 h-64 w-64 rounded-full bg-amber-500/5 blur-3xl"></div>
 
                 <div className="mb-4 inline-block rounded-full border border-amber-600/30 bg-amber-600/20 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-amber-500 md:mb-6 md:px-4 md:text-xs">
-                  {activeProfile.workPattern.frequency}
+                  {isEditing ? (
+                    <span
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) =>
+                        handleProfileUpdate(
+                          safeIdx,
+                          'workPattern.frequency',
+                          e.currentTarget.innerText,
+                        )
+                      }
+                      className="outline-none"
+                    >
+                      {activeProfile.workPattern.frequency}
+                    </span>
+                  ) : (
+                    activeProfile.workPattern.frequency
+                  )}
                 </div>
 
                 <div className="mb-4 md:mb-8">
@@ -425,9 +488,26 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                     想定報酬
                   </div>
                   <div className="flex flex-wrap items-baseline gap-1 md:gap-2">
-                    <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text font-serif text-3xl font-bold leading-none text-transparent md:text-6xl">
-                      {activeProfile.monthlyEarnings.toLocaleString()}
-                    </span>
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) =>
+                          handleProfileUpdate(
+                            safeIdx,
+                            'monthlyEarnings',
+                            parseInt(e.currentTarget.innerText.replace(/,/g, '')) || 0,
+                          )
+                        }
+                        className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text font-serif text-3xl font-bold leading-none text-transparent outline-none hover:bg-white/5 md:text-6xl"
+                      >
+                        {activeProfile.monthlyEarnings.toLocaleString()}
+                      </span>
+                    ) : (
+                      <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text font-serif text-3xl font-bold leading-none text-transparent md:text-6xl">
+                        {activeProfile.monthlyEarnings.toLocaleString()}
+                      </span>
+                    )}
                     <span className="bg-gradient-to-r from-amber-600 to-amber-500 bg-clip-text font-serif text-sm font-bold text-transparent md:text-3xl">
                       円
                     </span>
@@ -437,15 +517,49 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 <div className="mb-4 space-y-2 border-t border-slate-800 pt-4 md:mb-8 md:space-y-3 md:pt-6">
                   <div className="flex flex-col justify-between gap-1 text-[10px] md:flex-row md:items-center md:gap-0 md:text-sm">
                     <span className="text-slate-400">勤務時間</span>
-                    <span className="font-bold text-slate-200">
-                      {activeProfile.workPattern.hours}
-                    </span>
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) =>
+                          handleProfileUpdate(
+                            safeIdx,
+                            'workPattern.hours',
+                            e.currentTarget.innerText,
+                          )
+                        }
+                        className="font-bold text-slate-200 outline-none hover:bg-white/5"
+                      >
+                        {activeProfile.workPattern.hours}
+                      </span>
+                    ) : (
+                      <span className="font-bold text-slate-200">
+                        {activeProfile.workPattern.hours}
+                      </span>
+                    )}
                   </div>
                   <div className="flex flex-col justify-between gap-1 text-[10px] md:flex-row md:items-center md:gap-0 md:text-sm">
                     <span className="text-slate-400">報酬単価</span>
-                    <span className="font-bold text-slate-200">
-                      {activeProfile.workPattern.rate}
-                    </span>
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) =>
+                          handleProfileUpdate(
+                            safeIdx,
+                            'workPattern.rate',
+                            e.currentTarget.innerText,
+                          )
+                        }
+                        className="font-bold text-slate-200 outline-none hover:bg-white/5"
+                      >
+                        {activeProfile.workPattern.rate}
+                      </span>
+                    ) : (
+                      <span className="font-bold text-slate-200">
+                        {activeProfile.workPattern.rate}
+                      </span>
+                    )}
                   </div>
                 </div>
 
@@ -453,9 +567,22 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                   <div className="mb-2 text-xs font-bold text-slate-400 md:mb-3 md:text-sm">
                     ライフスタイル
                   </div>
-                  <p className="text-xs italic leading-relaxed text-slate-200 md:text-base">
-                    「{activeProfile.lifestyle}」
-                  </p>
+                  {isEditing ? (
+                    <p
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) =>
+                        handleProfileUpdate(safeIdx, 'lifestyle', e.currentTarget.innerText)
+                      }
+                      className="text-xs italic leading-relaxed text-slate-200 outline-none hover:bg-white/5 md:text-base"
+                    >
+                      {activeProfile.lifestyle}
+                    </p>
+                  ) : (
+                    <p className="text-xs italic leading-relaxed text-slate-200 md:text-base">
+                      「{activeProfile.lifestyle}」
+                    </p>
+                  )}
                 </div>
               </div>
 
