@@ -110,6 +110,21 @@ export interface LandingPageConfig {
   ideal?: {
     isVisible?: boolean;
   };
+  checkSheet?: {
+    isVisible?: boolean;
+    heading?: string;
+    description?: string;
+    okHeading?: string;
+    ngHeading?: string;
+    okItems?: string[];
+    ngItems?: string[];
+    resultPerfect?: string;
+    resultGood?: string;
+    resultTrial?: string;
+    closingLine1?: string;
+    closingLine2?: string;
+    closingLine3?: string;
+  };
   flow?: {
     isVisible?: boolean;
     heading?: string;
@@ -484,8 +499,34 @@ const LandingPage: React.FC<LandingPageProps> = ({
       </div>
 
       {/* Check Sheet Section */}
-      <div id="check">
-        <CheckSheet onOpenChat={onOpenChat} />
+      <div
+        id="check"
+        className={`group relative transition-opacity duration-300 ${
+          config?.checkSheet?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() =>
+                onUpdate?.('checkSheet', 'isVisible', config?.checkSheet?.isVisible === false)
+              }
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.checkSheet?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.checkSheet?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
+        <CheckSheet
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('checkSheet', key, value)}
+          {...config?.checkSheet}
+          onOpenChat={onOpenChat}
+        />
       </div>
 
       {/* Flow Section */}
