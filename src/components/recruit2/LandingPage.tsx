@@ -1,5 +1,4 @@
 import React from 'react';
-import { STOCK_RECRUIT_CONFIG } from './constants';
 import Header from './Header';
 import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
 import Benefits from './sections/Benefits';
@@ -13,6 +12,7 @@ import FukuokaReason from './sections/FukuokaReason';
 import HeroCollage from './sections/HeroCollage';
 import MetricsGrid from './sections/MetricsGrid';
 
+import Income from './sections/Income';
 import OpenCastRecruitment from './sections/OpenCastRecruitment';
 import Trust from './sections/Trust';
 
@@ -22,15 +22,17 @@ export interface LandingPageConfig {
     storeName?: string;
     pageTitleSuffix?: string;
   };
-  hero: {
+  hero?: {
     mainHeading?: string;
     subHeading?: string;
-    isVisible: boolean;
+    isVisible?: boolean;
     heroImage?: string;
+    stats?: { label: string; val: string }[];
   };
   openCast?: {
     isVisible?: boolean;
     openCastImage?: string;
+    benefits?: { title: string; desc: string }[];
   };
   fukuoka?: {
     backgroundImage?: string;
@@ -43,6 +45,22 @@ export interface LandingPageConfig {
   };
   trust?: {
     isVisible?: boolean;
+    sectionTitle?: string;
+    mainHeading?: string;
+    description?: string;
+    pillars?: { title: string; sub: string; desc: string }[];
+    statsHeaderTitle?: string;
+    statsHeaderDesc?: string;
+    stats?: { label: string; value: string; unit: string; desc: string }[];
+  };
+  income?: {
+    isVisible?: boolean;
+    sectionHeader?: string;
+    mainHeading?: string;
+    description?: string;
+    profileImage?: string;
+    tipText?: string;
+    profiles?: any[];
   };
   achievements?: {
     castImages?: Record<string, string>;
@@ -54,6 +72,9 @@ export interface LandingPageConfig {
   };
   benefits?: {
     isVisible?: boolean;
+    heading?: string;
+    description?: string;
+    points?: { title: string; desc: string }[];
   };
   comparison?: {
     isVisible?: boolean;
@@ -67,9 +88,23 @@ export interface LandingPageConfig {
   };
   flow?: {
     isVisible?: boolean;
+    heading?: string;
+    description?: string;
+    steps?: {
+      step: string;
+      title: string;
+      duration: string;
+      desc: string;
+      color: string;
+      numColor: string;
+      image: string;
+    }[];
   };
   faq?: {
     isVisible?: boolean;
+    heading?: string;
+    description?: string;
+    items?: { cat: string; q: string; a: string }[];
   };
   [key: string]: any;
 }
@@ -92,21 +127,18 @@ const LandingPage: React.FC<LandingPageProps> = ({
 }) => {
   // Merge incoming config with stock config. Incoming (DB) takes priority.
   // We do deep merge logic here manually for clarity.
-  console.log('🖼️ LandingPage received incomingConfig:', incomingConfig);
-  const config = {
-    general: { ...STOCK_RECRUIT_CONFIG.general, ...incomingConfig?.general },
-    hero: { ...STOCK_RECRUIT_CONFIG.hero, ...incomingConfig?.hero },
-    openCast: { ...STOCK_RECRUIT_CONFIG.openCast, ...incomingConfig?.openCast },
-    fukuoka: { ...STOCK_RECRUIT_CONFIG.fukuoka, ...incomingConfig?.fukuoka },
-    trust: { ...STOCK_RECRUIT_CONFIG.trust, ...incomingConfig?.trust },
-    achievements: { ...STOCK_RECRUIT_CONFIG.achievements, ...incomingConfig?.achievements },
-    comic: { ...STOCK_RECRUIT_CONFIG.comic, ...incomingConfig?.comic },
-    benefits: { ...STOCK_RECRUIT_CONFIG.benefits, ...incomingConfig?.benefits },
-    comparison: { ...STOCK_RECRUIT_CONFIG.comparison, ...incomingConfig?.comparison },
-    branding: { ...STOCK_RECRUIT_CONFIG.branding, ...incomingConfig?.branding },
-    ideal: { ...STOCK_RECRUIT_CONFIG.ideal, ...incomingConfig?.ideal },
-    flow: { ...STOCK_RECRUIT_CONFIG.flow, ...incomingConfig?.flow },
-    faq: { ...STOCK_RECRUIT_CONFIG.faq, ...incomingConfig?.faq },
+  // Ensure sections exist to avoid undefined errors, but don't force-merge with hardcoded defaults.
+  // The defaults should be handled by the caller or at component level.
+  const config = incomingConfig || ({} as LandingPageConfig);
+
+  const onImageUpload = async (section: string, file: File) => {
+    if (!onUpload) return;
+    const url = await onUpload(file);
+    if (url) {
+      if (section === 'income') {
+        onUpdate?.('income', 'profileImage', url);
+      }
+    }
   };
   console.log('✅ LandingPage merged config hero:', config.hero);
 
@@ -117,40 +149,40 @@ const LandingPage: React.FC<LandingPageProps> = ({
         <div className="pointer-events-none relative h-16 opacity-80">
           <Header
             onOpenForm={() => {}}
-            groupName={config.general.groupName}
-            storeName={config.general.storeName}
-            pageTitleSuffix={config.general.pageTitleSuffix}
+            groupName={config.general?.groupName}
+            storeName={config.general?.storeName}
+            pageTitleSuffix={config.general?.pageTitleSuffix}
           />
         </div>
       )}
 
       {/* Hero Section */}
-      {(config.hero.isVisible !== false || isEditing) && (
+      {(config.hero?.isVisible !== false || isEditing) && (
         <div
           className={`group relative transition-opacity duration-300 ${
-            config.hero.isVisible === false ? 'opacity-40' : ''
+            config.hero?.isVisible === false ? 'opacity-40' : ''
           }`}
         >
           {isEditing && (
             <div className="absolute right-2 top-2 z-50">
               <button
-                onClick={() => onUpdate?.('hero', 'isVisible', config.hero.isVisible !== false)}
+                onClick={() => onUpdate?.('hero', 'isVisible', config.hero?.isVisible !== false)}
                 className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                  config.hero.isVisible === false
+                  config.hero?.isVisible === false
                     ? 'bg-green-600 hover:bg-green-700'
                     : 'bg-red-500 hover:bg-red-600'
                 }`}
               >
-                {config.hero.isVisible === false ? '表示する' : '非表示にする'}
+                {config.hero?.isVisible === false ? '表示する' : '非表示にする'}
               </button>
             </div>
           )}
           <HeroCollage
             onOpenChat={onOpenChat}
-            mainHeading={config.hero.mainHeading}
-            subHeading={config.hero.subHeading}
-            heroImage={config.hero.heroImage}
-            stats={config.hero.stats}
+            mainHeading={config.hero?.mainHeading}
+            subHeading={config.hero?.subHeading}
+            heroImage={config.hero?.heroImage}
+            stats={config.hero?.stats}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('hero', key, value)}
           />
@@ -158,25 +190,25 @@ const LandingPage: React.FC<LandingPageProps> = ({
       )}
 
       {/* Open Cast Recruitment Section */}
-      {(config.openCast.isVisible !== false || isEditing) && (
+      {(config.openCast?.isVisible !== false || isEditing) && (
         <div
           className={`group relative transition-opacity duration-300 ${
-            config.openCast.isVisible === false ? 'opacity-40' : ''
+            config.openCast?.isVisible === false ? 'opacity-40' : ''
           }`}
         >
           {isEditing && (
             <div className="absolute right-2 top-2 z-50">
               <button
                 onClick={() =>
-                  onUpdate?.('openCast', 'isVisible', config.openCast.isVisible !== false)
+                  onUpdate?.('openCast', 'isVisible', config.openCast?.isVisible !== false)
                 }
                 className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                  config.openCast.isVisible === false
+                  config.openCast?.isVisible === false
                     ? 'bg-green-600 hover:bg-green-700'
                     : 'bg-red-500 hover:bg-red-600'
                 }`}
               >
-                {config.openCast.isVisible === false ? '表示する' : '非表示にする'}
+                {config.openCast?.isVisible === false ? '表示する' : '非表示にする'}
               </button>
             </div>
           )}
@@ -184,103 +216,109 @@ const LandingPage: React.FC<LandingPageProps> = ({
             onOpenChat={onOpenChat}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('openCast', key, value)}
-            openCastImage={config.openCast.openCastImage}
-            benefits={config.openCast.benefits}
+            openCastImage={config.openCast?.openCastImage}
+            benefits={config.openCast?.benefits}
           />
         </div>
       )}
 
       {/* Fukuoka Reason Section */}
-      <div
-        className={`group relative transition-opacity duration-300 ${
-          config?.fukuoka?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('fukuoka', 'isVisible', config?.fukuoka?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.fukuoka?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.fukuoka?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <FukuokaReason
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
-          backgroundImage={config?.fukuoka?.backgroundImage}
-          heading={config?.fukuoka?.heading}
-          description1={config?.fukuoka?.description1}
-          description2={config?.fukuoka?.description2}
-          description3={config?.fukuoka?.description3}
-          italicText={config?.fukuoka?.italicText}
-        />
-      </div>
+      {(config.fukuoka?.isVisible !== false || isEditing) && (
+        <div
+          className={`group relative transition-opacity duration-300 ${
+            config?.fukuoka?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('fukuoka', 'isVisible', config?.fukuoka?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.fukuoka?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.fukuoka?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <FukuokaReason
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
+            backgroundImage={config.fukuoka?.backgroundImage}
+            heading={config.fukuoka?.heading}
+            description1={config.fukuoka?.description1}
+            description2={config.fukuoka?.description2}
+            description3={config.fukuoka?.description3}
+            italicText={config.fukuoka?.italicText}
+          />
+        </div>
+      )}
 
       {/* Trust Section */}
-      <div
-        id="trust"
-        className={`group relative transition-opacity duration-300 ${
-          config?.trust?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('trust', 'isVisible', config?.trust?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.trust?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.trust?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Trust
-          config={config?.trust}
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('trust', key, value)}
-        />
-      </div>
+      {(config.trust?.isVisible !== false || isEditing) && (
+        <div
+          id="trust"
+          className={`group relative transition-opacity duration-300 ${
+            config?.trust?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() => onUpdate?.('trust', 'isVisible', config?.trust?.isVisible === false)}
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.trust?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.trust?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <Trust
+            config={config?.trust}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('trust', key, value)}
+          />
+        </div>
+      )}
 
       {/* Achievements Section */}
-      <div
-        id="achievements"
-        className={`group relative transition-opacity duration-300 ${
-          config?.achievements?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('achievements', 'isVisible', config?.achievements?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.achievements?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.achievements?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <AchievementsAndLifestyle
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('achievements', `castImages.${key}`, value)}
-          castImages={config?.achievements?.castImages}
-        />
-      </div>
+      {(config.achievements?.isVisible !== false || isEditing) && (
+        <div
+          id="achievements"
+          className={`group relative transition-opacity duration-300 ${
+            config?.achievements?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('achievements', 'isVisible', config?.achievements?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.achievements?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.achievements?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <AchievementsAndLifestyle
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('achievements', `castImages.${key}`, value)}
+            castImages={config?.achievements?.castImages}
+          />
+        </div>
+      )}
 
       {/* Comic Section */}
       <div
@@ -335,9 +373,41 @@ const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         )}
         <Benefits
-          heading={config.benefits.heading}
-          description={config.benefits.description}
-          points={config.benefits.points}
+          isVisible={config?.benefits?.isVisible}
+          heading={config?.benefits?.heading}
+          description={config?.benefits?.description}
+          points={config?.benefits?.points}
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('benefits', key, value)}
+        />
+      </div>
+
+      {/* Income Simulation Section */}
+      <div
+        id="income"
+        className={`group relative transition-opacity duration-300 ${
+          config?.income?.isVisible === false ? 'opacity-40' : ''
+        }`}
+      >
+        {isEditing && (
+          <div className="absolute right-2 top-2 z-50">
+            <button
+              onClick={() => onUpdate?.('income', 'isVisible', config?.income?.isVisible === false)}
+              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                config?.income?.isVisible === false
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-red-500 hover:bg-red-600'
+              }`}
+            >
+              {config?.income?.isVisible === false ? '表示する' : '非表示にする'}
+            </button>
+          </div>
+        )}
+        <Income
+          config={config?.income}
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('income', key, value)}
+          onImageUpload={onImageUpload}
         />
       </div>
 
@@ -394,10 +464,13 @@ const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         )}
         <Flow
-          heading={config.flow.heading}
-          description={config.flow.description}
-          steps={config.flow.steps}
+          isVisible={config?.flow?.isVisible}
+          heading={config?.flow?.heading}
+          description={config?.flow?.description}
+          steps={config?.flow?.steps}
           onOpenChat={onOpenChat}
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('flow', key, value)}
         />
       </div>
 
@@ -462,10 +535,13 @@ const LandingPage: React.FC<LandingPageProps> = ({
           </div>
         )}
         <FAQ
-          heading={config.faq.heading}
-          description={config.faq.description}
-          items={config.faq.items}
+          isVisible={config?.faq?.isVisible}
+          heading={config?.faq?.heading}
+          description={config?.faq?.description}
+          items={config?.faq?.items}
           onOpenChat={onOpenChat}
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('faq', key, value)}
         />
       </div>
 

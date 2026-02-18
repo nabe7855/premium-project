@@ -18,7 +18,20 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   isEditing = false,
   onUpdate,
   openCastImage,
-  benefits,
+  benefits = [
+    {
+      title: '業界最高水準のバック率',
+      desc: '努力がそのまま収入に直結。未経験でも高額報酬を目指せます。',
+    },
+    {
+      title: '完全自由出勤制',
+      desc: '週1日・短時間でもOK。あなたのライフスタイルを最優先します。',
+    },
+    {
+      title: '身バレ・プライバシー対策',
+      desc: '独自のWEB戦略で秘密を厳守。安心して働ける環境を約束します。',
+    },
+  ],
 }) => {
   const [timeLeft, setTimeLeft] = useState(0);
 
@@ -80,6 +93,19 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
           className="flex w-full max-w-5xl flex-col items-center px-4"
         >
           <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
+            {/* Background Image with Editable Image */}
+            <div className="absolute inset-0">
+              <EditableImage
+                src={openCastImage || '/images/recruit-bg.jpg'}
+                alt="Recruitment Background"
+                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                isEditing={isEditing}
+                onUpload={(file) => {
+                  if (onUpdate) onUpdate('openCastImage', file);
+                }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent" />
+            </div>
             {isEditing ? (
               <EditableImage
                 src={openCastImage || '/オープンキャスト募集.png'}
@@ -190,72 +216,51 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-orange-500 sm:text-3xl">
                   オープンキャスト限定特典
                 </h3>
-                <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3">
-                  {(
-                    benefits || [
-                      {
-                        title: '専属プロデューサー\n制度',
-                        desc: '業界経験豊富な\n専任担当者が、\nあなたの個性を\n見極め、\n最短ルートでの\n成功を\nマンツーマンで\n徹底サポート\nします。',
-                      },
-                      {
-                        title: '最短1ヶ月で\nデビュー',
-                        desc: '実践重視の\n独自プログラム\nにより、\n未経験からでも\n短期間で\nプロとしての\n自信と実力を\n身につけられます。',
-                      },
-                      {
-                        title: '未経験者\n専用カリキュラム',
-                        desc: '接客の基礎から\n心理学まで、\nゼロから\nプロフェッショナルを\n目指すための\n体系化された研修を\nご用意しています。',
-                      },
-                      {
-                        title: '3ヶ月間の\n最低保証',
-                        desc: 'デビュー直後でも\n安心して\n働けるよう、\n安定した\n収入を保証。\n焦らずじっくりと\n実力を磨ける\n環境です。',
-                      },
-                      {
-                        title: '初期費用\n完全無料',
-                        desc: '宣材写真撮影や\nレッスン費用など、\nスタートに\nかかる費用は\nすべて店舗が負担。\nリスクゼロで\n挑戦できます。',
-                      },
-                      {
-                        title: 'プロフェッショナル\n育成',
-                        desc: '業界トップクラスの\n教育環境で、\n一流のホストとして\n必要なマインドと\nスキルを\n余すことなく\n伝授します。',
-                      },
-                    ]
-                  ).map((benefit, idx) => (
-                    <div
+                <div className="grid gap-6">
+                  {benefits.map((benefit, idx) => (
+                    <motion.div
                       key={idx}
-                      className="group flex flex-col items-center justify-start rounded-xl border border-orange-500/20 bg-gradient-to-br from-indigo-900/30 to-slate-900/30 p-3 text-center backdrop-blur-sm transition-all hover:border-orange-500/40 hover:shadow-[0_0_20px_rgba(249,115,22,0.1)] sm:p-4"
+                      variants={itemVariants}
+                      className="group/item flex items-start gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 transition-all hover:bg-white/10"
                     >
-                      <h4
-                        className="mb-2 whitespace-pre-wrap break-words text-sm font-bold text-orange-500 outline-none sm:text-lg"
-                        contentEditable={isEditing}
-                        suppressContentEditableWarning={isEditing}
-                        onBlur={(e) => {
-                          if (!onUpdate || !benefits) return;
-                          const newBenefits = [...benefits];
-                          newBenefits[idx] = {
-                            ...newBenefits[idx],
-                            title: e.currentTarget.innerText,
-                          };
-                          onUpdate('benefits', newBenefits);
-                        }}
-                      >
-                        {benefit.title}
-                      </h4>
-                      <p
-                        className="whitespace-pre-wrap break-words text-[10px] leading-relaxed text-orange-300/80 outline-none sm:text-sm"
-                        contentEditable={isEditing}
-                        suppressContentEditableWarning={isEditing}
-                        onBlur={(e) => {
-                          if (!onUpdate || !benefits) return;
-                          const newBenefits = [...benefits];
-                          newBenefits[idx] = {
-                            ...newBenefits[idx],
-                            desc: e.currentTarget.innerText,
-                          };
-                          onUpdate('benefits', newBenefits);
-                        }}
-                      >
-                        {benefit.desc}
-                      </p>
-                    </div>
+                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-amber-500/20 text-amber-500">
+                        <span className="text-xl font-bold">{idx + 1}</span>
+                      </div>
+                      <div className="flex-grow">
+                        <h4
+                          className="mb-1 font-bold text-white outline-none"
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => {
+                            if (!onUpdate || !benefits) return;
+                            const newBenefits = [...benefits];
+                            newBenefits[idx] = {
+                              ...newBenefits[idx],
+                              title: e.currentTarget.innerText,
+                            };
+                            onUpdate('benefits', newBenefits);
+                          }}
+                        >
+                          {benefit.title}
+                        </h4>
+                        <p
+                          className="whitespace-pre-wrap break-words text-[10px] leading-relaxed text-orange-300/80 outline-none sm:text-sm"
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => {
+                            if (!onUpdate || !benefits) return;
+                            const newBenefits = [...benefits];
+                            newBenefits[idx] = {
+                              ...newBenefits[idx],
+                              desc: e.currentTarget.innerText,
+                            };
+                            onUpdate('benefits', newBenefits);
+                          }}
+                        >
+                          {benefit.desc}
+                        </p>
+                      </div>
+                    </motion.div>
                   ))}
                 </div>
               </div>

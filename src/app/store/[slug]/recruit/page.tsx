@@ -90,8 +90,10 @@ const AppContent: React.FC = () => {
 
   const localizedStock = localizeDefaults(STOCK_RECRUIT_CONFIG);
 
-  const mergedConfig: LandingPageConfig = {
-    ...(config || ({} as LandingPageConfig)),
+  // Create a deep-ish merge of localized defaults and DB config
+  const fullMergedConfig: LandingPageConfig = {
+    ...localizedStock,
+    ...config,
     general: {
       ...localizedStock.general,
       ...config?.general,
@@ -100,27 +102,39 @@ const AppContent: React.FC = () => {
           ? config.general.storeName
           : dynamicStoreName,
     },
-    fukuoka: {
-      ...localizedStock.fukuoka,
-      ...config?.fukuoka,
-    },
     hero: {
       ...localizedStock.hero,
       ...config?.hero,
     },
-    // Note: Other sections will still use STOCK_RECRUIT_CONFIG defaults
-    // because LandingPage.tsx does its own merge.
-    // To be thorough, we should pass localizedStock to LandingPage or merge all here.
+    fukuoka: {
+      ...localizedStock.fukuoka,
+      ...config?.fukuoka,
+    },
+    trust: {
+      ...localizedStock.trust,
+      ...config?.trust,
+    },
+    openCast: {
+      ...localizedStock.openCast,
+      ...config?.openCast,
+    },
+    benefits: {
+      ...localizedStock.benefits,
+      ...config?.benefits,
+    },
+    flow: {
+      ...localizedStock.flow,
+      ...config?.flow,
+    },
+    faq: {
+      ...localizedStock.faq,
+      ...config?.faq,
+    },
+    income: {
+      ...localizedStock.income,
+      ...config?.income,
+    },
   };
-
-  // Ensure all sections are merged with localized defaults here to pass to LandingPage
-  const fullMergedConfig: any = { ...localizedStock };
-  for (const key in mergedConfig) {
-    fullMergedConfig[key] = {
-      ...(fullMergedConfig[key] || {}),
-      ...(mergedConfig as any)[key],
-    };
-  }
 
   if (isLoading) {
     return <div className="min-h-screen bg-slate-950" />;

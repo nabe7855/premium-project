@@ -2,6 +2,7 @@ import NextImage from 'next/image';
 import React, { useState } from 'react';
 
 interface FlowProps {
+  isVisible?: boolean;
   heading?: string;
   description?: string;
   steps?: Array<{
@@ -14,9 +15,12 @@ interface FlowProps {
     image: string;
   }>;
   onOpenChat?: () => void;
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
 }
 
 const Flow: React.FC<FlowProps> = ({
+  isVisible = true,
   heading = 'デビューまでの<span class="text-rose-500">6ステップ</span>',
   description = 'わかりやすいステップで、未経験の方も安心してスタートできます。',
   steps = [
@@ -33,7 +37,7 @@ const Flow: React.FC<FlowProps> = ({
       step: '02',
       title: '仮エントリー',
       duration: '即日対応可能',
-      desc: '面談を行い、お互いの条件が合えばその場で仮エントリー。必要な書類の手続きを行います。',
+      desc: '面談を行い、お互いの条件が合えばその場で仮エントリー.必要な書類の手続きを行います。',
       color: 'bg-blue-50 border-blue-100',
       numColor: 'text-blue-200',
       image: '/images/recruit/02仮エントリー.png',
@@ -76,11 +80,21 @@ const Flow: React.FC<FlowProps> = ({
     },
   ],
   onOpenChat,
+  isEditing = false,
+  onUpdate,
 }) => {
   const [openStep, setOpenStep] = useState<number | null>(null);
 
+  if (!isVisible && !isEditing) return null;
+
   const toggleStep = (idx: number) => {
     setOpenStep(openStep === idx ? null : idx);
+  };
+
+  const handleInput = (key: string, value: any) => {
+    if (onUpdate) {
+      onUpdate(key, value);
+    }
   };
 
   return (
@@ -90,11 +104,33 @@ const Flow: React.FC<FlowProps> = ({
           <span className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-sm font-bold text-rose-600">
             FLOW TO DEBUT
           </span>
-          <h3
-            className="mb-6 font-serif text-3xl font-bold text-slate-900 md:text-5xl"
-            dangerouslySetInnerHTML={{ __html: heading }}
-          />
-          <p className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg">{description}</p>
+          {isEditing ? (
+            <h3
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('heading', e.currentTarget.innerHTML)}
+              className="mb-6 cursor-text rounded font-serif text-3xl font-bold text-slate-900 outline-none hover:bg-slate-200 md:text-5xl"
+              dangerouslySetInnerHTML={{ __html: heading }}
+            />
+          ) : (
+            <h3
+              className="mb-6 font-serif text-3xl font-bold text-slate-900 md:text-5xl"
+              dangerouslySetInnerHTML={{ __html: heading }}
+            />
+          )}
+
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
+              className="mx-auto max-w-2xl cursor-text rounded text-base text-slate-500 outline-none hover:bg-slate-200 md:text-lg"
+            >
+              {description}
+            </p>
+          ) : (
+            <p className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg">{description}</p>
+          )}
 
           <div className="mt-8 inline-block rotate-2 transform animate-bounce rounded-xl border-2 border-yellow-400 bg-yellow-100 px-6 py-3">
             <p className="text-lg font-bold text-yellow-800">※経験者は最短当日デビューも可能！</p>
@@ -105,10 +141,7 @@ const Flow: React.FC<FlowProps> = ({
         <div className="relative z-10 mx-auto flex max-w-4xl flex-col">
           {steps.map((s, i) => (
             <React.Fragment key={i}>
-              <button
-                onClick={() => toggleStep(i)}
-                className="group relative w-full text-left transition-all duration-300"
-              >
+              <div className="group relative w-full text-left transition-all duration-300">
                 {/* Inner Clipped Container */}
                 <div
                   className={`relative w-full overflow-hidden rounded-[2.5rem] border-2 bg-white/90 backdrop-blur-sm transition-all duration-300 hover:shadow-xl ${s.color} ${openStep === i ? 'shadow-lg' : ''}`}
@@ -138,12 +171,27 @@ const Flow: React.FC<FlowProps> = ({
                           <span className="bg-gradient-to-r from-slate-700 to-slate-900 bg-clip-text font-serif text-3xl font-bold text-transparent md:text-5xl">
                             0{i + 1}.
                           </span>
-                          <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
-                            {s.title}
-                          </span>
+                          {isEditing ? (
+                            <span
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(e) => {
+                                const newSteps = [...steps];
+                                newSteps[i] = { ...newSteps[i], title: e.currentTarget.innerText };
+                                handleInput('steps', newSteps);
+                              }}
+                              className="ml-3 cursor-text rounded bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent outline-none hover:bg-slate-200 md:ml-4 md:text-3xl"
+                            >
+                              {s.title}
+                            </span>
+                          ) : (
+                            <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
+                              {s.title}
+                            </span>
+                          )}
                         </div>
                         {/* Duration Badge (Enhanced Visibility) */}
-                        <span className="flex items-center gap-1.5 rounded-full border-2 border-yellow-400 bg-white px-3 py-1 text-xs font-bold text-slate-900 shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
+                        <div className="flex items-center gap-1.5 rounded-full border-2 border-yellow-400 bg-white px-3 py-1 text-xs font-bold text-slate-900 shadow-sm md:gap-2 md:px-4 md:py-1.5 md:text-sm">
                           <svg
                             className="h-3.5 w-3.5 text-yellow-500 md:h-4 md:w-4"
                             fill="none"
@@ -157,15 +205,40 @@ const Flow: React.FC<FlowProps> = ({
                               d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
                             />
                           </svg>
-                          {s.duration}
-                        </span>
+                          {isEditing ? (
+                            <span
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(e) => {
+                                const newSteps = [...steps];
+                                newSteps[i] = {
+                                  ...newSteps[i],
+                                  duration: e.currentTarget.innerText,
+                                };
+                                handleInput('steps', newSteps);
+                              }}
+                              className="cursor-text rounded outline-none hover:bg-slate-100"
+                            >
+                              {s.duration}
+                            </span>
+                          ) : (
+                            s.duration
+                          )}
+                        </div>
                       </div>
+
+                      {!isEditing && (
+                        <button
+                          onClick={() => toggleStep(i)}
+                          className="absolute inset-0 z-20 cursor-pointer"
+                        />
+                      )}
                     </div>
 
                     {/* Expandable Content Wrap */}
                     <div
                       className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                        openStep === i
+                        openStep === i || isEditing
                           ? 'mt-6 max-h-[800px] opacity-100 md:mt-8'
                           : 'max-h-0 opacity-0'
                       }`}
@@ -175,14 +248,29 @@ const Flow: React.FC<FlowProps> = ({
                       >
                         {/* Text Column */}
                         <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
-                          <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
-                            {s.desc}
-                          </p>
+                          {isEditing ? (
+                            <p
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(e) => {
+                                const newSteps = [...steps];
+                                newSteps[i] = { ...newSteps[i], desc: e.currentTarget.innerText };
+                                handleInput('steps', newSteps);
+                              }}
+                              className="cursor-text rounded text-sm font-medium leading-relaxed text-slate-600 outline-none hover:bg-slate-100 md:text-base"
+                            >
+                              {s.desc}
+                            </p>
+                          ) : (
+                            <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+                              {s.desc}
+                            </p>
+                          )}
                         </div>
 
                         {/* Image Column */}
                         <div className="w-full flex-1">
-                          <div className="aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
+                          <div className="group relative aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
                             <NextImage
                               src={s.image}
                               alt={s.title}
@@ -191,6 +279,24 @@ const Flow: React.FC<FlowProps> = ({
                               className="object-cover transition-transform duration-500 group-hover:scale-105"
                               loading="lazy"
                             />
+                            {isEditing && (
+                              <label className="absolute inset-0 z-30 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+                                <span className="text-xs font-bold text-white">画像変更</span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      const newSteps = [...steps];
+                                      // Image uploading would be handled by a parent or dedicated hook
+                                      // but for UI consistency:
+                                      onUpdate?.('steps', newSteps);
+                                    }
+                                  }}
+                                />
+                              </label>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -199,23 +305,25 @@ const Flow: React.FC<FlowProps> = ({
                 </div>
 
                 {/* Enhanced Expand Icon (Overlapping Border) */}
-                <div
-                  className={`absolute bottom-0 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-4 border-slate-50 transition-all duration-500 md:h-14 md:w-14 ${
-                    openStep === i
-                      ? 'rotate-180 bg-amber-500 text-white shadow-lg'
-                      : 'bg-white text-amber-500 shadow-md group-hover:bg-amber-50'
-                  }`}
-                >
-                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={3}
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </div>
-              </button>
+                {!isEditing && (
+                  <div
+                    className={`absolute bottom-0 left-1/2 z-20 flex h-12 w-12 -translate-x-1/2 translate-y-1/2 items-center justify-center rounded-full border-4 border-slate-50 transition-all duration-500 md:h-14 md:w-14 ${
+                      openStep === i
+                        ? 'rotate-180 bg-amber-500 text-white shadow-lg'
+                        : 'bg-white text-amber-500 shadow-md group-hover:bg-amber-50'
+                    }`}
+                  >
+                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={3}
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </div>
+                )}
+              </div>
 
               {/* Connector Arrow (Not after last item) */}
               {i < steps.length - 1 && (

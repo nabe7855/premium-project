@@ -324,4 +324,96 @@ export const STOCK_RECRUIT_CONFIG = {
       },
     ],
   },
+  income: {
+    isVisible: true,
+    sectionHeader: 'Therapist Lifestyle',
+    mainHeading: '「なりたい自分」を叶える1日',
+    description:
+      '単なる仕事ではありません。理想のライフスタイルを実現するためのルーティー。 あなたのステージに合わせた、リアルなシミュレーションをご覧ください。',
+    profileImage:
+      'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
+    tipText:
+      '※これらは実際のキャストの実績に基づくモデルケースです。ご自身の体調やライフスタイルに合わせて、自由にシフトを調整いただけます。',
+    profiles: [
+      {
+        id: 'side',
+        name: '副業（週2会社員）',
+        income: '月収 25万円〜',
+        lifestyle: '平日の夜や休日を有効活用。本業の収入にプラスして、ゆとりのある生活を。',
+        routine: [
+          { start: 0, end: 8, label: '睡眠', color: '#1e293b', type: 'sleep' as const },
+          { start: 8, end: 18, label: '本業勤務', color: '#334155', type: 'personal' as const },
+          { start: 18, end: 19, label: '移動・準備', color: '#475569', type: 'break' as const },
+          { start: 19, end: 23, label: '施術（2件）', color: '#d97706', type: 'work' as const },
+          {
+            start: 23,
+            end: 24,
+            label: '帰宅・リラックス',
+            color: '#1e293b',
+            type: 'personal' as const,
+          },
+        ],
+      },
+      {
+        id: 'novice',
+        name: '未経験新人（専業）',
+        income: '月収 45万円〜',
+        lifestyle: 'まずは研修を兼ねて無理のないシフトから。3ヶ月で一生モノのスキルを習得。',
+        routine: [
+          { start: 0, end: 9, label: '睡眠', color: '#1e293b', type: 'sleep' as const },
+          { start: 9, end: 11, label: '自己研鑽', color: '#475569', type: 'personal' as const },
+          { start: 11, end: 12, label: '出勤準備', color: '#475569', type: 'break' as const },
+          { start: 12, end: 18, label: '施術・講習', color: '#b45309', type: 'work' as const },
+          {
+            start: 18,
+            end: 24,
+            label: 'プライベート',
+            color: '#1e293b',
+            type: 'personal' as const,
+          },
+        ],
+      },
+      {
+        id: 'regular',
+        name: '中堅セラピスト',
+        income: '月収 85万円〜',
+        lifestyle: 'リピーター様も増え、安定した高収入。趣味や自己投資にも時間を割ける。',
+        routine: [
+          { start: 0, end: 9, label: '睡眠', color: '#1e293b', type: 'sleep' as const },
+          { start: 9, end: 12, label: '趣味・ジム', color: '#334155', type: 'personal' as const },
+          { start: 12, end: 13, label: '出勤準備', color: '#475569', type: 'break' as const },
+          { start: 13, end: 20, label: '施術（3~4件）', color: '#92400e', type: 'work' as const },
+          {
+            start: 20,
+            end: 24,
+            label: 'ゆとりの時間',
+            color: '#1e293b',
+            type: 'personal' as const,
+          },
+        ],
+      },
+      {
+        id: 'top',
+        name: 'トップセラピスト',
+        income: '月収 300万円超',
+        lifestyle: 'プロとしての誇りを持ち、圧倒的な支持を獲得。人生を劇的に変えるステージ。',
+        routine: [
+          { start: 0, end: 6, label: '睡眠・泊まり', color: '#1e293b', type: 'sleep' as const },
+          {
+            start: 6,
+            end: 10,
+            label: '朝のルーティン',
+            color: '#334155',
+            type: 'personal' as const,
+          },
+          { start: 10, end: 13, label: '1件目施術', color: '#d97706', type: 'work' as const },
+          { start: 13, end: 14, label: '休憩・SNS更新', color: '#475569', type: 'break' as const },
+          { start: 14, end: 17, label: '2件目施術', color: '#b45309', type: 'work' as const },
+          { start: 17, end: 18, label: '休憩・ブログ', color: '#475569', type: 'break' as const },
+          { start: 18, end: 21, label: '3件目施術', color: '#92400e', type: 'work' as const },
+          { start: 21, end: 24, label: 'リラックス', color: '#1e293b', type: 'personal' as const },
+        ],
+      },
+    ],
+  },
 };

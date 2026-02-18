@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 interface FAQProps {
+  isVisible?: boolean;
   heading?: string;
   description?: string;
   items?: Array<{
@@ -9,9 +10,12 @@ interface FAQProps {
     a: string;
   }>;
   onOpenChat?: () => void;
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
 }
 
 const FAQ: React.FC<FAQProps> = ({
+  isVisible = true,
   heading = 'よくあるご質問',
   description = '疑問を解消して、安心してお申し込みください。',
   items = [
@@ -121,9 +125,19 @@ const FAQ: React.FC<FAQProps> = ({
     },
   ],
   onOpenChat,
+  isEditing = false,
+  onUpdate,
 }) => {
   const [openIdx, setOpenIdx] = useState<number | null>(null);
   const [activeTab, setActiveTab] = useState<'all' | 'beginner' | 'expert'>('all');
+
+  if (!isVisible && !isEditing) return null;
+
+  const handleInput = (key: string, value: any) => {
+    if (onUpdate) {
+      onUpdate(key, value);
+    }
+  };
 
   const filteredFaqs =
     activeTab === 'all' ? items : items.filter((f) => f.cat === activeTab || f.cat === 'general');
@@ -132,10 +146,33 @@ const FAQ: React.FC<FAQProps> = ({
     <section className="bg-white py-16 sm:py-24">
       <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-10 text-center sm:mb-16">
-          <h3 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
-            {heading}
-          </h3>
-          <p className="px-4 text-sm text-slate-500 sm:text-base">{description}</p>
+          {isEditing ? (
+            <h3
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
+              className="mb-4 cursor-text rounded font-serif text-2xl font-bold tracking-tight text-slate-900 outline-none hover:bg-slate-100 sm:mb-6 sm:text-4xl"
+            >
+              {heading}
+            </h3>
+          ) : (
+            <h3 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
+              {heading}
+            </h3>
+          )}
+
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
+              className="cursor-text rounded px-4 text-sm text-slate-500 outline-none hover:bg-slate-100 sm:text-base"
+            >
+              {description}
+            </p>
+          ) : (
+            <p className="px-4 text-sm text-slate-500 sm:text-base">{description}</p>
+          )}
         </div>
 
         <div className="mb-8 flex flex-wrap justify-center gap-2 px-2 sm:mb-12 sm:gap-4">
@@ -171,15 +208,36 @@ const FAQ: React.FC<FAQProps> = ({
                 onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
                 className={`flex w-full items-center justify-between p-5 text-left transition-colors sm:p-7 ${openIdx === idx ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
               >
-                <div className="flex items-start gap-4">
+                <div className="flex flex-grow items-start gap-4">
                   <span
                     className={`font-serif text-lg font-bold text-amber-600 transition-opacity ${openIdx === idx ? 'opacity-100' : 'opacity-40'}`}
                   >
                     Q.
                   </span>
-                  <span className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base">
-                    {faq.q}
-                  </span>
+                  {isEditing ? (
+                    <span
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        const newItems = [...items];
+                        const globalIdx = items.indexOf(faq);
+                        if (globalIdx !== -1) {
+                          newItems[globalIdx] = {
+                            ...newItems[globalIdx],
+                            q: e.currentTarget.innerText,
+                          };
+                          handleInput('items', newItems);
+                        }
+                      }}
+                      className="cursor-text rounded text-sm font-bold leading-relaxed text-slate-900 outline-none hover:bg-slate-100 sm:text-base"
+                    >
+                      {faq.q}
+                    </span>
+                  ) : (
+                    <span className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base">
+                      {faq.q}
+                    </span>
+                  )}
                 </div>
                 <span
                   className={`shrink-0 transform text-[10px] text-amber-600 transition-transform duration-500 ${openIdx === idx ? 'rotate-180' : ''}`}
@@ -189,12 +247,33 @@ const FAQ: React.FC<FAQProps> = ({
               </button>
               <div
                 className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  openIdx === idx ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                  openIdx === idx || isEditing ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
                 }`}
               >
                 <div className="flex gap-4 border-t border-slate-200/50 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600 sm:p-7 sm:text-base">
                   <span className="font-serif text-lg font-bold text-slate-300">A.</span>
-                  <div>{faq.a}</div>
+                  {isEditing ? (
+                    <div
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        const newItems = [...items];
+                        const globalIdx = items.indexOf(faq);
+                        if (globalIdx !== -1) {
+                          newItems[globalIdx] = {
+                            ...newItems[globalIdx],
+                            a: e.currentTarget.innerText,
+                          };
+                          handleInput('items', newItems);
+                        }
+                      }}
+                      className="flex-grow cursor-text rounded outline-none hover:bg-slate-100"
+                    >
+                      {faq.a}
+                    </div>
+                  ) : (
+                    <div>{faq.a}</div>
+                  )}
                 </div>
               </div>
             </div>

@@ -1,15 +1,19 @@
 import React from 'react';
 
 interface BenefitsProps {
+  isVisible?: boolean;
   heading?: string;
   description?: string;
   points?: Array<{
     title: string;
     desc: string;
   }>;
+  isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
 }
 
 const Benefits: React.FC<BenefitsProps> = ({
+  isVisible = true,
   heading = '未経験者が安心できる\n5つの理由',
   description = '業界の常識を覆すサポート体制。あなたが「自分を変える」ことに専念できる環境を整えました。',
   points = [
@@ -34,19 +38,53 @@ const Benefits: React.FC<BenefitsProps> = ({
       desc: '専門チームによるアカウント運用管理で、知人への露出をシステムレベルでブロック。端末設定からSNS運用まで、初心者でも安心の身バレ対策マニュアル and サポート体制を完備しています。',
     },
   ],
+  isEditing = false,
+  onUpdate,
 }) => {
+  if (!isVisible && !isEditing) return null;
+
+  const handleInput = (key: string, value: any) => {
+    if (onUpdate) {
+      onUpdate(key, value);
+    }
+  };
+
   return (
     <section className="overflow-hidden bg-white pb-12 pt-24">
       <div className="container mx-auto px-4">
         <div className="mx-auto max-w-5xl">
           <div className="mb-16 text-center">
-            <h3
-              className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
-              style={{ whiteSpace: 'pre-line' }}
-            >
-              {heading}
-            </h3>
-            <p className="mx-auto max-w-2xl text-lg text-slate-600">{description}</p>
+            {isEditing ? (
+              <h3
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
+                className="mb-6 cursor-text rounded font-serif text-3xl font-bold tracking-tight text-slate-900 outline-none hover:bg-slate-100 md:text-5xl"
+                style={{ whiteSpace: 'pre-line' }}
+              >
+                {heading}
+              </h3>
+            ) : (
+              <h3
+                className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
+                style={{ whiteSpace: 'pre-line' }}
+              >
+                {heading}
+              </h3>
+            )}
+
+            {isEditing ? (
+              <p
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
+                className="mx-auto max-w-2xl cursor-text rounded text-lg text-slate-600 outline-none hover:bg-slate-100"
+              >
+                {description}
+              </p>
+            ) : (
+              <p className="mx-auto max-w-2xl text-lg text-slate-600">{description}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -56,10 +94,41 @@ const Benefits: React.FC<BenefitsProps> = ({
                 className="group flex flex-col items-center rounded-[2.5rem] border border-slate-100 bg-slate-50 p-8 text-center transition-all hover:border-amber-500/30"
               >
                 <div className="mb-6 h-1 w-12 rounded-full bg-amber-500/30 transition-all duration-500 group-hover:w-20 group-hover:bg-amber-500"></div>
-                <h4 className="mb-4 text-xl font-bold text-slate-900">{p.title}</h4>
-                <p className="text-left text-sm leading-relaxed text-slate-500 opacity-90">
-                  {p.desc}
-                </p>
+                {isEditing ? (
+                  <>
+                    <h4
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        const newPoints = [...points];
+                        newPoints[i] = { ...newPoints[i], title: e.currentTarget.innerText };
+                        handleInput('points', newPoints);
+                      }}
+                      className="mb-4 cursor-text rounded text-xl font-bold text-slate-900 outline-none hover:bg-slate-100"
+                    >
+                      {p.title}
+                    </h4>
+                    <p
+                      contentEditable
+                      suppressContentEditableWarning
+                      onBlur={(e) => {
+                        const newPoints = [...points];
+                        newPoints[i] = { ...newPoints[i], desc: e.currentTarget.innerText };
+                        handleInput('points', newPoints);
+                      }}
+                      className="cursor-text rounded text-left text-sm leading-relaxed text-slate-500 opacity-90 outline-none hover:bg-slate-100"
+                    >
+                      {p.desc}
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    <h4 className="mb-4 text-xl font-bold text-slate-900">{p.title}</h4>
+                    <p className="text-left text-sm leading-relaxed text-slate-500 opacity-90">
+                      {p.desc}
+                    </p>
+                  </>
+                )}
               </div>
             ))}
           </div>
