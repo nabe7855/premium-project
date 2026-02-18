@@ -86,6 +86,10 @@ export interface LandingPageConfig {
   branding?: {
     images?: Record<string, string>;
     isVisible?: boolean;
+    metricsLabel?: string;
+    metricsValue?: string;
+    heading?: string;
+    description?: string;
   };
   ideal?: {
     isVisible?: boolean;
@@ -497,8 +501,16 @@ const LandingPage: React.FC<LandingPageProps> = ({
       >
         <MetricsGrid
           isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('branding', `images.${key}`, value)}
+          onUpdate={(key, value) => {
+            if (['metricsLabel', 'metricsValue'].includes(key)) {
+              onUpdate?.('branding', key, value);
+            } else {
+              onUpdate?.('branding', `images.${key}`, value);
+            }
+          }}
           brandingImages={config?.branding?.images}
+          metricsLabel={config?.branding?.metricsLabel}
+          metricsValue={config?.branding?.metricsValue}
         />
       </div>
 
@@ -525,7 +537,12 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
         )}
-        <BrandingSupport isEditing={isEditing} />
+        <BrandingSupport
+          isEditing={isEditing}
+          onUpdate={(key, value) => onUpdate?.('branding', key, value)}
+          heading={config?.branding?.heading}
+          description={config?.branding?.description}
+        />
       </div>
 
       {/* FAQ Section */}

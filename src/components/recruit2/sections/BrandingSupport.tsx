@@ -5,9 +5,23 @@ import { useNavigate } from 'react-router-dom';
 
 interface BrandingSupportProps {
   isEditing?: boolean;
+  onUpdate?: (key: string, value: any) => void;
+  heading?: string;
+  description?: string;
 }
 
-const BrandingSupport: React.FC<BrandingSupportProps> = ({ isEditing = false }) => {
+const DEFAULT_HEADING =
+  '芸能・インフルエンサー活動との両立。\n私たちが選ばれるのは、\n圧倒的な『質』ゆえ。';
+
+const DEFAULT_DESCRIPTION =
+  '今の環境に満足していますか？あなたの実績を正当に評価し、前職を上回る最高の条件を約束します。福岡完全新規店だからこそ可能な、しがらみのないリスタートを。';
+
+const BrandingSupport: React.FC<BrandingSupportProps> = ({
+  isEditing = false,
+  onUpdate,
+  heading = DEFAULT_HEADING,
+  description = DEFAULT_DESCRIPTION,
+}) => {
   const navigate = useNavigate();
 
   const features = [
@@ -44,16 +58,35 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({ isEditing = false }) 
 
       <div className="container relative z-10 mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className="mb-8 font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
-            芸能・インフルエンサー活動との両立。
-            <br />
-            私たちが選ばれるのは、
-            <br />
-            圧倒的な<span className="font-normal text-amber-500">『質』</span>ゆえ。
-          </h2>
-          <p className="mx-auto mb-16 max-w-2xl text-lg font-light leading-relaxed text-slate-300 md:text-xl">
-            今の環境に満足していますか？あなたの実績を正当に評価し、前職を上回る最高の条件を約束します。福岡完全新規店だからこそ可能な、しがらみのないリスタートを。
-          </p>
+          {isEditing ? (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('heading', e.currentTarget.innerText)}
+              className="mb-8 cursor-text whitespace-pre-line rounded font-serif text-3xl font-light leading-tight tracking-wide text-white outline-none hover:bg-white/5 md:text-5xl lg:text-6xl"
+            >
+              {heading}
+            </h2>
+          ) : (
+            <h2 className="mb-8 whitespace-pre-line font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
+              {heading}
+            </h2>
+          )}
+
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
+              className="mx-auto mb-16 max-w-2xl cursor-text rounded text-lg font-light leading-relaxed text-slate-300 outline-none hover:bg-white/5 md:text-xl"
+            >
+              {description}
+            </p>
+          ) : (
+            <p className="mx-auto mb-16 max-w-2xl text-lg font-light leading-relaxed text-slate-300 md:text-xl">
+              {description}
+            </p>
+          )}
 
           <div className="grid grid-cols-1 gap-8 text-left md:grid-cols-2">
             {features.map((f, i) => (

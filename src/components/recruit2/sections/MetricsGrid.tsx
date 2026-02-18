@@ -12,12 +12,16 @@ interface MetricsGridProps {
     image3?: string;
     image4?: string;
   };
+  metricsLabel?: string;
+  metricsValue?: string;
 }
 
 const MetricsGrid: React.FC<MetricsGridProps> = ({
   isEditing = false,
   onUpdate,
   brandingImages,
+  metricsLabel = 'Fan Retention Rate',
+  metricsValue = '94.2%',
 }) => {
   const handleUpload = (key: string) => (file: File) => {
     if (onUpdate) onUpdate(key, file);
@@ -80,10 +84,32 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
 
             {/* Floating metrics badge */}
             <div className="animate-bounce-slow absolute left-1/2 top-1/2 z-20 -translate-x-1/2 -translate-y-1/2 rounded-3xl border-4 border-slate-950 bg-amber-600 p-6 text-white shadow-2xl md:p-10">
-              <div className="mb-1 text-[10px] font-bold uppercase tracking-widest opacity-80 md:text-sm">
-                Fan Retention Rate
-              </div>
-              <div className="font-serif text-3xl font-bold md:text-5xl">94.2%</div>
+              {isEditing ? (
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onUpdate?.('metricsLabel', e.currentTarget.innerText)}
+                  className="mb-1 cursor-text text-[10px] font-bold uppercase tracking-widest opacity-80 outline-none hover:bg-black/10 md:text-sm"
+                >
+                  {metricsLabel}
+                </div>
+              ) : (
+                <div className="mb-1 text-[10px] font-bold uppercase tracking-widest opacity-80 md:text-sm">
+                  {metricsLabel}
+                </div>
+              )}
+              {isEditing ? (
+                <div
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onUpdate?.('metricsValue', e.currentTarget.innerText)}
+                  className="cursor-text font-serif text-3xl font-bold outline-none hover:bg-black/10 md:text-5xl"
+                >
+                  {metricsValue}
+                </div>
+              ) : (
+                <div className="font-serif text-3xl font-bold md:text-5xl">{metricsValue}</div>
+              )}
             </div>
           </div>
         </div>
