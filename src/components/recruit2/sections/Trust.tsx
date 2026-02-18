@@ -13,6 +13,8 @@ interface TrustProps {
     statsHeaderTitle?: string;
     statsHeaderDesc?: string;
     stats?: Array<{ label: string; value: string; unit: string; desc: string }>;
+    locationsBadge?: string;
+    locationsHeading?: string;
   };
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
@@ -302,13 +304,35 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 backdrop-blur-md">
             <span className="animate-pulse text-amber-400">●</span>
-            <span className="text-xs font-bold text-amber-200 sm:text-sm">
-              三大都市を制圧する組織力
-            </span>
+            {isEditing ? (
+              <span
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => onUpdate?.('locationsBadge', e.currentTarget.innerText)}
+                className="cursor-text text-xs font-bold text-amber-200 outline-none hover:bg-white/10 sm:text-sm"
+              >
+                {config?.locationsBadge ?? '三大都市を制圧する組織力'}
+              </span>
+            ) : (
+              <span className="text-xs font-bold text-amber-200 sm:text-sm">
+                {config?.locationsBadge ?? '三大都市を制圧する組織力'}
+              </span>
+            )}
           </div>
-          <h3 className="font-serif text-2xl font-bold text-white sm:text-3xl">
-            全国主要都市を網羅する、確かな基盤
-          </h3>
+          {isEditing ? (
+            <h3
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('locationsHeading', e.currentTarget.innerText)}
+              className="cursor-text rounded font-serif text-2xl font-bold text-white outline-none hover:bg-white/5 sm:text-3xl"
+            >
+              {config?.locationsHeading ?? '全国主要都市を網羅する、確かな基盤'}
+            </h3>
+          ) : (
+            <h3 className="font-serif text-2xl font-bold text-white sm:text-3xl">
+              {config?.locationsHeading ?? '全国主要都市を網羅する、確かな基盤'}
+            </h3>
+          )}
         </motion.div>
 
         {/* 6. Locations Infinite Slider (Dark Theme Adjusted) */}
