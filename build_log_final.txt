@@ -1,0 +1,489 @@
+﻿node.exe :  笞 Linting is di
+sabled.
+発生場所 行:1 文字:1
++ & "C:\Program Files\nodejs
+/node.exe" "C:\Program Files
+\nodejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
+    + CategoryInfo          
+    : NotSpecifi    ed: ( 笞
+ Linting i    s disabled.:St
+ring    ) [], RemoteExcept  
+  ion
+    + FullyQualifiedEr    ro
+rId : NativeComm    andError
+ 
+  笆ｲ Next.js 14.2.35
+  - Environments: .env.local, .env.production, .env
+
+   Creating an optimized production build ...
+Browserslist: caniuse-lite i
+s outdated. Please run:
+  npx update-browserslist-db
+@latest
+  Why you should do it regul
+arly: https://github.com/bro
+wserslist/update-db#readme
+Browserslist: browsers data 
+(caniuse-lite) is 8 months o
+ld. Please run:
+  npx update-browserslist-db
+@latest
+  Why you should do it regul
+arly: https://github.com/bro
+wserslist/update-db#readme
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[1500ms]` 
+is ambiguous and matches mul
+tiple utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;1500ms&rsqb;` to s
+ilence this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[20s]` is 
+ambiguous and matches multip
+le utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;20s&rsqb;` to sile
+nce this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[2s]` is a
+mbiguous and matches multipl
+e utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;2s&rsqb;` to silen
+ce this warning.
+
+[1m[33mwarn[39m[22m - Th
+e class `duration-[3s]` is a
+mbiguous and matches multipl
+e utilities.
+[1m[33mwarn[39m[22m - If
+ this is content and not a c
+lass, replace it with `durat
+ion-&lsqb;3s&rsqb;` to silen
+ce this warning.
+ 笨・Compiled successfully
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/68) ...
+   Generating static pages (17/68) 
+   Generating static pages (34/68) 
+Error fetching hotel counts:
+ B [Error]: Dynamic server u
+sage: Route /api/hotels/coun
+t couldn't be rendered stati
+cally because it used `nextU
+rl.searchParams`. See more i
+nfo here: https://nextjs.org
+/docs/messages/dynamic-serve
+r-error
+    at V (C:\Users\nabe7\Doc
+uments\Projects\premium-proj
+ect\node_modules\next\dist\c
+ompiled\next-server\app-rout
+e.runtime.prod.js:6:21778)
+    at Object.get (C:\Users\
+nabe7\Documents\Projects\pre
+mium-project\node_modules\ne
+xt\dist\compiled\next-server
+\app-route.runtime.prod.js:6
+:29137)
+    at p (C:\Users\nabe7\Doc
+uments\Projects\premium-proj
+ect\.next\server\app\api\hot
+els\count\route.js:1:618)
+    at C:\Users\nabe7\Docume
+nts\Projects\premium-project
+\node_modules\next\dist\comp
+iled\next-server\app-route.r
+untime.prod.js:6:38417
+    at C:\Users\nabe7\Docume
+nts\Projects\premium-project
+\node_modules\next\dist\serv
+er\lib\trace\tracer.js:140:3
+6
+    at NoopContextManager.wi
+th (C:\Users\nabe7\Documents
+\Projects\premium-project\no
+de_modules\next\dist\compile
+d\@opentelemetry\api\index.j
+s:1:7062)
+    at ContextAPI.with (C:\U
+sers\nabe7\Documents\Project
+s\premium-project\node_modul
+es\next\dist\compiled\@opent
+elemetry\api\index.js:1:518)
+    at NoopTracer.startActiv
+eSpan (C:\Users\nabe7\Docume
+nts\Projects\premium-project
+\node_modules\next\dist\comp
+iled\@opentelemetry\api\inde
+x.js:1:18093)
+    at ProxyTracer.startActi
+veSpan (C:\Users\nabe7\Docum
+ents\Projects\premium-projec
+t\node_modules\next\dist\com
+piled\@opentelemetry\api\ind
+ex.js:1:18854)
+    at C:\Users\nabe7\Docume
+nts\Projects\premium-project
+\node_modules\next\dist\serv
+er\lib\trace\tracer.js:122:1
+03 {
+  description: "Route /api/h
+otels/count couldn't be rend
+ered statically because it u
+sed `nextUrl.searchParams`. 
+See more info here: https://
+nextjs.org/docs/messages/dyn
+amic-server-error",
+  digest: 'DYNAMIC_SERVER_US
+AGE'
+}
+   Generating static pages (51/68) 
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
+剥 StorePage params: { slug: 'yokohama' }
+剥 getStoreData('yokohama'): Found
+藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
+藤 getTodayCastsByStore start for slug: [yokohama], date: [undefined]
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for yokohama : 3
+[getPublishedPagesByStore] Records: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    title: '蠎鈴聞謖ｨ諡ｶ',
+    targetStoreSlugs: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    title: '譁ｰ莠ｺ縺悟・繧翫∪縺励◆',
+    targetStoreSlugs: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    title: '蛻晏屓蜑ｲ繧ｭ繝｣繝ｳ繝壹・繝ｳ',
+    targetStoreSlugs: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for yokohama : 3
+[getPublishedPagesByStore] Records: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    title: '蠎鈴聞謖ｨ諡ｶ',
+    targetStoreSlugs: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    title: '譁ｰ莠ｺ縺悟・繧翫∪縺励◆',
+    targetStoreSlugs: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    title: '蛻晏屓蜑ｲ繧ｭ繝｣繝ｳ繝壹・繝ｳ',
+    targetStoreSlugs: [ 'fukuoka', 'yokohama' ]
+  }
+]
+剥 StorePage params: { slug: 'tokyo' }
+剥 getStoreData('tokyo'): Found
+剥 StorePage params: { slug: 'tokyo' }
+剥 getStoreData('tokyo'): Found
+藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
+藤 getTodayCastsByStore start for slug: [tokyo], date: [undefined]
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+剥 StorePage params: { slug: 'nagoya' }
+剥 getStoreData('nagoya'): Found
+藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
+藤 getTodayCastsByStore start for slug: [nagoya], date: [undefined]
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for nagoya : 0
+[getPublishedPagesByStore] Records: []
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for nagoya : 0
+[getPublishedPagesByStore] Records: []
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+剥 StorePage params: { slug: 'osaka' }
+剥 getStoreData('osaka'): Found
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
+藤 getTodayCastsByStore start for slug: [osaka], date: [undefined]
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for tokyo : 0
+[getPublishedPagesByStore] Records: []
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for tokyo : 0
+[getPublishedPagesByStore] Records: []
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for osaka : 0
+[getPublishedPagesByStore] Records: []
+[getPublishedPagesByStore] All published pages: 3
+[getPublishedPagesByStore] Inspecting targetStoreSlugs type: [
+  {
+    id: '65fdc27c-e9a6-4f46-a9e8-66a75606e8cb',
+    type: 'object',
+    val: [ 'yokohama', 'fukuoka' ]
+  },
+  {
+    id: '37a69fa9-e558-4cb0-a416-89e8e6397b2e',
+    type: 'object',
+    val: [ 'yokohama' ]
+  },
+  {
+    id: '51218b4c-cc36-4620-85d3-3cdaac3cacb7',
+    type: 'object',
+    val: [ 'fukuoka', 'yokohama' ]
+  }
+]
+[getPublishedPagesByStore] Filtered for osaka : 0
+[getPublishedPagesByStore] Records: []
+ 笨・Generating static pages (68/68)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size     First Load JS
+笏・笳・/                                               491 B           172 kB
+笏・笳・/_not-found                                     159 B          87.8 kB
+笏・笳・/admin                                          2 kB           98.3 kB
+笏・笳・/admin/admin                                    274 B           208 kB
+笏・笳・/admin/admin/advertising                        7.35 kB         212 kB
+笏・笳・/admin/admin/advertising/list                   2.04 kB        94.5 kB
+笏・笳・/admin/admin/ai/copywriter                      5.58 kB        93.2 kB
+笏・笳・/admin/admin/ai/generate-intro                  7.7 kB         95.3 kB
+笏・笳・/admin/admin/all-cast                           6.4 kB          234 kB
+笏・笳・/admin/admin/auto-post                          10.6 kB        98.2 kB
+笏・笳・/admin/admin/banners                            5.78 kB         133 kB
+笏・笳・/admin/admin/dashboard                          269 B           208 kB
+笏・笳・/admin/admin/first-time-management              6.72 kB         167 kB
+笏・笳・/admin/admin/general-settings                   7.73 kB         141 kB
+笏・笳・/admin/admin/header-management                  9.21 kB         187 kB
+笏・笳・/admin/admin/hotels                             6.5 kB          147 kB
+笏・ﾆ・/admin/admin/hotels/[id]                        152 B           140 kB
+笏・笳・/admin/admin/hotels/masters                     5.8 kB          138 kB
+笏・笳・/admin/admin/hotels/new                         151 B           140 kB
+笏・笳・/admin/admin/interview-reservations             8.09 kB         138 kB
+笏・笳・/admin/admin/intro-list                         2.86 kB        95.4 kB
+笏・笳・/admin/admin/news-management                    16.3 kB         108 kB
+笏・笳・/admin/admin/page-request                       258 kB          345 kB
+笏・ﾆ・/admin/admin/price-management                   17 kB           145 kB
+笏・笳・/admin/admin/recruit-management                 5.34 kB         263 kB
+笏・笳・/admin/admin/reservations                       5.26 kB        92.8 kB
+笏・笳・/admin/admin/store-top-management               8.45 kB         278 kB
+笏・笳・/admin/admin/stores                             5.41 kB         133 kB
+笏・笳・/admin/admin/stores/casts                       14.8 kB         170 kB
+笏・笳・/admin/casts                                    3.37 kB         131 kB
+笏・笳・/admin/hotels                                   4.4 kB          105 kB
+笏・笳・/admin/login                                    3.56 kB         131 kB
+笏・笳・/admin/stores                                   2.86 kB         131 kB
+笏・ﾆ・/admin/stores/[id]/casts                        4.69 kB         132 kB
+笏・ﾆ・/admin/stores/[id]/edit                         2.14 kB         130 kB
+笏・笳・/admin/stores/new                               1.46 kB         129 kB
+笏・笳・/age-check                                      13.2 kB         183 kB
+笏・ﾆ・/api/admin/debug-faq-update                     0 B                0 B
+笏・ﾆ・/api/admin/debug-footer-update                  0 B                0 B
+笏・ﾆ・/api/ai/generate-post                           0 B                0 B
+笏・ﾆ・/api/ai/get-posts                               0 B                0 B
+笏・笳・/api/ai/get-status                              0 B                0 B
+笏・ﾆ・/api/ai/save-post                               0 B                0 B
+笏・ﾆ・/api/debug-db                                   0 B                0 B
+笏・笳・/api/debug/check-price                          0 B                0 B
+笏・ﾆ・/api/hotels/count                               0 B                0 B
+笏・笳・/api/set-age-cookie                             0 B                0 B
+笏・ﾆ・/api/upload                                     0 B                0 B
+笏・笳・/cast-list                                      915 B           103 kB
+笏・笳・/cast/cast-dashboard                            32.4 kB         236 kB
+笏・笳・/cast/signup                                    2.82 kB         130 kB
+笏・ﾆ・/consent/[reservationId]                        5.6 kB         97.6 kB
+笏・ﾆ・/counseling/[reservationId]                     1.4 kB         94.7 kB
+笏・笳・/login                                          2.93 kB         131 kB
+笏・ﾆ・/reflection/[reservationId]                     4.76 kB        96.8 kB
+笏・笳・/store/[slug]                                   14.9 kB         210 kB
+笏・  笏・/store/tokyo
+笏・  笏・/store/osaka
+笏・  笏・/store/nagoya
+笏・  笏・/store/yokohama
+笏・ﾆ・/store/[slug]/[cast]                            8.17 kB         141 kB
+笏・ﾆ・/store/[slug]/aaaa                              490 B           172 kB
+笏・ﾆ・/store/[slug]/Announcement-information/policy   7.17 kB        94.8 kB
+笏・ﾆ・/store/[slug]/Announcement-information/recruit  22.6 kB         110 kB
+笏・ﾆ・/store/[slug]/cast                              12.1 kB         143 kB
+笏・ﾆ・/store/[slug]/cast-list                         3.72 kB         191 kB
+笏・ﾆ・/store/[slug]/cast-list/search                  202 B           187 kB
+笏・ﾆ・/store/[slug]/cast/[cast]                       15 kB           198 kB
+笏・ﾆ・/store/[slug]/contact                           5.46 kB        93.1 kB
+笏・ﾆ・/store/[slug]/diary/cast/[castName]             3.24 kB         105 kB
+笏・ﾆ・/store/[slug]/diary/diary-list                  5.21 kB         147 kB
+笏・ﾆ・/store/[slug]/diary/post/[postId]               8.47 kB         105 kB
+笏・ﾆ・/store/[slug]/first-time                        550 B           133 kB
+笏・ﾆ・/store/[slug]/guide/guide                       9.69 kB         106 kB
+笏・ﾆ・/store/[slug]/hotel                             19.8 kB         124 kB
+笏・ﾆ・/store/[slug]/hotel/[area]                      337 B           104 kB
+笏・ﾆ・/store/[slug]/hotel/[area]/[hotelId]            11.8 kB         148 kB
+笏・ﾆ・/store/[slug]/hotel/features                    5.04 kB         101 kB
+笏・ﾆ・/store/[slug]/hotel/features/[articleId]        5.56 kB         102 kB
+笏・ﾆ・/store/[slug]/hotel/search                      5.38 kB         109 kB
+笏・ﾆ・/store/[slug]/news/[newsSlug]                   159 B          87.8 kB
+笏・笳・/store/[slug]/price                             7.37 kB         118 kB
+笏・  笏・/store/fukuoka/price
+笏・  笏・/store/yokohama/price
+笏・ﾆ・/store/[slug]/recruit                           9.99 kB         215 kB
+笏・ﾆ・/store/[slug]/reservation                       7.49 kB         135 kB
+笏・ﾆ・/store/[slug]/reviews/reviews                   10.1 kB         153 kB
+笏・ﾆ・/store/[slug]/schedule/schedule                 5.25 kB         180 kB
+笏・ﾆ・/store/[slug]/videos/videos                     9.65 kB        97.2 kB
+笏・ﾆ・/survey/[reservationId]                         6.87 kB        98.9 kB
+笏・笳・/test                                           3.64 kB        91.2 kB
+笏・笳・/test/reservation                               7.01 kB          99 kB
+笏・笳・/test10                                         1.68 kB         110 kB
+笏・笳・/test11                                         4.35 kB         145 kB
+笏・笳・/test12                                         3.37 kB         156 kB
+笏・笳・/test2                                          5.86 kB        93.4 kB
+笏・笳・/test3                                          6.36 kB          94 kB
+笏・笳・/test4                                          4.85 kB        92.4 kB
+笏・笳・/test5                                          3.38 kB        96.7 kB
+笏・笳・/test6                                          4.06 kB        91.7 kB
+笏・笳・/test7                                          159 B          87.8 kB
+笏・笳・/test8                                          2.23 kB         207 kB
+笏・笳・/test9                                          8.99 kB         135 kB
++ First Load JS shared by all                       87.6 kB
+  笏・chunks/2117-99a4431afb5ece1e.js                 31.9 kB
+  笏・chunks/fd9d1056-8678cf7090b2780b.js             53.6 kB
+  笏・other shared chunks (total)                     2.05 kB
+
+
+笳・ (Static)   prerendered as static content
+笳・ (SSG)      prerendered as static HTML (uses getStaticProps)
+ﾆ・ (Dynamic)  server-rendered on demand
+
