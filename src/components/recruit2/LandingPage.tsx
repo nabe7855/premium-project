@@ -115,6 +115,13 @@ export interface LandingPageConfig {
     description?: string;
     items?: { cat: string; q: string; a: string }[];
   };
+  cta?: {
+    heading?: string;
+    description?: string;
+    chatButtonText?: string;
+    consultButtonText?: string;
+    formButtonText?: string;
+  };
   [key: string]: any;
 }
 interface LandingPageProps {
@@ -582,16 +589,63 @@ const LandingPage: React.FC<LandingPageProps> = ({
       {/* Final CTA Section */}
       <section className="bg-slate-900 py-24 text-center text-white">
         <div className="container mx-auto max-w-4xl px-4">
-          <h2 className="mb-8 font-serif text-3xl font-bold leading-tight md:text-5xl">
-            あなたの人生を変える一歩を、
-            <br className="hidden md:block" />
-            ここから始めませんか？
-          </h2>
-          <p className="mb-12 text-lg text-slate-400">
-            私たちは、あなたの可能性を信じています。
-            <br />
-            誠実な一歩が、想像もしなかった未来を創り出します。
-          </p>
+          {isEditing ? (
+            <h2
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('cta', 'heading', e.currentTarget.innerText)}
+              className="mb-8 cursor-text whitespace-pre-line rounded font-serif text-3xl font-bold leading-tight outline-none hover:bg-white/5 md:text-5xl"
+            >
+              {config?.cta?.heading ?? 'あなたの人生を変える一歩を、\nここから始めませんか？'}
+            </h2>
+          ) : (
+            <h2 className="mb-8 font-serif text-3xl font-bold leading-tight md:text-5xl">
+              {config?.cta?.heading ? (
+                config.cta.heading.split('\n').map((line: string, i: number) => (
+                  <span key={i}>
+                    {line}
+                    {i < config.cta!.heading!.split('\n').length - 1 && (
+                      <br className="hidden md:block" />
+                    )}
+                  </span>
+                ))
+              ) : (
+                <>
+                  あなたの人生を変える一歩を、
+                  <br className="hidden md:block" />
+                  ここから始めませんか？
+                </>
+              )}
+            </h2>
+          )}
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('cta', 'description', e.currentTarget.innerText)}
+              className="mb-12 cursor-text whitespace-pre-line rounded text-lg text-slate-400 outline-none hover:bg-white/5"
+            >
+              {config?.cta?.description ??
+                '私たちは、あなたの可能性を信じています。\n誠実な一歩が、想像もしなかった未来を創り出します。'}
+            </p>
+          ) : (
+            <p className="mb-12 text-lg text-slate-400">
+              {config?.cta?.description ? (
+                config.cta.description.split('\n').map((line: string, i: number) => (
+                  <span key={i}>
+                    {line}
+                    {i < config.cta!.description!.split('\n').length - 1 && <br />}
+                  </span>
+                ))
+              ) : (
+                <>
+                  私たちは、あなたの可能性を信じています。
+                  <br />
+                  誠実な一歩が、想像もしなかった未来を創り出します。
+                </>
+              )}
+            </p>
+          )}
 
           <div className="flex flex-col gap-6">
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -600,14 +654,40 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-green-600 py-6 text-lg font-bold text-white shadow-xl transition-all hover:bg-green-700 hover:shadow-green-900/40 active:scale-95"
               >
                 <span className="text-2xl transition-transform group-hover:scale-110">💬</span>
-                <span>チャットでまずは話を聞いてみる</span>
+                {isEditing ? (
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => onUpdate?.('cta', 'chatButtonText', e.currentTarget.innerText)}
+                    className="cursor-text outline-none"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {config?.cta?.chatButtonText ?? 'チャットでまずは話を聞いてみる'}
+                  </span>
+                ) : (
+                  <span>{config?.cta?.chatButtonText ?? 'チャットでまずは話を聞いてみる'}</span>
+                )}
               </button>
               <button
                 onClick={onOpenChat}
                 className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-yellow-400 py-6 text-lg font-bold text-black shadow-xl transition-all hover:bg-yellow-500 hover:shadow-yellow-900/20 active:scale-95"
               >
                 <span className="text-2xl transition-transform group-hover:scale-110">⚡</span>
-                <span>30秒で簡単相談してみる</span>
+                {isEditing ? (
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) =>
+                      onUpdate?.('cta', 'consultButtonText', e.currentTarget.innerText)
+                    }
+                    className="cursor-text outline-none"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {config?.cta?.consultButtonText ?? '30秒で簡単相談してみる'}
+                  </span>
+                ) : (
+                  <span>{config?.cta?.consultButtonText ?? '30秒で簡単相談してみる'}</span>
+                )}
               </button>
             </div>
 
@@ -616,7 +696,19 @@ const LandingPage: React.FC<LandingPageProps> = ({
               className="mx-auto flex w-full max-w-md items-center justify-center space-x-3 rounded-2xl border-2 border-slate-700 bg-transparent py-5 text-lg font-bold text-white transition-all hover:border-amber-500 hover:bg-amber-500/10 active:scale-95"
             >
               <span className="text-xl">📝</span>
-              <span>応募フォームから応募する</span>
+              {isEditing ? (
+                <span
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onUpdate?.('cta', 'formButtonText', e.currentTarget.innerText)}
+                  className="cursor-text outline-none"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {config?.cta?.formButtonText ?? '応募フォームから応募する'}
+                </span>
+              ) : (
+                <span>{config?.cta?.formButtonText ?? '応募フォームから応募する'}</span>
+              )}
             </button>
           </div>
         </div>
