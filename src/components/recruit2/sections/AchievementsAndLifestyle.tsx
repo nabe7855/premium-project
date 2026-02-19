@@ -624,9 +624,26 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 <div className="space-y-4">
                   {activeProfile.routine.map((s, idx) => (
                     <div key={idx} className="group flex items-center gap-2 md:gap-4">
-                      <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
-                        {s.start}:00
-                      </div>
+                      {isEditing ? (
+                        <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
+                          <span
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => {
+                              const val = parseInt(e.currentTarget.innerText.split(':')[0]);
+                              if (!isNaN(val)) handleRoutineUpdate(safeIdx, idx, 'start', val);
+                            }}
+                            className="rounded px-0.5 outline-none hover:bg-white/5"
+                          >
+                            {s.start}
+                          </span>
+                          :00
+                        </div>
+                      ) : (
+                        <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
+                          {s.start}:00
+                        </div>
+                      )}
                       <div className="min-w-0 flex-grow">
                         <div className="mb-1 flex items-center justify-between gap-2">
                           {isEditing ? (
@@ -656,9 +673,29 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                               {s.label}
                             </span>
                           )}
-                          <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
-                            {s.end - s.start}h
-                          </span>
+                          {isEditing ? (
+                            <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                              <span
+                                contentEditable
+                                suppressContentEditableWarning
+                                onBlur={(e) => {
+                                  const duration = parseInt(
+                                    e.currentTarget.innerText.replace('h', ''),
+                                  );
+                                  if (!isNaN(duration))
+                                    handleRoutineUpdate(safeIdx, idx, 'end', s.start + duration);
+                                }}
+                                className="rounded px-0.5 outline-none hover:bg-white/5"
+                              >
+                                {s.end - s.start}
+                              </span>
+                              h
+                            </span>
+                          ) : (
+                            <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                              {s.end - s.start}h
+                            </span>
+                          )}
                         </div>
                         <div className="h-1 overflow-hidden rounded-full bg-slate-800">
                           <div
