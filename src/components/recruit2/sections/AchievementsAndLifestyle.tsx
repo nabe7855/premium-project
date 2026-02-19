@@ -128,6 +128,8 @@ interface AchievementsAndLifestyleProps {
   onUpdate?: (key: string, value: any) => void;
   profiles?: CastProfile[];
   castImages?: Record<string, string>;
+  routineTitle?: string;
+  disclaimer?: string;
 }
 
 const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
@@ -139,6 +141,8 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
   onUpdate,
   profiles: incomingProfiles,
   castImages,
+  routineTitle = 'Daily Routine Breakdown',
+  disclaimer = '※これらは実際のキャストの実績に基づくモデルケースです。ご自身の体調やライフスタイルに合わせて、自由にシフトを調整いただけます。',
 }) => {
   const displayProfiles = incomingProfiles || PROFILES;
   const [activeProfileId, setActiveProfileId] = useState<string>(displayProfiles[0].id);
@@ -178,6 +182,21 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
 
   const handleUpload = (id: string) => (file: File) => {
     if (onUpdate) onUpdate(id, file);
+  };
+
+  const handleRoutineUpdate = (profileIdx: number, segmentIdx: number, key: string, value: any) => {
+    if (!onUpdate) return;
+    const newProfiles = [...displayProfiles];
+    const newRoutine = [...newProfiles[profileIdx].routine];
+    newRoutine[segmentIdx] = {
+      ...newRoutine[segmentIdx],
+      [key]: value,
+    };
+    newProfiles[profileIdx] = {
+      ...newProfiles[profileIdx],
+      routine: newRoutine,
+    };
+    onUpdate('profiles', newProfiles);
   };
 
   const currentImage = castImages?.[activeProfile.id] || activeProfile.image;
@@ -588,9 +607,20 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
 
               {/* Schedule Breakdown */}
               <div className="rounded-2xl border border-slate-800 bg-slate-900/30 p-4 backdrop-blur-sm md:rounded-3xl md:p-6">
-                <div className="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 md:mb-6 md:text-xs">
-                  Daily Routine Breakdown
-                </div>
+                {isEditing ? (
+                  <div
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleSectionUpdate('routineTitle', e.currentTarget.innerText)}
+                    className="mb-4 cursor-text rounded text-[10px] font-bold uppercase tracking-wider text-slate-400 outline-none hover:bg-white/5 md:mb-6 md:text-xs"
+                  >
+                    {routineTitle}
+                  </div>
+                ) : (
+                  <div className="mb-4 text-[10px] font-bold uppercase tracking-wider text-slate-400 md:mb-6 md:text-xs">
+                    {routineTitle}
+                  </div>
+                )}
                 <div className="space-y-4">
                   {activeProfile.routine.map((s, idx) => (
                     <div key={idx} className="group flex items-center gap-2 md:gap-4">
@@ -599,11 +629,33 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                       </div>
                       <div className="min-w-0 flex-grow">
                         <div className="mb-1 flex items-center justify-between gap-2">
-                          <span
-                            className={`whitespace-nowrap text-[clamp(0.7rem,3vw,0.875rem)] font-bold md:text-sm ${s.type === 'work' ? 'text-amber-500' : 'text-slate-300'}`}
-                          >
-                            {s.label}
-                          </span>
+                          {isEditing ? (
+                            <span
+                              contentEditable
+                              suppressContentEditableWarning
+                              onBlur={(e) =>
+                                handleRoutineUpdate(
+                                  safeIdx,
+                                  idx,
+                                  'label',
+                                  e.currentTarget.innerText,
+                                )
+                              }
+                              className={`cursor-text whitespace-nowrap rounded text-[clamp(0.7rem,3vw,0.875rem)] font-bold outline-none hover:bg-white/5 md:text-sm ${
+                                s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
+                              }`}
+                            >
+                              {s.label}
+                            </span>
+                          ) : (
+                            <span
+                              className={`whitespace-nowrap text-[clamp(0.7rem,3vw,0.875rem)] font-bold md:text-sm ${
+                                s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
+                              }`}
+                            >
+                              {s.label}
+                            </span>
+                          )}
                           <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
                             {s.end - s.start}h
                           </span>
@@ -628,9 +680,18 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-amber-600/20 text-xl md:h-12 md:w-12 md:text-2xl">
                   💡
                 </div>
-                <p className="text-xs leading-relaxed text-slate-400 md:text-sm">
-                  ※これらは実際のキャストの実績に基づくモデルケースです。ご自身の体調やライフスタイルに合わせて、自由にシフトを調整いただけます。
-                </p>
+                {isEditing ? (
+                  <p
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => handleSectionUpdate('disclaimer', e.currentTarget.innerText)}
+                    className="cursor-text rounded text-xs leading-relaxed text-slate-400 outline-none hover:bg-white/5 md:text-sm"
+                  >
+                    {disclaimer}
+                  </p>
+                ) : (
+                  <p className="text-xs leading-relaxed text-slate-400 md:text-sm">{disclaimer}</p>
+                )}
               </div>
             </motion.div>
           </div>
