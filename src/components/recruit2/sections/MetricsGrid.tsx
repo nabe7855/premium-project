@@ -23,7 +23,11 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
   metricsLabel = 'Fan Retention Rate',
   metricsValue = '94.2%',
 }) => {
+  const [localPreviews, setLocalPreviews] = React.useState<Record<string, string>>({});
+
   const handleUpload = (key: string) => (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setLocalPreviews((prev) => ({ ...prev, [key]: previewUrl }));
     if (onUpdate) onUpdate(key, file);
   };
 
@@ -40,7 +44,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
               <div className="space-y-4 md:space-y-8 md:pt-12">
                 <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={brandingImages?.image1 || '/キャストモデル１.png'}
+                    src={localPreviews.image1 || brandingImages?.image1 || '/キャストモデル１.png'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 1"
                     isEditing={isEditing}
@@ -49,7 +53,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
                 </div>
                 <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={brandingImages?.image2 || '/キャストモデル２.png'}
+                    src={localPreviews.image2 || brandingImages?.image2 || '/キャストモデル２.png'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 2"
                     isEditing={isEditing}
@@ -60,7 +64,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
               <div className="space-y-4 md:space-y-8">
                 <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={brandingImages?.image3 || '/キャストモデル３.png'}
+                    src={localPreviews.image3 || brandingImages?.image3 || '/キャストモデル３.png'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 3"
                     isEditing={isEditing}
@@ -70,6 +74,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
                 <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
                     src={
+                      localPreviews.image4 ||
                       brandingImages?.image4 ||
                       'https://images.unsplash.com/photo-1488161628813-04466f872be2?auto=format&fit=crop&q=80&w=600'
                     }

@@ -23,6 +23,8 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   heroImage,
   stats,
 }) => {
+  const [localPreview, setLocalPreview] = React.useState<string | null>(null);
+
   // ContentEditable handling helper
   const handleInput = (
     key: string,
@@ -36,12 +38,16 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   const handleBackgroundUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && onUpdate) {
+      // Set local preview immediately for better UX
+      const previewUrl = URL.createObjectURL(file);
+      setLocalPreview(previewUrl);
       onUpdate('heroImage', file);
     }
   };
 
-  // Use prop or default. Dynamic for preview.
-  const imageUrl = heroImage || '/福岡募集バナー.png';
+  // Use local preview if available, otherwise prop, otherwise default
+  // fixed default path from '/福岡募集バナー.png' to '/ファーストビュー.png' which actually exists
+  const imageUrl = localPreview || heroImage || '/ファーストビュー.png';
 
   // Animation Variants
   const containerVariants: Variants = {
@@ -75,7 +81,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
           initial={{ scale: 1.15, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 1.8, ease: 'easeOut' }}
-          className="relative"
+          className={`relative ${isEditing ? 'min-h-[300px] bg-slate-900' : ''}`}
         >
           {/* Main Hero Image */}
           <NextImage
@@ -86,6 +92,9 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
             sizes="100vw"
             priority
             className="block h-auto w-full object-contain"
+            onError={() => {
+              console.error('Hero image failed to load:', imageUrl);
+            }}
           />
 
           {/* Subtle sheen overlay effect */}
@@ -100,15 +109,21 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
 
         {/* Edit Button Overlay (only if editing) */}
         {isEditing && (
-          <label className="absolute right-4 top-4 z-50 cursor-pointer rounded bg-black/50 px-4 py-2 text-white hover:bg-black/70">
-            <span className="text-sm font-bold">背景画像を変更</span>
-            <input
-              type="file"
-              className="hidden"
-              accept="image/*"
-              onChange={handleBackgroundUpload}
-            />
-          </label>
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/20 opacity-100 transition-opacity hover:bg-black/40">
+            <label className="group/btn cursor-pointer rounded-full bg-white/20 px-8 py-4 text-white shadow-2xl backdrop-blur-md transition-all hover:scale-105 hover:bg-white/30 active:scale-95">
+              <span className="flex items-center gap-3 text-sm font-bold sm:text-base">
+                <span className="text-2xl transition-transform group-hover/btn:rotate-12">🖼️</span>
+                背景画像を変更
+              </span>
+              <input
+                type="file"
+                className="hidden"
+                accept="image/*"
+                onChange={handleBackgroundUpload}
+                onClick={(e) => e.stopPropagation()}
+              />
+            </label>
+          </div>
         )}
       </div>
 
@@ -123,8 +138,8 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
         viewport={{ once: true, amount: 0.1 }}
         className="relative z-10 flex w-full flex-col items-center justify-start bg-slate-950 px-4 py-12"
       >
-        {/* Cinematic Backdrop Glow */}
-        <div className="absolute top-0 h-[500px] w-full max-w-4xl -translate-y-1/2 rounded-full bg-amber-600/10 blur-[100px]" />
+        {/* Cinematic Backdrop Glow - Added pointer-events-none to prevent blocking clicks */}
+        <div className="pointer-events-none absolute top-0 h-[500px] w-full max-w-4xl -translate-y-1/2 rounded-full bg-amber-600/10 blur-[100px]" />
 
         {/* Main Heading */}
         <motion.div variants={itemVariants} className="relative z-20 w-full text-center">

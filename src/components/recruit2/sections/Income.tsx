@@ -29,7 +29,7 @@ interface IncomeProps {
   };
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
-  onImageUpload?: (section: string, file: File) => void;
+  onImageUpload?: (section: string, key: string, file: File) => void;
 }
 
 const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
@@ -198,7 +198,7 @@ const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpl
                   'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop'
                 }
                 alt="Profile"
-                onUpload={(file) => onImageUpload?.('income', file)}
+                onUpload={(file) => onImageUpload?.('income', 'profileImage', file)}
                 className="h-full w-full object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>

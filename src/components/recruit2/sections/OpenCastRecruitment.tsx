@@ -33,6 +33,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
     },
   ],
 }) => {
+  const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
@@ -79,6 +80,14 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
     },
   };
 
+  const handleImageUpdate = (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setLocalPreview(previewUrl);
+    if (onUpdate) onUpdate('openCastImage', file);
+  };
+
+  const currentImage = localPreview || openCastImage || '/オープンキャスト募集.png';
+
   return (
     <section className="w-full bg-slate-950 py-12 font-sans">
       <motion.div
@@ -96,34 +105,28 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
             {/* Background Image with Editable Image */}
             <div className="absolute inset-0">
               <EditableImage
-                src={openCastImage || '/images/recruit-bg.jpg'}
+                src={currentImage}
                 alt="Recruitment Background"
                 className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                 isEditing={isEditing}
-                onUpload={(file) => {
-                  if (onUpdate) onUpdate('openCastImage', file);
-                }}
+                onUpload={handleImageUpdate}
               />
               <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent" />
             </div>
             {isEditing ? (
               <EditableImage
-                src={openCastImage || '/オープンキャスト募集.png'}
+                src={currentImage}
                 alt="オープンキャスト募集 - 10名限定超好待遇"
                 className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
                 isEditing={isEditing}
-                onUpload={(file) => {
-                  console.log('📸 OpenCastRecruitment: Image selected', file.name);
-                  if (onUpdate) onUpdate('openCastImage', file);
-                }}
+                onUpload={handleImageUpdate}
               />
             ) : (
               <NextImage
-                src={openCastImage || '/オープンキャスト募集.png'}
+                src={currentImage}
                 alt="オープンキャスト募集 - 10名限定超好待遇"
-                width={0}
-                height={0}
-                sizes="(max-width: 768px) 100vw, 1024px"
+                width={1200}
+                height={600}
                 className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
               />
             )}
@@ -136,10 +139,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                   accept="image/*"
                   onChange={(e) => {
                     const file = e.target.files?.[0];
-                    if (file && onUpdate) {
-                      console.log('📸 OpenCastRecruitment manual: Image selected', file.name);
-                      onUpdate('openCastImage', file);
-                    }
+                    if (file) handleImageUpdate(file);
                   }}
                 />
               </label>

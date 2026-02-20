@@ -25,11 +25,21 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
   description3 = '東京で磨き上げたクオリティと、福岡の情熱を掛け合わせ、新しい時代の働き方を定義します。',
   italicText = '"あなたの挑戦を、私たちは全力で肯定します。"',
 }) => {
+  const [localPreview, setLocalPreview] = React.useState<string | null>(null);
+
   const handleInput = (key: string, e: React.FormEvent<HTMLElement>) => {
     if (onUpdate) {
       onUpdate(key, e.currentTarget.innerText);
     }
   };
+
+  const handleImageUpdate = (file: File) => {
+    const previewUrl = URL.createObjectURL(file);
+    setLocalPreview(previewUrl);
+    if (onUpdate) onUpdate('backgroundImage', file);
+  };
+
+  const currentImage = localPreview || backgroundImage || '/yokohama.png';
 
   return (
     <section className="relative overflow-hidden bg-white py-32 text-white">
@@ -42,13 +52,11 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
         transition={{ duration: 1.5, ease: 'easeOut' }}
       >
         <EditableImage
-          src={backgroundImage || '/福岡夜景.png'}
+          src={currentImage}
           alt="福岡の夜景"
           className="duration-[20s] h-full w-full object-cover transition-transform hover:scale-110"
           isEditing={isEditing}
-          onUpload={(file) => {
-            if (onUpdate) onUpdate('backgroundImage', file);
-          }}
+          onUpload={handleImageUpdate}
         />
         {/* Dark Overlay for Readability */}
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/80 via-slate-900/40 to-slate-900/80"></div>
@@ -63,9 +71,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
               accept="image/*"
               onChange={(e) => {
                 const file = e.target.files?.[0];
-                if (file && onUpdate) {
-                  onUpdate('backgroundImage', file);
-                }
+                if (file) handleImageUpdate(file);
               }}
             />
           </label>

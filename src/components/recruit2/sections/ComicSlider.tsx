@@ -108,15 +108,15 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
   };
 
   const handleImageUpload = (index: number) => async (file: File) => {
+    // Set local preview immediately
+    const previewUrl = URL.createObjectURL(file);
+    handleUpdateSlide(index, 'img', previewUrl);
+
     if (onUpload) {
       const url = await onUpload(file);
       if (url) {
         handleUpdateSlide(index, 'img', url);
       }
-    } else if (onUpdate) {
-      // Fallback if onUpload is not provided (should not happen in editor)
-      const url = URL.createObjectURL(file);
-      handleUpdateSlide(index, 'img', url);
     }
   };
 

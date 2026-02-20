@@ -179,15 +179,14 @@ const LandingPage: React.FC<LandingPageProps> = ({
   // The defaults should be handled by the caller or at component level.
   const config = incomingConfig || ({} as LandingPageConfig);
 
-  const onImageUpload = async (section: string, file: File) => {
+  const onImageUpload = async (section: string, key: string, file: File) => {
     if (!onUpload) return;
     const url = await onUpload(file);
     if (url) {
-      if (section === 'income') {
-        onUpdate?.('income', 'profileImage', url);
-      }
+      onUpdate?.(section, key, url);
     }
   };
+
   console.log('✅ LandingPage merged config hero:', config.hero);
 
   return (
@@ -232,7 +231,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             heroImage={config.hero?.heroImage}
             stats={config.hero?.stats}
             isEditing={isEditing}
-            onUpdate={(key, value) => onUpdate?.('hero', key, value)}
+            onUpdate={(key: string, value: any) => onUpdate?.('hero', key, value)}
           />
         </div>
       )}
@@ -263,7 +262,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           <OpenCastRecruitment
             onOpenChat={onOpenChat}
             isEditing={isEditing}
-            onUpdate={(key, value) => onUpdate?.('openCast', key, value)}
+            onUpdate={(key: string, value: any) => onUpdate?.('openCast', key, value)}
             openCastImage={config.openCast?.openCastImage}
             benefits={config.openCast?.benefits}
           />
@@ -295,7 +294,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           )}
           <FukuokaReason
             isEditing={isEditing}
-            onUpdate={(key, value) => onUpdate?.('fukuoka', key, value)}
+            onUpdate={(key: string, value: any) => onUpdate?.('fukuoka', key, value)}
             backgroundImage={config.fukuoka?.backgroundImage}
             heading={config.fukuoka?.heading}
             description1={config.fukuoka?.description1}
@@ -476,7 +475,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
         <Income
           config={config?.income}
           isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('income', key, value)}
+          onUpdate={(key: string, value: any) => onUpdate?.('income', key, value)}
           onImageUpload={onImageUpload}
         />
       </div>
