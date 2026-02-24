@@ -1,8 +1,11 @@
 import { deleteStorageFile } from '@/actions/storage';
 import Card from '@/components/admin/ui/Card';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import { Store } from '@/types/dashboard';
-import { Edit2, Loader2, Trash2, Upload, X } from 'lucide-react';
+import { Edit2, ExternalLink, Loader2, Mail, Phone, Trash2, Upload, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 // Component for displaying an existing store's card
@@ -59,9 +62,11 @@ export default function StoreManagement() {
 
   // Edit State
   const [editingStore, setEditingStore] = useState<Store | null>(null);
+  const [isLoadingConfig, setIsLoadingConfig] = useState(false);
 
   const [newStore, setNewStore] = useState<Omit<Store, 'id' | 'photoUrl'>>({
     name: '',
+    slug: '',
     catchphrase: '',
     overview: '',
     address: '',
@@ -83,6 +88,7 @@ export default function StoreManagement() {
       const mappedData: Store[] = (data || []).map((s) => ({
         id: s.id,
         name: s.name,
+        slug: s.slug || '',
         catchphrase: s.catch_copy || '',
         overview: s.description || '', // Map description to overview
         address: s.address || '',
@@ -146,6 +152,28 @@ export default function StoreManagement() {
     }
   };
 
+  const handleEditClick = async (store: Store) => {
+    setEditingStore(store);
+    setIsLoadingConfig(true);
+    try {
+      const result = await getStoreTopConfig(store.slug);
+      const config = result.success && result.config ? result.config : DEFAULT_STORE_TOP_CONFIG;
+
+      setEditingStore({
+        ...store,
+        receptionHours: config.header.receptionHours || '',
+        businessHours: config.header.businessHours || '',
+        lineUrl: config.header.specialBanner?.link || '',
+        lineId: '',
+        notificationEmail: config.notificationEmail || '',
+      });
+    } catch (error) {
+      console.error('Error fetching config:', error);
+    } finally {
+      setIsLoadingConfig(false);
+    }
+  };
+
   const handleCreateStore = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -184,6 +212,7 @@ export default function StoreManagement() {
         const mapped: Store = {
           id: created.id,
           name: created.name,
+          slug: created.slug || '',
           catchphrase: created.catch_copy || '',
           overview: created.description || '',
           address: created.address || '',
@@ -191,7 +220,14 @@ export default function StoreManagement() {
           photoUrl: created.image_url || '',
         };
         setStores((prev) => [mapped, ...prev]);
-        setNewStore({ name: '', catchphrase: '', overview: '', address: '', phone: '' });
+        setNewStore({
+          name: '',
+          slug: '',
+          catchphrase: '',
+          overview: '',
+          address: '',
+          phone: '',
+        });
         setSelectedFile(null);
         alert('店舗を作成しました');
       }
@@ -242,7 +278,8 @@ export default function StoreManagement() {
         imageUrl = await handleFileUpload(selectedFile);
       }
 
-      const { error } = await supabase
+      // 1. Update stores table
+      const { error: storeError } = await supabase
         .from('stores')
         .update({
           name: editingStore.name,
@@ -254,7 +291,29 @@ export default function StoreManagement() {
         })
         .eq('id', editingStore.id);
 
-      if (error) throw error;
+      if (storeError) throw storeError;
+
+      // 2. Update store top config (General Settings)
+      const result = await getStoreTopConfig(editingStore.slug);
+      const config: StoreTopPageConfig =
+        result.success && result.config ? result.config : DEFAULT_STORE_TOP_CONFIG;
+
+      const updatedConfig: StoreTopPageConfig = {
+        ...config,
+        header: {
+          ...config.header,
+          phoneNumber: editingStore.phone, // Sync phone with config
+          receptionHours: editingStore.receptionHours || '',
+          businessHours: editingStore.businessHours || '',
+          specialBanner: {
+            ...config.header.specialBanner,
+            link: editingStore.lineUrl || '',
+          },
+        },
+        notificationEmail: editingStore.notificationEmail || '',
+      } as StoreTopPageConfig;
+
+      await saveStoreTopConfig(editingStore.slug, updatedConfig);
 
       setStores((prev) =>
         prev.map((s) => (s.id === editingStore.id ? { ...editingStore, photoUrl: imageUrl } : s)),
@@ -393,7 +452,7 @@ export default function StoreManagement() {
               <StoreCard
                 key={store.id}
                 store={store}
-                onEdit={setEditingStore}
+                onEdit={handleEditClick}
                 onDelete={handleDeleteStore}
               />
             ))}
@@ -418,128 +477,299 @@ export default function StoreManagement() {
               </button>
             </div>
 
-            <form
-              onSubmit={handleUpdateStore}
-              className="max-h-[80vh] space-y-6 overflow-y-auto p-6"
-            >
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      店舗名
-                    </label>
-                    <input
-                      type="text"
-                      value={editingStore.name}
-                      onChange={(e) => setEditingStore({ ...editingStore, name: e.target.value })}
-                      required
-                      className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      キャッチコピー
-                    </label>
-                    <input
-                      type="text"
-                      value={editingStore.catchphrase}
-                      onChange={(e) =>
-                        setEditingStore({ ...editingStore, catchphrase: e.target.value })
-                      }
-                      required
-                      className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      住所
-                    </label>
-                    <input
-                      type="text"
-                      value={editingStore.address}
-                      onChange={(e) =>
-                        setEditingStore({ ...editingStore, address: e.target.value })
-                      }
-                      required
-                      className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                    />
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      電話番号
-                    </label>
-                    <input
-                      type="tel"
-                      value={editingStore.phone}
-                      onChange={(e) => setEditingStore({ ...editingStore, phone: e.target.value })}
-                      required
-                      className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      店舗概要
-                    </label>
-                    <textarea
-                      value={editingStore.overview}
-                      onChange={(e) =>
-                        setEditingStore({ ...editingStore, overview: e.target.value })
-                      }
-                      required
-                      rows={5}
-                      className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                    ></textarea>
-                  </div>
-                  <div>
-                    <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                      現在の写真
-                    </label>
-                    <div className="group relative mt-1">
-                      <img
-                        src={editingStore.photoUrl || 'https://picsum.photos/400/200'}
-                        className="h-32 w-full rounded-lg border border-gray-700 object-cover"
-                        alt="Current"
-                      />
-                      <label className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
-                        <Upload className="text-white" />
-                        <span className="ml-2 text-xs text-white">変更する</span>
-                        <input
-                          type="file"
-                          className="hidden"
-                          accept="image/*"
-                          onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                        />
-                      </label>
+            {isLoadingConfig ? (
+              <div className="flex items-center justify-center p-20">
+                <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-brand-accent"></div>
+                <p className="ml-4 text-gray-400">設定を読み込み中...</p>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleUpdateStore}
+                className="max-h-[80vh] space-y-6 overflow-y-auto p-6"
+              >
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-6">
+                    <div className="space-y-4 rounded-xl border border-gray-700/30 bg-gray-900/40 p-4">
+                      <div className="flex items-center gap-2 border-b border-gray-700/50 pb-2">
+                        <Edit2 size={16} className="text-brand-accent" />
+                        <h3 className="text-sm font-bold text-white">基本情報</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            店舗名
+                          </label>
+                          <input
+                            type="text"
+                            value={editingStore.name}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                name: e.target.value,
+                              })
+                            }
+                            required
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            キャッチコピー
+                          </label>
+                          <input
+                            type="text"
+                            value={editingStore.catchphrase}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                catchphrase: e.target.value,
+                              })
+                            }
+                            required
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            店舗概要
+                          </label>
+                          <textarea
+                            value={editingStore.overview}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                overview: e.target.value,
+                              })
+                            }
+                            required
+                            rows={3}
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          ></textarea>
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                              現在の写真
+                            </label>
+                            <div className="group relative mt-1">
+                              <img
+                                src={editingStore.photoUrl || 'https://picsum.photos/400/200'}
+                                className="h-24 w-full rounded-lg border border-gray-700 object-cover"
+                                alt="Current"
+                              />
+                              <label className="absolute inset-0 flex cursor-pointer items-center justify-center rounded-lg bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                                <Upload className="text-white" size={16} />
+                                <span className="ml-2 text-[10px] text-white">変更</span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  accept="image/*"
+                                  onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                                />
+                              </label>
+                            </div>
+                            {selectedFile && (
+                              <p className="mt-1 text-[10px] text-brand-accent">
+                                選択済み: {selectedFile.name}
+                              </p>
+                            )}
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                              住所
+                            </label>
+                            <input
+                              type="text"
+                              value={editingStore.address}
+                              onChange={(e) =>
+                                setEditingStore({
+                                  ...editingStore,
+                                  address: e.target.value,
+                                })
+                              }
+                              required
+                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    {selectedFile && (
-                      <p className="mt-1 text-[10px] text-brand-accent">
-                        選択済み: {selectedFile.name}
-                      </p>
-                    )}
+
+                    <div className="space-y-4 rounded-xl border border-[#06C755]/20 bg-[#06C755]/5 p-4">
+                      <div className="flex items-center gap-2 border-b border-[#06C755]/30 pb-2">
+                        <ExternalLink size={16} className="text-[#06C755]" />
+                        <h3 className="text-sm font-bold text-white">公式LINE設定</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            LINE URL
+                          </label>
+                          <input
+                            type="text"
+                            value={editingStore.lineUrl}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                lineUrl: e.target.value,
+                              })
+                            }
+                            placeholder="https://line.me/R/ti/p/@example"
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            LINE ID（参考用）
+                          </label>
+                          <input
+                            type="text"
+                            value={editingStore.lineId}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                lineId: e.target.value,
+                              })
+                            }
+                            placeholder="@example"
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <div className="space-y-4 rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
+                      <div className="flex items-center gap-2 border-b border-blue-500/30 pb-2">
+                        <Phone size={16} className="text-blue-400" />
+                        <h3 className="text-sm font-bold text-white">電話番号設定</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            電話番号
+                          </label>
+                          <input
+                            type="tel"
+                            value={editingStore.phone}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                phone: e.target.value,
+                              })
+                            }
+                            required
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-4">
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                              受付時間
+                            </label>
+                            <input
+                              type="text"
+                              value={editingStore.receptionHours}
+                              onChange={(e) =>
+                                setEditingStore({
+                                  ...editingStore,
+                                  receptionHours: e.target.value,
+                                })
+                              }
+                              placeholder="12:00〜23:00"
+                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                              営業時間
+                            </label>
+                            <input
+                              type="text"
+                              value={editingStore.businessHours}
+                              onChange={(e) =>
+                                setEditingStore({
+                                  ...editingStore,
+                                  businessHours: e.target.value,
+                                })
+                              }
+                              placeholder="12:00〜翌3:00"
+                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
+                      <div className="flex items-center gap-2 border-b border-yellow-500/30 pb-2">
+                        <Mail size={16} className="text-yellow-400" />
+                        <h3 className="text-sm font-bold text-white">通知用メールアドレス</h3>
+                      </div>
+                      <div>
+                        <input
+                          type="email"
+                          value={editingStore.notificationEmail}
+                          onChange={(e) =>
+                            setEditingStore({
+                              ...editingStore,
+                              notificationEmail: e.target.value,
+                            })
+                          }
+                          placeholder="shop@example.com"
+                          className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                        />
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 rounded-xl border border-brand-accent/20 bg-brand-accent/5 p-4">
+                      <h3 className="text-xs font-bold text-brand-accent">📱 プレビュー</h3>
+                      <div className="space-y-2 rounded-lg bg-white p-3 text-brand-primary">
+                        <div className="flex items-center gap-2 text-pink-600">
+                          <Phone size={14} />
+                          <span className="text-base font-black">
+                            {editingStore.phone || '未設定'}
+                          </span>
+                        </div>
+                        <p className="text-[9px] text-gray-500">
+                          電話受付: {editingStore.receptionHours || '未設定'}
+                        </p>
+                        <p className="text-[9px] text-gray-500">
+                          営業時間: {editingStore.businessHours || '未設定'}
+                        </p>
+                        {editingStore.lineUrl && (
+                          <div className="mt-2 inline-flex items-center gap-1 rounded bg-[#06C755] px-2 py-1 text-[8px] font-bold text-white">
+                            <ExternalLink size={10} />
+                            LINEで問い合わせる
+                          </div>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="flex gap-4 border-t border-gray-700 pt-4 font-mono">
-                <button
-                  type="button"
-                  onClick={() => setEditingStore(null)}
-                  className="flex-1 rounded-md border border-gray-600 py-3 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all hover:bg-gray-800"
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting || uploading}
-                  className="flex flex-1 items-center justify-center gap-2 rounded-md bg-brand-accent py-3 text-xs font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-blue-500 disabled:opacity-50"
-                >
-                  {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : '更新を適用'}
-                </button>
-              </div>
-            </form>
+                <div className="flex gap-4 border-t border-gray-700 pt-4 font-mono">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingStore(null);
+                      setSelectedFile(null);
+                    }}
+                    className="flex-1 rounded-md border border-gray-600 py-3 text-xs font-bold uppercase tracking-widest text-gray-400 transition-all hover:bg-gray-800"
+                  >
+                    キャンセル
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmitting || uploading}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-md bg-brand-accent py-3 text-xs font-bold uppercase tracking-widest text-white shadow-lg transition-all hover:bg-blue-500 disabled:opacity-50"
+                  >
+                    {isSubmitting ? <Loader2 className="animate-spin" size={16} /> : '更新を適用'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

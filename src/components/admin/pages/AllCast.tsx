@@ -364,13 +364,14 @@ export default function AllCast() {
         // Fetch Stores
         const { data: storeData, error: storeError } = await supabase
           .from('stores')
-          .select('id, name');
+          .select('id, name, slug');
 
         if (storeError) throw storeError;
 
         const mappedStores: Store[] = (storeData || []).map((s) => ({
           id: s.id,
           name: s.name,
+          slug: s.slug || '',
           catchphrase: '',
           overview: '',
           address: '',

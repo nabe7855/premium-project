@@ -213,7 +213,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
           {isEditing && (
             <div className="absolute right-2 top-2 z-50">
               <button
-                onClick={() => onUpdate?.('hero', 'isVisible', config.hero?.isVisible !== false)}
+                onClick={() => onUpdate?.('hero', 'isVisible', config.hero?.isVisible === false)}
                 className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
                   config.hero?.isVisible === false
                     ? 'bg-green-600 hover:bg-green-700'
@@ -247,7 +247,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             <div className="absolute right-2 top-2 z-50">
               <button
                 onClick={() =>
-                  onUpdate?.('openCast', 'isVisible', config.openCast?.isVisible !== false)
+                  onUpdate?.('openCast', 'isVisible', config.openCast?.isVisible === false)
                 }
                 className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
                   config.openCast?.isVisible === false
@@ -390,273 +390,293 @@ const LandingPage: React.FC<LandingPageProps> = ({
       )}
 
       {/* Comic Section */}
-      <div
-        id="comic"
-        className={`group relative transition-opacity duration-300 ${
-          config?.comic?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('comic', 'isVisible', config?.comic?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.comic?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.comic?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <ComicSlider
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('comic', key, value)}
-          onUpload={onUpload}
-          slides={config?.comic?.slides}
-        />
-      </div>
+      {(config.comic?.isVisible !== false || isEditing) && (
+        <div
+          id="comic"
+          className={`group relative transition-opacity duration-300 ${
+            config?.comic?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() => onUpdate?.('comic', 'isVisible', config?.comic?.isVisible === false)}
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.comic?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.comic?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <ComicSlider
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('comic', key, value)}
+            onUpload={onUpload}
+            slides={config?.comic?.slides}
+          />
+        </div>
+      )}
 
       {/* Benefits Section */}
-      <div
-        id="benefits"
-        className={`group relative transition-opacity duration-300 ${
-          config?.benefits?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('benefits', 'isVisible', config?.benefits?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.benefits?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.benefits?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Benefits
-          isVisible={config?.benefits?.isVisible}
-          heading={config?.benefits?.heading}
-          description={config?.benefits?.description}
-          points={config?.benefits?.points}
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('benefits', key, value)}
-        />
-      </div>
+      {(config.benefits?.isVisible !== false || isEditing) && (
+        <div
+          id="benefits"
+          className={`group relative transition-opacity duration-300 ${
+            config?.benefits?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('benefits', 'isVisible', config?.benefits?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.benefits?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.benefits?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <Benefits
+            isVisible={config?.benefits?.isVisible}
+            heading={config?.benefits?.heading}
+            description={config?.benefits?.description}
+            points={config?.benefits?.points}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('benefits', key, value)}
+          />
+        </div>
+      )}
 
       {/* Income Simulation Section */}
-      <div
-        id="income"
-        className={`group relative transition-opacity duration-300 ${
-          config?.income?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('income', 'isVisible', config?.income?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.income?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.income?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Income
-          config={config?.income}
-          isEditing={isEditing}
-          onUpdate={(key: string, value: any) => onUpdate?.('income', key, value)}
-          onImageUpload={onImageUpload}
-        />
-      </div>
+      {(config.income?.isVisible !== false || isEditing) && (
+        <div
+          id="income"
+          className={`group relative transition-opacity duration-300 ${
+            config?.income?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('income', 'isVisible', config?.income?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.income?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.income?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <Income
+            config={config?.income}
+            isEditing={isEditing}
+            onUpdate={(key: string, value: any) => onUpdate?.('income', key, value)}
+            onImageUpload={onImageUpload}
+          />
+        </div>
+      )}
 
       {/* Comparison Section */}
-      <div
-        id="comparison"
-        className={`group relative transition-opacity duration-300 ${
-          config?.comparison?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('comparison', 'isVisible', config?.comparison?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.comparison?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.comparison?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Comparison
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('comparison', key, value)}
-          {...config?.comparison}
-        />
-      </div>
+      {(config.comparison?.isVisible !== false || isEditing) && (
+        <div
+          id="comparison"
+          className={`group relative transition-opacity duration-300 ${
+            config?.comparison?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('comparison', 'isVisible', config?.comparison?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.comparison?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.comparison?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <Comparison
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('comparison', key, value)}
+            {...config?.comparison}
+          />
+        </div>
+      )}
 
       {/* Check Sheet Section */}
-      <div
-        id="check"
-        className={`group relative transition-opacity duration-300 ${
-          config?.checkSheet?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('checkSheet', 'isVisible', config?.checkSheet?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.checkSheet?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.checkSheet?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <CheckSheet
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('checkSheet', key, value)}
-          {...config?.checkSheet}
-          onOpenChat={onOpenChat}
-        />
-      </div>
+      {(config.checkSheet?.isVisible !== false || isEditing) && (
+        <div
+          id="check"
+          className={`group relative transition-opacity duration-300 ${
+            config?.checkSheet?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('checkSheet', 'isVisible', config?.checkSheet?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.checkSheet?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.checkSheet?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <CheckSheet
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('checkSheet', key, value)}
+            {...config?.checkSheet}
+            onOpenChat={onOpenChat}
+          />
+        </div>
+      )}
 
       {/* Flow Section */}
-      <div
-        id="flow"
-        className={`group relative transition-opacity duration-300 ${
-          config?.flow?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('flow', 'isVisible', config?.flow?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.flow?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.flow?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <Flow
-          isVisible={config?.flow?.isVisible}
-          heading={config?.flow?.heading}
-          description={config?.flow?.description}
-          steps={config?.flow?.steps}
-          onOpenChat={onOpenChat}
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('flow', key, value)}
-        />
-      </div>
+      {(config.flow?.isVisible !== false || isEditing) && (
+        <div
+          id="flow"
+          className={`group relative transition-opacity duration-300 ${
+            config?.flow?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() => onUpdate?.('flow', 'isVisible', config?.flow?.isVisible === false)}
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.flow?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.flow?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <Flow
+            isVisible={config?.flow?.isVisible}
+            heading={config?.flow?.heading}
+            description={config?.flow?.description}
+            steps={config?.flow?.steps}
+            onOpenChat={onOpenChat}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('flow', key, value)}
+          />
+        </div>
+      )}
 
       {/* Metrics Grid Section */}
-      <div
-        className={`group relative transition-opacity duration-300 ${
-          config?.branding?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        <MetricsGrid
-          isEditing={isEditing}
-          onUpdate={(key, value) => {
-            if (['metricsLabel', 'metricsValue'].includes(key)) {
-              onUpdate?.('branding', key, value);
-            } else {
-              onUpdate?.('branding', `images.${key}`, value);
-            }
-          }}
-          brandingImages={config?.branding?.images}
-          metricsLabel={config?.branding?.metricsLabel}
-          metricsValue={config?.branding?.metricsValue}
-        />
-      </div>
+      {(config.branding?.isVisible !== false || isEditing) && (
+        <div
+          className={`group relative transition-opacity duration-300 ${
+            config?.branding?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          <MetricsGrid
+            isEditing={isEditing}
+            onUpdate={(key, value) => {
+              if (['metricsLabel', 'metricsValue'].includes(key)) {
+                onUpdate?.('branding', key, value);
+              } else {
+                onUpdate?.('branding', `images.${key}`, value);
+              }
+            }}
+            brandingImages={config?.branding?.images}
+            metricsLabel={config?.branding?.metricsLabel}
+            metricsValue={config?.branding?.metricsValue}
+          />
+        </div>
+      )}
 
       {/* Branding Support Section */}
-      <div
-        id="special"
-        className={`group relative transition-opacity duration-300 ${
-          config?.branding?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() =>
-                onUpdate?.('branding', 'isVisible', config?.branding?.isVisible === false)
-              }
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.branding?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.branding?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <BrandingSupport
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('branding', key, value)}
-          heading={config?.branding?.heading}
-          description={config?.branding?.description}
-          features={config?.branding?.features}
-        />
-      </div>
+      {(config.branding?.isVisible !== false || isEditing) && (
+        <div
+          id="special"
+          className={`group relative transition-opacity duration-300 ${
+            config?.branding?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('branding', 'isVisible', config?.branding?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.branding?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.branding?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <BrandingSupport
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('branding', key, value)}
+            heading={config?.branding?.heading}
+            description={config?.branding?.description}
+            features={config?.branding?.features}
+          />
+        </div>
+      )}
 
       {/* FAQ Section */}
-      <div
-        id="qa"
-        className={`group relative transition-opacity duration-300 ${
-          config?.faq?.isVisible === false ? 'opacity-40' : ''
-        }`}
-      >
-        {isEditing && (
-          <div className="absolute right-2 top-2 z-50">
-            <button
-              onClick={() => onUpdate?.('faq', 'isVisible', config?.faq?.isVisible === false)}
-              className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
-                config?.faq?.isVisible === false
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-red-500 hover:bg-red-600'
-              }`}
-            >
-              {config?.faq?.isVisible === false ? '表示する' : '非表示にする'}
-            </button>
-          </div>
-        )}
-        <FAQ
-          isVisible={config?.faq?.isVisible}
-          heading={config?.faq?.heading}
-          description={config?.faq?.description}
-          items={config?.faq?.items}
-          onOpenChat={onOpenChat}
-          isEditing={isEditing}
-          onUpdate={(key, value) => onUpdate?.('faq', key, value)}
-        />
-      </div>
+      {(config.faq?.isVisible !== false || isEditing) && (
+        <div
+          id="qa"
+          className={`group relative transition-opacity duration-300 ${
+            config?.faq?.isVisible === false ? 'opacity-40' : ''
+          }`}
+        >
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() => onUpdate?.('faq', 'isVisible', config?.faq?.isVisible === false)}
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.faq?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.faq?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
+          <FAQ
+            isVisible={config?.faq?.isVisible}
+            heading={config?.faq?.heading}
+            description={config?.faq?.description}
+            items={config?.faq?.items}
+            onOpenChat={onOpenChat}
+            isEditing={isEditing}
+            onUpdate={(key, value) => onUpdate?.('faq', key, value)}
+          />
+        </div>
+      )}
 
       {/* Final CTA Section */}
       <section className="bg-slate-900 py-24 text-center text-white">

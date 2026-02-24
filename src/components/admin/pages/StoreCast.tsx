@@ -375,11 +375,15 @@ export default function StoreCast() {
       setIsLoading(true);
       try {
         // Load Stores
-        const { data: storeData } = await supabase.from('stores').select('id, name').order('name');
+        const { data: storeData } = await supabase
+          .from('stores')
+          .select('id, name, slug')
+          .order('name');
         if (storeData) {
           const mappedStores: Store[] = storeData.map((s) => ({
             id: s.id,
             name: s.name,
+            slug: s.slug || '',
             catchphrase: '',
             overview: '',
             address: '',

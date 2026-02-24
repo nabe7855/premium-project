@@ -76,7 +76,6 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
 
   const navItems = [
     { href: '/admin/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
-    { href: '/admin/admin/general-settings', icon: <ChartBarIcon />, label: '一般設定' },
     { href: '/admin/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
     { href: '/admin/admin/stores/casts', icon: <StorefrontIcon />, label: '店舗別キャスト管理' },
     { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },

@@ -21,6 +21,7 @@ export const mockStores: Store[] = [
   {
     id: 'store-1',
     name: '新宿本店',
+    slug: 'shinjuku-honten',
     catchphrase: '夢のひとときを、あなたに。',
     overview: '都心に佇む最高級の癒やし空間。厳選されたキャストが、忘れられない夜を演出します。',
     address: '東京都新宿区新宿1-1-1',
@@ -30,6 +31,7 @@ export const mockStores: Store[] = [
   {
     id: 'store-2',
     name: '渋谷店',
+    slug: 'shibuya',
     catchphrase: '流行の最先端で、最高の出会いを。',
     overview:
       '若者文化の中心、渋谷。エネルギッシュで個性的なキャストたちと共に、刺激的な時間をお過ごしください。',
@@ -40,6 +42,7 @@ export const mockStores: Store[] = [
   {
     id: 'store-3',
     name: '銀座店',
+    slug: 'ginza',
     catchphrase: '本物を知る大人のための隠れ家。',
     overview:
       '洗練された街、銀座にふさわしい、落ち着きと気品に満ちた空間。上質なサービスで心ゆくまでおくつろぎください。',
@@ -50,6 +53,7 @@ export const mockStores: Store[] = [
   {
     id: 'store-4',
     name: '六本木店',
+    slug: 'roppongi',
     catchphrase: '眠らない街で、特別な夜を。',
     overview:
       '国際色豊かな六本木で、グラマラスなひとときを。最新のエンターテイメントと共にお楽しみください。',

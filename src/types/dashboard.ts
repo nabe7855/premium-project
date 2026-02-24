@@ -43,11 +43,17 @@ export interface Cast {
 export interface Store {
   id: string;
   name: string;
+  slug: string;
   catchphrase: string;
   overview: string;
   address: string;
   phone: string;
   photoUrl: string;
+  receptionHours?: string;
+  businessHours?: string;
+  lineUrl?: string;
+  lineId?: string;
+  notificationEmail?: string;
 }
 
 // Represents a data point for time series charts
