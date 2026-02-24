@@ -191,6 +191,7 @@ export async function getRecruitPageConfig(slug: string) {
       where: { slug },
       include: {
         recruit_pages: true,
+        store_top_config: true,
       },
     });
 
@@ -199,19 +200,25 @@ export async function getRecruitPageConfig(slug: string) {
       return { success: false, error: '店舗が見つかりません。' };
     }
 
-    console.log(
-      `✅ Store found: ${store.name} (${store.id}), Pages: ${store.recruit_pages.length}`,
-    );
-
     const config: any = {};
     store.recruit_pages.forEach((page: any) => {
-      // console.log(`   - Page: ${page.section_key}, Content keys: ${Object.keys(page.content || {})}`);
       config[page.section_key] = page.content;
     });
 
-    console.log(`📦 Built config with keys: ${Object.keys(config).join(', ')}`);
+    // Store basic info
+    const storeInfo = {
+      name: store.name,
+      address: store.address,
+      phone: store.phone,
+      slug: store.slug,
+    };
 
-    return { success: true, config };
+    // Use established getStoreTopConfig logic for merged configuration
+    const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
+    const topConfigResult = await getStoreTopConfig(slug);
+    const topConfig = topConfigResult.success ? topConfigResult.config : null;
+
+    return { success: true, config, storeInfo, topConfig };
   } catch (error) {
     console.error('Failed to get recruit page config:', error);
     return { success: false, error: '設定の取得に失敗しました。' };

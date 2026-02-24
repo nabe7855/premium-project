@@ -28,6 +28,8 @@ const AppContent: React.FC = () => {
 
   const { slug } = useParams() as { slug: string };
   const [config, setConfig] = useState<LandingPageConfig | undefined>();
+  const [storeInfo, setStoreInfo] = useState<any>(null);
+  const [topConfig, setTopConfig] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   // Scroll to top on route change
@@ -44,8 +46,10 @@ const AppContent: React.FC = () => {
     const fetchConfig = async () => {
       try {
         const result = await getRecruitPageConfig(slug);
-        if (result.success && result.config) {
-          setConfig(result.config as LandingPageConfig);
+        if (result.success) {
+          if (result.config) setConfig(result.config as LandingPageConfig);
+          if (result.storeInfo) setStoreInfo(result.storeInfo);
+          if (result.topConfig) setTopConfig(result.topConfig);
         }
       } catch (e) {
         console.error('Failed to fetch recruit config:', e);
@@ -69,7 +73,7 @@ const AppContent: React.FC = () => {
   const closeDiagnostic = () => setIsDiagnosticOpen(false);
 
   const storeData = stores[slug];
-  const dynamicStoreName = storeData?.displayName || '店舗名';
+  const dynamicStoreName = storeInfo?.name || storeData?.displayName || '店舗名';
 
   // Helper to deep replace "福岡" with dynamicStoreName for default values
   const localizeDefaults = (obj: any): any => {
@@ -169,7 +173,12 @@ const AppContent: React.FC = () => {
           <Route path="/thanks" element={<ThanksPage />} />
         </Routes>
       </main>
-      <Footer />
+      <Footer
+        storeName={storeInfo?.name || fullMergedConfig.general?.storeName}
+        phone={storeInfo?.phone || topConfig?.header?.phoneNumber}
+        receptionHours={topConfig?.header?.receptionHours}
+        address={storeInfo?.address}
+      />
       {location.pathname === '/' && (
         <FloatingCTA
           onOpenChat={openChat}
