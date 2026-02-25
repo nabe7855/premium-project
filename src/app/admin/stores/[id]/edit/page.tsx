@@ -1,9 +1,9 @@
 // app/admin/stores/[id]/edit/page.tsx
 'use client';
 
-import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useParams, useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface StoreForm {
   id: string;
@@ -14,7 +14,10 @@ interface StoreForm {
   catch_copy?: string;
   image_url?: string;
   theme_color?: string;
-  description?: string; // ✅ 店舗紹介文を追加
+  description?: string;
+  line_id?: string;
+  line_url?: string;
+  notification_email?: string;
 }
 
 export default function EditStorePage() {
@@ -30,11 +33,7 @@ export default function EditStorePage() {
   useEffect(() => {
     const loadStore = async () => {
       console.log('📡 Fetching store:', id);
-      const { data, error } = await supabase
-        .from('stores')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const { data, error } = await supabase.from('stores').select('*').eq('id', id).single();
 
       if (error) {
         console.error('❌ Store fetch error:', error);
@@ -80,14 +79,10 @@ export default function EditStorePage() {
       return;
     }
 
-    const { data: publicData } = supabase.storage
-      .from('store-images')
-      .getPublicUrl(filePath);
+    const { data: publicData } = supabase.storage.from('store-images').getPublicUrl(filePath);
 
     if (publicData?.publicUrl) {
-      setForm((prev) =>
-        prev ? { ...prev, image_url: publicData.publicUrl } : prev
-      );
+      setForm((prev) => (prev ? { ...prev, image_url: publicData.publicUrl } : prev));
       alert('✅ 画像をアップロードしました');
     }
 
@@ -110,7 +105,10 @@ export default function EditStorePage() {
         catch_copy: form.catch_copy,
         image_url: form.image_url,
         theme_color: form.theme_color,
-        description: form.description, // ✅ 店舗紹介文を保存
+        description: form.description,
+        line_id: form.line_id,
+        line_url: form.line_url,
+        notification_email: form.notification_email,
       })
       .eq('id', id);
 
@@ -127,7 +125,7 @@ export default function EditStorePage() {
   if (!form) return <div>読み込み中...</div>;
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4">
       <h1 className="text-xl font-bold">店舗編集</h1>
 
       <input
@@ -151,16 +149,45 @@ export default function EditStorePage() {
         placeholder="電話番号"
       />
       <input
+        className="w-full rounded border p-2"
         value={form.catch_copy || ''}
         onChange={(e) => handleChange('catch_copy', e.target.value)}
         placeholder="キャッチコピー"
       />
 
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div>
+          <label className="block text-sm font-medium text-gray-700">LINE ID</label>
+          <input
+            className="w-full rounded border p-2"
+            value={form.line_id || ''}
+            onChange={(e) => handleChange('line_id', e.target.value)}
+            placeholder="@example"
+          />
+        </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700">LINE URL</label>
+          <input
+            className="w-full rounded border p-2"
+            value={form.line_url || ''}
+            onChange={(e) => handleChange('line_url', e.target.value)}
+            placeholder="https://line.me/R/ti/p/..."
+          />
+        </div>
+        <div className="md:col-span-2">
+          <label className="block text-sm font-medium text-gray-700">通知用メールアドレス</label>
+          <input
+            className="w-full rounded border p-2"
+            value={form.notification_email || ''}
+            onChange={(e) => handleChange('notification_email', e.target.value)}
+            placeholder="contact@example.com"
+          />
+        </div>
+      </div>
+
       {/* 店舗紹介文 */}
       <div>
-        <label className="block text-sm font-medium text-gray-700">
-          店舗紹介文
-        </label>
+        <label className="block text-sm font-medium text-gray-700">店舗紹介文</label>
         <textarea
           value={form.description || ''}
           onChange={(e) => handleChange('description', e.target.value)}
@@ -180,9 +207,7 @@ export default function EditStorePage() {
         <button type="button" onClick={handleUpload} disabled={uploading}>
           {uploading ? 'アップロード中...' : '画像アップロード'}
         </button>
-        {form.image_url && (
-          <img src={form.image_url} alt="preview" className="mt-2 h-32 rounded" />
-        )}
+        {form.image_url && <img src={form.image_url} alt="preview" className="mt-2 h-32 rounded" />}
       </div>
 
       {/* テーマカラー */}
@@ -195,15 +220,15 @@ export default function EditStorePage() {
         />
       </div>
 
-{/* ✅ 更新ボタン（フッターの上に浮かせる） */}
-<div className="fixed bottom-20 right-6 z-50">
-  <button
-    onClick={handleSubmit}
-    className="px-6 py-3 rounded-full bg-indigo-600 text-white font-semibold shadow-lg hover:bg-indigo-700 transition"
-  >
-    更新
-  </button>
-</div>
+      {/* ✅ 更新ボタン（フッターの上に浮かせる） */}
+      <div className="fixed bottom-20 right-6 z-50">
+        <button
+          onClick={handleSubmit}
+          className="rounded-full bg-indigo-600 px-6 py-3 font-semibold text-white shadow-lg transition hover:bg-indigo-700"
+        >
+          更新
+        </button>
+      </div>
     </div>
   );
 }

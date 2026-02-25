@@ -1,0 +1,36 @@
+{
+  "id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+  "name": "横浜",
+  "slug": "yokohama",
+  "address": "神奈川県横浜市",
+  "phone": null,
+  "catch_copy": "夜景よりも輝く大人時間を",
+  "image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/store-images/1757847816948-yokohama.png",
+  "theme_color": "#1f51ff",
+  "tags": [],
+  "description": "ストロベリーボーイズ横浜店では、横浜の煌めく夜景に包まれながら、桃色に満たされる特別なひとときをご用意します。\n優しい声と温もりに寄り添われ、まるで恋人と過ごす夜のように心が解きほぐされていく…。\n甘く切ないロマンチックな時間の中で、あなたの心にそっと触れる出会いを演出します。日常を忘れて愛される歓びを味わいませんか？",
+  "created_at": "2025-09-09T05:34:01.160Z",
+  "recruit_pages": [
+    {
+      "id": "c4162d28-a0b2-4acd-a367-047e9cca24d6",
+      "store_id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+      "section_key": "hero",
+      "content": {
+        "isVisible": true,
+        "mainHeading": "横浜エリアで女性用風俗セラピストとして働くなら、ストロベリーボーイズ福岡店。\n\n\n"
+      },
+      "created_at": "2026-02-20T02:01:30.156Z",
+      "updated_at": "2026-02-20T02:01:30.156Z"
+    },
+    {
+      "id": "bd1a347e-5332-469b-8e18-1c8b822f38c1",
+      "store_id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+      "section_key": "openCast",
+      "content": {
+        "isVisible": true
+      },
+      "created_at": "2026-02-20T02:01:30.913Z",
+      "updated_at": "2026-02-20T02:01:30.913Z"
+    }
+  ]
+}
