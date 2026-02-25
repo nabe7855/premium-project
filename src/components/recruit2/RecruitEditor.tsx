@@ -28,6 +28,10 @@ export default function RecruitEditor() {
     openCast: {
       isVisible: true,
     },
+    branding: {
+      isVisible: true,
+      images: {},
+    },
   });
   const [isLoading, setIsLoading] = React.useState(false);
 

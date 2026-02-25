@@ -597,11 +597,25 @@ const LandingPage: React.FC<LandingPageProps> = ({
             config?.branding?.isVisible === false ? 'opacity-40' : ''
           }`}
         >
+          {(() => {
+            console.log(
+              '[LandingPage] Rendering MetricsGrid with config.branding:',
+              JSON.stringify(config?.branding, null, 2),
+            );
+            return null;
+          })()}
           <MetricsGrid
             isEditing={isEditing}
             onUpdate={(key, value) => {
+              console.log(
+                `[LandingPage] MetricsGrid onUpdate: key=${key}`,
+                value instanceof File ? 'File' : value,
+              );
               if (['metricsLabel', 'metricsValue'].includes(key)) {
                 onUpdate?.('branding', key, value);
+              } else if (value instanceof File) {
+                // Use the common photo upload logic
+                onImageUpload?.('branding', `images.${key}`, value);
               } else {
                 onUpdate?.('branding', `images.${key}`, value);
               }

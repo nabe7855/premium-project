@@ -23,9 +23,11 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
   metricsLabel = 'Fan Retention Rate',
   metricsValue = '94.2%',
 }) => {
+  console.log('[MetricsGrid] Rendered with brandingImages:', brandingImages);
   const [localPreviews, setLocalPreviews] = React.useState<Record<string, string>>({});
 
   const handleUpload = (key: string) => (file: File) => {
+    console.log(`[MetricsGrid] handleUpload for key=${key}, file=${file.name}`);
     const previewUrl = URL.createObjectURL(file);
     setLocalPreviews((prev) => ({ ...prev, [key]: previewUrl }));
     if (onUpdate) onUpdate(key, file);
@@ -122,8 +124,8 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
 
       <style>{`
         @keyframes bounce-slow {
-          0%, 100% { transform: translate(-50%, -55%); }
-          50% { transform: translate(-50%, -45%); }
+          0%, 100% { margin-top: -10px; }
+          50% { margin-top: 10px; }
         }
         .animate-bounce-slow {
           animation: bounce-slow 4s ease-in-out infinite;
