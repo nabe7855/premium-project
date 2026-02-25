@@ -46,9 +46,9 @@ model Store {
   recruit_pages    RecruitPage[]
   store_top_config StoreTopConfig?
   first_time_config FirstTimeConfig?
-  line_id          String?               @map("line_id")
-  line_url         String?               @map("line_url")
-  notification_email String?             @map("notification_email")
+  line_id          String?
+  line_url         String?
+  notification_email String?
 
   @@map("stores")
 }

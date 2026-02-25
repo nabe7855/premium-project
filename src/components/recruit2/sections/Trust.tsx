@@ -21,36 +21,109 @@ interface TrustProps {
   onUpdate?: (key: string, value: any) => void;
 }
 
-const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
-  const defaultLocations = [
-    {
-      city: '東京本店',
-      stores: 3,
-      image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
-    },
-    {
-      city: '大阪店',
-      stores: 2,
-      image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=800&h=600&fit=crop',
-    },
-    {
-      city: '名古屋店',
-      stores: 1,
-      image: 'https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop',
-    },
-  ];
+const DEFAULT_PILLARS = [
+  {
+    title: '盤石な土台',
+    sub: '創業8年の信頼',
+    desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
+  },
+  {
+    title: '能力の開花',
+    sub: '徹底した教育サポート',
+    desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
+  },
+  {
+    title: '継続的な成功',
+    sub: '個人の価値を資産へ',
+    desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
+  },
+];
 
-  const locations = config?.locations || defaultLocations;
+const DEFAULT_STATS = [
+  {
+    label: '継続年数',
+    value: '8',
+    unit: '年',
+    desc: '店舗生存率は3年で0.8%。私たちは8年間選ばれ続けています。',
+  },
+  {
+    label: '育成実績',
+    value: '200',
+    unit: '名以上',
+    desc: 'ほとんどが未経験スタート。0から育てた確かな実績。',
+  },
+  {
+    label: '定着率',
+    value: '92',
+    unit: '%',
+    desc: '稼げるから、続く。1年以上継続率92％。',
+  },
+  {
+    label: '平均月収',
+    value: '85',
+    unit: '万円',
+    desc: '多くのキャストが3年以上在籍。続けられる＝稼げる証拠です。',
+  },
+];
+
+const DEFAULT_LOCATIONS = [
+  {
+    city: '東京本店',
+    stores: 3,
+    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?w=800&h=600&fit=crop',
+  },
+  {
+    city: '大阪店',
+    stores: 2,
+    image: 'https://images.unsplash.com/photo-1589452271712-64b8a66c7b71?w=800&h=600&fit=crop',
+  },
+  {
+    city: '名古屋店',
+    stores: 1,
+    image: 'https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop',
+  },
+];
+
+const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
+  // Always base on the DEFAULT arrays to ensure consistent length and structure
+  const locations = DEFAULT_LOCATIONS.map((d, i) => {
+    const loc = config?.locations?.[i];
+    return {
+      city: loc?.city || d.city,
+      image: loc?.image || d.image,
+      stores: loc?.stores ?? d.stores,
+    };
+  });
+
+  const stats = DEFAULT_STATS.map((d, i) => {
+    const s = config?.stats?.[i];
+    return {
+      label: s?.label || d.label,
+      value: s?.value || d.value,
+      unit: s?.unit || d.unit,
+      desc: s?.desc || d.desc,
+    };
+  });
+
+  const pillars = DEFAULT_PILLARS.map((d, i) => {
+    const p = config?.pillars?.[i];
+    return {
+      title: p?.title || d.title,
+      sub: p?.sub || d.sub,
+      desc: p?.desc || d.desc,
+    };
+  });
 
   const handleImageClick = (idx: number) => {
     if (!isEditing) return;
+    console.log(`[Trust] handleImageClick triggered for index: ${idx}`);
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = 'image/*';
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        // key format: locations.0.image
+        console.log(`[Trust] Image selected for index ${idx}:`, file.name, file.size);
         onUpdate?.(`locations.${idx}.image`, file);
       }
     };
@@ -58,60 +131,15 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
   };
 
   const pillarIcons = [
-    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+    <svg key="1" className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
       <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8z" />
     </svg>,
-    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+    <svg key="2" className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
       <path d="M9 21c0 .5.5 1 1 1h4c.55 0 1-.5 1-1v-1H9v1zm3-19C8.14 2 5 5.14 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.86-3.14-7-7-7zm2.85 11.1l-.85.6V16h-4v-2.3l-.85-.6A4.997 4.997 0 0 1 7 9c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.63-.8 3.16-2.15 4.1z" />
     </svg>,
-    <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
+    <svg key="3" className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
       <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm0 4c2.21 0 4 1.79 4 4s-1.79 4-4 4-4-1.79-4-4 1.79-4 4-4zm6 10H6v-1.4c0-2 4-3.1 6-3.1s6 1.1 6 3.1V17z" />
     </svg>,
-  ];
-
-  const pillars = config?.pillars || [
-    {
-      title: '盤石な土台',
-      sub: '創業8年の信頼',
-      desc: '刹那的な稼ぎではなく、一生モノの自信を得るための環境を8年かけて磨き上げました。',
-    },
-    {
-      title: '能力の開花',
-      sub: '徹底した教育サポート',
-      desc: '未経験からでもプロになれる独自の育成プログラム。あなたの得意をプロのスキルへ。',
-    },
-    {
-      title: '継続的な成功',
-      sub: '個人の価値を資産へ',
-      desc: '単なる労働ではなく、あなた自身のブランドを確立。どこへ行っても通用する人間力を養います。',
-    },
-  ];
-
-  const stats = config?.stats || [
-    {
-      label: '継続年数',
-      value: '8',
-      unit: '年',
-      desc: '店舗生存率は3年で0.8%。私たちは8年間選ばれ続けています。',
-    },
-    {
-      label: '育成実績',
-      value: '200',
-      unit: '名以上',
-      desc: 'ほとんどが未経験スタート。0から育てた確かな実績。',
-    },
-    {
-      label: '定着率',
-      value: '92',
-      unit: '%',
-      desc: '稼げるから、続く。1年以上継続率92％。',
-    },
-    {
-      label: '平均月収',
-      value: '85',
-      unit: '万円',
-      desc: '多くのキャストが3年以上在籍。続けられる＝稼げる証拠です。',
-    },
   ];
 
   return (
@@ -122,7 +150,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
       <div className="pointer-events-none absolute bottom-0 right-0 h-96 w-96 translate-x-1/2 translate-y-1/2 rounded-full bg-indigo-500/10 blur-3xl"></div>
 
       <div className="container relative z-10 mx-auto px-4">
-        {/* 1. Brand Concept Header (8 YEARS) */}
+        {/* 1. Brand Concept Header */}
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -131,9 +159,6 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           className="mb-24 text-center"
         >
           <motion.h2
-            initial={{ scale: 0.9, opacity: 0 }}
-            whileInView={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
             className="mb-6 font-serif text-6xl font-black tracking-widest text-amber-400 outline-none drop-shadow-lg sm:text-8xl md:text-9xl"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
@@ -162,7 +187,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           </p>
         </motion.div>
 
-        {/* 2. Three Pillars (Concept) */}
+        {/* 2. Three Pillars */}
         <div className="mb-32 grid gap-8 md:grid-cols-3">
           {pillars.map((pillar, idx) => (
             <motion.div
@@ -242,12 +267,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
         </motion.div>
 
         {/* 4. Evidence Data Grid */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          className="mb-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
-        >
+        <div className="mb-32 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, idx) => (
             <motion.div
               key={idx}
@@ -307,13 +327,11 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
               >
                 {stat.desc}
               </p>
-              {/* Highlight Deco */}
-              <div className="absolute right-0 top-0 -mr-4 -mt-4 h-20 w-20 rounded-full bg-amber-100/50 blur-2xl transition-opacity group-hover:opacity-100"></div>
             </motion.div>
           ))}
-        </motion.div>
+        </div>
 
-        {/* 5. Locations Slider Header */}
+        {/* 5. Locations Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -322,40 +340,27 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
         >
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-amber-500/30 bg-amber-500/10 px-4 py-1.5 backdrop-blur-md">
             <span className="animate-pulse text-amber-400">●</span>
-            {isEditing ? (
-              <span
-                contentEditable
-                suppressContentEditableWarning
-                onBlur={(e) => onUpdate?.('locationsBadge', e.currentTarget.innerText)}
-                className="cursor-text text-xs font-bold text-amber-200 outline-none hover:bg-white/10 sm:text-sm"
-              >
-                {config?.locationsBadge ?? '三大都市を制圧する組織力'}
-              </span>
-            ) : (
-              <span className="text-xs font-bold text-amber-200 sm:text-sm">
-                {config?.locationsBadge ?? '三大都市を制圧する組織力'}
-              </span>
-            )}
-          </div>
-          {isEditing ? (
-            <h3
-              contentEditable
-              suppressContentEditableWarning
-              onBlur={(e) => onUpdate?.('locationsHeading', e.currentTarget.innerText)}
-              className="cursor-text rounded font-serif text-2xl font-bold text-white outline-none hover:bg-white/5 sm:text-3xl"
+            <span
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => onUpdate?.('locationsBadge', e.currentTarget.innerText)}
+              className="text-xs font-bold text-amber-200 outline-none sm:text-sm"
             >
-              {config?.locationsHeading ?? '全国主要都市を網羅する、確かな基盤'}
-            </h3>
-          ) : (
-            <h3 className="font-serif text-2xl font-bold text-white sm:text-3xl">
-              {config?.locationsHeading ?? '全国主要都市を網羅する、確かな基盤'}
-            </h3>
-          )}
+              {config?.locationsBadge ?? '三大都市を制圧する組織力'}
+            </span>
+          </div>
+          <h3
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('locationsHeading', e.currentTarget.innerText)}
+            className="font-serif text-2xl font-bold text-white outline-none sm:text-3xl"
+          >
+            {config?.locationsHeading ?? '全国主要都市を網羅する、確かな基盤'}
+          </h3>
         </motion.div>
 
-        {/* 6. Locations Infinite Slider (Dark Theme Adjusted) */}
+        {/* 6. Locations Infinite Slider */}
         <div className="relative w-full overflow-hidden py-4">
-          {/* Gradient Masks */}
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-8 bg-gradient-to-r from-[#111827] to-transparent sm:w-24"></div>
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-[#111827] to-transparent sm:w-24"></div>
 
@@ -365,7 +370,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
               return (
                 <div
                   key={`loc-${idx}`}
-                  className={`relative mx-3 w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-xl transition-all hover:scale-105 hover:border-amber-500/50 sm:w-[320px] ${isEditing ? 'cursor-pointer' : ''}`}
+                  className="relative mx-3 w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-xl transition-all hover:scale-105 hover:border-amber-500/50 sm:w-[320px]"
                   onClick={() => handleImageClick(originalIdx)}
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
@@ -391,7 +396,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
                       </h4>
                     </div>
                     {isEditing && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+                      <div className="absolute inset-0 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
                         <span className="rounded bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
                           画像を変更
                         </span>
@@ -404,7 +409,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           </div>
         </div>
 
-        {/* Custom Styles for Slider Animation */}
+        {/* Custom Styles */}
         <style jsx>{`
           @keyframes infinite-scroll {
             from {

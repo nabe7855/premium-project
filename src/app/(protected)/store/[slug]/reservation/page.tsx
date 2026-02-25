@@ -7,7 +7,7 @@ export default async function ReservationPage({ params }: { params: { slug: stri
   const { slug } = params;
 
   // 店舗情報を取得
-  const store = (await prisma.store.findUnique({
+  const store = await prisma.store.findUnique({
     where: { slug },
     select: {
       id: true,
@@ -18,7 +18,7 @@ export default async function ReservationPage({ params }: { params: { slug: stri
       line_url: true,
       notification_email: true,
     },
-  } as any)) as any;
+  });
 
   if (!store) {
     return notFound();

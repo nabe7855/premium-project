@@ -58,6 +58,46 @@ export default function RecruitEditor() {
   }, [selectedStore]);
 
   const handleUpdate = async (section: string, key: string, value: any) => {
+    console.log(
+      `[RecruitEditor] handleUpdate started: section=${section}, key=${key}`,
+      value instanceof File ? 'File' : value,
+    );
+
+    const updateState = (path: string, val: any) => {
+      setConfig((prev: any) => {
+        const newConfig = { ...prev };
+        // Deep clone the section to ensure React detects changes
+        if (!newConfig[section]) {
+          newConfig[section] = {};
+        } else {
+          newConfig[section] = { ...newConfig[section] };
+        }
+
+        const keys = path.split('.');
+        let current = newConfig[section];
+
+        for (let i = 0; i < keys.length - 1; i++) {
+          const k = keys[i];
+          const nextK = keys[i + 1];
+          const isNextArrayIndex = !isNaN(Number(nextK));
+
+          if (!current[k]) {
+            current[k] = isNextArrayIndex ? [] : {};
+          } else {
+            // Shallow clone child to maintain immutability chain
+            current[k] = Array.isArray(current[k]) ? [...current[k]] : { ...current[k] };
+          }
+          current = current[k];
+        }
+
+        const lastKey = keys[keys.length - 1];
+        console.log(`[RecruitEditor] Setting value at [${section}].${path} = `, val);
+        current[lastKey] = val;
+
+        return newConfig;
+      });
+    };
+
     // If value is a File, upload it first
     if (value instanceof File) {
       console.log('📂 File detected for upload:', value.name, value.size, value.type);
@@ -66,26 +106,8 @@ export default function RecruitEditor() {
       try {
         const url = await uploadRecruitImage(selectedStore, section, value);
         if (url) {
-          console.log('🔗 Uploaded URL:', url);
-
-          if (key.includes('.')) {
-            const [mainKey, subKey] = key.split('.');
-            setConfig((prev) => ({
-              ...prev,
-              [section]: {
-                ...prev[section],
-                [mainKey]: {
-                  ...(prev[section]?.[mainKey] || {}),
-                  [subKey]: url,
-                },
-              },
-            }));
-          } else {
-            setConfig((prev) => ({
-              ...prev,
-              [section]: { ...prev[section], [key]: url },
-            }));
-          }
+          console.log('🔗 Uploaded URL success:', url);
+          updateState(key, url);
           toast.success('画像をアップロードしました', { id: toastId });
         } else {
           console.error('❌ Upload failed: No URL returned');
@@ -98,24 +120,7 @@ export default function RecruitEditor() {
         setIsUploading(false);
       }
     } else {
-      if (key.includes('.')) {
-        const [mainKey, subKey] = key.split('.');
-        setConfig((prev) => ({
-          ...prev,
-          [section]: {
-            ...prev[section],
-            [mainKey]: {
-              ...(prev[section]?.[mainKey] || {}),
-              [subKey]: value,
-            },
-          },
-        }));
-      } else {
-        setConfig((prev) => ({
-          ...prev,
-          [section]: { ...prev[section], [key]: value },
-        }));
-      }
+      updateState(key, value);
     }
   };
 
