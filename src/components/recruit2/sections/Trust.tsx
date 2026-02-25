@@ -82,6 +82,11 @@ const DEFAULT_LOCATIONS = [
     stores: 1,
     image: 'https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop',
   },
+  {
+    city: '横浜店',
+    stores: 1,
+    image: 'https://images.unsplash.com/photo-1541123039126-724395e2637f?w=800&h=600&fit=crop',
+  },
 ];
 
 const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
