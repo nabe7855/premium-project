@@ -15,13 +15,14 @@ interface TrustProps {
     stats?: Array<{ label: string; value: string; unit: string; desc: string }>;
     locationsBadge?: string;
     locationsHeading?: string;
+    locations?: Array<{ city: string; image: string; stores?: number }>;
   };
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
 }
 
 const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
-  const locations = [
+  const defaultLocations = [
     {
       city: '東京本店',
       stores: 3,
@@ -38,6 +39,23 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
       image: 'https://images.unsplash.com/photo-1555633514-abcee6ab92e1?w=800&h=600&fit=crop',
     },
   ];
+
+  const locations = config?.locations || defaultLocations;
+
+  const handleImageClick = (idx: number) => {
+    if (!isEditing) return;
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.onchange = (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (file) {
+        // key format: locations.0.image
+        onUpdate?.(`locations.${idx}.image`, file);
+      }
+    };
+    input.click();
+  };
 
   const pillarIcons = [
     <svg className="h-8 w-8 text-amber-400" viewBox="0 0 24 24" fill="currentColor">
@@ -342,26 +360,47 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-[#111827] to-transparent sm:w-24"></div>
 
           <div className="animate-infinite-scroll hover:pause flex w-max">
-            {[...locations, ...locations, ...locations, ...locations].map((location, idx) => (
-              <div
-                key={`loc-${idx}`}
-                className="relative mx-3 w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-xl transition-all hover:scale-105 hover:border-amber-500/50 sm:w-[320px]"
-              >
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <img
-                    src={location.image}
-                    alt={location.city}
-                    className="h-full w-full object-cover opacity-80 transition-transform duration-700 hover:scale-110"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <h4 className="font-serif text-2xl font-bold text-white drop-shadow-md">
-                      {location.city}
-                    </h4>
+            {[...locations, ...locations, ...locations, ...locations].map((location, idx) => {
+              const originalIdx = idx % locations.length;
+              return (
+                <div
+                  key={`loc-${idx}`}
+                  className={`relative mx-3 w-[240px] flex-shrink-0 overflow-hidden rounded-xl border border-white/10 bg-slate-800 shadow-xl transition-all hover:scale-105 hover:border-amber-500/50 sm:w-[320px] ${isEditing ? 'cursor-pointer' : ''}`}
+                  onClick={() => handleImageClick(originalIdx)}
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden">
+                    <img
+                      src={location.image}
+                      alt={location.city}
+                      className="h-full w-full object-cover opacity-80 transition-transform duration-700 hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
+                    <div className="absolute bottom-4 left-4">
+                      <h4
+                        className="font-serif text-2xl font-bold text-white outline-none drop-shadow-md"
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onClick={(e) => e.stopPropagation()}
+                        onBlur={(e) => {
+                          const newLocations = [...locations];
+                          newLocations[originalIdx].city = e.currentTarget.innerText;
+                          onUpdate?.('locations', newLocations);
+                        }}
+                      >
+                        {location.city}
+                      </h4>
+                    </div>
+                    {isEditing && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+                        <span className="rounded bg-white/20 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+                          画像を変更
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

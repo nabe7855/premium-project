@@ -52,6 +52,9 @@ export interface LandingPageConfig {
     statsHeaderTitle?: string;
     statsHeaderDesc?: string;
     stats?: { label: string; value: string; unit: string; desc: string }[];
+    locationsBadge?: string;
+    locationsHeading?: string;
+    locations?: { city: string; image: string; stores?: number }[];
   };
   income?: {
     isVisible?: boolean;
