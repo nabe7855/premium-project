@@ -14,19 +14,28 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   useEffect(() => {
-    console.log('[AdminLayout] useEffect triggered', {
+    const timestamp = new Date().toISOString();
+    console.log(`[AdminLayout] useEffect triggered at ${timestamp}`, {
       loading,
       hasUser: !!user,
       isAuthenticated: user?.isAuthenticated,
       role: user?.role,
     });
+
     if (!loading) {
       if (!user || !user.isAuthenticated || user.role !== 'admin') {
-        console.warn('[AdminLayout] Auth check failed, redirecting to login');
+        const redirectReason = !user
+          ? 'No user session'
+          : !user.isAuthenticated
+            ? 'Not authenticated'
+            : `Unauthorized role: ${user.role}`;
+        console.warn(`[AdminLayout] Auth check failed (${redirectReason}), redirecting to login`);
         router.push('/admin/login');
       } else {
-        console.log('[AdminLayout] Auth check passed');
+        console.log('[AdminLayout] Auth check passed, user is admin');
       }
+    } else {
+      console.log('[AdminLayout] Still loading auth state...');
     }
   }, [user, loading, router]);
 

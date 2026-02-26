@@ -1,5 +1,6 @@
 'use client';
 
+import { getRoleFromServer } from '@/actions/auth-debug';
 import { supabase } from '@/lib/supabaseClient';
 import { Loader2, Lock, Mail, ShieldCheck } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -18,19 +19,21 @@ export default function AdminLoginForm() {
     setError('');
 
     try {
-      console.log('Attempting login for:', email);
+      console.log(`[AdminLoginForm] Attempting login for: ${email} at ${new Date().toISOString()}`);
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
       if (authError) {
-        console.error('Auth error:', authError);
+        console.error('[AdminLoginForm] Auth error:', authError);
         setError(`認証に失敗しました: ${authError.message}`);
         return;
       }
 
-      console.log('User authenticated:', data.user?.id);
+      console.log(
+        `[AdminLoginForm] User authenticated: ${data.user?.id} at ${new Date().toISOString()}`,
+      );
 
       if (!data.user) {
         setError('ユーザー情報を取得できませんでした。');
@@ -38,26 +41,56 @@ export default function AdminLoginForm() {
       }
 
       // Role check
-      const { data: roleData, error: roleError } = await supabase
-        .from('roles')
-        .select('role')
-        .eq('user_id', data.user.id)
-        .single();
+      console.log('[AdminLoginForm] Starting role check...');
+      let roleData: any = null;
+      let roleError: any = null;
 
-      console.log('Role check:', { roleData, roleError });
+      try {
+        // Create a timeout race for the client-side check
+        const timeoutPromise = new Promise<null>((_, reject) =>
+          setTimeout(() => reject(new Error('TIMEOUT')), 4000),
+        );
+
+        const clientRolePromise = supabase
+          .from('roles')
+          .select('role')
+          .eq('user_id', data.user.id)
+          .single();
+
+        const result: any = await Promise.race([clientRolePromise, timeoutPromise]);
+        roleData = result.data;
+        roleError = result.error;
+      } catch (err: any) {
+        console.warn(`[AdminLoginForm] Client-side role check failed or timed out: ${err.message}`);
+      }
+
+      // Fallback to server-side if client-side didn't give us a clear answer
+      if (roleError || !roleData) {
+        console.log('[AdminLoginForm] Falling back to server-side role check...');
+        const serverResult = await getRoleFromServer(data.user.id);
+        if (serverResult.success) {
+          roleData = { role: serverResult.role };
+          roleError = null;
+        }
+      }
+
+      console.log(`[AdminLoginForm] Role check final result at ${new Date().toISOString()}:`, {
+        roleData,
+        roleError,
+      });
 
       if (roleError || !roleData) {
-        console.error('Role fetch error:', roleError);
+        console.error('[AdminLoginForm] Role fetch error:', roleError);
         setError('アクセス権限を確認できませんでした。');
         return;
       }
 
       if (roleData.role === 'admin') {
+        console.log('[AdminLoginForm] Admin role confirmed, pushing to /admin/admin');
         router.push('/admin/admin');
       } else {
-        console.warn('User is not admin. Role:', roleData.role);
+        console.warn(`[AdminLoginForm] User is not admin. Role: ${roleData.role}`);
         setError('管理者権限がありません。');
-        // Optional: sign out if they aren't admin to be safe
         await supabase.auth.signOut();
       }
     } catch (err) {
