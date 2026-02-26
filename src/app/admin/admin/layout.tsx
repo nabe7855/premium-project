@@ -14,19 +14,38 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   useEffect(() => {
+    console.log('[AdminLayout] useEffect triggered', {
+      loading,
+      hasUser: !!user,
+      isAuthenticated: user?.isAuthenticated,
+      role: user?.role,
+    });
     if (!loading) {
       if (!user || !user.isAuthenticated || user.role !== 'admin') {
+        console.warn('[AdminLayout] Auth check failed, redirecting to login');
         router.push('/admin/login');
+      } else {
+        console.log('[AdminLayout] Auth check passed');
       }
     }
   }, [user, loading, router]);
 
   if (loading || !user || !user.isAuthenticated || user.role !== 'admin') {
+    const reason = loading
+      ? 'Loading...'
+      : !user
+        ? 'No user'
+        : !user.isAuthenticated
+          ? 'Not authenticated'
+          : `Invalid role: ${user.role}`;
+
+    console.log('[AdminLayout] Rendering loading screen. Reason:', reason);
+
     return (
       <div className="flex h-screen items-center justify-center bg-brand-primary">
         <div className="text-center">
           <Loader2 className="mx-auto h-12 w-12 animate-spin text-brand-accent" />
-          <p className="mt-4 text-brand-text-secondary">認証中...</p>
+          <p className="mt-4 text-brand-text-secondary">認証中... ({reason})</p>
         </div>
       </div>
     );

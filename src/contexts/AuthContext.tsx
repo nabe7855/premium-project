@@ -38,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const refreshUser = async () => {
+    console.log('[AuthContext] refreshUser started');
     try {
       const {
         data: { user: supabaseUser },
@@ -45,11 +46,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       } = await supabase.auth.getUser();
 
       if (authError) {
+        console.warn('[AuthContext] getUser error:', authError.message);
         throw authError;
       }
 
       if (supabaseUser) {
+        console.log('[AuthContext] supabaseUser found, fetching role...');
         const role = await fetchUserRole(supabaseUser.id, supabaseUser.email!);
+        console.log('[AuthContext] role fetched:', role);
         setUser({
           id: supabaseUser.id,
           email: supabaseUser.email!,
@@ -57,17 +61,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           role,
         });
       } else {
+        console.log('[AuthContext] No supabaseUser found');
         setUser(null);
       }
     } catch (err) {
-      console.error('Auth refresh error:', err);
+      console.error('[AuthContext] Auth refresh error:', err);
       setUser(null);
     } finally {
+      console.log('[AuthContext] refreshUser finished, setting loading to false');
       setLoading(false);
     }
   };
 
   useEffect(() => {
+    console.log('[AuthContext] Provider mounted');
     // Initial fetch
     refreshUser();
 
@@ -75,9 +82,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('Auth event change:', event);
+      console.log(
+        '[AuthContext] onAuthStateChange event:',
+        event,
+        'sessionUser:',
+        session?.user?.id,
+      );
 
       if (session?.user) {
+        console.log('[AuthContext] Session exists, updating user and role...');
         const role = await fetchUserRole(session.user.id, session.user.email!);
         setUser({
           id: session.user.id,
@@ -86,12 +99,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           role,
         });
       } else {
+        console.log('[AuthContext] No session, clearing user state');
         setUser(null);
       }
       setLoading(false);
     });
 
     return () => {
+      console.log('[AuthContext] Unsubscribing from auth changes');
       subscription.unsubscribe();
     };
   }, []);
