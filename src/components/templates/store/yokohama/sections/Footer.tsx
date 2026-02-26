@@ -1,8 +1,8 @@
+import { useStore } from '@/contexts/StoreContext';
+import { FooterConfig } from '@/lib/store/storeTopConfig';
 import { ImageIcon, Link2 } from 'lucide-react';
 import NextImage from 'next/image';
 import React from 'react';
-
-import { FooterConfig } from '@/lib/store/storeTopConfig';
 
 interface FooterProps {
   config?: FooterConfig;
@@ -29,15 +29,22 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
 
   const handleShopInfoUpdate = (key: string, value: string) => {
     if (onUpdate) {
-      const currentShopInfo = config.shopInfo || DEFAULT_SHOP_INFO;
+      const currentShopInfo = config.shopInfo || {
+        name: 'ストロベリーボーイズ',
+        address: '',
+        phone: '',
+        businessHours: '',
+      };
       onUpdate('footer', 'shopInfo', { ...currentShopInfo, [key]: value });
     }
   };
 
-  const DEFAULT_SHOP_INFO = {
-    address: '',
-    phone: '',
-    businessHours: '',
+  const handleButtonUpdate = (index: number, value: string) => {
+    if (onUpdate) {
+      const newButtons = [...config.menuButtons];
+      newButtons[index] = { ...newButtons[index], label: value };
+      onUpdate('footer', 'menuButtons', newButtons);
+    }
   };
 
   const handleLinkUpdate = (key: string, index?: number) => {
@@ -61,59 +68,87 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
     }
   };
 
+  const { store } = useStore();
+
+  const adjustedMenuButtons = config.menuButtons.map((btn) => {
+    if (btn.label.includes('料金') || btn.label.includes('コース')) {
+      return { ...btn, link: `/store/${store.slug}/price` };
+    }
+    return btn;
+  });
+
   return (
-    <footer id="footer" className="bg-[#EE827C] py-12 text-slate-400 md:py-20">
-      <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <div className="grid grid-cols-1 gap-12 md:gap-16 lg:grid-cols-4">
-          <div className="col-span-1 lg:col-span-2">
-            {/* Logo Image Wrapper Removed */}
-            <div className="space-y-4 text-sm leading-relaxed">
-              <p
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
-                className={isEditing ? 'rounded px-1 hover:bg-white/5' : ''}
-              >
-                {config.shopInfo?.address || ''}
-              </p>
-              <p
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleShopInfoUpdate('phone', e.currentTarget.innerText)}
-                className={`text-xl font-bold text-white ${isEditing ? 'rounded px-1 hover:bg-white/5' : ''}`}
-              >
-                {config.shopInfo?.phone || ''}
-              </p>
-              <p
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => handleShopInfoUpdate('businessHours', e.currentTarget.innerText)}
-                className={`whitespace-pre-line ${isEditing ? 'rounded px-1 hover:bg-white/5' : ''}`}
-              >
-                {config.shopInfo?.businessHours || ''}
-              </p>
+    <footer id="footer" className="border-Pink-100 border-t bg-[#EE827C] py-8 text-slate-800">
+      <div className="mx-auto max-w-[1000px] px-4">
+        {/* Main Content Area */}
+        <div className="flex flex-col gap-10 md:flex-row">
+          {/* Left: Shop Info */}
+          <div className="w-full flex-shrink-0 md:w-[240px]">
+            <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
+              <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
+                <span
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => handleShopInfoUpdate('name', e.currentTarget.innerText)}
+                  className={isEditing ? 'px-1 hover:bg-white/10' : ''}
+                >
+                  {config.shopInfo?.name || 'ストロベリーボーイズ'}
+                </span>
+              </div>
+              <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
+                <div className="flex gap-3">
+                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Address</span>
+                  <span
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
+                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
+                  >
+                    {config.shopInfo?.address}
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Phone</span>
+                  <span
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleShopInfoUpdate('phone', e.currentTarget.innerText)}
+                    className={isEditing ? 'px-1 font-bold hover:bg-slate-50' : 'font-bold'}
+                  >
+                    {config.shopInfo?.phone}
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Open-Close</span>
+                  <span
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleShopInfoUpdate('businessHours', e.currentTarget.innerText)}
+                    className={`whitespace-pre-line ${isEditing ? 'px-1 hover:bg-slate-50' : ''}`}
+                  >
+                    {config.shopInfo?.businessHours}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
-          <div>
-            <h4 className="mb-6 text-sm font-bold uppercase tracking-widest text-white">Menu</h4>
-            <ul className="grid grid-cols-2 gap-x-4 gap-y-5 text-sm">
-              {(config.menuButtons || []).map((btn, idx) => (
-                <li key={idx} className="group flex items-center gap-2">
+          {/* Right: Buttons and Banners */}
+          <div className="flex-grow">
+            {/* Grid of buttons */}
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+              {adjustedMenuButtons.map((btn, idx) => (
+                <div key={idx} className="group relative">
                   <a
                     href={getAbsoluteHref(btn.link || '#')}
                     onClick={(e) => isEditing && e.preventDefault()}
-                    className="py-1 transition-colors hover:text-white"
+                    className="flex h-12 items-center justify-center rounded-md bg-[#333] px-2 text-center text-xs font-bold text-white shadow-sm transition-colors hover:bg-[#444]"
                   >
                     <span
                       contentEditable={isEditing}
                       suppressContentEditableWarning={isEditing}
-                      onBlur={(e) => {
-                        const newButtons = [...config.menuButtons];
-                        newButtons[idx] = { ...newButtons[idx], label: e.currentTarget.innerText };
-                        onUpdate?.('footer', 'menuButtons', newButtons);
-                      }}
-                      className={isEditing ? 'cursor-text outline-none focus:bg-white/10' : ''}
+                      onBlur={(e) => handleButtonUpdate(idx, e.currentTarget.innerText)}
+                      className={isEditing ? 'cursor-text px-1 outline-none' : ''}
                     >
                       {btn.label}
                     </span>
@@ -121,22 +156,18 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   {isEditing && (
                     <button
                       onClick={() => handleLinkUpdate('menuButtons', idx)}
-                      className="opacity-0 transition-opacity group-hover:opacity-100"
+                      className="absolute -right-1 -top-1 z-10 hidden rounded-full bg-white p-1 text-slate-800 shadow-sm transition-opacity group-hover:block"
                     >
-                      <Link2 size={12} className="text-slate-500 hover:text-white" />
+                      <Link2 className="h-3 w-3" />
                     </button>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
-          </div>
+            </div>
 
-          <div className="lg:col-span-2">
             {/* Banners Area */}
-            <div className="overflow-hidden rounded-2xl p-4 md:p-8">
-              {/* Grid of Banners (2 columns as requested) */}
-              {/* Grid of Banners (2 columns as requested) */}
-              <div className="mx-auto grid max-w-[600px] grid-cols-2 gap-x-3 gap-y-7 px-1 md:gap-x-4 md:gap-y-8">
+            <div className="mt-10 overflow-hidden rounded-2xl">
+              <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
                 {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => (
                   <div key={idx} className="group relative flex flex-col items-start">
                     <a
@@ -180,8 +211,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                             accept="image/*"
                             onChange={(e) => {
                               if (!e.target.files?.[0]) return;
-                              const isSmall = idx >= config.banners.length;
-                              const realIdx = isSmall ? idx - config.banners.length : idx;
+                              const isSmall = idx >= (config.banners?.length || 0);
+                              const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
                               onImageUpload?.(
                                 'footer',
                                 e.target.files[0],
@@ -193,8 +224,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         </label>
                         <button
                           onClick={() => {
-                            const isSmall = idx >= config.banners.length;
-                            const realIdx = isSmall ? idx - config.banners.length : idx;
+                            const isSmall = idx >= (config.banners?.length || 0);
+                            const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
                             handleLinkUpdate(isSmall ? 'smallBanners' : 'banners', realIdx);
                           }}
                           className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
@@ -206,7 +237,6 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   </div>
                 ))}
               </div>
-
               {/* Large Square Banner at the Bottom */}
               <div className="mt-8 border-t border-white/20 pt-8">
                 <div className="mx-auto aspect-square max-w-[400px]">
@@ -257,14 +287,17 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-6 border-t border-slate-800 pt-8 md:flex-row">
-          <p
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => onUpdate?.('footer', 'copyright', e.currentTarget.innerText)}
-            className={`text-xs tracking-widest ${isEditing ? 'cursor-text rounded px-1 outline-none hover:bg-white/5' : ''}`}
-          >
-            {config.copyright}
+        {/* Bottom Copyright */}
+        <div className="mt-12 border-t border-slate-100 pt-6 text-center">
+          <p className="text-[10px] tracking-widest text-[#666]">
+            <span
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => onUpdate?.('footer', 'copyright', e.currentTarget.innerText)}
+              className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
+            >
+              {config.copyright}
+            </span>
           </p>
         </div>
       </div>
