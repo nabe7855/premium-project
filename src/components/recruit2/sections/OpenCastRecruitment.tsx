@@ -102,17 +102,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
           className="flex w-full max-w-5xl flex-col items-center px-4"
         >
           <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
-            {/* Background Image with Editable Image */}
-            <div className="absolute inset-0">
-              <EditableImage
-                src={currentImage}
-                alt="Recruitment Background"
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                isEditing={isEditing}
-                onUpload={handleImageUpdate}
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/40 to-transparent" />
-            </div>
+            {/* Banner Image Component */}
             {isEditing ? (
               <EditableImage
                 src={currentImage}
