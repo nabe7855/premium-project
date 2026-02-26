@@ -17,32 +17,35 @@ export const ThreePoints: React.FC<ThreePointsProps> = ({
 }) => {
   const data = config || {
     imageUrl: '',
+    heading: 'ストロベリーボーイズが選ばれる',
+    subHeading: '3つの安心ポイント',
+    items: [],
     isVisible: true,
   };
 
-  const points = [
-    {
-      step: 'point 1',
-      title: '初めての方限定！120分16,000円！',
-      description:
-        '本物のサービスをご体験頂けるよう、トップセラピストを含む全セラピストが対象の特別な価格にて初回コースをご案内致します！追加料金なしの明朗会計です。',
-      icon: '🍓',
-    },
-    {
-      step: 'point 2',
-      title: '女風デビューを失敗させません！',
-      description:
-        '事前カウンセリングで不安を解消！お店に何度でも無料相談可能です。セラピストとの事前連絡・カウンセリングで当日の不安を解消し、安心して素敵な体験をお楽しみください。',
-      icon: '✨',
-    },
-    {
-      step: 'point 3',
-      title: 'ゆったり過ごせるボリュームの120分！',
-      description:
-        '対面カウンセリング＆シャワー後にコーススタート！入室後のカウンセリングとシャワーを浴び終えた後からお時間のカウントを開始。無料時間の長さに驚きと喜びの声を多数頂いております！',
-      icon: '⏰',
-    },
-  ];
+  const points =
+    data.items && data.items.length > 0
+      ? data.items
+      : [
+          {
+            step: 'point 1',
+            title: '初めての方限定！120分16,000円！',
+            desc: '本物のサービスをご体験頂けるよう、トップセラピストを含む全セラピストが対象の特別な価格にて初回コースをご案内致します！追加料金なしの明朗会計です。',
+            icon: '🍓',
+          },
+          {
+            step: 'point 2',
+            title: '女風デビューを失敗ませません！',
+            desc: '事前カウンセリングで不安を解消！お店に何度でも無料相談可能です。セラピストとの事前連絡・カウンセリングで当日の不安を解消し、安心して素敵な体験をお楽しみください。',
+            icon: '✨',
+          },
+          {
+            step: 'point 3',
+            title: 'ゆったり過ごせるボリュームの120分！',
+            desc: '対面カウンセリング＆シャワー後にコーススタート！入室後のカウンセリングとシャワーを浴び終えた後からお時間のカウントを開始。無料時間の長さに驚きと喜びの声を多数頂いております！',
+            icon: '⏰',
+          },
+        ];
 
   if (data.isVisible === false && !isEditing) return null;
 
@@ -84,10 +87,22 @@ export const ThreePoints: React.FC<ThreePointsProps> = ({
           ) : (
             <>
               <h2 className="text-2xl font-black leading-tight text-gray-800 md:text-4xl">
-                ストロベリーボーイズが選ばれる
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) => onUpdate?.('threePoints', 'heading', e.currentTarget.innerText)}
+                  suppressContentEditableWarning={isEditing}
+                  className="outline-none"
+                >
+                  {data.heading}
+                </span>
                 <br />
-                <span className="text-[#FF4B5C] underline decoration-[#FF4B5C]/30 underline-offset-8">
-                  3つの安心ポイント
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) => onUpdate?.('threePoints', 'subHeading', e.currentTarget.innerText)}
+                  suppressContentEditableWarning={isEditing}
+                  className="text-[#FF4B5C] underline decoration-[#FF4B5C]/30 underline-offset-8 outline-none"
+                >
+                  {data.subHeading}
                 </span>
               </h2>
               {isEditing && (
@@ -123,19 +138,56 @@ export const ThreePoints: React.FC<ThreePointsProps> = ({
         </div>
 
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
-          {points.map((p, idx) => (
+          {points.map((p: any, idx: number) => (
             <div
               key={idx}
               className="rounded-3xl border border-red-50 bg-white p-8 shadow-xl transition-all duration-300 hover:shadow-2xl"
             >
-              <div className="mb-4 text-sm font-black uppercase tracking-widest text-[#FF4B5C]">
+              <div
+                className="mb-4 text-sm font-black uppercase tracking-widest text-[#FF4B5C] outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  if (!onUpdate) return;
+                  const newItems = [...points];
+                  newItems[idx] = { ...newItems[idx], step: e.currentTarget.innerText };
+                  onUpdate('threePoints', 'items', newItems);
+                }}
+              >
                 {p.step}
               </div>
-              <h3 className="mb-6 flex items-center gap-2 text-xl font-bold leading-tight text-gray-800">
-                <span className="text-2xl">{p.icon}</span>
+              <h3
+                className="mb-6 flex items-center gap-2 text-xl font-bold leading-tight text-gray-800 outline-none"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  if (!onUpdate) return;
+                  const newItems = [...points];
+                  newItems[idx] = { ...newItems[idx], title: e.currentTarget.innerText };
+                  onUpdate('threePoints', 'items', newItems);
+                }}
+              >
+                <span
+                  className="text-2xl"
+                  contentEditable={false} // Prevent icon from being edited as text
+                >
+                  {p.icon}
+                </span>
                 {p.title}
               </h3>
-              <p className="text-sm leading-relaxed text-gray-600 md:text-base">{p.description}</p>
+              <p
+                className="text-sm leading-relaxed text-gray-600 outline-none md:text-base"
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => {
+                  if (!onUpdate) return;
+                  const newItems = [...points];
+                  newItems[idx] = { ...newItems[idx], desc: e.currentTarget.innerText };
+                  onUpdate('threePoints', 'items', newItems);
+                }}
+              >
+                {p.desc}
+              </p>
             </div>
           ))}
         </div>

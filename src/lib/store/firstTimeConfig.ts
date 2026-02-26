@@ -41,8 +41,18 @@ export interface CastSectionConfig {
   isVisible: boolean;
 }
 
+export interface ThreePointsItem {
+  title: string;
+  desc: string;
+  icon: string;
+  step: string;
+}
+
 export interface ThreePointsConfig {
   imageUrl?: string;
+  heading: string;
+  subHeading: string;
+  items: ThreePointsItem[];
   isVisible: boolean;
 }
 
@@ -204,6 +214,28 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   },
   threePoints: {
     imageUrl: '',
+    heading: 'ストロベリーボーイズが選ばれる',
+    subHeading: '3つの安心ポイント',
+    items: [
+      {
+        step: 'point 1',
+        title: '初めての方限定！120分16,000円！',
+        desc: '本物のサービスをご体験頂けるよう、トップセラピストを含む全セラピストが対象の特別な価格にて初回コースをご案内致します！追加料金なしの明朗会計です。',
+        icon: '🍓',
+      },
+      {
+        step: 'point 2',
+        title: '女風デビューを失敗させません！',
+        desc: '事前カウンセリングで不安を解消！お店に何度でも無料相談可能です。セラピストとの事前連絡・カウンセリングで当日の不安を解消し、安心して素敵な体験をお楽しみください。',
+        icon: '✨',
+      },
+      {
+        step: 'point 3',
+        title: 'ゆったり過ごせるボリュームの120分！',
+        desc: '対面カウンセリング＆シャワー後にコーススタート！入室後のカウンセリングとシャワーを浴び終えた後からお時間のカウントを開始。無料時間の長さに驚きと喜びの声を多数頂いております！',
+        icon: '⏰',
+      },
+    ],
     isVisible: true,
   },
   sevenReasons: {
