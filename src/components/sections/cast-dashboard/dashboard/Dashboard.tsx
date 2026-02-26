@@ -29,7 +29,8 @@ import { CastDiary, CastProfile, FeatureMaster, QuestionMaster } from '@/types/c
 import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
-import { getCastPerformance } from '@/lib/getCastPerformance'; // ✅ 追加
+import { getCastDiaries } from '@/lib/getCastDiaries'; // ✅ 作成した関数
+import { getCastPerformance } from '@/lib/getCastPerformance';
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getCastQuestions } from '@/lib/getCastQuestions';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
@@ -48,7 +49,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   >('dashboard');
 
   const [castState, setCastState] = useState<CastProfile>(cast);
-  const [diaries] = useState<CastDiary[]>([]);
+  const [diaries, setDiaries] = useState<CastDiary[]>([]);
   const [featureMasters, setFeatureMasters] = useState<FeatureMaster[]>([]);
   const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
@@ -155,6 +156,27 @@ export default function Dashboard({ cast }: DashboardProps) {
       .catch((err) => console.error('能力チャート取得エラー:', err));
   }, [cast.id]);
 
+  // ✅ 日記リストのロード
+  useEffect(() => {
+    if (!cast.id) return;
+    refreshDiaries();
+  }, [cast.id]);
+
+  const refreshDiaries = async () => {
+    const data = await getCastDiaries(cast.id);
+    setDiaries(data);
+  };
+
+  const handleDiaryDelete = async (id: string) => {
+    if (!confirm('本当に削除しますか？')) return;
+    const { error } = await supabase.from('blogs').delete().eq('id', id);
+    if (!error) {
+      refreshDiaries();
+    } else {
+      alert('削除に失敗しました');
+    }
+  };
+
   // ---- ナビゲーションタブ ----
   const tabs = [
     { id: 'dashboard', name: 'ダッシュボード', icon: BarChart3 },
@@ -245,8 +267,11 @@ export default function Dashboard({ cast }: DashboardProps) {
             diaries={diaries}
             showEditor={showDiaryEditor}
             castId={cast.id}
-            onSave={() => {}}
-            onDelete={() => {}}
+            onSave={() => {
+              refreshDiaries();
+              setShowDiaryEditor(false);
+            }}
+            onDelete={handleDiaryDelete}
             onToggleEditor={setShowDiaryEditor}
           />
         )}
