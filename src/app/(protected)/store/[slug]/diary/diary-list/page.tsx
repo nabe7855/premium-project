@@ -1,11 +1,11 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import { useParams } from 'next/navigation';
-import { Search, Filter, Grid, List, Flame, Sparkles } from 'lucide-react';
-import DiaryCard from '@/components/sections/diary/DiaryCard';
 import CastSearchDropdown from '@/components/sections/diary/CastSearchDropdown';
+import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
 import { supabase } from '@/lib/supabaseClient';
+import { Filter, Flame, Grid, List, Search, Sparkles } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 interface DiaryPost {
   id: string;
@@ -51,7 +51,7 @@ const DiaryListPage = () => {
           blog_tags (
             blog_tag_master ( name )
           )
-        `
+        `,
         )
         .order('created_at', { ascending: false });
 
@@ -64,7 +64,8 @@ const DiaryListPage = () => {
       const posts =
         data
           ?.filter((post: any) => {
-            const memberships = post.casts?.[0]?.cast_store_memberships ?? [];
+            // casts は 1つのためオブジェクトで返る。その配下のメンバーシップを確認
+            const memberships = post.casts?.cast_store_memberships ?? [];
             const storeSlugs = memberships.map((m: any) => m.stores?.slug).filter(Boolean);
             return storeSlugs.includes(storeSlug);
           })
@@ -72,13 +73,13 @@ const DiaryListPage = () => {
             id: post.id,
             title: post.title,
             content: post.content ?? '',
-            excerpt: post.content ? post.content.slice(0, 100) : '',
+            excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
             date: post.created_at,
             tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
             reactions: { total: 0 }, // TODO: リアクション集計
             commentCount: 0, // TODO: コメント数集計
             storeSlug,
-            castName: post.casts?.[0]?.name ?? '不明なキャスト',
+            castName: post.casts?.name ?? '不明なキャスト',
           })) ?? [];
 
       setFilteredPosts(posts);
@@ -97,16 +98,14 @@ const DiaryListPage = () => {
           (hashtag) =>
             post.tags.includes(hashtag) ||
             post.title.includes(hashtag) ||
-            post.excerpt.includes(hashtag)
-        )
+            post.excerpt.includes(hashtag),
+        ),
       );
     }
 
     switch (sortBy) {
       case 'newest':
-        filtered = filtered.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
+        filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         break;
       case 'popular':
         filtered = filtered.sort((a, b) => b.reactions.total - a.reactions.total);
@@ -255,17 +254,11 @@ const DiaryListPage = () => {
           {filteredPosts.length > 0 ? (
             <div
               className={`grid gap-4 sm:gap-6 ${
-                viewMode === 'grid'
-                  ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
-                  : 'grid-cols-1'
+                viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
               }`}
             >
               {filteredPosts.map((post) => (
-                <DiaryCard
-                  key={post.id}
-                  post={post}
-                  listView={viewMode === 'list'}
-                />
+                <DiaryCard key={post.id} post={post} listView={viewMode === 'list'} />
               ))}
             </div>
           ) : (

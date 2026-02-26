@@ -1,7 +1,9 @@
 import { DiaryConfig } from '@/lib/store/storeTopConfig';
+import { supabase } from '@/lib/supabaseClient';
 import NextImage from 'next/image';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
 
 interface DiarySectionProps {
@@ -11,9 +13,76 @@ interface DiarySectionProps {
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
+interface DisplayDiary {
+  id: string;
+  castName: string;
+  title: string;
+  image: string;
+  date: string;
+}
+
 const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
   const params = useParams();
   const slug = params?.slug || 'tokyo';
+  const [diaries, setDiaries] = useState<DisplayDiary[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchDiaries = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('blogs')
+          .select(
+            `
+            id,
+            title,
+            created_at,
+            casts (
+              name,
+              cast_store_memberships (
+                stores ( slug )
+              )
+            ),
+            blog_images (
+              image_url
+            )
+          `,
+          )
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        const filtered = data
+          ?.filter((blog: any) => {
+            const memberships = blog.casts?.cast_store_memberships || [];
+            return memberships.some((m: any) => m.stores?.slug === slug);
+          })
+          .slice(0, 4)
+          .map((blog: any) => ({
+            id: blog.id,
+            castName: blog.casts?.name || '不明なキャスト',
+            title: blog.title,
+            image:
+              blog.blog_images?.[0]?.image_url ||
+              'https://via.placeholder.com/400x300?text=No+Image',
+            date: new Date(blog.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+          }));
+
+        if (filtered && filtered.length > 0) {
+          setDiaries(filtered);
+        } else if (config?.items) {
+          setDiaries(config.items.slice(0, 4));
+        }
+      } catch (err) {
+        console.error('Error fetching diaries:', err);
+        if (config?.items) setDiaries(config.items.slice(0, 4));
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchDiaries();
+  }, [slug, config?.items]);
 
   if (!config || (!config.isVisible && !isEditing)) return null;
 
@@ -26,9 +95,10 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
         <SectionTitle en={config.subHeading} ja={config.heading} />
 
         <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
-          {config.items.slice(0, 4).map((item) => (
-            <div
+          {diaries.map((item) => (
+            <Link
               key={item.id}
+              href={`/store/${slug}/diary/post/${item.id}`}
               className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
             >
               <div className="relative aspect-square overflow-hidden">
@@ -51,13 +121,13 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
                   {item.title}
                 </h3>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 
         <div className="mt-8 text-center md:mt-12">
-          <a
-            href={`/store/${slug}/diary`}
+          <Link
+            href={`/store/${slug}/diary/diary-list`}
             className="inline-flex items-center gap-2 border-b border-red-300 pb-1 text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:border-red-500 hover:text-slate-900"
           >
             Show All Diary
@@ -70,7 +140,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-          </a>
+          </Link>
         </div>
       </div>
     </section>
