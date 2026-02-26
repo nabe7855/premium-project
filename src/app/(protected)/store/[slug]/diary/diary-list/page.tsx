@@ -2,6 +2,11 @@
 import CastSearchDropdown from '@/components/sections/diary/CastSearchDropdown';
 import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
+import Header from '@/components/sections/layout/Header';
+import Footer from '@/components/templates/store/fukuoka/sections/Footer';
+import { useStore } from '@/contexts/StoreContext';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import { Filter, Flame, Grid, List, Search, Sparkles } from 'lucide-react';
 import { useParams } from 'next/navigation';
@@ -23,12 +28,26 @@ interface DiaryPost {
 const DiaryListPage = () => {
   const params = useParams();
   const storeSlug = params?.slug as string;
+  const { store } = useStore();
 
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
-  const [filteredPosts, setFilteredPosts] = useState<DiaryPost[]>([]);
+  const [allPosts, setAllPosts] = useState<DiaryPost[]>([]); // Store all fetched posts
+  const [filteredAndSortedPosts, setFilteredAndSortedPosts] = useState<DiaryPost[]>([]); // Store processed posts
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
+  const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
+
+  // ✅ 店舗設定取得
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const result = await getStoreTopConfig(storeSlug);
+      if (result.success) {
+        setTopConfig(result.config as StoreTopPageConfig);
+      }
+    };
+    fetchConfig();
+  }, [storeSlug]);
 
   // ✅ DBから日記取得
   useEffect(() => {
@@ -82,7 +101,7 @@ const DiaryListPage = () => {
             castName: post.casts?.name ?? '不明なキャスト',
           })) ?? [];
 
-      setFilteredPosts(posts);
+      setAllPosts(posts);
     };
 
     fetchPosts();
@@ -90,7 +109,7 @@ const DiaryListPage = () => {
 
   // ✅ フィルタリングとソート
   useEffect(() => {
-    let filtered = [...filteredPosts];
+    let filtered = [...allPosts]; // Start with all fetched posts
 
     if (selectedHashtags.length > 0) {
       filtered = filtered.filter((post) =>
@@ -115,21 +134,25 @@ const DiaryListPage = () => {
         break;
     }
 
-    setFilteredPosts(filtered);
-  }, [sortBy, selectedHashtags]);
+    setFilteredAndSortedPosts(filtered);
+  }, [sortBy, selectedHashtags, allPosts]); // Depend on allPosts to re-filter/sort when raw data changes
 
   const handleHashtagFilter = (hashtags: string[]) => {
     setSelectedHashtags(hashtags);
   };
 
   // おすすめ・トレンドは暫定的に最初の数件から
-  const trendingPosts = filteredPosts.slice(0, 3);
-  const recommendedPosts = filteredPosts.slice(3, 6);
+  const trendingPosts = filteredAndSortedPosts.slice(0, 3);
+  const recommendedPosts = filteredAndSortedPosts.slice(3, 6);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white">
+    <div
+      className={`min-h-screen ${store.theme.bodyClass || 'bg-gradient-to-br from-pink-50 to-white'}`}
+    >
+      {topConfig && topConfig.header.isVisible && <Header config={topConfig.header} />}
+
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-pink-100 to-pink-50 py-6 sm:py-8 md:py-12">
+      <div className="bg-gradient-to-r from-pink-100 to-pink-50 py-6 pt-24 sm:py-8 sm:pt-28 md:py-12 md:pt-32">
         <div className="container mx-auto px-3 sm:px-4">
           <div className="text-center">
             <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:mb-4 sm:text-3xl md:text-4xl lg:text-5xl">
@@ -236,7 +259,7 @@ const DiaryListPage = () => {
               </h2>
               {selectedHashtags.length > 0 && (
                 <p className="mt-1 text-sm text-gray-600">
-                  {filteredPosts.length}件の日記が見つかりました
+                  {filteredAndSortedPosts.length}件の日記が見つかりました
                 </p>
               )}
             </div>
@@ -251,13 +274,13 @@ const DiaryListPage = () => {
             </select>
           </div>
 
-          {filteredPosts.length > 0 ? (
+          {filteredAndSortedPosts.length > 0 ? (
             <div
               className={`grid gap-4 sm:gap-6 ${
                 viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'
               }`}
             >
-              {filteredPosts.map((post) => (
+              {filteredAndSortedPosts.map((post) => (
                 <DiaryCard key={post.id} post={post} listView={viewMode === 'list'} />
               ))}
             </div>
@@ -283,7 +306,7 @@ const DiaryListPage = () => {
         </div>
 
         {/* Load More Button */}
-        {filteredPosts.length > 0 && (
+        {filteredAndSortedPosts.length > 0 && (
           <div className="text-center">
             <button className="rounded-full bg-pink-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-pink-600 sm:px-8 sm:py-3 sm:text-base">
               もっと見る
@@ -291,6 +314,7 @@ const DiaryListPage = () => {
           </div>
         )}
       </div>
+      <Footer config={topConfig?.footer} />
     </div>
   );
 };
