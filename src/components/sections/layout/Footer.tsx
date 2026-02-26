@@ -1,5 +1,6 @@
 'use client';
 
+import { getStoreContactData } from '@/actions/store-contact';
 import { Calendar, CreditCard, Heart, MessageCircle, Phone } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -16,6 +17,10 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const [isMounted, setIsMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);
   const [isBusinessHours, setIsBusinessHours] = useState(true);
+  const [storeContact, setStoreContact] = useState({
+    phone: '050-5212-5818',
+    lineUrl: 'https://lin.ee/xxxxx',
+  });
 
   // 初めての方へページかどうかを判定
   const isFirstTimePage = pathname?.includes('/first-time');
@@ -37,8 +42,20 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
     updateBusinessHours();
     const interval = setInterval(updateBusinessHours, 60000);
+
+    if (slug) {
+      getStoreContactData(slug as string).then((res) => {
+        if (res.success && res.data) {
+          setStoreContact({
+            phone: res.data.phone || '050-5212-5818',
+            lineUrl: res.data.lineUrl || 'https://lin.ee/xxxxx',
+          });
+        }
+      });
+    }
+
     return () => clearInterval(interval);
-  }, []);
+  }, [slug]);
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -69,7 +86,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'phone',
       label: '電話',
       icon: Phone,
-      href: 'tel:050-5212-5818',
+      href: `tel:${storeContact.phone.replace(/-/g, '')}`,
       ariaLabel: isBusinessHours
         ? '今すぐ電話で予約・相談'
         : '営業時間外のためLINEをご利用ください',
@@ -79,7 +96,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       id: 'line',
       label: 'LINE',
       icon: MessageCircle,
-      href: 'https://lin.ee/xxxxx',
+      href: storeContact.lineUrl,
       ariaLabel: 'LINEで手軽に予約・相談',
       highlighted: !isBusinessHours,
     },
@@ -101,7 +118,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       itemType="https://schema.org/LocalBusiness"
     >
       <meta itemProp="name" content="ストロベリーボーイズ" />
-      <meta itemProp="telephone" content="050-5212-5818" />
+      <meta itemProp="telephone" content={storeContact.phone} />
 
       {/* ✅ 1段目（上段）: 初めての方へページのみ表示 */}
       {isFirstTimePage && (

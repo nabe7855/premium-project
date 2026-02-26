@@ -70,12 +70,19 @@ export default function HeaderManagement() {
 
   // インライン更新処理
   const handleUpdate = async (section: string, key: string, value: any) => {
-    const newConfig = {
-      ...config,
-      [section]: {
+    let newSectionData;
+    if (section === 'notificationEmail' || section === 'lineId') {
+      newSectionData = value;
+    } else {
+      newSectionData = {
         ...(config[section as keyof StoreTopPageConfig] as any),
         [key]: value,
-      },
+      };
+    }
+
+    const newConfig = {
+      ...config,
+      [section]: newSectionData,
     };
     setConfig(newConfig);
 
@@ -1206,12 +1213,12 @@ export default function HeaderManagement() {
                   </div>
                 </div>
 
-                {/* Special Banner */}
+                {/* Menu Bottom Banner */}
                 <div className="group relative overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl">
                   <div className="relative block aspect-[16/7]">
                     <img
-                      src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
-                      alt="Special Banner"
+                      src={config.header.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
+                      alt="Menu Bottom Banner"
                       className="h-full w-full object-cover opacity-60"
                     />
 
@@ -1224,7 +1231,7 @@ export default function HeaderManagement() {
                             input.accept = 'image/*';
                             input.onchange = (e) => {
                               const file = (e.target as HTMLInputElement).files?.[0];
-                              if (file) handleImageUpload('header', file, 0, 'specialBanner');
+                              if (file) handleImageUpload('header', file, 0, 'menuBottomBanner');
                             };
                             input.click();
                           }}
@@ -1250,10 +1257,48 @@ export default function HeaderManagement() {
                             />
                           </svg>
                         </button>
-                        {config.header.specialBanner?.imageUrl &&
-                          config.header.specialBanner.imageUrl !== '/福岡募集バナー.png' && (
+                        {config.header.menuBottomBanner?.imageUrl &&
+                          config.header.menuBottomBanner.imageUrl !== '/福岡募集バナー.png' && (
                             <button
-                              onClick={handleBannerDelete}
+                              onClick={async () => {
+                                if (!selectedStore) return;
+                                const imageUrl = config.header.menuBottomBanner?.imageUrl;
+                                if (!imageUrl || imageUrl === '/福岡募集バナー.png') {
+                                  toast.error('この画像は削除できません');
+                                  return;
+                                }
+                                const toastId = toast.loading('画像を削除中...');
+                                try {
+                                  if (imageUrl.startsWith('http')) {
+                                    const deleteResult = await deleteStorageFile(imageUrl);
+                                    if (!deleteResult.success) {
+                                      toast.error(
+                                        `画像の削除に失敗しました: ${deleteResult.error}`,
+                                        {
+                                          id: toastId,
+                                        },
+                                      );
+                                      return;
+                                    }
+                                  }
+                                  const newConfig = {
+                                    ...config,
+                                    header: {
+                                      ...config.header,
+                                      menuBottomBanner: {
+                                        ...(config.header.menuBottomBanner || {}),
+                                        imageUrl: '',
+                                      },
+                                    },
+                                  };
+                                  setConfig(newConfig);
+                                  await saveStoreTopConfig(selectedStore, newConfig);
+                                  toast.success('画像を削除しました', { id: toastId });
+                                } catch (error) {
+                                  console.error('Banner delete failed:', error);
+                                  toast.error('画像の削除に失敗しました', { id: toastId });
+                                }
+                              }}
                               className="rounded-lg bg-red-500/80 p-2 text-white backdrop-blur-sm transition-colors hover:bg-red-600"
                             >
                               <svg
@@ -1280,28 +1325,28 @@ export default function HeaderManagement() {
                         contentEditable={!isPreviewMode}
                         onBlur={(e) => {
                           const newBanner = {
-                            ...config.header.specialBanner,
+                            ...(config.header.menuBottomBanner || {}),
                             subHeading: e.currentTarget.textContent || '',
                           };
-                          handleUpdate('header', 'specialBanner', newBanner);
+                          handleUpdate('header', 'menuBottomBanner', newBanner);
                         }}
                         suppressContentEditableWarning
                       >
-                        {config.header.specialBanner?.subHeading || 'Strawberry Boys Premium'}
+                        {config.header.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
                       </p>
                       <h3
                         className="text-xl font-black leading-tight text-white outline-none focus:border-b focus:border-white/50"
                         contentEditable={!isPreviewMode}
                         onBlur={(e) => {
                           const newBanner = {
-                            ...config.header.specialBanner,
+                            ...(config.header.menuBottomBanner || {}),
                             mainHeading: e.currentTarget.textContent || '',
                           };
-                          handleUpdate('header', 'specialBanner', newBanner);
+                          handleUpdate('header', 'menuBottomBanner', newBanner);
                         }}
                         suppressContentEditableWarning
                       >
-                        {config.header.specialBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
+                        {config.header.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                       </h3>
                     </div>
                   </div>

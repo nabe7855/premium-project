@@ -297,7 +297,10 @@ export default function StoreTopManagement() {
         await saveStoreTopConfig(selectedStore, newConfig);
       } else {
         const sectionKey = key || 'imageUrl';
-        const sectionName = section as Exclude<keyof StoreTopPageConfig, 'notificationEmail'>;
+        const sectionName = section as Exclude<
+          keyof StoreTopPageConfig,
+          'notificationEmail' | 'lineId'
+        >;
         const oldImageUrl = (config[sectionName] as any)?.[sectionKey];
         if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.startsWith('http')) {
           await deleteStorageFile(oldImageUrl);

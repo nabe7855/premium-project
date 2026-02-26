@@ -164,7 +164,7 @@ export default function StoreManagement() {
         receptionHours: config.header.receptionHours || '',
         businessHours: config.header.businessHours || '',
         lineUrl: config.header.specialBanner?.link || '',
-        lineId: '',
+        lineId: config.lineId || '',
         notificationEmail: config.notificationEmail || '',
       });
     } catch (error) {
@@ -301,16 +301,17 @@ export default function StoreManagement() {
       const updatedConfig: StoreTopPageConfig = {
         ...config,
         header: {
-          ...config.header,
+          ...(config.header || {}),
           phoneNumber: editingStore.phone, // Sync phone with config
           receptionHours: editingStore.receptionHours || '',
           businessHours: editingStore.businessHours || '',
           specialBanner: {
-            ...config.header.specialBanner,
+            ...(config.header?.specialBanner || {}),
             link: editingStore.lineUrl || '',
           },
         },
         notificationEmail: editingStore.notificationEmail || '',
+        lineId: editingStore.lineId || '',
       } as StoreTopPageConfig;
 
       await saveStoreTopConfig(editingStore.slug, updatedConfig);

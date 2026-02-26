@@ -1,9 +1,10 @@
 'use client';
 
+import { getStoreContactData } from '@/actions/store-contact';
 import { stores } from '@/data/stores';
 import { AlertCircle, Mail, MessageCircle, Phone, Send } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export default function ContactPage() {
   const { slug } = useParams();
@@ -18,6 +19,30 @@ export default function ContactPage() {
     inquiryType: '',
     message: '',
   });
+
+  const [contactInfo, setContactInfo] = useState({
+    name: store.name || '',
+    phone: store.phone || '',
+    lineUrl: '',
+    lineId: '',
+    email: '',
+  });
+
+  useEffect(() => {
+    if (slug) {
+      getStoreContactData(slug as string).then((res) => {
+        if (res.success && res.data) {
+          setContactInfo({
+            name: res.data.name || store.name,
+            phone: res.data.phone || store.phone || '',
+            lineUrl: res.data.lineUrl || '',
+            lineId: res.data.lineId || '',
+            email: res.data.email || '',
+          });
+        }
+      });
+    }
+  }, [slug, store.name, store.phone]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,7 +69,7 @@ export default function ContactPage() {
             <span className="font-bold">お問い合わせ</span>
           </div>
           <h1 className="mb-4 text-3xl font-black leading-tight text-gray-800 md:text-5xl">
-            {store.name}に
+            {contactInfo.name}に
             <br className="md:hidden" />
             お気軽にご質問ください
           </h1>
@@ -58,7 +83,7 @@ export default function ContactPage() {
         {/* 連絡先カード */}
         <div className="mb-12 grid gap-4 md:grid-cols-3">
           <a
-            href={`tel:${store.phone || ''}`}
+            href={`tel:${contactInfo.phone.replace(/-/g, '')}`}
             className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-pink-100 bg-white p-6 transition-all hover:border-pink-300 hover:shadow-lg"
           >
             <div className="rounded-full bg-gradient-to-br from-pink-100 to-rose-100 p-4 transition-transform group-hover:scale-110">
@@ -66,12 +91,14 @@ export default function ContactPage() {
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-gray-500">お電話</div>
-              <div className="text-lg font-bold text-gray-800">{store.phone || '03-XXXX-XXXX'}</div>
+              <div className="text-lg font-bold text-gray-800">
+                {contactInfo.phone || '03-XXXX-XXXX'}
+              </div>
             </div>
           </a>
 
           <a
-            href={`https://line.me/R/ti/p/@strawberryboys`}
+            href={contactInfo.lineUrl || 'https://line.me'}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-green-100 bg-white p-6 transition-all hover:border-green-300 hover:shadow-lg"
@@ -81,11 +108,13 @@ export default function ContactPage() {
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-gray-500">LINE</div>
-              <div className="text-lg font-bold text-gray-800">@strawberryboys</div>
+              <div className="text-lg font-bold text-gray-800">
+                {contactInfo.lineId || '@strawberryboys'}
+              </div>
             </div>
           </a>
           <a
-            href="mailto:contactsutoroberrys@gmail.com"
+            href={`mailto:${contactInfo.email || 'contactsutoroberrys@gmail.com'}`}
             className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-blue-100 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg"
           >
             <div className="rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 p-4 transition-transform group-hover:scale-110">
@@ -93,7 +122,9 @@ export default function ContactPage() {
             </div>
             <div className="text-center">
               <div className="text-sm font-medium text-gray-500">メール</div>
-              <div className="text-sm font-bold text-gray-800">contact@</div>
+              <div className="text-sm font-bold text-gray-800">
+                {contactInfo.email ? contactInfo.email.split('@')[0] + '@' : 'contact@'}
+              </div>
             </div>
           </a>
         </div>
