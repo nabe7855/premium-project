@@ -288,10 +288,9 @@ const Flow: React.FC<FlowProps> = ({
                                   onChange={(e) => {
                                     const file = e.target.files?.[0];
                                     if (file) {
-                                      const newSteps = [...steps];
-                                      // Image uploading would be handled by a parent or dedicated hook
-                                      // but for UI consistency:
-                                      onUpdate?.('steps', newSteps);
+                                      // Pass the individual field path and the File object
+                                      // RecruitEditor will handle the upload and update config.flow.steps[i].image
+                                      onUpdate?.(`steps.${i}.image`, file);
                                     }
                                   }}
                                 />

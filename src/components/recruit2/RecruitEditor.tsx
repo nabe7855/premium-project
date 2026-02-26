@@ -14,6 +14,7 @@ import { uploadRecruitImage } from '@/lib/uploadRecruitImage';
 import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { toast } from 'sonner';
+import { STOCK_RECRUIT_CONFIG } from './constants';
 import LandingPage, { LandingPageConfig } from './LandingPage';
 
 export default function RecruitEditor() {
@@ -21,18 +22,7 @@ export default function RecruitEditor() {
   const [isSaving, setIsSaving] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
 
-  const [config, setConfig] = React.useState<LandingPageConfig>({
-    hero: {
-      isVisible: true,
-    },
-    openCast: {
-      isVisible: true,
-    },
-    branding: {
-      isVisible: true,
-      images: {},
-    },
-  });
+  const [config, setConfig] = React.useState<LandingPageConfig>(STOCK_RECRUIT_CONFIG);
   const [isLoading, setIsLoading] = React.useState(false);
 
   // Fetch config when store changes
@@ -43,11 +33,29 @@ export default function RecruitEditor() {
         const result = await getRecruitPageConfig(selectedStore);
         if (result.success && result.config) {
           console.log('📡 Fetched recruit config:', result.config);
-          // Merge with default config to ensure all sections exist
-          setConfig((prev) => ({
-            ...prev,
-            ...result.config,
-          }));
+          // Merge with default config at the section level to ensure all sections and their defaults exist
+          setConfig((prev) => {
+            const merged = { ...STOCK_RECRUIT_CONFIG } as any;
+            // Merge each section from fetched config
+            if (result.config) {
+              Object.keys(result.config).forEach((section) => {
+                const dbSectionValue = (result.config as any)[section];
+                if (
+                  dbSectionValue &&
+                  typeof dbSectionValue === 'object' &&
+                  !Array.isArray(dbSectionValue)
+                ) {
+                  merged[section] = {
+                    ...(merged[section] || {}),
+                    ...dbSectionValue,
+                  };
+                } else {
+                  merged[section] = dbSectionValue;
+                }
+              });
+            }
+            return merged as LandingPageConfig;
+          });
         } else {
           // Reset to default or handle error
           console.error('Failed to fetch config:', result.error);
