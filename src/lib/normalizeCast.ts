@@ -1,38 +1,29 @@
-import { Cast, CastStatus, Status, ServiceLevel, GalleryItem, CastQuestion } from '@/types/cast';
+import { Cast, CastQuestion, CastStatus, GalleryItem, ServiceLevel, Status } from '@/types/cast';
 
 export function normalizeCast(
   cast: any,
   features: any[],
   statuses: any[],
   gallery: any[] = [],
-  castQuestions: CastQuestion[] = [] // 🆕 Q&Aを追加
+  castQuestions: CastQuestion[] = [], // 🆕 Q&Aを追加
 ): Cast {
   // ✅ personality
-  const personalityFeatures = features.filter(
-    (f) => f.feature_master?.category === 'personality'
-  );
+  const personalityFeatures = features.filter((f) => f.feature_master?.category === 'personality');
   const personalityIds = personalityFeatures.map((f) => f.feature_id);
-  const personalityNames = personalityFeatures.map(
-    (f) => f.feature_master?.name ?? ''
-  );
+  const personalityNames = personalityFeatures.map((f) => f.feature_master?.name ?? '');
 
   // ✅ appearance
-  const appearanceFeatures = features.filter(
-    (f) => f.feature_master?.category === 'appearance'
-  );
+  const appearanceFeatures = features.filter((f) => f.feature_master?.category === 'appearance');
   const appearanceIds = appearanceFeatures.map((f) => f.feature_id);
-  const appearanceNames = appearanceFeatures.map(
-    (f) => f.feature_master?.name ?? ''
-  );
+  const appearanceNames = appearanceFeatures.map((f) => f.feature_master?.name ?? '');
 
   // ✅ mbti / animal / face
   const mbtiType =
-    features.find((f) => f.feature_master?.category === 'mbti')?.feature_master
-      ?.name ?? undefined;
+    features.find((f) => f.feature_master?.category === 'mbti')?.feature_master?.name ?? undefined;
 
   const animalName =
-    features.find((f) => f.feature_master?.category === 'animal')
-      ?.feature_master?.name ?? undefined;
+    features.find((f) => f.feature_master?.category === 'animal')?.feature_master?.name ??
+    undefined;
 
   const faceType = features
     .filter((f) => f.feature_master?.category === 'face')
@@ -115,6 +106,7 @@ export function normalizeCast(
     profileDetail: undefined,
     services,
     bloodType: cast.blood_type ?? undefined,
+    managerComment: cast.manager_comment ?? undefined,
     createdAt: cast.created_at ?? undefined,
 
     // 🆕 Q&Aを正しく統合

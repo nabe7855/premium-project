@@ -240,6 +240,7 @@ export interface CastProfile {
   sexinessLevel?: number;
   bloodType?: string;
   catchCopy?: string;
+  managerComment?: string;
 
   services?: {
     [key: string]: 'NG' | '要相談' | '普通' | '得意';
