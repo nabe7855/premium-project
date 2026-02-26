@@ -96,11 +96,18 @@ export default function StoreTopManagement() {
     fetchNews();
   }, [selectedStore]);
 
+  // 保存処理用ヘルパー（Server Actionに渡す前に確実にシリアライズ可能な状態にする）
+  const safeSaveConfig = async (currentConfig: StoreTopPageConfig) => {
+    // Client Functions cannot be passed... エラー対策としてディープコピーで関数等を除去
+    const serializableConfig = JSON.parse(JSON.stringify(currentConfig));
+    return await saveStoreTopConfig(selectedStore, serializableConfig);
+  };
+
   // 保存処理
   const handleSave = async () => {
     setIsSaving(true);
     try {
-      const result = await saveStoreTopConfig(selectedStore, config);
+      const result = await safeSaveConfig(config);
       if (result.success) {
         toast.success('設定を保存しました');
       } else {
@@ -165,7 +172,7 @@ export default function StoreTopManagement() {
           header: { ...config.header, navLinks: newNavLinks },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'hero' && typeof index === 'number') {
         // Hero images array handling
         const newImages = [...config.hero.images];
@@ -187,7 +194,7 @@ export default function StoreTopManagement() {
           hero: { ...config.hero, images: newImages },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
         // Concept items handling
         const newItems = [...config.concept.items];
@@ -201,7 +208,7 @@ export default function StoreTopManagement() {
           concept: { ...config.concept, items: newItems },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
         // Campaign items handling
         const newItems = [...config.campaign.items];
@@ -215,7 +222,7 @@ export default function StoreTopManagement() {
           campaign: { ...config.campaign, items: newItems },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'diary' && typeof index === 'number') {
         const newItems = [...config.diary.items];
         newItems[index] = { ...newItems[index], image: publicUrl };
@@ -224,7 +231,7 @@ export default function StoreTopManagement() {
           diary: { ...config.diary, items: newItems },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'newcomer' && typeof index === 'number') {
         const oldImageUrl = config.newcomer.items[index]?.imageUrl;
         if (oldImageUrl && oldImageUrl.startsWith('http')) {
@@ -238,7 +245,7 @@ export default function StoreTopManagement() {
           newcomer: { ...config.newcomer, items: newItems },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
         const newBanners = [...config.footer.banners];
         const oldImageUrl = newBanners[index]?.imageUrl;
@@ -251,7 +258,7 @@ export default function StoreTopManagement() {
           footer: { ...config.footer, banners: newBanners },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'footer' && key === 'smallBanners' && typeof index === 'number') {
         const newSmallBanners = [...config.footer.smallBanners];
         const oldImageUrl = newSmallBanners[index]?.imageUrl;
@@ -264,7 +271,7 @@ export default function StoreTopManagement() {
           footer: { ...config.footer, smallBanners: newSmallBanners },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'footer' && key === 'trustBadges' && typeof index === 'number') {
         const newTrustBadges = [...config.footer.trustBadges];
         const oldImageUrl = newTrustBadges[index]?.imageUrl;
@@ -280,7 +287,7 @@ export default function StoreTopManagement() {
           footer: { ...config.footer, trustBadges: newTrustBadges },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'footer' && key === 'largeBanner') {
         const oldImageUrl = config.footer.largeBanner?.imageUrl;
         if (oldImageUrl && oldImageUrl.startsWith('http')) {
@@ -294,7 +301,7 @@ export default function StoreTopManagement() {
           },
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       } else {
         const sectionKey = key || 'imageUrl';
         const sectionName = section as Exclude<
@@ -306,12 +313,26 @@ export default function StoreTopManagement() {
           await deleteStorageFile(oldImageUrl);
         }
 
+        // セクションの中身がオブジェクトか値かによって更新方法を変える
+        const currentSection = config[sectionName] as any;
+        let updatedSection;
+        if (typeof currentSection[sectionKey] === 'object' && currentSection[sectionKey] !== null) {
+          // 例: largeBanner: { imageUrl: '...', link: '...' } の imageUrl だけ更新する場合
+          updatedSection = {
+            ...currentSection,
+            [sectionKey]: { ...currentSection[sectionKey], imageUrl: publicUrl },
+          };
+        } else {
+          // 単純なプロパティ (例: logoUrl: '...') の場合
+          updatedSection = { ...currentSection, [sectionKey]: publicUrl };
+        }
+
         const newConfig = {
           ...config,
-          [sectionName]: { ...config[sectionName], [sectionKey]: publicUrl },
+          [sectionName]: updatedSection,
         };
         setConfig(newConfig);
-        await saveStoreTopConfig(selectedStore, newConfig);
+        await safeSaveConfig(newConfig);
       }
 
       toast.success('画像をアップロードしました', { id: toastId });

@@ -174,7 +174,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             <div className="mt-10 overflow-hidden rounded-2xl">
               {/* Grid of Banners (2 columns as requested) */}
               <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
-                {[...config.banners, ...config.smallBanners].map((banner, idx) => (
+                {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => (
                   <div key={idx} className="group relative flex flex-col items-start">
                     <a
                       href={getAbsoluteHref(banner.link || '#')}
@@ -250,7 +250,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     <a
                       href={getAbsoluteHref(config.largeBanner?.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
-                      className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
+                      className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >
                       <NextImage
                         src={

@@ -252,7 +252,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     <a
                       href={getAbsoluteHref(config.largeBanner?.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
-                      className="block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
+                      className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >
                       <NextImage
                         src={
