@@ -35,9 +35,7 @@ export default function ProfileEditor({
     questions: cast.questions ?? {},
   });
 
-  const [activeTab, setActiveTab] = useState<
-    'basic' | 'features' | 'questions' | 'sns' | 'gallery'
-  >('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'story' | 'sns' | 'gallery'>('basic');
 
   // ✅ cast が更新されたら form も更新
   useEffect(() => {
@@ -57,8 +55,7 @@ export default function ProfileEditor({
 
   const tabs = [
     { id: 'basic', name: '基本情報' },
-    { id: 'features', name: '特徴 / サービス' },
-    { id: 'questions', name: '質問' },
+    { id: 'story', name: 'ストーリー' },
     { id: 'sns', name: 'SNS' },
     { id: 'gallery', name: 'ギャラリー' },
   ];
@@ -68,12 +65,12 @@ export default function ProfileEditor({
       <h2 className="mb-4 text-xl font-bold">プロフィール編集</h2>
 
       {/* ✅ タブ切り替え */}
-      <div className="mb-6 flex space-x-4 border-b">
+      <div className="mb-6 flex space-x-4 overflow-x-auto whitespace-nowrap border-b scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as any)}
-            className={`px-2 pb-2 ${
+            className={`px-2 pb-2 transition-all ${
               activeTab === tab.id
                 ? 'border-b-2 border-pink-500 font-semibold text-pink-600'
                 : 'text-gray-500 hover:text-gray-700'
@@ -86,61 +83,77 @@ export default function ProfileEditor({
 
       {/* ✅ タブごとの表示 */}
       {activeTab === 'basic' && (
-        <>
+        <div className="space-y-8">
           <BasicInfoSection form={form} onChange={handleChange} />
           <MBTISelect form={form} onChange={handleChange} featureMasters={featureMasters} />
           <AnimalSelect form={form} onChange={handleChange} featureMasters={featureMasters} />
           <FaceSelector form={form} onChange={handleChange} featureMasters={featureMasters} />
 
-          <div className="mt-8 space-y-6 border-t pt-6">
-            <div>
-              <label className="mb-2 block text-sm font-bold text-gray-700">
-                自己紹介 (プロフィール)
-              </label>
-              <textarea
-                value={form.profile ?? ''}
-                onChange={(e) => handleChange('profile', e.target.value)}
-                className="h-32 w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
-                placeholder="お客様への挨拶や自己紹介を入力してください..."
-              />
-            </div>
-
-            <div>
-              <label className="mb-2 block text-sm font-bold text-gray-700">ストーリー</label>
-              <textarea
-                value={form.managerComment ?? ''}
-                onChange={(e) => handleChange('managerComment', e.target.value)}
-                className="h-32 w-full rounded-lg border border-gray-300 px-4 py-3 transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
-                placeholder="あなたのストーリーや、より詳細な紹介文を入力してください..."
-              />
-              <p className="mt-1 text-xs text-gray-500">
-                ※ キャスト詳細ページの「ストーリー」タブに表示されます
-              </p>
-            </div>
+          <div className="border-t pt-8">
+            <FeatureSelector
+              form={form}
+              onChange={handleChange}
+              featureMasters={featureMasters}
+              category="personality"
+            />
           </div>
-        </>
+
+          <div className="border-t pt-8">
+            <FeatureSelector
+              form={form}
+              onChange={handleChange}
+              featureMasters={featureMasters}
+              category="appearance"
+            />
+          </div>
+
+          <div className="border-t pt-8">
+            <h4 className="mb-4 text-sm font-bold text-gray-700">施術対応内容</h4>
+            <ServiceLevels form={form} onChange={handleChange} />
+          </div>
+
+          <div className="border-t pt-8">
+            <label className="mb-2 block text-sm font-bold text-gray-700">
+              自己紹介 (プロフィール)
+            </label>
+            <textarea
+              value={form.profile ?? ''}
+              onChange={(e) => handleChange('profile', e.target.value)}
+              className="h-32 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
+              placeholder="お客様への挨拶や自己紹介を入力してください..."
+            />
+          </div>
+        </div>
       )}
 
-      {activeTab === 'features' && (
-        <>
-          <FeatureSelector
-            form={form}
-            onChange={handleChange}
-            featureMasters={featureMasters}
-            category="personality"
-          />
-          <FeatureSelector
-            form={form}
-            onChange={handleChange}
-            featureMasters={featureMasters}
-            category="appearance"
-          />
-          <ServiceLevels form={form} onChange={handleChange} />
-        </>
-      )}
+      {activeTab === 'story' && (
+        <div className="space-y-8">
+          <div>
+            <label className="mb-2 block text-sm font-bold text-gray-700">
+              ストーリー (紹介文)
+            </label>
+            <textarea
+              value={form.managerComment ?? ''}
+              onChange={(e) => handleChange('managerComment', e.target.value)}
+              className="h-48 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
+              placeholder="あなたのストーリーや、より詳細な紹介文を入力してください..."
+            />
+            <p className="mt-2 text-xs text-gray-500">
+              ※ キャスト詳細ページの「ストーリー」タブのトップに表示されます
+            </p>
+          </div>
 
-      {activeTab === 'questions' && (
-        <QuestionsSection form={form} onChange={handleChange} questionMasters={questionMasters} />
+          <div className="border-t pt-8">
+            <h4 className="mb-6 flex items-center gap-2 text-sm font-bold text-gray-700">
+              <span>❓</span> 質問回答 (Q&A)
+            </h4>
+            <QuestionsSection
+              form={form}
+              onChange={handleChange}
+              questionMasters={questionMasters}
+            />
+          </div>
+        </div>
       )}
 
       {activeTab === 'sns' && <SnsInput form={form} onChange={handleChange} />}
