@@ -1,3 +1,4 @@
+import { updateCastAuth } from '@/actions/cast-auth';
 import Card from '@/components/admin/ui/Card';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
@@ -324,6 +325,38 @@ const CastDetailModal: React.FC<{
                   rows={4}
                 ></textarea>
               </div>
+              <div className="grid grid-cols-1 gap-4 rounded-md border border-brand-accent/20 bg-brand-accent/5 p-4 md:grid-cols-2">
+                <div className="md:col-span-2">
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                    アカウント情報
+                  </h3>
+                </div>
+                <div>
+                  <label className="text-sm text-brand-text-secondary">
+                    ログイン用メールアドレス
+                  </label>
+                  <input
+                    type="email"
+                    value={cast.email || ''}
+                    onChange={(e) => setCast({ ...cast, email: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
+                    placeholder="example@mail.com"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-brand-text-secondary">ログイン用パスワード</label>
+                  <input
+                    type="text"
+                    value={cast.password || ''}
+                    onChange={(e) => setCast({ ...cast, password: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
+                    placeholder="パスワードを入力"
+                  />
+                </div>
+                <p className="text-[10px] text-brand-text-secondary opacity-60 md:col-span-2">
+                  ※これらの情報は管理用として保存されます。
+                </p>
+              </div>
               <div className="flex justify-end space-x-2 pt-4">
                 <button
                   type="button"
@@ -388,6 +421,8 @@ export default function AllCast() {
             is_active,
             catch_copy,
             main_image_url,
+            email,
+            login_password,
             cast_store_memberships (
               store_id,
               priority
@@ -425,6 +460,8 @@ export default function AllCast() {
             photoUrl: c.main_image_url || '',
             managerComment: c.manager_comment || '',
             catchphrase: c.catch_copy || '',
+            email: c.email || '',
+            password: c.login_password || '',
             stats: {
               designations,
               repeatRate: Math.floor((repeat / designations) * 100),
@@ -473,6 +510,19 @@ export default function AllCast() {
         throw new Error(`プロフィールの更新に失敗しました: ${castError.message}`);
       }
       console.log('Cast profile updated successfully.');
+
+      // 1.5 Update auth info if changed
+      const authResult = await updateCastAuth(
+        updatedCast.id,
+        updatedCast.email || '',
+        updatedCast.password,
+      );
+      if (!authResult.success) {
+        console.error('Error updating cast auth:', authResult.error);
+        // We continue even if auth update fails, but log it
+      } else {
+        console.log('Cast auth updated successfully.');
+      }
 
       // 2. Sync store memberships
       console.log('Clearing old memberships...');

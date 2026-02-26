@@ -27,6 +27,8 @@ export interface Cast {
   photoUrl: string;
   managerComment: string;
   catchphrase: string;
+  email?: string;
+  password?: string;
   stats: {
     designations: number;
     repeatRate: number;

@@ -13,6 +13,8 @@ model Cast {
   age           Int
   profile       String?
   image_url     String
+  email         String?
+  login_password String?
   created_at    DateTime              @default(now())
   blogs         Blog[]
   badges        CastBadge[]
