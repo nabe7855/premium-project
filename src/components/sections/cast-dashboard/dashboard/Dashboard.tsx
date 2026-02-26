@@ -32,7 +32,6 @@ import { Badge, CastLevel } from '@/types/cast-dashboard';
 import { getCastDiaries } from '@/lib/getCastDiaries'; // ✅ 作成した関数
 import { getCastPerformance } from '@/lib/getCastPerformance';
 import { getCastProfile } from '@/lib/getCastProfile';
-import { getCastQuestions } from '@/lib/getCastQuestions';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -122,12 +121,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     try {
       const refreshed = await getCastProfile(castId);
       if (refreshed) {
-        const answers = await getCastQuestions(castId);
-        const questions: Record<string, string> = {};
-        answers.forEach((a) => {
-          if (a.question?.id) questions[a.question.id] = a.answer ?? '';
-        });
-        setCastState({ ...refreshed, questions });
+        setCastState(refreshed);
       }
     } catch (err) {
       console.error('キャスト再取得エラー:', err);

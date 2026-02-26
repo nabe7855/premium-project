@@ -1,4 +1,5 @@
-import { CastProfile, CastStatus, Status } from '@/types/cast';
+import { CastProfile, CastQuestion, CastStatus, Status } from '@/types/cast';
+import { getCastQuestions } from './getCastQuestions';
 import { supabase } from './supabaseClient';
 
 interface CastFeatureRow {
@@ -35,7 +36,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       manager_comment
     `,
     )
-    .eq('user_id', userId)
+    .or(`id.eq.${userId},user_id.eq.${userId}`)
     .maybeSingle();
 
   if (castError || !cast) {
@@ -119,7 +120,16 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       status_master: s.status_master as Status,
     })) ?? [];
 
-  // 4. 整形して返却
+  // 4. Q&A
+  const castQuestionsList = await getCastQuestions(cast.id);
+  const questionsRecord: Record<string, string> = {};
+  castQuestionsList.forEach((q: CastQuestion) => {
+    if (q.question_id && q.answer) {
+      questionsRecord[q.question_id] = q.answer;
+    }
+  });
+
+  // 5. 整形して返却
   const profile: CastProfile = {
     id: cast.id,
     name: cast.name,
@@ -140,6 +150,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     appearanceIds,
     services,
     statuses: castStatuses, // ✅ ステータス追加
+    questions: questionsRecord, // ✅ Q&A追加
   };
 
   return profile;
