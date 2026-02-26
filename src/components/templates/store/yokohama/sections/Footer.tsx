@@ -14,8 +14,8 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
   if (!config) return null;
 
-  const getAbsoluteHref = (href: string) => {
-    if (!href) return '#';
+  const getAbsoluteHref = (href: any) => {
+    if (!href || typeof href !== 'string') return '#';
     if (
       href.startsWith('http') ||
       href.startsWith('//') ||
@@ -239,7 +239,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               </div>
               {/* Large Square Banner at the Bottom */}
               <div className="mt-8 border-t border-white/20 pt-8">
-                <div className="mx-auto aspect-square max-w-[400px]">
+                <div className="relative mx-auto aspect-square max-w-[400px]">
                   <div className="group relative h-full w-full">
                     <a
                       href={getAbsoluteHref(config.largeBanner?.link || '#')}
