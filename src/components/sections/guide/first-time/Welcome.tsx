@@ -17,7 +17,7 @@ export const Welcome: React.FC<WelcomeProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
-  const data = config || {
+  const defaultData: WelcomeConfig = {
     heading: 'ストロベリーボーイズへ、ようこそ。',
     subHeading: 'ABOUT STRAWBERRY BOYS',
     imageUrl: '',
@@ -28,6 +28,8 @@ export const Welcome: React.FC<WelcomeProps> = ({
     ],
     isVisible: true,
   };
+
+  const data = config ? { ...defaultData, ...config } : defaultData;
 
   const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
     if (onUpdate) {

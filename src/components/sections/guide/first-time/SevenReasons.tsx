@@ -17,41 +17,52 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
-  const data = config || {
+  const defaultData: SevenReasonsConfig = {
     imageUrl: '',
+    reasons: [
+      {
+        title: '業界初！200件以上の受付口コミ！',
+        desc: '透明性を重視し、お店の雰囲気を感じてもらうためHP内に受付口コミ欄をご用意。皆様の声が200件以上投稿されており、利用の参考にしていただけます。',
+      },
+      {
+        title: '業界一の受付対応を目指しています！',
+        desc: '予約だけでなく、悩み事やご相談など、ご予約に関係のないお問い合わせでも構いません。ハートフルで丁寧な対応をスタッフ一同一人一人に提供します。',
+      },
+      {
+        title: '大手プロ出身セラピスト多数在籍！',
+        desc: '各ジャンルの元プロダクション出身者や、社会経験が豊富な男性を厳選採用。教育においてもお客様の満足度を第一に考え、業界最高レベルの人選を徹底しています。',
+      },
+      {
+        title: '業界熟練の講師による確かな人材育成！',
+        desc: '風俗業界で10年以上の経験豊富な専属講師がマンツーマンで指導。一般的な素人男性のレベルを超えた、プロならではの高品質なサービスをお約束します。',
+      },
+      {
+        title: '安心と安定、直営店での全国展開！',
+        desc: 'フランチャイズとは違い、全国展開している店舗は全て営業歴6年以上の東京本店にて直接運営に携わったスタッフが管理。どの地域でも安定のおもてなしを提供します。',
+      },
+      {
+        title: '定期的な性病検査の義務付け！',
+        desc: '「さくら検査研究所」様とのパートナーシップ契約を結んでおり、全てのセラピストに定期的な性病検査を徹底しています。心ゆくまで安心してお楽しみください！',
+      },
+      {
+        title: '7年以上の運営実績は信頼の証！',
+        desc: '急速に成長する業界で、1年未満で姿を消す店舗も珍しくありません。当店は皆様の支持を受け、7年以上にわたり大勢の皆様の女風デビューをサポートし続けています。',
+      },
+    ],
     isVisible: true,
   };
 
-  const reasons = [
-    {
-      title: '業界初！200件以上の受付口コミ！',
-      desc: '透明性を重視し、お店の雰囲気を感じてもらうためHP内に受付口コミ欄をご用意。皆様の声が200件以上投稿されており、利用の参考にしていただけます。',
-    },
-    {
-      title: '業界一の受付対応を目指しています！',
-      desc: '予約だけでなく、悩み事やご相談など、ご予約に関係のないお問い合わせでも構いません。ハートフルで丁寧な対応をスタッフ一同一人一人に提供します。',
-    },
-    {
-      title: '大手プロ出身セラピスト多数在籍！',
-      desc: '各ジャンルの元プロダクション出身者や、社会経験が豊富な男性を厳選採用。教育においてもお客様の満足度を第一に考え、業界最高レベルの人選を徹底しています。',
-    },
-    {
-      title: '業界熟練の講師による確かな人材育成！',
-      desc: '風俗業界で10年以上の経験豊富な専属講師がマンツーマンで指導。一般的な素人男性のレベルを超えた、プロならではの高品質なサービスをお約束します。',
-    },
-    {
-      title: '安心と安定、直営店での全国展開！',
-      desc: 'フランチャイズとは違い、全国展開している店舗は全て営業歴6年以上の東京本店にて直接運営に携わったスタッフが管理。どの地域でも安定のおもてなしを提供します。',
-    },
-    {
-      title: '定期的な性病検査の義務付け！',
-      desc: '「さくら検査研究所」様とのパートナーシップ契約を結んでおり、全てのセラピストに定期的な性病検査を徹底しています。心ゆくまで安心してお楽しみください！',
-    },
-    {
-      title: '7年以上の運営実績は信頼の証！',
-      desc: '急速に成長する業界で、1年未満で姿を消す店舗も珍しくありません。当店は皆様の支持を受け、7年以上にわたり大勢の皆様の女風デビューをサポートし続けています。',
-    },
-  ];
+  const data = config ? { ...defaultData, ...config } : defaultData;
+
+  const currentReasons = data.reasons || [];
+
+  const handleTextUpdate = (index: number, key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      const newReasons = [...currentReasons];
+      newReasons[index] = { ...newReasons[index], [key]: e.currentTarget.innerText };
+      onUpdate('sevenReasons', 'reasons', newReasons);
+    }
+  };
 
   if (data.isVisible === false && !isEditing) return null;
 
@@ -128,15 +139,29 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {reasons.map((r, i) => (
+          {currentReasons.map((r, i) => (
             <div
               key={i}
               className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors hover:border-[#FF4B5C]/30"
             >
               <div className="flex-shrink-0 text-xl">✅</div>
               <div>
-                <h3 className="mb-2 font-bold leading-tight text-gray-800">{r.title}</h3>
-                <p className="text-sm leading-relaxed text-gray-600">{r.desc}</p>
+                <h3
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleTextUpdate(i, 'title', e)}
+                  suppressContentEditableWarning
+                  className="mb-2 font-bold leading-tight text-gray-800"
+                >
+                  {r.title}
+                </h3>
+                <p
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleTextUpdate(i, 'desc', e)}
+                  suppressContentEditableWarning
+                  className="text-sm leading-relaxed text-gray-600"
+                >
+                  {r.desc}
+                </p>
               </div>
             </div>
           ))}

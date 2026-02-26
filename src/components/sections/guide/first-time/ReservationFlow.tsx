@@ -15,35 +15,52 @@ export const ReservationFlow: React.FC<ReservationFlowProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
-  const data = config || {
+  const defaultData: ReservationFlowConfig = {
     imageUrl: '',
+    steps: [
+      {
+        title: 'セラピストを決める',
+        desc: 'まずはセラピスト一覧から.写メ日記や口コミを参考に.ご指名がある場合はその方を,決まっていない場合はお店にご相談ください.貴女に合った方をスタッフが選定します.',
+      },
+      {
+        title: 'お店に問い合わせ・申し込み',
+        desc: '電話・メール・LINE・X(旧Twitter)のDMから.お急ぎの場合は電話かLINEがスムーズです.',
+        details: [
+          '【日時】第三希望まであるとスムーズです',
+          '【待ち合わせ場所】新宿、渋谷、池袋、鶯谷などが推奨ですが、ご自宅も可能です',
+          '【コース内容】初回の方は120分16,000円コースが推奨です',
+          '【指名の有無】ご希望がある場合はお伝えください',
+        ],
+      },
+      {
+        title: '担当セラピストの決定',
+        desc: 'ご指名がある場合はお店が確認後、ご報告。指名がない場合はお客様の要望（年齢、性格など）に合ったセラピストを厳選してご報告いたします。',
+      },
+      {
+        title: 'ご予約完了',
+        desc: '最終確認を行い受付完了。変更点があればお気軽にお申し付けください。当店ではセラピストとの事前のメッセージ交換を推奨しており、当日を安心して迎えられます。',
+      },
+    ],
     isVisible: true,
   };
 
-  const steps = [
-    {
-      title: 'セラピストを決める',
-      desc: 'まずはセラピスト一覧から.写メ日記や口コミを参考に.ご指名がある場合はその方を,決まっていない場合はお店にご相談ください.貴女に合った方をスタッフが選定します.',
-    },
-    {
-      title: 'お店に問い合わせ・申し込み',
-      desc: '電話・メール・LINE・X(旧Twitter)のDMから.お急ぎの場合は電話かLINEがスムーズです.',
-      details: [
-        '【日時】第三希望まであるとスムーズです',
-        '【待ち合わせ場所】新宿、渋谷、池袋、鶯谷などが推奨ですが、ご自宅も可能です',
-        '【コース内容】初回の方は120分16,000円コースが推奨です',
-        '【指名の有無】ご希望がある場合はお伝えください',
-      ],
-    },
-    {
-      title: '担当セラピストの決定',
-      desc: 'ご指名がある場合はお店が確認後、ご報告。指名がない場合はお客様の要望（年齢、性格など）に合ったセラピストを厳選してご報告いたします。',
-    },
-    {
-      title: 'ご予約完了',
-      desc: '最終確認を行い受付完了。変更点があればお気軽にお申し付けください。当店ではセラピストとの事前のメッセージ交換を推奨しており、当日を安心して迎えられます。',
-    },
-  ];
+  const data = config ? { ...defaultData, ...config } : defaultData;
+
+  const currentSteps = data.steps || [];
+
+  const handleStepUpdate = (index: number, key: string, value: string, detailIndex?: number) => {
+    if (onUpdate) {
+      const newSteps = [...currentSteps];
+      if (detailIndex !== undefined && newSteps[index].details) {
+        const newDetails = [...newSteps[index].details!];
+        newDetails[detailIndex] = value;
+        newSteps[index] = { ...newSteps[index], details: newDetails };
+      } else {
+        newSteps[index] = { ...newSteps[index], [key]: value };
+      }
+      onUpdate('reservationFlow', 'steps', newSteps);
+    }
+  };
 
   if (data.isVisible === false && !isEditing) return null;
 
@@ -118,7 +135,7 @@ export const ReservationFlow: React.FC<ReservationFlowProps> = ({
         <div className="relative space-y-12">
           <div className="absolute bottom-0 left-6 top-0 hidden w-1 bg-[#FFF0F3] md:left-1/2 md:-ml-0.5 md:block"></div>
 
-          {steps.map((s, i) => (
+          {currentSteps.map((s, i) => (
             <div
               key={i}
               className={`flex flex-col items-start md:flex-row md:items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}
@@ -127,10 +144,20 @@ export const ReservationFlow: React.FC<ReservationFlowProps> = ({
                 <div
                   className={`relative rounded-3xl border border-gray-100 bg-gray-50 p-6 md:p-8 ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}
                 >
-                  <h3 className="mb-3 text-xl font-bold text-[#FF4B5C]">
+                  <h3
+                    contentEditable={isEditing}
+                    onBlur={(e) => handleStepUpdate(i, 'title', e.currentTarget.innerText)}
+                    suppressContentEditableWarning
+                    className="mb-3 text-xl font-bold text-[#FF4B5C]"
+                  >
                     ステップ {i + 1}: {s.title}
                   </h3>
-                  <p className="mb-4 text-sm leading-relaxed text-gray-600 md:text-base">
+                  <p
+                    contentEditable={isEditing}
+                    onBlur={(e) => handleStepUpdate(i, 'desc', e.currentTarget.innerText)}
+                    suppressContentEditableWarning
+                    className="mb-4 text-sm leading-relaxed text-gray-600 md:text-base"
+                  >
                     {s.desc}
                   </p>
                   {s.details && (
@@ -139,7 +166,16 @@ export const ReservationFlow: React.FC<ReservationFlowProps> = ({
                         予約時に以下の情報をお伝えください：
                       </p>
                       {s.details.map((d, j) => (
-                        <p key={j}>・{d}</p>
+                        <p
+                          key={j}
+                          contentEditable={isEditing}
+                          onBlur={(e) =>
+                            handleStepUpdate(i, 'details', e.currentTarget.innerText, j)
+                          }
+                          suppressContentEditableWarning
+                        >
+                          ・{d}
+                        </p>
                       ))}
                     </div>
                   )}

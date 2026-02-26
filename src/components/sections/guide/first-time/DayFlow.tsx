@@ -10,33 +10,51 @@ interface DayFlowProps {
 }
 
 export const DayFlow: React.FC<DayFlowProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
-  const data = config || {
+  const defaultData: DayFlowConfig = {
     imageUrl: '',
+    steps: [
+      {
+        title: 'セラピストと合流',
+        desc: '駅改札前やUNIQLO前など、事前に伝えた貴女の服装を元にセラピストからお声がけします。スムーズに合流できない場合はお店が仲介するのでご安心を！',
+      },
+      {
+        title: 'ホテルへ移動',
+        desc: 'セラピストがいくつかピックアップしてご提案。デート気分でエスコートされます。入室後、ご利用料金を現金でセラピストにお渡しください。',
+      },
+      {
+        title: 'カウンセリング',
+        desc: '10〜15分程度。カウンセリングシートを使い、要望や重点的にしてほしい項目、NG項目を確認します。「寄り添う事」がテーマの特別な時間です。',
+      },
+      {
+        title: 'シャワー',
+        desc: 'リラックスしていただくためにお客様から先にシャワー。洗体オプション（+2,000円）で一緒に入浴して、お身体を丁寧に洗うプランも人気です♡',
+      },
+      {
+        title: 'カウント開始',
+        desc: 'お客様がシャワーを出たタイミングでコース時間スタート！ここまでの時間は完全無料です。心地よい非日常のひとときを存分にお楽しみください。',
+      },
+    ],
+    footerNote: '※シャワー後のカウント開始までのお時間は全て【無料】です',
     isVisible: true,
   };
 
-  const steps = [
-    {
-      title: 'セラピストと合流',
-      desc: '駅改札前やUNIQLO前など、事前に伝えた貴女の服装を元にセラピストからお声がけします。スムーズに合流できない場合はお店が仲介するのでご安心を！',
-    },
-    {
-      title: 'ホテルへ移動',
-      desc: 'セラピストがいくつかピックアップしてご提案。デート気分でエスコートされます。入室後、ご利用料金を現金でセラピストにお渡しください。',
-    },
-    {
-      title: 'カウンセリング',
-      desc: '10〜15分程度。カウンセリングシートを使い、要望や重点的にしてほしい項目、NG項目を確認します。「寄り添う事」がテーマの特別な時間です。',
-    },
-    {
-      title: 'シャワー',
-      desc: 'リラックスしていただくためにお客様から先にシャワー。洗体オプション（+2,000円）で一緒に入浴して、お身体を丁寧に洗うプランも人気です♡',
-    },
-    {
-      title: 'カウント開始',
-      desc: 'お客様がシャワーを出たタイミングでコース時間スタート！ここまでの時間は完全無料です。心地よい非日常のひとときを存分にお楽しみください。',
-    },
-  ];
+  const data = config ? { ...defaultData, ...config } : defaultData;
+
+  const currentSteps = data.steps || [];
+
+  const handleStepUpdate = (index: number, key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      const newSteps = [...currentSteps];
+      newSteps[index] = { ...newSteps[index], [key]: e.currentTarget.innerText };
+      onUpdate('dayFlow', 'steps', newSteps);
+    }
+  };
+
+  const handleUpdateField = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('dayFlow', key, e.currentTarget.innerText);
+    }
+  };
 
   if (data.isVisible === false && !isEditing) return null;
 
@@ -106,13 +124,18 @@ export const DayFlow: React.FC<DayFlowProps> = ({ config, isEditing, onUpdate, o
               )}
             </>
           )}
-          <p className="mt-4 font-medium text-gray-500">
-            ※シャワー後のカウント開始までのお時間は全て【無料】です
+          <p
+            contentEditable={isEditing}
+            onBlur={(e) => handleUpdateField('footerNote', e)}
+            suppressContentEditableWarning
+            className="mt-4 font-medium text-gray-500"
+          >
+            {data.footerNote}
           </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
-          {steps.map((s, i) => (
+          {currentSteps.map((s, i) => (
             <div key={i} className="flex flex-col items-center">
               <div className="flex h-full w-full flex-col items-center rounded-2xl border border-white bg-white p-6 text-center shadow-md transition-all hover:border-[#FF4B5C]/20">
                 <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white shadow-lg">
@@ -121,11 +144,24 @@ export const DayFlow: React.FC<DayFlowProps> = ({ config, isEditing, onUpdate, o
                 <h3 className="mb-4 text-base font-bold leading-tight text-gray-800">
                   ステップ {i + 1}
                   <br />
-                  {s.title}
+                  <span
+                    contentEditable={isEditing}
+                    onBlur={(e) => handleStepUpdate(i, 'title', e)}
+                    suppressContentEditableWarning
+                  >
+                    {s.title}
+                  </span>
                 </h3>
-                <p className="text-left text-xs leading-relaxed text-gray-500">{s.desc}</p>
+                <p
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleStepUpdate(i, 'desc', e)}
+                  suppressContentEditableWarning
+                  className="text-left text-xs leading-relaxed text-gray-500"
+                >
+                  {s.desc}
+                </p>
               </div>
-              {i < steps.length - 1 && (
+              {i < currentSteps.length - 1 && (
                 <div className="py-4 text-2xl font-bold text-[#FF4B5C] md:hidden">↓</div>
               )}
             </div>

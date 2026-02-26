@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 
 import { stores } from '@/data/stores';
 import { getFirstTimeConfig } from '@/lib/store/firstTimeActions';
-import { DEFAULT_FIRST_TIME_CONFIG, FirstTimeConfig } from '@/lib/store/firstTimeConfig';
+import { FirstTimeConfig, mergeConfig } from '@/lib/store/firstTimeConfig';
 
 import AnchorNav from './AnchorNav';
 import { CastSampler } from './CastSampler';
@@ -46,19 +46,19 @@ export default function FirstTimePageContent({
 }: FirstTimePageContentProps) {
   const params = useParams();
   const slug = propSlug || (params?.slug as string) || 'fukuoka';
-  const [config, setConfig] = useState<FirstTimeConfig>(propConfig || DEFAULT_FIRST_TIME_CONFIG);
+  const [config, setConfig] = useState<FirstTimeConfig>(mergeConfig(propConfig));
   const [isLoading, setIsLoading] = useState(!propConfig);
 
   useEffect(() => {
     if (propConfig) {
-      setConfig(propConfig);
+      setConfig(mergeConfig(propConfig));
       return;
     }
 
     const fetchConfig = async () => {
       const result = await getFirstTimeConfig(slug);
       if (result.success && result.config) {
-        setConfig(result.config as FirstTimeConfig);
+        setConfig(mergeConfig(result.config));
       }
       setIsLoading(false);
     };

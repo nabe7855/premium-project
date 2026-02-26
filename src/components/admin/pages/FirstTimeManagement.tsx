@@ -19,7 +19,11 @@ import FirstTimePageContent from '@/components/sections/guide/first-time/FirstTi
 import { StoreProvider } from '@/contexts/StoreContext';
 import { stores } from '@/data/stores';
 import { getFirstTimeConfig, saveFirstTimeConfig } from '@/lib/store/firstTimeActions';
-import { DEFAULT_FIRST_TIME_CONFIG, FirstTimeConfig } from '@/lib/store/firstTimeConfig';
+import {
+  DEFAULT_FIRST_TIME_CONFIG,
+  FirstTimeConfig,
+  mergeConfig,
+} from '@/lib/store/firstTimeConfig';
 import { getAllStores } from '@/lib/store/store-data';
 
 const SECTION_LABELS: Record<string, string> = {
@@ -66,7 +70,7 @@ export default function FirstTimeManagement() {
       try {
         const result = await getFirstTimeConfig(selectedStore);
         if (result.success && result.config) {
-          setConfig(result.config as FirstTimeConfig);
+          setConfig(mergeConfig(result.config));
         } else {
           setConfig(DEFAULT_FIRST_TIME_CONFIG);
         }

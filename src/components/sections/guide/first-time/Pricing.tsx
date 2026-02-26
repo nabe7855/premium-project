@@ -10,9 +10,59 @@ interface PricingProps {
 }
 
 export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
-  const data = config || {
+  const defaultData: PricingConfig = {
     imageUrl: '',
+    subHeading: '当店一番人気の初回120分コースを推奨しております♪',
+    courses: [
+      {
+        title: '初回120分',
+        courseName: '金額',
+        oldPrice: '20,000円',
+        newPrice: '16,000円',
+        description:
+          '初めてご利用のお客様から、多くのご指示を頂いている当店一番人気コースです♡\n2時間をかけてメインの施術行程を存分にご堪能いただけます。指圧、パウダー、オイル、性感マッサージの全てを網羅したトータルリラクゼーションに最適です！',
+        isMain: true,
+      },
+      {
+        title: '初回150分コース',
+        courseName: '150分コース',
+        oldPrice: '24,000円',
+        newPrice: '22,000円',
+        description: 'もう少しお時間に余裕を持ちたい時の150分コースです♡',
+      },
+      {
+        title: '初回180分コース',
+        courseName: '180分コース',
+        oldPrice: '29,000円',
+        newPrice: '27,000円',
+        description: '総額7,000円お得な180分コース。究極の癒しに包装紙。',
+      },
+    ],
     isVisible: true,
+  };
+
+  const data = config ? { ...defaultData, ...config } : defaultData;
+
+  const currentCourses = data.courses || [];
+  const mainCourse = currentCourses.find((c) => c.isMain) || currentCourses[0];
+  const otherCourses = currentCourses.filter((c) => !c.isMain);
+
+  const handleUpdateField = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('pricing', key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleUpdateCourse = (
+    indexInArray: number,
+    key: string,
+    e: React.FocusEvent<HTMLElement>,
+  ) => {
+    if (onUpdate) {
+      const newCourses = [...currentCourses];
+      newCourses[indexInArray] = { ...newCourses[indexInArray], [key]: e.currentTarget.innerText };
+      onUpdate('pricing', 'courses', newCourses);
+    }
   };
 
   if (data.isVisible === false && !isEditing) return null;
@@ -53,8 +103,13 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
           ) : (
             <>
               <h2 className="mb-4 text-center text-3xl font-black">ご利用プランの一覧</h2>
-              <p className="mb-4 text-center text-gray-500">
-                当店一番人気の初回120分コースを推奨しております♪
+              <p
+                contentEditable={isEditing}
+                onBlur={(e) => handleUpdateField('subHeading', e)}
+                suppressContentEditableWarning
+                className="mb-4 text-center text-gray-500"
+              >
+                {data.subHeading}
               </p>
               {isEditing && (
                 <div className="mt-4">
@@ -90,51 +145,117 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
 
         <div className="mb-16 grid grid-cols-1 gap-8">
           {/* Main 120min Course (Focused) */}
-          <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-[#FF4B5C] bg-white shadow-2xl md:flex-row">
-            <div className="flex flex-col items-center justify-center border-b border-gray-100 bg-gray-50 p-8 md:w-1/4 md:border-b-0 md:border-r">
-              <span className="mb-2 text-sm font-bold text-[#FF4B5C]">初回120分</span>
-              <span className="text-2xl font-black text-gray-800">金額</span>
-            </div>
-            <div className="flex-1 p-8 text-center md:p-12 md:text-left">
-              <div className="mb-6 flex flex-col items-center gap-4 md:flex-row">
-                <span className="text-2xl text-gray-300 line-through">20,000円</span>
-                <span className="text-5xl font-black tracking-tighter text-[#FF4B5C] md:text-6xl">
-                  16,000円
+          {mainCourse && (
+            <div className="flex flex-col overflow-hidden rounded-3xl border-2 border-[#FF4B5C] bg-white shadow-2xl md:flex-row">
+              <div className="flex flex-col items-center justify-center border-b border-gray-100 bg-gray-50 p-8 md:w-1/4 md:border-b-0 md:border-r">
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleUpdateCourse(currentCourses.indexOf(mainCourse), 'title', e)}
+                  suppressContentEditableWarning
+                  className="mb-2 text-sm font-bold text-[#FF4B5C]"
+                >
+                  {mainCourse.title}
+                </span>
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) =>
+                    handleUpdateCourse(currentCourses.indexOf(mainCourse), 'courseName', e)
+                  }
+                  suppressContentEditableWarning
+                  className="text-2xl font-black text-gray-800"
+                >
+                  {mainCourse.courseName}
                 </span>
               </div>
-              <div className="rounded-2xl bg-red-50 p-6">
-                <p className="mb-4 font-bold text-gray-700">【備考】</p>
-                <p className="text-sm leading-relaxed text-gray-600 md:text-base">
-                  初めてご利用のお客様から、多くのご指示を頂いている当店一番人気コースです♡
-                  <br />
-                  2時間をかけてメインの施術行程を存分にご堪能いただけます。指圧、パウダー、オイル、性感マッサージの全てを網羅したトータルリラクゼーションに最適です！
-                </p>
+              <div className="flex-1 p-8 text-center md:p-12 md:text-left">
+                <div className="mb-6 flex flex-col items-center gap-4 md:flex-row">
+                  <span
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleUpdateCourse(currentCourses.indexOf(mainCourse), 'oldPrice', e)
+                    }
+                    suppressContentEditableWarning
+                    className="text-2xl text-gray-300 line-through"
+                  >
+                    {mainCourse.oldPrice}
+                  </span>
+                  <span
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleUpdateCourse(currentCourses.indexOf(mainCourse), 'newPrice', e)
+                    }
+                    suppressContentEditableWarning
+                    className="text-5xl font-black tracking-tighter text-[#FF4B5C] md:text-6xl"
+                  >
+                    {mainCourse.newPrice}
+                  </span>
+                </div>
+                <div className="rounded-2xl bg-red-50 p-6">
+                  <p className="mb-4 font-bold text-gray-700">【備考】</p>
+                  <p
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleUpdateCourse(currentCourses.indexOf(mainCourse), 'description', e)
+                    }
+                    suppressContentEditableWarning
+                    className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600 md:text-base"
+                  >
+                    {mainCourse.description}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Sub Courses */}
           <div className="grid gap-8 md:grid-cols-2">
-            <div className="rounded-3xl border-2 border-red-100 p-8 transition-colors hover:border-red-200">
-              <h3 className="mb-4 text-center text-xl font-black">初回150分コース</h3>
-              <div className="mb-6 flex items-baseline justify-center gap-2">
-                <span className="text-sm text-gray-300 line-through">24,000円</span>
-                <span className="text-3xl font-black text-[#FF4B5C]">22,000円</span>
+            {otherCourses.map((course) => (
+              <div
+                key={course.title}
+                className="rounded-3xl border-2 border-red-100 p-8 transition-colors hover:border-red-200"
+              >
+                <h3
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleUpdateCourse(currentCourses.indexOf(course), 'title', e)}
+                  suppressContentEditableWarning
+                  className="mb-4 text-center text-xl font-black"
+                >
+                  {course.title}
+                </h3>
+                <div className="mb-6 flex items-baseline justify-center gap-2">
+                  <span
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleUpdateCourse(currentCourses.indexOf(course), 'oldPrice', e)
+                    }
+                    suppressContentEditableWarning
+                    className="text-sm text-gray-300 line-through"
+                  >
+                    {course.oldPrice}
+                  </span>
+                  <span
+                    contentEditable={isEditing}
+                    onBlur={(e) =>
+                      handleUpdateCourse(currentCourses.indexOf(course), 'newPrice', e)
+                    }
+                    suppressContentEditableWarning
+                    className="text-3xl font-black text-[#FF4B5C]"
+                  >
+                    {course.newPrice}
+                  </span>
+                </div>
+                <p
+                  contentEditable={isEditing}
+                  onBlur={(e) =>
+                    handleUpdateCourse(currentCourses.indexOf(course), 'description', e)
+                  }
+                  suppressContentEditableWarning
+                  className="text-center text-sm text-gray-500"
+                >
+                  {course.description}
+                </p>
               </div>
-              <p className="text-center text-sm text-gray-500">
-                もう少しお時間に余裕を持ちたい時の150分コースです♡
-              </p>
-            </div>
-            <div className="rounded-3xl border-2 border-red-100 p-8 transition-colors hover:border-red-200">
-              <h3 className="mb-4 text-center text-xl font-black">初回180分コース</h3>
-              <div className="mb-6 flex items-baseline justify-center gap-2">
-                <span className="text-sm text-gray-300 line-through">29,000円</span>
-                <span className="text-3xl font-black text-[#FF4B5C]">27,000円</span>
-              </div>
-              <p className="text-center text-sm text-gray-500">
-                総額7,000円お得な180分コース。究極の癒しに。
-              </p>
-            </div>
+            ))}
           </div>
         </div>
 
