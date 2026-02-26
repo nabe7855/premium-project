@@ -44,18 +44,26 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   const handleLinkUpdate = (key: string, index?: number) => {
     if (!onUpdate) return;
 
-    const currentLink =
-      typeof index === 'number'
-        ? (config[key as keyof FooterConfig] as any)[index].link
-        : (config[key as keyof FooterConfig] as any);
+    let currentLink = '';
+    const configValue = config[key as keyof FooterConfig] as any;
+
+    if (typeof index === 'number') {
+      currentLink = configValue[index]?.link || '';
+    } else if (typeof configValue === 'object' && configValue !== null && 'link' in configValue) {
+      currentLink = configValue.link || '';
+    } else {
+      currentLink = configValue || '';
+    }
 
     const newLink = window.prompt('リンクURLを入力してください:', currentLink);
 
     if (newLink !== null) {
       if (typeof index === 'number') {
-        const newArray = [...(config[key as keyof FooterConfig] as any)];
+        const newArray = [...configValue];
         newArray[index] = { ...newArray[index], link: newLink };
         onUpdate('footer', key, newArray);
+      } else if (typeof configValue === 'object' && configValue !== null && 'link' in configValue) {
+        onUpdate('footer', key, { ...configValue, link: newLink });
       } else {
         onUpdate('footer', key, newLink);
       }
