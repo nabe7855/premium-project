@@ -35,7 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         .from('roles')
         .select('role')
         .eq('user_id', userId)
-        .single()
+        .maybeSingle()
         .then((res) => ({ source: 'client', data: res.data, error: res.error }));
 
       // クライアントサイドとタイムアウトのレース
