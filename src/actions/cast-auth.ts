@@ -60,3 +60,50 @@ export async function updateCastAuth(castId: string, email: string, password?: s
     client.release();
   }
 }
+
+export async function createCastProfile(
+  userId: string,
+  name: string,
+  slug: string,
+  email: string,
+  password?: string,
+  storeId?: string,
+) {
+  const client = await pool.connect();
+  try {
+    await client.query('BEGIN');
+
+    // 1. Insert into casts
+    const castInsertRes = await client.query(
+      `INSERT INTO public.casts (user_id, name, slug, is_active, email, login_password)
+       VALUES ($1, $2, $3, true, $4, $5)
+       RETURNING id, slug`,
+      [userId, name, slug, email, password || null],
+    );
+
+    const castData = castInsertRes.rows[0];
+    const castId = castData.id;
+
+    // 2. Insert into roles
+    await client.query(`INSERT INTO public.roles (user_id, role) VALUES ($1, 'cast')`, [userId]);
+
+    // 3. Insert into cast_store_memberships
+    if (storeId) {
+      const today = new Date().toISOString().split('T')[0];
+      await client.query(
+        `INSERT INTO public.cast_store_memberships (cast_id, store_id, is_main, is_temporary, start_date, end_date)
+         VALUES ($1, $2, true, false, $3, '9999-12-31')`,
+        [castId, storeId, today],
+      );
+    }
+
+    await client.query('COMMIT');
+    return { success: true, cast: castData };
+  } catch (error: any) {
+    await client.query('ROLLBACK');
+    console.error('Failed to create cast profile:', error);
+    return { success: false, error: error.message };
+  } finally {
+    client.release();
+  }
+}

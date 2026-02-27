@@ -1,3 +1,4 @@
+import { createCastProfile } from '@/actions/cast-auth';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from './supabaseClient';
 
@@ -27,42 +28,12 @@ export async function signUpCast(name: string, email: string, password: string, 
   // 2. slug を生成
   const slug = generateSlug(name);
 
-  // 3. casts にプロフィール作成
-  const { data: castData, error: castError } = await supabase
-    .from('casts')
-    .insert({
-      user_id: user.id,
-      name: name,
-      slug: slug, // ✅ ここで自動生成された slug を保存
-      is_active: true,
-      email: email,
-      login_password: password,
-    })
-    .select('id, slug') // cast.id と slug を取得
-    .single();
+  // 3. サーバー側でRSLをバイパスしてロール等を一括登録
+  const result = await createCastProfile(user.id, name, slug, email, password, storeId);
 
-  if (castError) throw castError;
+  if (!result.success) {
+    throw new Error(result.error || 'プロフィールの作成に失敗しました');
+  }
 
-  const castId = castData.id;
-
-  // 4. roles にキャスト登録
-  const { error: roleError } = await supabase.from('roles').insert({
-    user_id: user.id,
-    role: 'cast',
-  });
-  if (roleError) throw roleError;
-
-  // 5. 所属店舗を登録
-  const { error: membershipError } = await supabase.from('cast_store_memberships').insert({
-    cast_id: castId,
-    store_id: storeId,
-    is_main: true,
-    is_temporary: false,
-    start_date: new Date().toISOString().split('T')[0], // 今日
-    end_date: '9999-12-31', // ← 無期限扱い
-  });
-
-  if (membershipError) throw membershipError;
-
-  return { user, cast: castData }; // ✅ slug も返せるようにした
+  return { user, cast: result.cast }; // ✅ slug も返せるようにした
 }
