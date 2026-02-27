@@ -38,6 +38,7 @@ const SECTION_LABELS: Record<string, string> = {
   diary: '写メ日記',
   newcomer: '新人セラピスト',
   faq: 'よくあるご質問',
+  quickAccess: 'クイックアクセス',
   footer: 'フッター',
 };
 
@@ -51,6 +52,7 @@ const SECTION_ORDER = [
   'price',
   'flow',
   'faq',
+  'quickAccess',
   'footer',
 ];
 

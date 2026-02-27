@@ -24,10 +24,15 @@ interface ReservationPageClientProps {
     line_url: string | null;
     notification_email: string | null;
   };
+  storeConfig?: any;
   casts: Cast[];
 }
 
-export default function ReservationPageClient({ store, casts }: ReservationPageClientProps) {
+export default function ReservationPageClient({
+  store,
+  storeConfig,
+  casts,
+}: ReservationPageClientProps) {
   const [formData, setFormData] = useState({
     castId: '',
     name: '',
@@ -60,10 +65,17 @@ export default function ReservationPageClient({ store, casts }: ReservationPageC
   const lineHref =
     store.line_url ||
     (store.line_id ? `https://line.me/R/ti/p/${store.line_id.replace('@', '')}` : '#');
-  const lineLabel = store.line_id || '@example';
+  const lineLabel = store.line_id
+    ? store.line_id.startsWith('@')
+      ? store.line_id
+      : `@${store.line_id}`
+    : '@example';
   const phoneHref = store.phone ? `tel:${store.phone}` : '#';
   const phoneLabel = store.phone || '03-XXXX-XXXX';
-  const emailLabel = store.notification_email || 'contact@';
+  const emailLabel = store.notification_email || 'contact@example.com';
+
+  const receptionHours = storeConfig?.header?.receptionHours;
+  const businessHours = storeConfig?.header?.businessHours;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-20 md:py-32">
@@ -98,6 +110,12 @@ export default function ReservationPageClient({ store, casts }: ReservationPageC
             <div className="text-center">
               <div className="text-sm font-medium text-gray-500">お電話</div>
               <div className="text-lg font-bold text-gray-800">{phoneLabel}</div>
+              {receptionHours && (
+                <div className="mt-0.5 text-[10px] text-rose-500">受付: {receptionHours}</div>
+              )}
+              {businessHours && (
+                <div className="text-[10px] text-gray-500">営業: {businessHours}</div>
+              )}
             </div>
           </a>
 

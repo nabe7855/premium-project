@@ -94,6 +94,9 @@ export default function StoreManagement() {
         address: s.address || '',
         phone: s.phone || '',
         photoUrl: s.image_url || '',
+        lineId: s.line_id || '',
+        lineUrl: s.line_url || '',
+        notificationEmail: s.notification_email || '',
       }));
 
       setStores(mappedData);
@@ -163,9 +166,9 @@ export default function StoreManagement() {
         ...store,
         receptionHours: config.header.receptionHours || '',
         businessHours: config.header.businessHours || '',
-        lineUrl: config.header.specialBanner?.link || '',
-        lineId: config.lineId || '',
-        notificationEmail: config.notificationEmail || '',
+        lineUrl: config.header.specialBanner?.link || store.lineUrl || '',
+        lineId: config.lineId || store.lineId || '',
+        notificationEmail: config.notificationEmail || store.notificationEmail || '',
       });
     } catch (error) {
       console.error('Error fetching config:', error);
@@ -288,6 +291,9 @@ export default function StoreManagement() {
           address: editingStore.address,
           phone: editingStore.phone,
           image_url: imageUrl,
+          line_id: editingStore.lineId,
+          line_url: editingStore.lineUrl,
+          notification_email: editingStore.notificationEmail,
         })
         .eq('id', editingStore.id);
 

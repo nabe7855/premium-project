@@ -24,9 +24,14 @@ export default async function ReservationPage({ params }: { params: { slug: stri
     return notFound();
   }
 
+  // 設定を取得（受付時間・営業時間のため）
+  const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
+  const configResult = await getStoreTopConfig(slug);
+  const storeConfig = configResult.success ? configResult.config : null;
+
   // キャスト情報を取得
   const allCasts = await getCastsByStore(slug);
   const activeCasts = allCasts.filter((cast) => cast.isActive);
 
-  return <ReservationPageClient store={store} casts={activeCasts} />;
+  return <ReservationPageClient store={store} storeConfig={storeConfig} casts={activeCasts} />;
 }

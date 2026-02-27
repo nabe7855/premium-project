@@ -171,6 +171,18 @@ export interface FAQConfig {
   isVisible: boolean;
 }
 
+export interface QuickAccessItem {
+  ja: string;
+  en: string;
+  href: string;
+  icon: string;
+}
+
+export interface QuickAccessConfig {
+  items: QuickAccessItem[];
+  isVisible: boolean;
+}
+
 export interface FooterConfig {
   logoImageUrl: string;
   logoLink?: string;
@@ -200,6 +212,7 @@ export interface StoreTopPageConfig {
   diary: DiaryConfig;
   newcomer: NewcomerConfig;
   faq: FAQConfig;
+  quickAccess: QuickAccessConfig;
   footer: FooterConfig;
   notificationEmail?: string;
   lineId?: string;
@@ -658,6 +671,47 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       },
     ],
     isVisible: true,
+  },
+  quickAccess: {
+    isVisible: true,
+    items: [
+      {
+        ja: 'セラピスト一覧',
+        en: 'THERAPIST',
+        href: '#cast',
+        icon: 'Users',
+      },
+      {
+        ja: '当日出勤',
+        en: 'TODAY',
+        href: '#cast',
+        icon: 'CalendarCheck',
+      },
+      {
+        ja: 'イベント',
+        en: 'EVENT',
+        href: '#campaign',
+        icon: 'Sparkles',
+      },
+      {
+        ja: '写メ日記',
+        en: 'DIARY',
+        href: '#diary',
+        icon: 'Camera',
+      },
+      {
+        ja: '口コミ',
+        en: 'REVIEW',
+        href: '#review',
+        icon: 'MessageCircle',
+      },
+      {
+        ja: 'QA',
+        en: 'Q&A',
+        href: '#faq',
+        icon: 'HelpCircle',
+      },
+    ],
   },
   footer: {
     logoImageUrl:

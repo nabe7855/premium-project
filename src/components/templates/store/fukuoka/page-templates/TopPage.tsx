@@ -57,7 +57,13 @@ export default function FukuokaPage({
         />
       )}
       <BeginnerGuideBanner />
-      <QuickAccessMenu />
+      {(!safeConfig || safeConfig.quickAccess.isVisible || isEditing) && (
+        <QuickAccessMenu
+          config={safeConfig?.quickAccess}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+        />
+      )}
       {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
         <ConceptSection
           config={safeConfig?.concept}
