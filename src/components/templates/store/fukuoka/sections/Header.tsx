@@ -470,29 +470,31 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   </div>
 
                   {/* Special Banner */}
-                  <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
-                    <Link
-                      href="#recruit"
-                      onClick={closeMenu}
-                      className="group relative block aspect-[16/7]"
-                    >
-                      <NextImage
-                        src={config.specialBanner?.imageUrl || '/福岡募集バナー.png'}
-                        alt="Special Banner"
-                        fill
-                        className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
-                        sizes="(max-width: 768px) 100vw, 400px"
-                      />
-                      <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                          Strawberry Boys Premium
-                        </p>
-                        <h3 className="text-xl font-black leading-tight text-white">
-                          甘い誘惑を、今夜貴女に。
-                        </h3>
-                      </div>
-                    </Link>
-                  </div>
+                  {(config.menuBottomBanner?.isVisible ?? true) && (
+                    <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
+                      <Link
+                        href={getAbsoluteHref(config.menuBottomBanner?.link || '#recruit')}
+                        onClick={closeMenu}
+                        className="group relative block aspect-[16/7]"
+                      >
+                        <NextImage
+                          src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
+                          alt="Special Banner"
+                          fill
+                          className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                          sizes="(max-width: 768px) 100vw, 400px"
+                        />
+                        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
+                          <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                            {config.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
+                          </p>
+                          <h3 className="text-xl font-black leading-tight text-white">
+                            {config.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
+                          </h3>
+                        </div>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

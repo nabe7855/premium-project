@@ -647,6 +647,27 @@ export default function HeaderManagement() {
               ハンバーガーメニュー最下部バナー
             </h2>
             <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+              <div className="flex items-center justify-between">
+                <label className="text-[10px] font-bold uppercase text-gray-500">
+                  バナーを表示する
+                </label>
+                <Switch
+                  checked={config.header.menuBottomBanner?.isVisible ?? true}
+                  onCheckedChange={(checked) => {
+                    const newBanner = {
+                      ...(config.header.menuBottomBanner || {
+                        imageUrl: '',
+                        subHeading: '',
+                        mainHeading: '',
+                        link: '',
+                      }),
+                      isVisible: checked,
+                    };
+                    handleUpdate('header', 'menuBottomBanner', newBanner);
+                  }}
+                  className="scale-75"
+                />
+              </div>
               <div className="space-y-2">
                 <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
                 <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">

@@ -27,6 +27,7 @@ export interface HeaderConfig {
     subHeading: string;
     mainHeading: string;
     link: string;
+    isVisible?: boolean;
   };
 }
 
@@ -299,6 +300,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       subHeading: 'Strawberry Boys Premium',
       mainHeading: '甘い誘惑を、今夜貴女に。',
       link: '#recruit',
+      isVisible: true,
     },
   },
   hero: {
