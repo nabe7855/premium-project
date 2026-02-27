@@ -15,7 +15,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // キャスト一覧を取得（priority を追加）
+  // キャスト一覧を取得（reviews も JOIN して直接集計）
   const { data, error } = await supabase
     .from('cast_store_memberships')
     .select(
@@ -44,6 +44,9 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
             label_color,
             text_color
           )
+        ),
+        reviews (
+          rating
         )
       )
     `,
@@ -55,6 +58,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
+  // 全キャストIDを抽出（つぶやき取得用）
   const castIds = (data ?? [])
     .map((item: any) => {
       if (Array.isArray(item.casts)) {
@@ -63,8 +67,6 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       return item.casts?.id;
     })
     .filter((id: string | undefined): id is string => !!id);
-
-  console.log('✅ Found Cast IDs:', castIds.length, castIds.slice(0, 3));
 
   // 🆕 各キャストの最新つぶやきを取得
   let tweetsMap: Record<string, string> = {};
@@ -80,40 +82,10 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       console.error('❌ つぶやき取得エラー:', tweetError.message);
     } else if (tweets) {
       for (const t of tweets) {
-        const existing = tweetsMap[t.cast_id];
-        if (!existing) {
+        if (!tweetsMap[t.cast_id]) {
           tweetsMap[t.cast_id] = t.content;
         }
       }
-    }
-  }
-
-  // 🆕 各キャストのレビュー統計を取得
-  let reviewStatsMap: Record<string, { rating: number; count: number }> = {};
-  if (castIds.length > 0) {
-    const { data: reviews, error: reviewError } = await supabase
-      .from('reviews')
-      .select('cast_id, rating')
-      .in('cast_id', castIds);
-
-    if (reviewError) {
-      console.error('❌ レビュー取得エラー:', reviewError.message);
-    } else if (reviews) {
-      const stats: Record<string, { sum: number; count: number }> = {};
-      reviews.forEach((r: any) => {
-        if (!stats[r.cast_id]) {
-          stats[r.cast_id] = { sum: 0, count: 0 };
-        }
-        stats[r.cast_id].sum += r.rating;
-        stats[r.cast_id].count += 1;
-      });
-
-      Object.keys(stats).forEach((id) => {
-        reviewStatsMap[id] = {
-          rating: Number((stats[id].sum / stats[id].count).toFixed(1)),
-          count: stats[id].count,
-        };
-      });
     }
   }
 
@@ -147,6 +119,18 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       // ✅ 新人判定
       const isNewcomer = statuses.some((s) => s.isActive && s.status_master?.name === '新人');
 
+      // ✅ reviewsを JOIN で取得済み → 直接集計
+      const castReviews: { rating: number }[] = Array.isArray(cast.reviews) ? cast.reviews : [];
+      const reviewCount = castReviews.length;
+      const rating =
+        reviewCount > 0
+          ? Number(
+              (
+                castReviews.reduce((sum: number, r: any) => sum + (r.rating ?? 0), 0) / reviewCount
+              ).toFixed(1),
+            )
+          : 0;
+
       const mapped: Cast = {
         id: cast.id,
         slug: cast.slug,
@@ -156,8 +140,14 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         mainImageUrl: cast.main_image_url ?? undefined,
         imageUrl: cast.image_url ?? undefined,
         isActive: cast.is_active,
-        mbtiType: cast.mbti?.name ?? undefined,
-        faceType: cast.face ? [cast.face.name] : [],
+        mbtiType: Array.isArray(cast.mbti)
+          ? (cast.mbti[0]?.name ?? undefined)
+          : (cast.mbti?.name ?? undefined),
+        faceType: Array.isArray(cast.face)
+          ? cast.face.map((f: any) => f.name).filter(Boolean)
+          : cast.face
+            ? [cast.face.name]
+            : [],
         statuses,
         sexinessLevel: cast.sexiness_level ?? 3,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
@@ -165,8 +155,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         latestTweet: tweetsMap[cast.id] ?? null,
         priority: item.priority ?? 0,
         isNewcomer,
-        rating: reviewStatsMap[cast.id]?.rating ?? 0, // ⭐ 平均評価
-        reviewCount: reviewStatsMap[cast.id]?.count ?? 0, // 💬 口コミ件数
+        rating, // ⭐ 平均評価
+        reviewCount, // 💬 口コミ件数
       };
 
       return mapped;
