@@ -65,20 +65,23 @@ export default function ProfileEditor({
       <h2 className="mb-4 text-xl font-bold">プロフィール編集</h2>
 
       {/* ✅ タブ切り替え */}
-      <div className="mb-6 flex space-x-4 overflow-x-auto whitespace-nowrap border-b scrollbar-hide">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id as any)}
-            className={`px-2 pb-2 transition-all ${
-              activeTab === tab.id
-                ? 'border-b-2 border-pink-500 font-semibold text-pink-600'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
-          >
-            {tab.name}
-          </button>
-        ))}
+      <div className="sticky top-0 z-10 -mx-6 mb-8 flex gap-1 overflow-x-auto border-b border-gray-100 bg-white/80 px-6 py-2 backdrop-blur-md scrollbar-hide">
+        {tabs.map((tab) => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`rounded-full px-6 py-2.5 text-sm font-bold transition-all duration-300 ${
+                isActive
+                  ? 'bg-pink-500 text-white shadow-lg shadow-pink-100 ring-2 ring-pink-500 ring-offset-2'
+                  : 'text-gray-400 hover:bg-gray-50 hover:text-gray-600'
+              }`}
+            >
+              {tab.name}
+            </button>
+          );
+        })}
       </div>
 
       {/* ✅ タブごとの表示 */}

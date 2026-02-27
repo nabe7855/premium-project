@@ -29,10 +29,13 @@ import { CastDiary, CastProfile, FeatureMaster, QuestionMaster } from '@/types/c
 import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
+import Footer from '@/components/templates/store/fukuoka/sections/Footer';
 import { getCastDiaries } from '@/lib/getCastDiaries'; // ✅ 作成した関数
 import { getCastPerformance } from '@/lib/getCastPerformance';
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 
 interface DashboardProps {
@@ -53,6 +56,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [questionMasters, setQuestionMasters] = useState<QuestionMaster[]>([]);
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
   const [storeName, setStoreName] = useState<string | null>(null);
+  const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
 
   // ✅ 能力チャート用データ（ダミー削除 → Supabaseから取得）
   const [performanceData, setPerformanceData] = useState<Record<string, number>>({});
@@ -132,12 +136,20 @@ export default function Dashboard({ cast }: DashboardProps) {
   useEffect(() => {
     supabase
       .from('cast_store_memberships')
-      .select('stores(name)')
+      .select('stores(name, slug)')
       .eq('cast_id', cast.id)
-      .then(({ data, error }) => {
+      .then(async ({ data, error }) => {
         if (!error && data) {
-          const names = data.map((item: any) => item.stores?.name).filter(Boolean);
+          const storesData = data.map((item: any) => item.stores).filter(Boolean);
+          const names = storesData.map((s: any) => s.name);
           setStoreName(names.join('・'));
+
+          if (storesData.length > 0) {
+            const res = await getStoreTopConfig(storesData[0].slug);
+            if (res.success && res.config) {
+              setTopConfig(res.config);
+            }
+          }
         }
       });
   }, [cast.id]);
@@ -185,33 +197,45 @@ export default function Dashboard({ cast }: DashboardProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50">
       {/* Header */}
-      <header className="sticky top-0 z-30 border-b border-pink-100 bg-white shadow-sm">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-          <div className="flex h-14 items-center justify-between sm:h-16">
-            <div className="flex items-center">
+      <header className="sticky top-0 z-40 border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center gap-4">
               <button
                 onClick={() => setSidebarOpen(!sidebarOpen)}
-                className="rounded-md p-2 text-gray-600 hover:bg-pink-50 hover:text-pink-600 md:hidden"
+                className="rounded-full p-2 text-gray-500 transition-all hover:bg-pink-100/50 hover:text-pink-600 md:hidden"
               >
                 {sidebarOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
-              <h1 className="ml-2 text-lg font-bold text-gray-900 sm:text-xl">
-                キャストダッシュボード
+
+              <div className="flex flex-col">
+                <h1 className="bg-gradient-to-r from-pink-600 to-rose-500 bg-clip-text text-xl font-black tracking-tight text-transparent">
+                  CAST DASHBOARD
+                </h1>
                 {storeName && (
-                  <span className="ml-2 text-base font-medium text-pink-600">（{storeName}）</span>
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400">
+                    {storeName}
+                  </span>
                 )}
-              </h1>
+              </div>
             </div>
-            <div className="flex items-center space-x-2 sm:space-x-4">
-              <span className="hidden text-xs text-gray-600 sm:inline sm:text-sm">
-                ようこそ、{castState.name} さん
-              </span>
+
+            <div className="flex items-center gap-3 sm:gap-6">
+              <div className="hidden flex-col items-end sm:flex">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-gray-400">
+                  Member
+                </p>
+                <p className="text-sm font-black text-gray-700">{castState.name} さん</p>
+              </div>
+
+              <div className="hidden h-8 w-[1px] bg-gray-200 sm:block"></div>
+
               <button
                 onClick={logout}
-                className="flex items-center space-x-1 text-gray-600 hover:text-pink-600"
+                className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-gray-600 transition-all hover:bg-rose-50 hover:text-rose-600 active:scale-95"
               >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden text-sm sm:inline">ログアウト</span>
+                <LogOut className="h-4 w-4 transition-transform group-hover:rotate-12" />
+                <span className="hidden sm:inline">Logout</span>
               </button>
             </div>
           </div>
@@ -219,22 +243,23 @@ export default function Dashboard({ cast }: DashboardProps) {
       </header>
 
       {/* Navigation Tabs */}
-      <div className="sticky top-14 z-20 border-b border-pink-100 bg-white sm:top-16">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6 lg:px-8">
-          <div className="flex space-x-4 overflow-x-auto sm:space-x-8">
+      <div className="sticky top-16 z-30 border-b border-pink-100 bg-white/80 backdrop-blur-sm">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex space-x-2 overflow-x-auto py-3 scrollbar-hide">
             {tabs.map((tab) => {
               const Icon = tab.icon;
+              const isActive = activeTab === tab.id;
               return (
                 <button
                   key={tab.id}
                   onClick={() => setActiveTab(tab.id as any)}
-                  className={`flex items-center space-x-1 whitespace-nowrap border-b-2 px-1 py-3 text-xs sm:text-sm ${
-                    activeTab === tab.id
-                      ? 'border-pink-500 text-pink-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700'
+                  className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-bold transition-all duration-300 ${
+                    isActive
+                      ? 'scale-105 bg-gradient-to-r from-pink-500 to-rose-400 text-white shadow-lg shadow-pink-200 ring-4 ring-pink-500/10'
+                      : 'text-gray-500 hover:bg-pink-50 hover:text-pink-600'
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
+                  <Icon className={`h-4 w-4 ${isActive ? 'animate-pulse' : ''}`} />
                   <span>{tab.name}</span>
                 </button>
               );
@@ -283,6 +308,8 @@ export default function Dashboard({ cast }: DashboardProps) {
         )}
         {activeTab === 'reservation' && <ReservationSection />}
       </main>
+
+      <Footer config={topConfig?.footer} />
     </div>
   );
 }
