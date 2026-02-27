@@ -1,3 +1,5 @@
+'use client';
+
 import { useStore } from '@/contexts/StoreContext';
 import { FooterConfig } from '@/lib/store/storeTopConfig';
 import { ImageIcon, Link2 } from 'lucide-react';

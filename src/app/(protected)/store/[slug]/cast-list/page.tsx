@@ -6,7 +6,9 @@ import Hero from '@/components/sections/casts/ui/Hero';
 import { getRandomTodayCast } from '@/lib/getRandomTodayCast';
 import { Metadata } from 'next';
 
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -93,7 +95,13 @@ export default async function CastListPage({ params }: Props) {
       </div>
 
       {/* フッター */}
-      <Footer />
+      {store.template === 'fukuoka' ? (
+        <FukuokaFooter config={topConfig.footer} />
+      ) : store.template === 'yokohama' ? (
+        <YokohamaFooter config={topConfig.footer} />
+      ) : (
+        <Footer />
+      )}
     </>
   );
 }
