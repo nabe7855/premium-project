@@ -30,11 +30,13 @@ import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
 import Footer from '@/components/templates/store/fukuoka/sections/Footer';
+import { StoreProvider } from '@/contexts/StoreContext';
 import { getCastDiaries } from '@/lib/getCastDiaries'; // ✅ 作成した関数
 import { getCastPerformance } from '@/lib/getCastPerformance';
 import { getCastProfile } from '@/lib/getCastProfile';
 import { getFeatureMasters } from '@/lib/getFeatureMasters';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { getStoreData, Store } from '@/lib/store/store-data';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 
@@ -57,6 +59,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [showDiaryEditor, setShowDiaryEditor] = useState(false);
   const [storeName, setStoreName] = useState<string | null>(null);
   const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
+  const [currentStore, setCurrentStore] = useState<Store | null>(null);
 
   // ✅ 能力チャート用データ（ダミー削除 → Supabaseから取得）
   const [performanceData, setPerformanceData] = useState<Record<string, number>>({});
@@ -145,7 +148,13 @@ export default function Dashboard({ cast }: DashboardProps) {
           setStoreName(names.join('・'));
 
           if (storesData.length > 0) {
-            const res = await getStoreTopConfig(storesData[0].slug);
+            const slug = storesData[0].slug;
+            const store = getStoreData(slug);
+            if (store) {
+              setCurrentStore(store);
+            }
+
+            const res = await getStoreTopConfig(slug);
             if (res.success && res.config) {
               setTopConfig(res.config);
             }
@@ -194,7 +203,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: 'reservation', name: '予約', icon: ClipboardList },
   ];
 
-  return (
+  const dashboardContent = (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md">
@@ -312,4 +321,17 @@ export default function Dashboard({ cast }: DashboardProps) {
       <Footer config={topConfig?.footer} />
     </div>
   );
+
+  if (!currentStore) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-50 via-white to-rose-50">
+        <div className="text-center">
+          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-pink-500"></div>
+          <p className="font-bold text-gray-600">Context Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <StoreProvider store={currentStore}>{dashboardContent}</StoreProvider>;
 }

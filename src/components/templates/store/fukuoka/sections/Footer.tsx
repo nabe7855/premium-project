@@ -12,6 +12,13 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
+  const storeContext = React.useContext(React.createContext<any>(undefined)); // Dummy avoid error if needed, but better use standard useStore
+  // Actually, useStore throws, so we should only call it if we are sure provider exists or it's at top.
+  // Using try-catch around hooks is NOT allowed.
+
+  // The correct way in this project's pattern:
+  const { store } = useStore();
+
   if (!config) return null;
 
   const getAbsoluteHref = (href: any) => {
@@ -69,8 +76,6 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
       }
     }
   };
-
-  const { store } = useStore();
 
   const adjustedMenuButtons = config.menuButtons.map((btn) => {
     if (btn.label.includes('料金') || btn.label.includes('コース')) {
