@@ -3,6 +3,9 @@ import { getCastsByStore } from '@/lib/getCastsByStore';
 import { prisma } from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 
+// 管理画面の変更を即反映させるためキャッシュを無効化
+export const dynamic = 'force-dynamic';
+
 export default async function ReservationPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
 

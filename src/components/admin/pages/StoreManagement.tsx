@@ -291,9 +291,9 @@ export default function StoreManagement() {
           address: editingStore.address,
           phone: editingStore.phone,
           image_url: imageUrl,
-          line_id: editingStore.lineId,
-          line_url: editingStore.lineUrl,
-          notification_email: editingStore.notificationEmail,
+          line_id: editingStore.lineId || null,
+          line_url: editingStore.lineUrl || null,
+          notification_email: editingStore.notificationEmail || null,
         })
         .eq('id', editingStore.id);
 
@@ -614,7 +614,7 @@ export default function StoreManagement() {
                           </label>
                           <input
                             type="text"
-                            value={editingStore.lineUrl}
+                            value={editingStore.lineUrl ?? ''}
                             onChange={(e) =>
                               setEditingStore({
                                 ...editingStore,
@@ -631,7 +631,7 @@ export default function StoreManagement() {
                           </label>
                           <input
                             type="text"
-                            value={editingStore.lineId}
+                            value={editingStore.lineId ?? ''}
                             onChange={(e) =>
                               setEditingStore({
                                 ...editingStore,
@@ -717,7 +717,7 @@ export default function StoreManagement() {
                       <div>
                         <input
                           type="email"
-                          value={editingStore.notificationEmail}
+                          value={editingStore.notificationEmail ?? ''}
                           onChange={(e) =>
                             setEditingStore({
                               ...editingStore,
