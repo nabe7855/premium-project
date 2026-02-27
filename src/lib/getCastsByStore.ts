@@ -1,6 +1,6 @@
 // lib/getCastsByStore.ts
-import { supabase } from './supabaseClient';
 import { Cast, CastStatus } from '@/types/cast';
+import { supabase } from './supabaseClient';
 
 export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
   // 店舗IDを取得
@@ -18,7 +18,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
   // キャスト一覧を取得（priority を追加）
   const { data, error } = await supabase
     .from('cast_store_memberships')
-    .select(`
+    .select(
+      `
       priority,
       casts (
         id,
@@ -45,7 +46,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
           )
         )
       )
-    `)
+    `,
+    )
     .eq('store_id', store.id);
 
   if (error) {
@@ -53,10 +55,16 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     return [];
   }
 
-  // 全キャストIDを抽出
   const castIds = (data ?? [])
-    .map((item: any) => item.casts?.id)
+    .map((item: any) => {
+      if (Array.isArray(item.casts)) {
+        return item.casts[0]?.id;
+      }
+      return item.casts?.id;
+    })
     .filter((id: string | undefined): id is string => !!id);
+
+  console.log('✅ Found Cast IDs:', castIds.length, castIds.slice(0, 3));
 
   // 🆕 各キャストの最新つぶやきを取得
   let tweetsMap: Record<string, string> = {};
@@ -80,9 +88,38 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     }
   }
 
+  // 🆕 各キャストのレビュー統計を取得
+  let reviewStatsMap: Record<string, { rating: number; count: number }> = {};
+  if (castIds.length > 0) {
+    const { data: reviews, error: reviewError } = await supabase
+      .from('reviews')
+      .select('cast_id, rating')
+      .in('cast_id', castIds);
+
+    if (reviewError) {
+      console.error('❌ レビュー取得エラー:', reviewError.message);
+    } else if (reviews) {
+      const stats: Record<string, { sum: number; count: number }> = {};
+      reviews.forEach((r: any) => {
+        if (!stats[r.cast_id]) {
+          stats[r.cast_id] = { sum: 0, count: 0 };
+        }
+        stats[r.cast_id].sum += r.rating;
+        stats[r.cast_id].count += 1;
+      });
+
+      Object.keys(stats).forEach((id) => {
+        reviewStatsMap[id] = {
+          rating: Number((stats[id].sum / stats[id].count).toFixed(1)),
+          count: stats[id].count,
+        };
+      });
+    }
+  }
+
   return (data ?? [])
     .map((item: any) => {
-      const cast = item.casts;
+      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
       if (!cast || !cast.is_active) return null;
 
       // ✅ Supabase Storage の公開URL
@@ -108,9 +145,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         })) ?? [];
 
       // ✅ 新人判定
-      const isNewcomer = statuses.some(
-        (s) => s.isActive && s.status_master?.name === '新人'
-      );
+      const isNewcomer = statuses.some((s) => s.isActive && s.status_master?.name === '新人');
 
       const mapped: Cast = {
         id: cast.id,
@@ -128,8 +163,10 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
         voiceUrl: urlData?.publicUrl ?? undefined,
         latestTweet: tweetsMap[cast.id] ?? null,
-        priority: item.priority ?? 0, // 🆕 priority
-        isNewcomer,                   // 🆕 新人判定
+        priority: item.priority ?? 0,
+        isNewcomer,
+        rating: reviewStatsMap[cast.id]?.rating ?? 0, // ⭐ 平均評価
+        reviewCount: reviewStatsMap[cast.id]?.count ?? 0, // 💬 口コミ件数
       };
 
       return mapped;
