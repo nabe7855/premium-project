@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import Link from 'next/link'; // ✅ 追加
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 // Cast の型を定義
 export interface TodayCast {
@@ -29,13 +29,7 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
   const [currentIndex, setCurrentIndex] = useState(0);
   const [likedCasts, setLikedCasts] = useState<Set<string>>(new Set());
 
-  // ✅ デバッグログ
-  useEffect(() => {
-    console.log('🎯 CastSliderSection props.casts:', casts);
-  }, [casts]);
-
   if (!casts || casts.length === 0) {
-    console.log('⚠️ 本日出勤キャストなし');
     return (
       <section className="px-4 py-16 text-center text-gray-500">
         本日出勤のキャストはいません
@@ -44,11 +38,6 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
   }
 
   const currentCast = casts[currentIndex];
-
-  // ✅ デバッグログ
-  useEffect(() => {
-    console.log('👉 currentIndex:', currentIndex, 'currentCast:', currentCast);
-  }, [currentIndex, currentCast]);
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % casts.length);
@@ -63,10 +52,8 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
       const newSet = new Set(prev);
       if (newSet.has(castId)) {
         newSet.delete(castId);
-        console.log('💔 お気に入り解除:', castId);
       } else {
         newSet.add(castId);
-        console.log('❤️ お気に入り追加:', castId);
       }
       return newSet;
     });

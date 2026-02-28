@@ -71,7 +71,7 @@ export async function getTodayCastsByStore(
       start_datetime,
       end_datetime,
       status,
-      casts (
+      casts!inner (
         id,
         name,
         age,
@@ -86,6 +86,7 @@ export async function getTodayCastsByStore(
         sexiness_strawberry,
         mbti_id,
         face_id,
+        store_id,
         cast_statuses (
           id,
           status_id,
@@ -101,7 +102,7 @@ export async function getTodayCastsByStore(
     `,
     )
     .eq('work_date', dateStr)
-    .eq('store_id', store.id);
+    .eq('casts.store_id', store.id);
 
   if (error) {
     console.error('❌ getTodayCastsByStore error:', error.message);
