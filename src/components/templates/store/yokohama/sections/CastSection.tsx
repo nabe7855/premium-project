@@ -269,28 +269,34 @@ const CastSection: React.FC<CastSectionProps> = ({
                           </span>
                         </div>
 
-                        {/* グラデーションオーバーレイ */}
-                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
-
-                        {/* 名前と基本情報（画像下部） */}
-                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                          <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
-                            {cast.name}
-                          </h3>
-                          <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
-                            {cast.height}cm / {cast.age}歳
-                          </p>
+                        {/* グラデーション & グラスモーフィズムオーバーレイ */}
+                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pb-4 pt-10 backdrop-blur-[2px]">
+                          {/* 名前と基本情報 */}
+                          <div className="px-4 text-white">
+                            <h3 className="mb-0.5 font-serif text-xl font-bold tracking-wider drop-shadow-md">
+                              {cast.name}
+                            </h3>
+                            <div className="flex items-center gap-2 opacity-90 drop-shadow-sm">
+                              <span className="text-[11px] font-black uppercase tracking-widest">
+                                {cast.height}cm
+                              </span>
+                              <span className="h-2 w-[1px] bg-white/30" />
+                              <span className="text-[11px] font-black uppercase tracking-widest">
+                                {cast.age}歳
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       </div>
 
-                      {/* タグエリア */}
-                      <div className="flex flex-wrap gap-1 p-2">
+                      {/* タグエリア（より洗練されたデザインに） */}
+                      <div className="flex flex-wrap gap-1.5 p-3">
                         {cast.tags?.slice(0, 3).map((tag: string) => (
                           <span
                             key={tag}
-                            className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
+                            className="rounded-md border border-rose-100/50 bg-rose-50/80 px-2 py-0.5 text-[9px] font-bold tracking-tight text-rose-500/80"
                           >
-                            {tag}
+                            #{tag}
                           </span>
                         ))}
                       </div>

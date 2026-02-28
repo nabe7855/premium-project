@@ -119,23 +119,30 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
                     </button>
                   </div>
 
-                  {/* Cast Info */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
-                    <h3 className="mb-2 text-2xl font-bold">{currentCast.name}</h3>
-                    {currentCast.age && <p className="mb-2 text-lg">{currentCast.age}歳</p>}
-                    {currentCast.catch_copy && (
-                      <p className="mb-2 text-sm italic">「{currentCast.catch_copy}」</p>
-                    )}
-                    <div className="mb-2 flex items-center gap-2">
-                      <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm">
-                        {currentCast.mbti_name || currentCast.face_name}
-                      </span>
+                  {/* Cast Info (Glassmorphism & Refined Gradient) */}
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-8 pb-10 pt-20 text-white backdrop-blur-[2px]">
+                    <h3 className="mb-1 text-3xl font-black tracking-tighter drop-shadow-lg">
+                      {currentCast.name}
+                    </h3>
+                    <div className="mb-4 flex items-center gap-3 font-bold opacity-90 drop-shadow-md">
+                      {currentCast.age && <span className="text-xl">{currentCast.age}歳</span>}
+                      {currentCast.age && <span className="h-4 w-[1px] bg-white/30" />}
+                      <div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs backdrop-blur-sm">
+                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
+                        <span>{currentCast.mbti_name || currentCast.face_name}</span>
+                      </div>
                     </div>
+
+                    {currentCast.catch_copy && (
+                      <p className="mb-4 line-clamp-2 text-sm font-medium italic leading-relaxed opacity-80">
+                        「{currentCast.catch_copy}」
+                      </p>
+                    )}
+
                     {currentCast.start_datetime && (
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        <span className="text-sm">
+                      <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 p-3 text-sm font-bold backdrop-blur-sm">
+                        <Clock className="h-4 w-4 text-rose-300" />
+                        <span className="tracking-widest">
                           {new Date(currentCast.start_datetime).toLocaleTimeString([], {
                             hour: '2-digit',
                             minute: '2-digit',
