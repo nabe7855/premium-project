@@ -81,12 +81,24 @@ export async function createCastProfile(
 
     // 3. Insert into cast_store_memberships
     if (storeId) {
+      // Find current max priority in this store to satisfy unique constraint
+      const { data: currentMaxRes } = await supabaseAdmin
+        .from('cast_store_memberships')
+        .select('priority')
+        .eq('store_id', storeId)
+        .order('priority', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const nextPriority = (currentMaxRes?.priority || 0) + 1;
+
       const today = new Date().toISOString().split('T')[0];
       const { error: membershipError } = await supabaseAdmin.from('cast_store_memberships').insert({
         cast_id: castId,
         store_id: storeId,
         is_main: true,
         is_temporary: false,
+        priority: nextPriority,
         start_date: today,
         end_date: '9999-12-31',
       });
