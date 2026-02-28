@@ -1,15 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
 import Dashboard from '@/components/sections/cast-dashboard/dashboard/Dashboard';
-import LoginForm from '@/components/sections/cast-dashboard/LoginForm';
-import { CastProfile } from '@/types/cast'; // ✅ 本物をインポート
+import { supabase } from '@/lib/supabaseClient';
+import { CastProfile } from '@/types/cast';
+import { useRouter } from 'next/navigation'; // ✅ 追加
+import { useEffect, useState } from 'react';
 
 export default function CastDashboardPage() {
   const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [castProfile, setCastProfile] = useState<CastProfile | null>(null);
+  const router = useRouter(); // ✅ 追加
 
   useEffect(() => {
     const checkUser = async () => {
@@ -23,6 +24,7 @@ export default function CastDashboardPage() {
       if (!user) {
         setIsAuthenticated(false);
         setCastProfile(null);
+        router.push('/login'); // ✅ ログインページへ飛ばす
         setLoading(false);
         return;
       }
@@ -32,22 +34,25 @@ export default function CastDashboardPage() {
         .from('roles')
         .select('role')
         .eq('user_id', user.id)
-        .single();
+        .contains('role', ['cast']) // 単一の single() だと複数ロールに対応できないので一応考慮
+        .maybeSingle();
 
       if (roleError || !roleData || roleData.role !== 'cast') {
         setIsAuthenticated(false);
         setCastProfile(null);
+        router.push('/login'); // ✅ キャストでなければログインへ
         setLoading(false);
         return;
       }
 
-      // ✅ getCastProfile を利用するのがベスト
+      // ✅ getCastProfile を利用
       const { getCastProfile } = await import('@/lib/getCastProfile');
       const profile = await getCastProfile(user.id);
 
       if (!profile) {
         setIsAuthenticated(false);
         setCastProfile(null);
+        router.push('/login');
         setLoading(false);
         return;
       }
@@ -58,7 +63,7 @@ export default function CastDashboardPage() {
     };
 
     checkUser();
-  }, []);
+  }, [router]);
 
   if (loading) {
     return (
@@ -71,10 +76,10 @@ export default function CastDashboardPage() {
     );
   }
 
-  // ✅ キャストログイン済みならプロフィール付きダッシュボードを表示
-  return isAuthenticated && castProfile ? (
-    <Dashboard cast={castProfile} />
-  ) : (
-    <LoginForm />
-  );
+  // ✅ 認証済みならダッシュボード、そうでなければ何も出さない（リダイレクト中）
+  if (isAuthenticated && castProfile) {
+    return <Dashboard cast={castProfile} />;
+  }
+
+  return null;
 }
