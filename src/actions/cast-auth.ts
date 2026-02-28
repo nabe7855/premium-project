@@ -55,54 +55,91 @@ export async function createCastProfile(
   storeId?: string,
 ) {
   try {
-    // 1. Insert into casts
+    // 1. Insert/Upsert into casts (Use user_id as conflict target)
     const { data: castData, error: castInsertError } = await supabaseAdmin
       .from('casts')
-      .insert({
-        user_id: userId,
-        name: name,
-        slug: slug,
-        is_active: true,
-        email: email,
-        login_password: password || null,
-      })
+      .upsert(
+        {
+          user_id: userId,
+          name: name,
+          slug: slug,
+          is_active: true,
+          email: email,
+          login_password: password || null,
+        },
+        { onConflict: 'user_id' },
+      )
       .select('id, slug')
       .single();
 
     if (castInsertError) throw castInsertError;
     const castId = castData.id;
 
-    // 2. Insert into roles
+    // 2. Insert/Upsert into roles
     const { error: roleError } = await supabaseAdmin
       .from('roles')
-      .insert({ user_id: userId, role: 'cast' });
+      .upsert({ user_id: userId, role: 'cast' }, { onConflict: 'user_id' });
 
     if (roleError) throw roleError;
 
     // 3. Insert into cast_store_memberships
     if (storeId) {
-      // Find current max priority in this store to satisfy unique constraint
-      const { data: currentMaxRes } = await supabaseAdmin
+      // Check if membership already exists (Idempotency)
+      const { data: existingMembership } = await supabaseAdmin
         .from('cast_store_memberships')
-        .select('priority')
+        .select('id')
+        .eq('cast_id', castId)
         .eq('store_id', storeId)
-        .order('priority', { ascending: false })
-        .limit(1)
         .maybeSingle();
 
-      const nextPriority = (currentMaxRes?.priority || 0) + 1;
+      if (!existingMembership) {
+        // Find a free priority in this store
+        const { data: allMemberships } = await supabaseAdmin
+          .from('cast_store_memberships')
+          .select('priority')
+          .eq('store_id', storeId);
 
-      const today = new Date().toISOString().split('T')[0];
-      const { error: membershipError } = await supabaseAdmin.from('cast_store_memberships').insert({
-        cast_id: castId,
-        store_id: storeId,
-        is_main: true,
-        is_temporary: false,
-        priority: nextPriority,
-        start_date: today,
-        end_date: '9999-12-31',
-      });
-      if (membershipError) throw membershipError;
+        const takenPriorities = (allMemberships || [])
+          .map((m) => m.priority)
+          .filter((p) => p !== null) as number[];
+
+        let nextPriority = 1;
+        // Find the lowest positive integer that isn't taken
+        while (takenPriorities.includes(nextPriority)) {
+          nextPriority++;
+        }
+
+        const today = new Date().toISOString().split('T')[0];
+        const { error: membershipError } = await supabaseAdmin
+          .from('cast_store_memberships')
+          .insert({
+            cast_id: castId,
+            store_id: storeId,
+            is_main: true,
+            is_temporary: false,
+            priority: nextPriority,
+            start_date: today,
+            end_date: '9999-12-31',
+          });
+
+        if (membershipError) {
+          // If priority somehow still conflicts (race condition), try one more time with a high random number
+          if (membershipError.code === '23505') {
+            const fallbackPriority = Math.floor(Math.random() * 9000) + 1001;
+            await supabaseAdmin.from('cast_store_memberships').insert({
+              cast_id: castId,
+              store_id: storeId,
+              is_main: true,
+              is_temporary: false,
+              priority: fallbackPriority,
+              start_date: today,
+              end_date: '9999-12-31',
+            });
+          } else {
+            throw membershipError;
+          }
+        }
+      }
     }
 
     return { success: true, cast: castData };
