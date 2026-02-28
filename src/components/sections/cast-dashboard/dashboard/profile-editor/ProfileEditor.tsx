@@ -114,32 +114,38 @@ export default function ProfileEditor({
             <h4 className="mb-4 text-sm font-bold text-gray-700">施術対応内容</h4>
             <ServiceLevels form={form} onChange={handleChange} />
           </div>
+        </div>
+      )}
 
-          <div className="border-t pt-8">
+      {activeTab === 'story' && (
+        <div className="space-y-8">
+          {/* ✅ マネージャーコメント（読取専用・店長からの他己紹介） */}
+          <div className="rounded-xl border border-blue-100 bg-blue-50/30 p-4 sm:p-6">
+            <label className="mb-2 flex items-center gap-2 text-sm font-extrabold text-blue-700">
+              <span>📢</span> マネージャーコメント (店長からの紹介文)
+            </label>
+            <div className="min-h-[80px] w-full rounded-lg border border-blue-100 bg-white/80 px-4 py-3 text-sm leading-relaxed text-gray-600 shadow-sm">
+              {form.managerComment ? (
+                <p className="whitespace-pre-wrap">{form.managerComment}</p>
+              ) : (
+                <p className="italic text-gray-400">まだコメントはありません</p>
+              )}
+            </div>
+            <p className="mt-2 text-[10px] font-medium text-blue-500/70">
+              ※ この項目は店長が設定します。キャスト側では編集できません。
+            </p>
+          </div>
+
+          {/* ✅ 自己紹介 (プロフィール) - 基本情報から移動 */}
+          <div>
             <label className="mb-2 block text-sm font-bold text-gray-700">
               自己紹介 (プロフィール)
             </label>
             <textarea
               value={form.profile ?? ''}
               onChange={(e) => handleChange('profile', e.target.value)}
-              className="h-32 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
-              placeholder="お客様への挨拶や自己紹介を入力してください..."
-            />
-          </div>
-        </div>
-      )}
-
-      {activeTab === 'story' && (
-        <div className="space-y-8">
-          <div>
-            <label className="mb-2 block text-sm font-bold text-gray-700">
-              ストーリー (紹介文)
-            </label>
-            <textarea
-              value={form.managerComment ?? ''}
-              onChange={(e) => handleChange('managerComment', e.target.value)}
               className="h-48 w-full rounded-lg border border-gray-300 px-4 py-3 outline-none transition-all focus:border-transparent focus:ring-2 focus:ring-pink-500"
-              placeholder="あなたのストーリーや、より詳細な紹介文を入力してください..."
+              placeholder="お客様への挨拶や自己紹介を入力してください..."
             />
             <p className="mt-2 text-xs text-gray-500">
               ※ キャスト詳細ページの「ストーリー」タブのトップに表示されます
