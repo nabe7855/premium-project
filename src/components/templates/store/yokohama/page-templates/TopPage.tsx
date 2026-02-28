@@ -25,6 +25,7 @@ interface YokohamaPageProps {
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
   hideHeader?: boolean;
+  storeSlug?: string;
 }
 
 export default function YokohamaPage({
@@ -34,6 +35,7 @@ export default function YokohamaPage({
   onUpdate,
   onImageUpload,
   hideHeader,
+  storeSlug,
 }: YokohamaPageProps) {
   return (
     <div className="selection:bg-primary-100 selection:text-primary-800 relative min-h-screen font-sans text-slate-600">
@@ -79,6 +81,7 @@ export default function YokohamaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
+        storeSlug={storeSlug}
       />
       <NewcomerSection
         config={config?.newcomer}

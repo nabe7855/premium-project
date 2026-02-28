@@ -25,6 +25,7 @@ interface FukuokaPageProps {
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
   hideHeader?: boolean;
+  storeSlug?: string;
 }
 
 export default function FukuokaPage({
@@ -34,6 +35,7 @@ export default function FukuokaPage({
   onUpdate,
   onImageUpload,
   hideHeader,
+  storeSlug,
 }: FukuokaPageProps) {
   // 設定がない場合はデフォルト値を使用
   const safeConfig = config || undefined;
@@ -95,6 +97,7 @@ export default function FukuokaPage({
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
       )}
       {(!safeConfig || safeConfig.newcomer.isVisible || isEditing) && (

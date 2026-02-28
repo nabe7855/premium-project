@@ -43,7 +43,6 @@ export async function getTodayCastsByStore(
   storeSlug: string,
   targetDate?: string,
 ): Promise<TodayCast[]> {
-  console.log(`📡 getTodayCastsByStore start for slug: [${storeSlug}], date: [${targetDate}]`);
   // 1. 店舗IDを取得
   const { data: store, error: storeError } = await supabase
     .from('stores')
@@ -101,7 +100,8 @@ export async function getTodayCastsByStore(
       )
     `,
     )
-    .eq('work_date', dateStr);
+    .eq('work_date', dateStr)
+    .eq('store_id', store.id);
 
   if (error) {
     console.error('❌ getTodayCastsByStore error:', error.message);

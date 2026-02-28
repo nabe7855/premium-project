@@ -139,9 +139,9 @@ export default async function StorePage({ params }: StorePageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       {store.template === 'fukuoka' ? (
-        <FukuokaTopPage config={topConfig as any} newsPages={newsPages} />
+        <FukuokaTopPage config={topConfig as any} newsPages={newsPages} storeSlug={params.slug} />
       ) : store.template === 'yokohama' ? (
-        <YokohamaTopPage config={topConfig as any} newsPages={newsPages} />
+        <YokohamaTopPage config={topConfig as any} newsPages={newsPages} storeSlug={params.slug} />
       ) : (
         <CommonTopPage
           store={store}
