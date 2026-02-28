@@ -34,7 +34,7 @@ export default function CastDashboardPage() {
         .from('roles')
         .select('role')
         .eq('user_id', user.id)
-        .contains('role', ['cast']) // 単一の single() だと複数ロールに対応できないので一応考慮
+        .eq('role', 'cast')
         .maybeSingle();
 
       if (roleError || !roleData || roleData.role !== 'cast') {
