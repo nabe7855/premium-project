@@ -4,6 +4,7 @@ import { supabase } from './supabaseClient';
 export interface TodayCast {
   id: string;
   name: string;
+  slug: string | null;
   age?: number;
   height?: number;
   catch_copy?: string;
@@ -111,6 +112,7 @@ export async function getTodayCastsByStore(
       return {
         id: cast.id, // UUID (string)
         name: cast.name,
+        slug: cast.slug,
         age: cast.age,
         height: cast.height,
         catch_copy: cast.catch_copy,

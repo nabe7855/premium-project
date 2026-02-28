@@ -61,6 +61,7 @@ export const store = {
 export interface CastMember {
   id: string; // ✅ string 型（UUIDに対応）
   name: string;
+  slug?: string | null; // ✅ 追加
   image: string;
   isWorking: boolean;
   schedule?: string[];

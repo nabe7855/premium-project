@@ -81,6 +81,7 @@ export interface CampaignConfig {
 export interface CastItem {
   id: string;
   name: string;
+  slug?: string | null;
   age: number;
   height: number;
   comment: string;

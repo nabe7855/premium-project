@@ -4,6 +4,7 @@ import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDown, Heart, RotateCcw, Search, Star } from 'lucide-react';
 import NextImage from 'next/image';
+import Link from 'next/link'; // ✅ 追加
 import React, { useEffect, useMemo, useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
 
@@ -67,6 +68,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         const mappedCasts: CastItem[] = data.map((c: TodayCast) => ({
           id: c.id,
           name: c.name,
+          slug: c.slug, // ✅ 追加
           age: c.age || 0,
           height: c.height || 0,
           comment: c.catch_copy || '',
@@ -241,58 +243,63 @@ const CastSection: React.FC<CastSectionProps> = ({
                     exit={{ opacity: 0, scale: 0.9 }}
                     className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
                   >
-                    <div className="relative aspect-[1/1.2] overflow-hidden">
-                      <NextImage
-                        src={cast.imageUrl}
-                        alt={cast.name}
-                        fill
-                        className="object-cover transition-transform duration-700 group-hover:scale-110"
-                        sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                        loading="lazy"
-                      />
+                    <Link
+                      href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`}
+                      className="block h-full w-full"
+                    >
+                      <div className="relative aspect-[1/1.2] overflow-hidden">
+                        <NextImage
+                          src={cast.imageUrl}
+                          alt={cast.name}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                          loading="lazy"
+                        />
 
-                      {/* バッジ装飾 */}
-                      <div className="absolute left-2 top-2 flex flex-col gap-1.5">
-                        {cast.name.length % 3 === 0 && (
-                          <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
-                            <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                        {/* バッジ装飾 */}
+                        <div className="absolute left-2 top-2 flex flex-col gap-1.5">
+                          {cast.name.length % 3 === 0 && (
+                            <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
+                              <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
+                            <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
                           </span>
-                        )}
-                        <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
-                          <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
-                        </span>
+                        </div>
+
+                        {/* グラデーションオーバーレイ */}
+                        <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
+
+                        {/* 名前と基本情報（画像下部） */}
+                        <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
+                          <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
+                            {cast.name}
+                          </h3>
+                          <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
+                            {cast.height}cm / {cast.age}歳
+                          </p>
+                        </div>
                       </div>
 
-                      {/* グラデーションオーバーレイ */}
-                      <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/60 to-transparent" />
-
-                      {/* 名前と基本情報（画像下部） */}
-                      <div className="absolute bottom-0 left-0 right-0 p-3 text-white">
-                        <h3 className="mb-0.5 font-serif text-lg font-bold tracking-wide">
-                          {cast.name}
-                        </h3>
-                        <p className="text-[10px] font-bold uppercase tracking-wider opacity-90">
-                          {cast.height}cm / {cast.age}歳
-                        </p>
+                      {/* タグエリア */}
+                      <div className="flex flex-wrap gap-1 p-2">
+                        {cast.tags?.slice(0, 3).map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
+                          >
+                            {tag}
+                          </span>
+                        ))}
                       </div>
-                    </div>
 
-                    {/* タグエリア */}
-                    <div className="flex flex-wrap gap-1 p-2">
-                      {cast.tags?.slice(0, 3).map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="rounded-full border border-rose-50 bg-rose-50/50 px-2 py-0.5 text-[8px] font-bold tracking-tight text-rose-400"
-                        >
-                          {tag}
-                        </span>
-                      ))}
-                    </div>
-
-                    {/* イチゴの隠しアイコン（ホバー時） */}
-                    <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
-                      <span className="text-3xl">🍓</span>
-                    </div>
+                      {/* イチゴの隠しアイコン（ホバー時） */}
+                      <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
+                        <span className="text-3xl">🍓</span>
+                      </div>
+                    </Link>
                   </motion.div>
                 ))}
               </AnimatePresence>

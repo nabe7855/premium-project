@@ -67,7 +67,7 @@ export default function CommonStorePage({
         <HeroSection />
         <TestimonialSection />
         <BannerSlideSection />
-        <CastSliderSection casts={todayCasts} />
+        <CastSliderSection casts={todayCasts} storeSlug={store.slug} />
         <NewcomerSection />
         <EventSection />
         <DiarySection />
