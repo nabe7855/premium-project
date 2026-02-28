@@ -1,7 +1,9 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { deleteCastProfile } from '@/actions/cast-auth';
 import { supabase } from '@/lib/supabaseClient';
+import { Trash2 } from 'lucide-react';
+import { useEffect, useState } from 'react';
 
 interface Store {
   id: string;
@@ -25,9 +27,7 @@ export default function CastManagement() {
   // 初期ロード
   useEffect(() => {
     const loadData = async () => {
-      const { data: castData, error: castError } = await supabase
-        .from('casts')
-        .select(`
+      const { data: castData, error: castError } = await supabase.from('casts').select(`
           id,
           name,
           manager_comment,
@@ -59,7 +59,8 @@ export default function CastManagement() {
   // 更新処理
   const handleUpdate = async (cast: Cast) => {
     try {
-      await supabase.from('casts')
+      await supabase
+        .from('casts')
         .update({
           manager_comment: cast.manager_comment,
           is_active: cast.is_active,
@@ -86,17 +87,47 @@ export default function CastManagement() {
     }
   };
 
+  const handleDelete = async (castId: string, castName: string) => {
+    // 1段階目の確認
+    if (!confirm(`キャスト「${castName}」を完全に削除しますか？\nこの操作は取り消せません。`)) {
+      return;
+    }
+
+    // 2段階目の確認（注意喚起含め）
+    if (
+      !confirm(
+        `【最終確認】\n「${castName}」に関連するすべてのデータ（プロフィール、画像、口コミ、つぶやき、出勤情報、アカウント）が完全に消去され、二度と復元できません。\n本当に削除しますか？`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const result = await deleteCastProfile(castId);
+      if (result.success) {
+        alert('キャストを削除しました');
+        setCasts((prev) => prev.filter((c) => c.id !== castId));
+        setOpenCastId(null);
+      } else {
+        alert(`削除に失敗しました: ${result.error}`);
+      }
+    } catch (err) {
+      console.error(err);
+      alert('削除中にエラーが発生しました');
+    }
+  };
+
   const activeCasts = casts.filter((c) => c.is_active);
   const inactiveCasts = casts.filter((c) => !c.is_active);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 text-cyan-100 p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-extrabold mb-6 tracking-wider text-cyan-400 drop-shadow-lg">
+    <div className="min-h-screen bg-gradient-to-br from-gray-950 via-black to-gray-900 p-4 text-cyan-100 sm:p-6">
+      <h1 className="mb-6 text-2xl font-extrabold tracking-wider text-cyan-400 drop-shadow-lg sm:text-3xl">
         キャスト一覧
       </h1>
 
       {/* 在籍中 */}
-      <h2 className="text-lg font-semibold mb-2 flex items-center gap-2 text-cyan-300">
+      <h2 className="mb-2 flex items-center gap-2 text-lg font-semibold text-cyan-300">
         ✅ 在籍中
       </h2>
       <ul className="space-y-3">
@@ -111,7 +142,7 @@ export default function CastManagement() {
       </ul>
 
       {/* 離籍中 */}
-      <h2 className="text-lg font-semibold mt-8 mb-2 flex items-center gap-2 text-red-400">
+      <h2 className="mb-2 mt-8 flex items-center gap-2 text-lg font-semibold text-red-400">
         🚫 離籍中
       </h2>
       <ul className="space-y-3 opacity-80">
@@ -131,32 +162,32 @@ export default function CastManagement() {
     return (
       <>
         <button
-  onClick={() => setOpenCastId(openCastId === cast.id ? null : cast.id)}
-  className={`w-full text-left px-4 py-3 font-semibold flex justify-between items-center transition
-    ${cast.is_active
-      ? 'text-cyan-200 hover:text-cyan-400'
-      : 'text-red-400 hover:text-red-300'}
-  `}
->
-  {cast.name}
-  <span>{openCastId === cast.id ? '▲' : '▼'}</span>
-</button>
+          onClick={() => setOpenCastId(openCastId === cast.id ? null : cast.id)}
+          className={`flex w-full items-center justify-between px-4 py-3 text-left font-semibold transition ${
+            cast.is_active ? 'text-cyan-200 hover:text-cyan-400' : 'text-red-400 hover:text-red-300'
+          } `}
+        >
+          {cast.name}
+          <span>{openCastId === cast.id ? '▲' : '▼'}</span>
+        </button>
 
         {openCastId === cast.id && (
-          <div className="px-4 pb-4 space-y-4 text-sm bg-gray-950/50 border-t border-gray-700">
+          <div className="space-y-4 border-t border-gray-700 bg-gray-950/50 px-4 pb-4 text-sm">
             {/* 在籍ステータス */}
             <div>
-              <label className="block font-medium mb-1">在籍ステータス</label>
+              <label className="mb-1 block font-medium">在籍ステータス</label>
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
                   checked={cast.is_active}
                   onChange={(e) =>
                     setCasts((prev) =>
-                      prev.map((c) => (c.id === cast.id ? { ...c, is_active: e.target.checked } : c))
+                      prev.map((c) =>
+                        c.id === cast.id ? { ...c, is_active: e.target.checked } : c,
+                      ),
                     )
                   }
-                  className="accent-cyan-500 w-4 h-4"
+                  className="h-4 w-4 accent-cyan-500"
                 />
                 <span>{cast.is_active ? '在籍中（公開）' : '非公開'}</span>
               </div>
@@ -164,17 +195,17 @@ export default function CastManagement() {
 
             {/* 所属店舗 */}
             <div>
-              <label className="block font-medium mb-1">所属店舗</label>
+              <label className="mb-1 block font-medium">所属店舗</label>
               <div className="flex flex-wrap gap-2">
                 {stores.map((store) => {
                   const checked = cast.stores.some((s) => s.id === store.id);
                   return (
                     <label
                       key={store.id}
-                      className={`px-2 py-1 rounded text-sm cursor-pointer border ${
+                      className={`cursor-pointer rounded border px-2 py-1 text-sm ${
                         checked
-                          ? 'bg-cyan-600 text-white border-cyan-400'
-                          : 'bg-gray-700 text-gray-300 border-gray-600 hover:bg-gray-600'
+                          ? 'border-cyan-400 bg-cyan-600 text-white'
+                          : 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     >
                       <input
@@ -189,9 +220,9 @@ export default function CastManagement() {
                                     stores: e.target.checked
                                       ? [...c.stores, store]
                                       : c.stores.filter((s) => s.id !== store.id),
-                                }
-                                : c
-                            )
+                                  }
+                                : c,
+                            ),
                           )
                         }
                         className="hidden"
@@ -205,29 +236,33 @@ export default function CastManagement() {
 
             {/* キャッチコピー */}
             <div>
-              <label className="block font-medium mb-1">キャッチコピー</label>
+              <label className="mb-1 block font-medium">キャッチコピー</label>
               <input
                 type="text"
                 value={cast.catch_copy ?? ''}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setCasts((prev) => prev.map((c) => (c.id === cast.id ? { ...c, catch_copy: value } : c)));
+                  setCasts((prev) =>
+                    prev.map((c) => (c.id === cast.id ? { ...c, catch_copy: value } : c)),
+                  );
                 }}
-                className="w-full border border-cyan-700/50 rounded bg-gray-800 text-white px-2 py-1 focus:ring-2 focus:ring-cyan-400"
+                className="w-full rounded border border-cyan-700/50 bg-gray-800 px-2 py-1 text-white focus:ring-2 focus:ring-cyan-400"
                 placeholder="例: 究極の癒し系男子"
               />
             </div>
 
             {/* 店長コメント */}
             <div>
-              <label className="block font-medium mb-1">店長コメント</label>
+              <label className="mb-1 block font-medium">店長コメント</label>
               <textarea
                 value={cast.manager_comment ?? ''}
                 onChange={(e) => {
                   const value = e.target.value;
-                  setCasts((prev) => prev.map((c) => (c.id === cast.id ? { ...c, manager_comment: value } : c)));
+                  setCasts((prev) =>
+                    prev.map((c) => (c.id === cast.id ? { ...c, manager_comment: value } : c)),
+                  );
                 }}
-                className="w-full border border-cyan-700/50 rounded bg-gray-800 text-white px-2 py-1 focus:ring-2 focus:ring-cyan-400"
+                className="w-full rounded border border-cyan-700/50 bg-gray-800 px-2 py-1 text-white focus:ring-2 focus:ring-cyan-400"
                 placeholder="店長コメントを入力"
               />
             </div>
@@ -235,10 +270,24 @@ export default function CastManagement() {
             {/* 保存ボタン */}
             <button
               onClick={() => handleUpdate(cast)}
-              className="mt-2 w-full rounded bg-cyan-600 hover:bg-cyan-500 px-3 py-2 text-white font-semibold shadow-lg shadow-cyan-400/40"
+              className="mt-2 w-full rounded bg-cyan-600 px-3 py-2 font-semibold text-white shadow-lg shadow-cyan-400/40 hover:bg-cyan-500"
             >
               保存
             </button>
+
+            {/* 削除ボタン */}
+            <div className="mt-6 border-t border-red-900/30 pt-4">
+              <button
+                onClick={() => handleDelete(cast.id, cast.name)}
+                className="flex w-full items-center justify-center gap-2 rounded border border-red-500/30 bg-red-900/30 px-3 py-2 font-semibold text-red-400 transition-colors hover:bg-red-600 hover:text-white"
+              >
+                <Trash2 size={16} />
+                キャストを完全に削除する
+              </button>
+              <p className="mt-2 text-balance text-center text-[10px] text-red-500/70">
+                ※プロフィール、口コミ、画像など、全データが削除され復元できません。
+              </p>
+            </div>
           </div>
         )}
       </>
