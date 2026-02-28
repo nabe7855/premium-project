@@ -64,6 +64,12 @@ export interface CastMember {
   slug?: string | null; // ✅ 追加
   image: string;
   isWorking: boolean;
+  age?: number;
+  mbtiType?: string | null;
+  faceType?: string[] | null;
+  rating?: number;
+  reviewCount?: number;
+  sexinessStrawberry?: string | null;
   schedule?: string[];
 }
 

@@ -2,7 +2,7 @@ import { fetchDailyCasts } from '@/actions/cast';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
-import { ArrowUpDown, Heart, RotateCcw, Search, Star } from 'lucide-react';
+import { ArrowUpDown, RotateCcw, Search, Star } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link'; // ✅ 追加
 import React, { useEffect, useMemo, useState } from 'react';
@@ -80,6 +80,11 @@ const CastSection: React.FC<CastSectionProps> = ({
             c.main_image_url ||
             c.image_url ||
             'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
+          mbtiType: c.mbti_name,
+          faceType: c.face_name ? [c.face_name] : [],
+          rating: c.rating,
+          reviewCount: c.review_count,
+          sexinessStrawberry: c.sexiness_strawberry,
           schedule: [selectedDate], // 現在選択中の日付のみ
         }));
         setFetchedCasts(mappedCasts);
@@ -259,70 +264,99 @@ const CastSection: React.FC<CastSectionProps> = ({
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.9 }}
                     transition={{ duration: 0.4 }}
-                    className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-[2rem] border border-rose-50/50 bg-white shadow-sm transition-all duration-500 hover:shadow-xl hover:shadow-rose-100/50 md:w-auto"
+                    className="group relative flex w-[calc(50%-0.5rem)] shrink-0 flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft transition-all duration-500 hover:shadow-luxury md:w-auto"
                   >
                     <Link
                       href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`}
                       className="block h-full w-full"
                     >
                       {/* 画像エリア */}
-                      <div className="relative aspect-[1/1.2] overflow-hidden">
+                      <div className="relative aspect-[3/4] overflow-hidden">
                         <NextImage
                           src={cast.imageUrl}
                           alt={cast.name}
                           fill
-                          className="object-cover transition-transform duration-700 group-hover:scale-110"
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
                           sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                           loading="lazy"
                         />
 
                         {/* バッジ装飾 */}
-                        <div className="absolute left-2 top-2 flex flex-col gap-1.5">
+                        <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1.5">
+                          <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
+                            本日出勤
+                          </span>
                           {cast.name.length % 3 === 0 && (
-                            <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[8px] font-black text-white shadow-lg">
-                              <Star className="h-2.5 w-2.5 fill-current" /> NEW
+                            <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
+                              <Star className="h-2.5 w-2.5 fill-current" /> 店長一押し
                             </span>
                           )}
-                          <span className="flex items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[8px] font-black text-rose-500 backdrop-blur-sm">
-                            <Heart className="h-2.5 w-2.5 fill-current" /> 本日出勤
-                          </span>
                         </div>
 
-                        {/* グラデーション & グラスモーフィズムオーバーレイ */}
-                        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent pb-4 pt-10 backdrop-blur-[2px]">
-                          {/* 名前と基本情報 */}
-                          <div className="px-4 text-white">
-                            <h3 className="mb-0.5 font-serif text-xl font-bold tracking-wider drop-shadow-md">
-                              {cast.name}
-                            </h3>
-                            <div className="flex items-center gap-2 opacity-90 drop-shadow-sm">
-                              <span className="text-[11px] font-black uppercase tracking-widest">
-                                {cast.height}cm
-                              </span>
-                              <span className="h-2 w-[1px] bg-white/30" />
-                              <span className="text-[11px] font-black uppercase tracking-widest">
-                                {cast.age}歳
-                              </span>
-                            </div>
+                        {/* 再生ボタン風装飾（ダミー） */}
+                        <div className="absolute bottom-3 right-3 rounded-full bg-white/90 p-2 shadow-lg backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                          <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-rose-400">
+                            <div className="ml-0.5 h-0 w-0 border-b-[5px] border-l-[8px] border-t-[5px] border-b-transparent border-l-rose-400 border-t-transparent" />
                           </div>
                         </div>
                       </div>
 
-                      {/* タグエリア（より洗練されたデザインに） */}
-                      <div className="flex flex-wrap gap-1.5 p-3">
-                        {cast.tags?.slice(0, 3).map((tag: string) => (
-                          <span
-                            key={tag}
-                            className="rounded-md border border-rose-100/50 bg-rose-50/80 px-2 py-0.5 text-[9px] font-bold tracking-tight text-rose-500/80"
-                          >
-                            #{tag}
+                      {/* コンテンツエリア */}
+                      <div className="flex flex-col p-4">
+                        <div className="mb-2 flex items-end justify-between">
+                          <h3 className="truncate text-base font-black text-slate-800 sm:text-lg">
+                            {cast.name}
+                          </h3>
+                          <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-400">
+                            {cast.age}歳
                           </span>
-                        ))}
-                      </div>
+                        </div>
 
-                      {/* イチゴの隠しアイコン（ホバー時） */}
-                      <div className="absolute -bottom-3 -right-3 h-10 w-10 rotate-12 opacity-0 transition-all duration-500 group-hover:opacity-20">
-                        <span className="text-3xl">🍓</span>
+                        {/* MBTI & 顔型 */}
+                        <div className="mb-3 flex flex-wrap gap-1.5">
+                          {cast.mbtiType && (
+                            <span className="rounded-full border border-blue-100/50 bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-600">
+                              MBTI: {cast.mbtiType}
+                            </span>
+                          )}
+                          {cast.faceType && cast.faceType.length > 0 && (
+                            <span className="rounded-full border border-purple-100/50 bg-purple-50 px-2.5 py-0.5 text-[10px] font-bold text-purple-600">
+                              顔型: {cast.faceType.join(', ')}
+                            </span>
+                          )}
+                          {(!cast.mbtiType || !cast.faceType) &&
+                            cast.tags?.slice(0, 1).map((tag) => (
+                              <span
+                                key={tag}
+                                className="rounded-full border border-rose-100/50 bg-rose-50 px-2.5 py-0.5 text-[10px] font-bold text-rose-500"
+                              >
+                                #{tag}
+                              </span>
+                            ))}
+                        </div>
+
+                        {/* 評価セクション */}
+                        <div className="mb-3 flex items-center gap-1">
+                          <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                          <span className="text-sm font-black text-slate-700">
+                            {(cast.rating || 5.0).toFixed(1)}
+                          </span>
+                          <span className="text-xs font-bold text-slate-400">
+                            ({cast.reviewCount || 10})
+                          </span>
+                        </div>
+
+                        {/* セクシー度 */}
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[11px] font-black uppercase tracking-tighter text-rose-400">
+                              セクシー度:
+                            </span>
+                            <div className="flex gap-0.5">
+                              <span className="text-xs">{cast.sexinessStrawberry || '🍓🍓🍓'}</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </Link>
                   </motion.div>

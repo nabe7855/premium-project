@@ -86,6 +86,11 @@ export interface CastItem {
   height: number;
   comment: string;
   status: string;
+  mbtiType?: string | null;
+  faceType?: string[] | null;
+  rating?: number;
+  reviewCount?: number;
+  sexinessStrawberry?: string | null;
   tags: string[];
   imageUrl: string;
   schedule?: string[]; // YYYY-MM-DD 形式

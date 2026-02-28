@@ -1,8 +1,7 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, ChevronRight, Clock, Heart, Star } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Heart, Star } from 'lucide-react';
 import Link from 'next/link'; // ✅ 追加
 import { useEffect, useState } from 'react';
 
@@ -87,75 +86,84 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
               href={`/store/${storeSlug}/cast/${currentCast.slug || currentCast.id}`}
               className="absolute inset-0 block"
             >
-              <div className="relative h-full transform overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 hover:scale-105">
-                <div className="relative h-full">
+              <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-rose-50 bg-white shadow-2xl transition-all duration-300 hover:scale-[1.02]">
+                {/* Image Area */}
+                <div className="relative aspect-[3/4] overflow-hidden">
                   <img
                     src={currentCast.main_image_url || currentCast.image_url || '/no-image.png'}
                     alt={currentCast.name}
-                    className="h-2/3 w-full object-cover"
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />
-
                   {/* Status Badge */}
-                  <div className="absolute right-4 top-4">
-                    <Badge className="bg-green-500 text-white">出勤中</Badge>
+                  <div className="absolute left-4 top-4 flex flex-col gap-2">
+                    <span className="flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black text-white shadow-lg">
+                      本日出勤
+                    </span>
                   </div>
-
+                  {/* Play Button Icon */}
+                  <div className="absolute bottom-4 right-4 rounded-full bg-white/90 p-3 shadow-xl backdrop-blur-sm">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-rose-400">
+                      <div className="ml-0.5 h-0 w-0 border-b-[5px] border-l-[8px] border-t-[5px] border-b-transparent border-l-rose-400 border-t-transparent" />
+                    </div>
+                  </div>
                   {/* Like Button */}
-                  <div className="absolute left-4 top-4 z-10">
+                  <div className="absolute bottom-4 left-4 z-10">
                     <button
                       onClick={(e) => {
-                        e.preventDefault(); // Link の遷移を防止
+                        e.preventDefault();
                         toggleLike(currentCast.id);
                       }}
-                      className="rounded-full bg-white/90 p-2 shadow-lg transition-colors hover:bg-white"
+                      className="rounded-full bg-white/80 p-2 shadow-lg backdrop-blur-sm transition-colors hover:bg-white"
                     >
                       <Heart
-                        className={`h-6 w-6 ${
+                        className={`h-5 w-5 ${
                           likedCasts.has(currentCast.id)
-                            ? 'fill-red-500 text-red-500'
-                            : 'text-gray-400'
+                            ? 'fill-rose-500 text-rose-500'
+                            : 'text-slate-400'
                         }`}
                       />
                     </button>
                   </div>
+                </div>
 
-                  {/* Cast Info (Glassmorphism & Refined Gradient) */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent px-8 pb-10 pt-20 text-white backdrop-blur-[2px]">
-                    <h3 className="mb-1 text-3xl font-black tracking-tighter drop-shadow-lg">
+                {/* Content Area */}
+                <div className="flex flex-col p-6">
+                  <div className="mb-3 flex items-end justify-between">
+                    <h3 className="text-2xl font-black tracking-tight text-slate-800">
                       {currentCast.name}
                     </h3>
-                    <div className="mb-4 flex items-center gap-3 font-bold opacity-90 drop-shadow-md">
-                      {currentCast.age && <span className="text-xl">{currentCast.age}歳</span>}
-                      {currentCast.age && <span className="h-4 w-[1px] bg-white/30" />}
-                      <div className="flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs backdrop-blur-sm">
-                        <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                        <span>{currentCast.mbti_name || currentCast.face_name}</span>
-                      </div>
-                    </div>
+                    <span className="mb-0.5 text-lg font-bold text-slate-400">
+                      {currentCast.age}歳
+                    </span>
+                  </div>
 
-                    {currentCast.catch_copy && (
-                      <p className="mb-4 line-clamp-2 text-sm font-medium italic leading-relaxed opacity-80">
-                        「{currentCast.catch_copy}」
-                      </p>
+                  {/* MBTI & Face */}
+                  <div className="mb-4 flex flex-wrap gap-2">
+                    {currentCast.mbti_name && (
+                      <span className="rounded-full border border-blue-100/50 bg-blue-50 px-3 py-1 text-[11px] font-bold text-blue-600">
+                        MBTI: {currentCast.mbti_name}
+                      </span>
                     )}
+                    {currentCast.face_name && (
+                      <span className="rounded-full border border-purple-100/50 bg-purple-50 px-3 py-1 text-[11px] font-bold text-purple-600">
+                        顔型: {currentCast.face_name}
+                      </span>
+                    )}
+                  </div>
 
-                    {currentCast.start_datetime && (
-                      <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/10 p-3 text-sm font-bold backdrop-blur-sm">
-                        <Clock className="h-4 w-4 text-rose-300" />
-                        <span className="tracking-widest">
-                          {new Date(currentCast.start_datetime).toLocaleTimeString([], {
-                            hour: '2-digit',
-                            minute: '2-digit',
-                          })}{' '}
-                          〜{' '}
-                          {currentCast.end_datetime &&
-                            new Date(currentCast.end_datetime).toLocaleTimeString([], {
-                              hour: '2-digit',
-                              minute: '2-digit',
-                            })}
-                        </span>
-                      </div>
-                    )}
+                  {/* Rating */}
+                  <div className="mb-5 flex items-center gap-1.5">
+                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                    <span className="text-lg font-black text-slate-700">5.0</span>
+                    <span className="text-sm font-bold text-slate-400">(10)</span>
+                  </div>
+
+                  {/* Sexiness */}
+                  <div className="mt-auto flex items-center gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-rose-400">
+                      セクシー度:
+                    </span>
+                    <span className="text-base tracking-widest">🍓🍓🍓</span>
                   </div>
                 </div>
               </div>

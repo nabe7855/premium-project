@@ -12,6 +12,9 @@ export interface TodayCast {
   image_url?: string;
   mbti_name?: string | null;
   face_name?: string | null;
+  rating?: number;
+  review_count?: number;
+  sexiness_strawberry?: string | null;
   tags?: string[];
   start_datetime: string;
   end_datetime: string;
@@ -79,6 +82,11 @@ export async function getTodayCastsByStore(
         main_image_url,
         image_url,
         is_active,
+        rating,
+        review_count,
+        sexiness_strawberry,
+        mbti_id,
+        face_id,
         cast_statuses (
           id,
           status_id,
@@ -123,9 +131,13 @@ export async function getTodayCastsByStore(
           .filter((cs: any) => cs.is_active)
           .map((cs: any) => cs.status_master?.name)
           .filter(Boolean),
-        // 追加の情報があればマッピング
-        mbti_name: null, // 今回のクエリからは除外（必要なら追加）
-        face_name: null,
+        rating: cast.rating,
+        review_count: cast.review_count,
+        sexiness_strawberry: cast.sexiness_strawberry,
+        // MBTI/Face は一旦IDから名前を引く必要があるかもしれないが、
+        // 現状の取得方法に合わせて簡易マッピング（必要なら別途Join）
+        mbti_name: cast.mbti_id,
+        face_name: cast.face_id,
         start_datetime: item.start_datetime,
         end_datetime: item.end_datetime,
       };
