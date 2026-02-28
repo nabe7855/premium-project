@@ -1,64 +1,48 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
-import pg from 'pg';
-
-const { Pool } = pg;
-
-// Use Pool for better management in Server Actions
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: {
-    rejectUnauthorized: false,
-  },
-});
 
 export async function updateCastAuth(castId: string, email: string, password?: string) {
-  const client = await pool.connect();
   try {
-    await client.query('BEGIN');
-
     // 1. Get user_id from casts
-    const castRes = await client.query('SELECT user_id FROM public.casts WHERE id = $1', [castId]);
-    if (castRes.rowCount === 0) {
+    const { data: cast, error: fetchError } = await supabaseAdmin
+      .from('casts')
+      .select('user_id')
+      .eq('id', castId)
+      .single();
+
+    if (fetchError || !cast) {
       throw new Error('キャストが見つかりません');
     }
-    const userId = castRes.rows[0].user_id;
+    const userId = cast.user_id;
 
-    // 2. Update public.casts (email and login_password for management view)
-    if (password) {
-      await client.query('UPDATE public.casts SET email = $1, login_password = $2 WHERE id = $3', [
-        email,
-        password,
-        castId,
-      ]);
-    } else {
-      await client.query('UPDATE public.casts SET email = $1 WHERE id = $2', [email, castId]);
-    }
+    // 2. Update public.casts
+    const updateData: any = { email };
+    if (password) updateData.login_password = password;
 
-    // 3. Update auth.users (linked via user_id)
+    const { error: castUpdateError } = await supabaseAdmin
+      .from('casts')
+      .update(updateData)
+      .eq('id', castId);
+
+    if (castUpdateError) throw castUpdateError;
+
+    // 3. Update auth.users
     if (userId) {
-      if (password) {
-        // Update both email and password in Auth
-        // Note: We use crypt() for password hashing compatible with Supabase Auth
-        await client.query(
-          "UPDATE auth.users SET email = $1, encrypted_password = crypt($2, gen_salt('bf')) WHERE id = $3",
-          [email, password, userId],
-        );
-      } else {
-        // Update only email in Auth
-        await client.query('UPDATE auth.users SET email = $1 WHERE id = $2', [email, userId]);
-      }
+      const authData: any = { email };
+      if (password) authData.password = password;
+
+      const { error: authUpdateError } = await supabaseAdmin.auth.admin.updateUserById(
+        userId,
+        authData,
+      );
+      if (authUpdateError) throw authUpdateError;
     }
 
-    await client.query('COMMIT');
     return { success: true };
   } catch (error: any) {
-    await client.query('ROLLBACK');
     console.error('Failed to update cast auth:', error);
     return { success: false, error: error.message };
-  } finally {
-    client.release();
   }
 }
 
@@ -70,42 +54,49 @@ export async function createCastProfile(
   password?: string,
   storeId?: string,
 ) {
-  const client = await pool.connect();
   try {
-    await client.query('BEGIN');
-
     // 1. Insert into casts
-    const castInsertRes = await client.query(
-      `INSERT INTO public.casts (user_id, name, slug, is_active, email, login_password)
-       VALUES ($1, $2, $3, true, $4, $5)
-       RETURNING id, slug`,
-      [userId, name, slug, email, password || null],
-    );
+    const { data: castData, error: castInsertError } = await supabaseAdmin
+      .from('casts')
+      .insert({
+        user_id: userId,
+        name: name,
+        slug: slug,
+        is_active: true,
+        email: email,
+        login_password: password || null,
+      })
+      .select('id, slug')
+      .single();
 
-    const castData = castInsertRes.rows[0];
+    if (castInsertError) throw castInsertError;
     const castId = castData.id;
 
     // 2. Insert into roles
-    await client.query(`INSERT INTO public.roles (user_id, role) VALUES ($1, 'cast')`, [userId]);
+    const { error: roleError } = await supabaseAdmin
+      .from('roles')
+      .insert({ user_id: userId, role: 'cast' });
+
+    if (roleError) throw roleError;
 
     // 3. Insert into cast_store_memberships
     if (storeId) {
       const today = new Date().toISOString().split('T')[0];
-      await client.query(
-        `INSERT INTO public.cast_store_memberships (cast_id, store_id, is_main, is_temporary, start_date, end_date)
-         VALUES ($1, $2, true, false, $3, '9999-12-31')`,
-        [castId, storeId, today],
-      );
+      const { error: membershipError } = await supabaseAdmin.from('cast_store_memberships').insert({
+        cast_id: castId,
+        store_id: storeId,
+        is_main: true,
+        is_temporary: false,
+        start_date: today,
+        end_date: '9999-12-31',
+      });
+      if (membershipError) throw membershipError;
     }
 
-    await client.query('COMMIT');
     return { success: true, cast: castData };
   } catch (error: any) {
-    await client.query('ROLLBACK');
     console.error('Failed to create cast profile:', error);
     return { success: false, error: error.message };
-  } finally {
-    client.release();
   }
 }
 
@@ -122,20 +113,15 @@ export async function deleteCastProfile(castId: string) {
     const userId = cast?.user_id;
 
     // 2. Delete related data in public schema
-    // Note: If foreign keys are set to ON DELETE CASCADE, some of these might be redundant,
-    // but we'll do it manually to be sure as per user request.
-
-    // Get blog ids to delete related tags/images
     const { data: blogs } = await supabaseAdmin.from('blogs').select('id').eq('cast_id', castId);
 
     if (blogs && blogs.length > 0) {
-      const blogIds = blogs.map((b) => b.id);
+      const blogIds = blogs.map((b: any) => b.id);
       await supabaseAdmin.from('blog_tags').delete().in('blog_id', blogIds);
       await supabaseAdmin.from('blog_images').delete().in('blog_id', blogIds);
       await supabaseAdmin.from('blogs').delete().eq('cast_id', castId);
     }
 
-    // Delete other related records
     await supabaseAdmin.from('cast_features').delete().eq('cast_id', castId);
     await supabaseAdmin.from('cast_questions').delete().eq('cast_id', castId);
     await supabaseAdmin.from('cast_statuses').delete().eq('cast_id', castId);
@@ -150,14 +136,10 @@ export async function deleteCastProfile(castId: string) {
 
     // 4. Delete from auth.users and roles if userId exists
     if (userId) {
-      // Delete role
       await supabaseAdmin.from('roles').delete().eq('user_id', userId);
-
-      // Delete user from auth
       const { error: authDeleteError } = await supabaseAdmin.auth.admin.deleteUser(userId);
       if (authDeleteError) {
         console.error('Auth user deletion failed:', authDeleteError);
-        // We don't necessarily throw here if the DB records are already gone
       }
     }
 

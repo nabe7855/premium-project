@@ -1,4 +1,4 @@
-import { updateCastAuth } from '@/actions/cast-auth';
+import { deleteCastProfile, updateCastAuth } from '@/actions/cast-auth';
 import Card from '@/components/admin/ui/Card';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
@@ -59,7 +59,8 @@ const CastDetailModal: React.FC<{
   allCasts: Cast[]; // Added to check for duplicates
   onClose: () => void;
   onSave: (cast: Cast) => void;
-}> = ({ cast: initialCast, stores, allCasts, onClose, onSave }) => {
+  onDelete: (castId: string, castName: string) => void;
+}> = ({ cast: initialCast, stores, allCasts, onClose, onSave, onDelete }) => {
   const [cast, setCast] = useState<Cast | null>(initialCast);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -372,6 +373,23 @@ const CastDetailModal: React.FC<{
                   保存
                 </button>
               </div>
+
+              {/* ⚠️ キャスト削除セクション */}
+              <div className="mt-8 border-t border-red-900/30 pt-6">
+                <div className="rounded-lg border border-red-900/50 bg-red-900/10 p-4">
+                  <h3 className="mb-2 text-sm font-bold text-red-500">キャストの完全削除</h3>
+                  <p className="mb-4 text-xs leading-relaxed text-brand-text-secondary">
+                    この操作により、キャストのプロフィール、画像、口コミ、つぶやき、出勤情報、およびログインアカウントがすべて完全に削除され、復元できなくなります。
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => onDelete(cast.id, cast.name)}
+                    className="flex w-full items-center justify-center gap-2 rounded-md border border-red-500/30 bg-red-600/20 px-4 py-2 text-sm font-bold text-red-500 transition-all hover:bg-red-600 hover:text-white"
+                  >
+                    このキャストを完全に削除する
+                  </button>
+                </div>
+              </div>
             </div>
           </form>
         </div>
@@ -562,6 +580,34 @@ export default function AllCast() {
     }
   };
 
+  const handleDelete = async (castId: string, castName: string) => {
+    if (!confirm(`キャスト「${castName}」を完全に削除しますか？\nこの操作は取り消せません。`)) {
+      return;
+    }
+
+    if (
+      !confirm(
+        `【最終確認】\n「${castName}」に関連するすべてのデータ（プロフィール、画像、口コミ、つぶやき、出勤情報、アカウント）が完全に消去されます。本当によろしいですか？`,
+      )
+    ) {
+      return;
+    }
+
+    try {
+      const result = await deleteCastProfile(castId);
+      if (result.success) {
+        alert('キャストを削除しました');
+        setCasts((prev) => prev.filter((c) => c.id !== castId));
+        setSelectedCast(null);
+      } else {
+        alert(`削除に失敗しました: ${result.error}`);
+      }
+    } catch (err) {
+      console.error('Delete error:', err);
+      alert('削除中にエラーが発生しました');
+    }
+  };
+
   const filteredCasts = useMemo(() => {
     const baseFiltered = casts.filter((cast) => {
       const nameMatch = cast.name.toLowerCase().includes(searchTerm.toLowerCase());
@@ -652,6 +698,7 @@ export default function AllCast() {
           allCasts={casts}
           onClose={() => setSelectedCast(null)}
           onSave={handleSave}
+          onDelete={handleDelete}
         />
       )}
     </div>
