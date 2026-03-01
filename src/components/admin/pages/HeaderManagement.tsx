@@ -372,12 +372,12 @@ export default function HeaderManagement() {
 
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center lg:gap-4">
           <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="h-8 w-full border-gray-700 bg-brand-primary text-[10px] text-white lg:h-9 lg:w-[160px] lg:text-xs">
-              <SelectValue />
+            <SelectTrigger className="h-8 w-full border-pink-500/50 bg-pink-500/10 text-xs font-bold text-pink-500 lg:h-9 lg:min-w-[200px] lg:text-sm">
+              <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
             <SelectContent>
               {getAllStores().map((store) => (
-                <SelectItem key={store.slug} value={store.slug}>
+                <SelectItem key={store.slug} value={store.slug} className="font-bold">
                   {store.name}
                 </SelectItem>
               ))}

@@ -444,12 +444,12 @@ export default function StoreTopManagement() {
         <div className="flex items-center justify-between gap-2 sm:justify-end sm:gap-4">
           <div className="flex flex-grow items-center gap-2 sm:flex-grow-0">
             <Select value={selectedStore} onValueChange={setSelectedStore}>
-              <SelectTrigger className="h-8 flex-grow border-gray-700 bg-brand-primary text-[10px] text-white sm:h-9 sm:w-[160px] sm:text-xs">
-                <SelectValue />
+              <SelectTrigger className="h-8 flex-grow border-pink-500/50 bg-pink-500/10 text-xs font-bold text-pink-500 sm:h-9 sm:min-w-[200px] sm:text-sm">
+                <SelectValue placeholder="店舗を選択" />
               </SelectTrigger>
               <SelectContent>
                 {getAllStores().map((store) => (
-                  <SelectItem key={store.slug} value={store.slug}>
+                  <SelectItem key={store.slug} value={store.slug} className="font-bold">
                     {store.name}
                   </SelectItem>
                 ))}
