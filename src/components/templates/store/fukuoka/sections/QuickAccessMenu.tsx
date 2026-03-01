@@ -10,6 +10,7 @@ import {
   Sparkles,
   Users,
 } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 interface QuickAccessMenuProps {
@@ -42,6 +43,12 @@ const getIcon = (iconName: string): LucideIcon => {
 };
 
 const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, onUpdate }) => {
+  const params = useParams();
+  const slug = (params?.slug as string) || '';
+
+  // {slug} プレースホルダーを実際の店舗スラグに置換
+  const resolveLink = (href: string) => href.replace(/\{slug\}/g, slug);
+
   if (!config) return null;
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
@@ -74,7 +81,7 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
     if (!onUpdate) return;
     const currentLink = config.items[index]?.href || '';
     const newLink = window.prompt(
-      'リンクURLまたはセクションID(#cast等)を入力してください:',
+      'リンクURLまたはセクションID(#cast等)を入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
       currentLink,
     );
     if (newLink !== null) {
@@ -91,8 +98,8 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
             return (
               <a
                 key={index}
-                href={isEditing ? undefined : item.href}
-                onClick={(e) => scrollToSection(e, item.href)}
+                href={isEditing ? undefined : resolveLink(item.href)}
+                onClick={(e) => scrollToSection(e, resolveLink(item.href))}
                 className="group relative flex flex-col items-center justify-center overflow-hidden rounded-md border border-white/10 bg-rose-950 py-2 text-center shadow-sm transition-all duration-300 hover:bg-rose-900 hover:shadow-md"
               >
                 {/* Icon decoration */}
