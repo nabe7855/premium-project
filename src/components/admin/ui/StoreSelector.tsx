@@ -33,14 +33,26 @@ export default function StoreSelector({
         id="store-selector"
         value={selectedStore}
         onChange={(e) => onStoreChange(e.target.value)}
-        className="w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white sm:w-auto"
+        className="w-full rounded-md border border-pink-500/50 bg-pink-500/10 p-2 text-sm font-bold text-pink-500 focus:outline-none focus:ring-2 focus:ring-pink-500/50 sm:w-auto"
         aria-label="店舗を選択"
       >
-        {stores.map((store) => (
-          <option key={store.id} value={store.id}>
-            {store.name}
-          </option>
-        ))}
+        {stores.map((store) => {
+          const displayName =
+            store.name === '全店舗'
+              ? store.name
+              : store.name.replace(/ストロベリーボーイズ?/, '').trim();
+          const finalName =
+            store.name === '全店舗'
+              ? displayName
+              : displayName.endsWith('店')
+                ? displayName
+                : `${displayName}店`;
+          return (
+            <option key={store.id} value={store.id} className="bg-white text-black">
+              {finalName}
+            </option>
+          );
+        })}
       </select>
     </div>
   );

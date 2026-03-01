@@ -375,12 +375,20 @@ export default function HeaderManagement() {
             <SelectTrigger className="h-8 w-full border-pink-500/50 bg-pink-500/10 text-xs font-bold text-pink-500 lg:h-9 lg:min-w-[200px] lg:text-sm">
               <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
-            <SelectContent>
-              {getAllStores().map((store) => (
-                <SelectItem key={store.slug} value={store.slug} className="font-bold">
-                  {store.name}
-                </SelectItem>
-              ))}
+            <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
+              {getAllStores().map((store) => {
+                const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
+                const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
+                return (
+                  <SelectItem
+                    key={store.slug}
+                    value={store.slug}
+                    className="cursor-pointer font-bold focus:bg-slate-100 focus:text-black"
+                  >
+                    {finalName}
+                  </SelectItem>
+                );
+              })}
             </SelectContent>
           </Select>
 
