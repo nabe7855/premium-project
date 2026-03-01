@@ -1,9 +1,10 @@
 'use client';
 
-import { useStore } from '@/contexts/StoreContext';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, User, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useStore } from '@/contexts/StoreContext';
+import { Calendar, Sparkles, User } from 'lucide-react';
+import Link from 'next/link';
 
 export default function NewcomerSection() {
   const { store } = useStore();
@@ -26,9 +27,10 @@ export default function NewcomerSection() {
 
         <div className="grid gap-8 md:gap-12">
           {store.newcomers.map((newcomer) => (
-            <div
+            <Link
               key={newcomer.id}
-              className="transform overflow-hidden rounded-3xl bg-white shadow-xl transition-all duration-300 hover:scale-105"
+              href={`/store/${store.slug}/cast/${(newcomer as any).slug || newcomer.id}`}
+              className="block transform overflow-hidden rounded-3xl bg-white shadow-xl transition-all duration-300 hover:scale-[1.02]"
             >
               <div className="md:flex">
                 <div className="relative md:w-1/2">
@@ -68,14 +70,17 @@ export default function NewcomerSection() {
                       >
                         詳細プロフィール
                       </Button>
-                      <Button variant="outline" className="rounded-full px-6 py-3 font-semibold">
+                      <Button
+                        variant="outline"
+                        className="pointer-events-none rounded-full px-6 py-3 font-semibold"
+                      >
                         予約する
                       </Button>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

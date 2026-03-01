@@ -152,6 +152,7 @@ export interface DiaryConfig {
 export interface NewcomerItem {
   id: string;
   name: string;
+  slug?: string | null;
   age: string;
   height: string;
   imageUrl: string;

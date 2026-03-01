@@ -1,5 +1,7 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
 import NextImage from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -15,6 +17,8 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
   onUpdate,
   onImageUpload: _onImageUpload,
 }) => {
+  const params = useParams();
+  const slug = params?.slug as string;
   if (!config || (!config.isVisible && !isEditing)) return null;
 
   const items = config.items || [];
@@ -48,17 +52,11 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
         {/* Horizontal Slider / Grid */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {items.map((item) => (
-            <div key={item.id} className="group relative min-w-[140px] snap-center md:min-w-0">
-              {/* Manual Removal Disabled for dynamic Newcomer section */}
-              {/* isEditing && (
-                <button
-                  onClick={() => removeItem(idx)}
-                  className="absolute right-4 top-4 z-50 rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110"
-                >
-                  <Trash2 size={16} />
-                </button>
-              ) */}
-
+            <Link
+              key={item.id}
+              href={`/store/${slug}/cast/${item.slug || item.id}`}
+              className="group relative min-w-[140px] snap-center transition-opacity hover:opacity-90 md:min-w-0"
+            >
               <div className="relative mb-2">
                 <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
                   <NextImage
@@ -69,20 +67,6 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                     sizes="(max-width: 768px) 150px, 200px"
                     loading="lazy"
                   />
-
-                  {/* Manual Image Change Disabled for dynamic Newcomer section */}
-                  {/* isEditing && (
-                    <label className="absolute inset-0 z-40 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100">
-                      <Camera size={40} className="mb-2" />
-                      <span className="text-xs font-bold">画像を変更</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, idx)}
-                      />
-                    </label>
-                  ) */}
 
                   {/* "New Face" Badge */}
                   <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
@@ -106,7 +90,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                   <span className="ml-[-1px]">cm</span>
                 </div>
               </div>
-            </div>
+            </Link>
           ))}
 
           {/* Manual Addition Disabled for dynamic Newcomer section */}

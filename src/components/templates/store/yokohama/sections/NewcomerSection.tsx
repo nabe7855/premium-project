@@ -1,5 +1,7 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
 import NextImage from 'next/image';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -10,6 +12,8 @@ interface NewcomerSectionProps {
 }
 
 const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) => {
+  const params = useParams();
+  const slug = params?.slug as string;
   if (!config || !config.isVisible) return null;
 
   return (
@@ -32,7 +36,11 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) 
         {/* Horizontal Slider / Grid */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {config.items.map((item) => (
-            <div key={item.id} className="min-w-[140px] snap-center md:min-w-0">
+            <Link
+              key={item.id}
+              href={`/store/${slug}/cast/${item.slug || item.id}`}
+              className="min-w-[140px] snap-center transition-opacity hover:opacity-90 md:min-w-0"
+            >
               <div className="group relative mb-2">
                 {/* Image with brown/gold border matching the image */}
                 <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
@@ -61,7 +69,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) 
                   {item.height}cm
                 </p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
