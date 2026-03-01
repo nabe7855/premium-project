@@ -1,0 +1,58 @@
+{
+  "range": {
+    "start": "2026-02-28",
+    "end": "2026-03-02"
+  },
+  "count": 3,
+  "schedules": [
+    {
+      "id": "20cc227d-e68a-47bc-b341-2ab59655db45",
+      "work_date": "2026-02-28",
+      "start_datetime": "2026-02-27T23:00:00+00:00",
+      "end_datetime": "2026-02-28T09:00:00+00:00",
+      "cast_id": "f65ec2f1-7091-4a04-9949-f815fdaaf1bb",
+      "store_id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+      "stores": {
+        "name": "横浜",
+        "slug": "yokohama"
+      },
+      "casts": {
+        "name": "木村２０２６２２８三回目",
+        "is_active": true
+      }
+    },
+    {
+      "id": "eb0b4eeb-2c43-4d86-a32d-0f48b2ef9664",
+      "work_date": "2026-02-28",
+      "start_datetime": "2026-02-28T06:00:00+00:00",
+      "end_datetime": "2026-02-28T15:00:00+00:00",
+      "cast_id": "4836b73f-df7a-4a8f-9324-2e2a05792ea9",
+      "store_id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+      "stores": {
+        "name": "福岡",
+        "slug": "fukuoka"
+      },
+      "casts": {
+        "name": "momomomo",
+        "is_active": true
+      }
+    },
+    {
+      "id": "d1944067-b000-45a1-98e0-8f50803635af",
+      "work_date": "2026-03-01",
+      "start_datetime": "2026-03-01T04:00:00+00:00",
+      "end_datetime": "2026-03-01T11:00:00+00:00",
+      "cast_id": "4836b73f-df7a-4a8f-9324-2e2a05792ea9",
+      "store_id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+      "stores": {
+        "name": "福岡",
+        "slug": "fukuoka"
+      },
+      "casts": {
+        "name": "momomomo",
+        "is_active": true
+      }
+    }
+  ],
+  "error": null
+}

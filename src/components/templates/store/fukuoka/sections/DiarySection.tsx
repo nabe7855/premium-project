@@ -128,17 +128,23 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
         <div className="mt-8 text-center md:mt-12">
           <Link
             href={`/store/${slug}/diary/diary-list`}
-            className="inline-flex items-center gap-2 border-b border-red-300 pb-1 text-xs font-bold uppercase tracking-widest text-slate-600 transition-colors hover:border-red-500 hover:text-slate-900"
+            className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-red-500 hover:shadow-lg active:scale-95 sm:px-10 sm:py-4 sm:text-sm"
           >
-            Show All Diary
+            <span>Show All Diary</span>
+            <span className="text-[10px] opacity-70"> / 写メ日記一覧</span>
             <svg
-              className="h-3 w-3"
+              className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
               xmlns="http://www.w3.org/2000/svg"
             >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M13 7l5 5m0 0l-5 5m5-5H6"
+              />
             </svg>
           </Link>
         </div>

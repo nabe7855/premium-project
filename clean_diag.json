@@ -1,0 +1,34 @@
+{
+  "stores": [
+    {
+      "id": "c5e519eb-ace2-4609-adb0-f3023021a143",
+      "slug": "yokohama",
+      "name": "横浜"
+    },
+    {
+      "id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+      "slug": "fukuoka",
+      "name": "福岡"
+    }
+  ],
+  "storesError": null,
+  "today": "2026-03-01",
+  "schedules": [
+    {
+      "id": "d1944067-b000-45a1-98e0-8f50803635af",
+      "cast_id": "4836b73f-df7a-4a8f-9324-2e2a05792ea9",
+      "store_id": "cf627a03-f600-45b8-86f5-60a9f513beac",
+      "work_date": "2026-03-01",
+      "start_datetime": "2026-03-01T04:00:00+00:00",
+      "end_datetime": "2026-03-01T11:00:00+00:00",
+      "status": "予約可能",
+      "casts": {
+        "id": "4836b73f-df7a-4a8f-9324-2e2a05792ea9",
+        "name": "momomomo",
+        "image_url": null,
+        "is_active": true
+      }
+    }
+  ],
+  "schedulesError": null
+}

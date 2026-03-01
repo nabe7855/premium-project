@@ -1,30 +1,103 @@
 'use client';
-import React, { useState, useEffect } from 'react';
-import type { PostType } from '@/types/diary';
-import Link from 'next/link';
-import { useParams } from 'next/navigation';
-import { ArrowLeft, Heart, Share2, Bookmark, Clock, User } from 'lucide-react';
-import { Sparkles, Zap, Clapperboard as Clap } from 'lucide-react';
 import CastCard from '@/components/sections/diary/CastCard';
 import MessageSection from '@/components/sections/diary/MessageSection';
 import RelatedPosts from '@/components/sections/diary/RelatedPosts';
 import { mockDiaryPosts } from '@/data/diarydata';
+import { supabase } from '@/lib/supabaseClient';
+import type { PostType } from '@/types/diary';
+import {
+  ArrowLeft,
+  Bookmark,
+  Clapperboard as Clap,
+  Clock,
+  Heart,
+  Share2,
+  Sparkles,
+  User,
+  Zap,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 const DiaryDetailPage = () => {
-  const { postId, slug } = useParams(); // ← 修正済み
+  const { postId, slug } = useParams();
   const [post, setPost] = useState<PostType | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log('🟡 useEffect 発火');
-    console.log('🔸 postId:', postId);
-    console.log('🔸 slug:', slug);
-    console.log('🔸 mockDiaryPosts:', mockDiaryPosts);
+    const fetchPost = async () => {
+      setIsLoading(true);
+      try {
+        console.log('🟡 Fetching post from Supabase:', postId);
+        const { data, error } = await supabase
+          .from('blogs')
+          .select(
+            `
+            id,
+            title,
+            content,
+            created_at,
+            casts (
+              id,
+              name,
+              image_url
+            ),
+            blog_images (
+              image_url
+            ),
+            blog_tags (
+              blog_tag_master ( name )
+            )
+          `,
+          )
+          .eq('id', postId)
+          .single();
 
-    const foundPost = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
+        if (error || !data) {
+          console.log('⚪️ Supabase fetch failed or no data, falling back to mock:', error?.message);
+          const foundPost = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
+          setPost(foundPost || null);
+        } else {
+          console.log('🟢 Supabase fetch success:', data);
+          // PostType に変換
+          const castData = Array.isArray(data.casts) ? data.casts[0] : data.casts;
+          const formattedPost: PostType = {
+            id: data.id,
+            title: data.title,
+            content: data.content || '',
+            excerpt: data.content ? data.content.slice(0, 100) : '',
+            date: new Date(data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+            tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
+            storeSlug: slug as string,
+            castName: castData?.name || '不明なキャスト',
+            image:
+              data.blog_images?.[0]?.image_url ||
+              'https://via.placeholder.com/800x600?text=No+Image',
+            castAvatar: castData?.image_url || '/images/avatar-placeholder.png',
+            readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
+            reactions: {
+              likes: 0, // 実装に合わせて調整
+              healing: 0,
+              energized: 0,
+              supportive: 0,
+            },
+          };
+          setPost(formattedPost);
+        }
+      } catch (err) {
+        console.error('❌ Error fetching post:', err);
+        const foundPost = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
+        setPost(foundPost || null);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-    console.log('🟢 foundPost:', foundPost);
-    setPost(foundPost || null);
+    if (postId) {
+      fetchPost();
+    }
   }, [postId, slug]);
 
   useEffect(() => {
@@ -39,12 +112,34 @@ const DiaryDetailPage = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!post) {
+  if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center px-4">
         <div className="text-center">
           <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-pink-500 border-t-transparent sm:h-16 sm:w-16"></div>
-          <p className="text-sm text-gray-600 sm:text-base">読み込み中...</p>
+          <p className="text-sm text-gray-600 sm:text-base">記事を読み込んでいます...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="flex min-h-screen items-center justify-center px-4">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-pink-50 text-pink-500">
+            <Share2 size={32} />
+          </div>
+          <h2 className="mb-2 text-xl font-bold text-gray-800">記事が見つかりませんでした</h2>
+          <p className="mb-6 text-sm text-gray-600">
+            お探しの記事は削除されたか、URLが間違っている可能性があります。
+          </p>
+          <Link
+            href={`/store/${slug}/diary/diary-list`}
+            className="inline-flex items-center gap-2 rounded-lg bg-pink-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-pink-600"
+          >
+            日記一覧に戻る
+          </Link>
         </div>
       </div>
     );
