@@ -56,7 +56,12 @@ export default function YokohamaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      <BeginnerGuideBanner />
+      <BeginnerGuideBanner
+        config={config?.beginnerGuide}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
       {(!config || config.quickAccess.isVisible || isEditing) && (
         <QuickAccessMenu config={config?.quickAccess} isEditing={isEditing} onUpdate={onUpdate} />
       )}

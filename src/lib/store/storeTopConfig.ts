@@ -209,6 +209,12 @@ export interface FooterConfig {
   isVisible: boolean;
 }
 
+export interface BeginnerGuideConfig {
+  imageUrl: string;
+  link: string;
+  isVisible: boolean;
+}
+
 export interface StoreTopPageConfig {
   header: HeaderConfig;
   hero: HeroConfig;
@@ -221,6 +227,7 @@ export interface StoreTopPageConfig {
   newcomer: NewcomerConfig;
   faq: FAQConfig;
   quickAccess: QuickAccessConfig;
+  beginnerGuide: BeginnerGuideConfig;
   footer: FooterConfig;
   notificationEmail?: string;
   lineId?: string;
@@ -774,6 +781,11 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     trustBadges: [{ imageUrl: 'https://placehold.jp/150x150.png?text=TRUST%26SAFETY', link: '#' }],
     logoLink: '#',
     copyright: 'Copyright © ストロベリーボーイズ. All Rights Reserved.',
+    isVisible: true,
+  },
+  beginnerGuide: {
+    imageUrl: '/女性用風俗初体験の方はこちら.png',
+    link: '/store/{slug}/first-time',
     isVisible: true,
   },
 };

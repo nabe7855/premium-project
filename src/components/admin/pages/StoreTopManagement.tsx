@@ -39,6 +39,7 @@ const SECTION_LABELS: Record<string, string> = {
   newcomer: '新人セラピスト',
   faq: 'よくあるご質問',
   quickAccess: 'クイックアクセス',
+  beginnerGuide: '初体験バナー',
   footer: 'フッター',
 };
 
@@ -53,6 +54,7 @@ const SECTION_ORDER = [
   'flow',
   'faq',
   'quickAccess',
+  'beginnerGuide',
   'footer',
 ];
 
@@ -245,6 +247,17 @@ export default function StoreTopManagement() {
         const newConfig = {
           ...config,
           newcomer: { ...config.newcomer, items: newItems },
+        };
+        setConfig(newConfig);
+        await safeSaveConfig(newConfig);
+      } else if (section === 'beginnerGuide' && key === 'imageUrl') {
+        const oldImageUrl = config.beginnerGuide?.imageUrl;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        const newConfig = {
+          ...config,
+          beginnerGuide: { ...config.beginnerGuide, imageUrl: publicUrl },
         };
         setConfig(newConfig);
         await safeSaveConfig(newConfig);
