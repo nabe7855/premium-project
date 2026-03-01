@@ -41,6 +41,7 @@ export interface Store {
   newcomers: Array<{
     id: string;
     name: string;
+    slug?: string | null;
     age: number;
     image: string;
     introduction: string;
@@ -163,6 +164,7 @@ const storeData: Record<string, Store> = {
       {
         id: '1',
         name: '海斗',
+        slug: 'kaito',
         age: 24,
         image: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
         introduction:

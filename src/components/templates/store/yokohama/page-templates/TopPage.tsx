@@ -78,6 +78,7 @@ export default function YokohamaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
+        storeSlug={storeSlug}
       />
       <CastSection
         config={config?.cast}
@@ -91,9 +92,10 @@ export default function YokohamaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
+        storeSlug={storeSlug}
       />
-      <PriceSection isEditing={isEditing} />
-      <FlowSection isEditing={isEditing} />
+      <PriceSection config={config?.price} isEditing={isEditing} />
+      <FlowSection config={config?.flow} isEditing={isEditing} />
       <FAQSection config={config?.faq} isEditing={isEditing} />
       <Footer
         config={config?.footer}

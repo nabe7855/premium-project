@@ -92,6 +92,7 @@ export default function FukuokaPage({
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
       )}
       {(!safeConfig || safeConfig.cast.isVisible || isEditing) && (
@@ -110,6 +111,7 @@ export default function FukuokaPage({
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
       )}
       {(!safeConfig || safeConfig.price.isVisible || isEditing) && (

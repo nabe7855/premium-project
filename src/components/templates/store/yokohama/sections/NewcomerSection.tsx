@@ -1,7 +1,6 @@
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import React from 'react';
 
 interface NewcomerSectionProps {
@@ -9,11 +8,14 @@ interface NewcomerSectionProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  storeSlug?: string;
 }
 
-const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) => {
-  const params = useParams();
-  const slug = params?.slug as string;
+const NewcomerSection: React.FC<NewcomerSectionProps> = ({
+  config,
+  isEditing,
+  storeSlug = 'yokohama',
+}) => {
   if (!config || !config.isVisible) return null;
 
   return (
@@ -36,40 +38,43 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({ config, isEditing }) 
         {/* Horizontal Slider / Grid */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
           {config.items.map((item) => (
-            <Link
-              key={item.id}
-              href={`/store/${slug}/cast/${item.slug || item.id}`}
-              className="min-w-[140px] snap-center transition-opacity hover:opacity-90 md:min-w-0"
-            >
-              <div className="group relative mb-2">
-                {/* Image with brown/gold border matching the image */}
-                <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
-                  <NextImage
-                    src={item.imageUrl}
-                    alt={item.name}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105"
-                    sizes="(max-width: 768px) 150px, 200px"
-                    loading="lazy"
-                  />
-                  {/* "New Face" Badge */}
-                  <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
-                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">New</span>
-                    <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">Face</span>
+            <div key={item.id} className="min-w-[140px] snap-center md:min-w-0">
+              <Link
+                href={`/store/${storeSlug}/cast/${item.slug || item.id}`}
+                className="group relative block h-full w-full overflow-hidden rounded-xl transition-all duration-300 hover:opacity-90"
+              >
+                <div className="relative mb-2">
+                  {/* Image with brown/gold border matching the image */}
+                  <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
+                    <NextImage
+                      src={item.imageUrl}
+                      alt={item.name}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      sizes="(max-width: 768px) 150px, 200px"
+                      loading="lazy"
+                    />
+                    {/* "New Face" Badge */}
+                    <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
+                      <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">New</span>
+                      <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">
+                        Face
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="px-1 text-left">
-                <h3 className="mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800">
-                  {item.name}
-                </h3>
-                <p className="font-serif text-[10px] tracking-widest text-[#9C7E4F]">
-                  {item.age} / <span className="text-[#C4A97A]">T</span>
-                  {item.height}cm
-                </p>
-              </div>
-            </Link>
+                <div className="px-1 text-left">
+                  <h3 className="mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800">
+                    {item.name}
+                  </h3>
+                  <p className="font-serif text-[10px] tracking-widest text-[#9C7E4F]">
+                    {item.age} / <span className="text-[#C4A97A]">T</span>
+                    {item.height}cm
+                  </p>
+                </div>
+              </Link>
+            </div>
           ))}
         </div>
       </div>

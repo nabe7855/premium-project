@@ -64,6 +64,7 @@ export async function getStoreTopConfig(storeSlug: string) {
         finalConfig.newcomer.items = newcomers.map((c) => ({
           id: c.id,
           name: c.name,
+          slug: c.slug,
           age: c.age ? `${Math.floor(c.age / 10) * 10}代` : '20代',
           height: c.height?.toString() || '170',
           imageUrl: c.mainImageUrl || c.imageUrl || '',

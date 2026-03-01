@@ -2,7 +2,6 @@ import { DiaryConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
 
@@ -11,6 +10,7 @@ interface DiarySectionProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  storeSlug?: string;
 }
 
 interface DisplayDiary {
@@ -21,9 +21,11 @@ interface DisplayDiary {
   date: string;
 }
 
-const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
-  const params = useParams();
-  const slug = params?.slug || 'tokyo';
+const DiarySection: React.FC<DiarySectionProps> = ({
+  config,
+  isEditing,
+  storeSlug = 'fukuoka',
+}) => {
   const [diaries, setDiaries] = useState<DisplayDiary[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -55,7 +57,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
         const filtered = data
           ?.filter((blog: any) => {
             const memberships = blog.casts?.cast_store_memberships || [];
-            return memberships.some((m: any) => m.stores?.slug === slug);
+            return memberships.some((m: any) => m.stores?.slug === storeSlug);
           })
           .slice(0, 4)
           .map((blog: any) => ({
@@ -82,7 +84,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
     };
 
     fetchDiaries();
-  }, [slug, config?.items]);
+  }, [storeSlug, config?.items]);
 
   if (!config || (!config.isVisible && !isEditing)) return null;
 
@@ -98,7 +100,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
           {diaries.map((item) => (
             <Link
               key={item.id}
-              href={`/store/${slug}/diary/post/${item.id}`}
+              href={`/store/${storeSlug}/diary/post/${item.id}`}
               className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
             >
               <div className="relative aspect-square overflow-hidden">
@@ -127,7 +129,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({ config, isEditing }) => {
 
         <div className="mt-8 text-center md:mt-12">
           <Link
-            href={`/store/${slug}/diary/diary-list`}
+            href={`/store/${storeSlug}/diary/diary-list`}
             className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-red-500 hover:shadow-lg active:scale-95 sm:px-10 sm:py-4 sm:text-sm"
           >
             <span>Show All Diary</span>
