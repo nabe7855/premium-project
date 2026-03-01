@@ -14,6 +14,7 @@ interface CastSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
   storeSlug?: string;
+  todayCasts?: TodayCast[];
 }
 
 const CastSection: React.FC<CastSectionProps> = ({
@@ -22,11 +23,35 @@ const CastSection: React.FC<CastSectionProps> = ({
   onUpdate: _onUpdate,
   onImageUpload: _onImageUpload,
   storeSlug = 'yokohama',
+  todayCasts,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedDate, setSelectedDate] = useState<string>(''); // YYYY-MM-DD
-  const [fetchedCasts, setFetchedCasts] = useState<CastItem[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
+
+  // 初期データのマッピング
+  const initialCasts = useMemo(() => {
+    if (!todayCasts) return [];
+    return todayCasts.map((c) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+      age: c.age || 0,
+      height: c.height || 0,
+      comment: c.catch_copy || '',
+      status: '本日出勤',
+      tags: c.tags || [],
+      imageUrl: c.main_image_url || c.image_url || '',
+      schedule: [],
+      mbtiType: c.mbti_name,
+      faceType: c.face_name ? [c.face_name] : [],
+      rating: c.rating,
+      reviewCount: c.review_count,
+      sexinessStrawberry: c.sexiness_strawberry,
+    }));
+  }, [todayCasts]);
+
+  const [fetchedCasts, setFetchedCasts] = useState<CastItem[]>(initialCasts);
+  const [isLoading, setIsLoading] = useState(!todayCasts);
   const [sortKey, setSortKey] = useState<
     'default' | 'age-asc' | 'age-desc' | 'height-asc' | 'height-desc' | 'new'
   >('default');
@@ -60,6 +85,12 @@ const CastSection: React.FC<CastSectionProps> = ({
     const loadCasts = async () => {
       if (!selectedDate) return;
 
+      // すでにサーバーサイドで取得済みの今日の日付なら、初回フェッチをスキップ
+      if (selectedDate === dates[0].date && todayCasts && todayCasts.length > 0) {
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
       try {
         const data = await fetchDailyCasts(storeSlug, selectedDate);
@@ -68,7 +99,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         const mappedCasts: CastItem[] = data.map((c: TodayCast) => ({
           id: c.id,
           name: c.name,
-          slug: c.slug, // ✅ 追加
+          slug: c.slug,
           age: c.age || 0,
           height: c.height || 0,
           comment: c.catch_copy || '',
@@ -92,7 +123,7 @@ const CastSection: React.FC<CastSectionProps> = ({
     };
 
     loadCasts();
-  }, [selectedDate, storeSlug]);
+  }, [selectedDate, storeSlug, dates, todayCasts]);
 
   const displayCasts = fetchedCasts.length > 0 ? fetchedCasts : isLoading ? [] : [];
 

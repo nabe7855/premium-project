@@ -16,11 +16,13 @@ import PriceSection from '../sections/PriceSection';
 import QuickAccessMenu from '../sections/QuickAccessMenu';
 
 import { PageData } from '@/components/admin/news/types';
+import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 
 interface YokohamaPageProps {
   config: StoreTopPageConfig | null;
   newsPages?: PageData[];
+  todayCasts?: TodayCast[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
@@ -31,6 +33,7 @@ interface YokohamaPageProps {
 export default function YokohamaPage({
   config,
   newsPages,
+  todayCasts,
   isEditing,
   onUpdate,
   onImageUpload,

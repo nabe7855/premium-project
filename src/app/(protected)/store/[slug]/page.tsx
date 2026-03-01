@@ -87,17 +87,16 @@ export default async function StorePage({ params }: StorePageProps) {
     notFound();
   }
 
-  // 店舗トップ設定を取得
-  const topConfigResult = await getStoreTopConfig(params.slug);
+  // 各種データを並列で取得して表示速度を向上
+  const [topConfigResult, todayCasts, newsPages] = await Promise.all([
+    getStoreTopConfig(params.slug),
+    getTodayCastsByStore(params.slug),
+    getPublishedPagesByStore(params.slug),
+  ]);
+
   const topConfig = topConfigResult.success
     ? (topConfigResult.config as StoreTopPageConfig)
     : DEFAULT_STORE_TOP_CONFIG;
-
-  // Supabaseから今日のキャストを取得
-  const todayCasts = await getTodayCastsByStore(params.slug);
-
-  // ニュースページを取得
-  const newsPages = await getPublishedPagesByStore(params.slug);
 
   const structuredData = {
     '@context': 'https://schema.org',
@@ -139,9 +138,19 @@ export default async function StorePage({ params }: StorePageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
       {store.template === 'fukuoka' ? (
-        <FukuokaTopPage config={topConfig as any} newsPages={newsPages} storeSlug={params.slug} />
+        <FukuokaTopPage
+          config={topConfig as any}
+          newsPages={newsPages}
+          storeSlug={params.slug}
+          todayCasts={todayCasts}
+        />
       ) : store.template === 'yokohama' ? (
-        <YokohamaTopPage config={topConfig as any} newsPages={newsPages} storeSlug={params.slug} />
+        <YokohamaTopPage
+          config={topConfig as any}
+          newsPages={newsPages}
+          storeSlug={params.slug}
+          todayCasts={todayCasts}
+        />
       ) : (
         <CommonTopPage
           store={store}

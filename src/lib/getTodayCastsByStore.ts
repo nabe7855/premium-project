@@ -43,25 +43,10 @@ export async function getTodayCastsByStore(
   storeSlug: string,
   targetDate?: string,
 ): Promise<TodayCast[]> {
-  // 1. 店舗IDを取得
-  const { data: store, error: storeError } = await supabase
-    .from('stores')
-    .select('id')
-    .eq('slug', storeSlug)
-    .single();
-
-  if (storeError || !store) {
-    console.error(
-      `❌ store not found for slug: [${storeSlug}]. Error:`,
-      storeError?.message || 'No data',
-    );
-    return [];
-  }
-
-  // 2. 日付を取得 (指定がなければ今日)
+  // 1. 日付を取得 (指定がなければ今日)
   const dateStr = targetDate || getJSTDateString(new Date());
 
-  // 3. 対象日の出勤キャストを取得 (スケジュールページを参考に、store_id フィルタリングなしで一旦取得)
+  // 2. 対象日の出勤キャストを取得 (店舗slugで直接絞り込み)
   const { data, error } = await supabase
     .from('schedules')
     .select(
@@ -71,6 +56,7 @@ export async function getTodayCastsByStore(
       start_datetime,
       end_datetime,
       status,
+      stores!inner ( slug ),
       casts!inner (
         id,
         name,
@@ -98,7 +84,7 @@ export async function getTodayCastsByStore(
     `,
     )
     .eq('work_date', dateStr)
-    .eq('store_id', store.id);
+    .eq('stores.slug', storeSlug);
 
   if (error) {
     console.error('❌ getTodayCastsByStore query error:', error.message);
