@@ -8,6 +8,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3768005/pexels-photo-3768005.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'みく',
+    castId: 'miku-id',
+    castSlug: 'miku',
     castAvatar:
       'https://images.pexels.com/photos/3768722/pexels-photo-3768722.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-15',
@@ -33,6 +35,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'あやか',
+    castId: 'ayaka-id',
+    castSlug: 'ayaka',
     castAvatar:
       'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-14',
@@ -58,6 +62,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3768146/pexels-photo-3768146.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'さくら',
+    castId: 'sakura-id',
+    castSlug: 'sakura',
     castAvatar:
       'https://images.pexels.com/photos/3768997/pexels-photo-3768997.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-13',
@@ -83,6 +89,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3768004/pexels-photo-3768004.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'ゆい',
+    castId: 'yui-id',
+    castSlug: 'yui',
     castAvatar:
       'https://images.pexels.com/photos/3763152/pexels-photo-3763152.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-12',
@@ -108,6 +116,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3768730/pexels-photo-3768730.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'りな',
+    castId: 'rina-id',
+    castSlug: 'rina',
     castAvatar:
       'https://images.pexels.com/photos/3768901/pexels-photo-3768901.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-11',
@@ -133,6 +143,8 @@ export const mockDiaryPosts = [
     image:
       'https://images.pexels.com/photos/3768132/pexels-photo-3768132.jpeg?auto=compress&cs=tinysrgb&w=800',
     castName: 'みお',
+    castId: 'mio-id',
+    castSlug: 'mio',
     castAvatar:
       'https://images.pexels.com/photos/3768834/pexels-photo-3768834.jpeg?auto=compress&cs=tinysrgb&w=200',
     date: '2024-01-10',

@@ -1,102 +1,122 @@
 'use client';
-import React, { useState, useEffect } from 'react';
+import CastCard from '@/components/sections/diary/CastCard';
+import DiaryCard from '@/components/sections/diary/DiaryCard';
+import { getDiaryPostsByCastId } from '@/lib/diary/getDiaryPostsByCastId';
+import { supabase } from '@/lib/supabaseClient';
+import type { PostType } from '@/types/diary';
+import { ArrowLeft, Calendar } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import { ArrowLeft, Calendar } from 'lucide-react';
-import DiaryCard from '@/components/sections/diary/DiaryCard';
-import CastCard from '@/components/sections/diary/CastCard';
-import { mockDiaryPosts } from '@/data/diarydata';
+import { useEffect, useState } from 'react';
 
 const CastDiaryPage = () => {
-  const { castName } = useParams<{ castName: string }>();
-  const [castPosts, setCastPosts] = useState<any[]>([]);
+  const { castName, slug } = useParams();
+  const [castPosts, setCastPosts] = useState<PostType[]>([]);
+  const [castInfo, setCastInfo] = useState<any>(null);
   const [sortBy, setSortBy] = useState('newest');
+  const [isLoading, setIsLoading] = useState(true);
 
-  const decodedCastName = castName ? decodeURIComponent(castName) : '';
+  const decodedCastName = castName ? decodeURIComponent(castName as string) : '';
 
   useEffect(() => {
-    // Filter posts by cast name
-    let filtered = mockDiaryPosts.filter((post) => post.castName === decodedCastName);
+    const fetchData = async () => {
+      if (!decodedCastName) {
+        setIsLoading(false);
+        return;
+      }
 
-    // Sort posts
+      setIsLoading(true);
+      try {
+        // 1. キャスト情報を取得 (名前で検索)
+        const { data: castData, error: castError } = await supabase
+          .from('casts')
+          .select('id, name, slug, image_url')
+          .eq('name', decodedCastName)
+          .maybeSingle();
+
+        if (castError || !castData) {
+          console.error('❌ Cast not found:', decodedCastName, castError);
+          setIsLoading(false);
+          return;
+        }
+
+        const formattedCastInfo = {
+          id: castData.id,
+          slug: castData.slug,
+          storeSlug: slug as string,
+          name: castData.name,
+          avatar: castData.image_url || '/images/avatar-placeholder.png',
+          status: 'available', // TODO: リアルなステータス取得
+          postsThisMonth: 0,
+          totalLikes: 0,
+          lastPost: '2日前',
+        };
+        setCastInfo(formattedCastInfo);
+
+        // 2. 日記投稿を取得
+        const posts = await getDiaryPostsByCastId(castData.id, slug as string);
+
+        // 統計情報の更新
+        formattedCastInfo.postsThisMonth = posts.filter((post) => {
+          const postDate = new Date(post.date);
+          const now = new Date();
+          return (
+            postDate.getMonth() === now.getMonth() && postDate.getFullYear() === now.getFullYear()
+          );
+        }).length;
+        formattedCastInfo.totalLikes = posts.reduce(
+          (sum, post) => sum + (post.reactions.likes || 0),
+          0,
+        );
+
+        setCastPosts(posts);
+      } catch (error) {
+        console.error('❌ Error fetching cast diary data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [decodedCastName, slug]);
+
+  // ソート処理
+  const sortedPosts = [...castPosts].sort((a, b) => {
     switch (sortBy) {
       case 'newest':
-        filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-        break;
+        return new Date(b.date).getTime() - new Date(a.date).getTime();
       case 'popular':
-        filtered = filtered.sort((a, b) => b.reactions.total - a.reactions.total);
-        break;
-      case 'comments':
-        filtered = filtered.sort((a, b) => b.commentCount - a.commentCount);
-        break;
+        const aTotal = Object.values(a.reactions).reduce((acc, val) => acc + val, 0);
+        const bTotal = Object.values(b.reactions).reduce((acc, val) => acc + val, 0);
+        return bTotal - aTotal;
+      default:
+        return 0;
     }
+  });
 
-    setCastPosts(filtered);
-  }, [decodedCastName, sortBy]);
-
-  // Get cast info from first post
-  const castInfo =
-    castPosts.length > 0
-      ? {
-          name: decodedCastName,
-          avatar: castPosts[0].castAvatar,
-          status: 'available',
-          postsThisMonth: castPosts.filter((post) => {
-            const postDate = new Date(post.date);
-            const currentDate = new Date();
-            return (
-              postDate.getMonth() === currentDate.getMonth() &&
-              postDate.getFullYear() === currentDate.getFullYear()
-            );
-          }).length,
-          totalLikes: castPosts.reduce((sum, post) => sum + post.reactions.total, 0),
-          lastPost: castPosts.length > 0 ? '2日前' : '投稿なし',
-        }
-      : null;
-
-  // SEO meta tags
+  // SEO
   useEffect(() => {
     if (decodedCastName) {
       document.title = `${decodedCastName}の写メ日記一覧｜Strawberry Boys`;
-
-      // Add canonical tag pointing to main diary page
-      const existingCanonical = document.querySelector('link[rel="canonical"]');
-      if (existingCanonical) {
-        existingCanonical.remove();
-      }
-
-      const canonical = document.createElement('link');
-      canonical.rel = 'canonical';
-      canonical.href = `${window.location.origin}/diary/diary-list`;
-      document.head.appendChild(canonical);
-
-      // Add meta description
-      const existingDescription = document.querySelector('meta[name="description"]');
-      if (existingDescription) {
-        existingDescription.setAttribute(
-          'content',
-          `${decodedCastName}の写メ日記一覧。日常の素顔や想いを綴った特別な日記をお楽しみください。`,
-        );
-      }
     }
-
-    return () => {
-      // Cleanup on unmount
-      const canonical = document.querySelector('link[rel="canonical"]');
-      if (canonical) {
-        canonical.remove();
-      }
-    };
   }, [decodedCastName]);
 
-  if (!decodedCastName) {
+  if (isLoading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-pink-500 border-t-transparent"></div>
+      </div>
+    );
+  }
+
+  if (!castInfo) {
     return (
       <div className="flex min-h-screen items-center justify-center px-3 sm:px-4">
         <div className="text-center">
-          <p className="text-sm text-gray-600 sm:text-base">キャストが見つかりません</p>
+          <p className="mb-4 text-sm text-gray-600 sm:text-base">キャストが見つかりません</p>
           <Link
-            href="/diary/diary-list"
-            className="text-sm text-pink-600 hover:text-pink-700 sm:text-base"
+            href={`/store/${slug}/diary/diary-list`}
+            className="rounded-lg bg-pink-500 px-6 py-2 text-sm text-white hover:bg-pink-600 sm:text-base"
           >
             日記一覧に戻る
           </Link>
@@ -106,7 +126,7 @@ const CastDiaryPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 to-white pb-24">
       <div className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 text-xs text-gray-600 sm:mb-6 sm:text-sm">
@@ -114,7 +134,7 @@ const CastDiaryPage = () => {
             Home
           </Link>
           <span className="mx-1 sm:mx-2">{'>'}</span>
-          <Link href="/diary/diary-list" className="hover:text-pink-600">
+          <Link href={`/store/${slug}/diary/diary-list`} className="hover:text-pink-600">
             写メ日記
           </Link>
           <span className="mx-1 sm:mx-2">{'>'}</span>
@@ -124,7 +144,7 @@ const CastDiaryPage = () => {
         {/* Back Button */}
         <div className="mb-4 sm:mb-6">
           <Link
-            href="/diary/diary-list"
+            href={`/store/${slug}/diary/diary-list`}
             className="inline-flex items-center gap-1 text-sm text-gray-600 transition-colors hover:text-pink-600 sm:gap-2 sm:text-base"
           >
             <ArrowLeft size={16} className="sm:h-5 sm:w-5" />
@@ -154,13 +174,13 @@ const CastDiaryPage = () => {
               </div>
               <div className="rounded-lg bg-white/70 p-2 sm:p-3">
                 <div className="text-lg font-bold text-gray-800 sm:text-xl md:text-2xl">
-                  {castInfo?.totalLikes.toLocaleString() || 0}
+                  {castInfo.totalLikes.toLocaleString()}
                 </div>
                 <div className="text-xs text-gray-600 sm:text-sm">総いいね</div>
               </div>
               <div className="rounded-lg bg-white/70 p-2 sm:p-3">
                 <div className="text-lg font-bold text-gray-800 sm:text-xl md:text-2xl">
-                  {castInfo?.postsThisMonth || 0}
+                  {castInfo.postsThisMonth}
                 </div>
                 <div className="text-xs text-gray-600 sm:text-sm">今月の投稿</div>
               </div>
@@ -169,11 +189,9 @@ const CastDiaryPage = () => {
         </div>
 
         {/* Cast Info Card */}
-        {castInfo && (
-          <div className="mb-6 sm:mb-8">
-            <CastCard cast={castInfo} expanded />
-          </div>
-        )}
+        <div className="mb-6 sm:mb-8">
+          <CastCard cast={castInfo} expanded />
+        </div>
 
         {/* Sort Controls */}
         <div className="mb-4 flex flex-col justify-between gap-3 sm:mb-6 sm:flex-row sm:items-center sm:gap-0">
@@ -187,14 +205,13 @@ const CastDiaryPage = () => {
           >
             <option value="newest">新着順</option>
             <option value="popular">人気順</option>
-            <option value="comments">コメント数順</option>
           </select>
         </div>
 
         {/* Posts Grid */}
-        {castPosts.length > 0 ? (
+        {sortedPosts.length > 0 ? (
           <div className="mb-6 grid grid-cols-1 gap-4 sm:mb-8 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
-            {castPosts.map((post) => (
+            {sortedPosts.map((post) => (
               <DiaryCard key={post.id} post={post} />
             ))}
           </div>
@@ -209,21 +226,12 @@ const CastDiaryPage = () => {
                 {decodedCastName}の最初の日記をお待ちください
               </p>
               <Link
-                href="/diary/diary-list"
+                href={`/store/${slug}/diary/diary-list`}
                 className="inline-flex items-center gap-2 rounded-lg bg-pink-500 px-4 py-2 text-sm text-white transition-colors hover:bg-pink-600 sm:px-6 sm:py-3 sm:text-base"
               >
                 他の日記を見る
               </Link>
             </div>
-          </div>
-        )}
-
-        {/* Load More Button */}
-        {castPosts.length > 0 && (
-          <div className="text-center">
-            <button className="rounded-full bg-pink-500 px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-pink-600 sm:px-8 sm:py-3 sm:text-base">
-              もっと見る
-            </button>
           </div>
         )}
       </div>

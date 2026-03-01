@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabaseClient';
 import type { PostType } from '@/types/diary';
 import {
   ArrowLeft,
-  Bookmark,
   Clapperboard as Clap,
   Clock,
   Heart,
@@ -25,6 +24,7 @@ const DiaryDetailPage = () => {
   const [post, setPost] = useState<PostType | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -42,7 +42,8 @@ const DiaryDetailPage = () => {
             casts (
               id,
               name,
-              image_url
+              image_url,
+              slug
             ),
             blog_images (
               image_url
@@ -72,12 +73,17 @@ const DiaryDetailPage = () => {
             tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
             storeSlug: slug as string,
             castName: castData?.name || '不明なキャスト',
+            castId: castData?.id || '',
+            castSlug: castData?.slug || '',
             image:
               data.blog_images?.[0]?.image_url ||
               'https://via.placeholder.com/800x600?text=No+Image',
             castAvatar: castData?.image_url || '/images/avatar-placeholder.png',
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
+            commentCount: 0,
+            image_url: data.blog_images?.[0]?.image_url,
             reactions: {
+              total: 0,
               likes: 0, // 実装に合わせて調整
               healing: 0,
               energized: 0,
@@ -99,6 +105,53 @@ const DiaryDetailPage = () => {
       fetchPost();
     }
   }, [postId, slug]);
+
+  useEffect(() => {
+    const fetchCastStats = async () => {
+      if (!post?.castId) return;
+
+      try {
+        const now = new Date();
+        const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+        // 今月の投稿数
+        const { count: monthCount } = await supabase
+          .from('blogs')
+          .select('*', { count: 'exact', head: true })
+          .eq('cast_id', post.castId)
+          .gte('created_at', firstDayOfMonth);
+
+        // 最終投稿日
+        const { data: lastBlog } = await supabase
+          .from('blogs')
+          .select('created_at')
+          .eq('cast_id', post.castId)
+          .order('created_at', { ascending: false })
+          .limit(1)
+          .single();
+
+        let lastPostStr = '投稿なし';
+        if (lastBlog) {
+          const postDate = new Date(lastBlog.created_at);
+          // 時刻を 00:00:00 にリセットして日付の差を計算
+          const d1 = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+          const d2 = new Date(postDate.getFullYear(), postDate.getMonth(), postDate.getDate());
+          const diffDays = Math.floor((d1.getTime() - d2.getTime()) / (1000 * 60 * 60 * 24));
+
+          lastPostStr = diffDays === 0 ? '今日' : diffDays === 1 ? '1日前' : `${diffDays}日前`;
+        }
+
+        setCastStats({
+          postsThisMonth: monthCount || 0,
+          lastPost: lastPostStr,
+        });
+      } catch (err) {
+        console.error('❌ Error fetching cast stats:', err);
+      }
+    };
+
+    fetchCastStats();
+  }, [post?.castId]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -177,9 +230,6 @@ const DiaryDetailPage = () => {
                 {post.castName}の日記一覧
               </Link>
               <button className="p-1.5 text-gray-600 transition-colors hover:text-pink-600 sm:p-2">
-                <Bookmark size={16} className="sm:h-5 sm:w-5" />
-              </button>
-              <button className="p-1.5 text-gray-600 transition-colors hover:text-pink-600 sm:p-2">
                 <Share2 size={16} className="sm:h-5 sm:w-5" />
               </button>
             </div>
@@ -187,7 +237,7 @@ const DiaryDetailPage = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-3 py-4 pt-16 sm:px-4 sm:py-6 sm:pt-20 md:py-8">
+      <div className="container mx-auto px-3 py-4 pb-24 pt-16 sm:px-4 sm:py-6 sm:pb-8 sm:pt-20 md:py-8">
         {/* Breadcrumb */}
         <nav className="mb-4 text-xs text-gray-600 sm:mb-6 sm:text-sm">
           <Link href="/" className="hover:text-pink-600">
@@ -283,12 +333,15 @@ const DiaryDetailPage = () => {
 
             <CastCard
               cast={{
+                id: post.castId,
+                slug: post.castSlug,
+                storeSlug: post.storeSlug,
                 name: post.castName,
                 avatar: post.castAvatar,
                 status: 'available',
-                postsThisMonth: 8,
-                totalLikes: 1234,
-                lastPost: '2日前',
+                postsThisMonth: castStats.postsThisMonth,
+                totalLikes: 1234, // ご要望により一旦モック
+                lastPost: castStats.lastPost,
               }}
               expanded
             />
@@ -298,41 +351,13 @@ const DiaryDetailPage = () => {
 
           {/* Sidebar */}
           <div className="space-y-4 sm:space-y-6">
-            <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6">
-              <div className="mb-3 flex items-center gap-2 sm:mb-4">
-                <img
-                  src={post.castAvatar}
-                  alt={post.castName}
-                  className="h-8 w-8 rounded-full object-cover sm:h-10 sm:w-10"
-                />
-                <div>
-                  <h3 className="text-base font-bold text-gray-800 sm:text-lg">{post.castName}</h3>
-                  <p className="text-xs text-gray-600 sm:text-sm">キャスト</p>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Link
-                  href={`/store/${slug}/diary/cast/${encodeURIComponent(post.castName)}`}
-                  className="block w-full rounded-lg bg-pink-500 px-3 py-2 text-center text-sm text-white hover:bg-pink-600"
-                >
-                  {post.castName}の他の日記を見る
-                </Link>
-                <button className="w-full rounded-lg bg-pink-100 px-3 py-2 text-sm text-pink-700 hover:bg-pink-200">
-                  このキャストを予約する
-                </button>
-              </div>
-            </div>
-
-            <RelatedPosts currentPostId={post.id} />
+            <RelatedPosts currentPostId={post.id} castId={post.castId} tagNames={post.tags} />
 
             <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6">
               <h3 className="mb-3 text-base font-bold text-gray-800 sm:mb-4 sm:text-lg">
                 クイックアクション
               </h3>
               <div className="space-y-2 sm:space-y-3">
-                <button className="w-full rounded-lg bg-pink-100 px-3 py-2 text-sm text-pink-700 hover:bg-pink-200">
-                  お気に入りに追加
-                </button>
                 <Link
                   href={`/store/${slug}/diary/diary-list`}
                   className="block w-full rounded-lg bg-gray-100 px-3 py-2 text-center text-sm text-gray-700 hover:bg-gray-200"

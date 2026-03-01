@@ -124,7 +124,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, 
 
             {/* Form Content */}
             <div className="max-h-[calc(90vh-80px)] overflow-y-auto">
-              <form onSubmit={handleSubmit} className="space-y-6 p-6">
+              <form onSubmit={handleSubmit} className="space-y-6 p-6 pb-24 sm:pb-6">
                 {/* お名前 */}
                 <div>
                   <label className="mb-2 flex items-center text-sm font-medium text-neutral-700">
