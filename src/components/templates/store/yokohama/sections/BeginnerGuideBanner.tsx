@@ -10,7 +10,7 @@ const BeginnerGuideBanner = () => {
     <div className="relative z-30 w-full bg-white px-2 py-3">
       <div className="mx-auto max-w-7xl">
         <Link
-          href="/test10"
+          href={`/store/${slug}/first-time`}
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
         >
           <img
