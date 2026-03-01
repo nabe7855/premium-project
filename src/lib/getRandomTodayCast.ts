@@ -47,10 +47,10 @@ export async function getRandomTodayCast(storeSlug: string): Promise<RandomCast 
         catch_copy,
         main_image_url,
         is_active,
-        mbti:mbti_id ( name ),
-        face:face_id ( name )
+        mbti:feature_master!casts_mbti_id_fkey ( name ),
+        face:feature_master!casts_face_id_fkey ( name )
       )
-    `
+    `,
     )
     .eq('store_id', store.id)
     .eq('work_date', today);

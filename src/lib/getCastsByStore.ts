@@ -31,8 +31,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         image_url,
         is_active,
         sexiness_level,
-        mbti:mbti_id ( name ),
-        face:face_id ( name ),
+        mbti:feature_master!casts_mbti_id_fkey ( name ),
+        face:feature_master!casts_face_id_fkey ( name ),
         cast_statuses (
           id,
           status_id,

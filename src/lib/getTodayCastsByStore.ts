@@ -66,8 +66,8 @@ export async function getTodayCastsByStore(
         main_image_url,
         image_url,
         is_active,
-        mbti:mbti_id ( name ),
-        face:face_id ( name ),
+        mbti:feature_master!casts_mbti_id_fkey ( name ),
+        face:feature_master!casts_face_id_fkey ( name ),
         cast_statuses (
           id,
           status_id,
