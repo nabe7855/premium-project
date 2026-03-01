@@ -1,7 +1,12 @@
 'use client';
 import CastCard from '@/components/sections/diary/CastCard';
 import DiaryCard from '@/components/sections/diary/DiaryCard';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
+import { useStore } from '@/contexts/StoreContext';
 import { getDiaryPostsByCastId } from '@/lib/diary/getDiaryPostsByCastId';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import type { PostType } from '@/types/diary';
 import { ArrowLeft, Calendar } from 'lucide-react';
@@ -15,6 +20,21 @@ const CastDiaryPage = () => {
   const [castInfo, setCastInfo] = useState<any>(null);
   const [sortBy, setSortBy] = useState('newest');
   const [isLoading, setIsLoading] = useState(true);
+  const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
+  const { store } = useStore();
+
+  // ✅ 店舗設定取得
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const result = await getStoreTopConfig(slug as string);
+      if (result.success) {
+        setTopConfig(result.config as StoreTopPageConfig);
+      } else {
+        setTopConfig(DEFAULT_STORE_TOP_CONFIG);
+      }
+    };
+    fetchConfig();
+  }, [slug]);
 
   const decodedCastName = castName ? decodeURIComponent(castName as string) : '';
 
@@ -235,6 +255,14 @@ const CastDiaryPage = () => {
           </div>
         )}
       </div>
+
+      {/* ✅ テンプレートに応じたフッターを表示 */}
+      {topConfig &&
+        (store?.template === 'yokohama' ? (
+          <YokohamaFooter config={topConfig.footer} />
+        ) : (
+          <FukuokaFooter config={topConfig.footer} />
+        ))}
     </div>
   );
 };

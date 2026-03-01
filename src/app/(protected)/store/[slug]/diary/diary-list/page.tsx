@@ -4,6 +4,7 @@ import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
 import Header from '@/components/sections/layout/Header';
 import Footer from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { useStore } from '@/contexts/StoreContext';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -314,7 +315,13 @@ const DiaryListPage = () => {
           </div>
         )}
       </div>
-      <Footer config={topConfig?.footer} />
+      {/* ✅ テンプレートに応じたフッターを表示 */}
+      {topConfig &&
+        (store?.template === 'yokohama' ? (
+          <YokohamaFooter config={topConfig.footer} />
+        ) : (
+          <Footer config={topConfig.footer} />
+        ))}
     </div>
   );
 };

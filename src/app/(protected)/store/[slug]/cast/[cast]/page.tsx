@@ -1,10 +1,14 @@
-import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import CastDetail from '@/components/sections/casts/casts/CastDetail';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import { getCastQuestions } from '@/lib/getCastQuestions';
-import CastDetail from '@/components/sections/casts/casts/CastDetail';
-import Footer from '@/components/sections/casts/ui/Footer';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { getStoreData } from '@/lib/store/store-data';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Cast } from '@/types/cast';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params: { slug: string; cast: string };
@@ -44,6 +48,13 @@ export default async function CastDetailPage({ params }: Props) {
   const castQuestions = await getCastQuestions(cast.id);
   cast = { ...cast, castQuestions };
 
+  // ✅ 店舗データと設定を取得
+  const store = getStoreData(params.slug);
+  const topConfigResult = await getStoreTopConfig(params.slug);
+  const topConfig = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
+
   // ✅ デバッグログ
   console.log('🟢 CastDetailPage params:', params);
   console.log('🟢 CastDetailPage loaded cast:', cast);
@@ -52,7 +63,13 @@ export default async function CastDetailPage({ params }: Props) {
     <>
       {/* ✅ storeSlug を渡す */}
       <CastDetail cast={cast} storeSlug={params.slug} />
-      <Footer />
+
+      {/* ✅ テンプレートに応じたフッターを表示 */}
+      {store?.template === 'yokohama' ? (
+        <YokohamaFooter config={topConfig.footer} />
+      ) : (
+        <FukuokaFooter config={topConfig.footer} />
+      )}
     </>
   );
 }

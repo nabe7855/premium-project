@@ -2,7 +2,12 @@
 import CastCard from '@/components/sections/diary/CastCard';
 import MessageSection from '@/components/sections/diary/MessageSection';
 import RelatedPosts from '@/components/sections/diary/RelatedPosts';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
+import { useStore } from '@/contexts/StoreContext';
 import { mockDiaryPosts } from '@/data/diarydata';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import type { PostType } from '@/types/diary';
 import {
@@ -25,6 +30,21 @@ const DiaryDetailPage = () => {
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
+  const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
+  const { store } = useStore();
+
+  // ✅ 店舗設定取得
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const result = await getStoreTopConfig(slug as string);
+      if (result.success) {
+        setTopConfig(result.config as StoreTopPageConfig);
+      } else {
+        setTopConfig(DEFAULT_STORE_TOP_CONFIG);
+      }
+    };
+    fetchConfig();
+  }, [slug]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -369,6 +389,14 @@ const DiaryDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* ✅ テンプレートに応じたフッターを表示 */}
+      {topConfig &&
+        (store?.template === 'yokohama' ? (
+          <YokohamaFooter config={topConfig.footer} />
+        ) : (
+          <FukuokaFooter config={topConfig.footer} />
+        ))}
     </div>
   );
 };

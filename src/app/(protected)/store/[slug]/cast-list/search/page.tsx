@@ -1,8 +1,13 @@
-import { Metadata } from 'next';
 import CastList from '@/components/sections/casts/casts/CastList';
-import Footer from '@/components/sections/casts/ui/Footer';
-import { MBTI_INFO, ANIMAL_INFO } from '@/data/matchingData';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { FACE_TYPES } from '@/data/faceTypes';
+import { ANIMAL_INFO, MBTI_INFO } from '@/data/matchingData';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { getStoreData } from '@/lib/store/store-data';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
+import { Metadata } from 'next';
+import { notFound } from 'next/navigation';
 
 interface Props {
   params: { slug: string };
@@ -61,7 +66,17 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   };
 }
 
-export default function SearchPage({ params, searchParams }: Props) {
+export default async function SearchPage({ params, searchParams }: Props) {
+  const store = getStoreData(params.slug);
+  if (!store) {
+    notFound();
+  }
+
+  // 店舗設定取得
+  const topConfigResult = await getStoreTopConfig(params.slug);
+  const topConfig = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
   // 診断結果ページかどうかを判定
   const isDiagnosisResult = !!(
     searchParams.mbti ||
@@ -92,7 +107,7 @@ export default function SearchPage({ params, searchParams }: Props) {
 
   return (
     <>
-      <div className="from-secondary bg-gradient-to-br via-white to-neutral-100 py-8 sm:py-12">
+      <div className="bg-gradient-to-br from-secondary via-white to-neutral-100 py-8 sm:py-12">
         <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
           <h1 className="mb-3 font-serif text-xl font-bold text-neutral-800 sm:mb-4 sm:text-2xl md:text-3xl">
             {getPageTitle()}
@@ -115,7 +130,13 @@ export default function SearchPage({ params, searchParams }: Props) {
       </div>
 
       <CastList storeSlug={params.slug} />
-      <Footer />
+
+      {/* フッター */}
+      {store.template === 'yokohama' ? (
+        <YokohamaFooter config={topConfig.footer} />
+      ) : (
+        <FukuokaFooter config={topConfig.footer} />
+      )}
     </>
   );
 }

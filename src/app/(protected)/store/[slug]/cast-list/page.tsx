@@ -1,7 +1,6 @@
 import CastList from '@/components/sections/casts/casts/CastList';
 import DiagnosisSection from '@/components/sections/casts/casts/DiagnosisSection';
 import BrandHero from '@/components/sections/casts/ui/BrandHero'; // ✅ 追加
-import Footer from '@/components/sections/casts/ui/Footer';
 import Hero from '@/components/sections/casts/ui/Hero';
 import { getRandomTodayCast } from '@/lib/getRandomTodayCast';
 import { Metadata } from 'next';
@@ -95,12 +94,10 @@ export default async function CastListPage({ params }: Props) {
       </div>
 
       {/* フッター */}
-      {store.template === 'fukuoka' ? (
-        <FukuokaFooter config={topConfig.footer} />
-      ) : store.template === 'yokohama' ? (
+      {store.template === 'yokohama' ? (
         <YokohamaFooter config={topConfig.footer} />
       ) : (
-        <Footer />
+        <FukuokaFooter config={topConfig.footer} />
       )}
     </>
   );
