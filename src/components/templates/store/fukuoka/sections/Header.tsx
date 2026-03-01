@@ -1,7 +1,8 @@
 'use client';
 
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
-import { Camera, ChevronDown, Menu, Users, X } from 'lucide-react';
+import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
+import { Camera, ChevronDown, Link2, Menu, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -82,17 +83,33 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.click();
   };
 
-  const getAbsoluteHref = (href: string) => {
-    if (!href) return '#';
-    if (
-      href.startsWith('http') ||
-      href.startsWith('//') ||
-      href.startsWith('#') ||
-      href.startsWith('/')
-    ) {
-      return href;
+  const handleLinkUpdate = (key: string) => {
+    if (!isEditing || !onUpdate) return;
+    const currentLink = (config as any)[key] || '';
+    const newLink = window.prompt(
+      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
+      currentLink,
+    );
+    if (newLink !== null) {
+      onUpdate('header', key, newLink);
     }
-    return `/${href}`;
+  };
+
+  const handleNestedLinkUpdate = (section: string, key: string) => {
+    if (!isEditing || !onUpdate) return;
+    const sectionData = (config as any)[section];
+    const currentLink = sectionData?.[key] || '';
+    const newLink = window.prompt(
+      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
+      currentLink,
+    );
+    if (newLink !== null) {
+      onUpdate('header', section, { ...sectionData, [key]: newLink });
+    }
+  };
+
+  const getAbsoluteHref = (href: string) => {
+    return resolveStoreLink(href, currentStoreId);
   };
 
   const BackgroundDecoration = () => (
@@ -318,25 +335,35 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           )}
 
           {isEditing && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerLogoUpload();
-              }}
-              className="absolute -right-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-black/40 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
-            >
-              <Camera size={16} />
-            </button>
+            <div className="absolute -right-16 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  triggerLogoUpload();
+                }}
+                className="flex items-center justify-center rounded-full bg-black/40 p-2 text-white"
+              >
+                <Camera size={16} />
+              </button>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleLinkUpdate('logoLink');
+                }}
+                className="flex items-center justify-center rounded-full bg-black/40 p-2 text-white"
+              >
+                <Link2 size={16} />
+              </button>
+            </div>
           )}
         </Link>
 
         <div className="flex items-center gap-3 sm:gap-4">
           {/* Header Banner Image (Horizontal) */}
           <Link
-            href={getAbsoluteHref(
-              config.specialBanner?.link || `/store/${currentStoreId}/first-time`,
-            )}
+            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
             className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
           >
             <div className="relative h-full w-32 md:w-40">
@@ -348,12 +375,22 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 priority
                 sizes="(max-width: 768px) 160px, 200px"
               />
+              {isEditing && (
+                <button
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleNestedLinkUpdate('specialBanner', 'link');
+                  }}
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity hover:opacity-100"
+                >
+                  <Link2 size={24} />
+                </button>
+              )}
             </div>
           </Link>
           <Link
-            href={getAbsoluteHref(
-              config.specialBanner?.link || `/store/${currentStoreId}/first-time`,
-            )}
+            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
             className="block h-12 w-auto max-w-[45vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
             <div className="relative h-full w-28">
@@ -477,6 +514,18 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                         onClick={closeMenu}
                         className="group relative block aspect-[16/7]"
                       >
+                        {isEditing && (
+                          <button
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleNestedLinkUpdate('menuBottomBanner', 'link');
+                            }}
+                            className="absolute right-4 top-4 z-20 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                          >
+                            <Link2 size={20} />
+                          </button>
+                        )}
                         <NextImage
                           src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
                           alt="Special Banner"

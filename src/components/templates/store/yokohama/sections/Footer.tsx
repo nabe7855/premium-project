@@ -2,6 +2,7 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { FooterConfig } from '@/lib/store/storeTopConfig';
+import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
 import { ImageIcon, Link2 } from 'lucide-react';
 import NextImage from 'next/image';
 import React from 'react';
@@ -17,16 +18,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   if (!config) return null;
 
   const getAbsoluteHref = (href: any) => {
-    if (!href || typeof href !== 'string') return '#';
-    if (
-      href.startsWith('http') ||
-      href.startsWith('//') ||
-      href.startsWith('#') ||
-      href.startsWith('/')
-    ) {
-      return href;
-    }
-    return `/${href}`;
+    return resolveStoreLink(href as string, store.slug);
   };
 
   const handleShopInfoUpdate = (key: string, value: string) => {
@@ -63,7 +55,10 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
       currentLink = configValue || '';
     }
 
-    const newLink = window.prompt('リンクURLを入力してください:', currentLink);
+    const newLink = window.prompt(
+      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
+      currentLink,
+    );
 
     if (newLink !== null) {
       if (typeof index === 'number') {

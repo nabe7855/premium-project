@@ -307,7 +307,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       imageUrl: '/初めてのお客様へバナー.png',
       subHeading: 'First Time',
       mainHeading: '初めての方へ',
-      link: '/store/fukuoka/first-time',
+      link: '/store/{slug}/first-time',
     },
     menuBottomBanner: {
       imageUrl: '/福岡募集バナー.png',
