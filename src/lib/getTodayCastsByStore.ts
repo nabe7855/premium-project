@@ -56,7 +56,6 @@ export async function getTodayCastsByStore(
       start_datetime,
       end_datetime,
       status,
-      stores!inner ( slug ),
       casts!inner (
         id,
         name,
@@ -67,8 +66,8 @@ export async function getTodayCastsByStore(
         main_image_url,
         image_url,
         is_active,
-        mbti_id,
-        face_id,
+        mbti:mbti_id ( name ),
+        face:face_id ( name ),
         cast_statuses (
           id,
           status_id,
@@ -79,12 +78,15 @@ export async function getTodayCastsByStore(
             label_color,
             text_color
           )
+        ),
+        cast_store_memberships!inner (
+          stores!inner ( slug )
         )
       )
     `,
     )
     .eq('work_date', dateStr)
-    .eq('stores.slug', storeSlug);
+    .eq('casts.cast_store_memberships.stores.slug', storeSlug);
 
   if (error) {
     console.error('❌ getTodayCastsByStore query error:', error.message);
@@ -118,10 +120,9 @@ export async function getTodayCastsByStore(
         rating: 5.0,
         review_count: 10,
         sexiness_strawberry: '🍓🍓🍓',
-        // MBTI/Face は一旦IDから名前を引く必要があるかもしれないが、
-        // 現状の取得方法に合わせて簡易マッピング（必要なら別途Join）
-        mbti_name: cast.mbti_id,
-        face_name: cast.face_id,
+        // MBTI/Face は JOIN した name を取得
+        mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,
+        face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
         start_datetime: item.start_datetime,
         end_datetime: item.end_datetime,
       };
