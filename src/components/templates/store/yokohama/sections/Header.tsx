@@ -306,7 +306,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     >
       <div className="mx-auto flex h-[58px] max-w-7xl items-center justify-between px-4 md:h-[72px] md:px-6">
         <Link
-          href={getAbsoluteHref(config.logoLink || '/')}
+          href={getAbsoluteHref(
+            config.logoLink === '/' || !config.logoLink ? '/store/{slug}' : config.logoLink,
+          )}
           className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
