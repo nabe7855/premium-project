@@ -2,10 +2,12 @@
 
 import DateNavigation from '@/components/sections/schedule/DateNavigation';
 import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
-import { HeaderConfig } from '@/lib/store/storeTopConfig';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
 import { useParams } from 'next/navigation';
@@ -17,13 +19,13 @@ function SchedulePage() {
 
   const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
   const [activeDate, setActiveDate] = useState<string>('');
-  const [headerConfig, setHeaderConfig] = useState<HeaderConfig | null>(null);
+  const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
 
-  // ✅ 店舗別ヘッダー設定の取得
+  // ✅ 店舗別設定の取得
   useEffect(() => {
     getStoreTopConfig(storeSlug).then((res) => {
-      if (res.success && res.config?.header) {
-        setHeaderConfig(res.config.header);
+      if (res.success && res.config) {
+        setTopConfig(res.config as StoreTopPageConfig);
       }
     });
   }, [storeSlug]);
@@ -149,10 +151,12 @@ function SchedulePage() {
   }, [storeSlug]);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gray-50">
       {/* Header */}
-      {storeSlug === 'yokohama' && headerConfig && <YokohamaHeader config={headerConfig} />}
-      {storeSlug === 'fukuoka' && headerConfig && <FukuokaHeader config={headerConfig} />}
+      {storeSlug === 'yokohama' && topConfig?.header && (
+        <YokohamaHeader config={topConfig.header} />
+      )}
+      {storeSlug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 py-6">
@@ -182,6 +186,12 @@ function SchedulePage() {
           </div>
         </div>
       </main>
+
+      {/* Footer */}
+      {storeSlug === 'yokohama' && topConfig?.footer && (
+        <YokohamaFooter config={topConfig.footer} />
+      )}
+      {storeSlug === 'fukuoka' && topConfig?.footer && <FukuokaFooter config={topConfig.footer} />}
     </div>
   );
 }

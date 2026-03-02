@@ -396,13 +396,9 @@ const DiaryDetailPage = () => {
         </div>
       </div>
 
-      {/* ✅ テンプレートに応じたフッターを表示 */}
-      {topConfig &&
-        (store?.template === 'yokohama' ? (
-          <YokohamaFooter config={topConfig.footer} />
-        ) : (
-          <FukuokaFooter config={topConfig.footer} />
-        ))}
+      {/* Footer */}
+      {slug === 'yokohama' && topConfig?.footer && <YokohamaFooter config={topConfig.footer} />}
+      {slug === 'fukuoka' && topConfig?.footer && <FukuokaFooter config={topConfig.footer} />}
     </div>
   );
 };

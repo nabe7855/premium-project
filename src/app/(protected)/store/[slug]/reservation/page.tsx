@@ -1,5 +1,7 @@
 import ReservationPageClient from '@/components/reservation/ReservationPageClient';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getCastsByStore } from '@/lib/getCastsByStore';
 import { prisma } from '@/lib/prisma';
@@ -47,7 +49,11 @@ export default async function ReservationPage({ params }: { params: { slug: stri
     <>
       {slug === 'yokohama' && <YokohamaHeader config={storeConfig?.header} />}
       {slug === 'fukuoka' && <FukuokaHeader config={storeConfig?.header} />}
+
       <ReservationPageClient store={store} storeConfig={storeConfig} casts={activeCasts} />
+
+      {slug === 'yokohama' && <YokohamaFooter config={storeConfig?.footer} />}
+      {slug === 'fukuoka' && <FukuokaFooter config={storeConfig?.footer} />}
     </>
   );
 }
