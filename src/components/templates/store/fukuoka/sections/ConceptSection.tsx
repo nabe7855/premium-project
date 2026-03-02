@@ -1,4 +1,5 @@
 import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
@@ -12,7 +13,7 @@ const defaultConcepts = [
   },
   {
     title: '女性目線の安心感',
-    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全のセキュリティ体制で、初めての方でも安心してご利用いただけます。',
+    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全의セキュリティ体制で、初めての方でも安心してご利用いただけます。',
     imageUrl:
       'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1000',
   },
@@ -59,9 +60,14 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
+  const params = useParams();
+  const slug = (params?.slug as string) || 'tokyo';
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
 
-  const concepts = config?.items || defaultConcepts;
+  const concepts = (config?.items || defaultConcepts).map((item) => ({
+    ...item,
+    imageUrl: item.imageUrl.replace(/\{slug\}/g, slug),
+  }));
 
   useEffect(() => {
     if (isEditing) return; // 編集時は自動スライドを停止

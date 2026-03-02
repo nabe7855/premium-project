@@ -179,7 +179,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                     >
                       <NextImage
-                        src={banner.imageUrl}
+                        src={getAbsoluteHref(banner.imageUrl)}
                         alt=""
                         width={0}
                         height={0}
@@ -250,10 +250,10 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >
                       <NextImage
-                        src={
+                        src={getAbsoluteHref(
                           config.largeBanner?.imageUrl ||
-                          'https://placehold.jp/400x400.png?text=Large%20Banner'
-                        }
+                            'https://placehold.jp/400x400.png?text=Large%20Banner',
+                        )}
                         alt="Large Banner"
                         fill
                         className="object-cover"

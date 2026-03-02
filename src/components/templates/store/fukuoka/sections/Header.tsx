@@ -140,7 +140,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
                 <NextImage
-                  src={item.imageUrl}
+                  src={getAbsoluteHref(item.imageUrl)}
                   alt={item.name}
                   fill
                   className="object-contain"
@@ -209,7 +209,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {item.imageUrl ? (
               <div className="relative aspect-[4/1] w-full">
                 <NextImage
-                  src={item.imageUrl}
+                  src={getAbsoluteHref(item.imageUrl)}
                   alt={item.name}
                   fill
                   className="object-contain"
@@ -255,7 +255,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage
-                src={item.imageUrl}
+                src={getAbsoluteHref(item.imageUrl)}
                 alt={item.name}
                 fill
                 className="object-contain"
@@ -312,7 +312,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           {config.logoUrl ? (
             <div className="relative h-full w-32">
               <NextImage
-                src={config.logoUrl}
+                src={getAbsoluteHref(config.logoUrl)}
                 alt="Logo"
                 fill
                 priority
@@ -368,7 +368,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           >
             <div className="relative h-full w-32 md:w-40">
               <NextImage
-                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                src={getAbsoluteHref(
+                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
+                )}
                 alt="Recruit Banner"
                 fill
                 className="object-cover"
@@ -395,7 +397,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           >
             <div className="relative h-full w-28">
               <NextImage
-                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                src={getAbsoluteHref(
+                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
+                )}
                 alt="Recruit Banner"
                 fill
                 className="object-cover"
@@ -527,7 +531,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </button>
                         )}
                         <NextImage
-                          src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
+                          src={getAbsoluteHref(
+                            config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png',
+                          )}
                           alt="Special Banner"
                           fill
                           className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"

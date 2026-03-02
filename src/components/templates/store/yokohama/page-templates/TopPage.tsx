@@ -7,6 +7,7 @@ import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
 import Header from '../sections/Header';
 
+import ReviewSection from '@/components/sections/store/ReviewSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
@@ -101,6 +102,7 @@ export default function YokohamaPage({
       />
       <PriceSection config={config?.price} isEditing={isEditing} />
       <FlowSection config={config?.flow} isEditing={isEditing} />
+      <ReviewSection />
       <FAQSection config={config?.faq} isEditing={isEditing} />
       <Footer
         config={config?.footer}

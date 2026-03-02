@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://strawberry-boy.com',
+    url: 'https://www.sutoroberrys.jp', // This URL is for the root layout, not dynamic. Dynamic URLs should be handled in page.tsx or generateMetadata.
     siteName: 'ストロベリーボーイ',
   },
   robots: {

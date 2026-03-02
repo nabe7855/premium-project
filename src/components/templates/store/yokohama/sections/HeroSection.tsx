@@ -1,5 +1,6 @@
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
+import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
@@ -23,7 +24,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
-  const images = config?.images?.length ? config.images : heroImages;
+  const params = useParams();
+  const slug = (params?.slug as string) || 'tokyo';
+
+  const images = (config?.images?.length ? config.images : heroImages).map((img) =>
+    img.replace(/\{slug\}/g, slug),
+  );
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);

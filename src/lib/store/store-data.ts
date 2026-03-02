@@ -122,7 +122,7 @@ const storeData: Record<string, Store> = {
     contact: {
       phone: '03-1234-5678',
       line: '@strawberry-tokyo',
-      email: 'tokyo@strawberry-boy.com',
+      email: 'tokyo@www.sutoroberrys.jp',
     },
     seo: {
       title: '【東京店】甘くとろける夢の世界へ｜ストロベリーボーイ',
@@ -297,7 +297,7 @@ const storeData: Record<string, Store> = {
     contact: {
       phone: '06-1234-5678',
       line: '@strawberry-osaka',
-      email: 'osaka@strawberry-boy.com',
+      email: 'osaka@www.sutoroberrys.jp',
     },
     seo: {
       title: '【大阪店】情熱的な関西の魅力｜ストロベリーボーイ',
@@ -359,7 +359,7 @@ const storeData: Record<string, Store> = {
     contact: {
       phone: '052-1234-5678',
       line: '@strawberry-nagoya',
-      email: 'nagoya@strawberry-boy.com',
+      email: 'nagoya@www.sutoroberrys.jp',
     },
     seo: {
       title: '【名古屋店】上品で洗練された時間｜ストロベリーボーイ',
@@ -420,7 +420,7 @@ const storeData: Record<string, Store> = {
     contact: {
       phone: '092-1234-5678',
       line: '@strawberry-fukuoka',
-      email: 'fukuoka@strawberry-boy.com',
+      email: 'fukuoka@www.sutoroberrys.jp',
     },
     seo: {
       title: '【福岡店】博多の夜に咲く一輪の花｜ストロベリーボーイズ',
@@ -470,7 +470,7 @@ const storeData: Record<string, Store> = {
     contact: {
       phone: '045-1234-5678',
       line: '@strawberry-yokohama',
-      email: 'yokohama@strawberry-boy.com',
+      email: 'yokohama@www.sutoroberrys.jp',
     },
     seo: {
       title: '【横浜店】港町横浜で叶える大人の恋｜ストロベリーボーイズ',

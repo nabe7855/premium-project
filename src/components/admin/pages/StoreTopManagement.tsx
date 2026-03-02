@@ -20,11 +20,10 @@ import { PageData } from '@/components/admin/news/types';
 import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { StoreProvider } from '@/contexts/StoreContext';
-import { stores } from '@/data/stores';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
-import { getAllStores } from '@/lib/store/store-data';
+import { getAllStores, getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
@@ -519,8 +518,8 @@ export default function StoreTopManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            <StoreProvider store={(stores[selectedStore] || stores['fukuoka']) as any}>
-              {stores[selectedStore]?.template === 'yokohama' ? (
+            <StoreProvider store={(getStoreData(selectedStore) || getStoreData('fukuoka'))!}>
+              {getStoreData(selectedStore)?.template === 'yokohama' ? (
                 <YokohamaPage
                   config={config}
                   newsPages={newsPages}
@@ -528,6 +527,7 @@ export default function StoreTopManagement() {
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}
                   hideHeader={true}
+                  storeSlug={selectedStore}
                 />
               ) : (
                 <FukuokaPage
@@ -537,6 +537,7 @@ export default function StoreTopManagement() {
                   onUpdate={handleUpdate}
                   onImageUpload={handleImageUpload}
                   hideHeader={true}
+                  storeSlug={selectedStore}
                 />
               )}
             </StoreProvider>

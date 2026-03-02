@@ -1,5 +1,6 @@
 'use client';
 import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
@@ -60,8 +61,13 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
+  const params = useParams();
+  const slug = (params?.slug as string) || 'tokyo';
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
-  const items = config?.items || defaultConcepts;
+  const items = (config?.items || defaultConcepts).map((item) => ({
+    ...item,
+    imageUrl: item.imageUrl.replace(/\{slug\}/g, slug),
+  }));
   const heading = config?.heading || '安心と癒やしを、すべての女性の日常に。';
   const subHeading = config?.subHeading || 'Our Concept';
 

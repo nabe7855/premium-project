@@ -112,7 +112,7 @@ const Inspector: React.FC<InspectorProps> = ({
               />
             </div>
             <p className="mt-2 text-[9px] text-slate-400">
-              URLの一部として使用されます（例: strawberry-boy.com/news/url-slug）
+              URLの一部として使用されます（例: www.sutoroberrys.jp/news/url-slug）
             </p>
           </div>
 

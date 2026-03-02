@@ -36,7 +36,10 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
         >
           <img
-            src={config.imageUrl || '/女性用風俗初体験の方はこちら.png'}
+            src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace(
+              '{slug}',
+              slug || '',
+            )}
             alt="女性用風俗初体験の方はこちら"
             className="h-auto w-full object-contain"
           />

@@ -7,6 +7,7 @@ import FlowSection from '../sections/FlowSection';
 import Footer from '../sections/Footer';
 import Header from '../sections/Header';
 
+import ReviewSection from '@/components/sections/store/ReviewSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
@@ -125,6 +126,7 @@ export default function FukuokaPage({
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
         <FlowSection config={safeConfig?.flow} isEditing={isEditing} onUpdate={onUpdate} />
       )}
+      <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <FAQSection config={safeConfig?.faq} isEditing={isEditing} onUpdate={onUpdate} />
       )}

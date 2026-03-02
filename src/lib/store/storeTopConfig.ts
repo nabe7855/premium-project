@@ -245,42 +245,42 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         name: '最新のお知らせ',
         href: '#news',
-        imageUrl: '/images/fukuoka/福岡お知らせ.png',
+        imageUrl: '/images/{slug}/福岡お知らせ.png',
       },
       {
         name: 'はじめての方へ',
         href: '#flow',
-        imageUrl: '/images/fukuoka/福岡初めての方へ.png',
+        imageUrl: '/images/{slug}/福岡初めての方へ.png',
       },
       {
         name: 'おすすめホテル一覧',
         href: '#hotels',
-        imageUrl: '/images/fukuoka/福岡おすすめホテル一覧.png',
+        imageUrl: '/images/{slug}/福岡おすすめホテル一覧.png',
       },
       {
         name: 'セラピスト一覧',
         href: '#casts',
-        imageUrl: '/images/fukuoka/福岡セラピスト一覧.png',
+        imageUrl: '/images/{slug}/福岡セラピスト一覧.png',
       },
       {
         name: '本日の出勤情報',
         href: '#schedules',
-        imageUrl: '/images/fukuoka/福岡本日の出勤.png',
+        imageUrl: '/images/{slug}/福岡本日の出勤.png',
       },
       {
         name: '口コミ・レビュー',
         href: '#reviews',
-        imageUrl: '/images/fukuoka/福岡セラピスト一覧.png',
+        imageUrl: '/images/{slug}/福岡セラピスト一覧.png',
       },
       {
         name: '写メ日記（更新中）',
         href: '#diary',
-        imageUrl: '/images/fukuoka/福岡出勤情報.png',
+        imageUrl: '/images/{slug}/福岡出勤情報.png',
       },
       {
         name: 'プライバシーポリシー',
         href: '/privacy',
-        imageUrl: '/images/fukuoka/プライバシーポリシー.png',
+        imageUrl: '/images/{slug}/プライバシーポリシー.png',
       },
       {
         name: 'メディア取材のご連絡',
@@ -310,10 +310,10 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       link: '/store/{slug}/first-time',
     },
     menuBottomBanner: {
-      imageUrl: '/福岡募集バナー.png',
+      imageUrl: '/images/{slug}/recruit-banner.png',
       subHeading: 'Strawberry Boys Premium',
       mainHeading: '甘い誘惑を、今夜貴女に。',
-      link: '#recruit',
+      link: '/store/{slug}/Announcement-information/recruit',
       isVisible: true,
     },
   },
@@ -718,7 +718,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         ja: '口コミ',
         en: 'REVIEW',
-        href: '#review',
+        href: '#reviews',
         icon: 'MessageCircle',
       },
       {
@@ -733,18 +733,18 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     logoImageUrl:
       'https://images.unsplash.com/photo-1519735812324-ecb585a06a26?auto=format&fit=crop&q=80&w=1000',
     menuButtons: [
-      { label: 'ご案内', link: '#' },
-      { label: 'セラピスト一覧', link: '#' },
-      { label: '出勤スケジュール', link: '#' },
-      { label: 'ご利用料金', link: '#' },
-      { label: 'コース', link: '#' },
-      { label: '口コミ', link: '#' },
-      { label: '写メ日記', link: '#' },
-      { label: '動画', link: '#' },
-      { label: 'ホテル', link: '#' },
-      { label: '求人募集', link: '#' },
-      { label: 'お問合わせ', link: '#' },
-      { label: 'メディア様お問合わせ', link: '#' },
+      { label: 'ご案内', link: '/store/{slug}/guide' },
+      { label: 'セラピスト一覧', link: '/store/{slug}/cast-list' },
+      { label: '出勤スケジュール', link: '/store/{slug}/schedule' },
+      { label: 'ご利用料金', link: '/store/{slug}/price' },
+      { label: 'コース', link: '/store/{slug}/price' },
+      { label: '口コミ', link: '/store/{slug}/reviews' },
+      { label: '写メ日記', link: '/store/{slug}/diary/diary-list' },
+      { label: '動画', link: '/store/{slug}/videos' },
+      { label: 'ホテル', link: '/store/{slug}/hotel' },
+      { label: '求人募集', link: '/store/{slug}/Announcement-information/recruit' },
+      { label: 'お問合わせ', link: '/store/{slug}/contact' },
+      { label: 'メディア様お問合わせ', link: '/media' },
     ],
     banners: [
       {
