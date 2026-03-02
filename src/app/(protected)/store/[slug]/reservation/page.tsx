@@ -28,7 +28,7 @@ export default async function ReservationPage({ params }: { params: { slug: stri
     },
   });
 
-  const configPromise = getStoreTopConfig(slug);
+  const configPromise = getStoreTopConfig(slug, { skipCasts: true });
   const castsPromise = getCastsByStore(slug);
 
   // 2. Promise.all で並列実行

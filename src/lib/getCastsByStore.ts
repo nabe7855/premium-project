@@ -3,24 +3,14 @@ import { Cast, CastStatus } from '@/types/cast';
 import { supabase } from './supabaseClient';
 
 export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
-  // 店舗IDを取得
-  const { data: store, error: storeError } = await supabase
-    .from('stores')
-    .select('id')
-    .eq('slug', storeSlug)
-    .single();
-
-  if (storeError || !store) {
-    console.error('❌ 店舗取得エラー:', storeError?.message);
-    return [];
-  }
-
-  // キャスト一覧を取得（reviews も JOIN して直接集計）
+  // 1. 店舗に所属するキャスト一覧を取得（reviews も JOIN して直接集計）
+  // stores テーブルを JOIN して slug でフィルタリングすることで、店舗ID取得の1回分のリクエストを削減
   const { data, error } = await supabase
     .from('cast_store_memberships')
     .select(
       `
       priority,
+      stores!inner ( slug ),
       casts (
         id,
         slug,
@@ -51,7 +41,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       )
     `,
     )
-    .eq('store_id', store.id);
+    .eq('stores.slug', storeSlug);
 
   if (error) {
     console.error('❌ キャスト取得エラー:', error.message);

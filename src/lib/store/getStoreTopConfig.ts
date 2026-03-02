@@ -3,8 +3,9 @@
 import { prisma } from '@/lib/prisma';
 import { DEFAULT_STORE_TOP_CONFIG } from './storeTopConfig';
 
-export async function getStoreTopConfig(storeSlug: string) {
+export async function getStoreTopConfig(storeSlug: string, options: { skipCasts?: boolean } = {}) {
   try {
+    const { skipCasts = false } = options;
     // まず店舗を取得
     const store = await prisma.store.findUnique({
       where: { slug: storeSlug },
@@ -52,29 +53,31 @@ export async function getStoreTopConfig(storeSlug: string) {
     // デフォルト値をベースにDBの値をマージする（DBにない項目はデフォルトが使われる）
     let finalConfig = deepMerge(dbConfig, DEFAULT_STORE_TOP_CONFIG);
 
-    // 🆕 新人キャストを動的に取得して上書き
-    try {
-      const { getCastsByStore } = await import('@/lib/getCastsByStore');
-      const allCasts = await getCastsByStore(storeSlug);
-      const newcomers = allCasts
-        .filter((c) => c.isNewcomer)
-        .sort((a, b) => (b.priority || 0) - (a.priority || 0));
+    // 🆕 新人キャストを動的に取得して上書き (店舗トップ以外では不要なため skipCasts ならスキップ)
+    if (!skipCasts) {
+      try {
+        const { getCastsByStore } = await import('@/lib/getCastsByStore');
+        const allCasts = await getCastsByStore(storeSlug);
+        const newcomers = allCasts
+          .filter((c) => c.isNewcomer)
+          .sort((a, b) => (b.priority || 0) - (a.priority || 0));
 
-      if (finalConfig.newcomer) {
-        finalConfig.newcomer.items = newcomers.map((c) => ({
-          id: c.id,
-          name: c.name,
-          slug: c.slug,
-          age: c.age ? `${Math.floor(c.age / 10) * 10}代` : '20代',
-          height: c.height?.toString() || '170',
-          imageUrl: c.mainImageUrl || c.imageUrl || '',
-        }));
+        if (finalConfig.newcomer) {
+          finalConfig.newcomer.items = newcomers.map((c) => ({
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            age: c.age ? `${Math.floor(c.age / 10) * 10}代` : '20代',
+            height: c.height?.toString() || '170',
+            imageUrl: c.mainImageUrl || c.imageUrl || '',
+          }));
 
-        // 見出しの人数も動的に更新
-        finalConfig.newcomer.heading = `新人セラピスト(${newcomers.length}名)`;
+          // 見出しの人数も動的に更新
+          finalConfig.newcomer.heading = `新人セラピスト(${newcomers.length}名)`;
+        }
+      } catch (e) {
+        console.error('[getStoreTopConfig] Error fetching dynamic newcomers:', e);
       }
-    } catch (e) {
-      console.error('[getStoreTopConfig] Error fetching dynamic newcomers:', e);
     }
 
     return { success: true, config: finalConfig };
