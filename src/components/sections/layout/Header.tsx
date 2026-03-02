@@ -47,26 +47,32 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
   const adjustLinks = (links: any[]) => {
     return links.map((link) => {
-      // '#' で始まる内部リンク、または '/price' などの相対パスを調整
-      if (link.href === '#price' || link.name.includes('料金')) {
-        return { ...link, href: `/store/${currentStoreId}/price` };
+      let href = link.href;
+
+      // {slug} プレースホルダーを置換
+      if (href && typeof href === 'string') {
+        href = href.replace(/\{slug\}/g, currentStoreId);
       }
-      if (
-        link.href === '#faq' ||
+
+      // '#' で始まる内部リンク、または '/price' などの相対パスを調整
+      if (href === '#price' || link.name.includes('料金')) {
+        href = `/store/${currentStoreId}/price`;
+      } else if (
+        href === '#faq' ||
         link.name.toLowerCase().includes('qa') ||
         link.name.includes('よくあるご質問')
       ) {
-        return { ...link, href: `/store/${currentStoreId}#faq` };
-      }
-      if (
-        link.href === '#campaign' ||
+        href = `/store/${currentStoreId}#faq`;
+      } else if (
+        href === '#campaign' ||
         link.name.includes('ニュース') ||
         link.name.includes('キャンペーン') ||
         link.name.includes('最新情報')
       ) {
-        return { ...link, href: `/store/${currentStoreId}#campaign` };
+        href = `/store/${currentStoreId}#campaign`;
       }
-      return link;
+
+      return { ...link, href };
     });
   };
 
@@ -77,7 +83,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     setTimeout(() => {
       setIsMenuOpen(false);
       setIsAnimating(false);
-    }, 400);
+    }, 300); // 300msで閉じ切る
   };
 
   const triggerImageUpload = (index: number) => {
@@ -367,7 +373,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         createPortal(
           <>
             <div
-              className={`fixed inset-0 z-[9999] overflow-y-auto bg-white transition-all duration-500 ${
+              className={`fixed inset-0 z-[9999] overflow-y-auto bg-white transition-all duration-300 ${
                 isAnimating ? 'translate-y-full' : 'translate-y-0'
               }`}
               style={{ top: '0' }}

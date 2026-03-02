@@ -7,9 +7,11 @@ import YokohamaHeader from '@/components/templates/store/yokohama/sections/Heade
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 
+import { Suspense } from 'react';
+
 export default async function StoreReviewsPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const result = await getStoreTopConfig(slug);
+  const result = await getStoreTopConfig(slug, { skipCasts: true });
   const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
 
   return (
@@ -18,8 +20,15 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
       {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       <main className="mx-auto max-w-6xl flex-grow px-4 py-8">
-        {/* ✅ storeSlug を渡して ReviewList に任せる */}
-        <ReviewList storeSlug={slug} />
+        <Suspense
+          fallback={
+            <div className="flex h-64 items-center justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent"></div>
+            </div>
+          }
+        >
+          <ReviewList storeSlug={slug} />
+        </Suspense>
 
         <FAQ />
       </main>
