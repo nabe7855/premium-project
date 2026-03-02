@@ -46,8 +46,9 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
   const params = useParams();
   const slug = (params?.slug as string) || '';
 
-  // {slug} プレースホルダーを実際の店舗スラグに置換
-  const resolveLink = (href: string) => href.replace(/\{slug\}/g, slug);
+  // {slug} や [slug] を置換 (URLエンコードされた文字にも対応)
+  const resolveLink = (href: string) =>
+    href.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
 
   if (!config) return null;
 
