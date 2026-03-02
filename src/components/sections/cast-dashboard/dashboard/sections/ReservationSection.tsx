@@ -1,6 +1,6 @@
 'use client';
 
-import { getReservations } from '@/lib/actions/reservation';
+import { getReservations, updateReservationStep } from '@/lib/actions/reservation';
 import { supabase } from '@/lib/supabaseClient';
 import { Reservation, WorkflowStep, WorkflowStepId } from '@/types/reservation';
 import {
@@ -18,7 +18,7 @@ import {
   ShieldCheck,
   User,
 } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const STEP_ICONS: Record<WorkflowStepId, LucideIcon> = {
@@ -29,51 +29,57 @@ const STEP_ICONS: Record<WorkflowStepId, LucideIcon> = {
   reflection: User,
 };
 
-export default function ReservationSection() {
+export default function ReservationSection({ castId }: { castId: string }) {
   const [activeSubTab, setActiveSubTab] = useState<'pending' | 'completed'>('pending');
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const fetchReservations = async () => {
+  const fetchReservations = useCallback(async () => {
     setIsLoading(true);
-    const data = await getReservations();
+    const data = await getReservations(undefined, castId);
     setReservations(data);
     setIsLoading(false);
-  };
+  }, [castId]);
 
   useEffect(() => {
     fetchReservations();
-  }, []);
+  }, [fetchReservations]);
 
   const filteredReservations = reservations.filter((r) => r.status === activeSubTab);
 
-  const toggleStep = (resId: string, stepId: WorkflowStepId) => {
-    setReservations((prev) => {
-      const updated = prev.map((res) => {
-        if (res.id !== resId) return res;
+  const toggleStep = async (resId: string, stepId: WorkflowStepId) => {
+    const res = reservations.find((r) => r.id === resId);
+    if (!res) return;
 
-        const newSteps = res.steps.map((step) =>
-          step.id === stepId ? { ...step, isCompleted: !step.isCompleted } : step,
-        );
+    const newSteps = res.steps.map((step) =>
+      step.id === stepId ? { ...step, isCompleted: !step.isCompleted } : step,
+    );
 
-        const allDone = newSteps.every((s) => s.isCompleted);
-        const status: 'pending' | 'completed' = allDone ? 'completed' : 'pending';
+    const allDone = newSteps.every((s) => s.isCompleted);
+    const status: 'pending' | 'completed' = allDone ? 'completed' : 'pending';
 
-        return {
-          ...res,
-          steps: newSteps,
-          status,
-        };
-      });
+    // Optimistic UI update
+    setReservations((prev) =>
+      prev.map((r) => (r.id === resId ? { ...r, steps: newSteps, status } : r)),
+    );
+    if (selectedReservation?.id === resId) {
+      setSelectedReservation({ ...res, steps: newSteps, status });
+    }
 
-      const currentSelected = updated.find((r) => r.id === resId);
-      if (currentSelected) {
-        setSelectedReservation(currentSelected);
+    try {
+      const result = await updateReservationStep(resId, newSteps, status);
+      if (result.success) {
+        toast.success('ステータスを更新しました');
+      } else {
+        toast.error('更新に失敗しました');
+        fetchReservations();
       }
-
-      return updated;
-    });
+    } catch (error) {
+      console.error('Update error:', error);
+      toast.error('保存中にエラーが発生しました');
+      fetchReservations();
+    }
   };
 
   useEffect(() => {

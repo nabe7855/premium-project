@@ -3,6 +3,7 @@ import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer'
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import { getCastQuestions } from '@/lib/getCastQuestions';
+import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -55,14 +56,20 @@ export default async function CastDetailPage({ params }: Props) {
     ? (topConfigResult.config as StoreTopPageConfig)
     : DEFAULT_STORE_TOP_CONFIG;
 
+  // ✅ DBから店舗IDを取得 (予約紐付け用)
+  const dbStore = await prisma.store.findUnique({
+    where: { slug: params.slug },
+    select: { id: true },
+  });
+
   // ✅ デバッグログ
   console.log('🟢 CastDetailPage params:', params);
   console.log('🟢 CastDetailPage loaded cast:', cast);
 
   return (
     <>
-      {/* ✅ storeSlug を渡す */}
-      <CastDetail cast={cast} storeSlug={params.slug} />
+      {/* ✅ storeSlug と storeId を渡す */}
+      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} />
 
       {/* ✅ テンプレートに応じたフッターを表示 */}
       {store?.template === 'yokohama' ? (

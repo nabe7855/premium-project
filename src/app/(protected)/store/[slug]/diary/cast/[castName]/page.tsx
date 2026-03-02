@@ -4,6 +4,7 @@ import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { useStore } from '@/contexts/StoreContext';
+import { getStoreBySlug } from '@/lib/actions/reservation';
 import { getDiaryPostsByCastId } from '@/lib/diary/getDiaryPostsByCastId';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -47,6 +48,9 @@ const CastDiaryPage = () => {
 
       setIsLoading(true);
       try {
+        // 0. 店舗情報を取得 (予約紐付け用)
+        const dbStore = await getStoreBySlug(slug as string);
+
         // 1. キャスト情報を取得 (名前で検索)
         const { data: castData, error: castError } = await supabase
           .from('casts')
@@ -64,6 +68,7 @@ const CastDiaryPage = () => {
           id: castData.id,
           slug: castData.slug,
           storeSlug: slug as string,
+          storeId: dbStore?.id,
           name: castData.name,
           avatar: castData.image_url || '/images/avatar-placeholder.png',
           status: 'available', // TODO: リアルなステータス取得

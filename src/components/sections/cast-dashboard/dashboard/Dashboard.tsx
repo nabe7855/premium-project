@@ -315,7 +315,7 @@ export default function Dashboard({ cast }: DashboardProps) {
         {activeTab === 'voice' && (
           <VoiceSection cast={castState} setCastState={setCastState} activeTab={activeTab} />
         )}
-        {activeTab === 'reservation' && <ReservationSection />}
+        {activeTab === 'reservation' && <ReservationSection castId={castState.id} />}
       </main>
 
       <Footer config={topConfig?.footer} />

@@ -11,9 +11,16 @@ interface BookingModalProps {
   onClose: () => void;
   castName?: string;
   castId?: string;
+  storeId?: string;
 }
 
-const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, castId }) => {
+const BookingModal: React.FC<BookingModalProps> = ({
+  isOpen,
+  onClose,
+  castName,
+  castId,
+  storeId,
+}) => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -44,6 +51,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, 
         phone: formData.phone,
         notes: `コース: ${formData.course}\n合流場所: ${formData.meetingPlace}\n指名: ${formData.nomination}\n衣装: ${formData.outfit}\n割引: ${formData.discount}\n備考: ${formData.notes}`,
         castId: castId,
+        storeId: storeId,
       };
       console.log('>>> [BookingModal] Calling createReservation with:', payload);
 

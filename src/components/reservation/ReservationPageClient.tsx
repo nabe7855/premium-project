@@ -1,10 +1,14 @@
 'use client';
 
+import { createReservation } from '@/lib/actions/reservation';
 import { Cast } from '@/types/cast';
 import {
   AlertCircle,
   Calendar,
+  CheckCircle,
   Clock,
+  Home,
+  Loader2,
   Mail,
   MapPin,
   MessageCircle,
@@ -12,7 +16,9 @@ import {
   Send,
   User,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 interface ReservationPageClientProps {
   store: {
@@ -33,6 +39,9 @@ export default function ReservationPageClient({
   storeConfig,
   casts,
 }: ReservationPageClientProps) {
+  const router = useRouter();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     castId: '',
     name: '',
@@ -47,10 +56,44 @@ export default function ReservationPageClient({
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Reservation submitted:', formData);
-    alert('予約が送信されました（シミュレーション）');
+    setIsSubmitting(true);
+
+    try {
+      // 合計情報を notes にまとめる
+      const combinedNotes = `
+【コース】: ${formData.course}
+【利用状況】: ${formData.usageStatus}
+【待ち合わせ】: ${formData.meetingPlace}
+【服装】: ${formData.outfit}
+【割引】: ${formData.discount}
+【メッセージ】: ${formData.message}
+      `.trim();
+
+      const result = await createReservation({
+        customerName: formData.name,
+        dateTime: formData.desiredDateTime,
+        visitCount: formData.usageStatus === 'first' ? 1 : 2,
+        email: formData.email,
+        phone: formData.phone,
+        notes: combinedNotes,
+        castId: formData.castId === 'free' ? undefined : formData.castId || undefined,
+        storeId: store.id,
+      });
+
+      if (result.success) {
+        setIsSuccess(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        toast.error('エラーが発生しました。お電話またはLINEにてお問い合わせください。');
+      }
+    } catch (error) {
+      console.error('Reservation error:', error);
+      toast.error('予期せぬエラーが発生しました。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -77,6 +120,65 @@ export default function ReservationPageClient({
   const receptionHours = storeConfig?.header?.receptionHours;
   const businessHours = storeConfig?.header?.businessHours;
 
+  if (isSuccess) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-20 md:py-32">
+        <div className="container mx-auto max-w-2xl px-4">
+          <div className="rounded-3xl border-2 border-rose-100 bg-white p-8 text-center shadow-2xl md:p-16">
+            <div className="mb-8 flex justify-center">
+              <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-50 text-green-500 shadow-inner">
+                <CheckCircle className="h-16 w-16 duration-500 animate-in zoom-in" />
+              </div>
+            </div>
+
+            <h1 className="mb-6 text-3xl font-black text-gray-800 md:text-4xl">
+              ご予約リクエストを
+              <br />
+              承りました
+            </h1>
+
+            <div className="mb-10 space-y-4 text-left">
+              <div className="flex items-start gap-4 rounded-2xl bg-rose-50/50 p-6">
+                <MessageCircle className="h-6 w-6 shrink-0 text-rose-500" />
+                <div>
+                  <p className="font-bold text-gray-800">店舗からの連絡をお待ちください</p>
+                  <p className="text-sm leading-relaxed text-gray-600">
+                    ご入力いただいた内容を確認後、店舗スタッフまたはキャストより折り返しご連絡を差し上げます。その連絡をもちまして予約確定となります。
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-start gap-4 rounded-2xl bg-blue-50/50 p-6">
+                <Mail className="h-6 w-6 shrink-0 text-blue-500" />
+                <div>
+                  <p className="font-bold text-gray-800">確認メールを送信しました</p>
+                  <p className="text-sm leading-relaxed text-gray-600">
+                    ご入力いただいたメールアドレス宛に、自動返信の確認メールをお送りしました。届いていない場合は、迷惑メールフォルダをご確認いただくか、LINEまたはお電話にてお問い合わせください。
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              <button
+                onClick={() => router.push(`/store/${store.slug}`)}
+                className="flex items-center justify-center gap-2 rounded-2xl bg-rose-500 py-5 text-lg font-black text-white shadow-xl transition-all hover:bg-rose-600 hover:shadow-2xl active:scale-95"
+              >
+                <Home className="h-5 w-5" />
+                店舗トップへ戻る
+              </button>
+
+              <div className="flex items-center justify-center gap-2 text-sm font-bold text-gray-400">
+                <Clock className="h-4 w-4" />
+                通常1時間以内に返信いたします
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-20 md:py-32">
       <div className="container mx-auto max-w-4xl px-4">
@@ -98,54 +200,47 @@ export default function ReservationPageClient({
           </p>
         </div>
 
-        {/* 連絡先カード */}
+        {/* クイック連絡先 */}
         <div className="mb-12 grid gap-4 md:grid-cols-3">
-          <a
-            href={phoneHref}
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-100 bg-white p-6 transition-all hover:border-rose-300 hover:shadow-lg"
-          >
-            <div className="rounded-full bg-gradient-to-br from-rose-100 to-pink-100 p-4 transition-transform group-hover:scale-110">
-              <Phone className="h-6 w-6 text-rose-600" />
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">お電話</div>
-              <div className="text-lg font-bold text-gray-800">{phoneLabel}</div>
-              {receptionHours && (
-                <div className="mt-0.5 text-[10px] text-rose-500">受付: {receptionHours}</div>
-              )}
-              {businessHours && (
-                <div className="text-[10px] text-gray-500">営業: {businessHours}</div>
-              )}
-            </div>
-          </a>
-
           <a
             href={lineHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-green-100 bg-white p-6 transition-all hover:border-green-300 hover:shadow-lg"
+            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-green-400 hover:shadow-xl"
           >
-            <div className="rounded-full bg-gradient-to-br from-green-100 to-emerald-100 p-4 transition-transform group-hover:scale-110">
-              <MessageCircle className="h-6 w-6 text-green-600" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-50 text-green-500 transition-colors group-hover:bg-green-500 group-hover:text-white">
+              <MessageCircle className="h-8 w-8" />
             </div>
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">LINE</div>
-              <div className="text-lg font-bold text-gray-800">{lineLabel}</div>
+              <span className="text-xs font-bold text-gray-400">LINE ID</span>
+              <p className="text-lg font-black text-gray-700">{lineLabel}</p>
             </div>
           </a>
 
           <a
-            href={store.notification_email ? `mailto:${store.notification_email}` : '#'}
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-blue-100 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg"
+            href={phoneHref}
+            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-400 hover:shadow-xl"
           >
-            <div className="rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 p-4 transition-transform group-hover:scale-110">
-              <Mail className="h-6 w-6 text-blue-600" />
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-colors group-hover:bg-rose-500 group-hover:text-white">
+              <Phone className="h-8 w-8" />
             </div>
             <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">メール</div>
-              <div className="text-sm font-bold text-gray-800">{emailLabel}</div>
+              <span className="text-xs font-bold text-gray-400">TEL</span>
+              <p className="text-lg font-black text-gray-700">{phoneLabel}</p>
             </div>
           </a>
+
+          <div className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-pink-400 hover:shadow-xl">
+            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 text-pink-500 transition-colors group-hover:bg-pink-500 group-hover:text-white">
+              <Clock className="h-8 w-8" />
+            </div>
+            <div className="text-center">
+              <span className="text-xs font-bold text-gray-400">受付時間</span>
+              <p className="text-sm font-black text-gray-700">
+                {receptionHours || 'お気軽にお電話ください'}
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* フォーム */}
@@ -348,7 +443,7 @@ export default function ReservationPageClient({
             {/* ご不明の点 */}
             <div>
               <label className="mb-2 block text-sm font-bold text-gray-700">
-                何かご不明の点はございましたらご記入ください。
+                ご不明の点、ご要望があればお書きください
               </label>
               <textarea
                 name="message"
@@ -356,37 +451,45 @@ export default function ReservationPageClient({
                 onChange={handleChange}
                 rows={4}
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-colors focus:border-rose-400 focus:outline-none"
-                placeholder="ご質問やご要望をご記入ください"
+                placeholder="例：タバコは吸われない方で。優しそうな方がいいです。"
               />
             </div>
 
             {/* 注意事項 */}
-            <div className="rounded-2xl bg-blue-50 p-6">
-              <div className="flex items-start gap-3">
-                <AlertCircle className="mt-0.5 h-5 w-5 flex-shrink-0 text-blue-600" />
-                <div className="space-y-2 text-sm text-gray-700">
-                  <p className="font-bold text-blue-800">※ご注意点</p>
-                  <p>
-                    <span className="font-mono text-xs">{emailLabel}</span>
-                    こちらのアドレスからメールが届きます。
-                  </p>
-                  <p>
-                    営業時間内に１時間以上返信がない方は「迷惑メール」フォルダに振り分けられている可能性が考えられますのでご確認をお願いします。
-                  </p>
-                  <p>
-                    それでも確認が出来ない場合は、お手数ですが別のメールアドレスで再度お申し込みを頂くか、LINE、お電話でお問い合わせを下さいませ。
-                  </p>
-                </div>
+            <div className="rounded-2xl border-2 border-rose-50 bg-rose-50/50 p-6">
+              <div className="mb-4 flex items-center gap-2 font-bold text-gray-800">
+                <AlertCircle className="h-5 w-5 text-rose-500" />
+                注意事項
               </div>
+              <ul className="list-inside list-disc space-y-2 text-sm text-gray-600">
+                <li>
+                  ご希望の日時、コース等を確認後、担当者より折り返しご連絡を差し上げます。その連絡をもちまて予約確定となります。
+                </li>
+                <li>
+                  お急ぎの場合や、直前のご予約はお電話（
+                  <a href={phoneHref} className="font-bold text-rose-500 underline">
+                    {phoneLabel}
+                  </a>
+                  ）またはLINEをご利用ください。
+                </li>
+                <li>無断キャンセルは、今後のご利用をお断りする場合がございます。</li>
+              </ul>
             </div>
 
             {/* 送信ボタン */}
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-rose-600 hover:to-pink-600 hover:shadow-xl"
+              disabled={isSubmitting}
+              className="group flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-500 py-6 text-xl font-black text-white shadow-xl transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Send className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              予約を送信する
+              {isSubmitting ? (
+                <Loader2 className="h-6 w-6 animate-spin" />
+              ) : (
+                <>
+                  <Send className="h-6 w-6 transition-transform group-hover:translate-x-1" />
+                  予約をリクエストする
+                </>
+              )}
             </button>
           </div>
         </form>

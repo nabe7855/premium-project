@@ -31,9 +31,10 @@ import CastTabReviewPage from './detail/CastTabReviews';
 interface CastDetailProps {
   cast: Cast;
   storeSlug: string; // ✅ 追加
+  storeId?: string; // ✅ 追加
 }
 
-const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
+const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => {
   const router = useRouter();
 
   const {
@@ -135,6 +136,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug }) => {
           isOpen={isBookingModalOpen}
           castName={cast.name}
           castId={cast.id}
+          storeId={storeId}
           onClose={handleBookingModalClose}
         />
       )}

@@ -15,6 +15,7 @@ interface CastCardProps {
     postsThisMonth: number;
     totalLikes: number;
     lastPost: string;
+    storeId?: string; // ✅ 追加
   };
   expanded?: boolean;
 }
@@ -139,6 +140,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
           isOpen={isBookingModalOpen}
           castName={cast.name}
           castId={castId}
+          storeId={cast.storeId}
           onClose={handleBookingModalClose}
         />
       )}

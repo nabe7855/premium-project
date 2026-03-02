@@ -14,4 +14,12 @@ export interface Reservation {
   dateTime: string;
   status: 'pending' | 'completed';
   steps: WorkflowStep[];
+  castName?: string;
+  castId?: string;
+  storeName?: string;
+  storeId?: string;
+  customerRequests?: string;
+  phone?: string;
+  email?: string;
+  clientNickname?: string;
 }

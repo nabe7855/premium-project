@@ -6,6 +6,7 @@ import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer'
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { useStore } from '@/contexts/StoreContext';
 import { mockDiaryPosts } from '@/data/diarydata';
+import { getStoreBySlug } from '@/lib/actions/reservation';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
@@ -29,11 +30,12 @@ const DiaryDetailPage = () => {
   const [post, setPost] = useState<PostType | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [dbStoreId, setDbStoreId] = useState<string | undefined>(undefined);
   const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
   const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
   const { store } = useStore();
 
-  // ✅ 店舗設定取得
+  // ✅ 店舗設定 & ID取得
   useEffect(() => {
     const fetchConfig = async () => {
       const result = await getStoreTopConfig(slug as string);
@@ -42,6 +44,9 @@ const DiaryDetailPage = () => {
       } else {
         setTopConfig(DEFAULT_STORE_TOP_CONFIG);
       }
+
+      const dbStore = await getStoreBySlug(slug as string);
+      if (dbStore) setDbStoreId(dbStore.id);
     };
     fetchConfig();
   }, [slug]);
@@ -356,6 +361,7 @@ const DiaryDetailPage = () => {
                 id: post.castId,
                 slug: post.castSlug,
                 storeSlug: post.storeSlug,
+                storeId: dbStoreId,
                 name: post.castName,
                 avatar: post.castAvatar,
                 status: 'available',
