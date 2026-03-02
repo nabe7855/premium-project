@@ -2,6 +2,14 @@
 import { Cast, CastStatus } from '@/types/cast';
 import { supabase } from './supabaseClient';
 
+export interface CastListMini {
+  id: string;
+  name: string;
+  age?: number;
+  isNewcomer: boolean;
+  priority: number;
+}
+
 export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
   // 1. 店舗に所属するキャスト一覧を取得（reviews も JOIN して直接集計）
   // stores テーブルを JOIN して slug でフィルタリングすることで、店舗ID取得の1回分のリクエストを削減
@@ -152,4 +160,55 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       return mapped;
     })
     .filter((c: Cast | null): c is Cast => c !== null);
+}
+
+// 🆕 予約フォーム専用の軽量版キャスト取得
+export async function getCastListMini(storeSlug: string): Promise<CastListMini[]> {
+  const { data, error } = await supabase
+    .from('cast_store_memberships')
+    .select(
+      `
+      priority,
+      stores!inner ( slug ),
+      casts (
+        id,
+        name,
+        age,
+        is_active,
+        cast_statuses (
+          is_active,
+          status_master ( name )
+        )
+      )
+    `,
+    )
+    .eq('stores.slug', storeSlug);
+
+  if (error || !data) {
+    console.error('❌ getCastListMini error:', error?.message);
+    return [];
+  }
+
+  return (data ?? [])
+    .map((item: any) => {
+      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
+      if (!cast || !cast.is_active) return null;
+
+      const statuses = Array.isArray(cast.cast_statuses)
+        ? cast.cast_statuses
+        : [cast.cast_statuses];
+      const isNewcomer = statuses.some(
+        (s: any) => s?.is_active && s?.status_master?.name === '新人',
+      );
+
+      return {
+        id: cast.id,
+        name: cast.name,
+        age: cast.age || undefined,
+        isNewcomer,
+        priority: item.priority ?? 0,
+      } as CastListMini;
+    })
+    .filter((c): c is CastListMini => c !== null)
+    .sort((a, b) => b.priority - a.priority);
 }

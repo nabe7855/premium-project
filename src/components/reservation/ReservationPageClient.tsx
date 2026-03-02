@@ -1,7 +1,7 @@
 'use client';
 
 import { createReservation } from '@/lib/actions/reservation';
-import { Cast } from '@/types/cast';
+import { CastListMini } from '@/lib/getCastsByStore';
 import {
   AlertCircle,
   Calendar,
@@ -17,7 +17,7 @@ import {
   User,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { Suspense, use, useState } from 'react';
 import { toast } from 'sonner';
 
 interface ReservationPageClientProps {
@@ -31,13 +31,28 @@ interface ReservationPageClientProps {
     notification_email: string | null;
   };
   storeConfig?: any;
-  casts: Cast[];
+  castsPromise: Promise<CastListMini[]>;
+}
+
+function CastOptions({ promise }: { promise: Promise<CastListMini[]> }) {
+  const casts = use(promise);
+  return (
+    <optgroup label="━━━ セラピスト指名 ━━━">
+      {casts.map((cast) => (
+        <option key={cast.id} value={cast.id}>
+          {cast.name}
+          {cast.age ? ` (${cast.age}歳)` : ''}
+          {cast.isNewcomer ? ' 🆕新人' : ''}
+        </option>
+      ))}
+    </optgroup>
+  );
 }
 
 export default function ReservationPageClient({
   store,
   storeConfig,
-  casts,
+  castsPromise,
 }: ReservationPageClientProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -267,15 +282,9 @@ export default function ReservationPageClient({
                 <option value="free" className="font-bold text-rose-600">
                   ⭐ フリー（セラピストはお店におまかせ）
                 </option>
-                <optgroup label="━━━ セラピスト指名 ━━━">
-                  {casts.map((cast) => (
-                    <option key={cast.id} value={cast.id}>
-                      {cast.name}
-                      {cast.age ? ` (${cast.age}歳)` : ''}
-                      {cast.isNewcomer ? ' 🆕新人' : ''}
-                    </option>
-                  ))}
-                </optgroup>
+                <Suspense fallback={<option disabled>読み込み中...</option>}>
+                  <CastOptions promise={castsPromise} />
+                </Suspense>
               </select>
               <p className="mt-2 text-xs text-gray-500">
                 💡 フリーをご選択いただくと、お店が最適なセラピストをご案内いたします

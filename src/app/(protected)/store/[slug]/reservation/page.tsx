@@ -3,7 +3,7 @@ import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer'
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
-import { getCastsByStore } from '@/lib/getCastsByStore';
+import { getCastListMini } from '@/lib/getCastsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { notFound } from 'next/navigation';
@@ -14,7 +14,7 @@ export const dynamic = 'force-dynamic';
 export default async function ReservationPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
 
-  // 1. 各リクエストを定義（並列実行のため実行はまだしない）
+  // 1. 各リクエストを定義
   const storePromise = prisma.store.findUnique({
     where: { slug },
     select: {
@@ -29,31 +29,27 @@ export default async function ReservationPage({ params }: { params: { slug: stri
   });
 
   const configPromise = getStoreTopConfig(slug, { skipCasts: true });
-  const castsPromise = getCastsByStore(slug);
+  // 高速な軽量版クエリを使用し、Promiseを解決せずに下位コンポーネントへ渡す（ストリーミング）
+  const castsPromise = getCastListMini(slug);
 
-  // 2. Promise.all で並列実行
-  const [store, configResult, allCasts] = await Promise.all([
-    storePromise,
-    configPromise,
-    castsPromise,
-  ]);
+  // 2. Promise.all で並列実行（キャスト一覧は待たない）
+  const [store, configResult] = await Promise.all([storePromise, configPromise]);
 
   if (!store) {
     return notFound();
   }
 
   const storeConfig = configResult.success ? configResult.config : null;
-  const activeCasts = allCasts.filter((cast) => cast.isActive);
 
   return (
-    <>
+    <div className="flex min-h-screen flex-col">
       {slug === 'yokohama' && <YokohamaHeader config={storeConfig?.header} />}
       {slug === 'fukuoka' && <FukuokaHeader config={storeConfig?.header} />}
 
-      <ReservationPageClient store={store} storeConfig={storeConfig} casts={activeCasts} />
+      <ReservationPageClient store={store} storeConfig={storeConfig} castsPromise={castsPromise} />
 
       {slug === 'yokohama' && <YokohamaFooter config={storeConfig?.footer} />}
       {slug === 'fukuoka' && <FukuokaFooter config={storeConfig?.footer} />}
-    </>
+    </div>
   );
 }
