@@ -92,6 +92,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
       // すでにサーバーサイドで取得済みの今日の日付なら、初回フェッチをスキップ
       if (selectedDate === dates[0].date && todayCasts && todayCasts.length > 0) {
+        setFetchedCasts(initialCasts);
         setIsLoading(false);
         return;
       }
@@ -131,7 +132,7 @@ const CastSection: React.FC<CastSectionProps> = ({
     };
 
     loadCasts();
-  }, [selectedDate, storeSlug, dates, todayCasts]);
+  }, [selectedDate, storeSlug, dates, todayCasts, initialCasts]);
 
   // 表示するリスト：データフェッチが完了していればそれを、なければConfigの初期値（SSG/SSR時点のもの）を使用...
   // としたいが、日付切り替えに対応するため、基本は fetchedCasts を使う。

@@ -87,6 +87,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
       // すでにサーバーサイドで取得済みの今日の日付なら、初回フェッチをスキップ
       if (selectedDate === dates[0].date && todayCasts && todayCasts.length > 0) {
+        setFetchedCasts(initialCasts);
         setIsLoading(false);
         return;
       }
@@ -123,7 +124,7 @@ const CastSection: React.FC<CastSectionProps> = ({
     };
 
     loadCasts();
-  }, [selectedDate, storeSlug, dates, todayCasts]);
+  }, [selectedDate, storeSlug, dates, todayCasts, initialCasts]);
 
   const displayCasts = fetchedCasts.length > 0 ? fetchedCasts : isLoading ? [] : [];
 
