@@ -119,7 +119,7 @@ const CastCard: React.FC<CastCardProps> = ({
 
         {/* 🆕 キャスト状態ラベル（付箋風 + スクロール時スライドイン） */}
         {cast.statuses?.some((s) => s.isActive && s.status_master) && (
-          <div className="absolute right-0 top-2 flex flex-col items-end gap-2 pr-[-8px]">
+          <div className="absolute right-0 top-2 flex flex-col items-end gap-2 overflow-hidden pr-0">
             {cast.statuses
               ?.filter((s) => s.isActive && s.status_master)
               .map((status, i) => (
