@@ -1,12 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { supabase } from '@/lib/supabaseClient';
-import { ScheduleDay as ScheduleDayType, Cast } from '@/types/schedule';
 import DateNavigation from '@/components/sections/schedule/DateNavigation';
 import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { HeaderConfig } from '@/lib/store/storeTopConfig';
+import { supabase } from '@/lib/supabaseClient';
+import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
 import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 function SchedulePage() {
   const params = useParams();
@@ -14,6 +17,16 @@ function SchedulePage() {
 
   const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
   const [activeDate, setActiveDate] = useState<string>('');
+  const [headerConfig, setHeaderConfig] = useState<HeaderConfig | null>(null);
+
+  // ✅ 店舗別ヘッダー設定の取得
+  useEffect(() => {
+    getStoreTopConfig(storeSlug).then((res) => {
+      if (res.success && res.config?.header) {
+        setHeaderConfig(res.config.header);
+      }
+    });
+  }, [storeSlug]);
 
   // ✅ 予約ボタン押下処理
   const handleBooking = (castId: string) => {
@@ -68,7 +81,7 @@ function SchedulePage() {
                 )
               )
             )
-          `
+          `,
         )
         .gte('work_date', dateRange[0].date)
         .lte('work_date', dateRange[dateRange.length - 1].date);
@@ -138,38 +151,8 @@ function SchedulePage() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="sticky top-0 z-50 border-b border-gray-200 bg-white">
-        <div className="mx-auto max-w-4xl px-4 py-4">
-          <div className="flex items-center space-x-3">
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: 'easeOut' }}
-              className="flex h-10 w-10 items-center justify-center rounded-full bg-red-100"
-            >
-              <span className="text-xl text-red-500">🍓</span>
-            </motion.div>
-            <div>
-              <motion.h1
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.2 }}
-                className="text-2xl font-bold text-gray-900"
-              >
-                Schedule
-              </motion.h1>
-              <motion.p
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, ease: 'easeOut', delay: 0.4 }}
-                className="font-serif text-sm text-gray-600"
-              >
-                あなたのご予定に、素敵な"いちご一会"を。
-              </motion.p>
-            </div>
-          </div>
-        </div>
-      </header>
+      {storeSlug === 'yokohama' && headerConfig && <YokohamaHeader config={headerConfig} />}
+      {storeSlug === 'fukuoka' && headerConfig && <FukuokaHeader config={headerConfig} />}
 
       {/* Main Content */}
       <main className="mx-auto max-w-4xl px-4 py-6">
