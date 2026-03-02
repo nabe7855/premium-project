@@ -18,6 +18,8 @@ interface DiaryPost {
   commentCount: number;
   storeSlug: string;
   castName: string;
+  image_url?: string;
+  castAvatar?: string;
 }
 
 interface DiaryListContentProps {
@@ -46,9 +48,13 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           casts (
             id,
             name,
+            image_url,
             cast_store_memberships (
               stores ( slug )
             )
+          ),
+          blog_images (
+            image_url
           ),
           blog_tags (
             blog_tag_master ( name )
@@ -65,24 +71,30 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
       const posts =
         data
           ?.filter((post: any) => {
-            const memberships = post.casts?.cast_store_memberships ?? [];
+            const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+            const memberships = castObj?.cast_store_memberships ?? [];
             const slugs = Array.isArray(memberships)
               ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
               : [];
             return slugs.includes(storeSlug);
           })
-          .map((post: any) => ({
-            id: post.id,
-            title: post.title,
-            content: post.content ?? '',
-            excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
-            date: post.created_at,
-            tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
-            reactions: { total: 0 },
-            commentCount: 0,
-            storeSlug,
-            castName: post.casts?.name ?? '不明なキャスト',
-          })) ?? [];
+          .map((post: any) => {
+            const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+            return {
+              id: post.id,
+              title: post.title,
+              content: post.content ?? '',
+              excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
+              date: post.created_at,
+              tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
+              reactions: { total: 0 },
+              commentCount: 0,
+              storeSlug,
+              castName: castObj?.name ?? '不明なキャスト',
+              castAvatar: castObj?.image_url,
+              image_url: post.blog_images?.[0]?.image_url,
+            };
+          }) ?? [];
 
       setAllPosts(posts);
     };

@@ -1,15 +1,15 @@
 'use client';
-import React from 'react';
-import Link from 'next/link';
 import {
-  Heart,
-  MessageCircle,
+  Clapperboard as Clap,
   Clock,
   Flame,
+  Heart,
+  MessageCircle,
   Sparkles,
   Zap,
-  Clapperboard as Clap,
 } from 'lucide-react';
+import Link from 'next/link';
+import React from 'react';
 
 interface DiaryCardProps {
   post: {
@@ -22,7 +22,13 @@ interface DiaryCardProps {
     image_url?: string;
     castName?: string;
     castAvatar?: string;
-    reactions: { total: number; likes?: number; healing?: number; energized?: number; supportive?: number };
+    reactions: {
+      total: number;
+      likes?: number;
+      healing?: number;
+      energized?: number;
+      supportive?: number;
+    };
     commentCount: number;
     readTime?: number;
     isNew?: boolean;
@@ -46,18 +52,23 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
 
   const linkHref = `/store/${post.storeSlug}/diary/post/${post.id}`;
 
-  // ✅ サムネイル画像が無い場合のフォールバック
-  const imageSrc = post.image_url || '/images/placeholder.png';
+  // ✅ サムネイル画像が無い場合のフォールバック（外部の高品質なプレースホルダーを使用）
+  const imageSrc =
+    post.image_url ||
+    'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop';
 
   // ✅ キャスト名とアバターのフォールバック
   const castName = post.castName || 'キャスト名未設定';
-  const castAvatar = post.castAvatar || '/images/avatar-placeholder.png';
+  const castAvatar =
+    post.castAvatar ||
+    `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castName)}`;
 
   // ✅ 読了時間はダミーで3分固定（将来的に content.length から算出可能）
   const readTime = post.readTime ?? 3;
 
   // ✅ 新着フラグは1週間以内投稿ならtrueにする
-  const isNew = post.isNew ?? (new Date().getTime() - new Date(post.date).getTime() < 7 * 24 * 60 * 60 * 1000);
+  const isNew =
+    post.isNew ?? new Date().getTime() - new Date(post.date).getTime() < 7 * 24 * 60 * 60 * 1000;
 
   if (compact) {
     return (

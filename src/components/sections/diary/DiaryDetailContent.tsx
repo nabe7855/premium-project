@@ -60,8 +60,10 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             castSlug: castData?.slug || '',
             image:
               data.blog_images?.[0]?.image_url ||
-              'https://via.placeholder.com/800x600?text=No+Image',
-            castAvatar: castData?.image_url || '/images/avatar-placeholder.png',
+              'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
+            castAvatar:
+              castData?.image_url ||
+              `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
             commentCount: 0,
             reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
