@@ -1,4 +1,6 @@
 import ReservationPageClient from '@/components/reservation/ReservationPageClient';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getCastsByStore } from '@/lib/getCastsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
@@ -41,5 +43,11 @@ export default async function ReservationPage({ params }: { params: { slug: stri
   const storeConfig = configResult.success ? configResult.config : null;
   const activeCasts = allCasts.filter((cast) => cast.isActive);
 
-  return <ReservationPageClient store={store} storeConfig={storeConfig} casts={activeCasts} />;
+  return (
+    <>
+      {slug === 'yokohama' && <YokohamaHeader config={storeConfig?.header} />}
+      {slug === 'fukuoka' && <FukuokaHeader config={storeConfig?.header} />}
+      <ReservationPageClient store={store} storeConfig={storeConfig} casts={activeCasts} />
+    </>
+  );
 }
