@@ -1,19 +1,40 @@
 'use client';
 
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface LayoutProps {
   children: React.ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
-  const { slug } = useParams();
+  const params = useParams();
+  const slug = (params?.slug as string) || '';
   const basePath = `/store/${slug}/hotel`;
 
+  const [headerConfig, setHeaderConfig] = useState<HeaderConfig | null>(null);
+
+  useEffect(() => {
+    if (slug) {
+      getStoreTopConfig(slug).then((res) => {
+        if (res.success && res.config?.header) {
+          setHeaderConfig(res.config.header);
+        }
+      });
+    }
+  }, [slug]);
+
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-gray-50">
+      {/* 店舗ごとの共通ヘッダー */}
+      {slug === 'yokohama' && headerConfig && <YokohamaHeader config={headerConfig} />}
+      {slug === 'fukuoka' && headerConfig && <FukuokaHeader config={headerConfig} />}
+
       <main className="flex-grow">{children}</main>
 
       <footer className="bg-gray-900 py-12 text-gray-400">
