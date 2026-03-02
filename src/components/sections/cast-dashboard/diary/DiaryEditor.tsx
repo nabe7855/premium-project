@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { CastDiary } from '@/types/cast';
+import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
@@ -39,7 +39,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         (initialData.images || []).map((url) => ({
           url,
           filePath: url.split('/').slice(-2).join('/'), // 👈 file_path を推定（保存時に正しく渡す）
-        }))
+        })),
       );
     }
   }, [initialData]);
@@ -161,12 +161,12 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
 
       // ---- 親に通知 ----
       onSave({
-         id: initialData?.id ?? '', // ✅ 新規は空文字 / 編集は既存id
-  castId,
-  title,
-  content,
-  images: [...existingImages.map((i) => i.url), ...newImageUrls],
-  tags,
+        id: initialData?.id ?? '', // ✅ 新規は空文字 / 編集は既存id
+        castId,
+        title,
+        content,
+        images: [...existingImages.map((i) => i.url), ...newImageUrls],
+        tags,
       });
     } catch (err) {
       console.error('❌ 保存エラー:', err);
@@ -177,14 +177,14 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-4 pb-32">
+    <form onSubmit={handleSubmit} className="relative space-y-4 pb-8">
       {/* タイトル */}
       <input
         type="text"
         placeholder="タイトル"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="w-full border rounded p-2"
+        className="w-full rounded border p-2"
       />
 
       {/* 本文 */}
@@ -192,7 +192,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         placeholder="本文"
         value={content}
         onChange={(e) => setContent(e.target.value)}
-        className="w-full border rounded p-2 min-h-[120px]"
+        className="min-h-[120px] w-full rounded border p-2"
       />
 
       {/* 既存画像プレビュー */}
@@ -200,11 +200,15 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         <div className="grid grid-cols-3 gap-2">
           {existingImages.map((img, index) => (
             <div key={index} className="relative">
-              <img src={img.url} alt={`existing-${index}`} className="w-full h-24 object-cover rounded" />
+              <img
+                src={img.url}
+                alt={`existing-${index}`}
+                className="h-24 w-full rounded object-cover"
+              />
               <button
                 type="button"
                 onClick={() => removeExistingImage(img.filePath)}
-                className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded"
+                className="absolute right-1 top-1 rounded bg-red-500 px-1 text-xs text-white"
               >
                 ✕
               </button>
@@ -214,9 +218,15 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
       )}
 
       {/* 新規ファイル選択 */}
-      <label className="block w-full p-4 text-center border-2 border-dashed rounded-lg cursor-pointer hover:bg-pink-50">
+      <label className="block w-full cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:bg-pink-50">
         <span className="text-gray-600">📸 写真を追加</span>
-        <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
+        <input
+          type="file"
+          multiple
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
       </label>
 
       {/* 新規プレビュー */}
@@ -224,11 +234,15 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         <div className="grid grid-cols-3 gap-2">
           {files.map((file, index) => (
             <div key={index} className="relative">
-              <img src={URL.createObjectURL(file)} alt={`preview-${index}`} className="w-full h-24 object-cover rounded" />
+              <img
+                src={URL.createObjectURL(file)}
+                alt={`preview-${index}`}
+                className="h-24 w-full rounded object-cover"
+              />
               <button
                 type="button"
                 onClick={() => handleRemoveFile(index)}
-                className="absolute top-1 right-1 bg-red-500 text-white text-xs px-1 rounded"
+                className="absolute right-1 top-1 rounded bg-red-500 px-1 text-xs text-white"
               >
                 ✕
               </button>
@@ -246,21 +260,25 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
             placeholder="タグを入力してEnter"
-            className="flex-1 border rounded px-2 py-1"
+            className="flex-1 rounded border px-2 py-1"
           />
-          <button type="button" onClick={() => addTag()} className="bg-pink-500 text-white px-3 rounded">
+          <button
+            type="button"
+            onClick={() => addTag()}
+            className="rounded bg-pink-500 px-3 text-white"
+          >
             追加
           </button>
         </div>
 
         {/* プリセットタグ */}
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {presetTags.map((preset) => (
             <button
               key={preset.id}
               type="button"
               onClick={() => addTag(preset.name)}
-              className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-sm hover:bg-pink-100 hover:text-pink-600"
+              className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 hover:bg-pink-100 hover:text-pink-600"
             >
               #{preset.name}
             </button>
@@ -268,9 +286,12 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         </div>
 
         {/* 選択済みタグ */}
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="bg-pink-100 text-pink-700 px-2 py-1 rounded-full flex items-center gap-1 text-sm">
+            <span
+              key={tag}
+              className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-sm text-pink-700"
+            >
               #{tag}
               <button type="button" onClick={() => removeTag(tag)} className="text-pink-500">
                 ×
@@ -280,12 +301,20 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         </div>
       </div>
 
-      {/* 固定ボタン */}
-      <div className="fixed bottom-16 left-0 right-0 bg-white border-t border-gray-200 p-4 flex gap-2 z-50 shadow-md">
-        <button type="submit" disabled={uploading} className="flex-1 bg-blue-500 text-white py-3 rounded text-lg">
+      {/* 保存・キャンセルボタン */}
+      <div className="mt-6 flex gap-4 pt-6">
+        <button
+          type="submit"
+          disabled={uploading}
+          className="flex-1 rounded-lg bg-blue-500 py-3 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-600 active:scale-[0.98]"
+        >
           {uploading ? '保存中...' : initialData ? '更新' : '保存'}
         </button>
-        <button type="button" onClick={onCancel} className="flex-1 bg-gray-300 py-3 rounded text-lg">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="flex-1 rounded-lg bg-[#D9E1E8] py-3 text-lg font-bold text-gray-800 shadow-md transition-all hover:bg-gray-300 active:scale-[0.98]"
+        >
           キャンセル
         </button>
       </div>
