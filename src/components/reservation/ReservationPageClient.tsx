@@ -304,7 +304,7 @@ export default function ReservationPageClient({
                 onChange={handleChange}
                 required
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-colors focus:border-rose-400 focus:outline-none"
-                placeholder="山田 太郎（偽名OK）"
+                placeholder="イチゴ"
               />
               <p className="mt-1 text-xs text-gray-500">偽名OK</p>
             </div>
@@ -388,7 +388,7 @@ export default function ReservationPageClient({
                 value={formData.meetingPlace}
                 onChange={handleChange}
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-colors focus:border-rose-400 focus:outline-none"
-                placeholder="例：新宿アルタ前、渋谷ラブホテル、鶯谷北口改札前"
+                placeholder=""
               />
             </div>
 
@@ -406,14 +406,49 @@ export default function ReservationPageClient({
                 className="w-full rounded-xl border-2 border-gray-200 px-4 py-3 transition-colors focus:border-rose-400 focus:outline-none"
               >
                 <option value="">選択して下さい</option>
-                <option value="120min-first" className="font-bold text-rose-600">
-                  ⭐ 初回限定120分コース（とてもお得！）
-                </option>
-                <option value="60min">60分コース</option>
-                <option value="90min">90分コース</option>
-                <option value="120min">120分コース</option>
-                <option value="150min">150分コース</option>
-                <option value="180min">180分コース</option>
+                <optgroup label="基本コース">
+                  <option value="基本コース-60分">60分</option>
+                  <option value="基本コース-90分">90分</option>
+                  <option value="基本コース-120分">120分</option>
+                  <option value="基本コース-150分">150分</option>
+                  <option value="基本コース-180分">180分</option>
+                  <option value="基本コース-240分">240分</option>
+                  <option value="基本コース-300分">300分</option>
+                </optgroup>
+                <optgroup label="お泊りコース">
+                  <option value="お泊りコース-10時間">10時間</option>
+                  <option value="お泊りコース-12時間">12時間</option>
+                  <option value="お泊りコース-14時間">14時間</option>
+                  <option value="お泊りコース-16時間">16時間</option>
+                  <option value="お泊りコース-18時間">18時間</option>
+                </optgroup>
+                <optgroup label="デートコース">
+                  <option value="デートコース-180分">180分</option>
+                  <option value="デートコース-240分">240分</option>
+                  <option value="デートコース-300分">300分</option>
+                </optgroup>
+                <optgroup label="新苺コース">
+                  <option value="新苺コース-90分">90分</option>
+                </optgroup>
+                <optgroup label="カップルコース">
+                  <option value="カップルコース-60分">60分</option>
+                  <option value="カップルコース-90分">90分</option>
+                  <option value="カップルコース-120分">120分</option>
+                </optgroup>
+                <optgroup label="3Pコース">
+                  <option value="3Pコース-90分">90分</option>
+                  <option value="3Pコース-120分">120分</option>
+                </optgroup>
+                <optgroup label="トラベルコース">
+                  <option value="トラベルコース-24時間以内">24時間以内</option>
+                  <option value="トラベルコース-30時間以内">30時間以内</option>
+                  <option value="トラベルコース-36時間以内">36時間以内</option>
+                  <option value="トラベルコース-42時間以内">42時間以内</option>
+                  <option value="トラベルコース-48時間以内">48時間以内</option>
+                  <option value="トラベルコース-54時間以内">54時間以内</option>
+                  <option value="トラベルコース-60時間以内">60時間以内</option>
+                  <option value="トラベルコース-60時間以上">60時間以上</option>
+                </optgroup>
               </select>
               <p className="mt-2 text-xs text-rose-600">
                 💡 初回の方は初回限定120分コースがとてもお得です
