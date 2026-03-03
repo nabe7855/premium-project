@@ -1,7 +1,9 @@
-import { useState, useRef, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 export const useCastDetail = () => {
-  const [activeTab, setActiveTab] = useState<'basic' | 'story' | 'schedule' | 'reviews' | 'videos'>('basic');
+  const [activeTab, setActiveTab] = useState<'basic' | 'story' | 'schedule' | 'reviews' | 'videos'>(
+    'basic',
+  );
   const [selectedImage, setSelectedImage] = useState(0);
   const [isSticky, setIsSticky] = useState(false);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -14,7 +16,7 @@ export const useCastDetail = () => {
       if (!actionBarRef.current) return;
 
       const rect = actionBarRef.current.getBoundingClientRect();
-      const headerHeight = 56; // モバイル基準で確実に低めに設定
+      const headerHeight = 102; // 店舗ヘッダー(54) + サブヘッダー(48) の合計に近い値
 
       setIsSticky(rect.top <= headerHeight);
     };

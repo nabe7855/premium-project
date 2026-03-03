@@ -71,7 +71,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
   return (
     <div className="min-h-screen bg-neutral-50">
       {/* ヘッダー */}
-      <div className="sticky top-0 z-40 border-b border-neutral-200 bg-white">
+      <div className="sticky top-[54px] z-40 border-b border-neutral-200 bg-white md:top-[65px]">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between">
             <button
@@ -118,7 +118,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
       </div>
 
       {/* タブコンテンツ */}
-      <div className={`px-4 py-6 ${isSticky ? 'mt-[112px] sm:mt-32' : ''}`}>
+      <div className={`px-4 py-6 ${isSticky ? 'mt-[150px] sm:mt-40' : ''}`}>
         {activeTab === 'basic' && <CastTabBasicInformation cast={cast} />}
         {activeTab === 'story' && <CastTabStory cast={cast} />}
         {activeTab === 'schedule' && (

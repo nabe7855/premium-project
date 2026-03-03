@@ -1,6 +1,8 @@
 import CastDetail from '@/components/sections/casts/casts/CastDetail';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import { getCastQuestions } from '@/lib/getCastQuestions';
 import { prisma } from '@/lib/prisma';
@@ -93,6 +95,20 @@ export default async function CastDetailPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(castProfileSD) }}
       />
+
+      {/* ✅ テンプレートに応じたヘッダーを表示 */}
+      {store?.template === 'yokohama' ? (
+        <>
+          <YokohamaHeader config={topConfig.header} />
+          <div className="h-[54px] md:h-[65px]" />
+        </>
+      ) : (
+        <>
+          <FukuokaHeader config={topConfig.header} />
+          <div className="h-[54px] md:h-[65px]" />
+        </>
+      )}
+
       {/* ✅ storeSlug と storeId を渡す */}
       <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} />
 

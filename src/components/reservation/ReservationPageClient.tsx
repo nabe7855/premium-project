@@ -185,7 +185,8 @@ export default function ReservationPageClient({
 
               <div className="flex items-center justify-center gap-2 text-sm font-bold text-gray-400">
                 <Clock className="h-4 w-4" />
-                通常1時間以内に返信いたします
+                迅速な対応を心がけていますが、混雑状況によりお返事が遅れる場合がございます。
+                お店からお返事が遅れている場合、当日ご利用、お急ぎのお客様はお手数をお掛け致しますがお電話にてご連絡を頂けますとスムーズです。
               </div>
             </div>
           </div>
