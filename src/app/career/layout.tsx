@@ -1,89 +1,110 @@
-import { ShieldCheckIcon } from 'lucide-react';
+import AgeVerificationModal from '@/components/career/AgeVerificationModal';
+import { UserCheckIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | セラピスト採用・キャリアメディア',
-    default: '未経験から稼げるセラピストへ | キャリアメディア',
+    template: "%s | GENTLEMAN'S CODE - モテる男を育成する自己研鑽メディア",
+    default: "モテる男への最短ルート | GENTLEMAN'S CODE",
   },
   description:
-    '女性用風俗のセラピスト・出張ホストとして稼ぐためのノウハウ、面接対策、給与シミュレーションを公開しています。',
+    "洗練された外見、心をつかむ会話、そして圧倒的な自信。GENTLEMAN'S CODEは、現代の男性が「選ばれる男」になるための知識とキャリアを提案する総合メディアです。",
 };
 
-import AgeVerificationModal from '@/components/career/AgeVerificationModal';
-
-// メディア専用の独立したレイアウト（クリーンな青基調）
+// 男性向け自己研鑽メディア専用レイアウト（洗練されたダーク＆クリーン）
 export default function CareerMediaLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-[#f8fafc] font-sans text-gray-800">
+    <div className="min-h-screen bg-[#fcfdff] font-sans text-slate-800 selection:bg-blue-100">
       <AgeVerificationModal />
 
       {/* メディア専用ヘッダー */}
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-sm">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6">
+      <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 shadow-sm backdrop-blur-sm">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/career" className="flex items-center gap-2">
-            {/* クリーンな印象を与えるロゴアイコン */}
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white">
-              <ShieldCheckIcon size={20} />
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-900 text-white shadow-lg">
+              <UserCheckIcon size={20} />
             </div>
-            <span className="text-xl font-bold tracking-tight text-gray-900">
-              THERAPIST <span className="text-blue-600">CAREER</span>
+            <span className="font-serif text-xl font-bold tracking-tighter text-slate-900">
+              GENTLEMAN<span className="text-blue-600">S</span>
             </span>
           </Link>
 
-          <nav className="hidden space-x-6 text-sm font-medium text-gray-600 md:flex">
-            <Link href="/career" className="hover:text-blue-600">
-              トップ
+          <nav className="hidden space-x-8 text-xs font-bold uppercase tracking-widest text-slate-500 md:flex">
+            <Link href="/career" className="transition-colors hover:text-blue-600">
+              Top
             </Link>
-            <Link href="/career?category=beginner" className="hover:text-blue-600">
-              初心者ガイド
+            <Link
+              href="/career?tag=ファッション・美容"
+              className="transition-colors hover:text-blue-600"
+            >
+              Style
             </Link>
-            <Link href="/career?category=income" className="hover:text-blue-600">
-              給料・稼ぎ方
+            <Link
+              href="/career?tag=会話・コミュ力"
+              className="transition-colors hover:text-blue-600"
+            >
+              Commu.
             </Link>
-            <Link href="/career?category=interview" className="hover:text-blue-600">
-              面接・採用
+            <Link href="/career?tag=恋愛・デート" className="transition-colors hover:text-blue-600">
+              Romance
+            </Link>
+            <Link
+              href="/career/recruit"
+              className="text-blue-600 transition-opacity hover:opacity-70"
+            >
+              Career
             </Link>
           </nav>
 
-          <a
-            href="https://line.me/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full bg-green-500 px-5 py-2 text-sm font-bold text-white shadow transition-colors hover:bg-green-600"
-          >
-            LINEで相談
-          </a>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/career/diagnostic"
+              className="hidden text-xs font-bold text-slate-400 transition-colors hover:text-blue-600 sm:block"
+            >
+              Potetial Check
+            </Link>
+            <a
+              href="https://line.me/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-slate-700"
+            >
+              Consultant
+            </a>
+          </div>
         </div>
       </header>
 
       {/* メインコンテンツ領域 */}
-      <main className="mx-auto max-w-5xl px-4 py-8 sm:px-6 md:py-12">{children}</main>
+      <main className="mx-auto max-w-none">{children}</main>
 
-      {/* メディア専用フッター */}
-      <footer className="mt-20 border-t border-gray-200 bg-white py-10">
-        <div className="mx-auto max-w-5xl px-4 text-center text-sm text-gray-500 sm:px-6">
-          <p className="mb-4">
-            当メディアは、これからセラピストを目指す男性のためのクリーンなキャリア支援プラットフォームです。
+      {/* 紳士向けフッター */}
+      <footer className="mt-20 border-t border-slate-100 bg-slate-50 py-16">
+        <div className="mx-auto max-w-6xl px-4 text-center sm:px-6">
+          <div className="mb-8 flex justify-center text-slate-300">
+            <UserCheckIcon size={32} strokeWidth={1} />
+          </div>
+          <p className="mx-auto mb-10 max-w-2xl text-[13px] leading-relaxed text-slate-400">
+            GENTLEMAN\'S
+            CODEは、男性の「自信」と「魅力」を科学し、行動で現実を変えるためのプラットフォームです。
             <br />
-            法令を遵守し、健全な店舗運営のもとでの働き方を提案しています。
+            洗練された知識を通じて、すべての男性が自分らしい輝きを放てる社会を目指しています。
           </p>
-          <div className="flex justify-center gap-4 text-xs">
-            <Link href="/terms" className="hover:text-gray-800">
-              利用規約
+          <div className="flex justify-center gap-8 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+            <Link href="/terms" className="hover:text-blue-600">
+              Terms
             </Link>
-            <Link href="/privacy" className="hover:text-gray-800">
-              プライバシーポリシー
+            <Link href="/privacy" className="hover:text-blue-600">
+              Privacy
             </Link>
-            <Link
-              href="/store/fukuoka/recruit"
-              className="font-bold text-blue-600 hover:text-gray-800"
-            >
-              採用・求人情報を見る
+            <Link href="/store/fukuoka/recruit" className="text-blue-600 hover:opacity-70">
+              Recruit Info
             </Link>
           </div>
-          <p className="mt-8">© 2026 THERAPIST CAREER Media. All rights reserved.</p>
+          <p className="mt-12 text-[10px] tracking-widest text-slate-300">
+            © 2026 GENTLEMAN\'S CODE / Premium Media Group.
+          </p>
         </div>
       </footer>
     </div>
