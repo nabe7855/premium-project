@@ -182,7 +182,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
             </div>
 
             {/* Thumbnail Gallery - Horizontal Scroll on Mobile */}
-            <div className="scrollbar-hide mb-4 flex gap-2 overflow-x-auto pb-2">
+            <div className="mb-4 flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
               {cast.images.map((image, index) => (
                 <button
                   key={index}
@@ -653,6 +653,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
         isOpen={isReviewModalOpen}
         onClose={() => setIsReviewModalOpen(false)}
         castName={cast.name}
+        castId={cast.id}
       />
     </div>
   );
