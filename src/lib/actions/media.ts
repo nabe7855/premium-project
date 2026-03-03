@@ -91,7 +91,7 @@ export async function createMediaArticle(data: MediaArticleData, tags: string[] 
       }
     }
 
-    revalidatePath('/admin');
+    revalidatePath('/admin/admin/media-management');
     return { success: true, article };
   } catch (error: any) {
     console.error('Error creating media article:', error);
@@ -145,7 +145,7 @@ export async function updateMediaArticle(id: string, data: MediaArticleData, tag
       });
     }
 
-    revalidatePath('/admin');
+    revalidatePath('/admin/admin/media-management');
     return { success: true, article };
   } catch (error: any) {
     console.error('Error updating media article:', error);
@@ -159,10 +159,23 @@ export async function deleteMediaArticle(id: string) {
     await prisma.mediaArticle.delete({
       where: { id },
     });
-    revalidatePath('/admin');
+    revalidatePath('/admin/admin/media-management');
     return { success: true };
   } catch (error: any) {
     console.error('Error deleting media article:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+// -- 管理画面用タグ一覧取得 (ステータス問わず全取得) --
+export async function getAllTags() {
+  try {
+    const tags = await prisma.mediaTag.findMany({
+      orderBy: { name: 'asc' },
+    });
+    return { success: true, tags };
+  } catch (error: any) {
+    console.error('Error fetching all tags:', error);
     return { success: false, error: error.message };
   }
 }

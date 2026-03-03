@@ -1,10 +1,15 @@
 'use client';
 
-import { createMediaArticle, MediaArticleData, updateMediaArticle } from '@/lib/actions/media';
-import { ChevronLeftIcon, SaveIcon } from 'lucide-react';
+import {
+  createMediaArticle,
+  getAllTags,
+  MediaArticleData,
+  updateMediaArticle,
+} from '@/lib/actions/media';
+import { ChevronLeftIcon, SaveIcon, Tag as TagIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface MediaEditorProps {
   initialData?: any;
@@ -14,6 +19,7 @@ interface MediaEditorProps {
 export default function MediaEditor({ initialData, articleId }: MediaEditorProps) {
   const router = useRouter();
   const [isSaving, setIsSaving] = useState(false);
+  const [availableTags, setAvailableTags] = useState<any[]>([]);
   const [formData, setFormData] = useState<MediaArticleData>({
     title: initialData?.title || '',
     slug: initialData?.slug || '',
@@ -30,11 +36,31 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
     initialData?.tags?.map((t: any) => t.tag.name).join(', ') || '',
   );
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      const result = await getAllTags();
+      if (result.success) {
+        setAvailableTags(result.tags || []);
+      }
+    };
+    fetchTags();
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleAddTag = (tagName: string) => {
+    const currentTags = tagsInput
+      .split(',')
+      .map((t) => t.trim())
+      .filter((t) => t !== '');
+    if (!currentTags.includes(tagName)) {
+      setTagsInput(currentTags.length > 0 ? `${tagsInput}, ${tagName}` : tagName);
+    }
   };
 
   const handleSave = async () => {
@@ -49,20 +75,26 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
       .map((tag) => tag.trim())
       .filter((tag) => tag.length > 0);
 
-    let result;
-    if (articleId) {
-      result = await updateMediaArticle(articleId, formData, tagsArray);
-    } else {
-      result = await createMediaArticle(formData, tagsArray);
-    }
+    try {
+      let result;
+      if (articleId) {
+        result = await updateMediaArticle(articleId, formData, tagsArray);
+      } else {
+        result = await createMediaArticle(formData, tagsArray);
+      }
 
-    if (result.success) {
-      alert('記事を保存しました！');
-      router.push('/admin/admin/media-management');
-    } else {
-      alert('保存エラー: ' + result.error);
+      if (result.success) {
+        alert('記事を保存しました！');
+        router.refresh();
+        router.push('/admin/admin/media-management');
+      } else {
+        alert('保存エラー: ' + result.error);
+      }
+    } catch (error: any) {
+      alert('システムエラーが発生しました: ' + error.message);
+    } finally {
+      setIsSaving(false);
     }
-    setIsSaving(false);
   };
 
   return (
@@ -193,8 +225,11 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
             </div>
 
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-bold text-gray-700">
-                タグ (カンマ区切り)
+              <label className="mb-2 block text-sm font-bold text-gray-700">
+                <div className="flex items-center gap-2">
+                  <TagIcon size={16} />
+                  タグ (カンマ区切り)
+                </div>
               </label>
               <input
                 type="text"
@@ -202,8 +237,29 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
                 placeholder="初回, 選び方, 面接"
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
+
+              {/* 既存タグの選択肢 */}
+              {availableTags.length > 0 && (
+                <div className="mt-4">
+                  <p className="mb-2 text-[11px] font-bold text-gray-400">
+                    登録済みのタグ（クリックで追加）:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {availableTags.map((tag) => (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => handleAddTag(tag.name)}
+                        className="rounded-full bg-gray-100 px-3 py-1 text-[10px] font-medium text-gray-600 transition-colors hover:bg-brand-secondary hover:text-white"
+                      >
+                        + {tag.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="mb-4">
               <label className="mb-1 block text-sm font-bold text-gray-700">

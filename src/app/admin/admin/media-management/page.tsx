@@ -83,6 +83,9 @@ export default function MediaManagementPage() {
                   ステータス
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  タグ
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   作成日
                 </th>
                 <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
@@ -93,13 +96,13 @@ export default function MediaManagementPage() {
             <tbody className="divide-y divide-gray-200 bg-white">
               {isLoading ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
                     読み込み中...
                   </td>
                 </tr>
               ) : articles.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
+                  <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
                     記事がまだありません。右上のボタンから新規作成してください。
                   </td>
                 </tr>
@@ -138,6 +141,21 @@ export default function MediaManagementPage() {
                         >
                           {article.status === 'published' ? '公開中' : '下書き'}
                         </span>
+                      </td>
+                      <td className="px-6 py-4">
+                        <div className="flex max-w-[200px] flex-wrap gap-1">
+                          {article.tags?.map((t: any) => (
+                            <span
+                              key={t.tag.id}
+                              className="inline-flex items-center rounded bg-gray-100 px-2 py-0.5 text-[10px] font-medium text-gray-600"
+                            >
+                              {t.tag.name}
+                            </span>
+                          ))}
+                          {(!article.tags || article.tags.length === 0) && (
+                            <span className="text-[10px] text-gray-400">なし</span>
+                          )}
+                        </div>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
                         {new Date(article.created_at).toLocaleDateString('ja-JP')}
