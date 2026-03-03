@@ -1,4 +1,5 @@
 import AgeVerificationGuard from '@/components/common/AgeVerificationGuard';
+import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
@@ -33,6 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <GoogleAnalytics ga_id="G-2TCLB5C447" />
       <body>
         <Providers>
           {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
