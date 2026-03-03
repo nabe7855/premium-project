@@ -394,7 +394,7 @@ export default function ReservationManagement() {
                         {/* Quick Actions for Step */}
                         {!step.isCompleted && (
                           <div className="flex gap-2 border-t border-gray-700/50 pt-2 group-hover:block">
-                            {['counseling', 'consent', 'survey'].includes(step.id) && (
+                            {['counseling', 'consent', 'review', 'survey'].includes(step.id) && (
                               <button
                                 onClick={() => copyLink(step.id, selectedReservation.id)}
                                 className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-brand-secondary py-2 text-[10px] font-bold text-pink-400 transition-all hover:bg-pink-500 hover:text-white"
