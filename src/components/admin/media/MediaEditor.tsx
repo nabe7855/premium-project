@@ -6,10 +6,18 @@ import {
   MediaArticleData,
   updateMediaArticle,
 } from '@/lib/actions/media';
-import { ChevronLeftIcon, SaveIcon, Tag as TagIcon } from 'lucide-react';
+import { uploadMediaImage } from '@/lib/uploadMediaImage';
+import {
+  ChevronLeftIcon,
+  ImageIcon,
+  SaveIcon,
+  Tag as TagIcon,
+  UploadIcon,
+  XCircleIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface MediaEditorProps {
   initialData?: any;
@@ -36,6 +44,11 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
     initialData?.tags?.map((t: any) => t.tag.name).join(', ') || '',
   );
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.thumbnail_url || null);
+  const [isUploading, setIsUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   useEffect(() => {
     const fetchTags = async () => {
       const result = await getAllTags();
@@ -60,6 +73,45 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
       .filter((t) => t !== '');
     if (!currentTags.includes(tagName)) {
       setTagsInput(currentTags.length > 0 ? `${tagsInput}, ${tagName}` : tagName);
+    }
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setSelectedFile(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewUrl(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const clearSelectedFile = () => {
+    setSelectedFile(null);
+    setPreviewUrl(formData.thumbnail_url || null);
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleImageUpload = async () => {
+    if (!selectedFile) return;
+
+    setIsUploading(true);
+    try {
+      const url = await uploadMediaImage(selectedFile);
+      if (url) {
+        setFormData((prev) => ({ ...prev, thumbnail_url: url }));
+        setSelectedFile(null);
+        alert('画像をアップロードしました。');
+      } else {
+        alert('画像のアップロードに失敗しました。');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('アップロード中にエラーが発生しました。');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -262,18 +314,86 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
               )}
             </div>
             <div className="mb-4">
-              <label className="mb-1 block text-sm font-bold text-gray-700">
-                サムネイル画像URL
-              </label>
-              <input
-                type="text"
-                name="thumbnail_url"
-                value={formData.thumbnail_url || ''}
-                onChange={handleChange}
-                placeholder="https://images.unsplash.com/..."
-                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
-              />
-              <p className="mt-1 text-[11px] text-gray-500">Unsplash等の画像URLを入力します。</p>
+              <label className="mb-1 block text-sm font-bold text-gray-700">サムネイル画像</label>
+
+              {/* プレビューエリア */}
+              <div className="mb-4">
+                {previewUrl ? (
+                  <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-gray-50 shadow-inner">
+                    <img
+                      src={previewUrl}
+                      alt="Thumbnail preview"
+                      className="h-full w-full object-cover"
+                    />
+                    {selectedFile && (
+                      <button
+                        onClick={clearSelectedFile}
+                        className="absolute right-2 top-2 rounded-full bg-black/50 p-1 text-white hover:bg-black/70"
+                      >
+                        <XCircleIcon size={20} />
+                      </button>
+                    )}
+                  </div>
+                ) : (
+                  <div className="flex aspect-video w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-gray-50">
+                    <div className="text-center">
+                      <ImageIcon className="mx-auto mb-2 text-gray-400" size={32} />
+                      <p className="text-xs text-gray-500">画像が未選択です</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* アップロード操作 */}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex flex-1 items-center justify-center gap-2 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"
+                  >
+                    <ImageIcon size={18} />
+                    画像を選択
+                  </button>
+
+                  {selectedFile && (
+                    <button
+                      type="button"
+                      onClick={handleImageUpload}
+                      disabled={isUploading}
+                      className="flex items-center justify-center gap-2 rounded-lg bg-slate-800 px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-slate-700 disabled:opacity-50"
+                    >
+                      <UploadIcon size={18} />
+                      {isUploading ? '中...' : 'アップロード'}
+                    </button>
+                  )}
+                </div>
+
+                <div className="relative">
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                    <span className="text-[10px] font-bold uppercase text-gray-400">URL</span>
+                  </div>
+                  <input
+                    type="text"
+                    name="thumbnail_url"
+                    value={formData.thumbnail_url || ''}
+                    onChange={handleChange}
+                    placeholder="https://images.unsplash.com/..."
+                    className="w-full rounded-lg border border-gray-300 p-2.5 pl-12 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                  />
+                </div>
+              </div>
+
+              <p className="mt-2 text-[11px] text-gray-500">
+                画像を直接アップロードするか、外部URLを入力してください。
+              </p>
             </div>
           </div>
 
