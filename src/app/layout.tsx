@@ -5,6 +5,7 @@ import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
+import { Toaster } from 'sonner';
 import './globals.css';
 import Providers from './providers'; // 👈 React Query 用のラッパー
 
@@ -44,6 +45,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </HeaderGuard>
           </AgeVerificationGuard>
         </Providers>
+        <Toaster
+          position="top-center"
+          richColors
+          duration={4000}
+          toastOptions={{
+            style: { fontFamily: 'inherit' },
+          }}
+        />
 
         {/* ✅ JSON-LD構造化データ（FAQ） */}
         <script
