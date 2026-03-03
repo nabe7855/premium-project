@@ -127,7 +127,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       return (
         <div
           key={item.href}
-          className="group relative overflow-hidden rounded-[40px] bg-white shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-[0.98]"
+          className="group relative overflow-hidden rounded-[40px] bg-transparent shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-[0.98]"
+          style={{
+            backgroundImage: 'url("/ハンバーガーメニュー横長背景.png")',
+            backgroundSize: '100% 100%',
+            backgroundPosition: 'center',
+          }}
         >
           <Link
             href={getAbsoluteHref(item.href)}
@@ -242,7 +247,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     return (
       <div
         key={item.href}
-        className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] border border-transparent bg-white px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+        className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] bg-transparent px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+        style={{
+          backgroundImage: 'url("/ハンバーガーメニュー背景.png")',
+          backgroundSize: '100% 100%',
+          backgroundPosition: 'center',
+        }}
       >
         <Link
           href={getAbsoluteHref(item.href)}
@@ -297,7 +307,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   return (
     <header
       id="header"
-      className={`sticky top-0 z-[100] w-full transition-all duration-300 ${
+      className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
         scrollY > 20 ? 'bg-white/95 py-1 shadow-sm backdrop-blur-md' : 'bg-white py-2'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >

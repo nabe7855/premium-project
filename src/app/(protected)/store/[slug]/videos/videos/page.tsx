@@ -1,14 +1,14 @@
 'use client';
-import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/sections/videos/Header';
 import { MoodSelector } from '@/components/sections/videos/MoodSelector';
+import { ParticleBackground } from '@/components/sections/videos/ParticleBackground';
 import { SortSelector } from '@/components/sections/videos/SortSelector';
 import { VideoCard } from '@/components/sections/videos/VideoCard';
 import { VideoPlayer } from '@/components/sections/videos/VideoPlayer';
-import { ParticleBackground } from '@/components/sections/videos/ParticleBackground';
 import { useTimeBasedTheme } from '@/hooks/useTimeBasedTheme';
 import { useVideoData } from '@/hooks/useVideoData';
 import { Video } from '@/types/videos';
+import { useEffect, useState } from 'react';
 
 function App() {
   const { currentTheme, isNightMode } = useTimeBasedTheme();
@@ -138,6 +138,8 @@ function App() {
           onSearchChange={setSearchTerm}
           favoriteCount={favorites.length}
         />
+        {/* Header Spacer */}
+        <div className="h-[72px] sm:h-[88px]" />
 
         <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-8">
           {/* Welcome message */}

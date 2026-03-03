@@ -8,7 +8,7 @@ interface HeaderProps {
 
 const Header: React.FC<HeaderProps> = ({ isMenuOpen, toggleMenu }) => {
   return (
-    <header className="sticky top-0 z-[60] flex h-16 items-center justify-between border-b border-pink-50 bg-white/95 px-6 shadow-sm backdrop-blur-md transition-all duration-300">
+    <header className="fixed top-0 z-[60] flex h-16 w-full items-center justify-between border-b border-pink-50 bg-white/95 px-6 shadow-sm backdrop-blur-md transition-all duration-300">
       <div className="flex items-center gap-3">
         <div className="flex h-10 w-10 rotate-3 items-center justify-center rounded-2xl bg-[#D14D72] shadow-lg shadow-pink-100 transition-transform active:rotate-0">
           <span className="-rotate-3 font-serif text-xl font-black text-white">S</span>

@@ -47,12 +47,16 @@ export default function FukuokaPage({
   return (
     <div className="selection:bg-primary-100 selection:text-primary-800 relative min-h-screen font-sans text-slate-600">
       {!hideHeader && (!safeConfig || safeConfig.header.isVisible || isEditing) && (
-        <Header
-          config={safeConfig?.header}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <Header
+            config={safeConfig?.header}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+          {/* Header Spacer */}
+          <div className="h-[70px] md:h-[81px]" />
+        </>
       )}
       {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (
         <HeroSection
