@@ -134,7 +134,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
               value={formData.title}
               onChange={handleChange}
               placeholder="初心者必見！女性用風俗の選び方..."
-              className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
             />
           </div>
 
@@ -149,7 +149,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
               onChange={handleChange}
               rows={20}
               placeholder="# 大見出し&#10;ここに本文を入力してください..."
-              className="w-full rounded-lg border border-gray-300 p-4 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              className="w-full rounded-lg border border-gray-300 p-4 font-mono text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
             />
             <p className="mt-2 text-xs text-brand-text-secondary">
               ※後日リッチテキストエディタ(画像をドラッグ＆ドロップできる画面)にアップグレード予定です。
@@ -167,7 +167,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
               onChange={handleChange}
               rows={3}
               placeholder="記事の一覧に表示される短い説明文を記述します。"
-              className="w-full rounded-lg border border-gray-300 p-3 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              className="w-full rounded-lg border border-gray-300 p-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
             />
           </div>
         </div>
@@ -184,7 +184,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 name="status"
                 value={formData.status}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               >
                 <option value="draft">下書き (非公開)</option>
                 <option value="published">公開</option>
@@ -199,7 +199,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 name="target_audience"
                 value={formData.target_audience}
                 onChange={handleChange}
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               >
                 <option value="user">お客様向け（ガイド・安心要素）</option>
                 <option value="recruit">求職者向け（採用・面接・悩み）</option>
@@ -217,7 +217,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 value={formData.slug}
                 onChange={handleChange}
                 placeholder="how-to-choose"
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
               <p className="mt-1 text-[11px] text-gray-500">
                 URLの一部になります（例：/magazine/how-to-choose）。英語とハイフンを推奨。
@@ -237,7 +237,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 value={tagsInput}
                 onChange={(e) => setTagsInput(e.target.value)}
                 placeholder="初回, 選び方, 面接"
-                className="w-full rounded-lg border border-gray-300 p-2.5 px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
 
               {/* 既存タグの選択肢 */}
@@ -271,7 +271,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 value={formData.thumbnail_url || ''}
                 onChange={handleChange}
                 placeholder="https://images.unsplash.com/..."
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
               <p className="mt-1 text-[11px] text-gray-500">Unsplash等の画像URLを入力します。</p>
             </div>
@@ -289,7 +289,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 value={formData.seo_title || ''}
                 onChange={handleChange}
                 placeholder="検索結果用のタイトル"
-                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
             </div>
 
@@ -301,7 +301,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 onChange={handleChange}
                 rows={4}
                 placeholder="検索結果で表示される説明文（120文字程度）"
-                className="w-full rounded-lg border border-gray-300 p-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-brand-accent"
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
             </div>
           </div>
