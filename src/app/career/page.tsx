@@ -69,7 +69,7 @@ export default async function CareerMediaTopPage({
         <div className="relative z-10 mx-auto max-w-6xl">
           <div className="max-w-2xl">
             <span className="mb-6 inline-flex items-center gap-2 rounded-full bg-blue-500/20 px-4 py-1.5 text-xs font-bold tracking-widest text-blue-300 backdrop-blur-sm">
-              <SparklesIcon size={14} /> FOR THE ULTIMATE GENTLEMAN
+              <SparklesIcon size={14} /> FOR THE ULTIMATE IKEO LABO
             </span>
             <h1 className="mb-8 font-serif text-4xl leading-tight md:text-6xl">
               「モテる男」の、
@@ -81,7 +81,7 @@ export default async function CareerMediaTopPage({
               <br />
               自分自身の魅力を最大限に引き出し、理想の人生とキャリアを手に入れる。
               <br />
-              大人な男性のための、総合自己研鑽メディア。
+              大人な男性のための、総合自己研鑽メディア「イケオラボ」。
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
               <Link

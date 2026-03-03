@@ -5,8 +5,8 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | 女性のための心とからだのケアメディア',
-    default: '心とからだを満たす特別な体験 | 女性向けケアメディア',
+    template: '%s | イケジョラボ - いけてる女になるためのメディア',
+    default: 'イケジョラボ | いけてる女になるためのメディア',
   },
   description:
     '女性のデリケートな悩み、セルフケア、そして日常から少し離れた特別なリラクゼーション体験に関する情報を発信しています。',
@@ -25,7 +25,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             <div className="flex items-center text-pink-300">
               <HeartIcon fill="currentColor" size={20} />
             </div>
-            <span className="font-serif text-lg tracking-[0.2em] text-gray-800">LUMIERE</span>
+            <span className="font-serif text-lg tracking-[0.2em] text-gray-800">イケジョラボ</span>
           </Link>
 
           <nav className="hidden space-x-6 text-[11px] font-bold text-gray-400 md:flex">
@@ -66,8 +66,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             <HeartIcon size={24} />
           </div>
           <p className="mx-auto mb-10 max-w-2xl">
-            Lumiere
-            Magazineは、女性の心とからだの健康、そして日常を彩る特別な体験をご提案するメディアです。
+            イケジョラボは、女性の心とからだの健康、そして日常を彩る特別な体験をご提案するメディアです。
             <br />
             すべての女性が自分らしく、心地よい時間を過ごせるようサポートいたします。
           </p>
@@ -86,7 +85,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             </Link>
           </div>
           <p className="mt-12 text-[10px] tracking-widest">
-            © 2026 LUMIERE MEDIA GROUP. All rights reserved.
+            © 2026 IKEJO LABO MEDIA GROUP. All rights reserved.
           </p>
         </div>
       </footer>

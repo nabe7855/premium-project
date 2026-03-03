@@ -29,7 +29,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${article.title} | GENTLEMAN'S CODE`,
+    title: `${article.title} | イケオラボ`,
     description: article.seo_description || article.excerpt || '',
     openGraph: {
       title: article.seo_title || article.title,
@@ -69,11 +69,11 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
     dateModified: article.updated_at.toISOString(),
     author: {
       '@type': 'Person',
-      name: article.author_name || "GENTLEMAN'S CODE 編集部",
+      name: article.author_name || 'イケオラボ 編集部',
     },
     publisher: {
       '@type': 'Organization',
-      name: "GENTLEMAN'S CODE",
+      name: 'イケオラボ',
       logo: {
         '@type': 'ImageObject',
         url: 'https://strawberry-boys.vercel.app/logo.png', // 適宜変更
@@ -147,8 +147,7 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
             <ShieldCheckIcon size={16} /> PROFESSIONAL GUIDELINES
           </div>
           <p>
-            GENTLEMAN\'S
-            CODEが提供するコンテンツは、男性の魅力向上とキャリア形成を目的とした情報提供です。
+            イケオラボが提供するコンテンツは、男性の魅力向上とキャリア形成を目的とした情報提供です。
             セラピストとしての働き方を検討される際は、各店舗の募集要項および関連法規を十分にご確認ください。
             当メディアは法令遵守（コンプライアンス）を最優先しており、反社会的勢力との関わりや公序良俗に反する行為を一切推奨いたしません。
           </p>

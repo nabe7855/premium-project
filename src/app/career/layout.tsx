@@ -5,11 +5,11 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | GENTLEMAN'S CODE - モテる男を育成する自己研鑽メディア",
-    default: "モテる男への最短ルート | GENTLEMAN'S CODE",
+    template: '%s | イケオラボ - いけてる男になるためのメディア',
+    default: 'イケオラボ | いけてる男になるためのメディア',
   },
   description:
-    "洗練された外見、心をつかむ会話、そして圧倒的な自信。GENTLEMAN'S CODEは、現代の男性が「選ばれる男」になるための知識とキャリアを提案する総合メディアです。",
+    '洗練された外見、心をつかむ会話、そして圧倒的な自信。イケオラボは、現代の男性が「選ばれる男」になるための知識とキャリアを提案する総合メディアです。',
 };
 
 // 男性向け自己研鑽メディア専用レイアウト（洗練されたダーク＆クリーン）
@@ -26,7 +26,7 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
               <UserCheckIcon size={20} />
             </div>
             <span className="font-serif text-xl font-bold tracking-tighter text-slate-900">
-              GENTLEMAN<span className="text-blue-600">S</span>
+              イケオ<span className="text-blue-600">ラボ</span>
             </span>
           </Link>
 
@@ -86,8 +86,7 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
             <UserCheckIcon size={32} strokeWidth={1} />
           </div>
           <p className="mx-auto mb-10 max-w-2xl text-[13px] leading-relaxed text-slate-400">
-            GENTLEMAN\'S
-            CODEは、男性の「自信」と「魅力」を科学し、行動で現実を変えるためのプラットフォームです。
+            イケオラボは、男性の「自信」と「魅力」を科学し、行動で現実を変えるためのプラットフォームです。
             <br />
             洗練された知識を通じて、すべての男性が自分らしい輝きを放てる社会を目指しています。
           </p>
@@ -103,7 +102,7 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
             </Link>
           </div>
           <p className="mt-12 text-[10px] tracking-widest text-slate-300">
-            © 2026 GENTLEMAN\'S CODE / Premium Media Group.
+            © 2026 IKEO LABO / Premium Media Group.
           </p>
         </div>
       </footer>

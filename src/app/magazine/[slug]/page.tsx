@@ -62,11 +62,11 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     dateModified: article.updated_at.toISOString(),
     author: {
       '@type': 'Person',
-      name: article.author_name || 'Lumiere 編集室',
+      name: article.author_name || 'イケジョラボ 編集室',
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Lumiere Magazine',
+      name: 'イケジョラボ',
       logo: {
         '@type': 'ImageObject',
         url: 'https://www.sutoroberrys.jp/logo.png', // 本番のロゴ画像に置き換え
@@ -144,7 +144,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
             記事内の体験談は投稿者個人の感想であり、すべての方に同様の成果を保証するものではありません。
           </p>
           <div className="mt-6 border-t border-gray-200 pt-6">
-            <p>© Lumiere Magazine / 無断転載・複製を固く禁じます。</p>
+            <p>© イケジョラボ / 無断転載・複製を固く禁じます。</p>
           </div>
         </div>
 
@@ -160,7 +160,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
             心ほどける、特別な時間を。
           </h2>
           <p className="mx-auto mb-10 max-w-lg text-sm leading-loose text-gray-500">
-            Lumiere Magazineをご覧いただきありがとうございます。
+            イケジョラボをご覧いただきありがとうございます。
             <br />
             日常から離れ、あなただけを優しく癒やす特別な体験を見つけてみませんか？
             <br />

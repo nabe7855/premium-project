@@ -106,11 +106,11 @@ export default async function MagazineTopPage({
             {/* 中央ロゴ */}
             <div className="mx-12 flex flex-col items-center">
               <div className="mb-1 font-serif text-2xl font-bold uppercase tracking-[0.2em] text-pink-400">
-                Lumiere
+                イケジョ
               </div>
               <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-pink-200 to-transparent"></div>
-              <span className="mt-1 text-[8px] uppercase tracking-[0.3em] text-pink-200">
-                Magazine
+              <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.3em] text-pink-200">
+                ラボ
               </span>
             </div>
 
