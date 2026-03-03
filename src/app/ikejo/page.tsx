@@ -60,14 +60,12 @@ export default async function MagazineTopPage({
   ];
 
   const subNav = [
-    { title: 'ニュース', href: '/ikejo?tag=ニュース' },
-    { title: 'よくある質問', href: '/ikejo?tag=よくある質問' },
-    { title: 'セラピの日常', href: '/ikejo?tag=セラピの日常' },
-    { title: 'プレゼント', href: '/ikejo?tag=プレゼント' },
-    { title: '人気オプション', href: '/ikejo?tag=人気オプション' },
+    { title: '初めての方へ', href: '/ikejo?tag=初めての方へ' },
+    { title: 'セルフケア', href: '/ikejo?tag=セルフケア' },
+    { title: 'パートナーと', href: '/ikejo?tag=パートナーと' },
+    { title: '恋愛・相談', href: '/ikejo?tag=恋愛・相談' },
+    { title: '体験談', href: '/ikejo?tag=体験談' },
     { title: 'ラブグッズ', href: '/ikejo?tag=ラブグッズ' },
-    { title: '店舗一覧', href: '/ikejo?tag=店舗一覧' },
-    { title: '全国ランキング', href: '/ikejo?tag=全国ランキング' },
   ];
 
   const renderEmptyState = () => (
@@ -149,20 +147,20 @@ export default async function MagazineTopPage({
       <section className="bg-white">
         <MagazineBannerSlider />
       </section>
-      {/* 3. サブナビゲーションバー & プロモーション */}
+      {/* 3. サブナビゲーションバー — 6項目を1行に均等配置 */}
       <section className="bg-pink-400 text-white shadow-md">
-        <div className="mx-auto max-w-6xl">
-          <div className="flex h-12 flex-wrap items-center justify-center gap-x-8 gap-y-2 px-4 text-[10px] font-bold md:text-xs">
+        <div className="mx-auto max-w-6xl overflow-x-auto scrollbar-hide">
+          <div className="flex h-12 w-full items-center justify-between px-2 text-[11px] font-bold md:px-6 md:text-xs">
             {subNav.map((item, idx) => (
-              <div key={item.title} className="flex items-center gap-8">
+              <div key={item.title} className="flex flex-1 items-center justify-center">
                 <Link
                   href={item.href}
-                  className="tracking-widest transition-opacity hover:opacity-70"
+                  className="whitespace-nowrap px-1 tracking-wider transition-all hover:opacity-70 md:px-3"
                 >
                   {item.title}
                 </Link>
                 {idx !== subNav.length - 1 && (
-                  <div className="hidden h-4 w-[1px] bg-white/20 md:block"></div>
+                  <div className="h-4 w-[1px] flex-shrink-0 bg-white/30"></div>
                 )}
               </div>
             ))}
