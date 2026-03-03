@@ -1,4 +1,4 @@
-import { Calendar, ChevronRight, Heart, MapPin, User } from 'lucide-react';
+import { Calendar, Heart, MapPin, User } from 'lucide-react';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
 import StepCard from '../components/StepCard';
@@ -85,10 +85,11 @@ const FlowSection: React.FC<FlowSectionProps> = ({
           en={config?.subHeading || 'Guide'}
           ja={config?.heading || 'ご利用までのステップ'}
         />
-        <div className="flex flex-col items-center justify-center gap-6 md:flex-row lg:gap-8">
-          {steps.map((step: any, idx: number) => (
-            <React.Fragment key={idx}>
+        <div className="mx-auto max-w-4xl">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">
+            {steps.map((step: any, idx: number) => (
               <StepCard
+                key={idx}
                 num={idx + 1}
                 icon={getIcon(step.icon)}
                 imageSrc={step.image || stepImages[idx]}
@@ -115,13 +116,8 @@ const FlowSection: React.FC<FlowSectionProps> = ({
                   </span>
                 }
               />
-              {idx < steps.length - 1 && (
-                <div className="text-primary-200 flex rotate-90 items-center justify-center py-2 md:rotate-0">
-                  <ChevronRight size={24} />
-                </div>
-              )}
-            </React.Fragment>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </section>
