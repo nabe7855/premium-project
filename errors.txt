@@ -1,0 +1,2 @@
+﻿src/components/admin/media/MediaEditor.tsx(48,13): error TS7006: Parameter 'tag' implicitly has an 'any' type.
+src/components/admin/media/MediaEditor.tsx(49,16): error TS7006: Parameter 'tag' implicitly has an 'any' type.

@@ -8,48 +8,48 @@ datasource db {
 }
 
 model Cast {
-  id            String                @id @default(uuid())
-  name          String
-  age           Int
-  profile       String?
-  image_url     String
-  email         String?
+  id             String                @id @default(uuid())
+  name           String
+  age            Int
+  profile        String?
+  image_url      String
+  email          String?
   login_password String?
-  created_at    DateTime              @default(now())
-  blogs         Blog[]
-  badges        CastBadge[]
-  features      CastFeatures?
-  profiles      CastProfile[]
-  memberships   CastStoreMembership[]
-  gallery_items GalleryItem[]
-  reviews       Review[]
-  schedules     Schedule[]
-  video_casts   VideoCast[]
+  created_at     DateTime              @default(now())
+  blogs          Blog[]
+  badges         CastBadge[]
+  features       CastFeatures?
+  profiles       CastProfile[]
+  memberships    CastStoreMembership[]
+  gallery_items  GalleryItem[]
+  reviews        Review[]
+  schedules      Schedule[]
+  video_casts    VideoCast[]
 
   @@map("casts")
 }
 
 model Store {
-  id               String                @id @default(uuid())
-  name             String
-  slug             String                @unique
-  address          String
-  phone            String?
-  catch_copy       String?
-  image_url        String?
-  theme_color      String?
-  tags             String[]
-  description      String?
-  created_at       DateTime              @default(now())
-  memberships      CastStoreMembership[]
-  schedules        Schedule[]
-  videos           Video[]
-  price_config     PriceConfig?
-  recruit_pages    RecruitPage[]
-  store_top_config StoreTopConfig?
-  first_time_config FirstTimeConfig?
-  line_id          String?
-  line_url         String?
+  id                 String                @id @default(uuid())
+  name               String
+  slug               String                @unique
+  address            String
+  phone              String?
+  catch_copy         String?
+  image_url          String?
+  theme_color        String?
+  tags               String[]
+  description        String?
+  created_at         DateTime              @default(now())
+  memberships        CastStoreMembership[]
+  schedules          Schedule[]
+  videos             Video[]
+  price_config       PriceConfig?
+  recruit_pages      RecruitPage[]
+  store_top_config   StoreTopConfig?
+  first_time_config  FirstTimeConfig?
+  line_id            String?
+  line_url           String?
   notification_email String?
 
   @@map("stores")
@@ -104,7 +104,6 @@ model FirstTimeConfig {
 
   @@map("first_time_configs")
 }
-
 
 model Schedule {
   id         String   @id @default(uuid())
@@ -680,4 +679,51 @@ model workflow_survey {
   technical_satisfaction String?
   therapist_name         String?
   updated_at             DateTime? @db.Timestamptz(6)
+}
+
+// ---------------------------------------------------------------------------
+// 新規メディア用テーブル群（既存のテーブルには一切リンク・干渉させない独立構造）
+// ---------------------------------------------------------------------------
+
+model MediaArticle {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  title           String
+  content         String    @db.Text
+  excerpt         String?   @db.Text
+  thumbnail_url   String?
+  target_audience String    @default("user") // "user" または "recruit" で出し分ける
+  status          String    @default("draft") // "draft" または "published"
+  author_name     String?   @default("運営事務局")
+  seo_title       String?
+  seo_description String?
+  published_at    DateTime?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  tags MediaArticleTag[]
+
+  @@map("media_articles")
+}
+
+model MediaTag {
+  id         String            @id @default(uuid())
+  name       String            @unique
+  created_at DateTime          @default(now())
+  articles   MediaArticleTag[]
+
+  @@map("media_tags")
+}
+
+model MediaArticleTag {
+  id         String   @id @default(uuid())
+  article_id String
+  tag_id     String
+  created_at DateTime @default(now())
+
+  article MediaArticle @relation(fields: [article_id], references: [id], onDelete: Cascade)
+  tag     MediaTag     @relation(fields: [tag_id], references: [id], onDelete: Cascade)
+
+  @@unique([article_id, tag_id])
+  @@map("media_article_tags")
 }

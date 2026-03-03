@@ -134,6 +134,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       icon: <SparklesIcon />,
       label: 'AI自動投稿管理',
     },
+    {
+      href: '/admin/admin/media-management',
+      icon: <DocumentTextIcon />,
+      label: 'メディア記事管理',
+    },
   ];
 
   return (
