@@ -4,7 +4,9 @@ import {
   deleteRecruitApplication,
   getRecruitApplications,
   updateApplicationStatus,
+  updateRecruitAdminData,
 } from '@/actions/recruit';
+import { Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -27,6 +29,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { Textarea } from '@/components/ui/textarea';
 
 import {
   AlertDialog,
@@ -66,6 +69,9 @@ export default function InterviewReservationsPage() {
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [storeFilter, setStoreFilter] = useState<string>('all');
   const [searchTerm, setSearchTerm] = useState<string>('');
+  const [adminMemo, setAdminMemo] = useState<string>('');
+  const [interviewDate, setInterviewDate] = useState<string>('');
+  const [isSavingAdminData, setIsSavingAdminData] = useState(false);
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -96,6 +102,28 @@ export default function InterviewReservationsPage() {
     } else {
       toast.error('削除に失敗しました');
     }
+  };
+
+  const handleOpenDetail = (app: any) => {
+    setSelectedApp(app);
+    setAdminMemo(app.adminMemo || '');
+    setInterviewDate(app.interviewDate || '');
+  };
+
+  const handleSaveAdminData = async () => {
+    if (!selectedApp) return;
+    setIsSavingAdminData(true);
+    const result = await updateRecruitAdminData(selectedApp.id, {
+      adminMemo,
+      interviewDate,
+    });
+    if (result.success) {
+      toast.success('管理情報を保存しました');
+      fetchApplications();
+    } else {
+      toast.error('保存に失敗しました');
+    }
+    setIsSavingAdminData(false);
   };
 
   const filteredApplications = applications.filter((app) => {
@@ -192,7 +220,7 @@ export default function InterviewReservationsPage() {
                     <TableCell className="text-right">
                       <Dialog>
                         <DialogTrigger asChild>
-                          <Button variant="ghost" size="sm" onClick={() => setSelectedApp(app)}>
+                          <Button variant="ghost" size="sm" onClick={() => handleOpenDetail(app)}>
                             詳細を見る
                           </Button>
                         </DialogTrigger>
@@ -526,12 +554,51 @@ export default function InterviewReservationsPage() {
                                     )}
                                   </section>
 
-                                  <div className="mt-12 rounded-xl bg-slate-900 p-4 text-white">
-                                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                                      Admin Note
-                                    </p>
-                                    <p className="mt-2 text-sm leading-relaxed text-slate-300">
-                                      ※チャットボット経由の応募です。24時間以内に折り返し連絡を行ってください。
+                                  <div className="mt-8 space-y-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                                      <h3 className="flex items-center gap-2 text-sm font-bold text-slate-800">
+                                        <Save size={16} className="text-blue-500" />
+                                        管理者用メモ / 予定
+                                      </h3>
+                                      <Button
+                                        size="sm"
+                                        onClick={handleSaveAdminData}
+                                        disabled={isSavingAdminData}
+                                        className="h-8 bg-blue-600 hover:bg-blue-700"
+                                      >
+                                        {isSavingAdminData ? '保存中...' : '保存する'}
+                                      </Button>
+                                    </div>
+
+                                    <div className="space-y-4">
+                                      <div>
+                                        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                          面接予定日時
+                                        </label>
+                                        <Input
+                                          placeholder="例: 3/15 14:00〜"
+                                          value={interviewDate}
+                                          onChange={(e) => setInterviewDate(e.target.value)}
+                                          className="border-slate-200 bg-slate-50"
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                                          管理者メモ
+                                        </label>
+                                        <Textarea
+                                          placeholder="面接時の印象や特記事項など..."
+                                          value={adminMemo}
+                                          onChange={(e) => setAdminMemo(e.target.value)}
+                                          rows={6}
+                                          className="resize-none border-slate-200 bg-slate-50 text-sm"
+                                        />
+                                      </div>
+                                    </div>
+
+                                    <p className="text-[10px] text-slate-400">
+                                      ※メモ内容は管理者間でのみ共有されます。
                                     </p>
                                   </div>
                                 </div>

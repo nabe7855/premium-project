@@ -157,6 +157,26 @@ export async function updateApplicationStatus(id: string, status: string) {
   }
 }
 
+export async function updateRecruitAdminData(
+  id: string,
+  data: { adminMemo?: string; interviewDate?: string },
+) {
+  try {
+    await prisma.recruitApplication.update({
+      where: { id },
+      data: {
+        adminMemo: data.adminMemo,
+        interviewDate: data.interviewDate,
+      },
+    });
+    revalidatePath('/admin/admin/interview-reservations');
+    return { success: true };
+  } catch (error) {
+    console.error('Update admin data error:', error);
+    return { success: false, error: '更新に失敗しました。' };
+  }
+}
+
 export async function getRecruitApplications() {
   try {
     return await prisma.recruitApplication.findMany({
