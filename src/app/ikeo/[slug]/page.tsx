@@ -91,7 +91,7 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
       <div className="mx-auto max-w-4xl px-6 pb-20 pt-10">
         {/* 戻るリンク */}
         <Link
-          href="/career"
+          href="/ikeo"
           className="mb-12 inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-slate-400 transition-colors hover:text-blue-600"
         >
           <ArrowLeftIcon size={14} /> Back to Index
@@ -201,7 +201,7 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
                 こちらの記事もおすすめ
               </h3>
               <Link
-                href="/career"
+                href="/ikeo"
                 className="text-[10px] font-bold uppercase tracking-widest text-blue-600 hover:underline"
               >
                 View All
@@ -209,7 +209,7 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
             </div>
             <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
               {relatedArticles.map((ra: any) => (
-                <Link key={ra.id} href={`/career/${ra.slug}`} className="group block">
+                <Link key={ra.id} href={`/ikeo/${ra.slug}`} className="group block">
                   <div className="relative mb-6 aspect-[16/10] overflow-hidden rounded-3xl bg-slate-100 shadow-sm transition-shadow group-hover:shadow-md">
                     {ra.thumbnail_url && (
                       <Image

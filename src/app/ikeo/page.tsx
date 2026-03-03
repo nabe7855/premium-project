@@ -85,7 +85,7 @@ export default async function CareerMediaTopPage({
             </p>
             <div className="flex flex-col gap-4 sm:flex-row">
               <Link
-                href="/career/?tag=初心者ガイド"
+                href="/ikeo/?tag=初心者ガイド"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-8 py-4 text-sm font-bold transition-all hover:bg-blue-500 hover:shadow-lg hover:shadow-blue-500/30"
               >
                 まずはここからチェック
@@ -105,7 +105,7 @@ export default async function CareerMediaTopPage({
         {/* モテ度診断バナー */}
         <section className="mb-24">
           <Link
-            href="/career/diagnostic"
+            href="/ikeo/diagnostic"
             className="group relative block overflow-hidden rounded-[2.5rem] bg-gradient-to-r from-blue-900 to-indigo-900 p-8 shadow-2xl md:p-12"
           >
             <div className="absolute right-0 top-0 h-full w-1/3 opacity-20 transition-transform duration-700 group-hover:scale-110">
@@ -138,7 +138,7 @@ export default async function CareerMediaTopPage({
             {sections.map((cat) => (
               <Link
                 key={cat.tag}
-                href={`/career/?tag=${cat.tag}`}
+                href={`/ikeo/?tag=${cat.tag}`}
                 className={`group flex flex-col items-center rounded-3xl border p-8 transition-all hover:shadow-xl ${
                   selectedTag === cat.tag
                     ? 'border-blue-500 bg-blue-50/50'
@@ -167,7 +167,7 @@ export default async function CareerMediaTopPage({
               </p>
             </div>
             {selectedTag && (
-              <Link href="/career" className="text-xs font-bold text-blue-600 hover:underline">
+              <Link href="/ikeo" className="text-xs font-bold text-blue-600 hover:underline">
                 すべて表示
               </Link>
             )}
@@ -178,7 +178,7 @@ export default async function CareerMediaTopPage({
               {allArticles.map((article: any) => (
                 <Link
                   key={article.id}
-                  href={`/career/${article.slug}`}
+                  href={`/ikeo/${article.slug}`}
                   className="group block overflow-hidden rounded-3xl border border-slate-100 bg-white transition-all hover:-translate-y-1 hover:shadow-xl"
                 >
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">

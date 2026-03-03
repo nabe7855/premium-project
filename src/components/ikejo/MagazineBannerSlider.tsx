@@ -14,7 +14,7 @@ const BANNER_ITEMS = [
     title: '漫画でわかる。\nはじめてのルミエール',
     subtitle: 'PICK UP',
     image: 'https://images.unsplash.com/photo-1516589174163-475354e00fb4?q=80&w=1600',
-    link: '/magazine?tag=はじめての方へ',
+    link: '/ikejo?tag=はじめての方へ',
   },
   {
     id: 2,

@@ -1,4 +1,4 @@
-import MagazineBannerSlider from '@/components/magazine/MagazineBannerSlider';
+import MagazineBannerSlider from '@/components/ikejo/MagazineBannerSlider';
 import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
 import {
   BookOpenIcon,
@@ -45,7 +45,7 @@ export default async function MagazineTopPage({
     {
       title: 'はじめての方へ',
       icon: InfoIcon,
-      href: '/magazine?tag=はじめての方へ',
+      href: '/ikejo?tag=はじめての方へ',
       label: 'FIRST',
     },
     {
@@ -60,14 +60,14 @@ export default async function MagazineTopPage({
   ];
 
   const subNav = [
-    { title: 'ニュース', href: '/magazine?tag=ニュース' },
-    { title: 'よくある質問', href: '/magazine?tag=よくある質問' },
-    { title: 'セラピの日常', href: '/magazine?tag=セラピの日常' },
-    { title: 'プレゼント', href: '/magazine?tag=プレゼント' },
-    { title: '人気オプション', href: '/magazine?tag=人気オプション' },
-    { title: 'ラブグッズ', href: '/magazine?tag=ラブグッズ' },
-    { title: '店舗一覧', href: '/magazine?tag=店舗一覧' },
-    { title: '全国ランキング', href: '/magazine?tag=全国ランキング' },
+    { title: 'ニュース', href: '/ikejo?tag=ニュース' },
+    { title: 'よくある質問', href: '/ikejo?tag=よくある質問' },
+    { title: 'セラピの日常', href: '/ikejo?tag=セラピの日常' },
+    { title: 'プレゼント', href: '/ikejo?tag=プレゼント' },
+    { title: '人気オプション', href: '/ikejo?tag=人気オプション' },
+    { title: 'ラブグッズ', href: '/ikejo?tag=ラブグッズ' },
+    { title: '店舗一覧', href: '/ikejo?tag=店舗一覧' },
+    { title: '全国ランキング', href: '/ikejo?tag=全国ランキング' },
   ];
 
   const renderEmptyState = () => (
@@ -236,7 +236,7 @@ export default async function MagazineTopPage({
             ].map((cat) => (
               <Link
                 key={cat.tag}
-                href={`/magazine/?tag=${cat.tag}`}
+                href={`/ikejo/?tag=${cat.tag}`}
                 className={`group flex flex-col items-center rounded-3xl border p-8 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-100/50 ${
                   selectedTag === cat.tag
                     ? 'border-pink-300 bg-pink-50/50'
@@ -270,7 +270,7 @@ export default async function MagazineTopPage({
           {/* タグフィルター */}
           <div className="mb-16 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/magazine"
+              href="/ikejo"
               className={`rounded-full px-6 py-2.5 text-[11px] font-bold tracking-widest transition-all ${
                 !selectedTag
                   ? 'bg-pink-500 text-white shadow-lg shadow-pink-200'
@@ -282,7 +282,7 @@ export default async function MagazineTopPage({
             {allTags.map((tag: any) => (
               <Link
                 key={tag.id}
-                href={`/magazine/?tag=${tag.name}`}
+                href={`/ikejo/?tag=${tag.name}`}
                 className={`rounded-full px-6 py-2.5 text-[11px] font-bold tracking-widest transition-all ${
                   selectedTag === tag.name
                     ? 'bg-pink-500 text-white shadow-lg shadow-pink-200'
@@ -301,7 +301,7 @@ export default async function MagazineTopPage({
               {allArticles.map((article: any) => (
                 <Link
                   key={article.id}
-                  href={`/magazine/${article.slug}`}
+                  href={`/ikejo/${article.slug}`}
                   className="group flex flex-col overflow-hidden"
                 >
                   <div className="relative mb-6 aspect-[16/10] w-full overflow-hidden rounded-[2rem] bg-pink-50 shadow-sm transition-shadow group-hover:shadow-xl group-hover:shadow-pink-100/30">

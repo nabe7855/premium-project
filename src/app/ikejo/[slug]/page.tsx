@@ -84,7 +84,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
       <div className="mx-auto max-w-3xl pb-24">
         {/* 戻るリンク */}
         <Link
-          href="/magazine"
+          href="/ikejo"
           className="mb-12 inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-gray-400 transition-colors hover:text-pink-500"
         >
           <ChevronLeftIcon size={14} /> Back to List
@@ -192,7 +192,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
             </h3>
             <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
               {relatedArticles.map((ra: any) => (
-                <Link key={ra.id} href={`/magazine/${ra.slug}`} className="group block">
+                <Link key={ra.id} href={`/ikejo/${ra.slug}`} className="group block">
                   <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl bg-pink-50">
                     {ra.thumbnail_url && (
                       <Image

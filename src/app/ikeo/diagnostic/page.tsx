@@ -99,7 +99,7 @@ export default function DiagnosticPage() {
                 className="transition-transform group-hover:translate-x-1"
               />
             </Link>
-            <Link href="/career" className="block text-sm font-bold text-blue-600 hover:underline">
+            <Link href="/ikeo" className="block text-sm font-bold text-blue-600 hover:underline">
               トップページに戻る
             </Link>
           </div>

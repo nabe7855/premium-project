@@ -335,7 +335,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
               <p className="mt-1 text-[11px] text-gray-500">
-                URLの一部になります（例：/magazine/how-to-choose）。英語とハイフンを推奨。
+                URLの一部になります（例：/ikejo/how-to-choose）。英語とハイフンを推奨。
               </p>
             </div>
 

@@ -1,4 +1,4 @@
-import MagazineAgeModal from '@/components/magazine/MagazineAgeModal';
+import MagazineAgeModal from '@/components/ikejo/MagazineAgeModal';
 import { HeartIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -21,7 +21,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
       {/* 女性向けクリーンヘッダー - ホームページのデザインと整合性を取るため少し控えめに */}
       <header className="sticky top-0 z-40 border-b border-pink-50 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/magazine" className="flex items-center gap-2">
+          <Link href="/ikejo" className="flex items-center gap-2">
             <div className="flex items-center text-pink-300">
               <HeartIcon fill="currentColor" size={20} />
             </div>
@@ -30,7 +30,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
 
           <nav className="hidden space-x-6 text-[11px] font-bold text-gray-400 md:flex">
             <Link
-              href="/magazine"
+              href="/ikejo"
               className="uppercase tracking-widest transition-colors hover:text-pink-500"
             >
               Magazine Top
@@ -80,7 +80,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             <Link href="/store/fukuoka" className="transition-colors hover:text-pink-500">
               店舗情報
             </Link>
-            <Link href="/career" className="text-pink-300 transition-opacity hover:opacity-70">
+            <Link href="/ikeo" className="text-pink-300 transition-opacity hover:opacity-70">
               採用特設メディア
             </Link>
           </div>
