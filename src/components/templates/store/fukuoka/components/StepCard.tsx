@@ -2,7 +2,7 @@ import { EditableImage } from '@/components/admin/EditableImage';
 import React from 'react';
 
 interface StepCardProps {
-  num: number;
+  num: string | number;
   icon?: React.ReactNode;
   title: React.ReactNode;
   desc: React.ReactNode;
@@ -22,8 +22,8 @@ const StepCard: React.FC<StepCardProps> = ({
 }) => (
   <div className="group relative flex w-full flex-row items-center gap-4 rounded-2xl border border-neutral-100 bg-white p-4 shadow-sm transition-all hover:shadow-md md:p-5">
     {/* Step Number Badge */}
-    <div className="from-primary-400 to-primary-500 absolute -left-2 -top-2 z-20 flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br font-serif text-sm font-bold text-white shadow-md">
-      {num}
+    <div className="absolute -left-3 -top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border-2 border-white bg-gradient-to-br from-primary to-accent font-serif text-lg font-bold italic tracking-tighter text-white shadow-[0_4px_12px_rgba(220,20,60,0.4)]">
+      {typeof num === 'number' ? num.toString().padStart(2, '0') : num}
     </div>
 
     {/* Image container - Left side */}

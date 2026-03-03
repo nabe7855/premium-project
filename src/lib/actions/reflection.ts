@@ -2,6 +2,7 @@
 
 import { supabase } from '@/lib/supabaseClient';
 import { ReflectionData } from '@/types/cast-reflection';
+import { markStepCompleted } from './reservation';
 
 export async function saveReflection(data: ReflectionData & { reservationId: string }) {
   console.log('>>> [saveReflection] START', { reservationId: data.reservationId });
@@ -30,6 +31,10 @@ export async function saveReflection(data: ReflectionData & { reservationId: str
     }
 
     console.log('>>> [saveReflection] SUCCESS');
+    // ワークフローのreflectionステップを完了にする
+    markStepCompleted(data.reservationId, 'reflection').catch((e) =>
+      console.error('[saveReflection] markStep failed:', e),
+    );
     return { success: true };
   } catch (error: any) {
     console.error('>>> [saveReflection] CATCH ERROR:', error);

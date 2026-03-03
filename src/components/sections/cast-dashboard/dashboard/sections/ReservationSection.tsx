@@ -1,6 +1,8 @@
 'use client';
 
+import { WorkflowResponseModal } from '@/components/admin/ui/WorkflowResponseModal';
 import { getReservations, updateReservationStep } from '@/lib/actions/reservation';
+import { getStepResponse } from '@/lib/actions/workflowResponse';
 import { supabase } from '@/lib/supabaseClient';
 import { Reservation, WorkflowStep, WorkflowStepId } from '@/types/reservation';
 import {
@@ -10,6 +12,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   Copy,
+  Eye,
   FileText,
   LucideIcon,
   MessageSquare,
@@ -34,6 +37,10 @@ export default function ReservationSection({ castId }: { castId: string }) {
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [stepModal, setStepModal] = useState<{ stepId: string; label: string; data: any } | null>(
+    null,
+  );
+  const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
 
   const fetchReservations = useCallback(async () => {
     setIsLoading(true);
@@ -84,72 +91,82 @@ export default function ReservationSection({ castId }: { castId: string }) {
 
   useEffect(() => {
     if (selectedReservation) {
-      const checkCounselingStatus = async () => {
-        const { data } = await supabase
+      // 一定間隔でDBの送信状況をチェックし、自動で「完了」にする
+      const interval = setInterval(async () => {
+        const res = reservations.find((r) => r.id === selectedReservation.id);
+        if (!res) return;
+
+        // カウンセリング
+        const { data: coun } = await supabase
           .from('workflow_counseling')
           .select('id')
-          .eq('reservation_id', selectedReservation.id)
+          .eq('reservation_id', res.id)
           .maybeSingle();
-
-        if (
-          data &&
-          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'counseling')?.isCompleted
-        ) {
-          toggleStep(selectedReservation.id, 'counseling' as WorkflowStepId);
+        if (coun && !res.steps.find((s) => s.id === 'counseling')?.isCompleted) {
+          toggleStep(res.id, 'counseling' as WorkflowStepId);
         }
-      };
 
-      const checkConsentStatus = async () => {
-        const { data } = await supabase
+        // 性的同意
+        const { data: cons } = await supabase
           .from('workflow_consent')
           .select('id')
-          .eq('reservation_id', selectedReservation.id)
+          .eq('reservation_id', res.id)
           .maybeSingle();
-
-        if (
-          data &&
-          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'consent')?.isCompleted
-        ) {
-          toggleStep(selectedReservation.id, 'consent' as WorkflowStepId);
+        if (cons && !res.steps.find((s) => s.id === 'consent')?.isCompleted) {
+          toggleStep(res.id, 'consent' as WorkflowStepId);
         }
-      };
 
-      const checkSurveyStatus = async () => {
-        const { data } = await supabase
+        // アンケート
+        const { data: surv } = await supabase
           .from('workflow_survey')
           .select('id')
-          .eq('reservation_id', selectedReservation.id)
+          .eq('reservation_id', res.id)
           .maybeSingle();
-
-        if (
-          data &&
-          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'survey')?.isCompleted
-        ) {
-          toggleStep(selectedReservation.id, 'survey' as WorkflowStepId);
+        if (surv && !res.steps.find((s) => s.id === 'survey')?.isCompleted) {
+          toggleStep(res.id, 'survey' as WorkflowStepId);
         }
-      };
 
-      const checkReflectionStatus = async () => {
-        const { data } = await supabase
+        // 口コミ
+        const { data: rev } = await supabase
+          .from('reviews')
+          .select('id')
+          .eq('reservation_id', res.id)
+          .maybeSingle();
+        if (rev && !res.steps.find((s) => s.id === 'review')?.isCompleted) {
+          toggleStep(res.id, 'review' as WorkflowStepId);
+        }
+
+        // 振り返り
+        const { data: refl } = await supabase
           .from('workflow_reflection')
           .select('id')
-          .eq('reservation_id', selectedReservation.id)
+          .eq('reservation_id', res.id)
           .maybeSingle();
-
-        if (
-          data &&
-          !selectedReservation.steps.find((s: WorkflowStep) => s.id === 'reflection')?.isCompleted
-        ) {
-          toggleStep(selectedReservation.id, 'reflection' as WorkflowStepId);
+        if (refl && !res.steps.find((s) => s.id === 'reflection')?.isCompleted) {
+          toggleStep(res.id, 'reflection' as WorkflowStepId);
         }
-      };
+      }, 5000); // 5秒おきにチェック
 
-      checkCounselingStatus();
-      checkConsentStatus();
-      checkSurveyStatus();
-      checkReflectionStatus();
+      return () => clearInterval(interval);
     }
-  }, [selectedReservation?.id]);
+  }, [selectedReservation?.id, reservations]);
+
+  const handleOpenResponse = async (stepId: string, label: string) => {
+    if (!selectedReservation) return;
+    setLoadingStepId(stepId);
+    try {
+      const data = await getStepResponse(selectedReservation.id, stepId as any);
+      if (data) {
+        setStepModal({ stepId, label, data });
+      } else {
+        toast.error('回答データが見つかりませんでした');
+      }
+    } catch (e) {
+      toast.error('エラーが発生しました');
+    } finally {
+      setLoadingStepId(null);
+    }
+  };
 
   const copyCounselingLink = (resId: string) => {
     const url = `${window.location.origin}/counseling/${resId}`;
@@ -258,16 +275,31 @@ export default function ReservationSection({ castId }: { castId: string }) {
                       </div>
                     </div>
                     <div className="flex shrink-0 flex-col gap-2">
-                      <button
-                        onClick={() => toggleStep(selectedReservation.id, step.id)}
-                        className={`rounded-xl px-4 py-2 text-xs font-bold transition-all ${
+                      <div
+                        className={`rounded-xl px-4 py-2 text-center text-xs font-bold transition-all ${
                           step.isCompleted
-                            ? 'border border-emerald-200 bg-white text-emerald-600 hover:bg-emerald-100'
-                            : 'bg-indigo-600 text-white shadow-md shadow-indigo-100 hover:bg-indigo-700'
+                            ? 'border border-emerald-200 bg-emerald-50 text-emerald-600'
+                            : 'bg-slate-100 text-slate-400'
                         }`}
                       >
-                        {step.isCompleted ? '完了済み' : '完了にする'}
-                      </button>
+                        {step.isCompleted ? '✓ 完了済み' : '未完了'}
+                      </div>
+
+                      {step.isCompleted &&
+                        ['counseling', 'consent', 'survey'].includes(step.id) && (
+                          <button
+                            onClick={() => handleOpenResponse(step.id, step.label)}
+                            className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-100"
+                            disabled={loadingStepId === step.id}
+                          >
+                            {loadingStepId === step.id ? (
+                              <span className="h-3 w-3 animate-spin rounded-full border border-emerald-400 border-t-transparent" />
+                            ) : (
+                              <Eye className="h-3 w-3" />
+                            )}
+                            回答を見る
+                          </button>
+                        )}
 
                       {step.id === 'counseling' && !step.isCompleted && (
                         <button
@@ -340,6 +372,14 @@ export default function ReservationSection({ castId }: { castId: string }) {
               </div>
             </div>
           </div>
+        )}
+        {stepModal && (
+          <WorkflowResponseModal
+            stepId={stepModal.stepId}
+            stepLabel={stepModal.label}
+            data={stepModal.data}
+            onClose={() => setStepModal(null)}
+          />
         )}
       </div>
     );
