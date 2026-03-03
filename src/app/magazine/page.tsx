@@ -1,5 +1,11 @@
 import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
-import { ChevronRightIcon, HeartPulseIcon, SparklesIcon } from 'lucide-react';
+import {
+  BookOpenIcon,
+  ChevronRightIcon,
+  HeartIcon,
+  HeartPulseIcon,
+  SparklesIcon,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -78,6 +84,53 @@ export default async function MagazineTopPage({
           </div>
         </div>
       </div>
+
+      {/* 悩み・シーン別ナビゲーション (ラブコスメ風) */}
+      <section className="mb-20">
+        <div className="mb-10 text-center">
+          <p className="mb-2 text-xs font-bold uppercase tracking-[0.2em] text-pink-400">
+            Search by Scene
+          </p>
+          <h2 className="font-serif text-3xl text-gray-800">シーン・悩み別で探す</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          {[
+            {
+              name: '初めての方へ',
+              tag: '初心者ガイド',
+              icon: HeartPulseIcon,
+              desc: '安心の利用ガイド',
+            },
+            { name: 'セルフケア', tag: 'セルフケア', icon: SparklesIcon, desc: '心と体の整え方' },
+            {
+              name: '恋愛・相談',
+              tag: '恋愛・コミュニケーション',
+              icon: HeartIcon,
+              desc: '大切な人との関係',
+            },
+            { name: '体験談', tag: '体験談', icon: BookOpenIcon, desc: 'ユーザーのリアルな声' },
+          ].map((cat) => (
+            <Link
+              key={cat.tag}
+              href={`/magazine/?tag=${cat.tag}`}
+              className={`group relative overflow-hidden rounded-3xl border p-6 transition-all hover:shadow-xl hover:shadow-pink-100/50 ${
+                selectedTag === cat.tag
+                  ? 'border-pink-300 bg-pink-50/30'
+                  : 'border-pink-50 bg-white'
+              }`}
+            >
+              <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-50 text-pink-500 transition-transform group-hover:scale-110 group-hover:bg-pink-500 group-hover:text-white">
+                <cat.icon size={24} strokeWidth={1.5} />
+              </div>
+              <h3 className="mb-1 font-bold text-gray-800 group-hover:text-pink-600">{cat.name}</h3>
+              <p className="text-[10px] text-gray-400">{cat.desc}</p>
+              {selectedTag === cat.tag && (
+                <div className="absolute right-4 top-4 h-2 w-2 rounded-full bg-pink-400"></div>
+              )}
+            </Link>
+          ))}
+        </div>
+      </section>
 
       {/* 最新マガジン */}
       <section>

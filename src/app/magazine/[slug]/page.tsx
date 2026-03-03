@@ -1,5 +1,6 @@
+import { getRelatedArticles } from '@/lib/actions/media';
 import { prisma } from '@/lib/prisma';
-import { ChevronLeftIcon, HeartIcon } from 'lucide-react';
+import { ArrowRightIcon, ChevronLeftIcon, HeartIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -47,6 +48,10 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     notFound();
   }
 
+  // 関連記事の取得
+  const relatedResult = await getRelatedArticles(article.id, 'user');
+  const relatedArticles = relatedResult.success ? relatedResult.articles : [];
+
   // 構造化データ（JSON-LD） - Article
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -64,7 +69,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
       name: 'Lumiere Magazine',
       logo: {
         '@type': 'ImageObject',
-        url: 'https://example.com/logo.png', // 本番のロゴ画像に置き換え
+        url: 'https://www.sutoroberrys.jp/logo.png', // 本番のロゴ画像に置き換え
       },
     },
   };
@@ -126,13 +131,25 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
           </div>
         )}
 
-        {/* 記事本文 (Markdown) -> prose設定を女性向けにカスタム */}
+        {/* 記事本文 (Markdown) */}
         <article className="prose prose-lg prose-headings:font-serif prose-headings:font-normal prose-headings:text-gray-800 prose-a:text-pink-500 prose-a:no-underline hover:prose-a:text-pink-600 prose-img:rounded-3xl prose-hr:border-pink-50 prose-blockquote:border-l-pink-300 prose-blockquote:bg-pink-50/30 prose-blockquote:px-6 prose-blockquote:py-2 prose-blockquote:rounded-r-2xl prose-blockquote:text-gray-500 prose-blockquote:font-normal prose-li:marker:text-pink-300 mx-auto mb-20 max-w-none font-medium leading-[2.2] text-gray-600">
           <ReactMarkdown>{article.content}</ReactMarkdown>
         </article>
 
+        {/* 免責事項・専門家監修プレースホルダー */}
+        <div className="mb-20 rounded-2xl border border-gray-100 bg-gray-50/50 p-8 text-[11px] leading-relaxed text-gray-400">
+          <p className="mb-2 font-bold text-gray-500">【免責事項】</p>
+          <p>
+            本記事の情報は公開時点の調査に基づくものであり、効果には個人差があります。また、本コンテンツは医療行為を代替するものではありません。心身の不調については必ず専門の医療機関にご相談ください。
+            記事内の体験談は投稿者個人の感想であり、すべての方に同様の成果を保証するものではありません。
+          </p>
+          <div className="mt-6 border-t border-gray-200 pt-6">
+            <p>© Lumiere Magazine / 無断転載・複製を固く禁じます。</p>
+          </div>
+        </div>
+
         {/* お店への優しい導線（CTA） */}
-        <div className="relative overflow-hidden rounded-[2rem] border border-pink-100 bg-[#fffafb] p-10 text-center shadow-sm sm:p-14">
+        <div className="relative mb-20 overflow-hidden rounded-[2rem] border border-pink-100 bg-[#fffafb] p-10 text-center shadow-sm sm:p-14">
           <div className="absolute right-0 top-0 -mr-10 -mt-10 h-32 w-32 rounded-full bg-pink-200/20 blur-2xl"></div>
           <div className="absolute bottom-0 left-0 -mb-10 -ml-10 h-32 w-32 justify-end rounded-full bg-orange-100/30 blur-2xl"></div>
 
@@ -149,7 +166,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
             <br />
             些細なご不安やご質問も、コンシェルジュが丁寧にお答えいたします。
           </p>
-          <div className="mx-auto flex w-fit flex-col justify-center gap-4 rounded-full shadow-[0_4px_15px_rgba(255,192,203,0.1)] sm:flex-row">
+          <div className="mx-auto flex w-fit flex-col justify-center gap-4 rounded-full shadow-[0_4px_15px_rgba(255,192,203,0.15)] sm:flex-row">
             <Link
               href="/store/fukuoka"
               className="rounded-full border border-pink-100 bg-white px-8 py-3.5 text-[13px] font-bold tracking-wider text-pink-600 transition-colors hover:bg-pink-50"
@@ -166,6 +183,37 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
             </a>
           </div>
         </div>
+
+        {/* 関連記事 */}
+        {relatedArticles.length > 0 && (
+          <section className="border-t border-pink-50 pt-16">
+            <h3 className="mb-10 text-center font-serif text-2xl text-gray-800">
+              こちらの記事もおすすめ
+            </h3>
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+              {relatedArticles.map((ra: any) => (
+                <Link key={ra.id} href={`/magazine/${ra.slug}`} className="group block">
+                  <div className="relative mb-4 aspect-video overflow-hidden rounded-2xl bg-pink-50">
+                    {ra.thumbnail_url && (
+                      <Image
+                        src={ra.thumbnail_url}
+                        alt={ra.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    )}
+                  </div>
+                  <h4 className="line-clamp-2 text-sm font-bold leading-relaxed text-gray-700 group-hover:text-pink-500">
+                    {ra.title}
+                  </h4>
+                  <div className="mt-2 flex items-center gap-1 text-[10px] font-bold text-pink-300 opacity-0 transition-all group-hover:underline group-hover:opacity-100">
+                    READ MORE <ArrowRightIcon size={10} />
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        )}
       </div>
     </>
   );

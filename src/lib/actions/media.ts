@@ -192,3 +192,63 @@ export async function getMediaTags(targetAudience?: 'user' | 'recruit') {
     return { success: false, error: error.message };
   }
 }
+
+// -- 関連記事の取得 (同じタグを持つものを優先) --
+export async function getRelatedArticles(
+  articleId: string,
+  targetAudience: 'user' | 'recruit',
+  limit: number = 3,
+) {
+  try {
+    const article = await prisma.mediaArticle.findUnique({
+      where: { id: articleId },
+      include: { tags: true },
+    });
+
+    if (!article) return { success: false, articles: [] };
+
+    const tagIds = article.tags.map((t: any) => t.tag_id);
+
+    const relatedArticles = await prisma.mediaArticle.findMany({
+      where: {
+        id: { not: articleId },
+        target_audience: targetAudience,
+        status: 'published',
+        tags: {
+          some: {
+            tag_id: { in: tagIds },
+          },
+        },
+      },
+      take: limit,
+      orderBy: { published_at: 'desc' },
+      include: {
+        tags: { include: { tag: true } },
+      },
+    });
+
+    // もしタグ一致が足りなければ、新しい順に補填
+    if (relatedArticles.length < limit) {
+      const moreArticles = await prisma.mediaArticle.findMany({
+        where: {
+          id: {
+            notIn: [articleId, ...relatedArticles.map((a: any) => a.id)],
+          },
+          target_audience: targetAudience,
+          status: 'published',
+        },
+        take: limit - relatedArticles.length,
+        orderBy: { published_at: 'desc' },
+        include: {
+          tags: { include: { tag: true } },
+        },
+      });
+      return { success: true, articles: [...relatedArticles, ...moreArticles] };
+    }
+
+    return { success: true, articles: relatedArticles };
+  } catch (error: any) {
+    console.error('Error fetching related articles:', error);
+    return { success: false, articles: [], error: error.message };
+  }
+}
