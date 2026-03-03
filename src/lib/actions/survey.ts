@@ -1,7 +1,8 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 import { SurveyResponse } from '@/types/service-feedback';
+import { markStepCompleted } from './reservation';
 
 export async function saveSurvey(data: SurveyResponse & { reservationId: string }) {
   console.log('>>> [saveSurvey] START', { reservationId: data.reservationId });
@@ -44,6 +45,8 @@ export async function saveSurvey(data: SurveyResponse & { reservationId: string 
     }
 
     console.log('>>> [saveSurvey] SUCCESS');
+    // ワークフローのsurveyステップを完了にする
+    await markStepCompleted(data.reservationId, 'survey');
     return { success: true };
   } catch (error: any) {
     console.error('>>> [saveSurvey] CATCH ERROR:', error);

@@ -1,7 +1,8 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 import { CounselingData, SurveyData } from '@/types/counseling&survey';
+import { markStepCompleted } from './reservation';
 
 // Server Action to fetch reservation and cast details
 export async function getReservationDetails(reservationId: string) {
@@ -49,10 +50,8 @@ export async function submitCounselingResult(
     return { success: false, error: insertError.message };
   }
 
-  // 2. 予約のステータス更新（またはワークフロー進捗の更新）
-  // 便宜上、ここでは reservations テーブルに progress_json などのカラムがあるか、
-  // あるいは UI 側でチェックマークを表示するためのフラグ管理を想定。
-  // 今回は「STEP 1 完了」の記録として扱う。
+  // 2. ワークフローのcounselingステップを完了にする
+  await markStepCompleted(reservationId, 'counseling');
 
   return { success: true };
 }

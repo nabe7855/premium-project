@@ -1,6 +1,7 @@
 'use server';
 
 import { supabaseAdmin } from '@/lib/supabaseAdmin';
+import { markStepCompleted } from './reservation';
 
 /** 予約IDから口コミに必要な情報を取得 */
 export async function getReservationForReview(reservationId: string) {
@@ -81,6 +82,9 @@ export async function saveReview(data: {
     const { error: tagError } = await supabaseAdmin.from('review_tag_links').insert(links);
     if (tagError) console.error('❌ tag link error:', tagError);
   }
+
+  // 3. ワークフローの口コミステップを完了にする
+  await markStepCompleted(data.reservationId, 'review');
 
   return { success: true };
 }

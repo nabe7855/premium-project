@@ -169,6 +169,40 @@ export async function updateReservationStep(
   }
 }
 
+export async function markStepCompleted(reservationId: string, stepId: string) {
+  try {
+    const reservation = await prisma.reservations.findUnique({
+      where: { id: reservationId },
+      select: { progress_json: true },
+    });
+
+    if (!reservation) return { success: false, error: 'Has reservation not found' };
+
+    const currentSteps = (reservation.progress_json as unknown as WorkflowStep[]) || INITIAL_STEPS;
+    const newSteps = currentSteps.map((step) =>
+      step.id === stepId ? { ...step, isCompleted: true } : step,
+    );
+
+    const allDone = newSteps.every((s) => s.isCompleted);
+    const newStatus = allDone ? 'completed' : 'pending';
+
+    await prisma.reservations.update({
+      where: { id: reservationId },
+      data: {
+        progress_json: newSteps as any,
+        status: newStatus,
+        updated_at: new Date(),
+      },
+    });
+
+    revalidatePath('/admin/admin/reservations');
+    return { success: true };
+  } catch (error) {
+    console.error('Error marking step completed:', error);
+    return { success: false };
+  }
+}
+
 export async function getAllCasts() {
   try {
     return await prisma.cast.findMany({

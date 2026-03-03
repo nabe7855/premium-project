@@ -1,6 +1,7 @@
 'use server';
 
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
+import { markStepCompleted } from './reservation';
 
 export async function saveConsent(data: {
   reservationId: string;
@@ -34,6 +35,8 @@ export async function saveConsent(data: {
     }
 
     console.log('>>> [saveConsent] SUCCESS');
+    // ワークフローのステップを自動で完了にする
+    await markStepCompleted(data.reservationId, 'consent');
     return { success: true };
   } catch (error: any) {
     console.error('>>> [saveConsent] CATCH ERROR:', error);
