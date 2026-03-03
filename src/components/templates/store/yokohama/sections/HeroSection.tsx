@@ -143,6 +143,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 priority={index === 0}
                 sizes="100vw"
                 className="scale-105 transform object-contain"
+                unoptimized
               />
 
               {isEditing && index === currentHeroSlide && (

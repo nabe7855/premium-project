@@ -111,6 +111,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   sizes="(max-width: 768px) 240px, 25vw"
                   loading="lazy"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0"></div>
                 <div className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-slate-800 backdrop-blur">

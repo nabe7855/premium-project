@@ -187,6 +187,8 @@ export default function ReservationPageClient({
                 <Clock className="h-4 w-4" />
                 迅速な対応を心がけていますが、混雑状況によりお返事が遅れる場合がございます。
                 お店からお返事が遅れている場合、当日ご利用、お急ぎのお客様はお手数をお掛け致しますがお電話にてご連絡を頂けますとスムーズです。
+
+                
               </div>
             </div>
           </div>

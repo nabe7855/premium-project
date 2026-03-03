@@ -113,6 +113,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   sizes="(max-width: 768px) 100vw, 33vw"
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   loading="lazy"
+                  unoptimized
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                 <div className="absolute left-4 top-4">
