@@ -1,4 +1,3 @@
-import AgeVerificationModal from '@/components/ikeo/AgeVerificationModal';
 import { UserCheckIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -16,8 +15,6 @@ export const metadata: Metadata = {
 export default function CareerMediaLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#fcfdff] font-sans text-slate-800 selection:bg-blue-100">
-      <AgeVerificationModal />
-
       {/* メディア専用ヘッダー */}
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 shadow-sm backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -40,10 +37,7 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
             >
               Style
             </Link>
-            <Link
-              href="/ikeo?tag=会話・コミュ力"
-              className="transition-colors hover:text-blue-600"
-            >
+            <Link href="/ikeo?tag=会話・コミュ力" className="transition-colors hover:text-blue-600">
               Commu.
             </Link>
             <Link href="/ikeo?tag=恋愛・デート" className="transition-colors hover:text-blue-600">

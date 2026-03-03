@@ -9,12 +9,16 @@ export default function HeaderGuard({ children }: { children: React.ReactNode })
 
   // ✅ ヘッダーを非表示にしたいパス一覧
   const hideHeaderPaths = ['/', '/age-check', '/store-select', '/test8'];
+  const hideHeaderPrefixes = ['/ikejo', '/ikeo'];
 
   // ✅ /store/[slug]/recruit も非表示にするための正規表現チェック
   const isRecruitPage = /\/store\/[^/]+\/recruit$/.test(pathname);
 
   // ✅ 上記に含まれていない場合のみヘッダーを表示
-  const showHeader = !hideHeaderPaths.includes(pathname) && !isRecruitPage;
+  const showHeader =
+    !hideHeaderPaths.includes(pathname) &&
+    !hideHeaderPrefixes.some((p) => pathname.startsWith(p)) &&
+    !isRecruitPage;
 
   return (
     <>

@@ -1,4 +1,3 @@
-import MagazineAgeModal from '@/components/ikejo/MagazineAgeModal';
 import { HeartIcon } from 'lucide-react';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -16,9 +15,7 @@ export const metadata: Metadata = {
 export default function MagazineLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FFFDFD] font-sans text-gray-800 selection:bg-pink-100">
-      <MagazineAgeModal />
-
-      {/* 女性向けクリーンヘッダー - ホームページのデザインと整合性を取るため少し控えめに */}
+      {/* 女性向けクリーンヘッダー */}
       <header className="sticky top-0 z-40 border-b border-pink-50 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/ikejo" className="flex items-center gap-2">
