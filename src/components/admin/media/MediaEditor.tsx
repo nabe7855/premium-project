@@ -47,7 +47,10 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialData?.thumbnail_url || null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isContentUploading, setIsContentUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const contentImageInputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -112,6 +115,47 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
       alert('アップロード中にエラーが発生しました。');
     } finally {
       setIsUploading(false);
+    }
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsContentUploading(true);
+    try {
+      const url = await uploadMediaImage(file);
+      if (url) {
+        // 現在のカーソル位置に画像を挿入
+        const markdownImage = `\n![イメージ](${url})\n`;
+        const textarea = textareaRef.current;
+
+        if (textarea) {
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+          const text = formData.content;
+          const newContent = text.substring(0, start) + markdownImage + text.substring(end);
+
+          setFormData((prev) => ({ ...prev, content: newContent }));
+
+          // カーソル位置を更新（少し遅延させてフォーカス）
+          setTimeout(() => {
+            textarea.focus();
+            textarea.setSelectionRange(start + markdownImage.length, start + markdownImage.length);
+          }, 10);
+        } else {
+          // テキストエリアの参照がない場合は末尾に追加
+          setFormData((prev) => ({ ...prev, content: prev.content + markdownImage }));
+        }
+      } else {
+        alert('画像のアップロードに失敗しました。');
+      }
+    } catch (error) {
+      console.error(error);
+      alert('アップロード中にエラーが発生しました。');
+    } finally {
+      setIsContentUploading(false);
+      if (contentImageInputRef.current) contentImageInputRef.current.value = '';
     }
   };
 
@@ -192,10 +236,29 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
 
           {/* Editor Placeholder */}
           <div className="rounded-xl bg-white p-6 shadow-sm">
-            <label className="mb-2 block text-sm font-bold text-gray-700">
-              本文 (Markdown形式) *
-            </label>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="text-sm font-bold text-gray-700">本文 (Markdown形式) *</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="file"
+                  ref={contentImageInputRef}
+                  onChange={handleContentImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => contentImageInputRef.current?.click()}
+                  disabled={isContentUploading}
+                  className="flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-[11px] font-bold text-gray-600 shadow-sm transition-all hover:bg-gray-50 disabled:opacity-50"
+                >
+                  <UploadIcon size={14} className={isContentUploading ? 'animate-bounce' : ''} />
+                  {isContentUploading ? 'アップロード中...' : '画像を本文に挿入'}
+                </button>
+              </div>
+            </div>
             <textarea
+              ref={textareaRef}
               name="content"
               value={formData.content}
               onChange={handleChange}
