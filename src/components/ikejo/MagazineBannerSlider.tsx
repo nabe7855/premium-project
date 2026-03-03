@@ -62,7 +62,7 @@ export default function MagazineBannerSlider() {
   }, [emblaApi, onSelect]);
 
   return (
-    <div className="relative w-full overflow-hidden py-10 md:py-20 lg:py-24">
+    <div className="relative w-full overflow-hidden py-8 md:py-12">
       {/* カルーセルコンテナ */}
       <div className="embla" ref={emblaRef}>
         <div className="embla__container flex items-center">
@@ -78,7 +78,7 @@ export default function MagazineBannerSlider() {
             return (
               <div
                 key={item.id}
-                className="embla__slide relative min-w-0 flex-[0_0_80%] md:flex-[0_0_70%] lg:flex-[0_0_60%]"
+                className="embla__slide relative min-w-0 flex-[0_0_72%] md:flex-[0_0_50%] lg:flex-[0_0_40%]"
                 style={{
                   perspective: '1200px',
                   zIndex: isActive ? 20 : 10,
@@ -98,7 +98,7 @@ export default function MagazineBannerSlider() {
                     stiffness: 180,
                     damping: 25,
                   }}
-                  className={`relative aspect-[16/9] w-full overflow-hidden rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.2)] md:rounded-[4rem] ${
+                  className={`relative aspect-square w-full overflow-hidden rounded-[3rem] shadow-[0_20px_60px_rgba(0,0,0,0.2)] md:rounded-[4rem] ${
                     isActive ? 'cursor-pointer' : 'pointer-events-none'
                   }`}
                 >
