@@ -5,9 +5,17 @@ import { supabaseAdmin } from '@/lib/supabaseAdmin';
 /** 完了済みワークフローステップの回答データを取得 */
 export async function getStepResponse(
   reservationId: string,
-  stepId: 'counseling' | 'consent' | 'review' | 'survey',
+  stepId: 'counseling' | 'consent' | 'review' | 'survey' | 'reflection',
 ) {
   switch (stepId) {
+    case 'reflection': {
+      const { data } = await supabaseAdmin
+        .from('workflow_reflection')
+        .select('*')
+        .eq('reservation_id', reservationId)
+        .maybeSingle();
+      return data ?? null;
+    }
     case 'counseling': {
       const { data } = await supabaseAdmin
         .from('workflow_counseling')

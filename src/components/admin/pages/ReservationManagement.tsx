@@ -49,6 +49,7 @@ const STEP_LABELS: Record<string, string> = {
   consent: '性的同意内容',
   review: '口コミ内容',
   survey: 'アンケート回答',
+  reflection: '施術振り返り',
 };
 
 type StatusFilter = 'all' | 'pending' | 'completed' | 'free';
@@ -172,7 +173,7 @@ export default function ReservationManagement() {
   };
 
   const handleViewStepResponse = async (stepId: string, resId: string) => {
-    if (!['counseling', 'consent', 'review', 'survey'].includes(stepId)) return;
+    if (!['counseling', 'consent', 'review', 'survey', 'reflection'].includes(stepId)) return;
     setLoadingStepId(stepId);
     try {
       const data = await getStepResponse(resId, stepId as any);
@@ -445,7 +446,9 @@ export default function ReservationManagement() {
                         )}
                         {/* 完了ステップの回答閲覧 */}
                         {step.isCompleted &&
-                          ['counseling', 'consent', 'review', 'survey'].includes(step.id) && (
+                          ['counseling', 'consent', 'review', 'survey', 'reflection'].includes(
+                            step.id,
+                          ) && (
                             <div className="border-t border-gray-700/50 pt-2">
                               <button
                                 onClick={() =>

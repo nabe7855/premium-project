@@ -179,7 +179,9 @@ export default function ReviewPage() {
                   className="text-4xl transition-transform hover:scale-110"
                 >
                   <span
-                    className={(hoverRating || rating) >= star ? 'text-rose-400' : 'text-gray-200'}
+                    className={`transition-all duration-200 ${
+                      (hoverRating || rating) >= star ? 'opacity-100' : 'opacity-30 grayscale'
+                    }`}
                   >
                     🍓
                   </span>

@@ -73,6 +73,8 @@ export async function saveReview(data: {
     return { success: false, error: reviewError.message };
   }
 
+  console.log('✅ Review inserted successfully:', review.id);
+
   // 2. タグを登録
   if (data.tagIds.length > 0 && review) {
     const links = data.tagIds.map((tagId) => ({

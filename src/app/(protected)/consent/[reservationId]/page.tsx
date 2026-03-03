@@ -42,6 +42,7 @@ export default function ConsentPage() {
       setFormData((prev) => ({
         ...prev,
         clientNickname: data.customer_name || data.client_nickname || '',
+        therapistName: data.therapist_name || '', // 担当者名をプリセット
       }));
       setIsLoading(false);
     };
@@ -248,13 +249,9 @@ export default function ConsentPage() {
           <div className="space-y-8 py-4">
             <div className="space-y-4">
               <label className="block text-sm font-bold text-gray-700">担当者名</label>
-              <input
-                type="text"
-                placeholder="担当セラピスト名を入力"
-                className="w-full rounded-xl border-2 border-gray-200 p-4 transition-colors focus:border-rose-500 focus:outline-none"
-                value={formData.therapistName}
-                onChange={(e) => setFormData({ ...formData, therapistName: e.target.value })}
-              />
+              <div className="w-full rounded-xl border border-gray-100 bg-gray-50 p-4 font-bold text-gray-700 shadow-inner">
+                {formData.therapistName || '担当者未設定'}
+              </div>
             </div>
 
             <div className="space-y-4 rounded-r-lg border-l-4 border-blue-500 bg-blue-50 p-6">
@@ -421,13 +418,7 @@ export default function ConsentPage() {
             </div>
 
             <div className="pt-8">
-              <button
-                onClick={() => router.push('/cast/cast-dashboard')}
-                className="group mx-auto flex items-center justify-center gap-2 rounded-full border border-rose-100 px-6 py-3 text-xs font-bold text-rose-300 transition-all duration-300 hover:border-rose-300 hover:text-rose-500"
-              >
-                <i className="fas fa-arrow-left transition-transform duration-500 group-hover:-translate-x-1"></i>
-                ダッシュボードに戻る
-              </button>
+              <p className="text-xs text-slate-300">ブラウザを閉じて終了してください</p>
             </div>
           </div>
         );

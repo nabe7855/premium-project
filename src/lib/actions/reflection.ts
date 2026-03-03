@@ -1,6 +1,6 @@
 'use server';
 
-import { supabase } from '@/lib/supabaseClient';
+import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 import { ReflectionData } from '@/types/cast-reflection';
 import { markStepCompleted } from './reservation';
 

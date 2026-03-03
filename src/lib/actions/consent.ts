@@ -79,12 +79,20 @@ export async function getReservationDetails(reservationId: string) {
       .eq('id', reservationId)
       .single();
 
-    if (error) {
-      console.error('>>> [getReservationDetails] ERROR:', error);
-      return null;
+    console.log('>>> [getReservationDetails] SUCCESS');
+
+    // therapist_name が空で cast_id がある場合、名前を補完する
+    if (!data.therapist_name && data.cast_id) {
+      const { data: castData } = await supabase
+        .from('casts')
+        .select('name')
+        .eq('id', data.cast_id)
+        .maybeSingle();
+      if (castData) {
+        data.therapist_name = castData.name;
+      }
     }
 
-    console.log('>>> [getReservationDetails] SUCCESS');
     return data;
   } catch (error: any) {
     console.error('>>> [getReservationDetails] CATCH ERROR:', error);

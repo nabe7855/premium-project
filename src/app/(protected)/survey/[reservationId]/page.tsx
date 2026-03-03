@@ -11,7 +11,6 @@ import {
   SERVICE_IMPRESSIONS,
   SOURCES,
   STORE_IMPROVEMENTS,
-  THERAPISTS,
 } from '@/data/service-feedback';
 import { getReservationDetails } from '@/lib/actions/consent';
 import { saveSurvey } from '@/lib/actions/survey';
@@ -92,10 +91,10 @@ export default function SurveyPage() {
   useEffect(() => {
     const fetchReservation = async () => {
       const data = await getReservationDetails(reservationId);
-      if (!data) {
-        toast.error('予約情報が見つかりません');
-        return;
-      }
+      setFormData((prev) => ({
+        ...prev,
+        therapistName: data.therapist_name || '未選択', // 担当者をプリセット
+      }));
       setIsLoading(false);
     };
 
@@ -162,12 +161,7 @@ export default function SurveyPage() {
           </p>
         </div>
         <div className="mt-8">
-          <button
-            onClick={() => router.push('/cast/cast-dashboard')}
-            className="rounded-full border border-indigo-100 px-6 py-3 text-sm font-bold text-indigo-600 transition-all hover:border-indigo-300 hover:bg-indigo-50"
-          >
-            ダッシュボードに戻る
-          </button>
+          <p className="text-xs text-slate-300">ブラウザを閉じて終了してください</p>
         </div>
       </div>
     );
@@ -295,19 +289,11 @@ export default function SurveyPage() {
 
                   <div className="mb-6">
                     <label className="mb-2 block text-sm font-semibold text-slate-700">
-                      【 担当セラピスト名（任意） 】
+                      【 担当セラピスト名 】
                     </label>
-                    <select
-                      className="w-full rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm"
-                      value={formData.therapistName}
-                      onChange={(e) => updateField('therapistName', e.target.value)}
-                    >
-                      {THERAPISTS.map((t) => (
-                        <option key={t} value={t}>
-                          {t}
-                        </option>
-                      ))}
-                    </select>
+                    <div className="w-full rounded-lg border border-slate-100 bg-slate-50 p-4 text-sm font-bold text-slate-800 shadow-inner">
+                      {formData.therapistName || '担当者未設定'}
+                    </div>
                   </div>
 
                   <MultiSelect

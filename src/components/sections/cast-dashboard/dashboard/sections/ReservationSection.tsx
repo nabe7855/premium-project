@@ -286,7 +286,9 @@ export default function ReservationSection({ castId }: { castId: string }) {
                       </div>
 
                       {step.isCompleted &&
-                        ['counseling', 'consent', 'survey'].includes(step.id) && (
+                        ['counseling', 'consent', 'review', 'survey', 'reflection'].includes(
+                          step.id,
+                        ) && (
                           <button
                             onClick={() => handleOpenResponse(step.id, step.label)}
                             className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-100"

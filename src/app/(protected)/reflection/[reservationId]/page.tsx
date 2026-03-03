@@ -157,32 +157,65 @@ export default function ReflectionPage() {
   if (isCompleted) {
     return (
       <Layout title="完了報告">
-        <div className="mb-6 rounded-3xl border border-slate-100 bg-white p-6 text-center shadow-sm">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-            <svg
-              className="h-8 w-8 text-green-500"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+        <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 py-12 text-center duration-700 animate-in fade-in slide-in-from-bottom-8">
+          <div className="relative mb-8">
+            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-emerald-400 to-teal-500 p-0.5 shadow-xl shadow-emerald-100">
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-white">
+                <svg
+                  className="h-12 w-12 text-emerald-500"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2.5}
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+            </div>
+            <div className="absolute -right-2 -top-2 flex h-8 w-8 items-center justify-center rounded-full bg-amber-400 text-white shadow-lg">
+              <span className="text-lg">✨</span>
+            </div>
           </div>
-          <h2 className="mb-2 text-xl font-bold text-slate-800">振り返り完了！</h2>
-          <p className="text-sm text-slate-500">標準ログが保存されました。</p>
-        </div>
 
-        <button
-          onClick={() => router.push('/cast/cast-dashboard')}
-          className="w-full rounded-2xl bg-slate-800 py-4 font-bold text-white transition-colors hover:bg-slate-900"
-        >
-          ダッシュボードに戻る
-        </button>
+          <h2 className="mb-4 text-3xl font-black tracking-tight text-slate-800">
+            お疲れ様でした！
+          </h2>
+
+          <div className="mx-auto mb-8 h-1 w-12 rounded-full bg-emerald-200" />
+
+          <p className="mb-10 text-lg font-medium leading-relaxed text-slate-600">
+            今回の振り返りを次回に活かせるよう、
+            <br />
+            またしっかりやっていきましょう。
+          </p>
+
+          <div className="w-full max-w-sm space-y-4">
+            <button
+              onClick={() => router.push('/cast/cast-dashboard')}
+              className="group flex w-full items-center justify-center gap-3 rounded-2xl bg-slate-900 py-5 font-bold text-white shadow-xl transition-all hover:bg-black active:scale-[0.98]"
+            >
+              ダッシュボードに戻る
+              <svg
+                className="h-5 w-5 transition-transform group-hover:translate-x-1"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 7l5 5m0 0l-5 5m5-5H6"
+                />
+              </svg>
+            </button>
+            <p className="text-xs text-slate-400">データは正常に送信・同期されました</p>
+          </div>
+        </div>
       </Layout>
     );
   }
