@@ -8,6 +8,8 @@ import { useEffect, useState } from 'react';
 export default function MediaManagementPage() {
   const [articles, setArticles] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [filterAudience, setFilterAudience] = useState<'all' | 'user' | 'recruit'>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
 
   const fetchArticles = async () => {
     setIsLoading(true);
@@ -35,15 +37,35 @@ export default function MediaManagementPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <h1 className="text-2xl font-bold text-brand-text">メディア記事管理</h1>
-        <Link
-          href="/admin/admin/media-management/new"
-          className="flex items-center gap-2 rounded-md bg-brand-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-600"
-        >
-          <PlusIcon size={16} />
-          新規執筆
-        </Link>
+        <div className="flex flex-wrap items-center gap-3">
+          <select
+            value={filterAudience}
+            onChange={(e) => setFilterAudience(e.target.value as any)}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+          >
+            <option value="all">すべての対象</option>
+            <option value="user">お客様向け</option>
+            <option value="recruit">求職者向け</option>
+          </select>
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value as any)}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+          >
+            <option value="all">すべての状態</option>
+            <option value="published">公開中</option>
+            <option value="draft">下書き</option>
+          </select>
+          <Link
+            href="/admin/admin/media-management/new"
+            className="ml-2 flex items-center gap-2 rounded-md bg-brand-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-600"
+          >
+            <PlusIcon size={16} />
+            新規執筆
+          </Link>
+        </div>
       </div>
 
       <div className="overflow-hidden rounded-lg bg-white shadow">
@@ -82,55 +104,62 @@ export default function MediaManagementPage() {
                   </td>
                 </tr>
               ) : (
-                articles.map((article) => (
-                  <tr key={article.id} className="hover:bg-gray-50">
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <div className="text-sm font-bold text-gray-900">{article.title}</div>
-                      <div className="text-xs text-gray-500">/{article.slug}</div>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                          article.target_audience === 'recruit'
-                            ? 'bg-blue-100 text-blue-800'
-                            : 'bg-green-100 text-green-800'
-                        }`}
-                      >
-                        {article.target_audience === 'recruit' ? '求職者向け' : 'お客様向け'}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4">
-                      <span
-                        className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                          article.status === 'published'
-                            ? 'bg-pink-100 text-pink-800'
-                            : 'bg-gray-100 text-gray-800'
-                        }`}
-                      >
-                        {article.status === 'published' ? '公開中' : '下書き'}
-                      </span>
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
-                      {new Date(article.created_at).toLocaleDateString('ja-JP')}
-                    </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
-                      <div className="flex justify-end gap-3">
-                        <Link
-                          href={`/admin/admin/media-management/${article.id}`}
-                          className="text-brand-accent hover:text-pink-700"
+                articles
+                  .filter((a) => {
+                    const audienceMatch =
+                      filterAudience === 'all' || a.target_audience === filterAudience;
+                    const statusMatch = filterStatus === 'all' || a.status === filterStatus;
+                    return audienceMatch && statusMatch;
+                  })
+                  .map((article) => (
+                    <tr key={article.id} className="hover:bg-gray-50">
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <div className="text-sm font-bold text-gray-900">{article.title}</div>
+                        <div className="text-xs text-gray-500">/{article.slug}</div>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                            article.target_audience === 'recruit'
+                              ? 'bg-blue-100 text-blue-800'
+                              : 'bg-green-100 text-green-800'
+                          }`}
                         >
-                          <PencilIcon size={18} />
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(article.id, article.title)}
-                          className="text-red-500 hover:text-red-700"
+                          {article.target_audience === 'recruit' ? '求職者向け' : 'お客様向け'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <span
+                          className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
+                            article.status === 'published'
+                              ? 'bg-pink-100 text-pink-800'
+                              : 'bg-gray-100 text-gray-800'
+                          }`}
                         >
-                          <TrashIcon size={18} />
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
+                          {article.status === 'published' ? '公開中' : '下書き'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-500">
+                        {new Date(article.created_at).toLocaleDateString('ja-JP')}
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
+                        <div className="flex justify-end gap-3">
+                          <Link
+                            href={`/admin/admin/media-management/${article.id}`}
+                            className="text-brand-accent hover:text-pink-700"
+                          >
+                            <PencilIcon size={18} />
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(article.id, article.title)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <TrashIcon size={18} />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
               )}
             </tbody>
           </table>

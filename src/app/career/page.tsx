@@ -1,14 +1,31 @@
-import { getMediaArticles } from '@/lib/actions/media';
+import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
 import { ArrowRightIcon, BookOpenIcon, ClockIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function CareerMediaTopPage() {
+export default async function CareerMediaTopPage({
+  searchParams,
+}: {
+  searchParams: { tag?: string };
+}) {
+  const selectedTag = searchParams.tag;
+
   // 求職者向け・公開済みの記事のみをサーバー側で取得
   const result = await getMediaArticles('recruit');
-  const allArticles = result.success
-    ? result.articles?.filter((a) => a.status === 'published') || []
+  let allArticles = result.success
+    ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];
+
+  // タグを取得
+  const tagsResult = await getMediaTags('recruit');
+  const allTags = tagsResult.success ? tagsResult.tags || [] : [];
+
+  // フィルタリング
+  if (selectedTag) {
+    allArticles = allArticles.filter((article: any) =>
+      article.tags.some((t: any) => t.tag.name === selectedTag),
+    );
+  }
 
   // デモ用（まだ記事がない場合に表示するダミー情報）
   const renderEmptyState = () => (
@@ -59,6 +76,33 @@ export default async function CareerMediaTopPage() {
       <section>
         <div className="mb-8 flex items-end justify-between border-b border-gray-200 pb-4">
           <h2 className="text-2xl font-bold text-gray-900">新着・おすすめ記事</h2>
+        </div>
+
+        {/* タグフィルター */}
+        <div className="mb-10 flex flex-wrap items-center gap-2">
+          <Link
+            href="/career"
+            className={`rounded-full px-5 py-2 text-xs font-bold transition-all ${
+              !selectedTag
+                ? 'bg-blue-600 text-white shadow-md'
+                : 'border border-gray-200 bg-white text-gray-500 hover:bg-blue-50'
+            }`}
+          >
+            すべて
+          </Link>
+          {allTags.map((tag: any) => (
+            <Link
+              key={tag.id}
+              href={`/career/?tag=${tag.name}`}
+              className={`rounded-full px-5 py-2 text-xs font-bold transition-all ${
+                selectedTag === tag.name
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'border border-gray-200 bg-white text-gray-500 hover:bg-blue-50'
+              }`}
+            >
+              {tag.name}
+            </Link>
+          ))}
         </div>
 
         {allArticles.length === 0 ? (

@@ -106,5 +106,41 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   }
 
-  return [...staticPages, ...storePages];
+  // Media (Magazine & Career)
+  const mediaPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/magazine`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/career`,
+      lastModified: new Date(),
+      changeFrequency: 'daily',
+      priority: 0.8,
+    },
+  ];
+
+  try {
+    const { getMediaArticles } = await import('@/lib/actions/media');
+    const result = await getMediaArticles();
+    if (result.success && result.articles) {
+      for (const article of result.articles) {
+        if (article.status === 'published') {
+          const path = article.target_audience === 'user' ? '/magazine' : '/career';
+          mediaPages.push({
+            url: `${baseUrl}${path}/${article.slug}`,
+            lastModified: new Date(article.updated_at),
+            changeFrequency: 'monthly',
+            priority: 0.6,
+          });
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Sitemap: Error fetching media articles:', e);
+  }
+
+  return [...staticPages, ...storePages, ...mediaPages];
 }

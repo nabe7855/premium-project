@@ -19,6 +19,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
     slug: initialData?.slug || '',
     content: initialData?.content || '',
     excerpt: initialData?.excerpt || '',
+    thumbnail_url: initialData?.thumbnail_url || '',
     target_audience: initialData?.target_audience || 'user',
     status: initialData?.status || 'draft',
     seo_title: initialData?.seo_title || '',
@@ -203,6 +204,20 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 placeholder="初回, 選び方, 面接"
                 className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
+            </div>
+            <div className="mb-4">
+              <label className="mb-1 block text-sm font-bold text-gray-700">
+                サムネイル画像URL
+              </label>
+              <input
+                type="text"
+                name="thumbnail_url"
+                value={formData.thumbnail_url || ''}
+                onChange={handleChange}
+                placeholder="https://images.unsplash.com/..."
+                className="w-full rounded-lg border border-gray-300 p-2.5 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              />
+              <p className="mt-1 text-[11px] text-gray-500">Unsplash等の画像URLを入力します。</p>
             </div>
           </div>
 

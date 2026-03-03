@@ -1,14 +1,31 @@
-import { getMediaArticles } from '@/lib/actions/media';
+import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
 import { ChevronRightIcon, HeartPulseIcon, SparklesIcon } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-export default async function MagazineTopPage() {
+export default async function MagazineTopPage({
+  searchParams,
+}: {
+  searchParams: { tag?: string };
+}) {
+  const selectedTag = searchParams.tag;
+
   // お客様向け・公開済みの記事のみを取得
   const result = await getMediaArticles('user');
-  const allArticles = result.success
-    ? result.articles?.filter((a) => a.status === 'published') || []
+  let allArticles = result.success
+    ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];
+
+  // タグ一覧を取得
+  const tagsResult = await getMediaTags('user');
+  const allTags = tagsResult.success ? tagsResult.tags || [] : [];
+
+  // タグでフィルタリング
+  if (selectedTag) {
+    allArticles = allArticles.filter((article: any) =>
+      article.tags.some((t: any) => t.tag.name === selectedTag),
+    );
+  }
 
   const renderEmptyState = () => (
     <div className="mt-8 rounded-2xl border border-pink-50 bg-[#FFFafb] p-16 text-center text-gray-500 shadow-sm">
@@ -69,6 +86,33 @@ export default async function MagazineTopPage() {
             Latest Articles
           </p>
           <h2 className="font-serif text-3xl text-gray-800">最新のコラム</h2>
+        </div>
+
+        {/* タグフィルター */}
+        <div className="mb-12 flex flex-wrap items-center justify-center gap-2">
+          <Link
+            href="/magazine"
+            className={`rounded-full px-5 py-2 text-xs font-bold tracking-wider transition-all ${
+              !selectedTag
+                ? 'bg-pink-500 text-white shadow-md'
+                : 'border border-pink-50 bg-white text-gray-400 hover:bg-pink-50'
+            }`}
+          >
+            すべて
+          </Link>
+          {allTags.map((tag: any) => (
+            <Link
+              key={tag.id}
+              href={`/magazine/?tag=${tag.name}`}
+              className={`rounded-full px-5 py-2 text-xs font-bold tracking-wider transition-all ${
+                selectedTag === tag.name
+                  ? 'bg-pink-500 text-white shadow-md'
+                  : 'border border-pink-50 bg-white text-gray-400 hover:bg-pink-50'
+              }`}
+            >
+              {tag.name}
+            </Link>
+          ))}
         </div>
 
         {allArticles.length === 0 ? (

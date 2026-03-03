@@ -166,3 +166,29 @@ export async function deleteMediaArticle(id: string) {
     return { success: false, error: error.message };
   }
 }
+// -- タグ一覧取得 --
+export async function getMediaTags(targetAudience?: 'user' | 'recruit') {
+  try {
+    const whereClause = targetAudience
+      ? {
+          articles: {
+            some: {
+              article: {
+                target_audience: targetAudience,
+                status: 'published',
+              },
+            },
+          },
+        }
+      : {};
+
+    const tags = await prisma.mediaTag.findMany({
+      where: whereClause,
+      orderBy: { name: 'asc' },
+    });
+    return { success: true, tags };
+  } catch (error: any) {
+    console.error('Error fetching media tags:', error);
+    return { success: false, error: error.message };
+  }
+}
