@@ -26,7 +26,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   const router = useRouter();
 
   const match = pathname.match(/^\/store\/([^/]+)/);
-  const currentStoreId = match?.[1] ?? 'tokyo';
+  const currentStoreId = (match?.[1] ?? '') as string;
   const currentStore = stores[currentStoreId];
 
   useEffect(() => {

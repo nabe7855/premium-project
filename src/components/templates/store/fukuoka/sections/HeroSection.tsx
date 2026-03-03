@@ -29,7 +29,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const [touchEnd, setTouchEnd] = useState(0);
 
   const params = useParams();
-  const slug = (params?.slug as string) || 'tokyo';
+  const slug = (params?.slug as string) || '';
 
   const images = (config?.images?.filter((img) => img) || defaultHeroImages).map((img) =>
     img.replace(/\{slug\}/g, slug),

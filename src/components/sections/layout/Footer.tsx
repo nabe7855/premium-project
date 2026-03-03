@@ -12,7 +12,7 @@ interface FooterProps {
 const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   const params = useParams();
   const pathname = usePathname();
-  const slug = params?.slug ?? 'tokyo';
+  const slug = params?.slug ?? '';
 
   const [isMounted, setIsMounted] = useState(false);
   const [isFirstVisit, setIsFirstVisit] = useState(false);

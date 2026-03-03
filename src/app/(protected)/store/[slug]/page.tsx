@@ -72,7 +72,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
 }
 
 export function generateStaticParams() {
-  return [{ slug: 'tokyo' }, { slug: 'osaka' }, { slug: 'nagoya' }, { slug: 'yokohama' }];
+  return [{ slug: 'fukuoka' }, { slug: 'yokohama' }];
 }
 
 export const dynamicParams = true;

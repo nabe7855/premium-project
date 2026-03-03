@@ -61,7 +61,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   onImageUpload,
 }) => {
   const params = useParams();
-  const slug = (params?.slug as string) || 'tokyo';
+  const slug = (params?.slug as string) || '';
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
 
   const concepts = (config?.items || defaultConcepts).map((item) => ({

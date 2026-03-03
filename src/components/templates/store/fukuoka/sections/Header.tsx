@@ -9,8 +9,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-import { stores } from '@/data/stores';
-
 interface HeaderProps {
   config?: HeaderConfig;
   isEditing?: boolean;
@@ -28,8 +26,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   const router = useRouter();
 
   const match = pathname.match(/^\/store\/([^/]+)/);
-  const currentStoreId = match?.[1] ?? 'tokyo';
-  const currentStore = stores[currentStoreId];
+  const currentStoreId = (match?.[1] ?? '') as string;
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);

@@ -25,7 +25,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   onImageUpload,
 }) => {
   const params = useParams();
-  const slug = (params?.slug as string) || 'tokyo';
+  const slug = (params?.slug as string) || '';
 
   const images = (config?.images?.length ? config.images : heroImages).map((img) =>
     img.replace(/\{slug\}/g, slug),

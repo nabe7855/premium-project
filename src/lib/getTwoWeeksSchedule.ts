@@ -1,6 +1,6 @@
 // lib/getTwoWeeksSchedule.ts
+import { Cast, CastStatus, ScheduleDay } from '@/types/schedule';
 import { supabase } from './supabaseClient';
-import { ScheduleDay, Cast, CastStatus } from '@/types/schedule';
 
 export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
   const today = new Date();
@@ -9,7 +9,8 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
 
   const { data, error } = await supabase
     .from('schedules')
-    .select(`
+    .select(
+      `
       id,
       work_date,
       start_datetime,
@@ -41,7 +42,8 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
           )
         )
       )
-    `)
+    `,
+    )
     .gte('work_date', today.toISOString().split('T')[0])
     .lte('work_date', endDate.toISOString().split('T')[0])
     .order('work_date', { ascending: true });
@@ -58,17 +60,17 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
 
   data?.forEach((row: any) => {
     // ✅ row 単位のキー確認
-    console.log("🛠 row keys:", Object.keys(row));
+    console.log('🛠 row keys:', Object.keys(row));
 
     // ✅ status の候補を徹底的にチェック
-    console.log("🛠 row.status:", row.status);
-    console.log("🛠 row.cast_id:", row.cast_id);
+    console.log('🛠 row.status:', row.status);
+    console.log('🛠 row.cast_id:', row.cast_id);
     if (row.casts) {
       (Array.isArray(row.casts) ? row.casts : [row.casts]).forEach((cast: any) => {
-        console.log("🛠 inside cast:", {
+        console.log('🛠 inside cast:', {
           castName: cast.name,
-          directStatus: cast.status,        // cast 側に入ってないか？
-          scheduleStatus: row.status,       // schedule 側の値
+          directStatus: cast.status, // cast 側に入ってないか？
+          scheduleStatus: row.status, // schedule 側の値
         });
       });
     }
@@ -83,47 +85,51 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
       };
     }
 
-    (row.casts ? (Array.isArray(row.casts) ? row.casts : [row.casts]) : []).forEach((castData: any) => {
-      const statuses: CastStatus[] = (castData.cast_statuses ?? [])
-        .filter((cs: any) => cs.is_active)
-        .map((cs: any): CastStatus => ({
-          id: cs.id,
-          castId: castData.id,
-          statusId: cs.status_id,
-          label: cs.status_master?.name ?? '',
-          labelColor: cs.status_master?.label_color ?? '#fce7f3',
-          textColor: cs.status_master?.text_color ?? '#9d174d',
-        }));
+    (row.casts ? (Array.isArray(row.casts) ? row.casts : [row.casts]) : []).forEach(
+      (castData: any) => {
+        const statuses: CastStatus[] = (castData.cast_statuses ?? [])
+          .filter((cs: any) => cs.is_active)
+          .map(
+            (cs: any): CastStatus => ({
+              id: cs.id,
+              castId: castData.id,
+              statusId: cs.status_id,
+              label: cs.status_master?.name ?? '',
+              labelColor: cs.status_master?.label_color ?? '#fce7f3',
+              textColor: cs.status_master?.text_color ?? '#9d174d',
+            }),
+          );
 
-      const storeSlug = castData.cast_store_memberships?.[0]?.stores?.slug ?? 'tokyo';
+        const storeSlug = castData.cast_store_memberships?.[0]?.stores?.slug ?? '';
 
-      // ✅ schedule 側のステータスを採用
-      const scheduleStatus: string | null = row.status ?? null;
+        // ✅ schedule 側のステータスを採用
+        const scheduleStatus: string | null = row.status ?? null;
 
-      console.log("🟣 cast assignment:", {
-        castName: castData.name,
-        scheduleStatus,
-      });
+        console.log('🟣 cast assignment:', {
+          castName: castData.name,
+          scheduleStatus,
+        });
 
-      const cast: Cast = {
-        id: castData.id,
-        name: castData.name,
-        age: castData.age ?? 0,
-        photo: castData.main_image_url ?? '',
-        slug: castData.slug ?? '',
-        workingHours: `${row.start_datetime?.slice(11, 16) ?? '??:??'} - ${row.end_datetime?.slice(11, 16) ?? '??:??'}`,
-        status: 'active',
-        scheduleStatus,
-        description: castData.catch_copy ?? '',
-        isFavorite: false,
-        isRecentlyViewed: false,
-        category: '',
-        statuses,
-        storeSlug,
-      };
+        const cast: Cast = {
+          id: castData.id,
+          name: castData.name,
+          age: castData.age ?? 0,
+          photo: castData.main_image_url ?? '',
+          slug: castData.slug ?? '',
+          workingHours: `${row.start_datetime?.slice(11, 16) ?? '??:??'} - ${row.end_datetime?.slice(11, 16) ?? '??:??'}`,
+          status: 'active',
+          scheduleStatus,
+          description: castData.catch_copy ?? '',
+          isFavorite: false,
+          isRecentlyViewed: false,
+          category: '',
+          statuses,
+          storeSlug,
+        };
 
-      grouped[date].casts.push(cast);
-    });
+        grouped[date].casts.push(cast);
+      },
+    );
   });
 
   return Object.values(grouped);

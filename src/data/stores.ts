@@ -1,6 +1,7 @@
 import { Store } from '@/types/store';
 
 export const stores: Record<string, Store> = {
+  /*
   tokyo: {
     id: 'tokyo',
     template: 'common',
@@ -67,6 +68,7 @@ export const stores: Record<string, Store> = {
         '名古屋栄で最高級のエンターテインメント。誰にも言えない特別なご褒美をご用意しています。完全予約制。',
     },
   },
+*/
   fukuoka: {
     id: 'fukuoka',
     template: 'fukuoka',

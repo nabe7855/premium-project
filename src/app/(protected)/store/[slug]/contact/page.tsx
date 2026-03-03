@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 
 export default function ContactPage() {
   const { slug } = useParams();
-  const store = stores[slug as string] || stores['tokyo'];
+  const store = stores[slug as string] || stores['fukuoka'];
 
   const [formData, setFormData] = useState({
     name: '',

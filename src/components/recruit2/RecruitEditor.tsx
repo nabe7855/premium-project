@@ -18,7 +18,7 @@ import { STOCK_RECRUIT_CONFIG } from './constants';
 import LandingPage, { LandingPageConfig } from './LandingPage';
 
 export default function RecruitEditor() {
-  const [selectedStore, setSelectedStore] = React.useState('tokyo');
+  const [selectedStore, setSelectedStore] = React.useState('fukuoka');
   const [isSaving, setIsSaving] = React.useState(false);
   const [isUploading, setIsUploading] = React.useState(false);
 
