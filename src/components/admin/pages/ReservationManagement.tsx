@@ -6,6 +6,7 @@ import {
   getAllCasts,
   getReservations,
   getStores,
+  updateReservationStatus,
   updateReservationStep,
 } from '@/lib/actions/reservation';
 import { Reservation, WorkflowStepId } from '@/types/reservation';
@@ -123,7 +124,7 @@ export default function ReservationManagement() {
       prev.map((r) => (r.id === resId ? { ...r, steps: newSteps, status: newStatus } : r)),
     );
     if (selectedReservation?.id === resId) {
-      setSelectedReservation({ ...res, steps: newSteps, status: newStatus });
+      setSelectedReservation({ ...selectedReservation, steps: newSteps, status: newStatus });
     }
 
     try {
@@ -132,11 +133,37 @@ export default function ReservationManagement() {
         toast.error('保存に失敗しました');
         fetchData();
       } else {
-        toast.success('ステータスを更新しました');
+        toast.success(`ステップ「${stepId}」を更新しました`);
       }
     } catch (error) {
       console.error('Update failed:', error);
       toast.error('保存中にエラーが発生しました');
+      fetchData();
+    }
+  };
+
+  const handleToggleOverallStatus = async (resId: string, currentStatus: string) => {
+    const newStatus: 'pending' | 'completed' =
+      currentStatus === 'completed' ? 'pending' : 'completed';
+
+    // Optimistic update
+    setReservations((prev) => prev.map((r) => (r.id === resId ? { ...r, status: newStatus } : r)));
+    if (selectedReservation?.id === resId) {
+      setSelectedReservation({ ...selectedReservation, status: newStatus });
+    }
+
+    try {
+      const result = await updateReservationStatus(resId, newStatus);
+      if (!result.success) {
+        toast.error('保存に失敗しました');
+        fetchData();
+      } else {
+        toast.success(
+          `予約ステータスを「${newStatus === 'completed' ? '完了' : '進行中'}」に変更しました`,
+        );
+      }
+    } catch (e) {
+      toast.error('エラーが発生しました');
       fetchData();
     }
   };
@@ -212,7 +239,26 @@ export default function ReservationManagement() {
                     <h2 className="text-2xl font-black text-white">
                       {selectedReservation.customerName} 様
                     </h2>
-                    <div className="mt-1 flex items-center gap-3 text-sm font-bold">
+                    <div className="mt-1 flex items-center gap-2">
+                      <button
+                        onClick={() =>
+                          handleToggleOverallStatus(
+                            selectedReservation.id,
+                            selectedReservation.status,
+                          )
+                        }
+                        className={`rounded-full px-4 py-1.5 text-xs font-black transition-all ${
+                          selectedReservation.status === 'completed'
+                            ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                            : 'bg-brand-accent text-white shadow-lg shadow-pink-500/20'
+                        }`}
+                      >
+                        {selectedReservation.status === 'completed'
+                          ? '総合ステータス: 完了 (クリックで戻す)'
+                          : '総合ステータス: 進行中 (クリックで完了へ)'}
+                      </button>
+                    </div>
+                    <div className="mt-3 flex items-center gap-3 text-sm font-bold">
                       <span
                         className={`rounded-full px-3 py-1 ${selectedReservation.visitCount === 1 ? 'bg-pink-500/20 text-pink-400' : 'bg-blue-500/20 text-blue-400'}`}
                       >
@@ -410,15 +456,16 @@ export default function ReservationManagement() {
                               </p>
                             </div>
                           </div>
-                          <div
-                            className={`rounded-full p-2 transition-all ${
+                          <button
+                            onClick={() => handleToggleStep(selectedReservation.id, step.id)}
+                            className={`rounded-full p-2 transition-all hover:scale-110 active:scale-90 ${
                               step.isCompleted
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-800 text-gray-600'
+                                ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                                : 'bg-gray-800 text-gray-600 hover:bg-gray-700'
                             }`}
                           >
                             <CheckCircle size={20} />
-                          </div>
+                          </button>
                         </div>
 
                         {/* Quick Actions for Step */}

@@ -147,6 +147,26 @@ export async function getStoreBySlug(slug: string) {
   }
 }
 
+export async function updateReservationStatus(
+  reservationId: string,
+  status: 'pending' | 'completed',
+) {
+  try {
+    await prisma.reservations.update({
+      where: { id: reservationId },
+      data: {
+        status,
+        updated_at: new Date(),
+      },
+    });
+    revalidatePath('/admin/admin/reservations');
+    return { success: true };
+  } catch (error) {
+    console.error('Error updating reservation status:', error);
+    return { success: false };
+  }
+}
+
 export async function updateReservationStep(
   reservationId: string,
   steps: WorkflowStep[],
