@@ -65,6 +65,7 @@ export default async function MagazineTopPage({
     { title: 'セラピの日常', href: '/magazine?tag=セラピの日常' },
     { title: 'プレゼント', href: '/magazine?tag=プレゼント' },
     { title: '人気オプション', href: '/magazine?tag=人気オプション' },
+    { title: 'ラブグッズ', href: '/magazine?tag=ラブグッズ' },
     { title: '店舗一覧', href: '/magazine?tag=店舗一覧' },
     { title: '全国ランキング', href: '/magazine?tag=全国ランキング' },
   ];

@@ -5,6 +5,7 @@ import {
   HeartIcon,
   MessageSquareIcon,
   ShirtIcon,
+  ShoppingBagIcon,
   SparklesIcon,
   ZapIcon,
 } from 'lucide-react';
@@ -50,6 +51,7 @@ export default async function CareerMediaTopPage({
     },
     { title: '恋愛・デート', tag: '恋愛・デート', icon: HeartIcon, desc: '満足させる術。' },
     { title: '健康・ボディ', tag: '健康・ボディ', icon: DumbbellIcon, desc: '自信を鍛える。' },
+    { title: 'ラブグッズ', tag: 'ラブグッズ', icon: ShoppingBagIcon, desc: '大人の嗜み。' },
   ];
 
   return (
@@ -132,7 +134,7 @@ export default async function CareerMediaTopPage({
             <h2 className="mb-4 font-serif text-3xl text-slate-800">カテゴリーから探す</h2>
             <div className="mx-auto h-1 w-12 bg-blue-500"></div>
           </div>
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-5">
             {sections.map((cat) => (
               <Link
                 key={cat.tag}
