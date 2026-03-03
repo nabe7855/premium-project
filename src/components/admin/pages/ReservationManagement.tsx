@@ -16,6 +16,7 @@ import {
   ChevronRight,
   ClipboardCheck,
   Copy,
+  Eye,
   FileText,
   LucideIcon,
   Mail,
@@ -28,9 +29,12 @@ import {
   Store,
   User,
   UserPlus,
+  X,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
+
+import { getStepResponse } from '@/lib/actions/workflowResponse';
 
 const STEP_ICONS: Record<WorkflowStepId, LucideIcon> = {
   counseling: FileText,
@@ -40,7 +44,140 @@ const STEP_ICONS: Record<WorkflowStepId, LucideIcon> = {
   reflection: User,
 };
 
+const STEP_LABELS: Record<string, string> = {
+  counseling: 'カウンセリング回答',
+  consent: '性的同意内容',
+  review: '口コミ内容',
+  survey: 'アンケート回答',
+};
+
 type StatusFilter = 'all' | 'pending' | 'completed' | 'free';
+
+// 回答表示モーダル
+function StepResponseModal({
+  stepId,
+  stepLabel,
+  data,
+  onClose,
+}: {
+  stepId: string;
+  stepLabel: string;
+  data: any;
+  onClose: () => void;
+}) {
+  const renderContent = () => {
+    if (!data) return <p className="text-gray-500">回答データが見つかりませんでした</p>;
+
+    if (stepId === 'consent') {
+      return (
+        <div className="space-y-3 text-sm">
+          <Row label="お客様名" value={data.client_nickname} />
+          <Row label="担当者" value={data.therapist_name} />
+          <Row label="同意日" value={data.consent_date} />
+          <Row label="18歳以上確認" value={data.is_over_18 ? '✅ 確認済み' : '❌ 未確認'} />
+          <Row label="担当者誓約" value={data.therapist_pledge_agreed ? '✅ 同意済み' : '未'} />
+          <Row label="ログID" value={data.log_id} />
+          {data.consent_text_snapshot && (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-xs text-gray-400 hover:text-white">
+                記録全文を見る
+              </summary>
+              <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-gray-900 p-3 text-[10px] text-gray-300">
+                {data.consent_text_snapshot}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
+    }
+
+    if (stepId === 'review') {
+      const tags = (data.review_tag_links ?? [])
+        .map((l: any) => l.review_tag_master?.name)
+        .filter(Boolean);
+      return (
+        <div className="space-y-3 text-sm">
+          <Row label="投稿者" value={data.user_name} />
+          <Row label="評価" value={'🍓'.repeat(data.rating) + ` (${data.rating}/5)`} />
+          {tags.length > 0 && (
+            <Row label="タグ" value={tags.map((t: string) => `#${t}`).join(' ')} />
+          )}
+          <div>
+            <p className="mb-1 text-xs text-gray-400">コメント</p>
+            <p className="whitespace-pre-wrap rounded-xl bg-gray-900 p-3 text-xs text-gray-200">
+              {data.comment}
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    if (stepId === 'survey') {
+      return (
+        <div className="space-y-3 text-sm">
+          <Row label="総合満足度" value={`${data.overall_satisfaction ?? '-'} / 5`} />
+          <Row label="リピート意向" value={data.repeat_intent ?? '-'} />
+          <Row label="推奨意向" value={data.recommend_intent ?? '-'} />
+          <Row label="施術印象" value={data.service_impression ?? '-'} />
+          <Row label="技術満足度" value={`${data.technical_satisfaction ?? '-'} / 5`} />
+          {data.free_text && <Row label="自由記述" value={data.free_text} />}
+        </div>
+      );
+    }
+
+    if (stepId === 'counseling') {
+      const answers = data.answers ?? {};
+      return (
+        <div className="space-y-3 text-sm">
+          <Row label="ニックネーム" value={answers.nickname ?? '-'} />
+          {answers.counseling && (
+            <details>
+              <summary className="cursor-pointer text-xs text-gray-400 hover:text-white">
+                カウンセリング詳細
+              </summary>
+              <pre className="mt-2 whitespace-pre-wrap rounded-xl bg-gray-900 p-3 text-[10px] text-gray-300">
+                {JSON.stringify(answers.counseling, null, 2)}
+              </pre>
+            </details>
+          )}
+        </div>
+      );
+    }
+
+    return (
+      <pre className="whitespace-pre-wrap text-[10px] text-gray-300">
+        {JSON.stringify(data, null, 2)}
+      </pre>
+    );
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative z-10 max-h-[85vh] w-full max-w-md overflow-hidden rounded-3xl border border-gray-700 bg-brand-secondary shadow-2xl">
+        <div className="flex items-center justify-between border-b border-gray-700 px-6 py-4">
+          <h3 className="font-bold text-white">{stepLabel}</h3>
+          <button
+            onClick={onClose}
+            className="rounded-full p-1.5 text-gray-400 hover:bg-gray-700 hover:text-white"
+          >
+            <X size={18} />
+          </button>
+        </div>
+        <div className="overflow-y-auto p-6">{renderContent()}</div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex justify-between gap-4">
+      <span className="shrink-0 text-xs text-gray-400">{label}</span>
+      <span className="text-right text-xs font-medium text-white">{String(value)}</span>
+    </div>
+  );
+}
 
 export default function ReservationManagement() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
@@ -52,6 +189,10 @@ export default function ReservationManagement() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
+  const [stepModal, setStepModal] = useState<{ stepId: string; label: string; data: any } | null>(
+    null,
+  );
+  const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -152,6 +293,19 @@ export default function ReservationManagement() {
 
   const openReflectionForm = (resId: string) => {
     window.open(`/reflection/${resId}`, '_blank');
+  };
+
+  const handleViewStepResponse = async (stepId: string, resId: string) => {
+    if (!['counseling', 'consent', 'review', 'survey'].includes(stepId)) return;
+    setLoadingStepId(stepId);
+    try {
+      const data = await getStepResponse(resId, stepId as any);
+      setStepModal({ stepId, label: STEP_LABELS[stepId] ?? stepId, data });
+    } catch (e) {
+      toast.error('回答データの取得に失敗しました');
+    } finally {
+      setLoadingStepId(null);
+    }
   };
 
   // Detail View
@@ -414,6 +568,26 @@ export default function ReservationManagement() {
                             )}
                           </div>
                         )}
+                        {/* 完了ステップの回答閲覧 */}
+                        {step.isCompleted &&
+                          ['counseling', 'consent', 'review', 'survey'].includes(step.id) && (
+                            <div className="border-t border-gray-700/50 pt-2">
+                              <button
+                                onClick={() =>
+                                  handleViewStepResponse(step.id, selectedReservation.id)
+                                }
+                                disabled={loadingStepId === step.id}
+                                className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-green-500/10 py-2 text-[10px] font-bold text-green-400 transition-all hover:bg-green-500 hover:text-white disabled:opacity-50"
+                              >
+                                {loadingStepId === step.id ? (
+                                  <span className="h-3 w-3 animate-spin rounded-full border border-green-400 border-t-transparent" />
+                                ) : (
+                                  <Eye size={12} />
+                                )}
+                                回答を見る
+                              </button>
+                            </div>
+                          )}
                       </div>
                     );
                   })}
@@ -422,6 +596,14 @@ export default function ReservationManagement() {
             </Card>
           </div>
         </div>
+        {stepModal && (
+          <StepResponseModal
+            stepId={stepModal.stepId}
+            stepLabel={stepModal.label}
+            data={stepModal.data}
+            onClose={() => setStepModal(null)}
+          />
+        )}
       </div>
     );
   }

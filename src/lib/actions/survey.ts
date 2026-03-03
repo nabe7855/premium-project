@@ -46,7 +46,9 @@ export async function saveSurvey(data: SurveyResponse & { reservationId: string 
 
     console.log('>>> [saveSurvey] SUCCESS');
     // ワークフローのsurveyステップを完了にする
-    await markStepCompleted(data.reservationId, 'survey');
+    markStepCompleted(data.reservationId, 'survey').catch((e) =>
+      console.error('[saveSurvey] markStep failed:', e),
+    );
     return { success: true };
   } catch (error: any) {
     console.error('>>> [saveSurvey] CATCH ERROR:', error);

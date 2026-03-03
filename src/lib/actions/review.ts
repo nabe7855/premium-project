@@ -83,8 +83,10 @@ export async function saveReview(data: {
     if (tagError) console.error('❌ tag link error:', tagError);
   }
 
-  // 3. ワークフローの口コミステップを完了にする
-  await markStepCompleted(data.reservationId, 'review');
+  // 3. ワークフローの口コミステップを完了にする（失敗しても主処理に影響しない）
+  markStepCompleted(data.reservationId, 'review').catch((e) =>
+    console.error('[saveReview] markStep failed:', e),
+  );
 
   return { success: true };
 }

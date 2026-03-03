@@ -35,8 +35,10 @@ export async function saveConsent(data: {
     }
 
     console.log('>>> [saveConsent] SUCCESS');
-    // ワークフローのステップを自動で完了にする
-    await markStepCompleted(data.reservationId, 'consent');
+    // ワークフローステップを完了にする（失敗しても主処理に影響しない）
+    markStepCompleted(data.reservationId, 'consent').catch((e) =>
+      console.error('[saveConsent] markStep failed:', e),
+    );
     return { success: true };
   } catch (error: any) {
     console.error('>>> [saveConsent] CATCH ERROR:', error);

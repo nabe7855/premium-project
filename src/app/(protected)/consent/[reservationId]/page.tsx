@@ -15,6 +15,7 @@ export default function ConsentPage() {
 
   const [currentStep, setCurrentStep] = useState<Step>(Step.GUIDELINES);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState<ConsentFormData>({
     isOver18: null,
     clientNickname: '',
@@ -62,6 +63,9 @@ export default function ConsentPage() {
   };
 
   const handleFinalSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     // Snapshot the full consent text for legal record
     const snapshot = `
       【同意事項】
@@ -76,30 +80,31 @@ export default function ConsentPage() {
 
     const logId = generateLogId();
 
-    setFormData((prev) => ({
-      ...prev,
-      consentTextSnapshot: snapshot,
-      logId: logId,
-    }));
-
     // Save to database
-    const result = await saveConsent({
-      reservationId,
-      clientNickname: formData.clientNickname,
-      therapistName: formData.therapistName,
-      consentDate: formData.consentDate,
-      isOver18: formData.isOver18 || false,
-      guidelinesAgreed: formData.guidelinesAgreed,
-      therapistPledgeAgreed: formData.therapistPledgeAgreed,
-      consentTextSnapshot: snapshot,
-      logId: logId,
-    });
+    try {
+      const result = await saveConsent({
+        reservationId,
+        clientNickname: formData.clientNickname,
+        therapistName: formData.therapistName,
+        consentDate: formData.consentDate,
+        isOver18: formData.isOver18 || false,
+        guidelinesAgreed: formData.guidelinesAgreed,
+        therapistPledgeAgreed: formData.therapistPledgeAgreed,
+        consentTextSnapshot: snapshot,
+        logId: logId,
+      });
 
-    if (result.success) {
-      toast.success('性的同意が正常に記録されました');
-      nextStep();
-    } else {
-      toast.error('保存に失敗しました: ' + result.error);
+      if (result.success) {
+        toast.success('性的同意が正常に記録されました');
+        nextStep();
+      } else {
+        toast.error('保存に失敗しました: ' + result.error);
+      }
+    } catch (e: any) {
+      toast.error('通信エラーが発生しました');
+      console.error(e);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -334,16 +339,29 @@ export default function ConsentPage() {
             <div className="flex gap-4">
               <button
                 onClick={prevStep}
-                className="flex-1 rounded-xl border-2 border-gray-200 py-4 font-bold text-gray-500"
+                disabled={isSubmitting}
+                className="flex-1 rounded-xl border-2 border-gray-200 py-4 font-bold text-gray-500 disabled:opacity-50"
               >
                 修正する
               </button>
               <button
                 onClick={handleFinalSubmit}
-                className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-rose-600 py-4 font-bold text-white shadow-lg transition-all hover:bg-rose-700 active:scale-95"
+                disabled={isSubmitting}
+                className={`flex flex-[2] items-center justify-center gap-2 rounded-xl py-4 font-bold text-white shadow-lg transition-all active:scale-95 ${
+                  isSubmitting ? 'cursor-not-allowed bg-gray-400' : 'bg-rose-600 hover:bg-rose-700'
+                }`}
               >
-                <i className="fas fa-file-signature"></i>
-                同意を確定し送信
+                {isSubmitting ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    送信中...
+                  </>
+                ) : (
+                  <>
+                    <i className="fas fa-file-signature" />
+                    同意を確定し送信
+                  </>
+                )}
               </button>
             </div>
             <p className="px-4 text-center text-[10px] leading-relaxed text-gray-400">

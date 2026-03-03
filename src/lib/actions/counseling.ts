@@ -50,8 +50,10 @@ export async function submitCounselingResult(
     return { success: false, error: insertError.message };
   }
 
-  // 2. ワークフローのcounselingステップを完了にする
-  await markStepCompleted(reservationId, 'counseling');
+  // 2. ワークフローのcounselingステップを完了にする（失敗しても主処理に影響しない）
+  markStepCompleted(reservationId, 'counseling').catch((e) =>
+    console.error('[submitCounseling] markStep failed:', e),
+  );
 
   return { success: true };
 }
