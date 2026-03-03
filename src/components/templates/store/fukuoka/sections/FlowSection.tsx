@@ -36,6 +36,7 @@ interface FlowSectionProps {
   config?: FlowConfig;
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
 const getIcon = (iconName: string) => {
@@ -53,7 +54,12 @@ const getIcon = (iconName: string) => {
   }
 };
 
-const FlowSection: React.FC<FlowSectionProps> = ({ config, isEditing, onUpdate }) => {
+const FlowSection: React.FC<FlowSectionProps> = ({
+  config,
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}) => {
   const steps = config?.steps || defaultSteps;
 
   const stepImages = [
@@ -86,6 +92,8 @@ const FlowSection: React.FC<FlowSectionProps> = ({ config, isEditing, onUpdate }
                 num={idx + 1}
                 icon={getIcon(step.icon)}
                 imageSrc={step.image || stepImages[idx]}
+                isEditing={isEditing}
+                onImageUpload={(file) => onImageUpload?.('flow', file, idx)}
                 title={
                   <span
                     contentEditable={isEditing}

@@ -10,23 +10,23 @@ import Providers from './providers'; // 👈 React Query 用のラッパー
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'ストロベリーボーイ - 女性向け癒しサービス',
+  title: 'ストロベリーボーイズ - 女性向け癒しサービス',
   description: '20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
   keywords: 'イケメン派遣,癒し,女性向け,マッチング,ホスト,エンターテイメント',
-  authors: [{ name: 'ストロベリーボーイ' }],
-  creator: 'ストロベリーボーイ',
+  authors: [{ name: 'ストロベリーボーイズ' }],
+  creator: 'ストロベリーボーイズ',
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
     url: 'https://www.sutoroberrys.jp', // This URL is for the root layout, not dynamic. Dynamic URLs should be handled in page.tsx or generateMetadata.
-    siteName: 'ストロベリーボーイ',
+    siteName: 'ストロベリーボーイズ',
   },
   robots: {
     index: true,
     follow: true,
   },
   verification: {
-    google: 'your-google-verification-code',
+    google: 'c7c614cd66f2c9b7',
   },
 };
 

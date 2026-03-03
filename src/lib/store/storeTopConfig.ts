@@ -125,6 +125,7 @@ export interface FlowStep {
   icon: string;
   title: string;
   desc: string;
+  image?: string;
 }
 
 export interface FlowConfig {
@@ -498,24 +499,28 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         icon: 'User',
         title: 'キャスト選択',
         desc: '当サイトのプロフィールを参考に、お気に入りのセラピストを選びます。',
+        image: '/images/flow/ご利用までのステップ１.jpg',
       },
       {
         num: 2,
         icon: 'Calendar',
         title: 'ご予約確定',
         desc: 'WEBまたはLINEで簡単予約。場所と時間を伝えて、予約完了です。',
+        image: '/images/flow/ご利用までのステップ２.jpg',
       },
       {
         num: 3,
         icon: 'MapPin',
         title: 'ご訪問',
         desc: 'セラピストが到着しましたら、簡単なカウンセリングを行います。',
+        image: '/images/flow/ご利用までのステップ３.jpg',
       },
       {
         num: 4,
         icon: 'Heart',
         title: '施術開始',
         desc: '最高のリラクゼーションをご堪能ください。お支払いは事前精算です。',
+        image: '/images/flow/ご利用までのステップ４.jpg',
       },
     ],
     isVisible: true,

@@ -124,7 +124,12 @@ export default function FukuokaPage({
         <PriceSection config={safeConfig?.price} isEditing={isEditing} onUpdate={onUpdate} />
       )}
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
-        <FlowSection config={safeConfig?.flow} isEditing={isEditing} onUpdate={onUpdate} />
+        <FlowSection
+          config={safeConfig?.flow}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
       )}
       <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (

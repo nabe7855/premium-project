@@ -102,7 +102,7 @@ const storeData: Record<string, Store> = {
   tokyo: {
     slug: 'tokyo',
     template: 'common',
-    name: 'ストロベリーボーイ東京店',
+    name: 'ストロベリーボーイズ東京店',
     city: '東京',
     theme: {
       primary: 'rgb(236, 72, 153)',
@@ -125,7 +125,7 @@ const storeData: Record<string, Store> = {
       email: 'tokyo@www.sutoroberrys.jp',
     },
     seo: {
-      title: '【東京店】甘くとろける夢の世界へ｜ストロベリーボーイ',
+      title: '【東京店】甘くとろける夢の世界へ｜ストロベリーボーイズ',
       description:
         '東京で癒しのひとときを。AIマッチング型イケメン派遣サービス。20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
       keywords: 'イケメン派遣,東京,癒し,女性向け,マッチング,ホスト,エンターテイメント',
@@ -277,7 +277,7 @@ const storeData: Record<string, Store> = {
   osaka: {
     slug: 'osaka',
     template: 'common',
-    name: 'ストロベリーボーイ大阪店',
+    name: 'ストロベリーボーイズ大阪店',
     city: '大阪',
     theme: {
       primary: 'rgb(249, 115, 22)',
@@ -300,7 +300,7 @@ const storeData: Record<string, Store> = {
       email: 'osaka@www.sutoroberrys.jp',
     },
     seo: {
-      title: '【大阪店】情熱的な関西の魅力｜ストロベリーボーイ',
+      title: '【大阪店】情熱的な関西の魅力｜ストロベリーボーイズ',
       description:
         '大阪で心温まる癒しの時間を。関西弁で親しみやすいイケメンキャストがあなたをお待ちしています。',
       keywords: 'イケメン派遣,大阪,関西,癒し,女性向け,マッチング,ホスト',
@@ -339,7 +339,7 @@ const storeData: Record<string, Store> = {
   nagoya: {
     slug: 'nagoya',
     template: 'common',
-    name: 'ストロベリーボーイ名古屋店',
+    name: 'ストロベリーボーイズ名古屋店',
     city: '名古屋',
     theme: {
       primary: 'rgb(147, 51, 234)',
@@ -362,7 +362,7 @@ const storeData: Record<string, Store> = {
       email: 'nagoya@www.sutoroberrys.jp',
     },
     seo: {
-      title: '【名古屋店】上品で洗練された時間｜ストロベリーボーイ',
+      title: '【名古屋店】上品で洗練された時間｜ストロベリーボーイズ',
       description: '名古屋で上質な癒しを。洗練されたキャストがあなたに特別な時間をお届けします。',
       keywords: 'イケメン派遣,名古屋,上品,癒し,女性向け,マッチング,ホスト',
       ogImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',

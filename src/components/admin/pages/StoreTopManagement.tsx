@@ -226,6 +226,19 @@ export default function StoreTopManagement() {
         };
         setConfig(newConfig);
         await safeSaveConfig(newConfig);
+      } else if (section === 'flow' && typeof index === 'number') {
+        const newSteps = [...config.flow.steps];
+        const oldImageUrl = newSteps[index]?.image;
+        if (oldImageUrl && oldImageUrl.startsWith('http')) {
+          await deleteStorageFile(oldImageUrl);
+        }
+        newSteps[index] = { ...newSteps[index], image: publicUrl };
+        const newConfig = {
+          ...config,
+          flow: { ...config.flow, steps: newSteps },
+        };
+        setConfig(newConfig);
+        await safeSaveConfig(newConfig);
       } else if (section === 'diary' && typeof index === 'number') {
         const newItems = [...config.diary.items];
         newItems[index] = { ...newItems[index], image: publicUrl };

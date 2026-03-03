@@ -34,6 +34,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: cast.catchCopy ?? '',
       images: cast.imageUrl ? [cast.imageUrl] : [],
     },
+    alternates: {
+      canonical: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${params.cast}`,
+    },
   };
 }
 
@@ -66,8 +69,30 @@ export default async function CastDetailPage({ params }: Props) {
   console.log('🟢 CastDetailPage params:', params);
   console.log('🟢 CastDetailPage loaded cast:', cast);
 
+  // ✅ 構造化データ (ProfilePage / Person)
+  const castProfileSD = {
+    '@context': 'https://schema.org',
+    '@type': 'ProfilePage',
+    mainEntity: {
+      '@type': 'Person',
+      name: cast.name,
+      description: cast.catchCopy,
+      image: cast.imageUrl || cast.mainImageUrl,
+      jobTitle: 'Cast',
+      affiliation: {
+        '@type': 'LocalBusiness',
+        name: store?.name || 'Strawberry Boys',
+      },
+      url: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${params.cast}`,
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(castProfileSD) }}
+      />
       {/* ✅ storeSlug と storeId を渡す */}
       <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} />
 

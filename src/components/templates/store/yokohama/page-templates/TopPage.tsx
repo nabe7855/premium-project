@@ -101,7 +101,12 @@ export default function YokohamaPage({
         storeSlug={storeSlug}
       />
       <PriceSection config={config?.price} isEditing={isEditing} />
-      <FlowSection config={config?.flow} isEditing={isEditing} />
+      <FlowSection
+        config={config?.flow}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+      />
       <ReviewSection />
       <FAQSection config={config?.faq} isEditing={isEditing} />
       <Footer

@@ -66,7 +66,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
       images: [ogImage],
     },
     alternates: {
-      canonical: `https://www.sutoroberrys.jp/${params.slug}`,
+      canonical: `https://www.sutoroberrys.jp/store/${params.slug}`,
     },
   };
 }
@@ -109,7 +109,7 @@ export default async function StorePage({ params }: StorePageProps) {
       addressCountry: 'JP',
     },
     telephone: topConfig?.footer?.shopInfo?.phone || store.contact.phone,
-    url: `https://www.sutoroberrys.jp/${params.slug}`,
+    url: `https://www.sutoroberrys.jp/store/${params.slug}`,
     image: topConfig?.hero?.images?.[0] || store.seo.ogImage,
     aggregateRating: {
       '@type': 'AggregateRating',
