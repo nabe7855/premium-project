@@ -106,6 +106,7 @@ export interface LandingPageConfig {
   branding?: {
     images?: Record<string, string>;
     isVisible?: boolean;
+    isGridVisible?: boolean;
     metricsLabel?: string;
     metricsValue?: string;
     heading?: string;
@@ -591,30 +592,34 @@ const LandingPage: React.FC<LandingPageProps> = ({
       )}
 
       {/* Metrics Grid Section */}
-      {(config.branding?.isVisible !== false || isEditing) && (
+      {(config.branding?.isGridVisible !== false || isEditing) && (
         <div
           className={`group relative transition-opacity duration-300 ${
-            config?.branding?.isVisible === false ? 'opacity-40' : ''
+            config?.branding?.isGridVisible === false ? 'opacity-40' : ''
           }`}
         >
-          {(() => {
-            console.log(
-              '[LandingPage] Rendering MetricsGrid with config.branding:',
-              JSON.stringify(config?.branding, null, 2),
-            );
-            return null;
-          })()}
+          {isEditing && (
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  onUpdate?.('branding', 'isGridVisible', config?.branding?.isGridVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.branding?.isGridVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.branding?.isGridVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+          )}
           <MetricsGrid
             isEditing={isEditing}
             onUpdate={(key, value) => {
-              console.log(
-                `[LandingPage] MetricsGrid onUpdate: key=${key}`,
-                value instanceof File ? 'File' : value,
-              );
               if (['metricsLabel', 'metricsValue'].includes(key)) {
                 onUpdate?.('branding', key, value);
               } else if (value instanceof File) {
-                // Use the common photo upload logic
                 onImageUpload?.('branding', `images.${key}`, value);
               } else {
                 onUpdate?.('branding', `images.${key}`, value);
