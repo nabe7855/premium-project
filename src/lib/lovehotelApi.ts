@@ -55,6 +55,7 @@ export const getHotels = async (filters?: {
   maxStayPrice?: number;
   minRating?: number;
   sort?: { column: string; ascending: boolean };
+  take?: number;
 }) => {
   let query = supabase.from('lh_hotels').select(`
       *,
@@ -105,9 +106,12 @@ export const getHotels = async (filters?: {
   const sortCol = filters?.sort?.column || 'created_at';
   const sortAsc = filters?.sort?.ascending ?? false;
 
-  const { data, error } = await query.order(sortCol, { ascending: sortAsc });
+  let { data, error } = await query
+    .order(sortCol, { ascending: sortAsc })
+    .limit(filters?.take || 1000);
+
   if (error) throw error;
-  return data;
+  return data || [];
 };
 
 export const getHotelById = async (id: string) => {

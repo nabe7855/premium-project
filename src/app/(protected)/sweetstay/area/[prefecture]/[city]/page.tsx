@@ -1,0 +1,66 @@
+import HotelCard from '@/components/sweetstay/HotelCard';
+import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
+
+interface Props {
+  params: {
+    prefecture: string;
+    city: string;
+  };
+}
+
+export default async function SweetStayCityAreaPage({ params }: Props) {
+  const { prefecture, city } = params;
+
+  // Try to find if this city ID works
+  const dbHotels = (await getHotels({ cityId: city })) || [];
+  const hotels = dbHotels.map(mapDbHotelToHotel);
+
+  if (hotels.length === 0) {
+    // Maybe try areaId? or case sensitive mapping
+    // For now, if no hotels, try searching with city name if decoded
+  }
+
+  const cityName = hotels.length > 0 ? (hotels[0] as any).city : decodeURIComponent(city);
+
+  return (
+    <div className="bg-white py-24 duration-500 animate-in fade-in md:py-32">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="mb-20 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+          <div className="max-w-xl">
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50 px-4 py-1.5 text-xs font-black uppercase italic tracking-widest text-rose-500">
+              Local Deep Dive
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter text-gray-900 md:text-7xl">
+              {cityName}
+            </h1>
+            <p className="mt-8 text-lg font-medium leading-relaxed text-gray-400">
+              {cityName}でプロが選んだ、ラグジュアリーで心地よいホテルのラインナップ。
+            </p>
+          </div>
+
+          <div className="hidden h-14 w-1 bg-rose-500/10 md:block"></div>
+
+          <div className="text-right">
+            <div className="mb-2 text-sm font-black uppercase leading-none tracking-widest text-gray-900">
+              {hotels.length} Hotels Found
+            </div>
+            <div className="text-[10px] font-bold uppercase tracking-widest text-gray-300">
+              Selected In {cityName}
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-3">
+          {hotels.map((hotel) => (
+            <HotelCard key={hotel.id} hotel={hotel} />
+          ))}
+          {hotels.length === 0 && (
+            <div className="col-span-full py-32 text-center text-gray-300">
+              この市区町村のホテル情報は準備中です。
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
