@@ -149,6 +149,21 @@ export interface LandingPageConfig {
       image: string;
     }[];
   };
+  footer?: {
+    isVisible?: boolean;
+    description?: string;
+    linksHeading?: string;
+    links?: { label: string; url: string }[];
+    contactHeading?: string;
+    phone?: string;
+    receptionHours?: string;
+    address?: string;
+    privacyLabel?: string;
+    privacyUrl?: string;
+    termsLabel?: string;
+    termsUrl?: string;
+    copyright?: string;
+  };
   faq?: {
     isVisible?: boolean;
     heading?: string;

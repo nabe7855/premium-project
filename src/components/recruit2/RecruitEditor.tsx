@@ -15,6 +15,7 @@ import React from 'react';
 import { HashRouter } from 'react-router-dom';
 import { toast } from 'sonner';
 import { STOCK_RECRUIT_CONFIG } from './constants';
+import Footer from './Footer';
 import LandingPage, { LandingPageConfig } from './LandingPage';
 
 export default function RecruitEditor() {
@@ -272,6 +273,28 @@ export default function RecruitEditor() {
             onOpenChat={() => {}}
             onOpenForm={() => {}}
           />
+          <div className="relative">
+            <div className="absolute right-2 top-2 z-50">
+              <button
+                onClick={() =>
+                  handleUpdate('footer', 'isVisible', config?.footer?.isVisible === false)
+                }
+                className={`rounded px-3 py-1.5 text-xs font-semibold text-white shadow ${
+                  config?.footer?.isVisible === false
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-red-500 hover:bg-red-600'
+                }`}
+              >
+                {config?.footer?.isVisible === false ? '表示する' : '非表示にする'}
+              </button>
+            </div>
+            <Footer
+              isEditing={true}
+              onUpdate={(key: string, value: any) => handleUpdate('footer', key, value)}
+              storeName={config.general?.storeName}
+              {...config.footer}
+            />
+          </div>
         </HashRouter>
       </div>
     </div>

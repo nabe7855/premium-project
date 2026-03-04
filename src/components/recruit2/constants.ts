@@ -416,4 +416,25 @@ export const STOCK_RECRUIT_CONFIG = {
       },
     ],
   },
+  footer: {
+    isVisible: true,
+    description:
+      '私たちは、福岡で「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
+    linksHeading: 'Links',
+    links: [
+      { label: '私たちの実績', url: '#trust' },
+      { label: '安心のサポート', url: '#benefits' },
+      { label: '報酬シミュレーション', url: '#income' },
+      { label: 'よくあるご質問', url: '#qa' },
+    ],
+    contactHeading: 'Contact',
+    phone: '05054913991',
+    receptionHours: '8:00〜23:00',
+    address: '福岡',
+    privacyLabel: 'Privacy Policy',
+    privacyUrl: '#',
+    termsLabel: 'Terms of Service',
+    termsUrl: '#',
+    copyright: '© 2024 LIFE CHANGE RECRUIT 福岡. ALL RIGHTS RESERVED.',
+  },
 };

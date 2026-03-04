@@ -89,6 +89,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     flow: { ...localizedStock.flow, ...config?.flow },
     faq: { ...localizedStock.faq, ...config?.faq },
     income: { ...localizedStock.income, ...config?.income },
+    footer: { ...localizedStock.footer, ...config?.footer },
   };
 
   return (
@@ -122,9 +123,12 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
       </main>
       <Footer
         storeName={storeInfo?.name || fullMergedConfig.general?.storeName}
-        phone={storeInfo?.phone || topConfig?.header?.phoneNumber}
-        receptionHours={topConfig?.header?.receptionHours}
-        address={storeInfo?.address}
+        phone={fullMergedConfig.footer?.phone || storeInfo?.phone || topConfig?.header?.phoneNumber}
+        receptionHours={
+          fullMergedConfig.footer?.receptionHours || topConfig?.header?.receptionHours
+        }
+        address={fullMergedConfig.footer?.address || storeInfo?.address}
+        {...fullMergedConfig.footer}
       />
       {location.pathname === '/' && (
         <FloatingCTA
