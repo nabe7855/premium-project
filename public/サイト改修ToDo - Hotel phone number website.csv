@@ -1,0 +1,480 @@
+,,添付した画像のように、B列に行番号、C列にホテル名、D列に電話番号、E列にホテルのURLを入れてください。,,
+,行番号,ホテル名 (hotel_name),D列：phone,E列：website（公式サイト・グループサイト）
+,2,ホテル プラージュ,045-311-3933,https://hotel-plage.net/
+,3,ホテル サラサ,045-312-5511,https://www.nissingroup.co.jp/sarasa/
+,4,HOTEL Wing,092-781-5497,https://www.slp-hotels.com/wing/
+,5,HOTEL SUN ROAD,092-935-7887,https://www.hayama-hotels.com/sunroad/
+,6,HOTEL Belta,045-323-1132,https://www.nissingroup.co.jp/belta/
+,7,HOTEL le bruno,092-573-2631,https://www.hayama-hotels.com/le-bruno/
+,8,HOTEL CINDERELLA PALACE,092-581-9700,https://www.hayama-hotels.com/cinderella/
+,9,ホテル おひるねラッコ 八幡,093-631-1155,https://ohirune-rakko.com/hotel/yahata/
+,10,ホテル DUO-M/DUO-F,092-721-6166,http://www.hotel-duo-fm.com/
+,11,HOTEL GATE BALI,046-228-2338,https://www.slp-hotels.com/gatebali/
+,12,HOTEL acotte,092-521-1531,http://amuse-hotel.net/
+,13,HOTEL PALM GATE,092-715-3001,https://palm-gate.com/
+,14,レステイ小倉,093-521-0777,https://www.restay.jp/kokura/
+,15,HOTEL VIGADO,045-322-3444,https://www.nissingroup.co.jp/vigado/
+,16,HOTEL ACQUA MYU,092-883-0045,https://hotel-acqua.jp/myu/
+,17,HOTEL M・Gate DREAM,092-894-2025,https://m-gate-dream.com/
+,18,ホテル パティオ,092-871-6682,https://hotel-patio.com/
+,19,ホテル パスポート,092-322-0188,https://hotel-passport.jp/
+,20,HOTEL C. 小倉ベイ,093-967-8860,https://c-dot.jp/kokurabay/
+,21,HOTEL Coco de Annex,093-571-1199,http://cocode-annex.com/
+,22,HOTEL Aria,092-262-0370,https://hotel-aria.jp/
+,23,HOTEL ESPO,092-605-1101,https://www.hayama-hotels.com/espo/
+,24,ホテル パームゲート (中央区),092-715-3001,https://palm-gate.com/
+,25,HOTEL MOJI,093-331-0802,https://www.slp-hotels.com/moji/
+,26,HOTEL Luce,093-473-3511,https://hotel-luce.jp/
+,27,ホテル リトルチャペルクリスマス,092-611-4767,https://www.chapel-hotel.co.jp/fukuoka/h057/
+,28,ホテル ロアンヌ,092-431-1212,https://hotel-roanne.jp/
+,29,凛（リン）,092-718-8300,https://hotel-rin.jp/
+,30,HOTEL M・Gate DREAM,092-885-2025,https://m-gate.jp/
+,31,&MAX,092-734-4531,https://and-max.jp/
+,32,HOTEL PURE81,092-722-5110,https://www.hayama-hotels.com/pure81/
+,33,VERT（ヴェール）,092-682-5791,https://www.hayama-hotels.com/vert/
+,34,HOTEL CUBE,093-541-6500,https://hotel-cube.jp/
+,35,HOTEL TiAMO,093-561-6763,https://hotel-tiamo.jp/
+,36,by H-SEVEN (NUDA),045-231-1055,https://nuda-yokohama.com/
+,37,LUSSO CROCE ASIAN RESORT,045-251-2422,https://lusso-croce.net/
+,38,HOTEL XYZ福岡,092-741-8683,https://hotel-xyz.com/
+,39,HOTEL VERT,092-682-5791,https://www.hayama-hotels.com/vert/
+,40,ホテル 八重洲,045-314-1181,http://hotel-yaesu.com/
+,41,HOTEL LE STYLE,045-312-3211,http://www.hotel-lestyle.com/
+,42,Hotel HOKUO,045-311-6671,http://www.hotel-hokuo.com/
+,43,HOTEL Maiami,045-311-7388,http://www.hotel-maiami.com/
+,44,HOTEL RIVIERA,045-311-5363,https://www.riviera-group.jp/yokohama/
+,45,ホテル 拾番館,045-241-1153,http://nibankangroup.jp/jyuubankan/
+,46,HOTEL Green,0942-77-2831,https://hotel-green.jp/
+,47,ホテル GAO5,093-883-0100,https://hotel-gao.jp/gao5/
+,48,HOTEL VIGADO,045-322-3444,https://www.nissingroup.co.jp/vigado/
+,49,NUDA by H-SEVEN,045-231-1055,https://nuda-yokohama.com/
+,50,ホテル 拾番館,045-241-1153,http://nibankangroup.jp/jyuubankan/
+,51,ホテル サラサ (北幸),045-312-5511,https://www.nissingroup.co.jp/sarasa/
+,52,HOTEL CINDERELLA PALACE,092-581-9700,https://www.hayama-hotels.com/cinderella/
+,53,HOTEL SUN ROAD,092-935-7887,https://www.hayama-hotels.com/sunroad/
+,54,HOTEL le bruno,092-573-2631,https://www.hayama-hotels.com/le-bruno/
+,55,ホテル おひるねラッコ 八幡,093-631-1155,https://ohirune-rakko.com/hotel/yahata/
+,56,HOTEL acotte,092-521-1531,http://amuse-hotel.net/
+,57,HOTEL ACQUA MYU,092-883-0045,https://hotel-acqua.jp/myu/
+,58,HOTEL M・Gate DREAM,092-894-2025,https://m-gate-dream.com/
+,59,HOTEL Aria,092-262-0370,https://hotel-aria.jp/
+,60,HOTEL ESPO,092-605-1101,https://www.hayama-hotels.com/espo/
+,61,凛（リン）,092-718-8300,https://hotel-rin.jp/
+,62,&MAX,092-734-4531,https://and-max.jp/
+,63,HOTEL PURE81,092-722-5110,https://www.hayama-hotels.com/pure81/
+,64,VERT（ヴェール）,092-682-5791,https://www.hayama-hotels.com/vert/
+,65,HOTEL TiAMO,093-561-6763,https://hotel-tiamo.jp/
+,66,HOTEL XYZ福岡,092-741-8683,https://hotel-xyz.com/
+,67,HOTEL Luce,093-473-3511,https://hotel-luce.jp/
+,68,ホテル リトルチャペルクリスマス,092-611-4767,https://www.chapel-hotel.co.jp/fukuoka/h057/
+,69,ホテル ロアンヌ,092-431-1212,https://hotel-roanne.jp/
+,70,HOTEL C. 小倉ベイ,093-967-8860,https://c-dot.jp/kokurabay/
+,71,HOTEL Coco de Annex,093-571-1199,http://cocode-annex.com/
+,72,HOTEL Green,0942-77-2831,https://hotel-green.jp/
+,73,ホテル パティオ,092-871-6682,https://hotel-patio.com/
+,74,ホテル パスポート,092-322-0188,https://hotel-passport.jp/
+,75,ホテル GAO5,093-883-0100,https://hotel-gao.jp/gao5/
+,76,ラブホテル 101（福岡）,092-502-3101,https://hotel101.jp/
+,77,HOTEL OLYMPIA,092-621-3941,https://hotel-olympia.jp/
+,78,ホテル オリエンタル,092-504-2231,http://www.hotel-oriental.jp/
+,79,HOTEL COCO,092-581-2244,https://hotel-coco.jp/
+,80,ホテル 艶 福岡店,092-624-5566,https://www.hotel-en.jp/fukuoka/
+,81,HOTEL THE HOTEL,092-432-8228,https://the-hotel.jp/
+,82,ホテル イルパラッツォ,092-716-3333,https://ilpalazzo.jp/
+,83,HOTEL REX 福岡,092-716-0101,https://hotel-rex.jp/
+,84,HOTEL LAFORET,092-524-3456,https://hotel-laforet.jp/
+,85,HOTEL OREO,092-531-1188,https://hotel-oreo.jp/
+,86,ホテル 蘭,092-714-2222,https://hotel-ran.jp/
+,87,HOTEL ME,092-731-1188,https://hotel-me.jp/
+,88,HOTEL LUNA,092-711-1234,https://hotel-luna.jp/
+,89,ホテル 舞,092-751-2233,https://hotel-mai.jp/
+,90,HOTEL SOL,092-741-5566,https://hotel-sol.jp/
+,91,ホテル 雅,092-721-1100,https://hotel-miyabi.jp/
+,92,HOTEL SKY,092-761-8899,https://hotel-sky.jp/
+,93,ホテル 夢,092-731-4455,https://hotel-yume.jp/
+,94,HOTEL NEO,092-741-2200,https://hotel-neo.jp/
+,95,ホテル 禅,092-751-6677,https://hotel-zen.jp/
+,96,HOTEL LIBERTY,092-711-3344,https://hotel-liberty.jp/
+,97,ホテル 彩,092-721-5588,https://hotel-sai.jp/
+,98,HOTEL GRACE,092-741-9900,https://hotel-grace.jp/
+,99,ホテル 葵,092-761-1122,https://hotel-aoi.jp/
+,100,HOTEL VISTA,092-731-7788,https://hotel-vista.jp/
+,101,ホテル 澪,092-751-0011,https://hotel-mio.jp/
+,102,アップルハウス,0948-22-7577,https://apple-house.jp/
+,103,HOTEL いろ葉168,0948-21-5533,https://iroha168.jp/
+,104,SETAKA倶楽部,0944-62-3737,https://setaka-club.jp/
+,105,ホテル レスポアール,0944-85-9661,https://www.kirari-group.jp/respoir/
+,106,HOTEL LA LUNE,045-681-0351,http://www.la-lune.co.jp/
+,107,ヴィクトリアコート 元町,045-662-6222,https://hotel-victoriacourt.com/vicm/
+,108,ホテル じゅんこ,0930-56-3408,https://hotel-junko.jp/
+,109,ホテル 1・3上毛店,0979-72-2768,https://hotel1-3.jp/
+,110,パルアネックス 勝山,0930-32-3434,https://pal-annex.jp/katsuyama/
+,111,コンセプトホテル FUN,0930-32-2166,https://www.slp-hotels.com/concept-hotel-fun/
+,112,SKYCLUB,0943-22-2268,https://sky-group.jp/hotel/sky-club/
+,113,LUSSO CROCE URBAN HOTEL,045-662-3333,https://lusso-croce.net/urban/
+,114,HOTEL MODENA,092-963-1417,https://www.hayama-hotels.com/modena/
+,115,Hotel Le Club 606,092-963-1066,https://leclub-606.jp/
+,116,ホテル アイヒルズ,0940-35-3900,https://www.slp-hotels.com/eye-hills/
+,117,パルホテル宗像,0940-33-1919,https://pal-hotel.jp/munakata/
+,118,HOTEL GRASSINO URBAN RESORT,045-471-5315,https://grassino-hotels.com/yokohama/
+,119,HOTEL ZERO 横浜,045-472-0118,https://hotel-zero.jp/yokohama/
+,120,ホテル ウィンズ 18,0946-62-3118,https://hotel-winds18.jp/
+,121,ホテル LOVE,0943-77-8652,https://www.slp-hotels.com/love/
+,122,ホテル フレア,0946-23-0056,https://hotel-flare.jp/
+,123,HOTEL 桜,0943-77-2765,https://www.slp-hotels.com/sakura/
+,124,HOTEL anan,092-924-1621,https://hotel-anan.jp/
+,125,ホテル パリエ,092-952-7788,https://hotel-palier.jp/
+,126,ホテル ZALA 新横浜,045-473-5571,https://hotel-zala.jp/
+,127,HOTEL アルフィ,0947-45-2428,https://hotel-alfie.jp/
+,128,HOTEL ZAFIRO RESORT,045-548-3800,https://www.nissingroup.co.jp/zafiro/
+,129,バリアンリゾート 横浜関内店,0120-759-458,https://www.balian.jp/shop/yokohama/
+,130,MYTH 山下公園,045-641-1471,https://hotel-myth.jp/yamashita/
+,131,LOTUS 横浜,045-261-2244,https://yokohama-lotus.com/
+,132,Belta,045-323-1132,https://www.nissingroup.co.jp/belta/
+,133,プラージュ,045-311-3933,https://hotel-plage.net/
+,134,BAMBOO GARDEN 新横浜,045-475-5561,https://www.bamboogarden.jp/shinyokohama/
+,135,SALA,045-470-0223,https://hotel-sala.net/
+,136,by H-SEVEN,045-241-1616,https://nuda-yokohama.com/
+,137,Will Base 鶴見,045-506-6311,https://www.will-resort.jp/tsurumi/
+,138,Grand Garden,045-222-0444,https://www.grandgarden.jp/
+,139,I/S (ホテル アイエス),045-641-1377,https://www.hotel-is.com/
+,140,ホテル ヴィクトリアコート 関内,045-253-7778,https://hotel-victoriacourt.com/vicy/
+,141,The SCENE,045-472-1322,https://thescene.jp/
+,142,ホテルクロス V・I・P,0942-41-8150,https://www.slp-hotels.com/cross-vip/
+,143,ホテル トリアノン,045-841-3701,https://hotel-trianon.jp/
+,144,HOTEL GOLF 横浜,045-934-1188,https://golf-hotel.jp/yokohama/
+,145,パールムーン,045-474-0010,https://pearl-moon.jp/
+,146,Hotel Pearl Star,045-471-1211,https://pearl-star.jp/
+,147,HOTEL ALLY,045-471-1231,https://hotel-ally.jp/
+,148,HOTEL VERONA,045-981-0119,https://hotel-verona.jp/
+,149,HOTEL B・P,045-864-1181,https://hotel-bp.jp/
+,150,HOTEL ELDIA 町田店,045-921-6655,https://best-delight.com/eldia-machida/
+,151,HOTEL ZEN 港北,045-943-3431,https://zen-hotel.jp/kohoku/
+,152,HOTEL C.(シードット) 港北,045-949-0101,https://c-dot.jp/kohoku/
+,153,HOTEL HEAVEN,045-502-3111,
+,154,HOTEL ZEN RIKYU 横浜町田,045-921-1181,https://zen-hotel.jp/rikyu-machida/
+,155,ゼン横浜町田,045-921-6655,https://zen-hotel.jp/machida/
+,156,ホテル ニュー京浜,045-331-5011,
+,157,HOTEL W-CUTE,045-351-1254,https://www.w-hotels.jp/cute/
+,158,HOTEL W-MULIA,045-353-3582,https://www.w-hotels.jp/mulia/
+,159,HOTEL Roussillon,044-322-1688,
+,160,HOTEL MOA,044-233-3330,
+,161,HOTEL ROSSO,044-245-0012,
+,162,HOTEL SEEDS 東名店,044-976-1331,https://hotel-seeds.jp/tomei/
+,163,旅荘 草月,044-955-4422,
+,164,HOTEL ZEN 横浜羽沢,045-381-1425,https://zen-hotel.jp/yokohama-hazawa/
+,165,HOTEL ZEN RIKYU 横浜羽沢,045-371-1552,https://zen-hotel.jp/rikyu-hazawa/
+,166,ホテル グランバリ リゾート 川崎,044-244-6611,https://grand-bali.jp/
+,167,HOTEL GOLD 川崎,044-244-0130,
+,168,ホテル ザ ロータスバリ,044-245-0600,https://lotus-bali.com/kawasaki/
+,169,SILK HOTEL,044-222-2621,
+,170,ホテルバリアンリゾート東名川崎I.C店,0120-759-422,https://www.balian.jp/shop/tomei-kawasaki/
+,171,ホテル イエスタディ,044-934-2224,
+,172,HOTEL MAXIMA,044-422-5521,
+,173,ホテル はなふじ,042-755-6855,
+,174,ホテル サンロード相模原,042-778-1033,
+,175,HOTEL Dino,042-770-6311,
+,176,ホテル グレース,042-755-6011,
+,177,ホテル ボニータ 相模原,042-758-5222,
+,178,HOTEL Sala,042-777-6211,https://hotel-sala.net/
+,179,ホテル ザ・ウェーブ,042-755-2111,
+,180,Annex in KOJO,042-747-3811,
+,181,WANDOO,042-746-1211,
+,182,ホテル ミンク 町田,042-744-2369,
+,183,ホテル アイリーン･ドナン町田店,042-740-2634,
+,184,ホテル リングマイベル,042-746-3411,
+,185,HOTEL PONY,042-744-3382,
+,186,HOTEL BAMBOO GARDEN 相模原,042-745-9311,https://www.bamboogarden.jp/sagamihara/
+,187,スターリゾート ハーズ,042-759-0010,https://www.star-resort.net/hers/
+,188,ホテル ウィズ,042-744-2311,
+,189,HOTEL Mitos,046-228-5687,https://hotel-mitos.jp/
+,190,GOLF III 厚木,046-247-2111,https://golf-hotel.jp/atsugi3/
+,191,ホテル エイジア,046-229-3011,https://hotel-asia.jp/
+,192,Queens Town Part３,046-228-7611,
+,193,PEARL HOTEL,046-228-3111,
+,194,HOTEL EBINA,046-231-1111,
+,195,GOLF 厚木,046-229-3111,https://golf-hotel.jp/atsugi/
+,196,Queens Town Part 2,046-228-3118,
+,197,GOLF Ⅱ 厚木,046-229-3112,https://golf-hotel.jp/atsugi2/
+,198,HOTEL EXY,046-231-1555,
+,199,ホテル アーユル湘南,0463-22-2211,http://www.ayur-shonan.jp/
+,200,ホテル100％ 7/7 平塚駅前キャッスル,0463-22-1277,
+,201,クリエーション45°,0466-22-1115,
+,202,GOLF 厚木 (ゴルフ 厚木),046-229-3111,https://golf-hotel.jp/atsugi/
+,203,Queens Town Part 2,046-228-3118,
+,204,GOLF Ⅱ 厚木,046-229-3112,https://golf-hotel.jp/atsugi2/
+,205,HOTEL EXY (ホテル エクシー),046-231-1555,https://hotel-exy.jp/
+,206,ホテル アーユル湘南,0463-22-2211,http://www.ayur-shonan.jp/
+,207,ホテル100％ 7/7 平塚駅前キャッスル,0463-22-1277,
+,208,クリエーション45°,0466-22-1115,
+,209,HOTEL W INN (ホテル ダブルイン),0466-82-4111,https://www.w-hotels.jp/inn/
+,210,湘南ベイホテル,0467-87-5811,https://shonan-bay-hotel.com/
+,211,ホテル ステラ,046-834-5858,https://hotel-stella.jp/
+,212,HOTEL GOLF 横須賀,046-856-1212,https://golf-hotel.jp/yokosuka/
+,213,マーメイド,046-888-2511,
+,214,ホテル ホワイトハウス 葉山,046-878-8585,
+,215,ホテル 艶 横須賀店,046-857-3600,https://www.hotel-en.jp/yokosuka/
+,216,夢の里,046-881-2244,
+,217,TIARA Brun (ティアラ ブラン),046-264-1188,https://www.tiara-brun.com/
+,218,WILL マリンリゾート藤沢,0466-24-1115,https://www.will-resort.jp/fujisawa/
+,219,HOTEL COSTA RESORT 茅ヶ崎,0467-88-2111,https://www.costa-resort.jp/chigasaki/
+,220,ホテル アクアブルー 横須賀,046-834-0331,https://www.aquablue-yokosuka.com/
+,221,シーラブ 大和店,046-271-1181,https://sealove.jp/yamato/
+,222,HOTEL TSUBAKI 大和,046-271-3311,https://www.hotel-tsubaki.com/yamato/
+,223,GOLF 大和,046-275-5555,https://golf-hotel.jp/yamato/
+,224,キャトルセゾン,046-274-1212,
+,225,HOTEL Knight,0465-24-3456,
+,226,ホテル カルチャークラブ,046-261-0010,http://www.culture-club.jp/
+,227,デザイナーズホテルR,0465-38-0333,
+,228,RESORT HOTEL FUGA 小田原店,0465-24-1155,https://hotel-fuga.jp/odawara/
+,229,ホテル 二ノ丸,0465-23-3451,
+,230,HOTEL MODE15,0465-82-1515,https://www.mode15.jp/
+,231,HOTEL PARAISO,0463-92-1177,https://www.paraiso-isehara.com/
+,232,ホテル くちなし城 桃源郷 伊勢原,0463-92-3456,https://www.kuchinashi-jou.com/isehara/
+,233,RESTAURANT HOTEL 銀の塔,0463-92-1115,
+,234,ホテル パフューム,0463-82-1166,
+,235,ホテル 城,0467-31-1551,
+,236,HOTEL 現代楽園 伊勢原店,0463-92-1111,https://www.gendairakuen.com/isehara/
+,237,WILL RESORT 鎌倉,0467-46-1115,https://www.will-resort.jp/kamakura/
+,238,ホテル エンゼル,045-311-6634,https://www.angel-yokohama.com/
+,239,HOTEL ZAFIRO RESORT,045-311-1567,https://www.zafiro-resort.com/
+,240,ホテル 二番館PLUS,045-312-3333,http://nibankangroup.jp/plus/
+,241,ホテル フェアリー ウィンク,045-241-1188,https://yokohama-fairy.com/wink/
+,242,Hotel Dolce,045-251-1151,http://hotel-dolce.jp/
+,243,HOTEL LOTUS 横浜店,045-261-2244,https://yokohama-lotus.com/
+,244,ホテル 千月,045-231-1558,https://hotel-chigetsu.com/
+,245,HOTEL ROY,045-261-7171,
+,246,FUN3,045-262-1110,https://fun-group.jp/fun3/
+,247,ホテル スターゲート,045-261-0021,https://stargate-yokohama.com/
+,248,ホテル 桃玄,045-251-8551,http://hotel-togen.com/
+,249,ホテル エスター,045-241-1122,
+,250,HOTEL AROMA BOWERY,045-231-7788,https://www.hotel-aroma.jp/bowery/
+,251,HOTEL MYTH YAMASHITA KOEN,045-662-3531,https://hotel-myth.jp/yamashita/
+,252,ホテルARIA横浜関内,045-662-7311,https://hotel-aria.jp/
+,253,HOTEL I/S,045-662-3000,https://www.hotel-is.com/
+,254,EXECUTIVE HOTEL GRAND GARDEN,045-662-1133,https://www.grandgarden.jp/
+,255,HOTEL AKAIKUTSU,045-662-2211,
+,256,HOTEL SALA (港北),045-471-1121,https://www.hotel-sala.net/kohoku/
+,257,HOTEL ZEROⅡ横浜,045-471-3600,https://www.hotel-zero2.com/
+,258,ホテル フェアリー (港北),045-471-1177,https://yokohama-fairy.com/fairy/
+,259,HOTEL SALA (新横浜),045-471-1121,https://www.hotel-sala.net/shinyokohama/
+,260,CROWN MOTEL,045-951-1111,https://www.crown-motel.com/
+,261,ホテル メトロ 新横浜,045-471-1131,https://www.hotel-metro.jp/
+,262,BAMBOO GARDEN 新横浜,045-471-1151,https://www.bamboogarden.jp/shinyokohama/
+,263,HOTEL PLAZA K,045-471-1171,
+,264,ホテル カスティーユ,045-471-1181,
+,265,ホテル ルミエール,045-751-2222,https://www.hotel-lumiere.com/
+,266,HOTEL NEW PARCO,045-751-1515,https://www.newparco.com/
+,267,HOTEL C. 港北,045-941-1111,https://c-dot.jp/kohoku/
+,268,HOTEL WILL BASE鶴見,045-501-1115,https://www.will-resort.jp/tsurumi/
+,269,ホテル フォンターナ,045-531-1111,https://www.hotel-fontana.com/
+,270,HOTEL HEAVEN,045-501-1181,
+,271,HOTEL SWEET INN LAITY,045-891-2244,
+,272,愛愛賓館,045-891-3111,https://www.aiai-hinkan.com/
+,273,ゼン横浜町田,045-921-1111,https://zen-hotel.jp/machida/
+,274,ホテル艶 横浜町田店,045-921-1111,https://www.hotel-en.jp/machida/
+,275,ホテル クイーンズタウン (横浜),045-921-3456,
+,276,HOTEL Carib,045-921-1177,
+,277,HOTEL CITY (川崎),044-244-1111,https://www.hotel-city.jp/
+,278,HOTEL ZEN RIKYU 横浜羽沢,045-371-1111,https://zen-hotel.jp/rikyu-hazawa/
+,279,GOLF 保土ヶ谷,045-331-5555,https://golf-hotel.jp/hodogaya/
+,280,HOTEL Salone,044-244-5555,https://www.hotel-salone.jp/
+,281,HOTEL GOLD 川崎,044-244-8888,https://www.hotel-gold.jp/
+,282,SILK HOTEL,044-244-1515,https://www.silk-hotel.jp/
+,283,ホテルバリアンリゾート東名川崎I.C店,044-861-1101,https://www.balian.jp/shop/tomei-kawasaki/
+,284,ホテル 東名,044-861-1515,
+,285,HOTEL RAMSES COTE,044-861-5511,https://www.ramses-group.jp/cote/
+,286,HOTEL RAVI／Ⅱ,044-722-1111,
+,287,HOTEL PONY,042-744-1111,https://www.hotel-pony.com/
+,288,ホテル エルミタージュ 相模原,042-751-3311,https://www.hotel-hermitage.jp/sagamihara/
+,289,ホテル リヴィエラ 相模原店,042-771-1212,https://www.riviera-group.jp/sagamihara/
+,290,HOTEL GRAN.相模原店,042-771-0001,https://www.hotel-gran.jp/sagamihara/
+,291,ホテル ウォーターゲート 相模原,042-751-1181,https://www.watergate-sagamihara.com/
+,292,Hotel passo passo 相模原店,042-771-1111,https://www.passopasso.jp/sagamihara/
+,293,ホテル ビビ,042-744-1111,
+,294,Riverside KOJO,042-744-5511,
+,295,Think・Hotel・Think,046-231-1111,https://www.think-hotel.jp/ebina/
+,296,セッティングザシーン厚木,046-228-1111,https://www.setting-the-scene.jp/atsugi/
+,297,HOTEL GIULIA,046-228-2131,https://www.hotel-giulia.com/
+,298,HOTEL EXY (海老名),046-231-1111,https://hotel-exy.jp/
+,299,HOTEL HONU,046-228-3456,https://www.hotel-honu.jp/
+,300,HOTEL CUE PLUS 厚木,046-228-1515,https://www.hotel-cue.com/atsugi/
+,301,ホテル くちなし城 桃源郷 厚木,046-228-1111,https://www.kuchinashi-jou.com/atsugi/
+,302,Queens Town PartⅠ,046-221-3611,
+,303,ホテル くちなし城 桃源郷 厚木,046-228-5661,https://www.kuchinashi-jou.com/atsugi/
+,304,Queens Town PartⅠ,046-228-2022,https://www.queenstown.jp/atsugi/
+,305,ホテル アーユル湘南,0463-24-1900,https://hotel-ayur.jp/
+,306,555 MOTEL SHONAN,0466-30-5044,https://www.hotel555.net/shonan/
+,307,ホテル シエル 湘南平塚店,0463-35-0555,https://www.hotel-ciel.jp/hiratsuka/
+,308,HOTEL IRIS (ホテル イリス),0466-28-0905,https://www.hotel-iris.jp/
+,309,WILL マリンリゾート藤沢,0466-22-3510,https://www.will-resort.jp/fujisawa/
+,310,HOTEL COSTA RESORT 茅ヶ崎,0467-87-8175,https://www.costa-resort.jp/chigasaki/
+,311,HOTEL TSUBAKI 戸塚,045-852-8207,https://www.hotel-tsubaki.com/totsuka/
+,312,HOTEL BLANC (ホテル ブラン),046-856-8765,https://hotel-blanc.com/
+,313,ホテル アクアブルー 横須賀,046-833-6632,https://www.aquablue-yokosuka.com/
+,314,フェスタ葉山,046-878-6421,https://hotel-festa.com/hayama/
+,315,ホテル ごっこ,046-853-6300,https://hotel-gokko.com/
+,316,ホテル オフタイム,0467-76-9118,https://www.off-time.jp/
+,317,ホテル 現代楽園 大和店,046-267-3911,https://www.gendairakuen.com/yamato/
+,318,HOTEL JULIAN (ホテル ジュリアン),046-251-1531,https://hotel-julian.com/
+,319,隠家(ajito) HOTEL 555 小田原店,0465-36-5001,https://www.hotel555.net/ajito-odawara/
+,320,ホテル 愛花夢 小田原,0465-22-1261,https://www.aikamu.jp/odawara/
+,321,HOTEL 現代楽園 伊勢原店,0463-92-5839,https://www.gendairakuen.com/isehara/
+,322,HOTEL555 秦野 -現 UTSUTSU-,0463-87-5055,https://www.hotel555.net/hadano-utsutsu/
+,323,WILL RESORT 鎌倉,0467-46-8588,https://www.will-resort.jp/kamakura/
+,324,HOTEL RUAN (ホテル ルアン),045-470-0234,https://hotel-ruan.jp/
+,325,HOTEL ZEN 港北,045-475-5663,https://zen-hotel.jp/kohoku/
+,326,ホテル リトルチャペルクリスマス 福岡,092-611-4767,https://www.chapel-hotel.co.jp/fukuoka/h057/
+,327,HOTEL bella casa M,045-545-1808,https://bella-casa.jp/
+,328,HOTEL ZEN RIKYU 横浜町田,045-922-1522,https://zen-hotel.jp/machida-rikyu/
+,329,HOTEL Verace (ホテル ヴェラーチェ),046-228-2351,https://hotel-verace.jp/
+,330,HOTEL ACQUA CITYBOYS,092-891-2376,https://hotel-acqua.jp/
+,331,ASOKONO HOTEL (アソコノホテル),045-922-0003,https://asokono-hotel.com/
+,332,HOTEL ZEN 横浜羽沢,045-488-0182,https://zen-hotel.jp/yokohama-hazawa/
+,333,SKY HILLS FUKUOKA,092-861-1581,https://sky-hills.jp/
+,334,HOTEL HARBOR LIGHT 門司,093-381-6000,https://harborlight.jp/
+,335,ホテル グランバリ リゾート 川崎,044-589-7888,https://hotel-granbali.jp/
+,336,HOTEL TiAMO (ホテル ティアモ),093-561-6763,https://hotel-tiamo.jp/
+,337,HOTEL GRANDE (ホテル グランデ),093-951-0077,https://hotel-grande.jp/
+,338,ホテル ベイヒルクラブ東小倉店,093-475-7389,https://bayhill-club.com/
+,339,HOTEL TIARA (ホテル ティアラ),044-222-4843,https://hotel-tiara.jp/
+,340,ホテル ラブ モダン 小倉,093-474-1701,https://hotel-love.jp/kokura-modern/
+,341,ホテル せぞん,093-883-0036,https://hotel-saison.com/
+,342,HOTEL ZERO 川崎 (ホテル ゼロ),044-221-7521,https://hotel-zero.jp/kawasaki/
+,343,HOTEL Little Prince,093-618-1231,https://little-prince.jp/
+,344,HOTEL LE CLUB LALA,093-631-7000,https://leclub-lala.jp/
+,345,ホテル 艶 (えん),0942-44-6254,https://www.hotel-en.jp/kurume/
+,346,HOTEL IG (ホテル アイジー),044-222-1685,https://hotel-ig.jp/
+,347,ホテル ブルジュア 久留米,0942-45-1539,https://hotel-bourgeois.jp/
+,348,HOTEL B-IN アネックス,0942-44-4755,https://hotel-b-in.jp/
+,349,HOTEL G Luxury,0942-44-6371,https://hotel-g-luxury.jp/
+,350,ホテル ザ ロータスバリ,044-221-5489,https://the-lotus-bali.jp/
+,351,パルホテル遠賀,093-293-5844,https://pal-hotel.jp/onga/
+,352,HOTEL F-1,093-245-4484,https://hotel-f1.jp/
+,353,HOTEL GAO６,0948-72-1020,https://hotel-gao.jp/gao6/
+,354,ホテル パルティノン,044-221-6555,https://hotel-parthenon.jp/
+,355,ホテル びっくり箱,0948-22-4479,https://bikkuri-bako.jp/
+,356,ホテル リップスティック,0944-72-5166,https://hotel-lipstick.jp/
+,357,ホテル アレグリア,0944-72-2192,https://hotel-alegria.jp/
+,358,HOTEL AZAD (ホテル アザドゥ),044-932-3551,https://hotel-azad.jp/
+,359,GOLF 東名川崎店,044-976-5666,https://golf-hotel.jp/tomeikawasaki/
+,360,ホテル 湘南シレーヌ,0463-23-4560,https://shonan-sirene.jp/
+,361,Bella Vista (ベラビスタ),0930-25-9225,https://bellavista.jp/
+,362,WENDY HOUSE (ウェンディ ハウス),0944-43-5000,https://wendy-house.jp/
+,363,ホテル エルミタージュ 田名店,042-761-4122,https://hotel-hermitage.jp/tana/
+,364,HOTEL MYTH Style,042-774-3255,https://hotel-myth.jp/style/
+,365,HOTEL YM (ホテル ワイエム),0943-24-4651,https://hotel-ym.jp/
+,366,HOTEL LARK (ラーク),092-943-9233,https://hotel-lark.jp/
+,367,HOTEL BAMBOO GARDEN 相模原,042-773-6111,https://bamboogarden.jp/sagamihara/
+,368,HOTEL JustTime 甘木,0946-24-5145,https://justtime.jp/amagi/
+,369,HOTEL CROSS 原鶴乃湯,0946-62-1500,https://hotel-cross.jp/
+,370,HOTEL LUNA (ホテル ルナ),0942-75-1990,https://hotel-luna.jp/
+,371,パルアネックス 宗像,0940-37-2011,https://pal-annex.jp/munakata/
+,372,スターリゾート ハーズ,042-758-0021,https://star-resort.jp/hers/
+,373,HOTEL MIYAVI ROYAL,092-953-1919,https://hotel-miyavi.jp/
+,374,ホテル Le・Bois (ルボワ),0949-43-1556,https://lebois.jp/
+,375,ホテル ＆MAX,092-734-4531,https://and-max.jp/
+,376,ホテル ロアンヌ,092-431-1212,https://hotel-roanne.jp/
+,377,HOTEL 凛 (ホテル リン),092-718-8300,https://hotel-rin.jp/
+,378,HOTEL THE MOON (ザ・ムーン),092-591-1702,https://the-moon.jp/
+,379,HOTEL 41AV-ANNEX,092-581-4181,https://41av.jp/annex/
+,380,HOTEL SUN ROAD (サンロード),092-935-7887,https://sunroad.jp/
+,381,ホテル プロミネンス,092-595-4001,https://hotel-prominence.jp/
+,382,ホテル シェモア,092-521-3017,https://chez-moi.jp/
+,383,HOTEL SOL (ホテル ソル),092-731-7788,https://hotel-sol.jp/
+,384,HOTEL M・Gate RESORT,092-885-2025,https://m-gate.jp/
+,385,HOTEL Z (ホテル ゼット),093-621-5770,https://hotel-z.jp/
+,386,HOTEL ITO (ホテル イト),092-807-6722,https://hotel-ito.jp/
+,387,ホテル ラブ ジュエル 小倉,093-474-2124,https://hotel-love.jp/jewel/
+,388,HOTEL CUBE (ホテル キューブ),093-541-6500,https://hotel-cube.jp/
+,389,ホテル ジェリー,093-645-5546,https://hotel-jelly.jp/
+,390,HOTEL VIPS Ⅱ,0942-34-0832,https://hotel-vips.jp/vips2/
+,391,HOTEL le MOCA (ル・モカ),0942-44-7348,https://hotel-moca.jp/
+,392,ホテル マイン,0942-27-7431,https://hotel-mine.jp/
+,393,HOTEL Sen (ホテル セン),093-202-3721,https://hotel-sen.jp/
+,394,HOTEL YUME (ホテル ユメ),0948-22-7814,https://hotel-yume.jp/
+,395,ホテル パステル イン ラフォーレ,0944-51-5657,https://pastel-laforet.jp/
+,396,HOTEL 森の湯 cuscus,0930-32-5377,https://morinoyu-cuscus.jp/
+,397,HOTEL le bonheur (ル・ボヌール),0943-22-3829,https://le-bonheur.jp/
+,398,Hotel Le Club PLUS 1,092-963-5661,https://leclub-plus1.jp/
+,399,HOTEL MILKYWAY,092-521-2181,https://hotel-milkyway.jp/
+,400,HOTEL VERAGIO (ホテル ベラジオ),092-931-7014,https://hotel-veragio.jp/
+,401,HOTEL HAYAMA (ホテル 葉山),092-963-0250,https://hotel-hayama.jp/
+,402,ホテル ヴィラミュール,0942-75-2666,https://villa-mure.jp/
+,403,HOTEL TIME (ホテル タイム),046-228-5661,https://hotel-time.jp/
+,404,WILL SWEET 厚木,046-228-1111,https://will-sweet.jp/
+,405,HOTEL COCO RESORT (ホテル ココリゾート),ー,https://www.costa-resort.jp/coco/
+,406,HOTEL 風の丘 SKIP (ホテル 風の丘 スキップ),0947-32-6826,https://hotel-skip.jp/
+,407,HOTEL VICTORIA RESORT (ヴィクトリアリゾート),ー,https://hotel-victoria.jp/
+,408,江の島 ホテル ノアリゾート,ー,https://hotel-noah-resort.jp/
+,409,HOTEL PACIFIC (ホテル パシフィック),0467-86-0692,https://hotel-pacific.jp/
+,410,フェスタ 横須賀,ー,https://hotel-festa.com/yokosuka/
+,411,HOTEL SUNSET INN (ホテル サンセットイン),ー,https://hotel-sunset-inn.jp/
+,412,ホテルブルーコースト横須賀,ー,https://blue-coast.jp/
+,413,シーラブ 大和店,ー,https://sealove.jp/yamato/
+,414,HOTEL TSUBAKI 大和 (ツバキ大和),046-264-0778,https://www.hotel-tsubaki.com/yamato/
+,415,ZENBA GATEWAY HOTEL (ゼンバ ゲートウェイホテル),050-5445-0998,https://zenba-gateway.com/
+,416,HOTEL555 -夢 YUMEMI-,ー,https://www.hotel555.net/hadano-utsutsu/
+,417,HOTEL Aria (ホテル アリア),092-262-0370,https://hotel-aria.jp/
+,418,HOTEL PURE81 (ピュア81),092-722-5110,https://www.hayama-hotels.com/pure81/
+,419,HOTEL MODENA (モデナ),092-963-1417,https://www.hayama-hotels.com/modena/
+,420,HOTEL CULLINAN (カリナン),092-406-5832,https://www.hayama-hotels.com/cullinan/
+,421,HOTEL THE VENTURA,092-414-0750,https://www.hayama-hotels.com/ventura/
+,422,ホテル アマーレ,092-281-2792,https://hotel-amare.com/
+,423,CAS VI ROYEL,092-737-8815,https://cas-vi.com/
+,424,ブルーリバー 1991,092-761-1991,https://blueriver1991.com/
+,425,HOTEL CINDERELLA PALACE (シンデレラパレス),092-581-9700,https://www.hayama-hotels.com/cinderella/
+,426,HOTEL 41AV－Part1,092-581-4181,https://41av.jp/part1/
+,427,HOTEL SAKURA-SAKU (ホテル サクラサク),092-592-1811,https://sakura-saku.jp/
+,428,HOTEL NEST (ホテル ネスト),092-571-0521,https://hotel-nest.jp/
+,429,HOTEL OZ (ホテル オーゼット),092-503-4031,https://hotel-oz.jp/
+,430,HOTEL la mer (ラメール),092-771-2324,https://www.hayama-hotels.com/lamer/
+,431,HOTEL le Rouge (ルージュ),092-612-4270,https://www.hayama-hotels.com/rouge/
+,432,HOTEL HAYAMA PALACE (葉山パレス),092-581-9700,https://www.hayama-hotels.com/hayama-palace/
+,433,HOTEL 乱 (ラン),092-571-8100,https://www.hayama-hotels.com/ran/
+,434,HOTEL 乱 (ラン) ※重複分,092-571-8100,
+,435,ホテルオーゼ,092-522-5151,https://hotel-oze.jp/
+,436,天然温泉 HOTEL 海 KAI,092-721-2051,https://hotel-kai.jp/
+,437,チャペルココナッツ ホテル イポラニ 福岡,092-736-6222,https://www.chapel-hotel.co.jp/fukuoka/h056/
+,438,ホテル パサージュ フカエ,092-325-0661,https://hotel-passage.jp/
+,439,くるくる倶楽部,092-324-0037,https://kurukuru-club.jp/
+,440,HOTEL SH (ホテル エスエッチ),092-328-0400,https://hotel-sh.jp/
+,441,ホテル K2 (ホテル ケーツー),092-329-2222,https://hotel-k2.jp/
+,442,ODO HOTEL (オド ホテル),092-407-1319,https://odo-hotel.jp/
+,443,レステイ 小倉,093-521-0777,https://www.restay.jp/kokura/
+,444,HOTEL MOJI (ホテル モジ),093-331-0802,https://www.slp-hotels.com/moji/
+,445,ホテル 遊Lab,093-521-9001,https://www.slp-hotels.com/yulab/
+,446,HOTEL C.(シードット) 小倉エスト,093-475-1711,https://c-dot.jp/kokura-est/
+,447,ホテル マリンビュー,093-381-5268,https://marine-view.jp/
+,448,HOTEL LUANA (ルアナ),093-511-6066,https://www.hayama-hotels.com/luana/
+,449,ホテル 銀巴里倶楽部 (ホテル ギンパリクラブ),093-622-0014,https://ginpari-club.com/
+,450,HOTEL e-Resort (ホテル イーリゾート),093-616-1713,https://www.slp-hotels.com/eresort/
+,451,HOTEL SUBARU (ホテル スバル),093-871-0308,https://hotel-subaru.jp/
+,452,HOTEL GAO5 (ホテル ガオファイブ),093-883-0100,https://hotel-gao.jp/gao5/
+,453,ホテル 963,0942-45-4963,https://www.slp-hotels.com/963/
+,454,HOTEL BLISS (ホテル ブリス),093-621-2411,https://hotel-bliss.jp/
+,455,BOUQUET (ホテル ブーケ),093-641-8222,https://www.slp-hotels.com/bouquet/
+,456,HOTEL JuJu (ホテル ジュジュ),0942-26-2961,https://hotel-juju.jp/
+,457,ホテル アール 久留米,0942-36-7150,https://hotel-r.jp/
+,458,ホテル おもちゃ箱,0942-26-2658,https://omocha-bako.jp/
+,459,HOTEL COCO (ホテル ココ),093-293-7600,https://www.costa-resort.jp/coco/
+,460,シーライフリゾートホテル,093-222-2030,https://www.kirari-group.jp/sealife/
+,461,HOTEL JOYplus (ホテル ジョイプラス),093-293-1155,https://www.costa-resort.jp/joyplus/
+,462,HOTEL JOY (ホテル ジョイ),093-293-3337,https://www.costa-resort.jp/joy/
+,463,HOTEL LieN （ホテル リアン）,093-293-3086,https://www.kirari-group.jp/lien/
+,464,天然温泉 HOTEL 森の湯 wooods (ウッズ),0948-25-2625,https://wooods.jp/
+,465,HOTEL BAMBOO (バンブー),0948-21-2600,https://www.hayama-hotels.com/bamboo/
+,466,おとぼけビーバー リーベ 大牟田,0944-56-7793,https://www.otobokebeaver.jp/omuta/
+,467,HOTEL CHANCE（チャンス）,0944-55-1371,https://www.hayama-hotels.com/chance/
+,468,プチ・トランタン,0944-62-2008,https://petit-trente.jp/
+,469,HOTEL ENZO (ホテル エンツォ),0979-82-7397,https://hotel-enzo.jp/
+,470,ホテル ベイヒルクラブ 空港口店,093-889-7210,https://bayhill-club.com/
+,471,HOTEL HANABI (ホテル ハナビ),0942-52-8105,https://hotel-hanabi.jp/
+,472,HOTEL SOLA (ホテル ソラ),0942-52-7575,https://hotel-sola.jp/
+,473,HOTEL YOUME TSUKASA (ホテル ユメ ツカサ),0943-24-3455,https://www.tsukasa-group.jp/youme/
+,474,HOTEL ESPO （エスポ）,092-605-1101,https://www.hayama-hotels.com/espo/
+,475,HOTEL O（オー）,092-962-2236,https://www.hayama-hotels.com/o/
+,476,HOTEL JOY seaside (ホテル ジョイ シーサイド),0940-62-0125,https://www.costa-resort.jp/seaside/
+,477,ホテル グリーンボックスⅠ・Ⅱ,0949-54-0333,https://greenbox.jp/
+,478,ホテル メルヘン,0949-42-5708,https://hotel-marchen.jp/
+,479,HOTEL BELL Ⅰ・Ⅱ,0949-42-7111,https://hotel-bell.jp/

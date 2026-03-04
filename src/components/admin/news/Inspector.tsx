@@ -86,7 +86,7 @@ const Inspector: React.FC<InspectorProps> = ({
         </h3>
         <div className="space-y-8">
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               ページタイトル
             </label>
             <input
@@ -99,7 +99,7 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               URLスラッグ
             </label>
             <div className="flex items-center gap-2">
@@ -118,7 +118,7 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div>
-            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               配信対象店舗
             </label>
             <div className="grid grid-cols-2 gap-2">
@@ -137,7 +137,7 @@ const Inspector: React.FC<InspectorProps> = ({
                     className={`flex items-center gap-2 rounded-xl border p-2 text-[10px] font-bold transition-all ${
                       isSelected
                         ? 'border-rose-200 bg-rose-50 text-rose-700'
-                        : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:bg-slate-50'
+                        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200 hover:bg-slate-50'
                     }`}
                   >
                     <span>{store.emoji}</span>
@@ -149,7 +149,7 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               一覧用サムネイル
             </label>
             <p className="mb-3 text-[10px] leading-tight text-slate-400">
@@ -217,7 +217,7 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               一覧用の簡単な説明文
             </label>
             <textarea
@@ -263,7 +263,7 @@ const Inspector: React.FC<InspectorProps> = ({
       </div>
       <div className="space-y-6">
         <div>
-          <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+          <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
             見出しタイトル
           </label>
           <input
@@ -275,7 +275,7 @@ const Inspector: React.FC<InspectorProps> = ({
         </div>
         {hasImage && section.type !== 'gallery' && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               メイン画像
             </label>
             <div className="group relative aspect-video overflow-hidden rounded-[1.5rem] border border-slate-200 bg-slate-50">
@@ -302,32 +302,32 @@ const Inspector: React.FC<InspectorProps> = ({
         )}
         {['hero', 'campaign', 'cast_list'].includes(section.type) && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               サブテキスト / ラベル
             </label>
             <input
               type="text"
               value={section.content.subtitle || ''}
               onChange={(e) => handleFieldChange('subtitle', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 p-3 text-xs outline-none transition-all focus:ring-2 focus:ring-rose-100"
+              className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:ring-2 focus:ring-rose-100"
             />
           </div>
         )}
         {section.type !== 'gallery' && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               説明文 / ボディコピー
             </label>
             <textarea
               value={section.content.description || ''}
               onChange={(e) => handleFieldChange('description', e.target.value)}
-              className="h-40 w-full rounded-xl border border-slate-200 p-4 text-xs leading-relaxed outline-none transition-all focus:ring-2 focus:ring-rose-100"
+              className="h-40 w-full rounded-xl border border-slate-200 p-4 text-xs font-bold leading-relaxed text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:ring-2 focus:ring-rose-100"
             />
           </div>
         )}
         {['hero', 'campaign', 'cast_list', 'cta'].includes(section.type) && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               アクションボタン文言
             </label>
             <input
@@ -342,7 +342,7 @@ const Inspector: React.FC<InspectorProps> = ({
         {/* List items for sections like ranking and gallery */}
         {['ranking', 'gallery', 'sns_links', 'price'].includes(section.type) && (
           <div>
-            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               リスト項目設定
             </label>
             <div className="space-y-4">
@@ -352,7 +352,7 @@ const Inspector: React.FC<InspectorProps> = ({
                   className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 shadow-sm"
                 >
                   <div className="mb-3 flex items-center justify-between">
-                    <span className="text-[10px] font-black text-slate-400">項目 {index + 1}</span>
+                    <span className="text-[10px] font-black text-slate-900">項目 {index + 1}</span>
                     <button
                       onClick={() => {
                         const newItems = [...(section.content.items || [])];
@@ -384,7 +384,7 @@ const Inspector: React.FC<InspectorProps> = ({
                         {item.imageUrl ? (
                           <img src={item.imageUrl} className="h-full w-full object-cover" alt="" />
                         ) : (
-                          <div className="flex h-full items-center justify-center text-[10px] font-bold text-slate-300">
+                          <div className="flex h-full items-center justify-center text-[10px] font-bold text-slate-400">
                             No Image
                           </div>
                         )}
@@ -505,7 +505,7 @@ const Inspector: React.FC<InspectorProps> = ({
                   }
                   handleFieldChange('items', [...(section.content.items || []), newItem]);
                 }}
-                className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-[10px] font-black text-slate-400 transition-all hover:border-rose-400 hover:bg-rose-50 hover:text-rose-600"
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-[10px] font-black text-slate-500 transition-all hover:border-rose-400 hover:bg-rose-50 hover:text-rose-600"
               >
                 <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
