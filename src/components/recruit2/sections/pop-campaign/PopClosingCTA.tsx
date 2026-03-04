@@ -28,7 +28,10 @@ const PopClosingCTA: React.FC = () => {
           </h2>
 
           <div className="relative z-10 mx-auto flex max-w-md flex-col gap-6">
-            <motion.button
+            <motion.a
+              href="https://lin.ee/nM8ZQi7"
+              target="_blank"
+              rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               className="group flex items-center justify-center gap-4 rounded-[2rem] border-[4px] border-black bg-[#06c755] px-8 py-6 shadow-[8px_8px_0_#000]"
@@ -37,7 +40,7 @@ const PopClosingCTA: React.FC = () => {
               <span className="text-xl font-black text-white md:text-2xl">
                 LINEで気軽に相談してみる
               </span>
-            </motion.button>
+            </motion.a>
 
             <motion.button
               whileHover={{ scale: 1.02 }}
