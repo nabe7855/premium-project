@@ -33,6 +33,9 @@ export interface LandingPageConfig {
     isVisible?: boolean;
     openCastImage?: string;
     targetDate?: string;
+    slotsLabelBefore?: string;
+    slotsCount?: string;
+    slotsLabelAfter?: string;
     benefits?: { title: string; desc: string }[];
   };
   fukuoka?: {
@@ -270,6 +273,9 @@ const LandingPage: React.FC<LandingPageProps> = ({
             onUpdate={(key: string, value: any) => onUpdate?.('openCast', key, value)}
             openCastImage={config.openCast?.openCastImage}
             targetDate={config.openCast?.targetDate}
+            slotsLabelBefore={config.openCast?.slotsLabelBefore}
+            slotsCount={config.openCast?.slotsCount}
+            slotsLabelAfter={config.openCast?.slotsLabelAfter}
             benefits={config.openCast?.benefits}
           />
         </div>

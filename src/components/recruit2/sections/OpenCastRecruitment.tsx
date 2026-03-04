@@ -11,6 +11,9 @@ interface OpenCastRecruitmentProps {
   onUpdate?: (key: string, value: any) => void;
   openCastImage?: string;
   targetDate?: string; // New: ISO string or "MM-DD"
+  slotsLabelBefore?: string;
+  slotsCount?: string;
+  slotsLabelAfter?: string;
   benefits?: { title: string; desc: string }[];
 }
 
@@ -20,6 +23,9 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   onUpdate,
   openCastImage,
   targetDate,
+  slotsLabelBefore = '超好待遇残り',
+  slotsCount = '4',
+  slotsLabelAfter = '名様限定',
   benefits = [
     {
       title: '業界最高水準のバック率',
@@ -205,13 +211,46 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
                 <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                   <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
-                  <p className="text-center text-lg font-medium text-amber-200 sm:text-2xl">
-                    超好待遇残り{' '}
-                    <span className="mx-1 text-4xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:text-6xl">
-                      4
-                    </span>{' '}
-                    名様限定
-                  </p>
+                  <div className="flex items-center gap-2 text-center text-lg font-medium text-amber-200 sm:text-2xl">
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => onUpdate?.('slotsLabelBefore', e.currentTarget.innerText)}
+                        className="cursor-text rounded outline-none hover:bg-white/10"
+                      >
+                        {slotsLabelBefore}
+                      </span>
+                    ) : (
+                      <span>{slotsLabelBefore}</span>
+                    )}
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => onUpdate?.('slotsCount', e.currentTarget.innerText)}
+                        className="mx-1 cursor-text rounded text-4xl font-bold text-amber-400 outline-none drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] hover:bg-white/10 sm:text-6xl"
+                      >
+                        {slotsCount}
+                      </span>
+                    ) : (
+                      <span className="mx-1 text-4xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:text-6xl">
+                        {slotsCount}
+                      </span>
+                    )}
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => onUpdate?.('slotsLabelAfter', e.currentTarget.innerText)}
+                        className="cursor-text rounded outline-none hover:bg-white/10"
+                      >
+                        {slotsLabelAfter}
+                      </span>
+                    ) : (
+                      <span>{slotsLabelAfter}</span>
+                    )}
+                  </div>
                   <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
                 </div>
                 <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/50 sm:w-12"></div>
