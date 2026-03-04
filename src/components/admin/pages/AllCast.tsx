@@ -586,6 +586,77 @@ const CastDetailModal: React.FC<{
                     rows={4}
                   ></textarea>
                 </div>
+                {/* AI要約 */}
+                <div className="rounded-lg border border-indigo-500/30 bg-indigo-500/10 p-4">
+                  <div className="mb-2 flex items-center justify-between">
+                    <label className="text-xs font-bold text-indigo-300">✨ AI口コミ要約</label>
+                    <button
+                      type="button"
+                      onClick={async () => {
+                        const { data: reviews, error } = await supabase
+                          .from('reviews')
+                          .select(
+                            `
+                            comment,
+                            rating,
+                            review_tag_links (
+                              review_tag_master ( name )
+                            )
+                          `,
+                          )
+                          .eq('cast_id', cast.id);
+
+                        if (error || !reviews) {
+                          alert('口コミの取得に失敗しました');
+                          return;
+                        }
+
+                        if (reviews.length === 0) {
+                          alert('まだ口コミがありません');
+                          return;
+                        }
+
+                        const reviewTexts = reviews
+                          .map((r: any) => {
+                            const tags = r.review_tag_links
+                              ?.map((tl: any) => tl.review_tag_master?.name)
+                              .filter(Boolean)
+                              .join(', ');
+                            return `【評価: ${r.rating}】${tags ? `[タグ: ${tags}] ` : ''}${r.comment}`;
+                          })
+                          .join('\n---\n');
+
+                        const prompt = `以下のキャスト「${cast.name}」に対するお客様の口コミデータを元に、この方の魅力や人気の理由を2〜3文で親しみやすく要約してください。
+ユーザーページに「AIによる口コミ要約」として掲載します。
+
+口コミデータ:
+${reviewTexts}
+`;
+                        try {
+                          await navigator.clipboard.writeText(prompt);
+                          alert(
+                            'AI分析用のプロンプトをクリップボードにコピーしました。\n外部AI（ChatGPT等）に貼り付けて要約を作成してください。',
+                          );
+                        } catch (err) {
+                          console.error(err);
+                          alert('コピーに失敗しました。');
+                        }
+                      }}
+                      className="rounded bg-indigo-600 px-3 py-1 text-[10px] font-bold text-white hover:bg-indigo-500"
+                    >
+                      分析用プロンプト作成
+                    </button>
+                  </div>
+                  <textarea
+                    value={cast.aiSummary ?? ''}
+                    onChange={(e) => setCast({ ...cast, aiSummary: e.target.value })}
+                    className="h-24 w-full rounded border border-indigo-700/50 bg-brand-primary px-2 py-1 text-xs text-white focus:ring-1 focus:ring-indigo-500"
+                    placeholder="AIで生成した要約文をここに貼り付けてください"
+                  />
+                  <p className="mt-1 text-[9px] text-indigo-300/60">
+                    ※この文章はユーザーページのプロフィール上部に表示されます。
+                  </p>
+                </div>
                 <div className="grid grid-cols-1 gap-4 rounded-md border border-brand-accent/20 bg-brand-accent/5 p-4 md:grid-cols-2">
                   <div className="md:col-span-2">
                     <h3 className="text-xs font-bold uppercase tracking-wider text-brand-accent">
@@ -721,6 +792,7 @@ export default function AllCast() {
             main_image_url,
             email,
             login_password,
+            ai_summary,
             cast_store_memberships (
               store_id,
               priority
@@ -752,6 +824,7 @@ export default function AllCast() {
             photoUrl: c.main_image_url || '',
             managerComment: c.manager_comment || '',
             catchphrase: c.catch_copy || '',
+            aiSummary: c.ai_summary || '',
             email: c.email || '',
             password: c.login_password || '',
             stats: {
@@ -815,6 +888,7 @@ export default function AllCast() {
           name: updatedCast.name,
           catch_copy: updatedCast.catchphrase,
           manager_comment: updatedCast.managerComment,
+          ai_summary: updatedCast.aiSummary,
           is_active: updatedCast.status === '在籍中',
         })
         .eq('id', updatedCast.id);
