@@ -337,24 +337,33 @@ const CastDetailModal: React.FC<{
               ) : (
                 <div className="space-y-2">
                   <p className="text-xs font-medium text-brand-text-secondary">
-                    直近 {reservationHistory.length} 件の完了予約 (クリックで詳細回答表示)
+                    直近 {reservationHistory.length} 件の予約履歴 (クリックで詳細回答表示)
                   </p>
                   {reservationHistory.map((r: any) => (
                     <div key={r.id} className="space-y-1">
                       <div className="flex items-center justify-between rounded-lg border border-gray-800 bg-brand-primary px-4 py-3 text-sm transition-colors hover:bg-brand-primary/80">
                         <div className="flex-1 text-slate-100">
-                          <p className="font-bold">{r.client_nickname || r.customer_name}</p>
-                          <p className="text-[11px] text-gray-500">{r.date_time}</p>
+                          <p className="font-bold">{r.customerName}</p>
+                          <p className="text-[11px] text-gray-500">{r.dateTime}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <span
+                            className={`rounded-full px-2 py-0.5 text-[9px] ${
+                              r.status === 'completed'
+                                ? 'bg-green-500/10 text-green-400'
+                                : 'bg-yellow-500/10 text-yellow-400'
+                            }`}
+                          >
+                            {r.status || '不明'}
+                          </span>
+                          <span
                             className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                              r.visit_count === 1
+                              r.visitCount === 1
                                 ? 'bg-pink-500/20 text-pink-400'
                                 : 'bg-blue-500/20 text-blue-400'
                             }`}
                           >
-                            {r.visit_count === 1 ? '新規' : `${r.visit_count}回目`}
+                            {r.visitCount === 1 ? '新規' : `${r.visitCount}回目`}
                           </span>
                         </div>
                       </div>
@@ -684,7 +693,8 @@ export default function AllCast() {
         // Fetch Stores
         const { data: storeData, error: storeError } = await supabase
           .from('stores')
-          .select('id, name, slug');
+          .select('id, name, slug')
+          .eq('is_active', true);
 
         if (storeError) throw storeError;
 
@@ -697,6 +707,7 @@ export default function AllCast() {
           address: '',
           phone: '',
           photoUrl: '',
+          isActive: true, // Filters are already applied in the query
         }));
         setStores(mappedStores);
 

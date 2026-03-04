@@ -51,6 +51,7 @@ model Store {
   line_id            String?
   line_url           String?
   notification_email String?
+  is_active          Boolean               @default(true)
 
   @@map("stores")
 }
@@ -62,7 +63,7 @@ model RecruitPage {
   content     Json
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
-  store       Store    @relation(fields: [store_id], references: [id])
+  store       Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
 
   @@unique([store_id, section_key])
   @@map("recruit_pages")
@@ -89,7 +90,7 @@ model StoreTopConfig {
   config     Json
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  store      Store    @relation(fields: [store_id], references: [id])
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
 
   @@map("store_top_configs")
 }
@@ -100,7 +101,7 @@ model FirstTimeConfig {
   config     Json
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  store      Store    @relation(fields: [store_id], references: [id])
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
 
   @@map("first_time_configs")
 }
@@ -113,7 +114,7 @@ model Schedule {
   start_time DateTime
   end_time   DateTime
   cast       Cast     @relation(fields: [cast_id], references: [id])
-  store      Store    @relation(fields: [store_id], references: [id])
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
 }
 
 model Review {
@@ -194,7 +195,7 @@ model CastStoreMembership {
   start_date DateTime  @db.Date
   end_date   DateTime? @db.Date
   cast       Cast      @relation(fields: [cast_id], references: [id])
-  store      Store     @relation(fields: [store_id], references: [id])
+  store      Store     @relation(fields: [store_id], references: [id], onDelete: Cascade)
 
   @@map("cast_store_memberships")
 }
@@ -243,7 +244,7 @@ model Video {
   store_id   String
   url        String
   created_at DateTime       @default(now())
-  store      Store          @relation(fields: [store_id], references: [id])
+  store      Store          @relation(fields: [store_id], references: [id], onDelete: Cascade)
   casts      VideoCast[]
   feelings   VideoFeeling[] @relation("VideoToVideoFeeling")
   tags       VideoTag[]     @relation("VideoToVideoTag")

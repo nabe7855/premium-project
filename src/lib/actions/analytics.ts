@@ -328,18 +328,21 @@ export async function getCastPerformanceData(storeId?: string, month?: string) {
 
 export async function getCastDetailReservations(castId: string, storeId?: string, month?: string) {
   try {
-    const normalizedCastId = castId.toLowerCase();
+    const normalizedCastId = castId.trim().toLowerCase();
 
-    console.log(
-      `[getCastDetailReservations] Fetching for castId: ${normalizedCastId}, store: ${storeId}, month: ${month}`,
-    );
+    console.log('[DEBUG] getCastDetailReservations start', {
+      castId,
+      normalizedCastId,
+      storeId,
+      month,
+    });
 
     const whereRes: any = {
       cast_id: normalizedCastId,
-      status: 'completed',
+      // Temporarily allowing all statuses to see if data exists
+      // status: 'completed',
     };
 
-    // Blog filtering
     const whereBlog: any = {
       cast_id: normalizedCastId,
     };
@@ -362,7 +365,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
     }
 
     // Parallel fetch
-    const [reservations, blogCount] = await Promise.all([
+    const [reservations, blogCount, samples] = await Promise.all([
       (prisma.reservations as any).findMany({
         where: whereRes,
         select: {
@@ -375,19 +378,38 @@ export async function getCastDetailReservations(castId: string, storeId?: string
           updated_at: true,
           created_at: true,
           progress_json: true,
+          cast_id: true,
         },
         orderBy: { date_time: 'desc' },
       }),
       prisma.blog.count({
         where: whereBlog,
       }),
+      // Sample 3 reservations to see actual cast_id values in DB
+      (prisma.reservations as any).findMany({
+        take: 3,
+        select: { cast_id: true },
+      }),
     ]);
 
-    console.log(
-      `[getCastDetailReservations] Found ${reservations.length} reservations and ${blogCount} blogs`,
-    );
+    console.log(`[DEBUG] Query Results for ${normalizedCastId}:`, {
+      resCount: reservations.length,
+      blogCount,
+      sampleCastIds: samples.map((s: any) => s.cast_id),
+    });
 
-    return { success: true, reservations, blogCount };
+    return {
+      success: true,
+      reservations: reservations.map((r: any) => ({
+        id: r.id,
+        customerName: r.client_nickname || r.customer_name || '不明',
+        dateTime: r.date_time || r.created_at?.toLocaleString('ja-JP') || '',
+        visitCount: r.visit_count || 1,
+        status: r.status,
+        progress_json: r.progress_json || [],
+      })),
+      blogCount,
+    };
   } catch (e) {
     console.error('Error fetching cast detail reservations:', e);
     return { success: false, reservations: [], blogCount: 0 };

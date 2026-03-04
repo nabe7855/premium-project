@@ -153,7 +153,8 @@ export async function getReservations(storeId?: string, castId?: string) {
 
 export async function getStores() {
   try {
-    return await prisma.store.findMany({
+    return await (prisma.store as any).findMany({
+      where: { is_active: true },
       select: { id: true, name: true, slug: true },
       orderBy: { name: 'asc' },
     });

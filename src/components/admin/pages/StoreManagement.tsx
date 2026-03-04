@@ -5,23 +5,63 @@ import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { supabase } from '@/lib/supabaseClient';
 import { Store } from '@/types/dashboard';
-import { Edit2, ExternalLink, Loader2, Mail, Phone, Trash2, Upload, X } from 'lucide-react';
+import {
+  Edit2,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  Loader2,
+  Mail,
+  Phone,
+  Trash2,
+  Upload,
+  X,
+} from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 // Component for displaying an existing store's card
 const StoreCard: React.FC<{
   store: Store;
   onEdit: (store: Store) => void;
-  onDelete: (id: string) => void;
-}> = ({ store, onEdit, onDelete }) => (
+  onDelete: (id: string, name: string) => void;
+  onToggleActive: (id: string, current: boolean) => void;
+  isUpdating?: boolean;
+}> = ({ store, onEdit, onDelete, onToggleActive, isUpdating }) => (
   <Card title={store.name}>
-    <div className="group relative">
+    <div
+      className={`group relative transition-opacity duration-300 ${!store.isActive ? 'opacity-40 grayscale-[0.5]' : ''}`}
+    >
       <img
         src={store.photoUrl || 'https://picsum.photos/400/200'}
         alt={store.name}
         className="mb-4 h-32 w-full rounded-md border border-gray-700 object-cover"
       />
+
+      {/* Visibility Status Badge */}
+      <div className="absolute left-2 top-2">
+        <div
+          className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold shadow-lg backdrop-blur-md ${
+            store.isActive ? 'bg-emerald-500/80 text-white' : 'bg-gray-500/80 text-white'
+          }`}
+        >
+          {store.isActive ? <Eye size={10} /> : <EyeOff size={10} />}
+          {store.isActive ? '表示中' : '非表示'}
+        </div>
+      </div>
+
       <div className="absolute right-2 top-2 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+        <button
+          onClick={() => onToggleActive(store.id, store.isActive)}
+          disabled={isUpdating}
+          title={store.isActive ? '非表示にする' : '表示する'}
+          className={`rounded-full p-1.5 text-white shadow-lg transition-colors ${
+            store.isActive
+              ? 'bg-gray-600/90 hover:bg-gray-600'
+              : 'bg-emerald-600/90 hover:bg-emerald-600'
+          }`}
+        >
+          {store.isActive ? <EyeOff size={14} /> : <Eye size={14} />}
+        </button>
         <button
           onClick={() => onEdit(store)}
           className="rounded-full bg-blue-600/90 p-1.5 text-white shadow-lg hover:bg-blue-600"
@@ -29,7 +69,7 @@ const StoreCard: React.FC<{
           <Edit2 size={14} />
         </button>
         <button
-          onClick={() => onDelete(store.id)}
+          onClick={() => onDelete(store.id, store.name)}
           className="rounded-full bg-red-600/90 p-1.5 text-white shadow-lg hover:bg-red-600"
         >
           <Trash2 size={14} />
@@ -64,7 +104,7 @@ export default function StoreManagement() {
   const [editingStore, setEditingStore] = useState<Store | null>(null);
   const [isLoadingConfig, setIsLoadingConfig] = useState(false);
 
-  const [newStore, setNewStore] = useState<Omit<Store, 'id' | 'photoUrl'>>({
+  const [newStore, setNewStore] = useState<Omit<Store, 'id' | 'photoUrl' | 'isActive'>>({
     name: '',
     slug: '',
     catchphrase: '',
@@ -72,6 +112,7 @@ export default function StoreManagement() {
     address: '',
     phone: '',
   });
+  const [updatingStoreId, setUpdatingStoreId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   // Fetch Stores
@@ -97,6 +138,7 @@ export default function StoreManagement() {
         lineId: s.line_id || '',
         lineUrl: s.line_url || '',
         notificationEmail: s.notification_email || '',
+        isActive: s.is_active ?? true,
       }));
 
       setStores(mappedData);
@@ -221,6 +263,7 @@ export default function StoreManagement() {
           address: created.address || '',
           phone: created.phone || '',
           photoUrl: created.image_url || '',
+          isActive: created.is_active ?? true,
         };
         setStores((prev) => [mapped, ...prev]);
         setNewStore({
@@ -236,33 +279,58 @@ export default function StoreManagement() {
       }
     } catch (err: any) {
       console.error('Create error:', err);
-      alert('店舗の作成に失敗しました: ' + err.message);
+      alert('店舗情報の更新に失敗しました: ' + err.message);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDeleteStore = async (id: string) => {
-    if (!confirm('本当に削除しますか？この操作は取り消せません。')) return;
+  const handleToggleActive = async (id: string, currentStatus: boolean) => {
+    setUpdatingStoreId(id);
+    try {
+      const { error } = await supabase
+        .from('stores')
+        .update({ is_active: !currentStatus })
+        .eq('id', id);
+
+      if (error) throw error;
+
+      setStores((prev) => prev.map((s) => (s.id === id ? { ...s, isActive: !currentStatus } : s)));
+    } catch (err) {
+      console.error('Toggle active error:', err);
+      alert('表示切替に失敗しました');
+    } finally {
+      setUpdatingStoreId(null);
+    }
+  };
+
+  const handleDeleteStore = async (id: string, name: string) => {
+    // Stage 1: Basic confirmation
+    if (!confirm(`店舗「${name}」を本当に削除しますか？`)) return;
+
+    // Stage 2: CRITICAL data loss warning
+    const warning = `【重要：最終確認】\nこの店舗を削除すると、キャスト出勤情報、求人ページ設定、料金設定などの関連データが「すべて」永久に失われ、元に戻せません。画像を完全に削除するため復旧も不可能です。\n\n本当によろしいですか？`;
+    if (!confirm(warning)) return;
 
     try {
-      // 1. Get the image URL before deleting
+      // 1. Get the image URL and other linked data if necessary
       const storeToDelete = stores.find((s) => s.id === id);
       const imageUrl = storeToDelete?.photoUrl;
 
+      // Note: Relation-linked data will be handled by Prisma onDelete Cascade (if properly set in DB)
       const { error } = await supabase.from('stores').delete().eq('id', id);
       if (error) throw error;
 
-      // 2. Delete image from storage if exists
+      // 2. Delete main image from storage if exists
       if (imageUrl && imageUrl.startsWith('http')) {
         await deleteStorageFile(imageUrl);
       }
 
       setStores((prev) => prev.filter((s) => s.id !== id));
-      alert('店舗を削除しました');
-    } catch (err) {
+      alert('店舗および関連する全データを完全に消去しました。');
+    } catch (err: any) {
       console.error('Delete error:', err);
-      alert('店舗の削除に失敗しました');
+      alert('店舗の削除に失敗しました: ' + (err.message || '予期せぬエラー'));
     }
   };
 
@@ -461,6 +529,8 @@ export default function StoreManagement() {
                 store={store}
                 onEdit={handleEditClick}
                 onDelete={handleDeleteStore}
+                onToggleActive={handleToggleActive}
+                isUpdating={updatingStoreId === store.id}
               />
             ))}
           </div>

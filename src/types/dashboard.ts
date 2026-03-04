@@ -57,6 +57,7 @@ export interface Store {
   lineUrl?: string;
   lineId?: string;
   notificationEmail?: string;
+  isActive: boolean;
 }
 
 // Represents a data point for time series charts
