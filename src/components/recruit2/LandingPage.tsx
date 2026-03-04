@@ -594,7 +594,13 @@ const LandingPage: React.FC<LandingPageProps> = ({
             steps={config?.flow?.steps}
             onOpenChat={onOpenChat}
             isEditing={isEditing}
-            onUpdate={(key, value) => onUpdate?.('flow', key, value)}
+            onUpdate={(key, value) => {
+              if (value instanceof File) {
+                onImageUpload?.('flow', key, value);
+              } else {
+                onUpdate?.('flow', key, value);
+              }
+            }}
           />
         </div>
       )}

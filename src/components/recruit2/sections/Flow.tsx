@@ -1,3 +1,4 @@
+import NextImage from 'next/image';
 import React, { useState } from 'react';
 
 interface FlowProps {
@@ -234,6 +235,7 @@ const Flow: React.FC<FlowProps> = ({
                       )}
                     </div>
 
+                    {/* Expandable Content Wrap */}
                     <div
                       className={`overflow-hidden transition-all duration-500 ease-in-out ${
                         openStep === i || isEditing
@@ -241,9 +243,11 @@ const Flow: React.FC<FlowProps> = ({
                           : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div className="flex flex-col items-center border-t border-slate-100 p-8 pt-10 md:p-10 md:pt-14">
-                        {/* Text Column - Centered */}
-                        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
+                      <div
+                        className={`flex flex-col items-center gap-6 border-t border-slate-100 p-8 pt-10 md:flex-row md:p-10 md:pt-14 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                      >
+                        {/* Text Column */}
+                        <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
                           {isEditing ? (
                             <p
                               contentEditable
@@ -263,9 +267,66 @@ const Flow: React.FC<FlowProps> = ({
                             </p>
                           )}
                         </div>
+
+                        {/* Image Column */}
+                        <div className="w-full flex-1">
+                          <div className="group relative aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
+                            <NextImage
+                              src={s.image || '/images/recruit/placeholder.png'}
+                              alt={s.title}
+                              fill
+                              sizes="(max-width: 768px) 100vw, 400px"
+                              className="object-cover transition-transform duration-500 group-hover:scale-105"
+                              loading="lazy"
+                            />
+                            {isEditing && (
+                              <label className="absolute inset-0 z-30 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
+                                <span className="text-xs font-bold text-white">画像変更</span>
+                                <input
+                                  type="file"
+                                  className="hidden"
+                                  onChange={(e) => {
+                                    const file = e.target.files?.[0];
+                                    if (file) {
+                                      onUpdate?.(`steps.${i}.image`, file);
+                                    }
+                                  }}
+                                />
+                              </label>
+                            )}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
+
+                  {/* Move/Delete Controls for Steps */}
+                  {isEditing && (
+                    <div className="absolute left-4 top-4 z-40 flex gap-2">
+                      <button
+                        onClick={() => {
+                          const newSteps = steps.filter((_, idx) => idx !== i);
+                          handleInput('steps', newSteps);
+                        }}
+                        className="rounded-full bg-red-500 p-2 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                        title="ステップを削除"
+                      >
+                        <svg
+                          className="h-4 w-4"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2.5}
+                            d="M6 18L18 6M6 6l12 12"
+                          />
+                        </svg>
+                      </button>
+                    </div>
+                  )}
                 </div>
 
                 {/* Enhanced Expand Icon (Overlapping Border) */}
@@ -298,6 +359,38 @@ const Flow: React.FC<FlowProps> = ({
             </React.Fragment>
           ))}
         </div>
+
+        {/* Add Step Button */}
+        {isEditing && (
+          <div className="mt-12 flex justify-center">
+            <button
+              onClick={() => {
+                const nextNum = (steps.length + 1).toString().padStart(2, '0');
+                const newStep = {
+                  step: nextNum,
+                  title: '新しいステップ',
+                  duration: '期間：1日',
+                  desc: 'ここに説明を入力してください。',
+                  color: 'bg-slate-50 border-slate-100',
+                  numColor: 'text-slate-200',
+                  image: '/images/recruit/placeholder.png',
+                };
+                handleInput('steps', [...steps, newStep]);
+              }}
+              className="flex items-center gap-2 rounded-full border-2 border-dashed border-rose-300 bg-rose-50 px-8 py-3 font-bold text-rose-500 transition-all hover:bg-rose-100 active:scale-95"
+            >
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={3}
+                  d="M12 4v16m8-8H4"
+                />
+              </svg>
+              <span>ステップを追加する</span>
+            </button>
+          </div>
+        )}
 
         <div className="mt-20 text-center">
           <p className="mb-8 text-lg font-bold text-slate-700">
