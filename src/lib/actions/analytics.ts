@@ -328,79 +328,96 @@ export async function getCastPerformanceData(storeId?: string, month?: string) {
 
 export async function getCastDetailReservations(castId: string, storeId?: string, month?: string) {
   try {
-    const normalizedCastId = castId.trim().toLowerCase();
+    const trimmedId = castId.trim();
+    const loweredId = trimmedId.toLowerCase();
+    const upperId = trimmedId.toUpperCase();
 
-    console.log('[DEBUG] getCastDetailReservations start', {
+    console.log('[DEBUG-EXTREME] getCastDetailReservations: Start', {
       castId,
-      normalizedCastId,
+      trimmedId,
+      loweredId,
+      upperId,
       storeId,
       month,
     });
 
-    const whereRes: any = {
-      cast_id: normalizedCastId,
-      // Temporarily allowing all statuses to see if data exists
-      // status: 'completed',
-    };
+    // 1. Broadest possible search (ignore all filters except ID patterns)
+    // We try original, trimmed, lowered and upper to catch any mismatch
+    const rawReservations = await (prisma.reservations as any).findMany({
+      where: {
+        OR: [
+          { cast_id: castId },
+          { cast_id: trimmedId },
+          { cast_id: loweredId },
+          { cast_id: upperId },
+        ],
+      },
+      select: {
+        id: true,
+        customer_name: true,
+        client_nickname: true,
+        date_time: true,
+        visit_count: true,
+        status: true,
+        updated_at: true,
+        created_at: true,
+        progress_json: true,
+        cast_id: true,
+        store_id: true,
+      },
+      orderBy: { created_at: 'desc' },
+      take: 100,
+    });
 
-    const whereBlog: any = {
-      cast_id: normalizedCastId,
-    };
+    // Sample IDs from DB for reference
+    const samples = await (prisma.reservations as any).findMany({
+      take: 5,
+      select: { cast_id: true },
+      where: { NOT: { cast_id: null } },
+    });
 
+    console.log('[DEBUG-EXTREME] Found raw count:', rawReservations.length, {
+      sampleIdsInDb: samples.map((s: any) => s.cast_id),
+    });
+
+    // 2. Perform manual filtering in memory to find where data is lost
+    let filtered = rawReservations;
+
+    // Filter by store
     if (storeId && storeId !== 'all') {
-      whereRes.store_id = storeId;
+      const prevCount = filtered.length;
+      filtered = filtered.filter((r) => r.store_id === storeId);
+      console.log(`[DEBUG-EXTREME] Store Filter (${storeId}): ${prevCount} -> ${filtered.length}`);
     }
 
+    // Filter by month
     if (month && month !== 'all') {
+      const prevCount = filtered.length;
       const startDate = new Date(`${month}-01T00:00:00.000Z`);
       const nextMonth = new Date(startDate);
       nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-      whereRes.OR = [
-        { updated_at: { gte: startDate, lt: nextMonth } },
-        { updated_at: null, created_at: { gte: startDate, lt: nextMonth } },
-      ];
-
-      whereBlog.created_at = { gte: startDate, lt: nextMonth };
+      filtered = filtered.filter((r) => {
+        const d = r.updated_at || r.created_at;
+        return d && d >= startDate && d < nextMonth;
+      });
+      console.log(`[DEBUG-EXTREME] Month Filter (${month}): ${prevCount} -> ${filtered.length}`);
     }
 
-    // Parallel fetch
-    const [reservations, blogCount, samples] = await Promise.all([
-      (prisma.reservations as any).findMany({
-        where: whereRes,
-        select: {
-          id: true,
-          customer_name: true,
-          client_nickname: true,
-          date_time: true,
-          visit_count: true,
-          status: true,
-          updated_at: true,
-          created_at: true,
-          progress_json: true,
-          cast_id: true,
-        },
-        orderBy: { date_time: 'desc' },
-      }),
-      prisma.blog.count({
-        where: whereBlog,
-      }),
-      // Sample 3 reservations to see actual cast_id values in DB
-      (prisma.reservations as any).findMany({
-        take: 3,
-        select: { cast_id: true },
-      }),
-    ]);
-
-    console.log(`[DEBUG] Query Results for ${normalizedCastId}:`, {
-      resCount: reservations.length,
-      blogCount,
-      sampleCastIds: samples.map((s: any) => s.cast_id),
+    const blogCount = await prisma.blog.count({
+      where: {
+        OR: [
+          { cast_id: castId },
+          { cast_id: trimmedId },
+          { cast_id: loweredId },
+          { cast_id: upperId },
+        ],
+      },
     });
 
     return {
       success: true,
-      reservations: reservations.map((r: any) => ({
+      reservations: filtered.map((r: any) => ({
         id: r.id,
         customerName: r.client_nickname || r.customer_name || '不明',
         dateTime: r.date_time || r.created_at?.toLocaleString('ja-JP') || '',
@@ -411,7 +428,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
       blogCount,
     };
   } catch (e) {
-    console.error('Error fetching cast detail reservations:', e);
+    console.error('[DEBUG-EXTREME] Fatal error in getCastDetailReservations:', e);
     return { success: false, reservations: [], blogCount: 0 };
   }
 }

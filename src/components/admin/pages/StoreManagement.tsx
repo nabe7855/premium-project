@@ -29,67 +29,72 @@ const StoreCard: React.FC<{
 }> = ({ store, onEdit, onDelete, onToggleActive, isUpdating }) => (
   <Card title={store.name}>
     <div
-      className={`group relative transition-opacity duration-300 ${!store.isActive ? 'opacity-40 grayscale-[0.5]' : ''}`}
+      className={`relative mb-4 transition-all duration-300 ${!store.isActive ? 'opacity-50 grayscale-[0.5]' : ''}`}
     >
       <img
         src={store.photoUrl || 'https://picsum.photos/400/200'}
         alt={store.name}
-        className="mb-4 h-32 w-full rounded-md border border-gray-700 object-cover"
+        className="h-32 w-full rounded-md border border-gray-700 object-cover"
       />
 
       {/* Visibility Status Badge */}
       <div className="absolute left-2 top-2">
         <div
           className={`flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold shadow-lg backdrop-blur-md ${
-            store.isActive ? 'bg-emerald-500/80 text-white' : 'bg-gray-500/80 text-white'
+            store.isActive ? 'bg-emerald-500/80 text-white' : 'bg-red-500/80 text-white'
           }`}
         >
           {store.isActive ? <Eye size={10} /> : <EyeOff size={10} />}
-          {store.isActive ? '表示中' : '非表示'}
+          {store.isActive ? '表示中' : '非表示（サイトから隠されています）'}
         </div>
       </div>
+    </div>
 
-      <div className="absolute right-2 top-2 flex gap-2 opacity-0 transition-opacity group-hover:opacity-100">
+    <p className="mb-1 line-clamp-1 text-sm font-semibold text-brand-text-secondary">
+      {store.catchphrase}
+    </p>
+    <p className="mb-4 line-clamp-2 h-10 overflow-hidden text-xs text-gray-400">{store.overview}</p>
+
+    <div className="space-y-3">
+      {/* Primary Action */}
+      <button
+        onClick={() => onEdit(store)}
+        className="flex w-full items-center justify-center gap-2 rounded border border-brand-accent/50 bg-brand-accent/20 px-4 py-2.5 text-sm font-bold text-brand-accent transition-colors hover:bg-brand-accent/40"
+      >
+        <Edit2 size={16} />
+        詳細・編集
+      </button>
+
+      {/* Horizontal Actions */}
+      <div className="grid grid-cols-2 gap-2">
         <button
           onClick={() => onToggleActive(store.id, store.isActive)}
           disabled={isUpdating}
-          title={store.isActive ? '非表示にする' : '表示する'}
-          className={`rounded-full p-1.5 text-white shadow-lg transition-colors ${
+          className={`flex items-center justify-center gap-2 rounded px-3 py-2 text-xs font-bold transition-all ${
             store.isActive
-              ? 'bg-gray-600/90 hover:bg-gray-600'
-              : 'bg-emerald-600/90 hover:bg-emerald-600'
+              ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              : 'bg-emerald-600 text-white hover:bg-emerald-500'
           }`}
         >
-          {store.isActive ? <EyeOff size={14} /> : <Eye size={14} />}
+          {isUpdating ? (
+            <Loader2 size={14} className="animate-spin" />
+          ) : store.isActive ? (
+            <EyeOff size={14} />
+          ) : (
+            <Eye size={14} />
+          )}
+          {store.isActive ? '非表示にする' : '表示する'}
         </button>
-        <button
-          onClick={() => onEdit(store)}
-          className="rounded-full bg-blue-600/90 p-1.5 text-white shadow-lg hover:bg-blue-600"
-        >
-          <Edit2 size={14} />
-        </button>
+
         <button
           onClick={() => onDelete(store.id, store.name)}
-          className="rounded-full bg-red-600/90 p-1.5 text-white shadow-lg hover:bg-red-600"
+          className="flex items-center justify-center gap-2 rounded bg-red-900/30 text-red-500 transition-all hover:bg-red-600 hover:text-white"
         >
           <Trash2 size={14} />
+          <span className="text-xs font-bold">店舗削除</span>
         </button>
       </div>
     </div>
-    <p className="mb-2 line-clamp-1 text-sm font-semibold text-brand-text-secondary">
-      {store.catchphrase}
-    </p>
-    <p className="mb-2 line-clamp-2 h-10 overflow-hidden text-xs text-gray-400">{store.overview}</p>
-    <div className="space-y-1">
-      <p className="line-clamp-1 text-[10px] text-gray-500">📍 {store.address}</p>
-      <p className="text-[10px] text-gray-500">📞 {store.phone}</p>
-    </div>
-    <button
-      onClick={() => onEdit(store)}
-      className="mt-4 w-full rounded border border-brand-accent/50 bg-brand-accent/20 px-4 py-2 text-center text-sm font-bold text-brand-accent transition-colors hover:bg-brand-accent/40"
-    >
-      詳細・編集
-    </button>
   </Card>
 );
 
