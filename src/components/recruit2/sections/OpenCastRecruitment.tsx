@@ -10,6 +10,7 @@ interface OpenCastRecruitmentProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   openCastImage?: string;
+  targetDate?: string; // New: ISO string or "MM-DD"
   benefits?: { title: string; desc: string }[];
 }
 
@@ -18,6 +19,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   isEditing = false,
   onUpdate,
   openCastImage,
+  targetDate,
   benefits = [
     {
       title: '業界最高水準のバック率',
@@ -37,19 +39,37 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   const [timeLeft, setTimeLeft] = useState(0);
 
   useEffect(() => {
-    // Target date: February 1st
-    const now = new Date();
-    const currentYear = now.getFullYear();
-    let targetYear = currentYear;
-    const testDate = new Date(currentYear, 1, 1);
-    if (now > testDate) {
-      targetYear = currentYear + 1;
+    let target: Date;
+    if (targetDate) {
+      target = new Date(targetDate);
+      // If only MM-DD is provided (legacy or simplistic), try to append current year
+      if (isNaN(target.getTime())) {
+        const parts = targetDate.split('-');
+        if (parts.length === 2) {
+          const now = new Date();
+          const year = now.getFullYear();
+          target = new Date(year, parseInt(parts[0]) - 1, parseInt(parts[1]));
+          if (now > target) {
+            target.setFullYear(year + 1);
+          }
+        } else {
+          // Fallback if invalid format
+          target = new Date(new Date().getFullYear(), 1, 1);
+        }
+      }
+    } else {
+      // Default: February 1st
+      const now = new Date();
+      const currentYear = now.getFullYear();
+      target = new Date(currentYear, 1, 1);
+      if (now > target) {
+        target.setFullYear(currentYear + 1);
+      }
     }
-    const targetDate = new Date(targetYear, 1, 1);
 
     const updateTimer = () => {
       const currentTime = new Date();
-      const difference = targetDate.getTime() - currentTime.getTime();
+      const difference = target.getTime() - currentTime.getTime();
 
       if (difference > 0) {
         setTimeLeft(Math.floor(difference / 1000));
@@ -61,7 +81,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
     updateTimer();
     const timer = setInterval(updateTimer, 1000);
     return () => clearInterval(timer);
-  }, []);
+  }, [targetDate]);
 
   const formatTime = (seconds: number) => {
     const d = Math.floor(seconds / (3600 * 24));
@@ -154,9 +174,29 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
             <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
               {/* Grand Opening Message - Moved and Prominent */}
               <div className="mb-8 text-center">
-                <p className="mb-3 text-2xl font-black tracking-[0.1em] text-white drop-shadow-[0_0_15px_rgba(251,191,36,0.6)] sm:text-4xl">
-                  2月1日 <span className="text-amber-300">グランドオープン</span>まで
-                </p>
+                <div className="mb-3 flex items-center justify-center gap-2 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
+                  {isEditing ? (
+                    <input
+                      type="date"
+                      value={targetDate ? new Date(targetDate).toISOString().split('T')[0] : ''}
+                      onChange={(e) => onUpdate?.('targetDate', e.target.value)}
+                      className="rounded border border-amber-500/50 bg-black/40 px-2 py-1 text-xl font-black text-amber-300 outline-none"
+                    />
+                  ) : (
+                    <p className="text-2xl font-black tracking-[0.1em] text-white sm:text-4xl">
+                      {targetDate ? (
+                        <>
+                          {new Date(targetDate).getMonth() + 1}月{new Date(targetDate).getDate()}日
+                        </>
+                      ) : (
+                        '2月1日'
+                      )}
+                    </p>
+                  )}
+                  <p className="text-2xl font-black tracking-[0.1em] text-white sm:text-4xl">
+                    <span className="text-amber-300">グランドオープン</span>まで
+                  </p>
+                </div>
                 <div className="mx-auto h-0.5 w-32 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent"></div>
               </div>
 
@@ -188,7 +228,15 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                     </div>
                     <div className="space-y-2 text-center">
                       <p className="text-sm font-medium text-indigo-200 sm:text-base">
-                        2月1日 23:59までにエントリーされた方のみ
+                        {targetDate ? (
+                          <>
+                            {new Date(targetDate).getMonth() + 1}月{new Date(targetDate).getDate()}
+                            日
+                          </>
+                        ) : (
+                          '2月1日'
+                        )}{' '}
+                        23:59までにエントリーされた方のみ
                       </p>
                       <p className="text-sm font-medium text-indigo-200 sm:text-base">
                         オープンキャスト枠として選考対象となります

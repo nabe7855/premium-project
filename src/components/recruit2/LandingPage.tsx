@@ -32,6 +32,7 @@ export interface LandingPageConfig {
   openCast?: {
     isVisible?: boolean;
     openCastImage?: string;
+    targetDate?: string;
     benefits?: { title: string; desc: string }[];
   };
   fukuoka?: {
@@ -268,6 +269,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             isEditing={isEditing}
             onUpdate={(key: string, value: any) => onUpdate?.('openCast', key, value)}
             openCastImage={config.openCast?.openCastImage}
+            targetDate={config.openCast?.targetDate}
             benefits={config.openCast?.benefits}
           />
         </div>
