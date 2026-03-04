@@ -1,6 +1,10 @@
 import { deleteCastProfile, updateCastAuth } from '@/actions/cast-auth';
 import Card from '@/components/admin/ui/Card';
-import { getAvailableMonths, getCastPerformanceData } from '@/lib/actions/analytics';
+import {
+  getAvailableMonths,
+  getCastDetailReservations,
+  getCastPerformanceData,
+} from '@/lib/actions/analytics';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -87,13 +91,39 @@ const CastCard: React.FC<{ cast: Cast; stores: Store[]; onSelect: (cast: Cast) =
 const CastDetailModal: React.FC<{
   cast: Cast;
   stores: Store[];
-  allCasts: Cast[]; // Added to check for duplicates
+  allCasts: Cast[];
+  selectedStore?: string;
+  selectedMonth?: string;
   onClose: () => void;
   onSave: (cast: Cast) => void;
   onDelete: (castId: string, castName: string) => void;
-}> = ({ cast: initialCast, stores, allCasts, onClose, onSave, onDelete }) => {
+}> = ({
+  cast: initialCast,
+  stores,
+  allCasts,
+  selectedStore,
+  selectedMonth,
+  onClose,
+  onSave,
+  onDelete,
+}) => {
   const [cast, setCast] = useState<Cast | null>(initialCast);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [activeTab, setActiveTab] = useState<'edit' | 'history'>('edit');
+  const [reservationHistory, setReservationHistory] = useState<any[]>([]);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [blogCount, setBlogCount] = useState(0);
+
+  useEffect(() => {
+    if (activeTab === 'history' && cast) {
+      setHistoryLoading(true);
+      getCastDetailReservations(cast.id, selectedStore, selectedMonth).then((result) => {
+        setReservationHistory(result.reservations || []);
+        setBlogCount(result.blogCount || 0);
+        setHistoryLoading(false);
+      });
+    }
+  }, [activeTab, cast?.id, selectedStore, selectedMonth]);
 
   if (!cast) return null;
 
@@ -166,263 +196,352 @@ const CastDetailModal: React.FC<{
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-4xl overflow-y-auto rounded-xl bg-brand-secondary shadow-lg"
+        className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden rounded-xl bg-brand-secondary shadow-lg"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="relative p-6">
+        <div className="relative border-b border-gray-700 p-6 pb-0">
           <button
             onClick={onClose}
             className="absolute right-4 top-4 text-brand-text-secondary hover:text-white"
           >
             <XMarkIcon />
           </button>
-          <h2 className="mb-6 text-2xl font-bold text-white">{cast.name} の詳細</h2>
+          <h2 className="mb-4 text-2xl font-bold text-white">{cast.name} の詳細</h2>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-5">
-            {/* Left Column: Photo & Stats */}
-            <div className="space-y-4 md:col-span-2">
-              <img
-                src={
-                  cast.photoUrl ||
-                  'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
-                }
-                alt={cast.name}
-                className="aspect-square w-full rounded-lg object-cover"
-              />
-              <Card title="統計情報">
-                <div className="space-y-4">
-                  {/* Donut Chart for Breakdown */}
-                  <div>
-                    <h4 className="mb-2 text-sm font-semibold text-brand-text-secondary">
-                      指名内訳
-                    </h4>
-                    <div className="relative h-48 w-full">
-                      <ResponsiveContainer>
-                        <PieChart>
-                          <Pie
-                            data={breakdownData}
-                            dataKey="value"
-                            nameKey="name"
-                            cx="50%"
-                            cy="50%"
-                            innerRadius={50}
-                            outerRadius={70}
-                            fill="#8884d8"
-                            paddingAngle={5}
-                          >
-                            {breakdownData.map((_entry, index) => (
-                              <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip
-                            contentStyle={{ backgroundColor: '#1E1E3F', borderColor: '#374151' }}
-                            itemStyle={{ color: '#fff' }}
-                          />
-                        </PieChart>
-                      </ResponsiveContainer>
-                      <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
-                        <span className="text-3xl font-bold text-white">
-                          {cast.stats?.designations || 0}
-                        </span>
-                        <span className="text-sm text-brand-text-secondary">総指名</span>
+          {/* Tabs */}
+          <div className="flex gap-4 border-b border-gray-700">
+            <button
+              onClick={() => setActiveTab('edit')}
+              className={`pb-3 text-sm font-bold transition-colors ${
+                activeTab === 'edit'
+                  ? 'border-b-2 border-brand-accent text-white'
+                  : 'text-brand-text-secondary hover:text-white'
+              }`}
+            >
+              プロフィール編集
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`pb-3 text-sm font-bold transition-colors ${
+                activeTab === 'history'
+                  ? 'border-b-2 border-brand-accent text-white'
+                  : 'text-brand-text-secondary hover:text-white'
+              }`}
+            >
+              予約履歴
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 overflow-y-auto p-6">
+          {activeTab === 'history' ? (
+            <div className="space-y-4">
+              {/* 簡易サマリー */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-xl border border-indigo-500/30 bg-indigo-500/10 p-4 text-center">
+                  <p className="text-2xl font-bold text-white">{cast.stats?.designations ?? 0}</p>
+                  <p className="mt-1 text-xs text-indigo-400">総指名数</p>
+                </div>
+                <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-4 text-center">
+                  <p className="text-2xl font-bold text-white">{cast.stats?.repeatRate ?? 0}%</p>
+                  <p className="mt-1 text-xs text-emerald-400">リピート率</p>
+                </div>
+                <div className="rounded-xl border border-violet-500/30 bg-violet-500/10 p-4 text-center">
+                  <p className="text-2xl font-bold text-white">{blogCount}</p>
+                  <p className="mt-1 text-xs text-violet-400">ブログ投稿数</p>
+                </div>
+              </div>
+
+              {/* 予約リスト */}
+              {historyLoading ? (
+                <div className="flex justify-center py-12">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-brand-accent" />
+                </div>
+              ) : reservationHistory.length === 0 ? (
+                <p className="py-8 text-center text-sm text-brand-text-secondary">
+                  該当期間の予約履歴がありません。
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  <p className="text-xs text-brand-text-secondary">
+                    直近 {reservationHistory.length} 件の完了予約
+                  </p>
+                  {reservationHistory.map((r: any) => (
+                    <div
+                      key={r.id}
+                      className="flex items-center justify-between rounded-lg bg-brand-primary px-4 py-3 text-sm"
+                    >
+                      <div>
+                        <p className="font-medium text-white">
+                          {r.client_nickname || r.customer_name}
+                        </p>
+                        <p className="text-[11px] text-brand-text-secondary">{r.date_time}</p>
                       </div>
-                    </div>
-                    <div className="mt-2 flex justify-center space-x-4 text-xs">
-                      {breakdownData.map((item, index) => (
-                        <div key={item.name} className="flex items-center">
-                          <span
-                            className="mr-1.5 h-3 w-3 rounded-full"
-                            style={{ backgroundColor: COLORS[index] }}
-                          ></span>
-                          <span>
-                            {item.name}: {item.value}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Bar Chart for Monthly Performance */}
-                  <div>
-                    <h4 className="mb-2 text-sm font-semibold text-brand-text-secondary">
-                      月次指名本数
-                    </h4>
-                    <div className="h-40 w-full">
-                      <ResponsiveContainer>
-                        <BarChart
-                          data={cast.stats?.monthlyPerformance || []}
-                          margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+                      <div className="flex items-center gap-2">
+                        <span
+                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                            r.visit_count === 1
+                              ? 'bg-pink-500/20 text-pink-400'
+                              : 'bg-blue-500/20 text-blue-400'
+                          }`}
                         >
-                          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                          <XAxis dataKey="name" tick={{ fill: '#A0AEC0' }} fontSize={12} />
-                          <YAxis tick={{ fill: '#A0AEC0' }} fontSize={12} />
-                          <Tooltip
-                            cursor={{ fill: 'rgba(62, 123, 250, 0.1)' }}
-                            contentStyle={{ backgroundColor: '#1E1E3F', borderColor: '#374151' }}
-                          />
-                          <Bar dataKey="value" name="指名本数" fill="#3E7BFA" />
-                        </BarChart>
-                      </ResponsiveContainer>
+                          {r.visit_count === 1 ? '新規' : `${r.visit_count}回目`}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-6 md:grid-cols-5">
+              {/* Left Column: Photo & Stats */}
+              <div className="space-y-4 md:col-span-2">
+                <img
+                  src={
+                    cast.photoUrl ||
+                    'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
+                  }
+                  alt={cast.name}
+                  className="aspect-square w-full rounded-lg object-cover"
+                />
+                <Card title="統計情報">
+                  <div className="space-y-4">
+                    {/* Donut Chart for Breakdown */}
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-brand-text-secondary">
+                        指名内訳
+                      </h4>
+                      <div className="relative h-48 w-full">
+                        <ResponsiveContainer>
+                          <PieChart>
+                            <Pie
+                              data={breakdownData}
+                              dataKey="value"
+                              nameKey="name"
+                              cx="50%"
+                              cy="50%"
+                              innerRadius={50}
+                              outerRadius={70}
+                              fill="#8884d8"
+                              paddingAngle={5}
+                            >
+                              {breakdownData.map((_entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                              ))}
+                            </Pie>
+                            <Tooltip
+                              contentStyle={{ backgroundColor: '#1E1E3F', borderColor: '#374151' }}
+                              itemStyle={{ color: '#fff' }}
+                            />
+                          </PieChart>
+                        </ResponsiveContainer>
+                        <div className="pointer-events-none absolute inset-0 flex flex-col items-center justify-center">
+                          <span className="text-3xl font-bold text-white">
+                            {cast.stats?.designations || 0}
+                          </span>
+                          <span className="text-sm text-brand-text-secondary">総指名</span>
+                        </div>
+                      </div>
+                      <div className="mt-2 flex justify-center space-x-4 text-xs">
+                        {breakdownData.map((item, index) => (
+                          <div key={item.name} className="flex items-center">
+                            <span
+                              className="mr-1.5 h-3 w-3 rounded-full"
+                              style={{ backgroundColor: COLORS[index] }}
+                            ></span>
+                            <span>
+                              {item.name}: {item.value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Bar Chart for Monthly Performance */}
+                    <div>
+                      <h4 className="mb-2 text-sm font-semibold text-brand-text-secondary">
+                        月次指名本数
+                      </h4>
+                      <div className="h-40 w-full">
+                        <ResponsiveContainer>
+                          <BarChart
+                            data={cast.stats?.monthlyPerformance || []}
+                            margin={{ top: 5, right: 10, left: -20, bottom: 5 }}
+                          >
+                            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+                            <XAxis dataKey="name" tick={{ fill: '#A0AEC0' }} fontSize={12} />
+                            <YAxis tick={{ fill: '#A0AEC0' }} fontSize={12} />
+                            <Tooltip
+                              cursor={{ fill: 'rgba(62, 123, 250, 0.1)' }}
+                              contentStyle={{ backgroundColor: '#1E1E3F', borderColor: '#374151' }}
+                            />
+                            <Bar dataKey="value" name="指名本数" fill="#3E7BFA" />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Card>
-            </div>
+                </Card>
+              </div>
 
-            {/* Right Column: Details & Form */}
-            <div className="space-y-4 md:col-span-3">
-              <div>
-                <label className="text-sm text-brand-text-secondary">名前</label>
-                <input
-                  type="text"
-                  value={cast.name}
-                  onChange={(e) => setCast({ ...cast, name: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-brand-text-secondary">キャッチコピー</label>
-                <input
-                  type="text"
-                  value={cast.catchphrase}
-                  onChange={(e) => setCast({ ...cast, catchphrase: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
-                />
-              </div>
-              <div>
-                <label className="text-sm text-brand-text-secondary">ステータス</label>
-                <select
-                  value={cast.status}
-                  onChange={(e) => setCast({ ...cast, status: e.target.value as Cast['status'] })}
-                  className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
-                >
-                  <option>在籍中</option>
-                  <option>離籍</option>
-                </select>
-              </div>
-              <div>
-                <label className="text-sm text-brand-text-secondary">
-                  所属店舗と表示順位（1〜）
-                </label>
-                <div className="mt-2 space-y-2 rounded-md border border-gray-700 bg-brand-primary p-3">
-                  {stores.map((store) => {
-                    const isChecked = cast.storeIds.includes(store.id);
-                    return (
-                      <div key={store.id} className="flex flex-col space-y-1">
-                        <div className="flex items-center justify-between">
-                          <label className="flex cursor-pointer items-center space-x-2 text-sm">
-                            <input
-                              type="checkbox"
-                              checked={isChecked}
-                              onChange={(e) => handleStoreChange(store.id, e.target.checked)}
-                              className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
-                            />
-                            <span className={isChecked ? 'text-white' : 'text-gray-500'}>
-                              {store.name}
-                            </span>
-                          </label>
-                          {isChecked && (
-                            <div className="flex items-center space-x-2">
-                              <span className="mt-1 text-xs text-brand-text-secondary">
-                                表示順:
-                              </span>
-                              <input
-                                type="number"
-                                min="1"
-                                value={cast.storePriorities[store.id] || ''}
-                                onChange={(e) =>
-                                  handlePriorityChange(store.id, parseInt(e.target.value) || 0)
-                                }
-                                className={`w-16 rounded border ${
-                                  errors[store.id] ? 'border-red-500' : 'border-gray-700'
-                                } bg-brand-secondary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
-                              />
-                            </div>
-                          )}
-                        </div>
-                        {isChecked && errors[store.id] && (
-                          <p className="text-[10px] text-red-500">{errors[store.id]}</p>
-                        )}
-                      </div>
-                    );
-                  })}
+              {/* Right Column: Details & Form */}
+              <div className="space-y-4 md:col-span-3">
+                <div>
+                  <label className="text-sm text-brand-text-secondary">名前</label>
+                  <input
+                    type="text"
+                    value={cast.name}
+                    onChange={(e) => setCast({ ...cast, name: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+                  />
                 </div>
-              </div>
-              <div>
-                <label className="text-sm text-brand-text-secondary">マネージャーコメント</label>
-                <textarea
-                  value={cast.managerComment}
-                  onChange={(e) => setCast({ ...cast, managerComment: e.target.value })}
-                  className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
-                  rows={4}
-                ></textarea>
-              </div>
-              <div className="grid grid-cols-1 gap-4 rounded-md border border-brand-accent/20 bg-brand-accent/5 p-4 md:grid-cols-2">
-                <div className="md:col-span-2">
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                    アカウント情報
-                  </h3>
+                <div>
+                  <label className="text-sm text-brand-text-secondary">キャッチコピー</label>
+                  <input
+                    type="text"
+                    value={cast.catchphrase}
+                    onChange={(e) => setCast({ ...cast, catchphrase: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm text-brand-text-secondary">ステータス</label>
+                  <select
+                    value={cast.status}
+                    onChange={(e) => setCast({ ...cast, status: e.target.value as Cast['status'] })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+                  >
+                    <option>在籍中</option>
+                    <option>離籍</option>
+                  </select>
                 </div>
                 <div>
                   <label className="text-sm text-brand-text-secondary">
-                    ログイン用メールアドレス
+                    所属店舗と表示順位（1〜）
                   </label>
-                  <input
-                    type="email"
-                    value={cast.email || ''}
-                    onChange={(e) => setCast({ ...cast, email: e.target.value })}
-                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
-                    placeholder="example@mail.com"
-                  />
+                  <div className="mt-2 space-y-2 rounded-md border border-gray-700 bg-brand-primary p-3">
+                    {stores.map((store) => {
+                      const isChecked = cast.storeIds.includes(store.id);
+                      return (
+                        <div key={store.id} className="flex flex-col space-y-1">
+                          <div className="flex items-center justify-between">
+                            <label className="flex cursor-pointer items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={isChecked}
+                                onChange={(e) => handleStoreChange(store.id, e.target.checked)}
+                                className="h-4 w-4 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
+                              />
+                              <span className={isChecked ? 'text-white' : 'text-gray-500'}>
+                                {store.name}
+                              </span>
+                            </label>
+                            {isChecked && (
+                              <div className="flex items-center space-x-2">
+                                <span className="mt-1 text-xs text-brand-text-secondary">
+                                  表示順:
+                                </span>
+                                <input
+                                  type="number"
+                                  min="1"
+                                  value={cast.storePriorities[store.id] || ''}
+                                  onChange={(e) =>
+                                    handlePriorityChange(store.id, parseInt(e.target.value) || 0)
+                                  }
+                                  className={`w-16 rounded border ${
+                                    errors[store.id] ? 'border-red-500' : 'border-gray-700'
+                                  } bg-brand-secondary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
+                                />
+                              </div>
+                            )}
+                          </div>
+                          {isChecked && errors[store.id] && (
+                            <p className="text-[10px] text-red-500">{errors[store.id]}</p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
                 </div>
                 <div>
-                  <label className="text-sm text-brand-text-secondary">ログイン用パスワード</label>
-                  <input
-                    type="text"
-                    value={cast.password || ''}
-                    onChange={(e) => setCast({ ...cast, password: e.target.value })}
-                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
-                    placeholder="パスワードを入力"
-                  />
+                  <label className="text-sm text-brand-text-secondary">マネージャーコメント</label>
+                  <textarea
+                    value={cast.managerComment}
+                    onChange={(e) => setCast({ ...cast, managerComment: e.target.value })}
+                    className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+                    rows={4}
+                  ></textarea>
                 </div>
-                <p className="text-[10px] text-brand-text-secondary opacity-60 md:col-span-2">
-                  ※これらの情報は管理用として保存されます。
-                </p>
-              </div>
-              <div className="flex justify-end space-x-2 pt-4">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="rounded-md bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-500"
-                >
-                  キャンセル
-                </button>
-                <button
-                  type="submit"
-                  className="rounded-md bg-brand-accent px-4 py-2 font-semibold text-white hover:bg-blue-500"
-                >
-                  保存
-                </button>
-              </div>
-
-              {/* ⚠️ キャスト削除セクション */}
-              <div className="mt-8 border-t border-red-900/30 pt-6">
-                <div className="rounded-lg border border-red-900/50 bg-red-900/10 p-4">
-                  <h3 className="mb-2 text-sm font-bold text-red-500">キャストの完全削除</h3>
-                  <p className="mb-4 text-xs leading-relaxed text-brand-text-secondary">
-                    この操作により、キャストのプロフィール、画像、口コミ、つぶやき、出勤情報、およびログインアカウントがすべて完全に削除され、復元できなくなります。
+                <div className="grid grid-cols-1 gap-4 rounded-md border border-brand-accent/20 bg-brand-accent/5 p-4 md:grid-cols-2">
+                  <div className="md:col-span-2">
+                    <h3 className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                      アカウント情報
+                    </h3>
+                  </div>
+                  <div>
+                    <label className="text-sm text-brand-text-secondary">
+                      ログイン用メールアドレス
+                    </label>
+                    <input
+                      type="email"
+                      value={cast.email || ''}
+                      onChange={(e) => setCast({ ...cast, email: e.target.value })}
+                      className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
+                      placeholder="example@mail.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm text-brand-text-secondary">
+                      ログイン用パスワード
+                    </label>
+                    <input
+                      type="text"
+                      value={cast.password || ''}
+                      onChange={(e) => setCast({ ...cast, password: e.target.value })}
+                      className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white"
+                      placeholder="パスワードを入力"
+                    />
+                  </div>
+                  <p className="text-[10px] text-brand-text-secondary opacity-60 md:col-span-2">
+                    ※これらの情報は管理用として保存されます。
                   </p>
+                </div>
+                <div className="flex justify-end space-x-2 pt-4">
                   <button
                     type="button"
-                    onClick={() => onDelete(cast.id, cast.name)}
-                    className="flex w-full items-center justify-center gap-2 rounded-md border border-red-500/30 bg-red-600/20 px-4 py-2 text-sm font-bold text-red-500 transition-all hover:bg-red-600 hover:text-white"
+                    onClick={onClose}
+                    className="rounded-md bg-gray-600 px-4 py-2 font-semibold text-white hover:bg-gray-500"
                   >
-                    このキャストを完全に削除する
+                    キャンセル
+                  </button>
+                  <button
+                    type="submit"
+                    className="rounded-md bg-brand-accent px-4 py-2 font-semibold text-white hover:bg-blue-500"
+                  >
+                    保存
                   </button>
                 </div>
+
+                {/* ⚠️ キャスト削除セクション */}
+                <div className="mt-8 border-t border-red-900/30 pt-6">
+                  <div className="rounded-lg border border-red-900/50 bg-red-900/10 p-4">
+                    <h3 className="mb-2 text-sm font-bold text-red-500">キャストの完全削除</h3>
+                    <p className="mb-4 text-xs leading-relaxed text-brand-text-secondary">
+                      この操作により、キャストのプロフィール、画像、口コミ、つぶやき、出勤情報、およびログインアカウントがすべて完全に削除され、復元できなくなります。
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => onDelete(cast.id, cast.name)}
+                      className="flex w-full items-center justify-center gap-2 rounded-md border border-red-500/30 bg-red-600/20 px-4 py-2 text-sm font-bold text-red-500 transition-all hover:bg-red-600 hover:text-white"
+                    >
+                      このキャストを完全に削除する
+                    </button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </form>
+            </form>
+          )}
         </div>
       </div>
     </div>
@@ -772,6 +891,8 @@ export default function AllCast() {
           cast={selectedCast}
           stores={stores}
           allCasts={casts}
+          selectedStore={selectedStore}
+          selectedMonth={selectedMonth}
           onClose={() => setSelectedCast(null)}
           onSave={handleSave}
           onDelete={handleDelete}

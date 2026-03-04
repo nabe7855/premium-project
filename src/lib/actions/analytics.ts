@@ -325,3 +325,60 @@ export async function getCastPerformanceData(storeId?: string, month?: string) {
     return {};
   }
 }
+
+export async function getCastDetailReservations(castId: string, storeId?: string, month?: string) {
+  try {
+    const whereRes: any = {
+      cast_id: castId,
+      status: 'completed',
+    };
+
+    // Blog filtering
+    const whereBlog: any = {
+      cast_id: castId,
+    };
+
+    if (storeId && storeId !== 'all') {
+      whereRes.store_id = storeId;
+    }
+
+    if (month && month !== 'all') {
+      const startDate = new Date(`${month}-01T00:00:00.000Z`);
+      const nextMonth = new Date(startDate);
+      nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+      whereRes.OR = [
+        { updated_at: { gte: startDate, lt: nextMonth } },
+        { updated_at: null, created_at: { gte: startDate, lt: nextMonth } },
+      ];
+
+      whereBlog.created_at = { gte: startDate, lt: nextMonth };
+    }
+
+    // Parallel fetch
+    const [reservations, blogCount] = await Promise.all([
+      (prisma.reservations as any).findMany({
+        where: whereRes,
+        select: {
+          id: true,
+          customer_name: true,
+          client_nickname: true,
+          date_time: true,
+          visit_count: true,
+          status: true,
+          updated_at: true,
+          created_at: true,
+        },
+        orderBy: { date_time: 'desc' },
+      }),
+      prisma.blog.count({
+        where: whereBlog,
+      }),
+    ]);
+
+    return { success: true, reservations, blogCount };
+  } catch (e) {
+    console.error('Error fetching cast detail reservations:', e);
+    return { success: false, reservations: [], blogCount: 0 };
+  }
+}
