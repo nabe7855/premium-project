@@ -24,7 +24,7 @@ const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> 
   osaka: { prefectureId: 'osaka' },
   nagoya: { prefectureId: 'aichi' },
   fukuoka: { prefectureId: 'Fukuoka' },
-  yokohama: { prefectureId: 'kanagawa', cityId: 'yokohama' },
+  yokohama: { prefectureId: 'Kanagawa', cityId: 'Yokohama-shi' },
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
