@@ -27,6 +27,7 @@ export const mockStores: Store[] = [
     address: '東京都新宿区新宿1-1-1',
     phone: '03-1234-5678',
     photoUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400&q=80',
+    isActive: true,
   },
   {
     id: 'store-2',
@@ -38,6 +39,7 @@ export const mockStores: Store[] = [
     address: '東京都渋谷区渋谷2-2-2',
     phone: '03-2345-6789',
     photoUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400&q=80',
+    isActive: true,
   },
   {
     id: 'store-3',
@@ -49,6 +51,7 @@ export const mockStores: Store[] = [
     address: '東京都中央区銀座3-3-3',
     phone: '03-3456-7890',
     photoUrl: 'https://images.unsplash.com/photo-1578474846511-04ba529f0b88?w=400&q=80',
+    isActive: true,
   },
   {
     id: 'store-4',
@@ -60,6 +63,7 @@ export const mockStores: Store[] = [
     address: '東京都港区六本木4-4-4',
     phone: '03-4567-8901',
     photoUrl: 'https://images.unsplash.com/photo-1552566626-52f8b828add9?w=400&q=80',
+    isActive: true,
   },
 ];
 

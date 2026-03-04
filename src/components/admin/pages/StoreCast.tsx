@@ -389,6 +389,7 @@ export default function StoreCast() {
             address: '',
             phone: '',
             photoUrl: '',
+            isActive: true,
           }));
           setStores(mappedStores);
           if (mappedStores.length > 0) setSelectedStore(mappedStores[0].id);

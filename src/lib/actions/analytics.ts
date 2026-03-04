@@ -392,7 +392,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
     const nextMonth = startDate ? new Date(startDate) : null;
     if (nextMonth) nextMonth.setMonth(nextMonth.getMonth() + 1);
 
-    const filtered = rawReservations.filter((r) => {
+    const filtered = rawReservations.filter((r: any) => {
       // Store filter
       if (storeId && storeId !== 'all' && r.store_id !== storeId) return false;
 
