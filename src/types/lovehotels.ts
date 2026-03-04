@@ -2,6 +2,7 @@ export interface Hotel {
   id: string;
   name: string;
   prefecture: string;
+  prefectureId?: string;
   city: string;
   cityId?: string; // Added for correct routing
   area: string;

@@ -1,5 +1,6 @@
 import { getHotelById, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
+import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 interface Props {
@@ -30,8 +31,62 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
     notFound();
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Hotel',
+    name: hotel.name,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: hotel.address,
+      addressLocality: hotel.city,
+      addressRegion: hotel.prefecture,
+    },
+    telephone: hotel.phone,
+    image: hotel.imageUrl,
+    url: `https://www.sutoroberrys.jp/sweetstay/hotel/${hotel.id}`,
+    amenityFeature: hotel.amenities.map((a) => ({
+      '@type': 'LocationFeatureSpecification',
+      name: a,
+      value: true,
+    })),
+  };
+
   return (
     <div className="min-h-screen bg-white">
+      {/* SEO Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
+      {/* Breadcrumbs */}
+      <nav className="border-b border-gray-50 bg-white py-4">
+        <div className="container mx-auto px-4 md:px-6">
+          <ul className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">
+            <li>
+              <Link href="/sweetstay" className="hover:text-rose-500">
+                Sweet Stay
+              </Link>
+            </li>
+            <li>
+              <span className="text-gray-200">/</span>
+            </li>
+            <li>
+              <Link
+                href={`/sweetstay/area/${hotel.prefectureId?.toLowerCase()}`}
+                className="hover:text-rose-500"
+              >
+                {hotel.prefecture}
+              </Link>
+            </li>
+            <li>
+              <span className="text-gray-200">/</span>
+            </li>
+            <li className="text-gray-900">{hotel.name}</li>
+          </ul>
+        </div>
+      </nav>
+
       {/* Hero: Main Image */}
       <section className="relative h-[60vh] overflow-hidden bg-gray-900 md:h-[80vh]">
         {hotel.imageUrl && (
@@ -69,9 +124,58 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                 <h2 className="mb-8 text-2xl font-black tracking-tight text-gray-900">
                   About This Hotel
                 </h2>
-                <p className="text-lg font-medium leading-[2] text-gray-500">
-                  {hotel.description ||
-                    'このホテルについての詳細な紹介文を、現在プロの目利きたちが執筆中です。現時点では、以下の充実したアメニティとサービス、そしてその立地の良さから多くの方に選ばれています。'}
+                <div className="prose prose-rose max-w-none">
+                  <p className="text-lg font-medium leading-[2] text-gray-500">
+                    {hotel.description ||
+                      'このホテルについての詳細な紹介文を、現在プロの目利きたちが執筆中です。現時点では、以下の充実したアメニティとサービス、そしてその立地の良さから多くの方に選ばれています。'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Detailed Price Table Section */}
+              <div className="mb-16 border-t border-gray-100 pt-16">
+                <h2 className="mb-8 text-2xl font-black tracking-tight text-gray-900">
+                  料金システム
+                </h2>
+                <div className="overflow-hidden rounded-3xl border border-gray-100">
+                  <table className="w-full text-left">
+                    <thead className="bg-gray-50">
+                      <tr>
+                        <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">
+                          プラン
+                        </th>
+                        <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">
+                          平日
+                        </th>
+                        <th className="px-6 py-4 text-xs font-black uppercase tracking-widest text-gray-400">
+                          週末・祝日
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-50 text-sm font-bold">
+                      <tr>
+                        <td className="px-6 py-6 text-gray-900">休憩 (Rest)</td>
+                        <td className="px-6 py-6 text-gray-500">
+                          ¥{hotel.restPriceMinWeekday?.toLocaleString() || '---'} 〜
+                        </td>
+                        <td className="px-6 py-6 text-gray-500">
+                          ¥{hotel.restPriceMinWeekend?.toLocaleString() || '---'} 〜
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-6 text-gray-900">宿泊 (Stay)</td>
+                        <td className="px-6 py-6 text-gray-500">
+                          ¥{hotel.stayPriceMinWeekday?.toLocaleString() || '---'} 〜
+                        </td>
+                        <td className="px-6 py-6 text-gray-500">
+                          ¥{hotel.stayPriceMinWeekend?.toLocaleString() || '---'} 〜
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-4 text-[10px] font-bold uppercase italic tracking-widest text-gray-300">
+                  ※ 料金は部屋タイプや利用時間により変動します。詳細は公式サイトをご確認ください。
                 </p>
               </div>
 
@@ -81,13 +185,13 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                   <h3 className="mb-8 text-sm font-black uppercase tracking-widest text-gray-900">
                     Amenities
                   </h3>
-                  <ul className="space-y-4">
+                  <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {hotel.amenities.map((amenity) => (
                       <li
                         key={amenity}
-                        className="flex items-center gap-4 text-sm font-bold text-gray-500"
+                        className="flex items-center gap-4 text-xs font-bold text-gray-500"
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-rose-500">
+                        <div className="flex h-10 min-w-[2.5rem] items-center justify-center rounded-xl bg-gray-50 text-rose-500">
                           ★
                         </div>
                         {amenity}
@@ -102,13 +206,13 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                   <h3 className="mb-8 text-sm font-black uppercase tracking-widest text-gray-900">
                     Services
                   </h3>
-                  <ul className="space-y-4">
+                  <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                     {hotel.services.map((service) => (
                       <li
                         key={service}
-                        className="flex items-center gap-4 text-sm font-bold text-gray-500"
+                        className="flex items-center gap-4 text-xs font-bold text-gray-500"
                       >
-                        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gray-50 text-rose-500">
+                        <div className="flex h-10 min-w-[2.5rem] items-center justify-center rounded-xl bg-gray-50 text-rose-500">
                           ✔
                         </div>
                         {service}
@@ -118,6 +222,29 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                       <li className="text-sm font-bold text-gray-300">掲載準備中</li>
                     )}
                   </ul>
+                </div>
+              </div>
+
+              {/* Reviews Section Placeholder */}
+              <div className="mb-16 border-t border-gray-100 pt-16">
+                <div className="mb-8 flex items-center justify-between">
+                  <h2 className="text-2xl font-black tracking-tight text-gray-900">
+                    ユーザーレビュー
+                  </h2>
+                  <div className="flex items-center gap-2">
+                    <div className="text-2xl font-black text-rose-500">
+                      {hotel.rating?.toFixed(1) || '0.0'}
+                    </div>
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-300">
+                      平均評価 ({hotel.reviewCount}件)
+                    </div>
+                  </div>
+                </div>
+                <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-gray-50 py-20 text-center">
+                  <div className="mb-4 text-4xl text-gray-200">✍</div>
+                  <p className="text-sm font-bold text-gray-400">
+                    現在、キャストとユーザーによるレビューを収集中です。
+                  </p>
                 </div>
               </div>
             </div>
@@ -149,14 +276,19 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                   </div>
                 </div>
 
-                <a
-                  href={hotel.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex h-16 w-full items-center justify-center rounded-2xl bg-gray-900 text-sm font-black text-white shadow-xl shadow-gray-100 transition-all hover:bg-rose-600 active:scale-95"
-                >
-                  公式サイトを見る
-                </a>
+                <div className="mb-8 space-y-4">
+                  <a
+                    href={hotel.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex h-16 w-full items-center justify-center rounded-2xl bg-gray-900 text-sm font-black text-white shadow-xl shadow-gray-100 transition-all hover:bg-rose-600 active:scale-95"
+                  >
+                    公式サイトを開く
+                  </a>
+                  <button className="flex h-16 w-full items-center justify-center rounded-2xl border border-rose-500 bg-white text-sm font-black text-rose-500 transition-all hover:bg-rose-50 active:scale-95">
+                    ハピホテで空室確認
+                  </button>
+                </div>
 
                 <div className="mt-8 text-center">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-300">

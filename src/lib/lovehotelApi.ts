@@ -339,6 +339,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     id: dbHotel.id,
     name: dbHotel.name,
     prefecture: dbHotel.lh_prefectures?.name || '',
+    prefectureId: dbHotel.prefecture_id?.trim() || '',
     city: dbHotel.lh_cities?.name || '',
     cityId: dbHotel.city_id || '',
     area: dbHotel.lh_areas?.name || '',

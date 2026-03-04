@@ -38,18 +38,56 @@ export default async function SweetStayPortalPage() {
               単なる場所探しではない、上質なステイ体験をお届けします。
             </p>
 
+            <div className="mb-12 flex flex-col items-center gap-2 rounded-[2.5rem] border border-rose-50 bg-white p-2 shadow-2xl shadow-rose-100 md:flex-row">
+              <div className="flex w-full flex-grow items-center gap-4 px-6 py-4">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-rose-500"
+                >
+                  <circle cx="11" cy="11" r="8" />
+                  <path d="m21 21-4.3-4.3" />
+                </svg>
+                <input
+                  type="text"
+                  placeholder="エリア、ホテル名、駅名..."
+                  className="w-full bg-transparent text-sm font-bold text-gray-900 outline-none placeholder:text-gray-300"
+                />
+              </div>
+              <div className="hidden h-8 w-px bg-gray-100 md:block"></div>
+              <div className="flex w-full items-center gap-4 px-6 py-4 md:w-auto">
+                <span className="whitespace-nowrap text-[10px] font-black uppercase tracking-widest text-gray-300">
+                  Plan
+                </span>
+                <select className="cursor-pointer bg-transparent text-sm font-bold text-gray-900 outline-none">
+                  <option>宿泊</option>
+                  <option>休憩</option>
+                </select>
+              </div>
+              <button className="h-14 w-full rounded-3xl bg-rose-500 text-sm font-black text-white shadow-lg shadow-rose-200 transition-all hover:bg-rose-600 active:scale-95 md:w-40">
+                SEARCH
+              </button>
+            </div>
+
             <div className="flex flex-wrap items-center gap-4">
               <Link
-                href="/sweetstay/search"
-                className="flex h-16 items-center rounded-2xl bg-gray-900 px-10 text-sm font-black text-white shadow-xl shadow-gray-200 transition-all hover:-translate-y-1 hover:bg-rose-600 active:scale-95"
-              >
-                ホテルを検索する
-              </Link>
-              <Link
                 href="/sweetstay/guide"
-                className="flex h-16 items-center rounded-2xl border border-gray-100 bg-white px-10 text-sm font-black text-gray-900 transition-all hover:bg-gray-50 active:scale-95"
+                className="flex h-12 items-center rounded-2xl border border-gray-100 bg-white px-8 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all hover:bg-gray-50 active:scale-95"
               >
                 初めての方へ
+              </Link>
+              <Link
+                href="/sweetstay/coupon"
+                className="flex h-12 items-center rounded-2xl border border-gray-100 bg-white px-8 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all hover:bg-gray-50 active:scale-95"
+              >
+                クーポン一覧
               </Link>
             </div>
           </div>
