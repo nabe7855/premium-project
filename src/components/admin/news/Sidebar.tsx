@@ -46,7 +46,7 @@ const Sidebar: React.FC<SidebarProps> = ({
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-6">
         <div>
           <h2 className="mb-1 text-xl font-bold tracking-tight text-slate-800">Luxury CMS</h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <p className="text-[10px] font-black uppercase tracking-widest text-slate-500">
             Visual Editor
           </p>
         </div>
@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({
 
       <div className="flex-1 overflow-y-auto p-6">
         <div className="mb-4 flex items-center justify-between">
-          <p className="text-xs font-black uppercase tracking-widest text-slate-500">
+          <p className="text-xs font-black uppercase tracking-widest text-slate-700">
             レイヤー構成
           </p>
         </div>
@@ -146,7 +146,7 @@ const Sidebar: React.FC<SidebarProps> = ({
                   >
                     {section.content.title || template?.label || '名称未設定'}
                   </p>
-                  <p className="text-[9px] uppercase tracking-tighter text-slate-300">
+                  <p className="text-[9px] font-bold uppercase tracking-tighter text-slate-500">
                     {section.type}
                   </p>
                 </div>

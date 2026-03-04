@@ -273,6 +273,7 @@ export const CTASection: React.FC<SectionComponentProps> = ({ data, active, inne
 };
 
 export const SNSSection: React.FC<SectionComponentProps> = ({ data, active, innerRef }) => {
+  const { items } = data.content;
   const platformIcons = {
     Instagram: (
       <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
@@ -299,16 +300,29 @@ export const SNSSection: React.FC<SectionComponentProps> = ({ data, active, inne
         <p className="text-center text-[12px] font-black uppercase tracking-[0.6em] text-slate-300">
           Follow Our Social Journey
         </p>
-        <div className="flex justify-center gap-16">
-          {(['Instagram', 'X', 'TikTok'] as const).map((platform) => (
-            <div key={platform} className="group flex cursor-pointer flex-col items-center gap-4">
-              <div className="flex h-20 w-20 transform items-center justify-center rounded-[2rem] border border-slate-100 bg-slate-50 text-slate-300 shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:bg-rose-50 group-hover:text-rose-50 group-hover:shadow-xl">
-                {platformIcons[platform]}
+        <div className="flex flex-wrap justify-center gap-16">
+          {(items && items.length > 0
+            ? items
+            : (['Instagram', 'X', 'TikTok'] as const).map((name) => ({ name }))
+          ).map((platform: any) => (
+            <a
+              key={platform.name}
+              href={platform.url || '#'}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group flex cursor-pointer flex-col items-center gap-4"
+            >
+              <div className="flex h-20 w-20 transform items-center justify-center rounded-[2rem] border border-slate-100 bg-slate-50 text-slate-300 shadow-sm transition-all duration-500 group-hover:-translate-y-2 group-hover:bg-rose-50 group-hover:text-rose-500 group-hover:shadow-xl">
+                {platformIcons[platform.name as keyof typeof platformIcons] || (
+                  <svg className="h-8 w-8" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 15h-2v-6h2v6zm0-8h-2V7h2v2zm4 8h-2v-6h2v6zm0-8h-2V7h2v2z" />
+                  </svg>
+                )}
               </div>
               <span className="text-[11px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-slate-700">
-                {platform}
+                {platform.name}
               </span>
-            </div>
+            </a>
           ))}
         </div>
       </div>

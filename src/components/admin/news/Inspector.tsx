@@ -1,3 +1,4 @@
+import { stores } from '@/data/stores';
 import { uploadNewsImage } from '@/lib/actions/news-pages';
 import React from 'react';
 import { toast } from 'sonner';
@@ -85,39 +86,70 @@ const Inspector: React.FC<InspectorProps> = ({
         </h3>
         <div className="space-y-8">
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
               ページタイトル
             </label>
             <input
               type="text"
               value={page.title}
               onChange={(e) => onUpdatePage({ title: e.target.value })}
-              className="w-full rounded-2xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+              className="w-full rounded-2xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
               placeholder="ダッシュボード用タイトル"
             />
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
               URLスラッグ
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-slate-400">/news/</span>
+              <span className="text-[10px] font-bold text-slate-500">/news/</span>
               <input
                 type="text"
                 value={page.slug}
                 onChange={(e) => onUpdatePage({ slug: e.target.value })}
-                className="flex-1 rounded-2xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                className="flex-1 rounded-2xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
                 placeholder="url-slug"
               />
             </div>
-            <p className="mt-2 text-[9px] text-slate-400">
+            <p className="mt-2 text-[9px] font-medium text-slate-500">
               URLの一部として使用されます（例: www.sutoroberrys.jp/news/url-slug）
             </p>
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+              配信対象店舗
+            </label>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.values(stores).map((store) => {
+                const isSelected = page.targetStoreSlugs?.includes(store.id);
+                return (
+                  <button
+                    key={store.id}
+                    onClick={() => {
+                      const current = page.targetStoreSlugs || [];
+                      const next = isSelected
+                        ? current.filter((s) => s !== store.id)
+                        : [...current, store.id];
+                      onUpdatePage({ targetStoreSlugs: next });
+                    }}
+                    className={`flex items-center gap-2 rounded-xl border p-2 text-[10px] font-bold transition-all ${
+                      isSelected
+                        ? 'border-rose-200 bg-rose-50 text-rose-700'
+                        : 'border-slate-100 bg-white text-slate-400 hover:border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <span>{store.emoji}</span>
+                    <span className="truncate">{store.displayName}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
               一覧用サムネイル
             </label>
             <p className="mb-3 text-[10px] leading-tight text-slate-400">
@@ -185,16 +217,16 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
               一覧用の簡単な説明文
             </label>
             <textarea
               value={page.shortDescription || ''}
               onChange={(e) => onUpdatePage({ shortDescription: e.target.value })}
-              className="h-32 w-full rounded-[1.5rem] border border-slate-200 p-4 text-xs font-medium leading-relaxed outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+              className="h-32 w-full rounded-[1.5rem] border border-slate-200 p-4 text-xs font-bold leading-relaxed text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
               placeholder="制作したページの内容を一言で説明しましょう。ユーザーが一覧から選ぶ際のヒントになります。"
             />
-            <p className="mt-2 text-right text-[9px] text-slate-300">
+            <p className="mt-2 text-right text-[9px] font-black text-slate-400">
               {page.shortDescription?.length || 0} 文字
             </p>
           </div>
@@ -231,14 +263,14 @@ const Inspector: React.FC<InspectorProps> = ({
       </div>
       <div className="space-y-6">
         <div>
-          <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+          <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
             見出しタイトル
           </label>
           <input
             type="text"
             value={section.content.title || ''}
             onChange={(e) => handleFieldChange('title', e.target.value)}
-            className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:ring-2 focus:ring-rose-100"
+            className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:ring-2 focus:ring-rose-100"
           />
         </div>
         {hasImage && section.type !== 'gallery' && (
@@ -293,17 +325,199 @@ const Inspector: React.FC<InspectorProps> = ({
             />
           </div>
         )}
-        {section.type !== 'hero' && (
+        {['hero', 'campaign', 'cast_list', 'cta'].includes(section.type) && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-400">
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-600">
               アクションボタン文言
             </label>
             <input
               type="text"
               value={section.content.buttonText || ''}
               onChange={(e) => handleFieldChange('buttonText', e.target.value)}
-              className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold outline-none transition-all focus:ring-2 focus:ring-rose-100"
+              className="w-full rounded-xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:ring-2 focus:ring-rose-100"
             />
+          </div>
+        )}
+
+        {/* List items for sections like ranking and gallery */}
+        {['ranking', 'gallery', 'sns_links', 'price'].includes(section.type) && (
+          <div>
+            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-600">
+              リスト項目設定
+            </label>
+            <div className="space-y-4">
+              {section.content.items?.map((item: any, index: number) => (
+                <div
+                  key={index}
+                  className="rounded-2xl border border-slate-100 bg-slate-50/50 p-4 shadow-sm"
+                >
+                  <div className="mb-3 flex items-center justify-between">
+                    <span className="text-[10px] font-black text-slate-400">項目 {index + 1}</span>
+                    <button
+                      onClick={() => {
+                        const newItems = [...(section.content.items || [])];
+                        newItems.splice(index, 1);
+                        handleFieldChange('items', newItems);
+                      }}
+                      className="text-red-400 hover:text-red-600"
+                    >
+                      <svg
+                        className="h-4 w-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+
+                  {/* Dynamic item fields based on section type */}
+                  <div className="space-y-3">
+                    {['ranking', 'gallery', 'price'].includes(section.type) && (
+                      <div className="group relative aspect-video overflow-hidden rounded-xl border border-slate-200 bg-white shadow-inner">
+                        {item.imageUrl ? (
+                          <img src={item.imageUrl} className="h-full w-full object-cover" alt="" />
+                        ) : (
+                          <div className="flex h-full items-center justify-center text-[10px] font-bold text-slate-300">
+                            No Image
+                          </div>
+                        )}
+                        <label className="absolute inset-0 flex cursor-pointer flex-col items-center justify-center bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100">
+                          <span className="text-[9px] font-black">変更</span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={async (e) => {
+                              const file = e.target.files?.[0];
+                              if (!file || !page) return;
+                              const formData = new FormData();
+                              formData.append('file', file);
+                              formData.append('pageId', page.id);
+                              const publicUrl = await uploadNewsImage(formData);
+                              if (publicUrl) {
+                                const newItems = [...(section.content.items || [])];
+                                newItems[index] = { ...item, imageUrl: publicUrl };
+                                handleFieldChange('items', newItems);
+                              }
+                            }}
+                          />
+                        </label>
+                      </div>
+                    )}
+
+                    {['ranking', 'price', 'sns_links'].includes(section.type) && (
+                      <input
+                        type="text"
+                        value={item.name || ''}
+                        onChange={(e) => {
+                          const newItems = [...(section.content.items || [])];
+                          newItems[index] = { ...item, name: e.target.value };
+                          handleFieldChange('items', newItems);
+                        }}
+                        className="w-full rounded-lg border border-slate-200 p-2 text-[11px] font-bold text-slate-900 outline-none placeholder:text-slate-300"
+                        placeholder={
+                          section.type === 'sns_links' ? 'プラットフォーム名' : '名前 / ラベル'
+                        }
+                        readOnly={section.type === 'sns_links'}
+                      />
+                    )}
+
+                    {section.type === 'sns_links' && (
+                      <input
+                        type="text"
+                        value={item.url || ''}
+                        onChange={(e) => {
+                          const newItems = [...(section.content.items || [])];
+                          newItems[index] = { ...item, url: e.target.value };
+                          handleFieldChange('items', newItems);
+                        }}
+                        className="w-full rounded-lg border border-slate-200 p-2 text-[11px] font-bold text-slate-900 outline-none placeholder:text-slate-300"
+                        placeholder="URL (https://...)"
+                      />
+                    )}
+
+                    {section.type === 'price' && (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          value={item.time || ''}
+                          onChange={(e) => {
+                            const newItems = [...(section.content.items || [])];
+                            newItems[index] = { ...item, time: e.target.value };
+                            handleFieldChange('items', newItems);
+                          }}
+                          className="w-16 rounded-lg border border-slate-200 p-2 text-[11px] font-bold text-slate-900 outline-none"
+                          placeholder="分"
+                        />
+                        <input
+                          type="text"
+                          value={item.price || ''}
+                          onChange={(e) => {
+                            const newItems = [...(section.content.items || [])];
+                            newItems[index] = { ...item, price: e.target.value };
+                            handleFieldChange('items', newItems);
+                          }}
+                          className="flex-1 rounded-lg border border-slate-200 p-2 text-[11px] font-bold text-slate-900 outline-none"
+                          placeholder="料金 (¥)"
+                        />
+                      </div>
+                    )}
+
+                    {['ranking', 'price'].includes(section.type) && (
+                      <textarea
+                        value={item.text || item.description || ''}
+                        onChange={(e) => {
+                          const newItems = [...(section.content.items || [])];
+                          newItems[index] = {
+                            ...item,
+                            [section.type === 'price' ? 'description' : 'text']: e.target.value,
+                          };
+                          handleFieldChange('items', newItems);
+                        }}
+                        className="w-full rounded-lg border border-slate-200 p-2 text-[11px] font-medium text-slate-900 outline-none"
+                        placeholder="説明文"
+                      />
+                    )}
+                  </div>
+                </div>
+              ))}
+              <button
+                onClick={() => {
+                  let newItem;
+                  if (section.type === 'price') {
+                    newItem = {
+                      name: 'New Menu',
+                      time: '60',
+                      price: '10,000',
+                      description: '説明を入力',
+                    };
+                  } else if (section.type === 'sns_links') {
+                    newItem = { name: 'Instagram', url: '' };
+                  } else {
+                    newItem = { name: 'Item Name', text: '説明を入力', imageUrl: '' };
+                  }
+                  handleFieldChange('items', [...(section.content.items || []), newItem]);
+                }}
+                className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-slate-300 py-3 text-[10px] font-black text-slate-400 transition-all hover:border-rose-400 hover:bg-rose-50 hover:text-rose-600"
+              >
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={3}
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+                項目を追加
+              </button>
+            </div>
           </div>
         )}
       </div>
