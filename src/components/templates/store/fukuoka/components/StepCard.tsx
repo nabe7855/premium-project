@@ -46,11 +46,9 @@ const StepCard: React.FC<StepCardProps> = ({
     {/* Text content - Right side */}
     <div className="flex min-w-0 flex-1 flex-col justify-center">
       <div className="mb-2 inline-flex w-fit items-center gap-2 border-b border-neutral-100 pb-1 pr-4">
-        <h3 className="truncate text-base font-bold text-slate-800 sm:text-lg">{title}</h3>
+        <h3 className="text-base font-bold text-slate-800 sm:text-lg">{title}</h3>
       </div>
-      <p className="line-clamp-2 text-xs leading-relaxed text-slate-500 sm:line-clamp-3 sm:text-sm">
-        {desc}
-      </p>
+      <p className="text-xs leading-relaxed text-slate-500 sm:text-sm">{desc}</p>
     </div>
   </div>
 );
