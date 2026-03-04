@@ -283,9 +283,14 @@ export default function SurveyPage() {
 
               {step === 3 && (
                 <>
-                  <h3 className="mb-6 text-lg font-bold text-slate-800">
-                    ブロックC：セラピストについて
-                  </h3>
+                  <div className="mb-4 rounded-xl border-l-4 border-indigo-500 bg-indigo-50 p-4">
+                    <h3 className="mb-1 text-lg font-bold text-slate-800">
+                      ブロックC：セラピストについて
+                    </h3>
+                    <p className="text-[10px] font-medium leading-relaxed text-indigo-700">
+                      ※このブロックの内容は、今後の品質向上のための統計データとしてのみ利用し、キャスト当人には知らされません。
+                    </p>
+                  </div>
 
                   <div className="mb-6">
                     <label className="mb-2 block text-sm font-semibold text-slate-700">

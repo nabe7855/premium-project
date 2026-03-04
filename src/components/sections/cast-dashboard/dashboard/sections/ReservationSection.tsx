@@ -1,7 +1,13 @@
 'use client';
 
+import { NewReservationModal } from '@/components/admin/ui/NewReservationModal';
 import { WorkflowResponseModal } from '@/components/admin/ui/WorkflowResponseModal';
-import { getReservations, updateReservationStep } from '@/lib/actions/reservation';
+import {
+  getAllCasts,
+  getReservations,
+  getStores,
+  updateReservationStep,
+} from '@/lib/actions/reservation';
 import { getStepResponse } from '@/lib/actions/workflowResponse';
 import { supabase } from '@/lib/supabaseClient';
 import { Reservation, WorkflowStep, WorkflowStepId } from '@/types/reservation';
@@ -20,6 +26,7 @@ import {
   Search,
   ShieldCheck,
   User,
+  UserPlus,
 } from 'lucide-react';
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -41,6 +48,11 @@ export default function ReservationSection({ castId }: { castId: string }) {
     null,
   );
   const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [allCasts, setAllCasts] = useState<{ id: string; name: string; storeIds?: string[] }[]>([]);
+  const [stores, setStores] = useState<{ id: string; name: string }[]>([]);
+  const [repeatData, setRepeatData] = useState<any>(null);
 
   const fetchReservations = useCallback(async () => {
     setIsLoading(true);
@@ -51,9 +63,22 @@ export default function ReservationSection({ castId }: { castId: string }) {
 
   useEffect(() => {
     fetchReservations();
+    // キャストと店舗の一覧を取得（モーダル用）
+    const fetchMetadata = async () => {
+      const [castData, storeData] = await Promise.all([getAllCasts(), getStores()]);
+      setAllCasts(castData);
+      setStores(storeData);
+    };
+    fetchMetadata();
   }, [fetchReservations]);
 
-  const filteredReservations = reservations.filter((r) => r.status === activeSubTab);
+  const filteredReservations = reservations.filter((r) => {
+    const matchesStatus = r.status === activeSubTab;
+    const matchesSearch =
+      r.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (r.phone || '').includes(searchQuery);
+    return matchesStatus && matchesSearch;
+  });
 
   const toggleStep = async (resId: string, stepId: WorkflowStepId) => {
     const res = reservations.find((r) => r.id === resId);
@@ -190,6 +215,19 @@ export default function ReservationSection({ castId }: { castId: string }) {
     window.open(`/reflection/${resId}`, '_blank');
   };
 
+  const handleRepeat = (res: Reservation) => {
+    setRepeatData({
+      customerName: res.customerName,
+      clientNickname: res.clientNickname,
+      phone: res.phone,
+      email: res.email,
+      visitCount: (res.visitCount || 1) + 1,
+      storeId: res.storeId,
+      castId: res.castId,
+    });
+    setShowNewModal(true);
+  };
+
   if (selectedReservation) {
     const isCompleted = selectedReservation.status === 'completed';
     return (
@@ -226,12 +264,21 @@ export default function ReservationSection({ castId }: { castId: string }) {
                 {selectedReservation.dateTime} 予約
               </p>
             </div>
-            {isCompleted && (
-              <span className="flex items-center gap-1.5 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold text-green-600">
-                <CheckCircle className="h-4 w-4" />
-                Workflow 完了
-              </span>
-            )}
+            <div className="flex flex-col items-end gap-2">
+              {isCompleted && (
+                <span className="flex items-center gap-1.5 rounded-full bg-green-100 px-4 py-1.5 text-xs font-bold text-green-600">
+                  <CheckCircle className="h-4 w-4" />
+                  Workflow 完了
+                </span>
+              )}
+              <button
+                onClick={() => handleRepeat(selectedReservation)}
+                className="flex items-center gap-1.5 rounded-full bg-slate-800 px-4 py-1.5 text-xs font-bold text-white shadow-lg shadow-black/10 transition-all hover:bg-slate-700 active:scale-95"
+              >
+                <RotateCcw className="h-3.5 w-3.5" />
+                リピート作成
+              </button>
+            </div>
           </div>
 
           <div className="space-y-4">
@@ -286,9 +333,7 @@ export default function ReservationSection({ castId }: { castId: string }) {
                       </div>
 
                       {step.isCompleted &&
-                        ['counseling', 'consent', 'review', 'survey', 'reflection'].includes(
-                          step.id,
-                        ) && (
+                        ['counseling', 'consent', 'review', 'reflection'].includes(step.id) && (
                           <button
                             onClick={() => handleOpenResponse(step.id, step.label)}
                             className="flex items-center justify-center gap-1.5 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2 text-xs font-bold text-emerald-600 hover:bg-emerald-100"
@@ -430,6 +475,17 @@ export default function ReservationSection({ castId }: { castId: string }) {
         >
           <RotateCcw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
         </button>
+
+        <button
+          onClick={() => {
+            setRepeatData({ castId }); // 自分の予約として作成
+            setShowNewModal(true);
+          }}
+          className="group flex items-center gap-2 rounded-2xl bg-pink-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-pink-100 transition-all hover:bg-pink-600 active:scale-95"
+        >
+          <UserPlus className="h-4 w-4 transition-transform group-hover:scale-110" />
+          新規予約
+        </button>
       </div>
 
       <div className="relative">
@@ -437,6 +493,8 @@ export default function ReservationSection({ castId }: { castId: string }) {
         <input
           type="text"
           placeholder="予約者を検索..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="w-full rounded-2xl border border-pink-100 bg-white py-3.5 pl-11 pr-4 text-sm shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-pink-200"
         />
       </div>
@@ -513,6 +571,16 @@ export default function ReservationSection({ castId }: { castId: string }) {
           </div>
         )}
       </div>
+
+      {showNewModal && (
+        <NewReservationModal
+          onClose={() => setShowNewModal(false)}
+          onSuccess={fetchReservations}
+          stores={stores}
+          casts={allCasts}
+          initialData={repeatData}
+        />
+      )}
     </div>
   );
 }

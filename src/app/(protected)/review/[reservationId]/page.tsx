@@ -321,7 +321,10 @@ export default function ReviewPage() {
             )}
 
             {/* 年代 */}
-            <label className="mb-2 block text-xs font-bold text-gray-500">年代（任意）</label>
+            <div className="mb-2 flex items-center justify-between">
+              <label className="block text-xs font-bold text-gray-500">年代（任意）</label>
+              <span className="text-[9px] font-bold text-rose-400">※一般公開はされません</span>
+            </div>
             <div className="flex gap-2">
               {AGE_GROUPS.map((ag) => (
                 <button

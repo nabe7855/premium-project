@@ -558,6 +558,7 @@ model reservations {
   store_id              String?   @db.Uuid
   therapist_name        String?
   updated_at            DateTime? @db.Timestamptz(6)
+  completed_at          DateTime? @db.Timestamptz(6)
   visit_count           Int?
 }
 

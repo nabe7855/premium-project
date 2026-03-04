@@ -34,6 +34,7 @@ import {
 import { useCallback, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
+import { NewReservationModal } from '@/components/admin/ui/NewReservationModal';
 import { WorkflowResponseModal } from '@/components/admin/ui/WorkflowResponseModal';
 import { getStepResponse } from '@/lib/actions/workflowResponse';
 
@@ -60,7 +61,7 @@ type StatusFilter = 'all' | 'pending' | 'completed' | 'free';
 export default function ReservationManagement() {
   const [reservations, setReservations] = useState<Reservation[]>([]);
   const [stores, setStores] = useState<{ id: string; name: string }[]>([]);
-  const [allCasts, setAllCasts] = useState<{ id: string; name: string }[]>([]);
+  const [allCasts, setAllCasts] = useState<{ id: string; name: string; storeIds?: string[] }[]>([]);
   const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [statusFilter, setStatusFilter] = useState<StatusFilter>('all');
   const [storeFilter, setStoreFilter] = useState<string>('all');
@@ -71,6 +72,8 @@ export default function ReservationManagement() {
     null,
   );
   const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
+  const [showNewModal, setShowNewModal] = useState(false);
+  const [repeatData, setRepeatData] = useState<any>(null);
 
   const fetchData = useCallback(async () => {
     setIsLoading(true);
@@ -80,11 +83,12 @@ export default function ReservationManagement() {
         getStores(),
         getAllCasts(),
       ]);
+      console.log('[fetchData] Received reservations:', resData.length);
       setReservations(resData);
       setStores(storeData);
       setAllCasts(castData);
     } catch (error) {
-      console.error('Failed to fetch data:', error);
+      console.error('[fetchData] Failed to fetch data:', error);
       toast.error('データの取得に失敗しました');
     } finally {
       setIsLoading(false);
@@ -97,16 +101,31 @@ export default function ReservationManagement() {
 
   // Filter logic
   const filteredReservations = reservations.filter((res) => {
+    if (!res) return false;
+
     const matchesStatus =
       statusFilter === 'all' ||
       (statusFilter === 'free' ? !res.castId : res.status === statusFilter);
     const matchesStore = storeFilter === 'all' || res.storeId === storeFilter;
+
+    // 検索語句があればフィルタリング
+    const query = (searchQuery || '').toLowerCase().trim();
+    if (!query) return matchesStatus && matchesStore;
+
     const matchesSearch =
-      res.customerName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (res.castName || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (res.phone || '').includes(searchQuery);
-    return matchesStatus && matchesStore && matchesSearch;
+      (res.customerName || '').toLowerCase().includes(query) ||
+      (res.castName || '').toLowerCase().includes(query) ||
+      (res.phone || '').includes(query) ||
+      (res.clientNickname || '').toLowerCase().includes(query);
+
+    const result = matchesStatus && matchesStore && matchesSearch;
+    return result;
   });
+
+  console.log('[ReservationManagement] reservations state count:', reservations.length);
+  console.log('[ReservationManagement] filteredReservations count:', filteredReservations.length);
+  console.log('[ReservationManagement] statusFilter:', statusFilter);
+  console.log('[ReservationManagement] storeFilter:', storeFilter);
 
   const handleToggleStep = async (resId: string, stepId: WorkflowStepId) => {
     const res = reservations.find((r) => r.id === resId);
@@ -189,6 +208,19 @@ export default function ReservationManagement() {
     }
   };
 
+  const handleRepeat = (res: Reservation) => {
+    setRepeatData({
+      customerName: res.customerName,
+      clientNickname: res.clientNickname,
+      phone: res.phone,
+      email: res.email,
+      visitCount: (res.visitCount || 1) + 1,
+      storeId: res.storeId,
+      castId: res.castId,
+    });
+    setShowNewModal(true);
+  };
+
   const copyLink = (type: string, resId: string) => {
     const url = `${window.location.origin}/${type}/${resId}`;
     navigator.clipboard.writeText(url);
@@ -256,6 +288,13 @@ export default function ReservationManagement() {
                         {selectedReservation.status === 'completed'
                           ? '総合ステータス: 完了 (クリックで戻す)'
                           : '総合ステータス: 進行中 (クリックで完了へ)'}
+                      </button>
+                      <button
+                        onClick={() => handleRepeat(selectedReservation)}
+                        className="flex items-center gap-1 rounded-full bg-slate-800 px-4 py-1.5 text-xs font-black text-white shadow-lg shadow-black/20 transition-all hover:bg-slate-700 active:scale-95"
+                      >
+                        <RotateCcw size={12} />
+                        リピート予約を作成
                       </button>
                     </div>
                     <div className="mt-3 flex items-center gap-3 text-sm font-bold">
@@ -542,13 +581,28 @@ export default function ReservationManagement() {
           <h1 className="mb-1 text-2xl font-bold text-white">予約管理</h1>
           <p className="text-sm text-brand-text-secondary">すべての予約を一元管理</p>
         </div>
-        <button
-          onClick={fetchData}
-          className="rounded-xl border border-gray-700 bg-brand-primary p-3 transition-colors hover:bg-gray-800 disabled:opacity-50"
-          disabled={isLoading}
-        >
-          <RotateCcw size={18} className={`text-brand-accent ${isLoading ? 'animate-spin' : ''}`} />
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => {
+              setRepeatData(null);
+              setShowNewModal(true);
+            }}
+            className="group flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-bold text-white shadow-lg shadow-indigo-200 transition-all hover:bg-indigo-700 active:scale-95"
+          >
+            <UserPlus size={18} className="transition-transform group-hover:scale-110" />
+            <span className="hidden sm:inline">新規予約登録</span>
+          </button>
+          <button
+            onClick={fetchData}
+            className="rounded-xl border border-gray-700 bg-brand-primary p-3 transition-colors hover:bg-gray-800 disabled:opacity-50"
+            disabled={isLoading}
+          >
+            <RotateCcw
+              size={18}
+              className={`text-brand-accent ${isLoading ? 'animate-spin' : ''}`}
+            />
+          </button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -629,16 +683,19 @@ export default function ReservationManagement() {
               const isFree = !res.castId;
 
               return (
-                <button
+                <div
                   key={res.id}
-                  onClick={() => setSelectedReservation(res)}
                   className={`group relative overflow-hidden rounded-xl border p-5 text-left shadow-lg transition-all hover:border-brand-accent hover:shadow-xl ${
                     isFree ? 'border-pink-500/50 bg-pink-500/5' : 'border-gray-700 bg-brand-primary'
                   }`}
                 >
+                  <div
+                    className="absolute inset-0 z-0 cursor-pointer"
+                    onClick={() => setSelectedReservation(res)}
+                  />
                   {/* Progress Bar */}
                   <div
-                    className={`absolute left-0 top-0 h-1 transition-all duration-500 ${isFree ? 'bg-pink-500' : 'bg-brand-accent'}`}
+                    className={`absolute left-0 top-0 z-10 h-1 transition-all duration-500 ${isFree ? 'bg-pink-500' : 'bg-brand-accent'}`}
                     style={{ width: `${progress}%` }}
                   />
 
@@ -675,10 +732,24 @@ export default function ReservationManagement() {
                         </p>
                       </div>
                     </div>
-                    <ChevronRight
-                      className="shrink-0 text-gray-600 transition-all group-hover:translate-x-1 group-hover:text-brand-accent"
-                      size={20}
-                    />
+                    <div className="z-10 flex items-center gap-2">
+                      {res.status === 'completed' && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleRepeat(res);
+                          }}
+                          className="flex items-center gap-1.5 rounded-full bg-indigo-500/20 px-3 py-1.5 text-[10px] font-bold text-indigo-400 transition-all hover:bg-indigo-500 hover:text-white"
+                        >
+                          <RotateCcw size={12} />
+                          リピート予約を作成
+                        </button>
+                      )}
+                      <ChevronRight
+                        className="shrink-0 text-gray-600 transition-all group-hover:translate-x-1 group-hover:text-brand-accent"
+                        size={20}
+                      />
+                    </div>
                   </div>
 
                   <div className="space-y-2">
@@ -706,7 +777,7 @@ export default function ReservationManagement() {
                       </span>
                     </div>
                   </div>
-                </button>
+                </div>
               );
             })
           ) : (
@@ -716,6 +787,16 @@ export default function ReservationManagement() {
             </div>
           )}
         </div>
+      )}
+
+      {showNewModal && (
+        <NewReservationModal
+          onClose={() => setShowNewModal(false)}
+          onSuccess={fetchData}
+          stores={stores}
+          casts={allCasts}
+          initialData={repeatData}
+        />
       )}
     </div>
   );

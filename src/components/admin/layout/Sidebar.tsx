@@ -9,6 +9,7 @@ import {
   BuildingOfficeIcon,
   BuildingStorefrontIcon,
   ChartBarIcon,
+  ChevronDownIcon,
   DocumentTextIcon,
   PencilIcon,
   PresentationChartLineIcon,
@@ -74,72 +75,123 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const navItems = [
-    { href: '/admin/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
-    { href: '/admin/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
-    { href: '/admin/admin/stores/casts', icon: <StorefrontIcon />, label: '店舗別キャスト管理' },
-    { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
-    { href: '/admin/admin/price-management', icon: <ChartBarIcon />, label: '料金管理' },
-    { href: '/admin/admin/reservations', icon: <ChartBarIcon />, label: '予約管理' },
-    { href: '/admin/admin/advertising', icon: <PresentationChartLineIcon />, label: '広告・集客' },
-    { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
-    { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
-    { href: '/admin/admin/advertising/list', icon: <DocumentTextIcon />, label: '投稿済み広告' },
-    { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
-    { href: '/admin/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
+  const navCategories = [
     {
-      href: '/admin/admin/interview-reservations',
-      icon: <UsersIcon />,
-      label: '面接予約管理',
-    },
-    { href: '/admin/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
-    {
-      href: '/admin/admin/hotels/masters',
-      icon: <PresentationChartLineIcon />,
-      label: 'ホテルマスタ管理',
+      title: 'ホーム・分析',
+      items: [
+        { href: '/admin/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
+        {
+          href: '/admin/admin/analytics',
+          icon: <PresentationChartLineIcon />,
+          label: 'データ分析',
+        },
+      ],
     },
     {
-      href: '/admin/admin/recruit-management',
-      icon: <DocumentTextIcon />,
-      label: '採用ページ管理',
+      title: 'キャスト・店舗管理',
+      items: [
+        { href: '/admin/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
+        {
+          href: '/admin/admin/stores/casts',
+          icon: <StorefrontIcon />,
+          label: '店舗別キャスト管理',
+        },
+        { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
+        { href: '/admin/admin/price-management', icon: <ChartBarIcon />, label: '料金管理' },
+        {
+          href: '/admin/admin/reservations',
+          icon: <ChartBarIcon />,
+          label: '予約管理',
+          badgeKey: 'reservePendingCount',
+        },
+      ],
     },
     {
-      href: '/admin/admin/header-management',
-      icon: <PencilIcon />,
-      label: '共通ヘッダー管理',
+      title: '広告・AI生成',
+      items: [
+        {
+          href: '/admin/admin/advertising',
+          icon: <PresentationChartLineIcon />,
+          label: '広告・集客',
+        },
+        { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
+        { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
+        {
+          href: '/admin/admin/advertising/list',
+          icon: <DocumentTextIcon />,
+          label: '投稿済み広告',
+        },
+        { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
+        { href: '/admin/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
+        { href: '/admin/admin/auto-post', icon: <SparklesIcon />, label: 'AI自動投稿管理' },
+      ],
     },
     {
-      href: '/admin/admin/store-top-management',
-      icon: <StorefrontIcon />,
-      label: 'トップページ管理',
+      title: '求人・面接管理',
+      items: [
+        {
+          href: '/admin/admin/interview-reservations',
+          icon: <UsersIcon />,
+          label: '面接予約管理',
+          badgeKey: 'pendingCount',
+        },
+        {
+          href: '/admin/admin/recruit-management',
+          icon: <DocumentTextIcon />,
+          label: '採用ページ管理',
+        },
+      ],
     },
     {
-      href: '/admin/admin/first-time-management',
-      icon: <SparklesIcon />,
-      label: '初めての方へページ管理',
-    },
-
-    {
-      href: '/admin/admin/page-request',
-      icon: <PencilIcon />,
-      label: 'ページ制作依頼',
-    },
-    {
-      href: '/admin/admin/news-management',
-      icon: <DocumentTextIcon />,
-      label: 'ニュースページ管理',
+      title: 'ホテル管理',
+      items: [
+        { href: '/admin/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
+        {
+          href: '/admin/admin/hotels/masters',
+          icon: <PresentationChartLineIcon />,
+          label: 'ホテルマスタ管理',
+        },
+      ],
     },
     {
-      href: '/admin/admin/auto-post',
-      icon: <SparklesIcon />,
-      label: 'AI自動投稿管理',
-    },
-    {
-      href: '/admin/admin/media-management',
-      icon: <DocumentTextIcon />,
-      label: 'メディア記事管理',
+      title: 'サイト設定・記事',
+      items: [
+        { href: '/admin/admin/header-management', icon: <PencilIcon />, label: '共通ヘッダー管理' },
+        {
+          href: '/admin/admin/store-top-management',
+          icon: <StorefrontIcon />,
+          label: 'トップページ管理',
+        },
+        {
+          href: '/admin/admin/first-time-management',
+          icon: <SparklesIcon />,
+          label: '初めての方へページ管理',
+        },
+        { href: '/admin/admin/page-request', icon: <PencilIcon />, label: 'ページ制作依頼' },
+        {
+          href: '/admin/admin/news-management',
+          icon: <DocumentTextIcon />,
+          label: 'ニュースページ管理',
+        },
+        {
+          href: '/admin/admin/media-management',
+          icon: <DocumentTextIcon />,
+          label: 'メディア記事管理',
+        },
+      ],
     },
   ];
+
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    const activeCategory = navCategories.find((cat) =>
+      cat.items.some((item) => item.href === pathname),
+    );
+    if (activeCategory) {
+      setOpenCategories((prev) => ({ ...prev, [activeCategory.title]: true }));
+    }
+  }, [pathname]);
 
   return (
     <>
@@ -164,22 +216,54 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
           </button>
         </div>
 
-        <nav className="flex-1 space-y-2">
-          {navItems.map((item) => (
-            <NavItem
-              key={item.href}
-              {...item}
-              isActive={pathname === item.href}
-              setOpen={setOpen}
-              badge={
-                item.href === '/admin/admin/interview-reservations'
-                  ? pendingCount
-                  : item.href === '/admin/admin/reservations'
-                    ? reservePendingCount
-                    : undefined
-              }
-            />
-          ))}
+        <nav className="flex-1 space-y-4 overflow-y-auto pb-8 pr-2">
+          {navCategories.map((category) => {
+            const isOpen = openCategories[category.title];
+            const toggleCategory = () =>
+              setOpenCategories((prev) => ({ ...prev, [category.title]: !prev[category.title] }));
+
+            return (
+              <div key={category.title} className="space-y-1">
+                <button
+                  onClick={toggleCategory}
+                  className="flex w-full items-center justify-between px-2 py-2 text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary transition-colors hover:text-white"
+                >
+                  <span>{category.title}</span>
+                  <div
+                    className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                  >
+                    <ChevronDownIcon />
+                  </div>
+                </button>
+                <div
+                  className={`space-y-1 overflow-hidden transition-all duration-300 ${
+                    isOpen ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  {category.items.map((item) => {
+                    const isActive = pathname === item.href;
+                    const badgeValue =
+                      item.badgeKey === 'pendingCount'
+                        ? pendingCount
+                        : item.badgeKey === 'reservePendingCount'
+                          ? reservePendingCount
+                          : undefined;
+                    return (
+                      <NavItem
+                        key={item.href}
+                        href={item.href}
+                        icon={item.icon}
+                        label={item.label}
+                        isActive={isActive}
+                        setOpen={setOpen}
+                        badge={badgeValue}
+                      />
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })}
         </nav>
       </aside>
     </>

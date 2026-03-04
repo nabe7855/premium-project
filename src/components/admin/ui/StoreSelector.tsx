@@ -1,5 +1,7 @@
-import { mockStores } from '@/data/admin-mockData';
-import { Store } from '@/types/dashboard';
+'use client';
+
+import { getStores } from '@/lib/actions/reservation';
+import { useEffect, useState } from 'react';
 
 interface StoreSelectorProps {
   selectedStore: string;
@@ -13,11 +15,22 @@ export default function StoreSelector({
   onStoreChange,
   className = '',
 }: StoreSelectorProps) {
+  const [dbStores, setDbStores] = useState<{ id: string; name: string; slug: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchDbStores() {
+      try {
+        const stored = await getStores();
+        setDbStores(stored || []);
+      } catch (err) {
+        console.error('Failed to fetch stores', err);
+      }
+    }
+    fetchDbStores();
+  }, []);
+
   // Add an "All Stores" option to the list of stores
-  const stores: (Store | { id: string; name: string; slug: string })[] = [
-    { id: 'all', name: '全店舗', slug: 'all' },
-    ...mockStores,
-  ];
+  const stores = [{ id: 'all', name: '全店舗', slug: 'all' }, ...dbStores];
 
   return (
     <div

@@ -11,7 +11,6 @@ const INITIAL_STEPS: WorkflowStep[] = [
   { id: 'survey', label: '事後アンケート', isCompleted: false, type: 'post' },
   { id: 'reflection', label: '振り返りシート', isCompleted: false, type: 'post' },
 ];
-
 export async function createReservation(formData: {
   customerName: string;
   clientNickname?: string;
@@ -22,6 +21,7 @@ export async function createReservation(formData: {
   notes?: string;
   castId?: string;
   storeId?: string;
+  preCompleteCounseling?: boolean;
 }) {
   try {
     let finalStoreId = formData.storeId;
@@ -38,22 +38,27 @@ export async function createReservation(formData: {
       }
     }
 
-    const reservation = await prisma.reservations.create({
+    const reservation = await (prisma.reservations as any).create({
       data: {
         id: crypto.randomUUID(),
-
         customer_name: formData.customerName,
         client_nickname: formData.clientNickname || formData.customerName,
         reservation_datetime: formData.dateTime,
         date_time: formData.dateTime,
         visit_count: formData.visitCount,
         status: 'pending',
-        progress_json: INITIAL_STEPS as any,
-        email: formData.email,
-        phone: formData.phone,
-        notes: formData.notes,
-        cast_id: formData.castId,
-        store_id: finalStoreId,
+        progress_json: (formData.preCompleteCounseling
+          ? INITIAL_STEPS.map((s) => (s.id === 'counseling' ? { ...s, isCompleted: true } : s))
+          : INITIAL_STEPS) as any,
+        email: formData.email || null,
+        phone: formData.phone || null,
+        notes: formData.notes || null,
+        cast_id: formData.castId || null,
+        store_id: finalStoreId || null,
+      },
+      select: {
+        id: true,
+        customer_name: true,
       },
     });
 
@@ -74,16 +79,38 @@ export async function getReservations(storeId?: string, castId?: string) {
       where.cast_id = castId;
     }
 
-    const data = await prisma.reservations.findMany({
+    console.log('[getReservations] Querying with where:', JSON.stringify(where, null, 2));
+
+    const data = await (prisma.reservations as any).findMany({
       where,
+      select: {
+        id: true,
+        customer_name: true,
+        client_nickname: true,
+        reservation_datetime: true,
+        date_time: true,
+        visit_count: true,
+        status: true,
+        progress_json: true,
+        email: true,
+        phone: true,
+        notes: true,
+        cast_id: true,
+        store_id: true,
+        therapist_name: true,
+        created_at: true,
+        updated_at: true,
+      },
       orderBy: {
         created_at: 'desc',
       },
     });
 
+    console.log(`[getReservations] Found ${data.length} records in DB.`);
+
     // キャストと店舗の情報も取得してマッピング
-    const castIds = [...new Set(data.map((r) => r.cast_id).filter(Boolean))] as string[];
-    const storeIds = [...new Set(data.map((r) => r.store_id).filter(Boolean))] as string[];
+    const castIds = [...new Set(data.map((r: any) => r.cast_id).filter(Boolean))] as string[];
+    const storeIds = [...new Set(data.map((r: any) => r.store_id).filter(Boolean))] as string[];
 
     const [casts, stores] = await Promise.all([
       prisma.cast.findMany({
@@ -99,7 +126,7 @@ export async function getReservations(storeId?: string, castId?: string) {
     const castMap = new Map(casts.map((c) => [c.id, c.name]));
     const storeMap = new Map(stores.map((s) => [s.id, s.name]));
 
-    const formatted: Reservation[] = data.map((d) => ({
+    const formatted: Reservation[] = data.map((d: any) => ({
       id: d.id,
       customerName: d.customer_name || '不明',
       visitCount: d.visit_count || 1,
@@ -116,9 +143,10 @@ export async function getReservations(storeId?: string, castId?: string) {
       clientNickname: d.client_nickname || undefined,
     }));
 
+    console.log(`[getReservations] Formatted ${formatted.length} reservations.`);
     return formatted;
   } catch (error) {
-    console.error('Error fetching reservations:', error);
+    console.error('[getReservations] Error fetching reservations:', error);
     return [];
   }
 }
@@ -152,12 +180,14 @@ export async function updateReservationStatus(
   status: 'pending' | 'completed',
 ) {
   try {
-    await prisma.reservations.update({
+    await (prisma.reservations as any).update({
       where: { id: reservationId },
       data: {
         status,
         updated_at: new Date(),
+        // completed_at: status === 'completed' ? new Date() : null, // DB反映が未完了のため一旦コメントアウト
       },
+      select: { id: true },
     });
     revalidatePath('/admin/admin/reservations');
     return { success: true };
@@ -173,13 +203,15 @@ export async function updateReservationStep(
   status: 'pending' | 'completed',
 ) {
   try {
-    await prisma.reservations.update({
+    await (prisma.reservations as any).update({
       where: { id: reservationId },
       data: {
         progress_json: steps as any,
         status,
         updated_at: new Date(),
+        // completed_at: status === 'completed' ? new Date() : null,
       },
+      select: { id: true },
     });
     revalidatePath('/admin/admin/reservations');
     return { success: true };
@@ -206,13 +238,15 @@ export async function markStepCompleted(reservationId: string, stepId: string) {
     const allDone = newSteps.every((s) => s.isCompleted);
     const newStatus = allDone ? 'completed' : 'pending';
 
-    await prisma.reservations.update({
+    await (prisma.reservations as any).update({
       where: { id: reservationId },
       data: {
         progress_json: newSteps as any,
         status: newStatus,
         updated_at: new Date(),
+        // completed_at: newStatus === 'completed' ? new Date() : null,
       },
+      select: { id: true },
     });
 
     revalidatePath('/admin/admin/reservations');
@@ -225,10 +259,22 @@ export async function markStepCompleted(reservationId: string, stepId: string) {
 
 export async function getAllCasts() {
   try {
-    return await prisma.cast.findMany({
-      select: { id: true, name: true },
+    const casts = await prisma.cast.findMany({
+      select: {
+        id: true,
+        name: true,
+        memberships: {
+          select: { store_id: true },
+        },
+      },
       orderBy: { name: 'asc' },
     });
+
+    // UI側の使い勝手のため、storeIds 配列を追加して返す
+    return casts.map((c) => ({
+      ...c,
+      storeIds: c.memberships.map((m) => m.store_id),
+    }));
   } catch (error) {
     console.error('Error fetching all casts:', error);
     return [];
@@ -253,6 +299,7 @@ export async function assignCastToReservation(reservationId: string, castId: str
         therapist_name: cast.name, // 検索用などのため、名前も同期しておく
         updated_at: new Date(),
       },
+      select: { id: true },
     });
 
     revalidatePath('/admin/admin/reservations');

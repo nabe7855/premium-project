@@ -1,5 +1,6 @@
 import { deleteCastProfile, updateCastAuth } from '@/actions/cast-auth';
 import Card from '@/components/admin/ui/Card';
+import { getAvailableMonths, getCastPerformanceData } from '@/lib/actions/analytics';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -28,26 +29,56 @@ const CastCard: React.FC<{ cast: Cast; stores: Store[]; onSelect: (cast: Cast) =
   return (
     <button
       onClick={() => onSelect(cast)}
-      className="flex w-full items-center space-x-4 rounded-lg bg-brand-secondary p-4 text-left transition-colors duration-200 hover:bg-gray-700/50"
+      className="flex w-full flex-col justify-start space-y-3 rounded-lg bg-brand-secondary p-4 text-left transition-colors duration-200 hover:bg-gray-700/50"
     >
-      <img
-        src={
-          cast.photoUrl || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
-        }
-        alt={cast.name}
-        className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
-      />
-      <div className="flex-1 overflow-hidden">
-        <p className="truncate font-bold text-white">{cast.name}</p>
-        <p className="truncate text-sm text-brand-text-secondary">
-          {castStores.map((s) => s.name).join(', ')}
-        </p>
-        <span
-          className={`mt-1 inline-block rounded-full px-2 py-1 text-xs font-semibold ${cast.status === '在籍中' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
-        >
-          {cast.status}
-        </span>
+      <div className="flex w-full items-center space-x-4">
+        <img
+          src={
+            cast.photoUrl ||
+            'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
+          }
+          alt={cast.name}
+          className="h-16 w-16 flex-shrink-0 rounded-full object-cover"
+        />
+        <div className="flex-1 overflow-hidden">
+          <p className="truncate font-bold text-white">{cast.name}</p>
+          <p className="truncate text-[11px] text-brand-text-secondary">
+            {castStores.map((s) => s.name).join(', ')}
+          </p>
+          <span
+            className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${cast.status === '在籍中' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+          >
+            {cast.status}
+          </span>
+        </div>
       </div>
+
+      {/* 統計情報簡易表示 */}
+      {cast.stats && (
+        <div className="flex w-full flex-col gap-2 rounded-lg bg-gray-800/50 p-2 text-[11px]">
+          <div className="flex items-center justify-between font-medium">
+            <span className="text-gray-400">
+              総指名: <span className="text-white">{cast.stats.designations}</span>
+            </span>
+            <span className="text-pink-400">新規: {cast.stats.breakdown.new}</span>
+            <span className="text-blue-400">リピ: {cast.stats.breakdown.repeat}</span>
+            <span className="text-orange-400">フリー: {cast.stats.breakdown.free}</span>
+          </div>
+          {cast.stats.strengths && cast.stats.strengths.length > 0 && (
+            <div className="flex flex-wrap gap-1">
+              <span className="text-[10px] text-gray-500">強み:</span>
+              {cast.stats.strengths.map((s) => (
+                <span
+                  key={s}
+                  className="rounded bg-indigo-500/20 px-1 py-0.5 text-[10px] text-indigo-300"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
     </button>
   );
 };
@@ -400,6 +431,7 @@ const CastDetailModal: React.FC<{
 
 // Main page for managing all cast members
 export default function AllCast() {
+  const [baseCasts, setBaseCasts] = useState<Cast[]>([]);
   const [casts, setCasts] = useState<Cast[]>([]);
   const [stores, setStores] = useState<Store[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -407,6 +439,12 @@ export default function AllCast() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStore, setSelectedStore] = useState('all');
   const [activeTab, setActiveTab] = useState<'active' | 'inactive'>('active');
+  const [selectedMonth, setSelectedMonth] = useState('all');
+  const [availableMonths, setAvailableMonths] = useState<string[]>([]);
+
+  useEffect(() => {
+    getAvailableMonths(selectedStore).then(setAvailableMonths);
+  }, [selectedStore]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -455,12 +493,6 @@ export default function AllCast() {
         if (castError) throw castError;
 
         const mappedCasts: Cast[] = (castData || []).map((c) => {
-          // Generate dummy stats for each cast
-          const designations = Math.floor(Math.random() * 100) + 20;
-          const repeat = Math.floor(designations * 0.7);
-          const news = Math.floor(designations * 0.2);
-          const free = designations - repeat - news;
-
           const storeStatuses =
             c.cast_statuses?.map((s: any) => s.status_master?.name).filter(Boolean) || [];
 
@@ -481,21 +513,15 @@ export default function AllCast() {
             email: c.email || '',
             password: c.login_password || '',
             stats: {
-              designations,
-              repeatRate: Math.floor((repeat / designations) * 100),
-              breakdown: { new: news, repeat: repeat, free: free },
-              monthlyPerformance: [
-                { name: '1月', value: Math.floor(Math.random() * 20) },
-                { name: '2月', value: Math.floor(Math.random() * 20) },
-                { name: '3月', value: Math.floor(Math.random() * 20) },
-                { name: '4月', value: Math.floor(Math.random() * 20) },
-                { name: '5月', value: Math.floor(Math.random() * 20) },
-                { name: '6月', value: Math.floor(Math.random() * 20) },
-              ],
+              designations: 0,
+              repeatRate: 0,
+              breakdown: { new: 0, repeat: 0, free: 0 },
+              monthlyPerformance: [],
+              strengths: [],
             },
           };
         });
-        setCasts(mappedCasts);
+        setBaseCasts(mappedCasts);
       } catch (error) {
         console.error('Error fetching data:', error);
       } finally {
@@ -505,6 +531,34 @@ export default function AllCast() {
 
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (baseCasts.length === 0) return;
+    let isMounted = true;
+    const loadStats = async () => {
+      setIsLoading(true);
+      const statsMap = await getCastPerformanceData(selectedStore, selectedMonth);
+      if (!isMounted) return;
+      const combined = baseCasts.map((c) => {
+        const st = statsMap[c.id];
+        if (st) {
+          return { ...c, stats: st };
+        }
+        return c; // default empty stats
+      });
+      setCasts(combined);
+
+      if (selectedCast) {
+        const updated = combined.find((cb) => cb.id === selectedCast.id);
+        if (updated) setSelectedCast(updated);
+      }
+      setIsLoading(false);
+    };
+    loadStats();
+    return () => {
+      isMounted = false;
+    };
+  }, [baseCasts, selectedMonth, selectedStore]);
 
   const handleSave = async (updatedCast: Cast) => {
     console.log('--- Start Saving Cast Details (Priority Aware) ---');
@@ -570,7 +624,9 @@ export default function AllCast() {
       }
 
       // Update local state and close modal
-      setCasts(casts.map((c) => (c.id === updatedCast.id ? updatedCast : c)));
+      const mapped = casts.map((c) => (c.id === updatedCast.id ? updatedCast : c));
+      setCasts(mapped);
+      setBaseCasts(baseCasts.map((c) => (c.id === updatedCast.id ? updatedCast : c)));
       setSelectedCast(null);
       alert('キャスト情報を保存しました');
       console.log('--- Save Process Completed Successfully ---');
@@ -598,6 +654,7 @@ export default function AllCast() {
       if (result.success) {
         alert('キャストを削除しました');
         setCasts((prev) => prev.filter((c) => c.id !== castId));
+        setBaseCasts((prev) => prev.filter((c) => c.id !== castId));
         setSelectedCast(null);
       } else {
         alert(`削除に失敗しました: ${result.error}`);
@@ -647,18 +704,21 @@ export default function AllCast() {
             </button>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <input
             type="text"
             placeholder="名前で検索..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+            className="w-full rounded-md border border-gray-700 bg-brand-primary p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           />
           <select
             value={selectedStore}
-            onChange={(e) => setSelectedStore(e.target.value)}
-            className="w-full rounded-md border border-gray-700 bg-brand-primary p-2"
+            onChange={(e) => {
+              setSelectedStore(e.target.value);
+              setSelectedMonth('all');
+            }}
+            className="w-full rounded-md border border-gray-700 bg-brand-primary p-2 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
           >
             <option value="all">すべての店舗</option>
             {stores.map((s) => (
@@ -667,6 +727,22 @@ export default function AllCast() {
               </option>
             ))}
           </select>
+          <div className="flex">
+            <select
+              value={selectedMonth}
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="w-full rounded-md border border-indigo-500/50 bg-indigo-500/10 p-2 font-bold text-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/50"
+            >
+              <option value="all" className="bg-brand-primary text-white">
+                全期間の統計
+              </option>
+              {availableMonths.map((m) => (
+                <option key={m} value={m} className="bg-brand-primary text-white">
+                  {m.replace('-', '年 ')}月 の統計
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </Card>
 

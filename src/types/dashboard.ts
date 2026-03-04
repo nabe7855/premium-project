@@ -38,6 +38,7 @@ export interface Cast {
       free: number;
     };
     monthlyPerformance: TimeSeriesData[];
+    strengths?: string[];
   };
 }
 

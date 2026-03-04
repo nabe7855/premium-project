@@ -227,13 +227,15 @@ export const WorkflowResponseModal: React.FC<WorkflowResponseModalProps> = ({
               <p className="mb-2 border-b border-pink-100 pb-1 text-xs font-bold uppercase tracking-widest text-pink-500">
                 Counseling Responses
               </p>
-              <div className="max-h-[40vh] space-y-2 overflow-y-auto pr-1">
+              <div className="space-y-2 pr-1">
                 {Object.entries(answers.counseling).map(([key, val]: [string, any]) => (
                   <div key={key} className="rounded-lg bg-slate-50 p-2">
                     <p className="text-[10px] font-bold uppercase text-slate-400">
                       {key.replace(/_/g, ' ')}
                     </p>
-                    <p className="text-xs font-medium text-slate-800">{String(val) || '-'}</p>
+                    <p className="text-xs font-medium text-slate-800">
+                      {Array.isArray(val) ? val.join(', ') : String(val) || '-'}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -244,13 +246,15 @@ export const WorkflowResponseModal: React.FC<WorkflowResponseModalProps> = ({
               <p className="mb-2 border-b border-indigo-100 pb-1 text-xs font-bold uppercase tracking-widest text-indigo-500">
                 Survey Responses
               </p>
-              <div className="space-y-2">
+              <div className="space-y-2 pr-1">
                 {Object.entries(answers.survey).map(([key, val]: [string, any]) => (
                   <div key={key} className="rounded-lg bg-slate-50 p-2">
                     <p className="text-[10px] font-bold uppercase text-slate-400">
                       {key.replace(/_/g, ' ')}
                     </p>
-                    <p className="text-xs font-medium text-slate-800">{String(val) || '-'}</p>
+                    <p className="text-xs font-medium text-slate-800">
+                      {Array.isArray(val) ? val.join(', ') : String(val) || '-'}
+                    </p>
                   </div>
                 ))}
               </div>
@@ -270,8 +274,8 @@ export const WorkflowResponseModal: React.FC<WorkflowResponseModalProps> = ({
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative z-10 max-h-[85vh] w-full max-w-md overflow-hidden rounded-3xl border border-white/20 bg-white shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+      <div className="relative z-10 flex max-h-[85vh] w-full max-w-md flex-col overflow-hidden rounded-3xl border border-white/20 bg-white shadow-2xl">
+        <div className="flex flex-none items-center justify-between border-b border-slate-100 px-6 py-4">
           <h3 className="font-bold text-slate-800">{stepLabel}</h3>
           <button
             onClick={onClose}
@@ -280,7 +284,7 @@ export const WorkflowResponseModal: React.FC<WorkflowResponseModalProps> = ({
             <X size={18} />
           </button>
         </div>
-        <div className="overflow-y-auto p-6">{renderContent()}</div>
+        <div className="flex-1 overflow-y-auto p-6">{renderContent()}</div>
       </div>
     </div>
   );
