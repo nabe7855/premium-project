@@ -1,4 +1,3 @@
-import NextImage from 'next/image';
 import React, { useState } from 'react';
 
 interface FlowProps {
@@ -235,7 +234,6 @@ const Flow: React.FC<FlowProps> = ({
                       )}
                     </div>
 
-                    {/* Expandable Content Wrap */}
                     <div
                       className={`overflow-hidden transition-all duration-500 ease-in-out ${
                         openStep === i || isEditing
@@ -243,11 +241,9 @@ const Flow: React.FC<FlowProps> = ({
                           : 'max-h-0 opacity-0'
                       }`}
                     >
-                      <div
-                        className={`flex flex-col items-center gap-6 border-t border-slate-100 p-8 pt-10 md:flex-row md:p-10 md:pt-14 ${i % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
-                      >
-                        {/* Text Column */}
-                        <div className="flex flex-1 flex-col items-center text-center md:items-start md:text-left">
+                      <div className="flex flex-col items-center border-t border-slate-100 p-8 pt-10 md:p-10 md:pt-14">
+                        {/* Text Column - Centered */}
+                        <div className="mx-auto flex max-w-2xl flex-col items-center text-center">
                           {isEditing ? (
                             <p
                               contentEditable
@@ -266,37 +262,6 @@ const Flow: React.FC<FlowProps> = ({
                               {s.desc}
                             </p>
                           )}
-                        </div>
-
-                        {/* Image Column */}
-                        <div className="w-full flex-1">
-                          <div className="group relative aspect-video overflow-hidden rounded-2xl border border-slate-200 shadow-sm md:aspect-square">
-                            <NextImage
-                              src={s.image}
-                              alt={s.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, 400px"
-                              className="object-cover transition-transform duration-500 group-hover:scale-105"
-                              loading="lazy"
-                            />
-                            {isEditing && (
-                              <label className="absolute inset-0 z-30 flex cursor-pointer items-center justify-center bg-black/40 opacity-0 transition-opacity hover:opacity-100">
-                                <span className="text-xs font-bold text-white">画像変更</span>
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                      // Pass the individual field path and the File object
-                                      // RecruitEditor will handle the upload and update config.flow.steps[i].image
-                                      onUpdate?.(`steps.${i}.image`, file);
-                                    }
-                                  }}
-                                />
-                              </label>
-                            )}
-                          </div>
                         </div>
                       </div>
                     </div>
