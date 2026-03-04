@@ -1,12 +1,23 @@
 import { deleteCastProfile, updateCastAuth } from '@/actions/cast-auth';
 import Card from '@/components/admin/ui/Card';
+import { WorkflowResponseModal } from '@/components/admin/ui/WorkflowResponseModal';
 import {
   getAvailableMonths,
   getCastDetailReservations,
   getCastPerformanceData,
 } from '@/lib/actions/analytics';
+import { getStepResponse } from '@/lib/actions/workflowResponse';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
+import {
+  Calendar,
+  ClipboardCheck,
+  FileText,
+  Filter,
+  MessageSquare,
+  ShieldCheck,
+  User,
+} from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
 import { XMarkIcon } from '../admin-assets/Icons';
 // FIX: Added CartesianGrid to the import from recharts to resolve the "Cannot find name 'CartesianGrid'" error.
@@ -94,6 +105,7 @@ const CastDetailModal: React.FC<{
   allCasts: Cast[];
   selectedStore?: string;
   selectedMonth?: string;
+  availableMonths: string[];
   onClose: () => void;
   onSave: (cast: Cast) => void;
   onDelete: (castId: string, castName: string) => void;
@@ -101,8 +113,9 @@ const CastDetailModal: React.FC<{
   cast: initialCast,
   stores,
   allCasts,
-  selectedStore,
-  selectedMonth,
+  selectedStore: initialStore,
+  selectedMonth: initialMonth,
+  availableMonths,
   onClose,
   onSave,
   onDelete,
@@ -114,16 +127,41 @@ const CastDetailModal: React.FC<{
   const [historyLoading, setHistoryLoading] = useState(false);
   const [blogCount, setBlogCount] = useState(0);
 
+  // Modal-local filters
+  const [localStore, setLocalStore] = useState(initialStore || 'all');
+  const [localMonth, setLocalMonth] = useState(initialMonth || 'all');
+
+  // Workflow detail state
+  const [workflowDetail, setWorkflowDetail] = useState<{
+    reservationId: string;
+    stepId: string;
+    label: string;
+    data: any;
+  } | null>(null);
+  const [loadingStepId, setLoadingStepId] = useState<string | null>(null);
+
   useEffect(() => {
     if (activeTab === 'history' && cast) {
       setHistoryLoading(true);
-      getCastDetailReservations(cast.id, selectedStore, selectedMonth).then((result) => {
+      getCastDetailReservations(cast.id, localStore, localMonth).then((result) => {
         setReservationHistory(result.reservations || []);
         setBlogCount(result.blogCount || 0);
         setHistoryLoading(false);
       });
     }
-  }, [activeTab, cast?.id, selectedStore, selectedMonth]);
+  }, [activeTab, cast?.id, localStore, localMonth]);
+
+  const handleViewWorkflowStep = async (reservation: any, stepId: string, label: string) => {
+    setLoadingStepId(`${reservation.id}-${stepId}`);
+    try {
+      const resp = await getStepResponse(reservation.id, stepId as any);
+      setWorkflowDetail({ reservationId: reservation.id, stepId, label, data: resp });
+    } catch (e) {
+      alert('回答の取得に失敗しました');
+    } finally {
+      setLoadingStepId(null);
+    }
+  };
 
   if (!cast) return null;
 
@@ -206,7 +244,42 @@ const CastDetailModal: React.FC<{
           >
             <XMarkIcon />
           </button>
-          <h2 className="mb-4 text-2xl font-bold text-white">{cast.name} の詳細</h2>
+          <div className="mb-4 flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+            <h2 className="text-2xl font-bold text-white">{cast.name} の詳細</h2>
+
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 rounded-md bg-brand-primary p-1.5 ring-1 ring-gray-700">
+                <Calendar className="h-4 w-4 text-gray-400" />
+                <select
+                  value={localMonth}
+                  onChange={(e) => setLocalMonth(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-white focus:outline-none"
+                >
+                  <option value="all">全期間</option>
+                  {availableMonths.map((m) => (
+                    <option key={m} value={m} className="bg-brand-secondary">
+                      {m.replace('-', '年 ')}月
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex items-center gap-1.5 rounded-md bg-brand-primary p-1.5 ring-1 ring-gray-700">
+                <Filter className="h-4 w-4 text-gray-400" />
+                <select
+                  value={localStore}
+                  onChange={(e) => setLocalStore(e.target.value)}
+                  className="bg-transparent text-xs font-bold text-white focus:outline-none"
+                >
+                  <option value="all">全店舗</option>
+                  {stores.map((s) => (
+                    <option key={s.id} value={s.id} className="bg-brand-secondary">
+                      {s.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </div>
 
           {/* Tabs */}
           <div className="flex gap-4 border-b border-gray-700">
@@ -263,30 +336,61 @@ const CastDetailModal: React.FC<{
                 </p>
               ) : (
                 <div className="space-y-2">
-                  <p className="text-xs text-brand-text-secondary">
-                    直近 {reservationHistory.length} 件の完了予約
+                  <p className="text-xs font-medium text-brand-text-secondary">
+                    直近 {reservationHistory.length} 件の完了予約 (クリックで詳細回答表示)
                   </p>
                   {reservationHistory.map((r: any) => (
-                    <div
-                      key={r.id}
-                      className="flex items-center justify-between rounded-lg bg-brand-primary px-4 py-3 text-sm"
-                    >
-                      <div>
-                        <p className="font-medium text-white">
-                          {r.client_nickname || r.customer_name}
-                        </p>
-                        <p className="text-[11px] text-brand-text-secondary">{r.date_time}</p>
+                    <div key={r.id} className="space-y-1">
+                      <div className="flex items-center justify-between rounded-lg border border-gray-800 bg-brand-primary px-4 py-3 text-sm transition-colors hover:bg-brand-primary/80">
+                        <div className="flex-1 text-slate-100">
+                          <p className="font-bold">{r.client_nickname || r.customer_name}</p>
+                          <p className="text-[11px] text-gray-500">{r.date_time}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
+                              r.visit_count === 1
+                                ? 'bg-pink-500/20 text-pink-400'
+                                : 'bg-blue-500/20 text-blue-400'
+                            }`}
+                          >
+                            {r.visit_count === 1 ? '新規' : `${r.visit_count}回目`}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                            r.visit_count === 1
-                              ? 'bg-pink-500/20 text-pink-400'
-                              : 'bg-blue-500/20 text-blue-400'
-                          }`}
-                        >
-                          {r.visit_count === 1 ? '新規' : `${r.visit_count}回目`}
-                        </span>
+
+                      {/* Workflow Step Buttons */}
+                      <div className="flex flex-wrap gap-2 px-1 pb-2">
+                        {[
+                          { id: 'counseling', icon: FileText, label: 'カウンセリング' },
+                          { id: 'consent', icon: ShieldCheck, label: '同意書' },
+                          { id: 'review', icon: MessageSquare, label: '口コミ' },
+                          { id: 'survey', icon: ClipboardCheck, label: 'アンケート' },
+                          { id: 'reflection', icon: User, label: '振り返り' },
+                        ].map((step) => {
+                          const isCompleted = r.progress_json?.some(
+                            (s: any) => s.id === step.id && s.isCompleted,
+                          );
+                          if (!isCompleted) return null;
+
+                          const isLoading = loadingStepId === `${r.id}-${step.id}`;
+
+                          return (
+                            <button
+                              key={step.id}
+                              onClick={() => handleViewWorkflowStep(r, step.id, step.label)}
+                              disabled={isLoading}
+                              className="flex items-center gap-1 rounded border border-gray-700/50 bg-gray-800/50 px-2 py-1 text-[10px] text-gray-400 transition-all hover:bg-indigo-500/20 hover:text-indigo-300 disabled:opacity-50"
+                            >
+                              {isLoading ? (
+                                <div className="h-2 w-2 animate-spin rounded-full border-b border-white" />
+                              ) : (
+                                <step.icon className="h-3 w-3" />
+                              )}
+                              {step.label}
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
@@ -543,6 +647,14 @@ const CastDetailModal: React.FC<{
             </form>
           )}
         </div>
+        {workflowDetail && (
+          <WorkflowResponseModal
+            stepId={workflowDetail.stepId}
+            stepLabel={workflowDetail.label}
+            data={workflowDetail.data}
+            onClose={() => setWorkflowDetail(null)}
+          />
+        )}
       </div>
     </div>
   );
@@ -893,6 +1005,7 @@ export default function AllCast() {
           allCasts={casts}
           selectedStore={selectedStore}
           selectedMonth={selectedMonth}
+          availableMonths={availableMonths}
           onClose={() => setSelectedCast(null)}
           onSave={handleSave}
           onDelete={handleDelete}

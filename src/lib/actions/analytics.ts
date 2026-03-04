@@ -328,14 +328,20 @@ export async function getCastPerformanceData(storeId?: string, month?: string) {
 
 export async function getCastDetailReservations(castId: string, storeId?: string, month?: string) {
   try {
+    const normalizedCastId = castId.toLowerCase();
+
+    console.log(
+      `[getCastDetailReservations] Fetching for castId: ${normalizedCastId}, store: ${storeId}, month: ${month}`,
+    );
+
     const whereRes: any = {
-      cast_id: castId,
+      cast_id: normalizedCastId,
       status: 'completed',
     };
 
     // Blog filtering
     const whereBlog: any = {
-      cast_id: castId,
+      cast_id: normalizedCastId,
     };
 
     if (storeId && storeId !== 'all') {
@@ -368,6 +374,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
           status: true,
           updated_at: true,
           created_at: true,
+          progress_json: true,
         },
         orderBy: { date_time: 'desc' },
       }),
@@ -375,6 +382,10 @@ export async function getCastDetailReservations(castId: string, storeId?: string
         where: whereBlog,
       }),
     ]);
+
+    console.log(
+      `[getCastDetailReservations] Found ${reservations.length} reservations and ${blogCount} blogs`,
+    );
 
     return { success: true, reservations, blogCount };
   } catch (e) {
