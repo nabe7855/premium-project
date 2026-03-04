@@ -107,6 +107,7 @@ export function normalizeCast(
     services,
     bloodType: cast.blood_type ?? undefined,
     managerComment: cast.manager_comment ?? undefined,
+    aiSummary: cast.ai_summary ?? undefined,
     createdAt: cast.created_at ?? undefined,
 
     // 🆕 Q&Aを正しく統合

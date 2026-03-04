@@ -15,7 +15,11 @@ model Cast {
   image_url      String
   email          String?
   login_password String?
-  created_at     DateTime              @default(now())
+  manager_comment  String?
+  catch_copy       String?
+  is_active        Boolean               @default(true)
+  ai_summary       String?
+  created_at       DateTime              @default(now())
   blogs          Blog[]
   badges         CastBadge[]
   features       CastFeatures?

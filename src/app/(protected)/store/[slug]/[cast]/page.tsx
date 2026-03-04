@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import CastHeader from '@/components/cast/CastHeader';
 import CastTabs from '@/components/cast/CastTabs';
+import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
+import { useEffect, useState } from 'react';
 
 interface CastDetailPageProps {
   params: { store: string; cast: string };
@@ -40,6 +40,7 @@ const CastDetailPage = ({ params }: CastDetailPageProps) => {
       <CastHeader
         name={castData.name}
         catchCopy={castData.catchCopy}
+        aiSummary={castData.aiSummary}
         galleryItems={castData.galleryItems}
       />
       {/* ✅ isSticky は不要なので削除 */}

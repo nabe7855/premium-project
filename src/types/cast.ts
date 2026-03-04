@@ -79,6 +79,7 @@ export interface Cast {
   catchphrase?: string;
   profile?: string | null;
   managerComment?: string | null;
+  aiSummary?: string | null;
   story?: string;
 
   // 画像

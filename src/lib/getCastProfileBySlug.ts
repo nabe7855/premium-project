@@ -27,6 +27,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       sexiness_level,
       blood_type,
       manager_comment,
+      ai_summary,
       created_at
     `,
     )

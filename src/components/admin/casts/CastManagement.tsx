@@ -16,6 +16,7 @@ interface Cast {
   manager_comment?: string;
   is_active: boolean;
   catch_copy?: string;
+  ai_summary?: string;
   stores: Store[];
 }
 
@@ -33,6 +34,7 @@ export default function CastManagement() {
           manager_comment,
           is_active,
           catch_copy,
+          ai_summary,
           cast_store_memberships ( stores ( id, name ) )
         `);
 
@@ -47,6 +49,7 @@ export default function CastManagement() {
           manager_comment: c.manager_comment,
           is_active: c.is_active,
           catch_copy: c.catch_copy,
+          ai_summary: c.ai_summary,
           stores: c.cast_store_memberships?.map((cs: any) => cs.stores) || [],
         })) ?? [];
 
@@ -65,6 +68,7 @@ export default function CastManagement() {
           manager_comment: cast.manager_comment,
           is_active: cast.is_active,
           catch_copy: cast.catch_copy,
+          ai_summary: cast.ai_summary,
         })
         .eq('id', cast.id);
 
@@ -265,6 +269,84 @@ export default function CastManagement() {
                 className="w-full rounded border border-cyan-700/50 bg-gray-800 px-2 py-1 text-white focus:ring-2 focus:ring-cyan-400"
                 placeholder="店長コメントを入力"
               />
+            </div>
+
+            {/* AI要約 */}
+            <div className="rounded-lg border border-purple-500/30 bg-purple-900/10 p-4">
+              <div className="mb-2 flex items-center justify-between">
+                <label className="font-bold text-purple-300">✨ AI口コミ要約</label>
+                <button
+                  onClick={async () => {
+                    const { data: reviews, error } = await supabase
+                      .from('reviews')
+                      .select(
+                        `
+                        comment,
+                        rating,
+                        review_tag_links (
+                          review_tag_master ( name )
+                        )
+                      `,
+                      )
+                      .eq('cast_id', cast.id);
+
+                    if (error || !reviews) {
+                      alert('口コミの取得に失敗しました');
+                      return;
+                    }
+
+                    if (reviews.length === 0) {
+                      alert('まだ口コミがありません');
+                      return;
+                    }
+
+                    const reviewTexts = reviews
+                      .map((r: any) => {
+                        const tags = r.review_tag_links
+                          ?.map((tl: any) => tl.review_tag_master?.name)
+                          .filter(Boolean)
+                          .join(', ');
+                        return `【評価: ${r.rating}】${tags ? `[タグ: ${tags}] ` : ''}${r.comment}`;
+                      })
+                      .join('\n---\n');
+
+                    const prompt = `以下のキャスト「${cast.name}」に対するお客様の口コミデータを元に、この方の魅力や人気の理由を2〜3文で親しみやすく要約してください。
+ユーザーページに「AIによる口コミ要約」として掲載します。
+
+口コミデータ:
+${reviewTexts}
+`;
+                    // クリップボードにコピー
+                    try {
+                      await navigator.clipboard.writeText(prompt);
+                      alert(
+                        'AI分析用のプロンプトをクリップボードにコピーしました。\n外部AI（ChatGPT等）に貼り付けて要約を作成してください。',
+                      );
+                    } catch (err) {
+                      console.error(err);
+                      console.log('Prompt:', prompt);
+                      alert('コピーに失敗しました。コンソールからプロンプトを確認してください。');
+                    }
+                  }}
+                  className="rounded bg-purple-600 px-3 py-1 text-xs font-bold text-white hover:bg-purple-500"
+                >
+                  分析用プロンプト作成
+                </button>
+              </div>
+              <textarea
+                value={cast.ai_summary ?? ''}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setCasts((prev) =>
+                    prev.map((c) => (c.id === cast.id ? { ...c, ai_summary: value } : c)),
+                  );
+                }}
+                className="h-24 w-full rounded border border-purple-700/50 bg-gray-800 px-2 py-1 text-sm text-white focus:ring-2 focus:ring-purple-400"
+                placeholder="AIで生成した要約文をここに貼り付けてください"
+              />
+              <p className="mt-1 text-[10px] text-purple-300/60">
+                ※この文章はユーザーページのプロフィール上部に表示されます。
+              </p>
             </div>
 
             {/* 保存ボタン */}
