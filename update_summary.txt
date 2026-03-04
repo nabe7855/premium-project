@@ -1,8 +1,0 @@
-
---- Update Summary ---
-Successfully updated: 354
-Not found in DB: 32
-Ambiguous (multiple matches): 92
-
-Updated (first 20): ホテル プラージュ, ホテル サラサ, HOTEL Wing, HOTEL Belta, HOTEL le bruno, ホテル おひるねラッコ 八幡, ホテル DUO-M/DUO-F, HOTEL GATE BALI, HOTEL acotte, HOTEL PALM GATE, レステイ小倉, HOTEL VIGADO, HOTEL ACQUA MYU, HOTEL M・Gate DREAM, ホテル パティオ, ホテル パスポート, HOTEL Coco de Annex, HOTEL ESPO, ホテル パームゲート (中央区), HOTEL MOJI
-Not found (first 20): HOTEL C. 小倉ベイ, by H-SEVEN (NUDA), ホテル サラサ (北幸), HOTEL C. 小倉ベイ, ラブホテル 101（福岡）, HOTEL OLYMPIA, ホテル オリエンタル, HOTEL THE HOTEL, ホテル イルパラッツォ, HOTEL REX 福岡, HOTEL LAFORET, HOTEL OREO, HOTEL ME, ホテル 舞, ホテル 雅, HOTEL SKY, ホテル 夢, HOTEL NEO, ホテル 禅, HOTEL LIBERTY
