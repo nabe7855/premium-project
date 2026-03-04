@@ -332,7 +332,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
     const loweredId = trimmedId.toLowerCase();
     const upperId = trimmedId.toUpperCase();
 
-    console.log('[DEBUG-EXTREME] getCastDetailReservations: Start', {
+    console.log('[DEBUG-EXTREME] Request Parameters:', {
       castId,
       trimmedId,
       loweredId,
@@ -341,8 +341,7 @@ export async function getCastDetailReservations(castId: string, storeId?: string
       month,
     });
 
-    // 1. Broadest possible search (ignore all filters except ID patterns)
-    // We try original, trimmed, lowered and upper to catch any mismatch
+    // 1. Fetch reservations (Crucial part)
     const rawReservations = await (prisma.reservations as any).findMany({
       where: {
         OR: [
@@ -366,54 +365,47 @@ export async function getCastDetailReservations(castId: string, storeId?: string
         store_id: true,
       },
       orderBy: { created_at: 'desc' },
-      take: 100,
+      take: 200,
     });
 
-    // Sample IDs from DB for reference
-    const samples = await (prisma.reservations as any).findMany({
-      take: 5,
-      select: { cast_id: true },
-      where: { NOT: { cast_id: null } },
-    });
+    console.log(`[DEBUG-EXTREME] Reservations Found: ${rawReservations.length}`);
 
-    console.log('[DEBUG-EXTREME] Found raw count:', rawReservations.length, {
-      sampleIdsInDb: samples.map((s: any) => s.cast_id),
-    });
-
-    // 2. Perform manual filtering in memory to find where data is lost
-    let filtered = rawReservations;
-
-    // Filter by store
-    if (storeId && storeId !== 'all') {
-      const prevCount = filtered.length;
-      filtered = filtered.filter((r) => r.store_id === storeId);
-      console.log(`[DEBUG-EXTREME] Store Filter (${storeId}): ${prevCount} -> ${filtered.length}`);
-    }
-
-    // Filter by month
-    if (month && month !== 'all') {
-      const prevCount = filtered.length;
-      const startDate = new Date(`${month}-01T00:00:00.000Z`);
-      const nextMonth = new Date(startDate);
-      nextMonth.setMonth(nextMonth.getMonth() + 1);
-
-      filtered = filtered.filter((r) => {
-        const d = r.updated_at || r.created_at;
-        return d && d >= startDate && d < nextMonth;
+    // 2. Blog count with Error Handling
+    let blogCount = 0;
+    try {
+      blogCount = await prisma.blog.count({
+        where: {
+          OR: [
+            { cast_id: castId },
+            { cast_id: trimmedId },
+            { cast_id: loweredId },
+            { cast_id: upperId },
+          ],
+        },
       });
-      console.log(`[DEBUG-EXTREME] Month Filter (${month}): ${prevCount} -> ${filtered.length}`);
+    } catch (blogErr) {
+      console.warn('[DEBUG-EXTREME] Blog table skipping due to error:', blogErr);
     }
 
-    const blogCount = await prisma.blog.count({
-      where: {
-        OR: [
-          { cast_id: castId },
-          { cast_id: trimmedId },
-          { cast_id: loweredId },
-          { cast_id: upperId },
-        ],
-      },
+    // 3. Manual Filtering (JS)
+    const startDate = month && month !== 'all' ? new Date(`${month}-01T00:00:00.000Z`) : null;
+    const nextMonth = startDate ? new Date(startDate) : null;
+    if (nextMonth) nextMonth.setMonth(nextMonth.getMonth() + 1);
+
+    const filtered = rawReservations.filter((r) => {
+      // Store filter
+      if (storeId && storeId !== 'all' && r.store_id !== storeId) return false;
+
+      // Date filter
+      if (startDate && nextMonth) {
+        const d = r.updated_at || r.created_at;
+        if (!d || d < startDate || d >= nextMonth) return false;
+      }
+
+      return true;
     });
+
+    console.log(`[DEBUG-EXTREME] Finally displaying: ${filtered.length} (after manual filtering)`);
 
     return {
       success: true,
