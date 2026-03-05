@@ -149,14 +149,14 @@ const SecondaryBannerSlider: React.FC = () => {
         {/* Right: Info & Other Items */}
         <div className="flex min-w-0 flex-1 flex-col justify-end">
           <div className="mb-2 flex items-center gap-1.5 overflow-hidden border-b-[1.5px] border-[#EB4E5A] pb-1 md:mb-4 md:border-b-[3px] md:pb-2">
-            <span className="animate-pulse text-[8px] text-[#EB4E5A] md:text-xs">◀</span>
+            <span className="animate-pulse text-[10px] text-[#EB4E5A] md:text-xs">◀</span>
             <AnimatePresence mode="wait">
               <motion.h2
                 key={activeItem.title}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                className="truncate text-[10px] font-bold tracking-tight text-gray-800 md:text-xl"
+                className="truncate text-sm font-bold tracking-tight text-gray-800 md:text-xl"
               >
                 {activeItem.title}
               </motion.h2>
