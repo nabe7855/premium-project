@@ -16,18 +16,29 @@ import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import AreaSearchModal from './AreaSearchModal';
 import DetailedSearchModal from './DetailedSearchModal';
-import PriceSearchModal from './PriceSearchModal';
 
-const POPULAR_TAGS = ['女子会', '露天風呂', '格安', 'サウナ', '駅チカ', 'VOD'];
+import ThemeSearchModal from './ThemeSearchModal';
+
+const POPULAR_TAGS = [
+  '露天風呂付き',
+  'サウナ付き',
+  '岩盤浴付き',
+  '記念日デート',
+  '女子会',
+  '一人利用OK',
+  '安い',
+  '駐車場付き',
+  '駅近',
+];
 
 const TabelogSearch: React.FC = () => {
   const [keyword, setKeyword] = useState('');
   const [purposes, setPurposes] = useState<Purpose[]>([]);
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [activeModal, setActiveModal] = useState<'area' | 'purpose' | 'amenity' | 'price' | null>(
-    null,
-  );
+  const [activeModal, setActiveModal] = useState<
+    'area' | 'purpose' | 'amenity' | 'price' | 'theme' | null
+  >(null);
 
   const [activeFilters, setActiveFilters] = useState<{
     tags: string[];
@@ -128,7 +139,7 @@ const TabelogSearch: React.FC = () => {
         <div
           className={`overflow-hidden transition-all duration-500 ease-in-out ${
             isAccordionOpen
-              ? 'mt-6 max-h-[1000px] space-y-6 opacity-100 md:mt-8 md:space-y-8'
+              ? 'mt-6 max-h-[2000px] space-y-8 opacity-100 md:mt-8 md:space-y-10'
               : 'mt-0 max-h-0 space-y-0 opacity-0'
           }`}
         >
@@ -137,14 +148,14 @@ const TabelogSearch: React.FC = () => {
             <p className="flex items-center gap-1.5 pl-1 text-[11px] font-black uppercase tracking-widest text-gray-500">
               <Zap size={14} className="fill-amber-500 text-amber-500" /> 人気の条件から即検索
             </p>
-            <div className="flex gap-2.5 overflow-x-auto px-1 pb-2 scrollbar-hide">
+            <div className="flex flex-wrap gap-2 px-1">
               {POPULAR_TAGS.map((tag, idx) => (
                 <button
                   key={idx}
-                  className={`flex-shrink-0 rounded-full border px-5 py-2.5 text-xs font-black transition-all active:scale-95 ${
+                  className={`rounded-xl border px-4 py-2 text-[11px] font-black transition-all active:scale-95 ${
                     activeFilters.tags.includes(tag)
-                      ? 'border-[#40C4C9] bg-[#40C4C9] text-white shadow-md shadow-cyan-400/20'
-                      : 'border-gray-200 bg-white text-gray-600 hover:border-[#40C4C9] hover:bg-cyan-50'
+                      ? 'border-[#40C4C9] bg-[#40C4C9] text-white shadow-md'
+                      : 'border-slate-100 bg-slate-50 text-slate-500 hover:border-[#40C4C9] hover:bg-white'
                   }`}
                   onClick={() => toggleTag(tag)}
                 >
@@ -186,20 +197,20 @@ const TabelogSearch: React.FC = () => {
               </span>
             </button>
 
-            {/* Price */}
+            {/* Theme */}
             <button
-              onClick={() => setActiveModal('price')}
+              onClick={() => setActiveModal('theme')}
               className={`group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 p-5 shadow-sm transition-all active:scale-95 md:p-6 ${
-                activeFilters.priceRange[1] < 30000
-                  ? 'border-emerald-400 bg-emerald-50/30'
-                  : 'border-slate-100 bg-white hover:border-emerald-400 hover:bg-emerald-50/30'
+                activeFilters.tags.length > 0
+                  ? 'border-orange-400 bg-orange-50/30'
+                  : 'border-slate-100 bg-white hover:border-orange-400 hover:bg-orange-50/30'
               }`}
             >
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 shadow-sm transition-transform group-hover:scale-110">
-                <Wallet size={26} strokeWidth={2.5} className="text-emerald-500" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-50 shadow-sm transition-transform group-hover:scale-110">
+                <Search size={26} strokeWidth={2.5} className="text-orange-500" />
               </div>
               <span className="text-xs font-black tracking-tighter text-gray-700 md:text-sm">
-                金額で探す
+                テーマで探す
               </span>
             </button>
 
@@ -219,6 +230,129 @@ const TabelogSearch: React.FC = () => {
                 設備で探す
               </span>
             </button>
+          </div>
+
+          {/* Price Search (Permanent Section) */}
+          <div className="mt-8 rounded-3xl bg-slate-50/80 p-6 md:p-8">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-50 text-emerald-500">
+                <Wallet size={20} strokeWidth={2.5} />
+              </div>
+              <h4 className="text-sm font-black tracking-widest text-slate-800">
+                金額・コスパで探す
+              </h4>
+            </div>
+
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                {/* Day/Stay Type */}
+                <div className="flex gap-4">
+                  <div className="flex-1 space-y-2">
+                    <p className="pl-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      曜日
+                    </p>
+                    <div className="flex rounded-xl border border-slate-100 bg-white p-1 shadow-sm">
+                      {(['weekday', 'weekend', 'holiday'] as const).map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => setActiveFilters({ ...activeFilters, dayType: type })}
+                          className={`flex-1 rounded-lg py-1.5 text-[10px] font-black transition-all ${
+                            activeFilters.dayType === type
+                              ? 'bg-emerald-500 text-white shadow-md'
+                              : 'text-slate-400 hover:bg-slate-50'
+                          }`}
+                        >
+                          {type === 'weekday' ? '平日' : type === 'weekend' ? '休日' : '連休'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex-1 space-y-2">
+                    <p className="pl-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      プラン
+                    </p>
+                    <div className="flex rounded-xl border border-slate-100 bg-white p-1 shadow-sm">
+                      {(['rest', 'stay'] as const).map((type) => (
+                        <button
+                          key={type}
+                          onClick={() => setActiveFilters({ ...activeFilters, stayType: type })}
+                          className={`flex-1 rounded-lg py-1.5 text-[10px] font-black transition-all ${
+                            activeFilters.stayType === type
+                              ? 'bg-indigo-500 text-white shadow-md'
+                              : 'text-slate-400 hover:bg-slate-50'
+                          }`}
+                        >
+                          {type === 'rest' ? '休憩' : '宿泊'}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Price Display */}
+                <div className="flex flex-col justify-center">
+                  <div className="flex items-end justify-between px-2">
+                    <p className="mb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      予算設定
+                    </p>
+                    <div className="flex items-center gap-1.5 font-black text-slate-700">
+                      <span className="text-lg text-emerald-600">
+                        ¥{activeFilters.priceRange[0].toLocaleString()}
+                      </span>
+                      <span className="text-slate-300">〜</span>
+                      <span className="text-lg text-emerald-600">
+                        {activeFilters.priceRange[1] === 30000
+                          ? '無制限'
+                          : `¥${activeFilters.priceRange[1].toLocaleString()}`}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="relative mt-4 h-2 w-full rounded-full bg-slate-200">
+                    <div
+                      className="absolute h-full rounded-full bg-emerald-500"
+                      style={{
+                        left: `${(activeFilters.priceRange[0] / 30000) * 100}%`,
+                        right: `${100 - (activeFilters.priceRange[1] / 30000) * 100}%`,
+                      }}
+                    ></div>
+                    <input
+                      type="range"
+                      min="0"
+                      max="30000"
+                      step="1000"
+                      value={activeFilters.priceRange[0]}
+                      onChange={(e) =>
+                        setActiveFilters({
+                          ...activeFilters,
+                          priceRange: [
+                            Math.min(Number(e.target.value), activeFilters.priceRange[1]),
+                            activeFilters.priceRange[1],
+                          ],
+                        })
+                      }
+                      className="pointer-events-none absolute -top-1 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-emerald-500"
+                    />
+                    <input
+                      type="range"
+                      min="0"
+                      max="30000"
+                      step="1000"
+                      value={activeFilters.priceRange[1]}
+                      onChange={(e) =>
+                        setActiveFilters({
+                          ...activeFilters,
+                          priceRange: [
+                            activeFilters.priceRange[0],
+                            Math.max(Number(e.target.value), activeFilters.priceRange[0]),
+                          ],
+                        })
+                      }
+                      className="pointer-events-none absolute -top-1 w-full appearance-none bg-transparent [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-white [&::-webkit-slider-thumb]:ring-2 [&::-webkit-slider-thumb]:ring-emerald-500"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           {/* Search Button */}
@@ -252,15 +386,11 @@ const TabelogSearch: React.FC = () => {
           toggleFilterId(activeModal === 'purpose' ? 'purposeIds' : 'amenityIds', id)
         }
       />
-      <PriceSearchModal
-        isOpen={activeModal === 'price'}
+      <ThemeSearchModal
+        isOpen={activeModal === 'theme'}
         onClose={() => setActiveModal(null)}
-        priceRange={activeFilters.priceRange}
-        onPriceChange={(range) => setActiveFilters((prev) => ({ ...prev, priceRange: range }))}
-        dayType={activeFilters.dayType}
-        onDayTypeChange={(dt) => setActiveFilters((prev) => ({ ...prev, dayType: dt }))}
-        stayType={activeFilters.stayType}
-        onStayTypeChange={(st) => setActiveFilters((prev) => ({ ...prev, stayType: st }))}
+        selectedTags={activeFilters.tags}
+        onToggleTag={toggleTag}
       />
     </div>
   );
