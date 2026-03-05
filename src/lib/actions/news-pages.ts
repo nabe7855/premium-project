@@ -7,6 +7,7 @@ import { revalidatePath } from 'next/cache';
 
 // Map Prisma model to PageData type
 const mapPrismaToPageData = (record: any): PageData => {
+  const misc = (record.referenceUrls as any) || {};
   return {
     id: record.id,
     slug: record.slug,
@@ -15,19 +16,9 @@ const mapPrismaToPageData = (record: any): PageData => {
     updatedAt: record.updatedAt.getTime(),
     sections: JSON.parse(JSON.stringify(record.sections || [])),
     thumbnailUrl: record.thumbnailUrl || undefined,
-    shortDescription: record.referenceUrls
-      ? (record.referenceUrls as any).shortDescription
-      : undefined, // Assuming we misuse referenceUrls or need a new field. Wait, schema didn't have shortDescription.
-    // Let's check schema again. I didn't add shortDescription. I added thumbnailUrl and targetStoreSlugs.
-    // I should use referenceUrls for shortDescription as a temporary hack OR just add it to schema?
-    // The user approved "Update Prisma schema (PageRequest model)".
-    // I missed shortDescription in the schema update step.
-    // I'll add it to the schema now if I can, or use referenceUrls JSON for it.
-    // Let's stick to using referenceUrls JSON for now to avoid another schema change if possible,
-    // BUT clean way is to add it.
-    // For now, let's assume I can store it in referenceUrls or just ignore it?
-    // No, the inspector has it.
-    // Let's treat referenceUrls as a JSON bucket for misc fields for now.
+    shortDescription: misc.shortDescription,
+    category: misc.category,
+    showInSlider: misc.showInSlider,
     targetStoreSlugs: record.targetStoreSlugs || [],
   };
 };
@@ -53,27 +44,12 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
       orderBy: { updatedAt: 'desc' },
     });
 
-    console.log('[getPublishedPagesByStore] All published pages:', allPublished.length);
-    console.log(
-      '[getPublishedPagesByStore] Inspecting targetStoreSlugs type:',
-      allPublished.map((p: any) => ({
-        id: p.id,
-        type: typeof p.targetStoreSlugs,
-        val: p.targetStoreSlugs,
-      })),
-    );
-
     // 手動フィルタリング
     const records = allPublished.filter((record: any) => {
       const slugs = record.targetStoreSlugs as string[];
       return Array.isArray(slugs) && slugs.includes(storeSlug);
     });
 
-    console.log('[getPublishedPagesByStore] Filtered for', storeSlug, ':', records.length);
-    console.log(
-      '[getPublishedPagesByStore] Records:',
-      records.map((r: any) => ({ id: r.id, title: r.title, targetStoreSlugs: r.targetStoreSlugs })),
-    );
     return records.map(mapPrismaToPageData);
   } catch (error) {
     console.error('Failed to fetch published pages by store:', error);
@@ -96,11 +72,19 @@ export async function getPage(id: string): Promise<PageData | null> {
 
 export async function createPage(data: Partial<PageData>): Promise<PageData | null> {
   try {
-    const { title, slug, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } =
-      data;
+    const {
+      title,
+      slug,
+      sections,
+      status,
+      thumbnailUrl,
+      targetStoreSlugs,
+      shortDescription,
+      category,
+      showInSlider,
+    } = data;
 
-    // Use referenceUrls to store shortDescription for now since I didn't add it to schema explicitly
-    const miscData = { shortDescription };
+    const miscData = { shortDescription, category, showInSlider };
 
     const record = await prisma.pageRequest.create({
       data: {
@@ -124,8 +108,23 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
 
 export async function updatePage(id: string, data: Partial<PageData>): Promise<PageData | null> {
   try {
-    const { title, slug, sections, status, thumbnailUrl, targetStoreSlugs, shortDescription } =
-      data;
+    const {
+      title,
+      slug,
+      sections,
+      status,
+      thumbnailUrl,
+      targetStoreSlugs,
+      shortDescription,
+      category,
+      showInSlider,
+    } = data;
+
+    const existingRecord = await prisma.pageRequest.findUnique({
+      where: { id },
+      select: { referenceUrls: true },
+    });
+    const currentMisc = (existingRecord?.referenceUrls as any) || {};
 
     const updateData: any = {};
     if (title !== undefined) updateData.title = title;
@@ -134,9 +133,12 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
     if (status !== undefined) updateData.status = status;
     if (thumbnailUrl !== undefined) updateData.thumbnailUrl = thumbnailUrl;
     if (targetStoreSlugs !== undefined) updateData.targetStoreSlugs = targetStoreSlugs;
-    if (shortDescription !== undefined) {
-      updateData.referenceUrls = { shortDescription };
-    }
+
+    const newMisc = { ...currentMisc };
+    if (shortDescription !== undefined) newMisc.shortDescription = shortDescription;
+    if (category !== undefined) newMisc.category = category;
+    if (showInSlider !== undefined) newMisc.showInSlider = showInSlider;
+    updateData.referenceUrls = newMisc;
 
     const record = await prisma.pageRequest.update({
       where: { id },

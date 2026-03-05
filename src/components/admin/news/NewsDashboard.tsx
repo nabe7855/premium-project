@@ -13,6 +13,14 @@ interface NewsDashboardProps {
   onUpdatePage: (id: string, data: Partial<PageData>) => void;
 }
 
+const CATEGORIES = [
+  { id: 'info', label: 'お知らせ' },
+  { id: 'promo', label: 'プロモーション' },
+  { id: 'event', label: 'イベント' },
+  { id: 'media', label: 'メディア' },
+  { id: 'twitcasting', label: 'ツイキャス' },
+];
+
 const NewsDashboard: React.FC<NewsDashboardProps> = ({
   pages,
   onCreatePage,
@@ -33,6 +41,8 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
       slug: editingPage.slug,
       shortDescription: editingPage.shortDescription,
       thumbnailUrl: editingPage.thumbnailUrl,
+      category: editingPage.category,
+      showInSlider: editingPage.showInSlider,
     });
     setEditingPage(null);
     toast.success('基本情報を更新しました');
@@ -68,6 +78,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
       : [...currentStores, storeSlug];
     onUpdatePage(pageId, { targetStoreSlugs: nextStores });
   };
+
   return (
     <div className="min-h-screen bg-slate-50 p-8 md:p-12">
       <div className="mx-auto max-w-6xl">
@@ -139,12 +150,22 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                       No Thumbnail
                     </div>
                   )}
-                  <div className="absolute right-6 top-6">
+                  <div className="absolute right-6 top-6 flex flex-col items-end gap-2">
                     <span
                       className={`rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-xl backdrop-blur-md ${page.status === 'published' ? 'bg-green-500/90 text-white' : 'bg-slate-700/80 text-white'}`}
                     >
                       {page.status === 'published' ? '公開中' : '非公開'}
                     </span>
+                    {page.category && (
+                      <span className="rounded-full bg-rose-500/90 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md">
+                        {CATEGORIES.find((c) => c.id === page.category)?.label || page.category}
+                      </span>
+                    )}
+                    {page.showInSlider && (
+                      <span className="rounded-full bg-amber-400/90 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md">
+                        スライダー表示
+                      </span>
+                    )}
                   </div>
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition-opacity group-hover:opacity-100">
                     <div className="flex flex-col gap-3">
@@ -296,7 +317,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
       {/* Quick Edit Modal */}
       {editingPage && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-lg overflow-hidden rounded-[3rem] bg-white shadow-2xl duration-300 animate-in fade-in zoom-in">
+          <div className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[3rem] bg-white shadow-2xl duration-300 animate-in fade-in zoom-in">
             <div className="relative p-10">
               <button
                 onClick={() => setEditingPage(null)}
@@ -365,6 +386,53 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     className="w-full rounded-2xl bg-slate-50 px-6 py-4 font-bold text-slate-900 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/10"
                     placeholder="ページタイトルを入力"
                   />
+                </div>
+
+                {/* Category & Slider */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      タグ（カテゴリ）
+                    </label>
+                    <select
+                      value={editingPage.category || ''}
+                      onChange={(e) => setEditingPage({ ...editingPage, category: e.target.value })}
+                      className="w-full rounded-2xl bg-slate-50 px-6 py-4 font-bold text-slate-900 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/10"
+                    >
+                      <option value="">未設定（お知らせ）</option>
+                      {CATEGORIES.map((cat) => (
+                        <option key={cat.id} value={cat.id}>
+                          {cat.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                      スライダー表示
+                    </label>
+                    <button
+                      onClick={() =>
+                        setEditingPage({ ...editingPage, showInSlider: !editingPage.showInSlider })
+                      }
+                      className={`flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 font-bold transition-all ${
+                        editingPage.showInSlider
+                          ? 'bg-amber-100 text-amber-600 ring-4 ring-amber-500/10'
+                          : 'bg-slate-50 text-slate-400 hover:bg-slate-100'
+                      }`}
+                    >
+                      {editingPage.showInSlider ? (
+                        <>
+                          <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                          </svg>
+                          表示する
+                        </>
+                      ) : (
+                        <>表示しない</>
+                      )}
+                    </button>
+                  </div>
                 </div>
 
                 {/* Slug Edit */}

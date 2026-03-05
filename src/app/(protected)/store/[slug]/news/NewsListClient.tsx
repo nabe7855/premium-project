@@ -30,6 +30,7 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
 
   // カテゴリ分けのロジック
   const getCategoryLabel = (item: PageData) => {
+    if (item.category) return item.category;
     if (item.title.includes('イベント')) return 'event';
     if (item.title.includes('メディア') || item.title.includes('出演')) return 'media';
     if (item.title.includes('ツイキャス')) return 'twitcasting';
@@ -42,8 +43,9 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
     return getCategoryLabel(item) === activeCategory;
   });
 
-  // スライダー用の最新ニュース（上位3〜5件）
-  const sliderNews = news.slice(0, 5);
+  // スライダー用のニュース（管理画面で設定されたものを優先、なければ最新3件）
+  const manualSliderNews = news.filter((item) => item.showInSlider);
+  const sliderNews = manualSliderNews.length > 0 ? manualSliderNews : news.slice(0, 3);
 
   const totalPages = Math.ceil(filteredNews.length / ITEMS_PER_PAGE);
   const currentNews = filteredNews.slice(

@@ -50,4 +50,6 @@ export interface PageData {
   thumbnailUrl?: string;
   shortDescription?: string;
   targetStoreSlugs?: string[];
+  category?: string;
+  showInSlider?: boolean;
 }
