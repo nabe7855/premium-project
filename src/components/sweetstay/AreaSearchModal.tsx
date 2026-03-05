@@ -10,9 +10,10 @@ import JapanMap, { Prefecture, Region } from './JapanMap';
 interface AreaSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSelect: (prefName: string, cityIds: string[]) => void;
 }
 
-const AreaSearchModal: React.FC<AreaSearchModalProps> = ({ isOpen, onClose }) => {
+const AreaSearchModal: React.FC<AreaSearchModalProps> = ({ isOpen, onClose, onSelect }) => {
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
   const [selectedPref, setSelectedPref] = useState<Prefecture | null>(null);
   const [cities, setCities] = useState<City[]>([]);
@@ -68,7 +69,9 @@ const AreaSearchModal: React.FC<AreaSearchModalProps> = ({ isOpen, onClose }) =>
   };
 
   const handleConfirm = () => {
-    // Navigate with selected cities
+    if (selectedPref) {
+      onSelect(selectedPref.name, selectedCityIds);
+    }
     onClose();
   };
 

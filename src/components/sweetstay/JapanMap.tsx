@@ -141,22 +141,20 @@ const JapanMap: React.FC<JapanMapProps> = ({
     [],
   );
 
-  const handlePrefClick = (el: SVGElement) => {
-    const classList = Array.from(el.classList);
-    // Find the class that matches a known prefecture ID
-    const prefId = classList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
-
-    if (!prefId) {
-      // If not on element itself, check parents (e.g., if path inside <g>)
-      const parent = el.closest('g[class]') as SVGElement;
-      if (parent) {
-        const parentClassList = Array.from(parent.classList);
-        const parentPrefId = parentClassList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
-        if (parentPrefId) return handlePrefClick(parent);
+  const getPrefIdFromElement = (el: SVGElement): string | null => {
+    let current: SVGElement | null = el;
+    while (current && current.tagName !== 'svg') {
+      if (current.classList && current.classList.length > 0) {
+        const classList = Array.from(current.classList);
+        const found = classList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
+        if (found) return found;
       }
-      return;
+      current = current.parentElement as any;
     }
+    return null;
+  };
 
+  const handlePrefIdClick = (prefId: string) => {
     const pref = PREFECTURES_FLAT.find((p) => p.id === prefId);
     if (!pref) return;
 
@@ -188,47 +186,24 @@ const JapanMap: React.FC<JapanMapProps> = ({
     svgElement.style.width = '100%';
     svgElement.style.height = 'auto';
     svgElement.style.display = 'block';
+    svgElement.style.pointerEvents = 'auto';
 
-    // Set up all paths and groups for interaction
-    const interactiveElements = svgElement.querySelectorAll('g, path');
-
-    interactiveElements.forEach((el) => {
-      const element = el as SVGElement;
-      const classList = Array.from(element.classList);
-
-      // Is this a prefecture element?
-      const isPref = PREFECTURES_FLAT.some((p) => classList.includes(p.id));
-
-      if (isPref) {
-        element.style.cursor = 'pointer';
-        element.style.pointerEvents = 'auto'; // Force interaction
-        element.style.transition = 'fill 0.3s ease, filter 0.3s ease';
-
-        (element as any).onclick = (e: MouseEvent) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handlePrefClick(element);
-        };
-
-        // Hover effect helper
-        (element as any).onmouseenter = () => {
-          element.style.filter = 'brightness(1.1)';
-        };
-        (element as any).onmouseleave = () => {
-          element.style.filter = 'none';
-        };
+    // Centralized Click Handler
+    (svgElement as any).onclick = (e: MouseEvent) => {
+      const target = e.target as SVGElement;
+      const prefId = getPrefIdFromElement(target);
+      if (prefId) {
+        e.preventDefault();
+        e.stopPropagation();
+        handlePrefIdClick(prefId);
       }
-    });
-
-    const prefElements = Array.from(interactiveElements).filter((el) =>
-      PREFECTURES_FLAT.some((p) => el.classList.contains(p.id)),
-    ) as SVGGraphicsElement[];
+    };
 
     const labels: { id: string; name: string; x: number; y: number }[] = [];
 
+    // Coloring and Labels Logic
     REGIONS_DATA.forEach((region) => {
       const isRegionSelected = selectedRegion?.id === region.id;
-
       let regionMinX = Infinity,
         regionMinY = Infinity,
         regionMaxX = -Infinity,
@@ -236,45 +211,58 @@ const JapanMap: React.FC<JapanMapProps> = ({
       let regionFound = false;
 
       region.prefectures.forEach((pref) => {
-        const el = Array.from(prefElements).find((e) =>
-          e.classList.contains(pref.id),
-        ) as SVGGraphicsElement;
+        // Find ALL elements for this prefecture (some maps use multi-path)
+        const els = svgElement.querySelectorAll(`.${pref.id}`);
 
-        if (el) {
+        els.forEach((elNode) => {
+          const el = elNode as SVGGraphicsElement;
+          el.style.cursor = 'pointer';
+          el.style.transition = 'fill 0.3s ease, filter 0.2s ease';
+
           if (selectedRegion) {
             if (isRegionSelected) {
               el.style.fill = getRegionColor('selected');
               el.style.pointerEvents = 'auto';
+            } else {
+              el.style.fill = '#f8fafc'; // slate-50 background for non-selected
+              el.style.pointerEvents = 'none';
+            }
+          } else {
+            el.style.fill = getRegionColor(region.id);
+            el.style.pointerEvents = 'auto';
+          }
 
-              // Calculate prefecture label
-              try {
-                const bbox = el.getBBox();
+          // Hover effects
+          (el as any).onmouseenter = () => {
+            if (!selectedRegion || isRegionSelected) el.style.filter = 'brightness(1.05)';
+          };
+          (el as any).onmouseleave = () => {
+            el.style.filter = 'none';
+          };
+
+          // Label calculation
+          try {
+            const bbox = el.getBBox();
+            if (!selectedRegion) {
+              regionMinX = Math.min(regionMinX, bbox.x);
+              regionMinY = Math.min(regionMinY, bbox.y);
+              regionMaxX = Math.max(regionMaxX, bbox.x + bbox.width);
+              regionMaxY = Math.max(regionMaxY, bbox.y + bbox.height);
+              regionFound = true;
+            } else if (isRegionSelected) {
+              // Add pref labels if zoomed
+              // Only add if not already added (some prefs have multiple paths)
+              if (!labels.some((l) => l.id === pref.id)) {
                 labels.push({
                   id: pref.id,
                   name: pref.name.replace(/都|道|府|県$/, ''),
                   x: bbox.x + bbox.width / 2,
                   y: bbox.y + bbox.height / 2,
                 });
-              } catch (e) {}
-            } else {
-              el.style.fill = '#fff1f2'; // rose-50
-              el.style.pointerEvents = 'none';
+              }
             }
-          } else {
-            el.style.fill = getRegionColor(region.id);
-            el.style.pointerEvents = 'auto';
-
-            // Stats for Region label
-            try {
-              const bbox = el.getBBox();
-              regionMinX = Math.min(regionMinX, bbox.x);
-              regionMinY = Math.min(regionMinY, bbox.y);
-              regionMaxX = Math.max(regionMaxX, bbox.x + bbox.width);
-              regionMaxY = Math.max(regionMaxY, bbox.y + bbox.height);
-              regionFound = true;
-            } catch (e) {}
-          }
-        }
+          } catch (e) {}
+        });
       });
 
       if (!selectedRegion && regionFound) {

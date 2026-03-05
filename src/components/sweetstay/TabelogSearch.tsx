@@ -58,6 +58,8 @@ const TabelogSearch: React.FC = () => {
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (keyword.trim()) params.append('q', keyword.trim());
+    if (activeFilters.areaId) params.append('area', activeFilters.areaId);
+    if (activeFilters.cityIds.length > 0) params.append('cities', activeFilters.cityIds.join(','));
     if (activeFilters.purposeIds.length > 0)
       params.append('purposes', activeFilters.purposeIds.join(','));
     if (activeFilters.amenityIds.length > 0)
@@ -232,7 +234,13 @@ const TabelogSearch: React.FC = () => {
         </div>
       </div>
 
-      <AreaSearchModal isOpen={activeModal === 'area'} onClose={() => setActiveModal(null)} />
+      <AreaSearchModal
+        isOpen={activeModal === 'area'}
+        onClose={() => setActiveModal(null)}
+        onSelect={(pref, cityIds) =>
+          setActiveFilters((prev) => ({ ...prev, areaId: pref, cityIds: cityIds }))
+        }
+      />
       <DetailedSearchModal
         isOpen={activeModal === 'purpose' || activeModal === 'amenity'}
         type={activeModal === 'purpose' ? 'purpose' : 'amenity'}
