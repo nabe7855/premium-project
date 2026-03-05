@@ -134,9 +134,9 @@ const SecondaryBannerSlider: React.FC = () => {
 
   return (
     <section className="container mx-auto mb-16 px-4 md:px-6">
-      <div className="flex snap-x flex-row items-end gap-3 overflow-x-auto pb-4 scrollbar-hide md:gap-5">
+      <div className="-mx-4 flex snap-x flex-row items-end gap-3 overflow-x-auto px-4 pb-4 scrollbar-hide md:mx-0 md:gap-5 md:px-0">
         {/* Left: Active Item (Main) */}
-        <div className="w-[80vw] flex-shrink-0 snap-start md:w-[45%] lg:w-[40%]">
+        <div className="w-[82vw] flex-shrink-0 snap-start md:w-[40%] lg:w-[36%]">
           <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-gray-200 shadow-sm transition-all duration-300">
             {renderSlideContent(activeItem)}
           </div>
@@ -158,13 +158,15 @@ const SecondaryBannerSlider: React.FC = () => {
               <div
                 key={`${item.id}-${idx}`}
                 onClick={() => setCurrentIndex(SNS_ITEMS.findIndex((i) => i.id === item.id))}
-                className="w-[45vw] flex-shrink-0 cursor-pointer snap-start transition-transform hover:opacity-90 active:scale-95 sm:w-[160px] md:w-[200px] lg:w-[230px]"
+                className="w-[50vw] flex-shrink-0 cursor-pointer snap-start transition-transform hover:opacity-90 active:scale-95 sm:w-[180px] md:w-[230px] lg:w-[270px]"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[2px] border border-gray-200 shadow-sm">
                   {renderSlideContent(item)}
                 </div>
               </div>
             ))}
+            {/* Added spacer for mobile scroll to end */}
+            <div className="w-4 flex-shrink-0 md:hidden" />
           </div>
         </div>
       </div>
