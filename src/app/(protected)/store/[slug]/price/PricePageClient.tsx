@@ -83,7 +83,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`font-rounded flex-1 truncate rounded-full px-1 py-3 text-xs font-bold outline-none transition-all duration-500 md:text-sm ${
+                    className={`font-rounded flex-1 rounded-full px-2 py-3 text-xs font-bold outline-none transition-all duration-500 md:text-sm ${
                       activeTab === tab.id
                         ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/30'
                         : 'text-rose-300 hover:text-rose-400'
@@ -522,7 +522,7 @@ function CourseAccordion({
       {/* Accordion Header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center gap-5 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white p-6 transition-all hover:from-rose-100 hover:to-rose-50 md:p-8"
+        className="flex w-full items-center gap-4 border-b border-rose-50 bg-gradient-to-br from-rose-50 to-white p-4 transition-all hover:from-rose-100 hover:to-rose-50 md:p-8"
       >
         <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-full bg-rose-100 text-3xl">
           {course.icon && (course.icon.startsWith('http') || course.icon.startsWith('/')) ? (
@@ -552,7 +552,7 @@ function CourseAccordion({
           isOpen ? 'max-h-[3000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="space-y-8 p-6 md:p-8">
+        <div className="space-y-8 p-4 md:p-8">
           {/* Time & Price List */}
           <div>
             <div className="mb-4 flex items-center gap-2">
@@ -561,7 +561,7 @@ function CourseAccordion({
                 Time & Price
               </h4>
             </div>
-            <div className="grid grid-cols-2 gap-x-3 gap-y-0.5 sm:gap-x-6">
+            <div className="grid grid-cols-1 gap-x-4 gap-y-1 min-[450px]:grid-cols-2 sm:gap-x-8 sm:gap-y-2">
               {course.plans?.map((plan, idx) => (
                 <div
                   key={plan.id}
@@ -576,11 +576,11 @@ function CourseAccordion({
                           : `${plan.minutes}min`}
                     </span>
                     {plan.discount_info && (
-                      <div className="flex items-center gap-1">
+                      <div className="flex flex-wrap items-center gap-1">
                         <span className="shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
                           HOT
                         </span>
-                        <span className="min-w-0 truncate text-[8px] font-bold text-rose-500 sm:text-[9px]">
+                        <span className="text-[9px] font-bold leading-tight text-rose-500 sm:text-[10px]">
                           {plan.discount_info}
                         </span>
                       </div>
