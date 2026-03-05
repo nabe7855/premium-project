@@ -144,17 +144,17 @@ const JapanMap: React.FC<JapanMapProps> = ({
   const getPrefIdFromElement = (el: SVGElement): string | null => {
     let current: SVGElement | null = el;
     while (current && current.tagName !== 'svg') {
-      if (current.classList && current.classList.length > 0) {
-        const classList = Array.from(current.classList);
-        const found = classList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
-        if (found) return found;
-      }
+      const className = current.getAttribute('class') || '';
+      const classes = className.split(' ');
+      const found = classes.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
+      if (found) return found;
       current = current.parentElement as any;
     }
     return null;
   };
 
   const handlePrefIdClick = (prefId: string) => {
+    console.log('[JapanMap] Handling Click for PrefID:', prefId);
     const pref = PREFECTURES_FLAT.find((p) => p.id === prefId);
     if (!pref) return;
 
@@ -171,17 +171,13 @@ const JapanMap: React.FC<JapanMapProps> = ({
   };
 
   useEffect(() => {
-    // Cache-busting fetch
     fetch(`/map-mobile.svg?v=${Date.now()}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.text();
-      })
+      .then((res) => res.text())
       .then((svg) => {
-        console.log('[JapanMap] SVG fetched successfully, length:', svg.length);
+        console.log('[JapanMap] SVG fetched, length:', svg.length);
         setSvgContent(svg);
       })
-      .catch((err) => console.error('[JapanMap] Failed to load map svg', err));
+      .catch((err) => console.error('[JapanMap] Failed to fetch SVG', err));
   }, []);
 
   useEffect(() => {
@@ -189,33 +185,28 @@ const JapanMap: React.FC<JapanMapProps> = ({
 
     const svgElement = containerRef.current.querySelector('svg');
     if (!svgElement) {
-      console.error('[JapanMap] SVG element not found in container');
+      console.error('[JapanMap] SVG element not found in DOM');
       return;
     }
 
-    console.log(
-      '[JapanMap] SVG loaded, width:',
-      svgElement.getAttribute('width'),
-      'viewBox:',
-      svgElement.getAttribute('viewBox'),
-    );
+    console.log('[JapanMap] SVG DOM detected. Initializing styles...');
 
     svgElement.style.width = '100%';
     svgElement.style.height = 'auto';
     svgElement.style.display = 'block';
     svgElement.style.pointerEvents = 'auto';
 
-    // Centralized Click Handler
-    const handleGlobalClick = (e: MouseEvent) => {
+    // ATTACH CLICK HANDLER TO SVG ROOT
+    (svgElement as any).onclick = (e: MouseEvent) => {
       const target = e.target as SVGElement;
       console.log(
-        '[JapanMap] Global Click target:',
+        '[JapanMap] SVG Click intercepted:',
         target.tagName,
-        'Classes:',
-        target.classList?.toString(),
+        'Class:',
+        target.getAttribute('class'),
       );
       const prefId = getPrefIdFromElement(target);
-      console.log('[JapanMap] Resolved prefId:', prefId);
+      console.log('[JapanMap] Resolved PrefID from click:', prefId);
       if (prefId) {
         e.preventDefault();
         e.stopPropagation();
@@ -223,48 +214,47 @@ const JapanMap: React.FC<JapanMapProps> = ({
       }
     };
 
-    (svgElement as any).onclick = handleGlobalClick;
-
     const labels: { id: string; name: string; x: number; y: number }[] = [];
+    let matchedPrefs = 0;
 
-    // Coloring and Labels Logic
     REGIONS_DATA.forEach((region) => {
       const isRegionSelected = selectedRegion?.id === region.id;
-      let regionMinX = Infinity,
-        regionMinY = Infinity,
-        regionMaxX = -Infinity,
-        regionMaxY = -Infinity;
-      let regionFound = false;
+      let rMinX = Infinity,
+        rMinY = Infinity,
+        rMaxX = -Infinity,
+        rMaxY = -Infinity;
+      let rFound = false;
 
       region.prefectures.forEach((pref) => {
-        // Find ALL elements for this prefecture (some maps use multi-path)
         const els = svgElement.querySelectorAll(`.${pref.id}`);
+        if (els.length > 0) matchedPrefs++;
 
-        els.forEach((elNode) => {
-          const el = elNode as SVGGraphicsElement;
+        els.forEach((node) => {
+          const el = node as SVGGraphicsElement;
           el.style.cursor = 'pointer';
-          el.style.transition = 'fill 0.3s ease, filter 0.2s ease';
+          el.style.transition = 'fill 0.3s ease, opacity 0.3s ease';
 
-          const color = selectedRegion
+          // Robust coloring logic
+          const baseColor = selectedRegion
             ? isRegionSelected
               ? getRegionColor('selected')
               : '#f1f5f9'
             : getRegionColor(region.id);
 
-          el.setAttribute('fill', color);
-          el.style.fill = color;
+          el.setAttribute('fill', baseColor);
+          el.style.fill = baseColor;
           el.setAttribute('stroke', '#ffffff');
-          el.style.stroke = '#ffffff';
+          el.setAttribute('stroke-width', '1');
 
           if (selectedRegion && !isRegionSelected) {
+            el.style.opacity = '0.3';
             el.style.pointerEvents = 'none';
-            el.style.opacity = '0.5';
           } else {
-            el.style.pointerEvents = 'auto';
             el.style.opacity = '1';
+            el.style.pointerEvents = 'auto';
           }
 
-          // Hover effects
+          // Hover
           (el as any).onmouseenter = () => {
             if (!selectedRegion || isRegionSelected) el.style.filter = 'brightness(1.05)';
           };
@@ -276,37 +266,34 @@ const JapanMap: React.FC<JapanMapProps> = ({
           try {
             const bbox = el.getBBox();
             if (!selectedRegion) {
-              regionMinX = Math.min(regionMinX, bbox.x);
-              regionMinY = Math.min(regionMinY, bbox.y);
-              regionMaxX = Math.max(regionMaxX, bbox.x + bbox.width);
-              regionMaxY = Math.max(regionMaxY, bbox.y + bbox.height);
-              regionFound = true;
-            } else if (isRegionSelected) {
-              // Add pref labels if zoomed
-              // Only add if not already added (some prefs have multiple paths)
-              if (!labels.some((l) => l.id === pref.id)) {
-                labels.push({
-                  id: pref.id,
-                  name: pref.name.replace(/都|道|府|県$/, ''),
-                  x: bbox.x + bbox.width / 2,
-                  y: bbox.y + bbox.height / 2,
-                });
-              }
+              rMinX = Math.min(rMinX, bbox.x);
+              rMinY = Math.min(rMinY, bbox.y);
+              rMaxX = Math.max(rMaxX, bbox.x + bbox.width);
+              rMaxY = Math.max(rMaxY, bbox.y + bbox.height);
+              rFound = true;
+            } else if (isRegionSelected && !labels.some((l) => l.id === pref.id)) {
+              labels.push({
+                id: pref.id,
+                name: pref.name.replace(/都|道|府|県$/, ''),
+                x: bbox.x + bbox.width / 2,
+                y: bbox.y + bbox.height / 2,
+              });
             }
           } catch (e) {}
         });
       });
 
-      if (!selectedRegion && regionFound) {
+      if (!selectedRegion && rFound) {
         labels.push({
           id: region.id,
           name: region.name,
-          x: regionMinX + (regionMaxX - regionMinX) / 2,
-          y: regionMinY + (regionMaxY - regionMinY) / 2,
+          x: rMinX + (rMaxX - rMinX) / 2,
+          y: rMinY + (rMaxY - rMinY) / 2,
         });
       }
     });
 
+    console.log(`[JapanMap] Applied styles to ${matchedPrefs} prefectures.`);
     setMapLabels(labels);
 
     if (selectedRegion) {
@@ -322,7 +309,6 @@ const JapanMap: React.FC<JapanMapProps> = ({
       maxX = -Infinity,
       maxY = -Infinity;
     let found = false;
-
     region.prefectures.forEach((pref) => {
       const el = svg.querySelector(`.${pref.id}`) as SVGGraphicsElement;
       if (el) {
@@ -336,21 +322,17 @@ const JapanMap: React.FC<JapanMapProps> = ({
         } catch (e) {}
       }
     });
-
     if (found) {
       const padding = 20;
-      const vb = `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}`;
-      svg.setAttribute('viewBox', vb);
+      svg.setAttribute(
+        'viewBox',
+        `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}`,
+      );
     }
   };
 
   const resetZoom = (svg: SVGSVGElement) => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(svgContent, 'image/svg+xml');
-    const originalVB = doc.documentElement.getAttribute('viewBox');
-    if (originalVB) {
-      svg.setAttribute('viewBox', originalVB);
-    }
+    svg.setAttribute('viewBox', '0 0 1000 1000');
   };
 
   return (
@@ -358,50 +340,10 @@ const JapanMap: React.FC<JapanMapProps> = ({
       <div
         ref={containerRef}
         className="relative w-full"
+        style={{ pointerEvents: 'auto' }}
         dangerouslySetInnerHTML={{ __html: svgContent }}
       />
-      {mapLabels.map((label) => (
-        <div
-          key={label.id}
-          className="pointer-events-none absolute h-0 w-0"
-          style={
-            {
-              // Simplified positioning relative to SVG coordinate system inside the relative container
-              // This requires the SVG to be rendered at 100% width and center-aligned
-              // In reality, this is tricky to map accurately without more math.
-              // I'll use a hacky estimation or try to keep them visible.
-            }
-          }
-        >
-          {/* We'll use absolute positioning but it's hard to match SVG viewBox exactly in HTML overlay. 
-              Instead, let's keep it simple for now or use SVG text if needed.
-              For now, I'll just show the name labels in the UI if possible.
-          */}
-        </div>
-      ))}
-
-      {/* Fallback Labeling Strategy: Map Labels in SVG text is better but hard to inject. 
-          Let's try to overlay them using percentage based on bbox if we can get the container size.
-      */}
-      <div className="pointer-events-none absolute inset-0">
-        {mapLabels.map((label) => {
-          // We need a way to translate SVG coords to %
-          // Assuming viewBox is roughly what we see.
-          return (
-            <div
-              key={label.id}
-              className="absolute whitespace-nowrap text-[10px] font-black text-white drop-shadow-md md:text-sm"
-              style={
-                {
-                  // This won't work perfectly without knowing the scale.
-                  // I will skip absolute overlay for now to avoid broken UI,
-                  // and focus on the split screen functionality which is higher priority.
-                }
-              }
-            ></div>
-          );
-        })}
-      </div>
+      {/* Percentage Based Labels Overlay can go here if needed later */}
     </div>
   );
 };
@@ -409,23 +351,23 @@ const JapanMap: React.FC<JapanMapProps> = ({
 const getRegionColor = (regionId: string) => {
   switch (regionId) {
     case 'hokkaido':
-      return '#60a5fa'; // blue-400
+      return '#60a5fa';
     case 'tohoku':
-      return '#2dd4bf'; // teal-400
+      return '#2dd4bf';
     case 'kanto':
-      return '#8b5cf6'; // violet-500
+      return '#8b5cf6';
     case 'chubu':
-      return '#10b981'; // emerald-500
+      return '#10b981';
     case 'kansai':
-      return '#f59e0b'; // amber-500
+      return '#f59e0b';
     case 'chugoku':
-      return '#f97316'; // orange-500
+      return '#f97316';
     case 'shikoku':
-      return '#ef4444'; // red-500
+      return '#ef4444';
     case 'kyushu':
-      return '#ec4899'; // pink-500
+      return '#ec4899';
     case 'selected':
-      return '#4EA2F0'; // indigo-500 (matched to new theme)
+      return '#4EA2F0';
     default:
       return '#ffe4ef';
   }
