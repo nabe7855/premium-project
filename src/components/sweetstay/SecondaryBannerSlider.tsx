@@ -129,7 +129,7 @@ const SecondaryBannerSlider: React.FC = () => {
     <section className="container mx-auto mb-16 overflow-hidden px-4 md:px-6">
       <div className="-mx-4 flex flex-row items-end gap-3 px-4 pb-4 md:mx-0 md:gap-8 md:px-0">
         {/* Left: Active Item (Main) */}
-        <div className="relative w-[65vw] flex-shrink-0 overflow-visible md:w-[38%] lg:w-[32%]">
+        <div className="relative w-[35vw] flex-shrink-0 overflow-visible md:w-[38%] lg:w-[32%]">
           <div className="relative aspect-[4/3] w-full">
             <AnimatePresence mode="popLayout">
               <motion.div
@@ -148,28 +148,28 @@ const SecondaryBannerSlider: React.FC = () => {
 
         {/* Right: Info & Other Items */}
         <div className="flex min-w-0 flex-1 flex-col justify-end">
-          <div className="mb-4 flex items-center gap-2 overflow-hidden border-b-[3px] border-[#EB4E5A] pb-2">
-            <span className="animate-pulse text-xs text-[#EB4E5A]">◀</span>
+          <div className="mb-2 flex items-center gap-1.5 overflow-hidden border-b-[1.5px] border-[#EB4E5A] pb-1 md:mb-4 md:border-b-[3px] md:pb-2">
+            <span className="animate-pulse text-[8px] text-[#EB4E5A] md:text-xs">◀</span>
             <AnimatePresence mode="wait">
               <motion.h2
                 key={activeItem.title}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -20, opacity: 0 }}
-                className="truncate text-base font-bold tracking-tight text-gray-800 md:text-xl"
+                className="truncate text-[10px] font-bold tracking-tight text-gray-800 md:text-xl"
               >
                 {activeItem.title}
               </motion.h2>
             </AnimatePresence>
           </div>
 
-          <div className="flex items-start gap-2.5 overflow-x-auto pb-2 scrollbar-hide md:gap-4">
+          <div className="flex items-start gap-1.5 overflow-x-auto pb-2 scrollbar-hide md:gap-4">
             {restItems.map((item, idx) => (
               <motion.div
                 key={item.id}
                 layout
                 onClick={() => setCurrentIndex(SNS_ITEMS.findIndex((i) => i.id === item.id))}
-                className="w-[38vw] flex-shrink-0 cursor-pointer transition-all hover:opacity-90 active:scale-95 sm:w-[150px] md:w-[180px] lg:w-[220px]"
+                className="w-[20vw] flex-shrink-0 cursor-pointer transition-all hover:opacity-90 active:scale-95 sm:w-[150px] md:w-[180px] lg:w-[220px]"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[4px] border border-gray-100 bg-gray-50 shadow-sm">
                   {renderSlideContent(item)}
