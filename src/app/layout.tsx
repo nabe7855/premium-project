@@ -3,11 +3,12 @@ import GoogleAnalytics from '@/components/common/GoogleAnalytics';
 import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
-import Providers from './providers'; // 👈 React Query 用のラッパー
+import Providers from './providers';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <FooterGuard>{children}</FooterGuard>
             </HeaderGuard>
           </AgeVerificationGuard>
+          <SpeedInsights />
         </Providers>
         <Toaster
           position="top-center"
