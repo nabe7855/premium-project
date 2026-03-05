@@ -49,25 +49,30 @@ function CastOptions({ promise }: { promise: Promise<CastListMini[]> }) {
   return (
     <SelectGroup>
       <SelectSeparator className="bg-rose-100" />
-      <SelectLabel className="bg-rose-50/50 py-2.5 text-xs font-black tracking-widest text-rose-500">
-        ━━ セラピスト指名 ━━
+      <SelectLabel className="sticky top-0 z-10 bg-rose-50/95 py-3 text-center text-[10px] font-black tracking-[0.2em] text-rose-400 backdrop-blur-sm">
+        ━━ セラピストを指名する ━━
       </SelectLabel>
       {casts.map((cast) => (
         <SelectItem
           key={cast.id}
           value={cast.id}
-          className="cursor-pointer py-3 transition-colors focus:bg-rose-50"
+          className="cursor-pointer border-b border-rose-50/50 py-4 transition-colors last:border-0 focus:bg-rose-50"
         >
-          <div className="flex w-full flex-nowrap items-center justify-between gap-4">
-            <span className="truncate font-bold text-gray-800">{cast.name}</span>
-            <div className="flex flex-shrink-0 items-center gap-2">
-              {cast.age && <span className="text-xs text-gray-400">({cast.age}歳)</span>}
-              {cast.isNewcomer && (
-                <span className="rounded bg-rose-100 px-1 py-0.5 text-[10px] font-black text-rose-500">
-                  新人
-                </span>
-              )}
+          <div className="flex w-full items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-100 font-bold text-rose-500">
+                {cast.name.charAt(0)}
+              </div>
+              <div className="flex flex-col">
+                <span className="text-sm font-bold text-gray-800">{cast.name}</span>
+                {cast.age && <span className="text-[10px] text-gray-400">{cast.age}歳</span>}
+              </div>
             </div>
+            {cast.isNewcomer && (
+              <span className="rounded-full bg-rose-500 px-2 py-0.5 text-[8px] font-black uppercase text-white">
+                NEW
+              </span>
+            )}
           </div>
         </SelectItem>
       ))}
@@ -304,23 +309,23 @@ export default function ReservationPageClient({
                 value={formData.castId}
                 onValueChange={(value) => setFormData({ ...formData, castId: value })}
               >
-                <SelectTrigger className="h-auto w-full rounded-xl border-2 border-gray-200 px-4 py-3 text-left transition-colors focus:border-rose-400 focus:outline-none data-[placeholder]:text-gray-400">
+                <SelectTrigger className="h-auto w-full rounded-xl border-2 border-gray-200 bg-white px-4 py-3 text-left transition-colors focus:border-rose-400 focus:outline-none data-[placeholder]:text-gray-400">
                   <SelectValue placeholder="選択してください" />
                 </SelectTrigger>
-                <SelectContent className="max-h-[80vh] w-[var(--radix-select-trigger-width)] rounded-2xl border-2 border-rose-100 shadow-2xl">
+                <SelectContent className="max-h-[60vh] w-[var(--radix-select-trigger-width)] overflow-hidden rounded-2xl border-2 border-rose-100 bg-white shadow-2xl">
                   <SelectItem value="none" disabled className="text-gray-400">
                     選択してください
                   </SelectItem>
                   <SelectItem
                     value="free"
-                    className="py-3 font-bold text-rose-600 focus:bg-rose-50"
+                    className="py-4 font-bold text-rose-600 focus:bg-rose-50"
                   >
                     ⭐ フリー（セラピストはお店におまかせ）
                   </SelectItem>
                   <Suspense
                     fallback={
-                      <div className="flex items-center justify-center p-4">
-                        <Loader2 className="h-5 w-5 animate-spin text-rose-500" />
+                      <div className="flex items-center justify-center p-8">
+                        <Loader2 className="h-6 w-6 animate-spin text-rose-500" />
                       </div>
                     }
                   >
