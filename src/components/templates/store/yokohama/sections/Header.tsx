@@ -1,5 +1,6 @@
 'use client';
 
+import { useStore } from '@/contexts/StoreContext';
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
 import { Camera, ChevronDown, Home, Link2, Menu, Users, X } from 'lucide-react';
@@ -17,6 +18,7 @@ interface HeaderProps {
 }
 
 export default function Header({ config, isEditing, onUpdate, onImageUpload }: HeaderProps) {
+  const { store } = useStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isStoreDropdownOpen, setIsStoreDropdownOpen] = useState(false);
@@ -519,7 +521,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </svg>
                         </div>
                         <span className="text-4xl font-black tabular-nums tracking-tighter">
-                          {config.phoneNumber || '03-6356-3860'}
+                          {store.contact?.phone || config.phoneNumber || '03-6356-3860'}
                         </span>
                       </div>
                       <p className="text-sm font-bold text-gray-400">

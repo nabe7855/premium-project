@@ -79,6 +79,9 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
     if (btn.label.includes('料金') || btn.label.includes('コース')) {
       return { ...btn, link: `/store/${store.slug}/price` };
     }
+    if (btn.label.includes('LINE') || btn.label.includes('ライン')) {
+      return { ...btn, link: store.contact?.line || btn.link };
+    }
     return btn;
   });
 
@@ -120,7 +123,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     onBlur={(e) => handleShopInfoUpdate('phone', e.currentTarget.innerText)}
                     className={isEditing ? 'px-1 font-bold hover:bg-slate-50' : 'font-bold'}
                   >
-                    {config.shopInfo?.phone}
+                    {store.contact?.phone || config.shopInfo?.phone}
                   </span>
                 </div>
                 <div className="flex gap-3">

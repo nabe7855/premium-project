@@ -10,13 +10,25 @@ export async function getStoreContactData(slug: string) {
       select: {
         name: true,
         phone: true,
+        line_id: true,
+        line_url: true,
         notification_email: true,
       },
     });
 
     const configResult = await getStoreTopConfig(slug);
-    const lineUrl = configResult.success ? configResult.config.header.specialBanner?.link : '';
-    const lineId = configResult.success ? configResult.config.lineId : '';
+
+    // 優先順位: 1. Storeレコードのline_url, 2. Storeレコードのline_idから生成, 3. ConfigのlineIdから生成
+    let finalLineUrl = store?.line_url || '';
+    if (!finalLineUrl && store?.line_id) {
+      finalLineUrl = `https://line.me/R/ti/p/${store.line_id.startsWith('@') ? store.line_id : '@' + store.line_id}`;
+    }
+
+    if (!finalLineUrl && configResult.success && configResult.config.lineId) {
+      const lineId = configResult.config.lineId;
+      finalLineUrl = `https://line.me/R/ti/p/${lineId.startsWith('@') ? lineId : '@' + lineId}`;
+    }
+
     const email = configResult.success
       ? configResult.config.notificationEmail
       : store?.notification_email;
@@ -26,8 +38,8 @@ export async function getStoreContactData(slug: string) {
       data: {
         name: store?.name || '',
         phone: store?.phone || '',
-        lineUrl: lineUrl || '',
-        lineId: lineId || '',
+        lineUrl: finalLineUrl || '',
+        lineId: store?.line_id || (configResult.success ? configResult.config.lineId : '') || '',
         email: email || '',
       },
     };

@@ -3,6 +3,7 @@ import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
+import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -79,7 +80,51 @@ export const dynamicParams = true;
 
 export default async function StorePage({ params }: StorePageProps) {
   console.log('🔍 StorePage params:', params);
-  const store = getStoreData(params.slug);
+  const staticStore = getStoreData(params.slug);
+
+  // DBから最新の店舗情報を取得
+  const dbStore = await prisma.store.findUnique({
+    where: { slug: params.slug },
+    select: {
+      id: true,
+      name: true,
+      slug: true,
+      address: true,
+      phone: true,
+      catch_copy: true,
+      image_url: true,
+      theme_color: true,
+      tags: true,
+      description: true,
+      line_id: true,
+      line_url: true,
+      notification_email: true,
+    },
+  });
+
+  const store = dbStore
+    ? ({
+        ...staticStore,
+        ...dbStore,
+        name: dbStore.name || staticStore?.name || '',
+        contact: {
+          phone: dbStore.phone || staticStore?.contact.phone || '',
+          line:
+            dbStore.line_url ||
+            (dbStore.line_id
+              ? `https://line.me/R/ti/p/${dbStore.line_id.startsWith('@') ? dbStore.line_id : '@' + dbStore.line_id}`
+              : staticStore?.contact.line || ''),
+          email: dbStore.notification_email || staticStore?.contact.email || '',
+        },
+        seo: {
+          ...staticStore?.seo,
+          description: dbStore.description || staticStore?.seo.description || '',
+        },
+        template: staticStore?.template || 'common',
+        reviews: staticStore?.reviews || [],
+      } as any)
+    : staticStore;
+
   console.log(`🔍 getStoreData('${params.slug}'):`, store ? 'Found' : 'Not Found');
 
   if (!store) {
@@ -116,7 +161,7 @@ export default async function StorePage({ params }: StorePageProps) {
       ratingValue: '4.8',
       reviewCount: '247',
     },
-    review: store.reviews.slice(0, 3).map((review) => ({
+    review: store.reviews?.slice(0, 3).map((review: any) => ({
       '@type': 'Review',
       author: {
         '@type': 'Person',

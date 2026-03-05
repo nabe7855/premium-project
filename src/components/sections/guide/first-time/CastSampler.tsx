@@ -3,6 +3,7 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import { CastData, getCastsByStore } from '@/lib/store/castActions';
 import { CastSectionConfig } from '@/lib/store/firstTimeConfig';
+import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 interface CastSamplerProps {
@@ -185,8 +186,8 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
         </div>
 
         <div className="text-center">
-          <a
-            href={`/store/${storeSlug}/cast`}
+          <Link
+            href={`/store/${storeSlug}/cast-list`}
             className="inline-flex items-center gap-2 rounded-full bg-[#FF4B5C] px-10 py-4 font-bold text-white shadow-lg transition-all hover:bg-[#ff3548] hover:shadow-xl active:scale-95"
           >
             すべてのセラピストを見る
@@ -203,7 +204,7 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
             >
               <path d="m9 18 6-6-6-6" />
             </svg>
-          </a>
+          </Link>
           <p className="mt-4 text-xs font-medium text-gray-300">
             ※写真はイメージです。実際とは異なる場合があります。
           </p>

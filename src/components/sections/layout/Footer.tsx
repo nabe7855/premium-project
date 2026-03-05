@@ -124,7 +124,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       {isFirstTimePage && (
         <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-3 px-4 pb-2 md:hidden">
           <a
-            href="https://line.me"
+            href={storeContact.lineUrl || 'https://line.me'}
             target="_blank"
             rel="noopener noreferrer"
             className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#06C755] py-3 text-sm font-bold text-white shadow-md transition-transform active:scale-95"

@@ -1,6 +1,7 @@
 import HeroSlider from '@/components/sweetstay/HeroSlider';
 import HotelCard from '@/components/sweetstay/HotelCard';
 import QuickNav from '@/components/sweetstay/QuickNav';
+import SecondaryBannerSlider from '@/components/sweetstay/SecondaryBannerSlider';
 import TabelogSearch from '@/components/sweetstay/TabelogSearch';
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import Link from 'next/link';
@@ -22,6 +23,9 @@ export default async function SweetStayPortalPage() {
     <div className="bg-[#FFF8F6] duration-500 animate-in fade-in">
       {/* Premium Hero Slider Section */}
       <HeroSlider />
+
+      {/* Secondary SNS Banner Slider */}
+      <SecondaryBannerSlider />
 
       {/* Tabelog-style Search Bar */}
       <TabelogSearch />
