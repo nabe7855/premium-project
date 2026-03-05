@@ -1,3 +1,13 @@
+export type RegionId =
+  | 'hokkaido'
+  | 'tohoku'
+  | 'kanto'
+  | 'chubu'
+  | 'kansai'
+  | 'chugoku'
+  | 'shikoku'
+  | 'kyushu';
+
 export interface Hotel {
   id: string;
   name: string;

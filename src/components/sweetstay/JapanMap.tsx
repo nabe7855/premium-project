@@ -1,6 +1,8 @@
 'use client';
 
-import React, { useEffect, useRef, useState } from 'react';
+import { RegionId } from '@/types/lovehotels';
+import React, { useEffect, useState } from 'react';
+import { DETAILED_MAP_DATA } from './MapData';
 
 export interface Prefecture {
   code: string;
@@ -10,7 +12,7 @@ export interface Prefecture {
 }
 
 export interface Region {
-  id: string;
+  id: RegionId;
   name: string;
   prefs: string[];
   prefectures: Prefecture[];
@@ -68,7 +70,7 @@ export const REGIONS_DATA: Region[] = [
   },
   {
     id: 'kansai',
-    name: '近畿',
+    name: '関西',
     prefs: ['24', '25', '26', '27', '28', '29', '30'],
     prefectures: [
       { code: '24', name: '三重県', en: 'Mie', id: 'mie' },
@@ -105,7 +107,7 @@ export const REGIONS_DATA: Region[] = [
   },
   {
     id: 'kyushu',
-    name: '九州・沖縄',
+    name: '九州',
     prefs: ['40', '41', '42', '43', '44', '45', '46', '47'],
     prefectures: [
       { code: '40', name: '福岡県', en: 'Fukuoka', id: 'fukuoka' },
@@ -120,8 +122,6 @@ export const REGIONS_DATA: Region[] = [
   },
 ];
 
-const PREFECTURES_FLAT = REGIONS_DATA.flatMap((r) => r.prefectures);
-
 interface JapanMapProps {
   onRegionSelect?: (region: Region) => void;
   onPrefectureSelect?: (pref: Prefecture) => void;
@@ -129,248 +129,183 @@ interface JapanMapProps {
   className?: string;
 }
 
+interface RegionVisualData {
+  id: RegionId;
+  hue: number;
+  label: string;
+  labelPos: { x: number; y: number };
+}
+
+const REGION_VISUALS: RegionVisualData[] = [
+  { id: 'hokkaido', hue: 230, label: '北海道', labelPos: { x: 806, y: 154 } },
+  { id: 'tohoku', hue: 200, label: '東北', labelPos: { x: 662, y: 442 } },
+  { id: 'kanto', hue: 160, label: '関東', labelPos: { x: 620, y: 645 } },
+  { id: 'chubu', hue: 45, label: '中部', labelPos: { x: 515, y: 633 } },
+  { id: 'kansai', hue: 15, label: '関西', labelPos: { x: 417, y: 718 } },
+  { id: 'chugoku', hue: 340, label: '中国', labelPos: { x: 276, y: 701 } },
+  { id: 'shikoku', hue: 65, label: '四国', labelPos: { x: 310, y: 772 } },
+  { id: 'kyushu', hue: 280, label: '九州', labelPos: { x: 174, y: 700 } },
+];
+
+const getSlotColor = (hue: number, slot: 'A' | 'B' | 'C' | 'D', isHovered = false) => {
+  const variations = {
+    A: { s: 85, l: 55 },
+    B: { s: 60, l: 75 },
+    C: { s: 40, l: 35 },
+    D: { s: 70, l: 45 },
+  };
+  const { s, l } = variations[slot];
+  return `hsl(${hue}, ${s}%, ${isHovered ? l + 10 : l}%)`;
+};
+
 const JapanMap: React.FC<JapanMapProps> = ({
   onRegionSelect,
   onPrefectureSelect,
   selectedRegion,
-  className,
+  className = '',
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [svgContent, setSvgContent] = useState<string>('');
-  const [mapLabels, setMapLabels] = useState<{ id: string; name: string; x: number; y: number }[]>(
-    [],
-  );
+  const [hoveredRegion, setHoveredRegion] = useState<RegionId | null>(null);
+  const nationalViewBox = '-15 -85 1120 1160';
+  const [currentViewBox, setCurrentViewBox] = useState(nationalViewBox);
 
-  const getPrefIdFromElement = (el: SVGElement): string | null => {
-    let current: SVGElement | null = el;
-    while (current && current.tagName !== 'svg') {
-      const className = current.getAttribute('class') || '';
-      const classes = className.split(' ');
-      const found = classes.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
-      if (found) return found;
-      current = current.parentElement as any;
+  useEffect(() => {
+    if (selectedRegion) {
+      const b = DETAILED_MAP_DATA[selectedRegion.id].bbox;
+      const zoomFactor = selectedRegion.id === 'kyushu' ? 1.1 : 1.3;
+      const w = b.width / zoomFactor;
+      const h = b.height / zoomFactor;
+      const x = b.x + (b.width - w) / 2;
+      const y = b.y + (b.height - h) / 2;
+      setCurrentViewBox(`${x} ${y} ${w} ${h}`);
+    } else {
+      setCurrentViewBox(nationalViewBox);
     }
-    return null;
+  }, [selectedRegion]);
+
+  const handleRegionClick = (regionId: RegionId) => {
+    const region = REGIONS_DATA.find((r) => r.id === regionId);
+    if (region && onRegionSelect) {
+      onRegionSelect(region);
+    }
   };
 
-  const handlePrefIdClick = (prefId: string) => {
-    console.log('[JapanMap] Handling Click for PrefID:', prefId);
-    const pref = PREFECTURES_FLAT.find((p) => p.id === prefId);
-    if (!pref) return;
-
-    const region = REGIONS_DATA.find((r) => r.prefectures.some((p) => p.code === pref.code));
+  const handlePrefClick = (prefName: string, regionId: RegionId) => {
+    const region = REGIONS_DATA.find((r) => r.id === regionId);
     if (!region) return;
 
-    if (!selectedRegion) {
-      if (onRegionSelect) onRegionSelect(region);
-    } else {
-      if (selectedRegion.id === region.id) {
-        if (onPrefectureSelect) onPrefectureSelect(pref);
-      }
+    // Find pref object by checking if the name matches or starts with the clicked name
+    // (e.g. "東京都" starts with "東京")
+    const pref = region.prefectures.find(
+      (p) => p.name === prefName || p.name.startsWith(prefName) || prefName.startsWith(p.name),
+    );
+    if (pref && onPrefectureSelect) {
+      onPrefectureSelect(pref);
     }
-  };
-
-  useEffect(() => {
-    fetch(`/map-mobile.svg?v=${Date.now()}`)
-      .then((res) => res.text())
-      .then((svg) => {
-        console.log('[JapanMap] SVG fetched, length:', svg.length);
-        setSvgContent(svg);
-      })
-      .catch((err) => console.error('[JapanMap] Failed to fetch SVG', err));
-  }, []);
-
-  useEffect(() => {
-    if (!svgContent || !containerRef.current) return;
-
-    const svgElement = containerRef.current.querySelector('svg');
-    if (!svgElement) {
-      console.error('[JapanMap] SVG element not found in DOM');
-      return;
-    }
-
-    console.log('[JapanMap] SVG DOM detected. Initializing styles...');
-
-    svgElement.style.width = '100%';
-    svgElement.style.height = 'auto';
-    svgElement.style.display = 'block';
-    svgElement.style.pointerEvents = 'auto';
-
-    // ATTACH CLICK HANDLER TO SVG ROOT
-    (svgElement as any).onclick = (e: MouseEvent) => {
-      const target = e.target as SVGElement;
-      console.log(
-        '[JapanMap] SVG Click intercepted:',
-        target.tagName,
-        'Class:',
-        target.getAttribute('class'),
-      );
-      const prefId = getPrefIdFromElement(target);
-      console.log('[JapanMap] Resolved PrefID from click:', prefId);
-      if (prefId) {
-        e.preventDefault();
-        e.stopPropagation();
-        handlePrefIdClick(prefId);
-      }
-    };
-
-    const labels: { id: string; name: string; x: number; y: number }[] = [];
-    let matchedPrefs = 0;
-
-    REGIONS_DATA.forEach((region) => {
-      const isRegionSelected = selectedRegion?.id === region.id;
-      let rMinX = Infinity,
-        rMinY = Infinity,
-        rMaxX = -Infinity,
-        rMaxY = -Infinity;
-      let rFound = false;
-
-      region.prefectures.forEach((pref) => {
-        const els = svgElement.querySelectorAll(`.${pref.id}`);
-        if (els.length > 0) matchedPrefs++;
-
-        els.forEach((node) => {
-          const el = node as SVGGraphicsElement;
-          el.style.cursor = 'pointer';
-          el.style.transition = 'fill 0.3s ease, opacity 0.3s ease';
-
-          // Robust coloring logic
-          const baseColor = selectedRegion
-            ? isRegionSelected
-              ? getRegionColor('selected')
-              : '#f1f5f9'
-            : getRegionColor(region.id);
-
-          el.setAttribute('fill', baseColor);
-          el.style.fill = baseColor;
-          el.setAttribute('stroke', '#ffffff');
-          el.setAttribute('stroke-width', '1');
-
-          if (selectedRegion && !isRegionSelected) {
-            el.style.opacity = '0.3';
-            el.style.pointerEvents = 'none';
-          } else {
-            el.style.opacity = '1';
-            el.style.pointerEvents = 'auto';
-          }
-
-          // Hover
-          (el as any).onmouseenter = () => {
-            if (!selectedRegion || isRegionSelected) el.style.filter = 'brightness(1.05)';
-          };
-          (el as any).onmouseleave = () => {
-            el.style.filter = 'none';
-          };
-
-          // Label calculation
-          try {
-            const bbox = el.getBBox();
-            if (!selectedRegion) {
-              rMinX = Math.min(rMinX, bbox.x);
-              rMinY = Math.min(rMinY, bbox.y);
-              rMaxX = Math.max(rMaxX, bbox.x + bbox.width);
-              rMaxY = Math.max(rMaxY, bbox.y + bbox.height);
-              rFound = true;
-            } else if (isRegionSelected && !labels.some((l) => l.id === pref.id)) {
-              labels.push({
-                id: pref.id,
-                name: pref.name.replace(/都|道|府|県$/, ''),
-                x: bbox.x + bbox.width / 2,
-                y: bbox.y + bbox.height / 2,
-              });
-            }
-          } catch (e) {}
-        });
-      });
-
-      if (!selectedRegion && rFound) {
-        labels.push({
-          id: region.id,
-          name: region.name,
-          x: rMinX + (rMaxX - rMinX) / 2,
-          y: rMinY + (rMaxY - rMinY) / 2,
-        });
-      }
-    });
-
-    console.log(`[JapanMap] Applied styles to ${matchedPrefs} prefectures.`);
-    setMapLabels(labels);
-
-    if (selectedRegion) {
-      zoomToRegion(selectedRegion, svgElement);
-    } else {
-      resetZoom(svgElement);
-    }
-  }, [svgContent, selectedRegion]);
-
-  const zoomToRegion = (region: Region, svg: SVGSVGElement) => {
-    let minX = Infinity,
-      minY = Infinity,
-      maxX = -Infinity,
-      maxY = -Infinity;
-    let found = false;
-    region.prefectures.forEach((pref) => {
-      const el = svg.querySelector(`.${pref.id}`) as SVGGraphicsElement;
-      if (el) {
-        try {
-          const bbox = el.getBBox();
-          minX = Math.min(minX, bbox.x);
-          minY = Math.min(minY, bbox.y);
-          maxX = Math.max(maxX, bbox.x + bbox.width);
-          maxY = Math.max(maxY, bbox.y + bbox.height);
-          found = true;
-        } catch (e) {}
-      }
-    });
-    if (found) {
-      const padding = 20;
-      svg.setAttribute(
-        'viewBox',
-        `${minX - padding} ${minY - padding} ${maxX - minX + padding * 2} ${maxY - minY + padding * 2}`,
-      );
-    }
-  };
-
-  const resetZoom = (svg: SVGSVGElement) => {
-    svg.setAttribute('viewBox', '0 0 1000 1000');
   };
 
   return (
-    <div className={`relative w-full ${className} flex items-center justify-center p-4`}>
-      <div
-        ref={containerRef}
-        className="relative w-full"
-        style={{ pointerEvents: 'auto' }}
-        dangerouslySetInnerHTML={{ __html: svgContent }}
-      />
-      {/* Percentage Based Labels Overlay can go here if needed later */}
+    <div className={`relative w-full overflow-hidden transition-all duration-700 ${className}`}>
+      <svg
+        viewBox={currentViewBox}
+        className="duration-[1200ms] h-full w-full transition-all ease-in-out"
+        style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }}
+      >
+        <defs>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="8" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+
+        {REGION_VISUALS.map((rv) => {
+          const isRegionActive = selectedRegion?.id === rv.id;
+          const isNational = !selectedRegion;
+          const detail = DETAILED_MAP_DATA[rv.id];
+
+          // In regional view, we still show other regions but very faded (or hide them)
+          // The reference hides them in municipal, but here we only have regional level.
+
+          return (
+            <g
+              key={rv.id}
+              className={`transition-all duration-500 ${isNational ? 'cursor-pointer' : ''}`}
+              onClick={() => isNational && handleRegionClick(rv.id)}
+              onMouseEnter={() => isNational && setHoveredRegion(rv.id)}
+              onMouseLeave={() => isNational && setHoveredRegion(null)}
+              opacity={!selectedRegion || isRegionActive ? 1 : 0.1}
+            >
+              {detail.prefectures.map((pref) => {
+                const isHovered = hoveredRegion === rv.id;
+
+                const fillColor = isNational
+                  ? getSlotColor(rv.hue, 'A', isHovered)
+                  : isRegionActive
+                    ? getSlotColor(rv.hue, pref.colorSlot)
+                    : 'rgba(200,200,200,0.2)';
+
+                return (
+                  <path
+                    key={pref.code}
+                    d={pref.path}
+                    onClick={(e) => {
+                      if (!isNational) {
+                        e.stopPropagation();
+                        handlePrefClick(pref.name, rv.id);
+                      }
+                    }}
+                    className={`transition-all duration-700 ease-out ${
+                      !isNational && isRegionActive ? 'cursor-pointer hover:opacity-80' : ''
+                    }`}
+                    fill={fillColor}
+                    stroke="#ffffff"
+                    strokeWidth={isRegionActive ? 1.5 : 0.5}
+                    strokeOpacity={0.8}
+                  />
+                );
+              })}
+
+              {/* Region Label (Only in National View) */}
+              {isNational && (
+                <text
+                  x={rv.labelPos.x}
+                  y={rv.labelPos.y}
+                  textAnchor="middle"
+                  className={`pointer-events-none fill-slate-800 text-[24px] font-black transition-all duration-500 ${
+                    hoveredRegion === rv.id ? 'scale-110 opacity-100' : 'opacity-60'
+                  }`}
+                  style={{
+                    textShadow: '0 2px 4px rgba(255,255,255,0.8)',
+                    transformOrigin: `${rv.labelPos.x}px ${rv.labelPos.y}px`,
+                  }}
+                >
+                  {rv.label}
+                </text>
+              )}
+
+              {/* Prefecture Labels (Only in Regional View) */}
+              {!isNational &&
+                isRegionActive &&
+                detail.prefectures.map((pref, idx) => (
+                  <text
+                    key={`label-${pref.code}`}
+                    x={pref.labelPos.x}
+                    y={pref.labelPos.y}
+                    textAnchor="middle"
+                    className="pointer-events-none fill-white text-[14px] font-black duration-700 animate-in fade-in zoom-in"
+                    style={{
+                      textShadow: '0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8)',
+                      animationDelay: `${idx * 50}ms`,
+                    }}
+                  >
+                    {pref.name}
+                  </text>
+                ))}
+            </g>
+          );
+        })}
+      </svg>
     </div>
   );
-};
-
-const getRegionColor = (regionId: string) => {
-  switch (regionId) {
-    case 'hokkaido':
-      return '#60a5fa';
-    case 'tohoku':
-      return '#2dd4bf';
-    case 'kanto':
-      return '#8b5cf6';
-    case 'chubu':
-      return '#10b981';
-    case 'kansai':
-      return '#f59e0b';
-    case 'chugoku':
-      return '#f97316';
-    case 'shikoku':
-      return '#ef4444';
-    case 'kyushu':
-      return '#ec4899';
-    case 'selected':
-      return '#4EA2F0';
-    default:
-      return '#ffe4ef';
-  }
 };
 
 export default JapanMap;
