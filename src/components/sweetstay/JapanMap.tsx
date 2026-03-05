@@ -181,7 +181,17 @@ const JapanMap: React.FC<JapanMapProps> = ({
     if (!svgContent || !containerRef.current) return;
 
     const svgElement = containerRef.current.querySelector('svg');
-    if (!svgElement) return;
+    if (!svgElement) {
+      console.error('[JapanMap] SVG element not found in container');
+      return;
+    }
+
+    console.log(
+      '[JapanMap] SVG loaded, width:',
+      svgElement.getAttribute('width'),
+      'viewBox:',
+      svgElement.getAttribute('viewBox'),
+    );
 
     svgElement.style.width = '100%';
     svgElement.style.height = 'auto';
@@ -191,7 +201,14 @@ const JapanMap: React.FC<JapanMapProps> = ({
     // Centralized Click Handler
     (svgElement as any).onclick = (e: MouseEvent) => {
       const target = e.target as SVGElement;
+      console.log(
+        '[JapanMap] Click target:',
+        target.tagName,
+        'classes:',
+        target.classList.toString(),
+      );
       const prefId = getPrefIdFromElement(target);
+      console.log('[JapanMap] Resolved prefId:', prefId);
       if (prefId) {
         e.preventDefault();
         e.stopPropagation();
