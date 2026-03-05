@@ -1,10 +1,12 @@
 'use client';
 
 import { PageData } from '@/components/admin/news/types';
+import Autoplay from 'embla-carousel-autoplay';
+import useEmblaCarousel from 'embla-carousel-react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 interface NewsListClientProps {
   news: PageData[];
@@ -40,17 +42,37 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
     return getCategoryLabel(item) === activeCategory;
   });
 
+  // スライダー用の最新ニュース（上位3〜5件）
+  const sliderNews = news.slice(0, 5);
+
   const totalPages = Math.ceil(filteredNews.length / ITEMS_PER_PAGE);
   const currentNews = filteredNews.slice(
     (currentPage - 1) * ITEMS_PER_PAGE,
     currentPage * ITEMS_PER_PAGE,
   );
 
+  // Embla Carousel setup
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay({ delay: 5000, stopOnInteraction: false }),
+  ]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on('select', onSelect);
+  }, [emblaApi, onSelect]);
+
   return (
     <div className="min-h-screen bg-[#fffafa] pb-20 pt-10">
       <div className="mx-auto max-w-5xl px-4">
         {/* Title Area (Sweet Dot style ribbon) */}
-        <div className="mb-16 flex flex-col items-center">
+        <div className="mb-12 flex flex-col items-center">
           <div className="relative flex w-full max-w-2xl items-center justify-center px-12 py-4">
             <div className="absolute left-0 top-1/2 h-[1px] w-full -translate-y-1/2 bg-slate-200"></div>
             <div className="relative z-10 bg-[#fffafa] px-6 text-center">
@@ -72,6 +94,78 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
           </div>
         </div>
 
+        {/* Featured Slider (Latest News) */}
+        {sliderNews.length > 0 && currentPage === 1 && activeCategory === 'all' && (
+          <div className="group relative mb-16">
+            <div
+              className="overflow-hidden rounded-3xl border-4 border-white shadow-2xl"
+              ref={emblaRef}
+            >
+              <div className="flex">
+                {sliderNews.map((item, index) => (
+                  <div
+                    className="relative aspect-[16/9] min-w-0 flex-[0_0_100%] md:aspect-[21/9]"
+                    key={item.id}
+                  >
+                    <Link
+                      href={`/store/${storeSlug}/news/${item.slug}`}
+                      className="relative block h-full w-full"
+                    >
+                      <NextImage
+                        src={
+                          item.thumbnailUrl ||
+                          'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=1200&q=80'
+                        }
+                        alt={item.title}
+                        fill
+                        className="object-cover"
+                        unoptimized
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                      <div className="absolute bottom-0 left-0 w-full p-6 text-center text-white md:p-12">
+                        <span className="mb-4 inline-block rounded-sm bg-primary px-3 py-1 text-[10px] font-bold uppercase tracking-widest">
+                          PICK UP
+                        </span>
+                        <h2 className="line-clamp-2 text-xl font-bold leading-tight drop-shadow-xl md:text-3xl">
+                          {item.title}
+                        </h2>
+                      </div>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Slider Navigation Dots */}
+            <div className="absolute -bottom-8 left-1/2 flex -translate-x-1/2 gap-2">
+              {sliderNews.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => emblaApi?.scrollTo(index)}
+                  className={`h-2 w-2 rounded-full transition-all duration-300 ${
+                    selectedIndex === index ? 'w-8 bg-primary' : 'bg-slate-300'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Slider Arrows (Optional, hidden on mobile) */}
+            <button
+              onClick={() => emblaApi?.scrollPrev()}
+              className="absolute left-4 top-1/2 flex hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100 md:flex"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={() => emblaApi?.scrollNext()}
+              className="absolute right-4 top-1/2 flex hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/20 text-white opacity-0 backdrop-blur-md transition-opacity group-hover:opacity-100 md:flex"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        )}
+
         {/* Category Tabs */}
         <div className="mb-12 flex flex-wrap justify-center gap-2 border-y border-slate-100 py-8">
           {CATEGORIES.map((cat) => (
@@ -92,7 +186,7 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
           ))}
         </div>
 
-        {/* News Grid (Two columns) - Strictly updated to 2-columns as requested */}
+        {/* News Grid (Two columns) */}
         <div className="mb-20 grid grid-cols-2 gap-x-6 gap-y-12 sm:gap-x-10 sm:gap-y-14">
           {currentNews.map((item) => (
             <div key={item.id} className="group flex flex-col">
