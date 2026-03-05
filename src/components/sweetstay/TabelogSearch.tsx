@@ -35,6 +35,7 @@ const TabelogSearch: React.FC = () => {
     cityIds: string[];
     priceRange: [number, number];
     dayType: 'weekday' | 'weekend' | 'holiday';
+    stayType: 'rest' | 'stay';
     purposeIds: string[];
     amenityIds: string[];
   }>({
@@ -43,6 +44,7 @@ const TabelogSearch: React.FC = () => {
     cityIds: [],
     priceRange: [0, 30000],
     dayType: 'weekday',
+    stayType: 'rest',
     purposeIds: [],
     amenityIds: [],
   });
@@ -65,6 +67,7 @@ const TabelogSearch: React.FC = () => {
     params.append('min_price', activeFilters.priceRange[0].toString());
     params.append('max_price', activeFilters.priceRange[1].toString());
     params.append('day_type', activeFilters.dayType);
+    params.append('stay_type', activeFilters.stayType);
 
     router.push(`/sweetstay/search?${params.toString()}`);
   };
@@ -248,6 +251,8 @@ const TabelogSearch: React.FC = () => {
         onPriceChange={(range) => setActiveFilters((prev) => ({ ...prev, priceRange: range }))}
         dayType={activeFilters.dayType}
         onDayTypeChange={(dt) => setActiveFilters((prev) => ({ ...prev, dayType: dt }))}
+        stayType={activeFilters.stayType}
+        onStayTypeChange={(st) => setActiveFilters((prev) => ({ ...prev, stayType: st }))}
       />
     </div>
   );

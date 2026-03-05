@@ -11,6 +11,8 @@ interface PriceSearchModalProps {
   onPriceChange: (range: [number, number]) => void;
   dayType: 'weekday' | 'weekend' | 'holiday';
   onDayTypeChange: (day: 'weekday' | 'weekend' | 'holiday') => void;
+  stayType: 'rest' | 'stay';
+  onStayTypeChange: (type: 'rest' | 'stay') => void;
 }
 
 const PriceSearchModal: React.FC<PriceSearchModalProps> = ({
@@ -20,6 +22,8 @@ const PriceSearchModal: React.FC<PriceSearchModalProps> = ({
   onPriceChange,
   dayType,
   onDayTypeChange,
+  stayType,
+  onStayTypeChange,
 }) => {
   const [min, max] = priceRange;
 
@@ -67,26 +71,55 @@ const PriceSearchModal: React.FC<PriceSearchModalProps> = ({
                   </button>
                 </div>
 
-                <div className="space-y-10">
-                  {/* Day Type Selection */}
-                  <div className="space-y-4">
-                    <p className="pl-1 text-[11px] font-black uppercase tracking-widest text-gray-500">
-                      曜日を選択
-                    </p>
-                    <div className="flex gap-2 overflow-hidden rounded-2xl bg-slate-100/50 p-1">
-                      {(['weekday', 'weekend', 'holiday'] as const).map((type) => (
-                        <button
-                          key={type}
-                          onClick={() => onDayTypeChange(type)}
-                          className={`flex-1 rounded-xl py-3 text-xs font-black transition-all ${
-                            dayType === type
-                              ? 'bg-white text-emerald-500 shadow-sm'
-                              : 'text-slate-400 hover:text-slate-600'
-                          }`}
-                        >
-                          {type === 'weekday' ? '平日' : type === 'weekend' ? '休日' : '連休・祝日'}
-                        </button>
-                      ))}
+                <div className="space-y-8">
+                  {/* Grid for Filters */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Day Type Selection */}
+                    <div className="space-y-3">
+                      <p className="pl-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                        曜日
+                      </p>
+                      <div className="flex flex-col gap-1 overflow-hidden rounded-2xl bg-slate-100/50 p-1">
+                        {(['weekday', 'weekend', 'holiday'] as const).map((type) => (
+                          <button
+                            key={type}
+                            onClick={() => onDayTypeChange(type)}
+                            className={`flex-1 rounded-xl py-2 text-[11px] font-black transition-all ${
+                              dayType === type
+                                ? 'bg-white text-emerald-500 shadow-sm'
+                                : 'text-slate-400 hover:text-slate-600'
+                            }`}
+                          >
+                            {type === 'weekday'
+                              ? '平日'
+                              : type === 'weekend'
+                                ? '休日'
+                                : '連休・祝日'}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Stay Type Selection */}
+                    <div className="space-y-3">
+                      <p className="pl-1 text-[10px] font-black uppercase tracking-widest text-gray-500">
+                        利用プラン
+                      </p>
+                      <div className="flex flex-col gap-1 overflow-hidden rounded-2xl bg-slate-100/50 p-1">
+                        {(['rest', 'stay'] as const).map((type) => (
+                          <button
+                            key={type}
+                            onClick={() => onStayTypeChange(type)}
+                            className={`flex-1 rounded-xl py-2.5 text-xs font-black transition-all ${
+                              stayType === type
+                                ? 'bg-white text-indigo-500 shadow-sm'
+                                : 'text-slate-400 hover:text-slate-600'
+                            }`}
+                          >
+                            {type === 'rest' ? 'ショート/休憩' : '宿泊'}
+                          </button>
+                        ))}
+                      </div>
                     </div>
                   </div>
 

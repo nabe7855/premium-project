@@ -143,14 +143,19 @@ const JapanMap: React.FC<JapanMapProps> = ({
 
   const handlePrefClick = (el: SVGElement) => {
     const classList = Array.from(el.classList);
-    const prefId = classList.find(
-      (c) =>
-        c !== 'prefecture' &&
-        c !== 'geolonia-svg-map-prefecture' &&
-        !REGIONS_DATA.some((r) => r.id === c),
-    );
+    // Find the class that matches a known prefecture ID
+    const prefId = classList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
 
-    if (!prefId) return;
+    if (!prefId) {
+      // If not on element itself, check parents (e.g., if path inside <g>)
+      const parent = el.closest('g[class]') as SVGElement;
+      if (parent) {
+        const parentClassList = Array.from(parent.classList);
+        const parentPrefId = parentClassList.find((c) => PREFECTURES_FLAT.some((p) => p.id === c));
+        if (parentPrefId) return handlePrefClick(parent);
+      }
+      return;
+    }
 
     const pref = PREFECTURES_FLAT.find((p) => p.id === prefId);
     if (!pref) return;
@@ -184,21 +189,40 @@ const JapanMap: React.FC<JapanMapProps> = ({
     svgElement.style.height = 'auto';
     svgElement.style.display = 'block';
 
-    const prefElements = svgElement.querySelectorAll('.prefecture');
+    // Set up all paths and groups for interaction
+    const interactiveElements = svgElement.querySelectorAll('g, path');
 
-    prefElements.forEach((el) => {
+    interactiveElements.forEach((el) => {
       const element = el as SVGElement;
-      element.style.fill = '#ffe4ef'; // rose-100 default
-      element.style.stroke = '#fff';
-      element.style.strokeWidth = '1';
-      element.style.cursor = 'pointer';
-      element.style.transition = 'fill 0.3s ease';
+      const classList = Array.from(element.classList);
 
-      (element as any).onclick = (e: MouseEvent) => {
-        e.stopPropagation();
-        handlePrefClick(element);
-      };
+      // Is this a prefecture element?
+      const isPref = PREFECTURES_FLAT.some((p) => classList.includes(p.id));
+
+      if (isPref) {
+        element.style.cursor = 'pointer';
+        element.style.pointerEvents = 'auto'; // Force interaction
+        element.style.transition = 'fill 0.3s ease, filter 0.3s ease';
+
+        (element as any).onclick = (e: MouseEvent) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handlePrefClick(element);
+        };
+
+        // Hover effect helper
+        (element as any).onmouseenter = () => {
+          element.style.filter = 'brightness(1.1)';
+        };
+        (element as any).onmouseleave = () => {
+          element.style.filter = 'none';
+        };
+      }
     });
+
+    const prefElements = Array.from(interactiveElements).filter((el) =>
+      PREFECTURES_FLAT.some((p) => el.classList.contains(p.id)),
+    ) as SVGGraphicsElement[];
 
     const labels: { id: string; name: string; x: number; y: number }[] = [];
 
