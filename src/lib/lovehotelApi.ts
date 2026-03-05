@@ -413,6 +413,17 @@ export const getPrefectureDetails = async (prefectureId: string) => {
   };
 };
 
+export const getHotelsCount = async (filters: { prefecture?: string; cities?: string[] }) => {
+  let query = supabase.from('lh_hotels').select('city_id, lh_cities(name)');
+  const { data } = await query;
+  const counts: Record<string, number> = {};
+  data?.forEach((h: any) => {
+    const name = h.lh_cities?.name;
+    if (name) counts[name] = (counts[name] || 0) + 1;
+  });
+  return counts;
+};
+
 export const getCityDetails = async (cityId: string) => {
   const { data, error } = await supabase
     .from('lh_cities')

@@ -1,217 +1,230 @@
 'use client';
 
-import { getPrefectureDetails } from '@/lib/lovehotelApi';
-import { ChevronRight, MapPin, Search, X } from 'lucide-react';
-import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import JapanMap, { Prefecture, Region, REGIONS_DATA } from './JapanMap';
+import { getHotelsCount, getPrefectureDetails } from '@/lib/lovehotelApi';
+import { City } from '@/types/lovehotels';
+import { Dialog, Transition } from '@headlessui/react';
+import { ChevronLeft, Info, MapPin, X } from 'lucide-react';
+import React, { Fragment, useState } from 'react';
+import JapanMap, { Prefecture, Region } from './JapanMap';
 
 interface AreaSearchModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
 
-export default function AreaSearchModal({ isOpen, onClose }: AreaSearchModalProps) {
-  const router = useRouter();
+const AreaSearchModal: React.FC<AreaSearchModalProps> = ({ isOpen, onClose }) => {
   const [selectedRegion, setSelectedRegion] = useState<Region | null>(null);
-  const [selectedPrefecture, setSelectedPrefecture] = useState<Prefecture | null>(null);
+  const [selectedPref, setSelectedPref] = useState<Prefecture | null>(null);
+  const [cities, setCities] = useState<City[]>([]);
+  const [loadingCities, setLoadingCities] = useState(false);
+  const [selectedCityIds, setSelectedCityIds] = useState<string[]>([]);
+  const [cityCounts, setCityCounts] = useState<Record<string, number>>({});
 
-  // City Selection Stage
-  const [cities, setCities] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // Fetch cities when prefecture is selected
-  useEffect(() => {
-    if (selectedPrefecture) {
-      setLoading(true);
-      // getPrefectureDetails takes the name (e.g. "東京都")
-      getPrefectureDetails(selectedPrefecture.name)
-        .then((data) => {
-          setCities(data.cities || []);
-          setLoading(false);
-        })
-        .catch((err) => {
-          console.error(err);
-          setLoading(false);
-          setCities([]);
-        });
-    } else {
-      setCities([]);
-      setSearchTerm('');
-    }
-  }, [selectedPrefecture]);
-
-  // Reset internal state when modal opens/closes
-  useEffect(() => {
-    if (!isOpen) {
-      setTimeout(() => {
-        setSelectedRegion(null);
-        setSelectedPrefecture(null);
-      }, 300);
-    }
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
-  const handleCitySelect = (city: any) => {
-    // Navigate to sweetstay area page or search page
-    // Since we are adding it to SweetStay search form, we can just navigate to the search page with parameters
-    // or navigate to `/sweetstay/area/${city.name}` if such route exists.
-    // Let's use search query for now.
-    const params = new URLSearchParams();
-    params.append('cityId', city.id);
-    onClose();
-    router.push(`/sweetstay/search?${params.toString()}`);
+  const handleRegionSelect = (region: Region) => {
+    setSelectedRegion(region);
   };
 
-  const filteredCities = cities.filter((c) => c.name.includes(searchTerm));
+  const handlePrefSelect = (pref: Prefecture) => {
+    setSelectedPref(pref);
+    setLoadingCities(true);
+    getPrefectureDetails(pref.name)
+      .then((data) => {
+        setCities(data.cities || []);
+        // Fetch counts for cities if possible
+        const cityNames = (data.cities || []).map((c) => c.name);
+        if (cityNames.length > 0) {
+          getHotelsCount({ prefecture: pref.name, cities: cityNames })
+            .then((counts) => {
+              setCityCounts(counts);
+            })
+            .catch(() => {});
+        }
+      })
+      .finally(() => setLoadingCities(false));
+  };
 
-  const isCitySelection = !!selectedPrefecture;
+  const handleBack = () => {
+    if (selectedPref) {
+      setSelectedPref(null);
+      setCities([]);
+      setSelectedCityIds([]);
+    } else if (selectedRegion) {
+      setSelectedRegion(null);
+    }
+  };
+
+  const toggleCity = (cityId: string) => {
+    setSelectedCityIds((prev) =>
+      prev.includes(cityId) ? prev.filter((id) => id !== cityId) : [...prev, cityId],
+    );
+  };
+
+  const handleAllSelect = () => {
+    if (selectedCityIds.length === cities.length) {
+      setSelectedCityIds([]);
+    } else {
+      setSelectedCityIds(cities.map((c) => c.id));
+    }
+  };
+
+  const handleConfirm = () => {
+    // Navigate with selected cities
+    onClose();
+  };
+
+  const isCitySelection = !!selectedPref;
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-white duration-200 animate-in fade-in zoom-in-95">
-      <div className="sticky top-0 z-10 flex items-center justify-between border-b border-rose-50 bg-white/90 px-4 py-3 shadow-sm backdrop-blur-md">
-        <button
-          onClick={() => {
-            if (isCitySelection) {
-              setSelectedPrefecture(null);
-            } else if (selectedRegion) {
-              setSelectedRegion(null);
-            } else {
-              onClose();
-            }
-          }}
-          className="-ml-2 rounded-full p-2 text-rose-400 transition hover:bg-rose-50 hover:text-rose-600"
+    <Transition show={isOpen} as={Fragment}>
+      <Dialog as="div" className="relative z-[100]" onClose={onClose}>
+        <Transition.Child
+          as={Fragment}
+          enter="ease-out duration-300"
+          enterFrom="opacity-0"
+          enterTo="opacity-100"
+          leave="ease-in duration-200"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
         >
-          <ChevronRight className="rotate-180" size={24} />
-        </button>
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" />
+        </Transition.Child>
 
-        <h2 className="flex items-center gap-2 text-lg font-black text-gray-800">
-          <MapPin size={20} className="text-rose-500" />
-          {selectedPrefecture ? selectedPrefecture.name : 'エリア検索'}
-        </h2>
-
-        <button
-          onClick={onClose}
-          className="-mr-2 rounded-full p-2 text-rose-400 transition hover:bg-rose-50 hover:text-rose-600"
-        >
-          <X size={24} />
-        </button>
-      </div>
-
-      <div className="flex-1 overflow-y-auto bg-gray-50/20 scrollbar-hide">
-        {!isCitySelection ? (
-          <div className="mx-auto flex h-full max-w-2xl flex-col p-4 md:p-8">
-            <h3 className="mb-6 text-center text-sm font-bold tracking-widest text-gray-500">
-              {selectedRegion
-                ? `${selectedRegion.name}の都道府県を選択`
-                : '探したい地方を選択してください'}
-            </h3>
-
-            <JapanMap
-              selectedRegion={selectedRegion}
-              onRegionSelect={setSelectedRegion}
-              onPrefectureSelect={setSelectedPrefecture}
-              className="flex-shrink-0"
-            />
-
-            {!selectedRegion && (
-              <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {REGIONS_DATA.map((region) => (
-                  <button
-                    key={region.id}
-                    onClick={() => setSelectedRegion(region)}
-                    className="rounded-xl border border-rose-100 bg-white px-2 py-3 text-center text-sm font-bold text-gray-700 shadow-sm transition hover:border-rose-300 hover:shadow-md"
-                  >
-                    {region.name}
-                  </button>
-                ))}
-              </div>
-            )}
-
-            {selectedRegion && (
-              <div className="mt-8 transition-all animate-in slide-in-from-bottom-5">
-                <h4 className="mb-3 text-xs font-black uppercase tracking-widest text-rose-400">
-                  Prefectures
-                </h4>
-                <div className="grid grid-cols-2 gap-3 md:grid-cols-3">
-                  {selectedRegion.prefectures.map((pref) => (
-                    <button
-                      key={pref.id}
-                      onClick={() => setSelectedPrefecture(pref)}
-                      className="rounded-xl border border-rose-100 bg-gradient-to-br from-rose-50 to-white px-2 py-3 text-center text-sm font-black text-rose-700 transition hover:shadow-md active:scale-95"
-                    >
-                      {pref.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="relative flex h-full flex-col bg-white">
-            <div className="sticky top-0 z-10 border-b border-rose-100 bg-rose-50/50 p-4 shadow-sm">
-              <div className="relative">
-                <Search
-                  className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-300"
-                  size={18}
-                />
-                <input
-                  type="text"
-                  placeholder={`${selectedPrefecture.name}の市区町村を検索...`}
-                  className="w-full rounded-xl border border-rose-200 bg-white py-3 pl-10 pr-4 font-bold text-gray-700 placeholder-gray-400 outline-none transition focus:border-rose-400 focus:ring-4 focus:ring-rose-100"
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="mx-auto w-full max-w-2xl p-4 pb-20">
-              {loading ? (
-                <div className="flex justify-center py-20">
-                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-rose-400"></div>
-                </div>
-              ) : (
-                <div className="space-y-6">
-                  <h3 className="pl-2 text-xs font-black uppercase tracking-widest text-rose-400">
-                    City Selection
-                  </h3>
-
-                  <div className="space-y-2">
-                    {filteredCities.map((city) => (
+        <div className="fixed inset-0 overflow-y-auto">
+          <div className="flex min-h-full items-center justify-center p-4">
+            <Transition.Child
+              as={Fragment}
+              enter="ease-out duration-300"
+              enterFrom="opacity-0 scale-95"
+              enterTo="opacity-100 scale-100"
+              leave="ease-in duration-200"
+              leaveFrom="opacity-100 scale-100"
+              leaveTo="opacity-0 scale-95"
+            >
+              <Dialog.Panel className="w-full max-w-4xl transform overflow-hidden rounded-[2.5rem] bg-white p-6 shadow-2xl transition-all md:p-8">
+                {/* Header */}
+                <div className="mb-6 flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    {selectedRegion && (
                       <button
-                        key={city.id}
-                        onClick={() => handleCitySelect(city)}
-                        className="group flex w-full items-center justify-between rounded-2xl border border-slate-100 bg-white px-4 py-4 shadow-sm transition hover:bg-rose-50 active:bg-rose-100"
+                        onClick={handleBack}
+                        className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600"
                       >
-                        <span className="truncate pr-4 text-base font-bold text-gray-700 transition group-hover:text-rose-600 md:text-lg">
-                          {city.name}
-                        </span>
-                        <div className="flex items-center gap-3">
-                          <span className="rounded-full bg-gray-100 px-2.5 py-1 text-xs font-bold text-gray-400">
-                            {city.count || 0}件
-                          </span>
-                          <ChevronRight
-                            size={18}
-                            className="transform text-rose-300 transition group-hover:translate-x-1 group-hover:text-rose-500"
-                          />
-                        </div>
+                        <ChevronLeft size={24} />
                       </button>
-                    ))}
-                    {filteredCities.length === 0 && (
-                      <div className="flex flex-col items-center gap-3 py-12 text-center">
-                        <MapPin size={32} className="text-gray-300" />
-                        <span className="font-bold text-gray-400">該当するエリアがありません</span>
-                      </div>
                     )}
+                    <h3 className="text-xl font-black tracking-tighter text-slate-800">
+                      エリアで探す
+                    </h3>
                   </div>
+                  <button
+                    onClick={onClose}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-50 text-slate-400 transition-colors hover:bg-slate-100"
+                  >
+                    <X size={20} />
+                  </button>
                 </div>
-              )}
-            </div>
+
+                {/* Content */}
+                <div
+                  className={`flex flex-col gap-6 lg:flex-row ${isCitySelection ? 'lg:h-[500px]' : ''}`}
+                >
+                  {/* Left: Map */}
+                  <div className={`${isCitySelection ? 'lg:w-2/5' : 'w-full'}`}>
+                    <div className="relative overflow-hidden rounded-3xl border border-rose-50 bg-rose-50/20 shadow-inner">
+                      <JapanMap
+                        selectedRegion={selectedRegion}
+                        onRegionSelect={handleRegionSelect}
+                        onPrefectureSelect={handlePrefSelect}
+                        className={
+                          isCitySelection ? 'aspect-[4/5] h-full' : 'max-h-[50vh] md:max-h-[60vh]'
+                        }
+                      />
+
+                      {!isCitySelection && (
+                        <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+                          <div className="flex items-center gap-2 rounded-full border border-rose-100 bg-white/90 px-4 py-2 text-[10px] font-bold text-rose-500 shadow-sm backdrop-blur-md">
+                            <Info size={14} />
+                            地図上の地域をクリックして都道府県を選択してください
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Right: Selection Context or City List */}
+                  {isCitySelection && (
+                    <div className="flex flex-col lg:w-3/5">
+                      <div className="flex h-full flex-col rounded-3xl border border-slate-100/50 bg-slate-50/50 p-5">
+                        {/* City Header */}
+                        <div className="mb-4 flex items-center justify-between">
+                          <div className="flex items-center gap-2 text-indigo-500">
+                            <MapPin size={20} strokeWidth={2.5} />
+                            <h4 className="text-lg font-black tracking-tight text-slate-800">
+                              {selectedPref?.name}のエリア
+                            </h4>
+                          </div>
+                          <button
+                            onClick={handleAllSelect}
+                            className="rounded-lg bg-cyan-50 px-3 py-1.5 text-xs font-black text-cyan-500 hover:text-cyan-600"
+                          >
+                            {selectedCityIds.length === cities.length ? '全解除' : 'すべて選択'}
+                          </button>
+                        </div>
+                        <p className="mb-5 text-[11px] font-bold text-slate-400">
+                          市区町村を選択してください
+                        </p>
+
+                        {/* City Grid */}
+                        <div className="grid grid-cols-2 gap-3 overflow-y-auto pr-1 scrollbar-hide">
+                          {loadingCities ? (
+                            <div className="col-span-2 flex h-40 items-center justify-center">
+                              <div className="h-6 w-6 animate-spin rounded-full border-2 border-cyan-500 border-t-transparent" />
+                            </div>
+                          ) : (
+                            cities.map((city) => (
+                              <button
+                                key={city.id}
+                                onClick={() => toggleCity(city.id)}
+                                className={`flex items-center justify-between rounded-xl border p-4 text-left transition-all active:scale-95 ${
+                                  selectedCityIds.includes(city.id)
+                                    ? 'border-cyan-400 bg-cyan-50 text-cyan-600 shadow-sm'
+                                    : 'border-slate-100 bg-white text-slate-600 hover:border-slate-200'
+                                }`}
+                              >
+                                <span className="text-[13px] font-black">{city.name}</span>
+                                <span className="text-[10px] font-bold text-slate-400">
+                                  {cityCounts[city.name] || 0}
+                                </span>
+                              </button>
+                            ))
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Footer Button */}
+                <div className="mt-8">
+                  <button
+                    onClick={handleConfirm}
+                    disabled={selectedCityIds.length === 0 && isCitySelection}
+                    className={`flex w-full items-center justify-center rounded-2xl py-4 text-base font-black shadow-xl transition-all active:scale-[0.98] ${
+                      isCitySelection
+                        ? 'bg-slate-900 text-white shadow-slate-200 hover:bg-slate-800'
+                        : 'cursor-not-allowed bg-slate-100 text-slate-300'
+                    }`}
+                  >
+                    選択した条件を確定する
+                  </button>
+                </div>
+              </Dialog.Panel>
+            </Transition.Child>
           </div>
-        )}
-      </div>
-    </div>
+        </div>
+      </Dialog>
+    </Transition>
   );
-}
+};
+
+export default AreaSearchModal;
