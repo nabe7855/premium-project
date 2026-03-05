@@ -93,7 +93,7 @@ const BookingModal: React.FC<BookingModalProps> = ({
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto">
+      <div className="fixed inset-0 z-[10001] overflow-y-auto">
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

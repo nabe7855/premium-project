@@ -102,7 +102,7 @@ const BookingModal: React.FC<BookingModalProps> = ({ isOpen, onClose, castName, 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[10001] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
       <div className="relative max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-white shadow-xl">
         {/* ヘッダー */}
         <div className="sticky top-0 z-10 border-b border-neutral-200 bg-white px-6 py-4">
