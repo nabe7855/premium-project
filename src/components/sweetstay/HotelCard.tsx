@@ -66,14 +66,25 @@ const HotelCard: React.FC<HotelCardProps> = ({ hotel }) => {
         </h3>
 
         <div className="mb-6 flex h-6 flex-wrap gap-2 overflow-hidden">
-          {hotel.amenities.slice(0, 3).map((amenity) => (
+          {/* Display Purposes as primary tags */}
+          {hotel.purposes?.slice(0, 2).map((purpose) => (
             <span
-              key={amenity}
-              className="inline-block rounded-full border border-gray-100 bg-gray-50 px-3 py-1 text-[8px] font-bold text-gray-400"
+              key={purpose}
+              className="inline-block rounded-full border border-rose-100 bg-rose-50 px-3 py-1 text-[8px] font-bold text-rose-500"
             >
-              {amenity}
+              {purpose}
             </span>
           ))}
+          {/* Fallback to amenities if no purposes */}
+          {(!hotel.purposes || hotel.purposes.length === 0) &&
+            hotel.amenities.slice(0, 3).map((amenity) => (
+              <span
+                key={amenity}
+                className="inline-block rounded-full border border-gray-100 bg-gray-50 px-3 py-1 text-[8px] font-bold text-gray-400"
+              >
+                {amenity}
+              </span>
+            ))}
         </div>
 
         <div className="flex items-center justify-between border-t border-gray-100 pt-6">

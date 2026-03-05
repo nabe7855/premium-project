@@ -25,6 +25,7 @@ export interface Hotel {
   reviewCount: number;
   amenities: string[];
   services: string[];
+  purposes: string[];
   distanceFromStation: string;
   roomCount: number;
   description?: string;
@@ -49,6 +50,11 @@ export interface ReviewPhoto {
   category: string;
 }
 
+export interface Purpose {
+  id: string;
+  name: string;
+}
+
 export interface Review {
   id: string;
   hotelId: string;
@@ -56,6 +62,8 @@ export interface Review {
   rating: number;
   cleanliness: number;
   service: number;
+  design: number;
+  facilities: number;
   rooms: number;
   value: number;
   content: string;
@@ -64,6 +72,9 @@ export interface Review {
   stayType?: 'lodging' | 'rest' | 'pro_report'; // 宿泊 or 休憩 or プロレポート
   cost?: number; // 利用金額
   photos?: ReviewPhoto[]; // カテゴリ付き写真
+  helpfulCount?: number;
+  isCast?: boolean;
+  isVerified?: boolean;
 }
 
 export interface Prefecture {
@@ -88,6 +99,7 @@ export interface SearchFilters {
   budgetMax?: number;
   type?: 'rest' | 'stay';
   amenities: string[];
+  purposes: string[];
   rating?: number;
   sort: 'price_asc' | 'rating_desc' | 'newest';
 }

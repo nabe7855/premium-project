@@ -33,6 +33,44 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
     notFound();
   }
 
+  const reviewMetrics = [
+    {
+      label: '清掃',
+      score:
+        reviews.length > 0
+          ? reviews.reduce((acc, r) => acc + (r.cleanliness || 0), 0) / reviews.length
+          : 0,
+    },
+    {
+      label: '接客',
+      score:
+        reviews.length > 0
+          ? reviews.reduce((acc, r) => acc + (r.service || 0), 0) / reviews.length
+          : 0,
+    },
+    {
+      label: 'デザイン',
+      score:
+        reviews.length > 0
+          ? reviews.reduce((acc, r) => acc + (r.design || 0), 0) / reviews.length
+          : 0,
+    },
+    {
+      label: '設備',
+      score:
+        reviews.length > 0
+          ? reviews.reduce((acc, r) => acc + (r.facilities || 0), 0) / reviews.length
+          : 0,
+    },
+    {
+      label: 'コスパ',
+      score:
+        reviews.length > 0
+          ? reviews.reduce((acc, r) => acc + (r.value || 0), 0) / reviews.length
+          : 0,
+    },
+  ];
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Hotel',
@@ -101,10 +139,18 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
         <div className="absolute bottom-12 left-0 w-full">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="mb-4 flex items-center gap-2">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
               <span className="rounded-full bg-rose-500 px-4 py-1.5 text-[10px] font-black uppercase italic tracking-widest text-white shadow-lg shadow-rose-900/40">
                 Professional Choice
               </span>
+              {hotel.purposes?.map((purpose) => (
+                <span
+                  key={purpose}
+                  className="rounded-full border border-rose-100 bg-rose-50 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-rose-500"
+                >
+                  {purpose}
+                </span>
+              ))}
               <span className="rounded-full border border-white/10 bg-white/20 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white backdrop-blur-md">
                 {hotel.city || '横浜'}・{hotel.area || '中区'}
               </span>
@@ -238,7 +284,20 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                       プロフェッショナルな視点とユーザー体験
                     </p>
                   </div>
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-8">
+                    {/* Itemized Bar Chart (Small) */}
+                    <div className="hidden gap-6 border-r border-gray-100 pr-10 md:flex">
+                      {reviewMetrics.map((m) => (
+                        <div key={m.label} className="text-center">
+                          <div className="text-[14px] font-black text-gray-900">
+                            {m.score > 0 ? m.score.toFixed(1) : '-'}
+                          </div>
+                          <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">
+                            {m.label}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                     <div className="text-right">
                       <div className="text-4xl font-black text-rose-500">
                         {hotel.rating?.toFixed(1) || '0.0'}
@@ -297,6 +356,26 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                           </div>
                           <div className="prose prose-sm mb-6 max-w-none font-medium leading-relaxed text-gray-600">
                             <p className="whitespace-pre-wrap">{review.content}</p>
+                          </div>
+
+                          {/* Detailed Scores */}
+                          <div className="mb-6 flex flex-wrap gap-4 rounded-2xl bg-white/50 p-4">
+                            {[
+                              { label: '清掃', score: review.cleanliness },
+                              { label: 'サービス', score: review.service },
+                              { label: 'デザイン', score: review.design },
+                              { label: '設備', score: review.facilities },
+                              { label: 'コスパ', score: review.value },
+                            ].map((s) => (
+                              <div key={s.label} className="flex items-center gap-2">
+                                <span className="text-[8px] font-black uppercase tracking-widest text-gray-400">
+                                  {s.label}
+                                </span>
+                                <span className="text-xs font-black text-gray-900">
+                                  {s.score || '-'}
+                                </span>
+                              </div>
+                            ))}
                           </div>
 
                           {review.photos && review.photos.length > 0 && (

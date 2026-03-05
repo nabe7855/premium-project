@@ -1,4 +1,5 @@
 import { Hotel, Review } from '@/types/lovehotels';
+import { v4 as uuidv4 } from 'uuid';
 import { supabase } from './supabaseClient';
 
 // --- Master Data ---
@@ -41,6 +42,12 @@ export const getServices = async () => {
   return data;
 };
 
+export const getPurposes = async () => {
+  const { data, error } = await supabase.from('lh_purposes').select('*').order('name');
+  if (error) throw error;
+  return data;
+};
+
 // --- Hotels ---
 
 export const getHotels = async (filters?: {
@@ -54,18 +61,35 @@ export const getHotels = async (filters?: {
   minStayPrice?: number;
   maxStayPrice?: number;
   minRating?: number;
+  purposeId?: string;
   sort?: { column: string; ascending: boolean };
   take?: number;
 }) => {
-  let query = supabase.from('lh_hotels').select(`
+  let selectString = `
       *,
       lh_prefectures(name),
       lh_cities(name),
       lh_areas(name),
       lh_hotel_amenities(lh_amenities(*)),
       lh_hotel_services(lh_services(*)),
+      lh_hotel_purposes(lh_purposes(*)),
       lh_hotel_images(*)
-    `);
+    `;
+
+  if (filters?.purposeId) {
+    selectString = `
+      *,
+      lh_prefectures(name),
+      lh_cities(name),
+      lh_areas(name),
+      lh_hotel_amenities(lh_amenities(*)),
+      lh_hotel_services(lh_services(*)),
+      lh_hotel_purposes!inner(lh_purposes(*)),
+      lh_hotel_images(*)
+    `;
+  }
+
+  let query = supabase.from('lh_hotels').select(selectString);
 
   if (filters?.prefectureId) {
     const cleanId = filters.prefectureId.trim();
@@ -102,6 +126,9 @@ export const getHotels = async (filters?: {
   if (filters?.minRating) {
     query = query.gte('rating', filters.minRating);
   }
+  if (filters?.purposeId) {
+    query = query.eq('lh_hotel_purposes.purpose_id', filters.purposeId);
+  }
 
   const sortCol = filters?.sort?.column || 'created_at';
   const sortAsc = filters?.sort?.ascending ?? false;
@@ -125,6 +152,7 @@ export const getHotelById = async (id: string) => {
       lh_areas(name),
       lh_hotel_amenities(lh_amenities(*)),
       lh_hotel_services(lh_services(*)),
+      lh_hotel_purposes(lh_purposes(*)),
       lh_hotel_images(*)
     `,
     )
@@ -139,6 +167,7 @@ export const createHotel = async (
   hotelData: any,
   amenityIds: string[],
   serviceIds: string[],
+  purposeIds: string[],
   images: { url: string; category: string }[],
 ) => {
   // 1. Insert Hotel
@@ -173,6 +202,14 @@ export const createHotel = async (
     if (imgError) throw imgError;
   }
 
+  // 5. Link Purposes
+  if (purposeIds && purposeIds.length > 0) {
+    const { error: purpError } = await supabase
+      .from('lh_hotel_purposes')
+      .insert(purposeIds.map((id) => ({ hotel_id: hotel.id, purpose_id: id })));
+    if (purpError) throw purpError;
+  }
+
   return hotel;
 };
 
@@ -181,6 +218,7 @@ export const updateHotel = async (
   hotelData: any,
   amenityIds: string[],
   serviceIds: string[],
+  purposeIds: string[],
   images: { url: string; category: string }[],
 ) => {
   // 1. Update Hotel
@@ -207,6 +245,14 @@ export const updateHotel = async (
   await supabase.from('lh_hotel_images').delete().eq('hotel_id', id);
   if (images.length > 0) {
     await supabase.from('lh_hotel_images').insert(images.map((img) => ({ ...img, hotel_id: id })));
+  }
+
+  // 5. Refresh Purposes
+  await supabase.from('lh_hotel_purposes').delete().eq('hotel_id', id);
+  if (purposeIds && purposeIds.length > 0) {
+    await supabase
+      .from('lh_hotel_purposes')
+      .insert(purposeIds.map((pId) => ({ hotel_id: id, purpose_id: pId })));
   }
 };
 
@@ -282,12 +328,46 @@ export const deleteMaster = async (table: string, id: string | number) => {
   }
 };
 
+/**
+ * 名前リストからマスターデータを同期し（存在しなければ作成）、IDリストを返す
+ */
+export const syncMasterData = async (table: string, names: string[]) => {
+  const cleanNames = [...new Set(names.filter(Boolean).map((n) => n.trim()))];
+  if (cleanNames.length === 0) return [];
+
+  // 1. 既存のデータを取得
+  const { data: existing } = await supabase.from(table).select('id, name').in('name', cleanNames);
+
+  const existingMap = new Map(existing?.map((e: any) => [e.name, e.id]) || []);
+  const existingNames = new Set(existing?.map((e: any) => e.name) || []);
+
+  // 2. 未登録の名前を特定して挿入
+  const missingNames = cleanNames.filter((n) => !existingNames.has(n));
+
+  if (missingNames.length > 0) {
+    const { data: inserted, error } = await supabase
+      .from(table)
+      .insert(missingNames.map((name) => ({ id: uuidv4(), name })))
+      .select();
+
+    if (error) {
+      console.error(`[syncMasterData] Error inserting missing ${table}:`, error);
+      throw error;
+    }
+
+    inserted?.forEach((i: any) => existingMap.set(i.name, i.id));
+  }
+
+  // 3. 元の順番・リストに対応するIDを返す
+  return cleanNames.map((name) => existingMap.get(name)).filter(Boolean) as string[];
+};
+
 export const getPrefectureDetails = async (prefectureId: string) => {
   const cleanId = prefectureId.trim();
   // 1. 都道府県情報を取得（IDまたは名前で検索）
   const { data: prefData } = await supabase
     .from('lh_prefectures')
-    .select('id, name')
+    .select('id, name, description')
     .or(`id.eq.${cleanId},id.eq." ${cleanId}",name.ilike.%${cleanId}%`)
     .single();
 
@@ -300,6 +380,7 @@ export const getPrefectureDetails = async (prefectureId: string) => {
       `
       id,
       name,
+      description,
       lh_areas (
         id,
         name
@@ -325,7 +406,22 @@ export const getPrefectureDetails = async (prefectureId: string) => {
     areas: city.lh_areas?.map((a: any) => a.name) || [],
   }));
 
-  return results;
+  return {
+    prefectureName: prefData?.name || cleanId,
+    description: prefData?.description || null,
+    cities: results,
+  };
+};
+
+export const getCityDetails = async (cityId: string) => {
+  const { data, error } = await supabase
+    .from('lh_cities')
+    .select('id, name, description')
+    .eq('id', cityId)
+    .single();
+
+  if (error) return null;
+  return data;
 };
 
 // Map DB hotel data to frontend Hotel interface
@@ -366,6 +462,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     amenities:
       dbHotel.lh_hotel_amenities?.map((a: any) => a.lh_amenities?.name).filter(Boolean) || [],
     services: dbHotel.lh_hotel_services?.map((s: any) => s.lh_services?.name).filter(Boolean) || [],
+    purposes: dbHotel.lh_hotel_purposes?.map((p: any) => p.lh_purposes?.name).filter(Boolean) || [],
     distanceFromStation: dbHotel.distance_from_station || '',
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
@@ -400,6 +497,8 @@ export const mapDbReviewToReview = (dbReview: any): Review => {
     rating: dbReview.rating,
     cleanliness: dbReview.cleanliness,
     service: dbReview.service,
+    design: dbReview.design,
+    facilities: dbReview.facilities,
     rooms: dbReview.rooms,
     value: dbReview.value,
     content: dbReview.content,
@@ -411,6 +510,9 @@ export const mapDbReviewToReview = (dbReview: any): Review => {
       url: p.url,
       category: p.category,
     })),
+    helpfulCount: dbReview.helpful_count || 0,
+    isCast: dbReview.is_cast,
+    isVerified: dbReview.is_verified,
   };
 };
 
@@ -442,6 +544,8 @@ export const submitReview = async (
         rating: reviewData.rating,
         cleanliness: reviewData.cleanliness,
         service: reviewData.service,
+        design: reviewData.design,
+        facilities: reviewData.facilities,
         rooms: reviewData.rooms,
         value: reviewData.value,
         content: reviewData.content,
@@ -492,4 +596,24 @@ export const deleteReview = async (reviewId: string) => {
   if (photoUrls.length > 0) {
     await deleteStorageImages(photoUrls);
   }
+};
+
+export const incrementReviewHelpfulCount = async (reviewId: string) => {
+  // Using rpc or manual increment
+  // Manual increment for simplicity if not using postgrest-js rpc
+  const { data: review } = await supabase
+    .from('lh_reviews')
+    .select('helpful_count')
+    .eq('id', reviewId)
+    .single();
+
+  const newCount = (review?.helpful_count || 0) + 1;
+
+  const { error } = await supabase
+    .from('lh_reviews')
+    .update({ helpful_count: newCount })
+    .eq('id', reviewId);
+
+  if (error) throw error;
+  return newCount;
 };

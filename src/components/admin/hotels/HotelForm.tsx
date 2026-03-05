@@ -9,6 +9,7 @@ import {
   getCities,
   getHotelById,
   getPrefectures,
+  getPurposes,
   getReviews,
   getServices,
   updateHotel,
@@ -34,6 +35,7 @@ export default function HotelForm({ id }: HotelFormProps) {
   const [areas, setAreas] = useState<any[]>([]);
   const [allAmenities, setAllAmenities] = useState<any[]>([]);
   const [allServices, setAllServices] = useState<any[]>([]);
+  const [allPurposes, setAllPurposes] = useState<any[]>([]);
   const [reviews, setReviews] = useState<Review[]>([]);
   const [loadingReviews, setLoadingReviews] = useState(false);
 
@@ -64,6 +66,7 @@ export default function HotelForm({ id }: HotelFormProps) {
   });
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
+  const [selectedPurposes, setSelectedPurposes] = useState<string[]>([]);
 
   // Image state
   const [images, setImages] = useState<
@@ -91,14 +94,16 @@ export default function HotelForm({ id }: HotelFormProps) {
 
   const loadMasters = async () => {
     try {
-      const [prefs, amens, servs] = await Promise.all([
+      const [prefs, amens, servs, purps] = await Promise.all([
         getPrefectures(),
         getAmenities(),
         getServices(),
+        getPurposes(),
       ]);
       setPrefectures(prefs);
       setAllAmenities(amens);
       setAllServices(servs);
+      setAllPurposes(purps);
     } catch (error) {
       console.error(error);
       toast.error('マスタデータの読み込みに失敗しました');
@@ -152,6 +157,7 @@ export default function HotelForm({ id }: HotelFormProps) {
       });
       setSelectedAmenities(hotel.lh_hotel_amenities.map((a: any) => a.amenity_id));
       setSelectedServices(hotel.lh_hotel_services.map((s: any) => s.service_id));
+      setSelectedPurposes(hotel.lh_hotel_purposes.map((p: any) => p.purpose_id));
       setImages(
         hotel.lh_hotel_images.map((img: any) => ({
           id: img.id,
@@ -288,10 +294,23 @@ export default function HotelForm({ id }: HotelFormProps) {
       });
 
       if (id) {
-        await updateHotel(id, submitData, selectedAmenities, selectedServices, finalImages);
+        await updateHotel(
+          id,
+          submitData,
+          selectedAmenities,
+          selectedServices,
+          selectedPurposes,
+          finalImages,
+        );
         toast.success('更新しました');
       } else {
-        await createHotel(submitData, selectedAmenities, selectedServices, finalImages);
+        await createHotel(
+          submitData,
+          selectedAmenities,
+          selectedServices,
+          selectedPurposes,
+          finalImages,
+        );
         toast.success('作成しました');
       }
       router.push('/admin/admin/hotels');
@@ -854,6 +873,28 @@ export default function HotelForm({ id }: HotelFormProps) {
                 }`}
               >
                 {serv.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <label className="mb-3 block text-sm font-medium text-brand-text-secondary">
+            利用目的 (Purposes)
+          </label>
+          <div className="flex flex-wrap gap-2">
+            {allPurposes.map((purp) => (
+              <button
+                key={purp.id}
+                type="button"
+                onClick={() => toggleItem(purp.id, selectedPurposes, setSelectedPurposes)}
+                className={`rounded-full px-3 py-1.5 text-xs font-medium transition-all ${
+                  selectedPurposes.includes(purp.id)
+                    ? 'scale-105 bg-rose-500 text-white shadow-lg'
+                    : 'bg-white/5 text-brand-text-secondary hover:bg-white/10'
+                }`}
+              >
+                {purp.name}
               </button>
             ))}
           </div>

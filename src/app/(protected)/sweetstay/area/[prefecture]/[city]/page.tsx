@@ -1,5 +1,5 @@
 import HotelCard from '@/components/sweetstay/HotelCard';
-import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
+import { getCityDetails, getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 
 interface Props {
   params: {
@@ -9,18 +9,15 @@ interface Props {
 }
 
 export default async function SweetStayCityAreaPage({ params }: Props) {
-  const { prefecture, city } = params;
+  const { city } = params;
 
   // Try to find if this city ID works
   const dbHotels = (await getHotels({ cityId: city })) || [];
   const hotels = dbHotels.map(mapDbHotelToHotel);
 
-  if (hotels.length === 0) {
-    // Maybe try areaId? or case sensitive mapping
-    // For now, if no hotels, try searching with city name if decoded
-  }
-
-  const cityName = hotels.length > 0 ? (hotels[0] as any).city : decodeURIComponent(city);
+  const cityInfo = await getCityDetails(city);
+  const cityName =
+    cityInfo?.name || (hotels.length > 0 ? (hotels[0] as any).city : decodeURIComponent(city));
 
   return (
     <div className="bg-white py-24 duration-500 animate-in fade-in md:py-32">
@@ -33,8 +30,9 @@ export default async function SweetStayCityAreaPage({ params }: Props) {
             <h1 className="text-5xl font-black tracking-tighter text-gray-900 md:text-7xl">
               {cityName}
             </h1>
-            <p className="mt-8 text-lg font-medium leading-relaxed text-gray-400">
-              {cityName}でプロが選んだ、ラグジュアリーで心地よいホテルのラインナップ。
+            <p className="mt-8 text-lg font-medium leading-relaxed text-gray-600">
+              {cityInfo?.description ||
+                `${cityName}でプロが選んだ、ラグジュアリーで心地よいホテルのラインナップ。`}
             </p>
           </div>
 

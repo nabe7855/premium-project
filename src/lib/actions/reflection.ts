@@ -52,6 +52,8 @@ export async function saveReflection(data: ReflectionData & { reservationId: str
             stayType: 'rest',
             cleanliness: 5,
             service: 5,
+            design: 5,
+            facilities: 5,
             rooms: 5,
             value: 5,
           },

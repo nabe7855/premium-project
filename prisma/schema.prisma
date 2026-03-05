@@ -408,8 +408,10 @@ model roles {
 }
 
 model lh_amenities {
-  id   String  @id @db.Uuid
+  id   String  @id @default(uuid()) @db.Uuid
   name String?
+  
+  hotels lh_hotel_amenities[]
 }
 
 model lh_areas {
@@ -439,6 +441,7 @@ model lh_cities {
   id            String  @id
   name          String?
   prefecture_id String?
+  description   String?
 }
 
 model lh_feature_articles {
@@ -454,10 +457,15 @@ model lh_feature_articles {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model lh_hotel_amenities {
-  amenity_id String? @db.Uuid
-  hotel_id   String? @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
+  amenity_id String?  @db.Uuid
+  hotel_id   String?  @db.Uuid
+  
+  amenity    lh_amenities? @relation(fields: [amenity_id], references: [id], onDelete: Cascade)
+  hotel      lh_hotels?    @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
 
-  @@ignore
+  @@index([hotel_id])
+  @@index([amenity_id])
 }
 
 model lh_hotel_images {
@@ -471,10 +479,15 @@ model lh_hotel_images {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model lh_hotel_services {
-  hotel_id   String? @db.Uuid
-  service_id String? @db.Uuid
+  id         String   @id @default(uuid()) @db.Uuid
+  hotel_id   String?  @db.Uuid
+  service_id String?  @db.Uuid
 
-  @@ignore
+  hotel      lh_hotels?   @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
+  service    lh_services? @relation(fields: [service_id], references: [id], onDelete: Cascade)
+
+  @@index([hotel_id])
+  @@index([service_id])
 }
 
 model lh_hotels {
@@ -506,12 +519,38 @@ model lh_hotels {
   stay_price_min_weekend Int?
   website                String?
   price_details          Json?
+  
+  amenities lh_hotel_amenities[]
+  services  lh_hotel_services[]
+  purposes  lh_hotel_purposes[]
+  reviews_list lh_reviews[]
+}
+
+model lh_purposes {
+  id         String   @id @default(uuid()) @db.Uuid
+  name       String?  @unique
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+  
+  hotels lh_hotel_purposes[]
+}
+
+model lh_hotel_purposes {
+  id         String   @id @default(uuid()) @db.Uuid
+  hotel_id   String?  @db.Uuid
+  purpose_id String?  @db.Uuid
+  
+  hotel   lh_hotels?   @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
+  purpose lh_purposes? @relation(fields: [purpose_id], references: [id], onDelete: Cascade)
+
+  @@index([hotel_id])
+  @@index([purpose_id])
 }
 
 model lh_prefectures {
   count Int?
   id    String  @id
   name  String?
+  description String?
 }
 
 model lh_review_photos {
@@ -525,22 +564,31 @@ model lh_reviews {
   cleanliness Int?
   content     String?
   cost        Int?
+  service     Int?
+  design      Int?
+  facilities  Int?
+  rating      Int?
   created_at  DateTime? @db.Timestamptz(6)
   hotel_id    String?   @db.Uuid
   id          String    @id @db.Uuid
-  rating      Int?
   review_date DateTime? @db.Date
   room_number String?
   rooms       Int?
-  service     Int?
   stay_type   String?
   user_name   String?
   value       Int?
+  helpful_count Int?    @default(0)
+  is_cast       Boolean?  @default(false)
+  is_verified   Boolean?  @default(false)
+  
+  hotel lh_hotels? @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
 }
 
 model lh_services {
-  id   String  @id @db.Uuid
+  id   String  @id @default(uuid()) @db.Uuid
   name String?
+  
+  hotels lh_hotel_services[]
 }
 
 model reservations {

@@ -1,7 +1,7 @@
 'use client';
 
 import { AMENITIES, SERVICES } from '@/data/lovehotels';
-import { getReviews, submitReview } from '@/lib/lovehotelApi';
+import { getReviews, incrementReviewHelpfulCount, submitReview } from '@/lib/lovehotelApi';
 import { Hotel, Review } from '@/types/lovehotels';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -30,6 +30,8 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
     rating: 5,
     cleanliness: 5,
     service: 5,
+    design: 5,
+    facilities: 5,
     rooms: 5,
     value: 5,
     content: '',
@@ -39,6 +41,26 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
     { id: string; file: File; data: string; category: string }[]
   >([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleHelpfulClick = async (reviewId: string) => {
+    try {
+      const newCount = await incrementReviewHelpfulCount(reviewId);
+      setReviews((prev) =>
+        prev.map((r) => (r.id === reviewId ? { ...r, helpfulCount: newCount } : r)),
+      );
+    } catch (error) {
+      console.error('Error updating helpful count:', error);
+    }
+  };
+
+  const starStats = [5, 4, 3, 2, 1].map((star) => {
+    const count = reviews.filter((r) => r.rating === star).length;
+    return {
+      star,
+      count,
+      percent: reviews.length > 0 ? (count / reviews.length) * 100 : 0,
+    };
+  });
 
   useEffect(() => {
     const fetchReviews = async () => {
@@ -106,6 +128,8 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
           rating: formData.rating,
           cleanliness: formData.cleanliness,
           service: formData.service,
+          design: formData.design,
+          facilities: formData.facilities,
           rooms: formData.rooms,
           value: formData.value,
           content: formData.content,
@@ -126,6 +150,8 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
         rating: 5,
         cleanliness: 5,
         service: 5,
+        design: 5,
+        facilities: 5,
         rooms: 5,
         value: 5,
         content: '',
@@ -672,6 +698,8 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                             { key: 'rating', label: '総合' },
                             { key: 'cleanliness', label: '清掃' },
                             { key: 'service', label: '接客' },
+                            { key: 'design', label: 'デザイン' },
+                            { key: 'facilities', label: '設備' },
                             { key: 'rooms', label: '部屋' },
                             { key: 'value', label: '価格' },
                           ].map((item) => (
@@ -783,103 +811,259 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                 </div>
               )}
 
-              <div className="space-y-8">
+              <div className="space-y-12">
                 {isLoading ? (
                   <div className="py-20 text-center font-bold text-gray-400">
                     口コミを読み込み中...
                   </div>
-                ) : reviews.length > 0 ? (
-                  reviews.map((review) => (
-                    <div
-                      key={review.id}
-                      className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:p-8"
-                    >
-                      <div className="mb-6 flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-50 text-xl font-black text-rose-500">
-                            {review.userName[0]}
-                          </div>
-                          <div>
-                            <div className="font-black text-gray-900">{review.userName}</div>
-                            <div className="text-[10px] font-black uppercase tracking-widest text-gray-300">
-                              {review.date} • {review.stayType === 'rest' ? '休憩利用' : '宿泊利用'}
+                ) : (
+                  <>
+                    {/* Rating Summary (Distribution Graph) */}
+                    {reviews.length > 0 && (
+                      <div className="relative overflow-hidden rounded-[2.5rem] border border-gray-100 bg-white p-8 shadow-2xl shadow-rose-100/20 md:p-12">
+                        {/* Decorative background circle */}
+                        <div className="absolute -right-20 -top-20 h-64 w-64 rounded-full bg-rose-50/50" />
+
+                        <div className="relative z-10">
+                          <div className="mb-10 flex items-center justify-between">
+                            <div>
+                              <h3 className="text-sm font-black uppercase tracking-widest text-[#FF8BA7]">
+                                Rating Summary
+                              </h3>
+                              <p className="text-[10px] font-bold text-gray-300">
+                                Based on {reviews.length} experiences
+                              </p>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-5xl font-black text-rose-500">
+                                {hotel.rating?.toFixed(1) || '0.0'}
+                              </div>
+                              <div className="text-[10px] font-black uppercase tracking-widest text-gray-300">
+                                Overall Score
+                              </div>
                             </div>
                           </div>
-                        </div>
-                        <div className="flex flex-col items-end gap-1">
-                          <div className="flex text-yellow-400">
-                            {'★★★★★'.split('').map((_, i) => (
-                              <span
-                                key={i}
-                                className={i < review.rating ? 'opacity-100' : 'opacity-20'}
-                              >
-                                ★
-                              </span>
-                            ))}
-                          </div>
-                          {review.roomNumber && (
-                            <span className="text-[10px] font-bold text-gray-400">
-                              利用: {review.roomNumber}
-                            </span>
-                          )}
-                        </div>
-                      </div>
 
-                      {/* Itemized Ratings */}
-                      <div className="mb-6 grid grid-cols-2 gap-4 rounded-2xl bg-gray-50 p-4 sm:grid-cols-4">
-                        {[
-                          { label: '清掃', score: review.cleanliness },
-                          { label: '接客', score: review.service },
-                          { label: '部屋', score: review.rooms },
-                          { label: '価格', score: review.value },
-                        ].map((item, idx) => (
-                          <div key={idx} className="flex flex-col items-center">
-                            <span className="mb-1 text-[10px] font-black uppercase text-gray-400">
-                              {item.label}
-                            </span>
-                            <div className="flex gap-0.5">
-                              {[1, 2, 3, 4, 5].map((v) => (
-                                <div
-                                  key={v}
-                                  className={`h-1.5 w-3 rounded-full ${v <= (item.score || 0) ? 'bg-rose-400' : 'bg-gray-200'}`}
-                                />
+                          <div className="grid grid-cols-1 items-center gap-12 md:grid-cols-2 lg:gap-20">
+                            {/* Stars Graph */}
+                            <div className="space-y-4">
+                              {starStats.map((stat) => (
+                                <div key={stat.star} className="flex items-center gap-4">
+                                  <div className="flex w-10 items-center gap-1 text-[10px] font-black text-gray-400">
+                                    <span>{stat.star}</span>
+                                    <span className="text-[8px]">★</span>
+                                  </div>
+                                  <div className="h-2.5 flex-1 overflow-hidden rounded-full bg-gray-50">
+                                    <div
+                                      className="h-full rounded-full bg-gradient-to-r from-rose-300 to-rose-400 transition-all duration-1000"
+                                      style={{ width: `${stat.percent}%` }}
+                                    />
+                                  </div>
+                                  <span className="w-8 text-right text-[10px] font-black text-gray-300">
+                                    {stat.count}
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Aggregated Metrics */}
+                            <div className="grid grid-cols-3 gap-6 border-t border-gray-50 pt-10 md:border-t-0 md:pt-0">
+                              {[
+                                {
+                                  label: '清掃',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.cleanliness || 0), 0) /
+                                    reviews.length,
+                                },
+                                {
+                                  label: '接客',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.service || 0), 0) /
+                                    reviews.length,
+                                },
+                                {
+                                  label: '設備',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.facilities || 0), 0) /
+                                    reviews.length,
+                                },
+                                {
+                                  label: 'デザイン',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.design || 0), 0) /
+                                    reviews.length,
+                                },
+                                {
+                                  label: '部屋',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.rooms || 0), 0) /
+                                    reviews.length,
+                                },
+                                {
+                                  label: '価格',
+                                  score:
+                                    reviews.reduce((acc, r) => acc + (r.value || 0), 0) /
+                                    reviews.length,
+                                },
+                              ].map((m) => (
+                                <div key={m.label} className="text-center">
+                                  <div className="mb-1 text-base font-black text-gray-900">
+                                    {m.score > 0 ? m.score.toFixed(1) : '-'}
+                                  </div>
+                                  <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">
+                                    {m.label}
+                                  </div>
+                                </div>
                               ))}
                             </div>
                           </div>
-                        ))}
+                        </div>
                       </div>
+                    )}
 
-                      <p className="mb-6 text-lg font-medium leading-loose text-gray-600">
-                        {review.content}
-                      </p>
+                    {/* Review List */}
+                    <div className="space-y-10">
+                      {reviews.length > 0 ? (
+                        reviews.map((review) => (
+                          <div
+                            key={review.id}
+                            className="group relative rounded-[2rem] border border-gray-100 bg-white p-8 shadow-sm transition-all hover:shadow-xl hover:shadow-rose-100/20 md:p-10"
+                          >
+                            {/* Review Header */}
+                            <div className="mb-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                              <div className="flex items-center gap-5">
+                                <div className="flex h-16 w-16 items-center justify-center rounded-[1.5rem] bg-rose-50 text-2xl font-black text-rose-500 shadow-inner">
+                                  {review.userName[0]}
+                                </div>
+                                <div>
+                                  <div className="flex items-center gap-3">
+                                    <div className="text-xl font-black tracking-tight text-gray-900">
+                                      {review.userName}
+                                    </div>
+                                    {/* Badges */}
+                                    {review.isCast && (
+                                      <span className="flex items-center gap-1 rounded-full bg-amber-100 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-amber-600 shadow-sm ring-1 ring-amber-200">
+                                        👑 Cast Report
+                                      </span>
+                                    )}
+                                    {review.isVerified && (
+                                      <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-emerald-600 shadow-sm ring-1 ring-emerald-100">
+                                        ✓ Verified
+                                      </span>
+                                    )}
+                                  </div>
+                                  <div className="mt-1 flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-gray-300">
+                                    <span>{review.date}</span>
+                                    <span className="h-1 w-1 rounded-full bg-gray-200" />
+                                    <span>
+                                      {review.stayType === 'rest' ? 'Short Stay' : 'Night Stay'}
+                                    </span>
+                                  </div>
+                                </div>
+                              </div>
 
-                      {/* Review Photos */}
-                      {review.photos && review.photos.length > 0 && (
-                        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                          {review.photos.map((photo, idx) => (
-                            <div
-                              key={idx}
-                              className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100"
-                            >
-                              <img
-                                src={photo.url}
-                                alt={`Review photo ${idx}`}
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                              />
-                              <div className="absolute bottom-2 left-2 rounded-full bg-black/40 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-white backdrop-blur-md">
-                                {PHOTO_CATEGORIES.find((c) => c.id === photo.category)?.label ||
-                                  'その他'}
+                              <div className="flex flex-col items-end gap-2 text-right">
+                                <div className="flex gap-0.5 text-yellow-400">
+                                  {'★★★★★'.split('').map((_, i) => (
+                                    <span
+                                      key={i}
+                                      className={`text-xl ${i < review.rating ? 'opacity-100' : 'opacity-10'}`}
+                                    >
+                                      ★
+                                    </span>
+                                  ))}
+                                </div>
+                                {review.roomNumber && (
+                                  <div className="rounded-lg bg-gray-50 px-3 py-1 text-[10px] font-black text-gray-400">
+                                    ROOM {review.roomNumber}
+                                  </div>
+                                )}
                               </div>
                             </div>
-                          ))}
+
+                            {/* Detailed metrics (Optional small dots/bars) */}
+                            <div className="mb-8 flex flex-wrap gap-x-8 gap-y-4 rounded-3xl bg-gray-50/50 p-6">
+                              {[
+                                { label: '清掃', score: review.cleanliness },
+                                { label: '接客', score: review.service },
+                                { label: '部屋', score: review.rooms },
+                                { label: '価格', score: review.value },
+                                { label: 'デザイン', score: review.design },
+                                { label: '設備', score: review.facilities },
+                              ].map((item, idx) => (
+                                <div key={idx} className="flex flex-col gap-1.5">
+                                  <span className="text-[8px] font-black uppercase tracking-wider text-gray-400">
+                                    {item.label}
+                                  </span>
+                                  <div className="flex gap-0.5">
+                                    {[1, 2, 3, 4, 5].map((v) => (
+                                      <div
+                                        key={v}
+                                        className={`h-1 w-2.5 rounded-full ${v <= (item.score || 0) ? 'bg-rose-400' : 'bg-gray-200'}`}
+                                      />
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+
+                            {/* Review Content */}
+                            <p className="mb-10 text-lg font-medium leading-relaxed text-gray-600 md:text-xl">
+                              {review.content}
+                            </p>
+
+                            {/* Review Photos */}
+                            {review.photos && review.photos.length > 0 && (
+                              <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                                {review.photos.map((photo, idx) => (
+                                  <div
+                                    key={idx}
+                                    className="group/photo relative aspect-square overflow-hidden rounded-[1.5rem] bg-gray-100 ring-1 ring-gray-100"
+                                  >
+                                    <img
+                                      src={photo.url}
+                                      alt={`Review photo ${idx}`}
+                                      className="h-full w-full object-cover transition-transform duration-700 group-hover/photo:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 transition-opacity group-hover/photo:opacity-100" />
+                                    <div className="absolute bottom-3 left-3 rounded-full bg-white/20 px-3 py-1 text-[8px] font-black uppercase tracking-widest text-white backdrop-blur-md">
+                                      {PHOTO_CATEGORIES.find((c) => c.id === photo.category)
+                                        ?.label || 'Other'}
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+
+                            {/* Footer / Interaction */}
+                            <div className="mt-10 flex items-center justify-between border-t border-gray-50 pt-8">
+                              <button
+                                onClick={() => handleHelpfulClick(review.id)}
+                                className="inline-flex items-center gap-2 rounded-2xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all hover:bg-rose-50 hover:text-rose-500 active:scale-95"
+                              >
+                                <span>👍</span>
+                                <span>参考になった</span>
+                                <span className="ml-1 text-rose-300">
+                                  {review.helpfulCount || 0}
+                                </span>
+                              </button>
+
+                              <button className="text-[10px] font-black uppercase tracking-widest text-gray-200 transition-colors hover:text-rose-300">
+                                Report
+                              </button>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <div className="py-20 text-center">
+                          <div className="mb-4 text-4xl">💭</div>
+                          <div className="font-bold text-gray-400">
+                            まだ口コミはありません。最初の口コミを投稿しませんか？
+                          </div>
                         </div>
                       )}
                     </div>
-                  ))
-                ) : (
-                  <div className="py-20 text-center font-bold text-gray-400">
-                    まだ口コミはありません。最初の口コミを投稿しませんか？
-                  </div>
+                  </>
                 )}
               </div>
             </section>

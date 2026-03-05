@@ -44,7 +44,7 @@ export default async function StoreHotelRootPage({ params }: Props) {
   if (!store || !location) notFound();
 
   // Fetch dynamic city/area data for AreaExplorer
-  const dbCities = await getPrefectureDetails(location.prefectureId);
+  const { cities: dbCities } = await getPrefectureDetails(location.prefectureId);
 
   const dynamicPrefecture = {
     // Keep basic structure, but data comes from DB

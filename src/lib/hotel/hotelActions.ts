@@ -1,6 +1,8 @@
 'use server';
 
+import { getHotels, syncMasterData } from '@/lib/lovehotelApi';
 import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabaseClient';
 import Papa from 'papaparse';
 
 export interface HotelCSVRow {
@@ -35,6 +37,8 @@ export interface HotelCSVRow {
   review_rating: string | number;
   review_content: string;
   review_date: string;
+  amenities: string;
+  services: string;
 }
 
 /**
@@ -42,7 +46,7 @@ export interface HotelCSVRow {
  */
 export async function exportHotelsToCSV() {
   try {
-    const hotels = await prisma.lh_hotels.findMany();
+    const hotels = (await getHotels()) as any[];
     const reviews = await prisma.lh_reviews.findMany();
 
     const rows: HotelCSVRow[] = [];
@@ -56,34 +60,34 @@ export async function exportHotelsToCSV() {
         address: hotel.address || '',
         phone: hotel.phone || '',
         website: hotel.website || '',
-        image_url: hotel.image_url || '',
+        image_url: hotel.imageUrl || '',
         description: hotel.description || '',
-        area_id: hotel.area_id || '',
-        city_id: hotel.city_id || '',
-        prefecture_id: hotel.prefecture_id || '',
-        min_price_rest: hotel.min_price_rest || '',
-        min_price_stay: hotel.min_price_stay || '',
+        area_id: hotel.area_id || hotel.areaId || '',
+        city_id: hotel.city_id || hotel.cityId || '',
+        prefecture_id: hotel.prefecture_id || hotel.prefectureId || '',
+        min_price_rest: hotel.minPriceRest || '',
+        min_price_stay: hotel.minPriceStay || '',
         rating: hotel.rating?.toString() || '',
-        distance_from_station: (hotel as any).distance_from_station || '',
-        room_count: (hotel as any).room_count || '',
+        distance_from_station: hotel.distanceFromStation || '',
+        room_count: hotel.roomCount?.toString() || '',
         place_id: (hotel as any).place_id || '',
-        status: (hotel as any).status || '',
-        price_details: (hotel as any).price_details
-          ? JSON.stringify((hotel as any).price_details)
-          : '[]',
-        rest_price_min_weekday: (hotel as any).rest_price_min_weekday || '',
-        rest_price_max_weekday: (hotel as any).rest_price_max_weekday || '',
-        rest_price_min_weekend: (hotel as any).rest_price_min_weekend || '',
-        rest_price_max_weekend: (hotel as any).rest_price_max_weekend || '',
-        stay_price_min_weekday: (hotel as any).stay_price_min_weekday || '',
-        stay_price_max_weekday: (hotel as any).stay_price_max_weekday || '',
-        stay_price_min_weekend: (hotel as any).stay_price_min_weekend || '',
-        stay_price_max_weekend: (hotel as any).stay_price_max_weekend || '',
+        status: hotel.status || 'draft',
+        price_details: hotel.priceDetails ? JSON.stringify(hotel.priceDetails) : '[]',
+        rest_price_min_weekday: hotel.restPriceMinWeekday || '',
+        rest_price_max_weekday: hotel.restPriceMaxWeekday || '',
+        rest_price_min_weekend: hotel.restPriceMinWeekend || '',
+        rest_price_max_weekend: hotel.restPriceMaxWeekend || '',
+        stay_price_min_weekday: hotel.stayPriceMinWeekday || '',
+        stay_price_max_weekday: hotel.stayPriceMaxWeekday || '',
+        stay_price_min_weekend: hotel.stayPriceMinWeekend || '',
+        stay_price_max_weekend: hotel.stayPriceMaxWeekend || '',
+        amenities: (hotel.amenities || []).join(', '),
+        services: (hotel.services || []).join(', '),
       };
 
       if (hotelReviews.length === 0) {
         rows.push({
-          ...baseRow,
+          ...(baseRow as any),
           review_id: '',
           review_user: '',
           review_rating: '',
@@ -93,7 +97,7 @@ export async function exportHotelsToCSV() {
       } else {
         for (const review of hotelReviews) {
           rows.push({
-            ...baseRow,
+            ...(baseRow as any),
             review_id: review.id,
             review_user: review.user_name || '',
             review_rating: review.rating || '',
@@ -130,7 +134,10 @@ export async function importHotelsFromCSV(csvContent: string) {
     }
 
     // ホテルごとにデータをグループ化
-    const hotelMap = new Map<string, { hotel: any; reviews: any[] }>();
+    const hotelMap = new Map<
+      string,
+      { hotel: any; reviews: any[]; amenities: string[]; services: string[] }
+    >();
 
     for (const row of data) {
       const key = row.hotel_id || `new_${row.hotel_name}`;
@@ -191,6 +198,8 @@ export async function importHotelsFromCSV(csvContent: string) {
               : null,
           },
           reviews: [],
+          amenities: row.amenities ? row.amenities.split(',').map((s) => s.trim()) : [],
+          services: row.services ? row.services.split(',').map((s) => s.trim()) : [],
         });
       }
 
@@ -205,43 +214,64 @@ export async function importHotelsFromCSV(csvContent: string) {
       }
     }
 
-    // トランザクションで保存
-    await prisma.$transaction(async (tx) => {
-      for (const [key, item] of hotelMap) {
-        // ホテルの保存
-        let hotelId = item.hotel.id;
+    // ホテルの保存（Supabaseを使用。Prismaはmany-to-manyが非推奨でうまく動かないため）
+    for (const [key, item] of hotelMap) {
+      // 1. 同期（マスターデータ）
+      const amenityIds = await syncMasterData('lh_amenities', item.amenities);
+      const serviceIds = await syncMasterData('lh_services', item.services);
 
-        if (hotelId) {
-          const updated = await tx.lh_hotels.upsert({
-            where: { id: hotelId },
-            update: item.hotel,
-            create: item.hotel,
+      // 2. ホテル自身の保存
+      const hotelPayload = { ...item.hotel };
+      if (!hotelPayload.id) {
+        delete hotelPayload.id; // 新規作成時はIDフィールドを除去
+      }
+
+      const { data: savedHotel, error: hotelError } = await supabase
+        .from('lh_hotels')
+        .upsert([hotelPayload])
+        .select()
+        .single();
+
+      if (hotelError) {
+        console.error(
+          `[importHotelsFromCSV] Error upserting hotel ${item.hotel.name}:`,
+          hotelError,
+        );
+        continue;
+      }
+
+      const hotelId = savedHotel.id;
+
+      // 3. アメニティ・サービスのリレーションを更新
+      await supabase.from('lh_hotel_amenities').delete().eq('hotel_id', hotelId);
+      if (amenityIds.length > 0) {
+        await supabase
+          .from('lh_hotel_amenities')
+          .insert(amenityIds.map((aId) => ({ hotel_id: hotelId, amenity_id: aId })));
+      }
+
+      await supabase.from('lh_hotel_services').delete().eq('hotel_id', hotelId);
+      if (serviceIds.length > 0) {
+        await supabase
+          .from('lh_hotel_services')
+          .insert(serviceIds.map((sId) => ({ hotel_id: hotelId, service_id: sId })));
+      }
+
+      // 4. 口コミの保存 (Prismaを利用し続ける)
+      for (const review of item.reviews) {
+        if (review.id) {
+          await prisma.lh_reviews.upsert({
+            where: { id: review.id },
+            update: { ...review, hotel_id: hotelId },
+            create: { ...review, hotel_id: hotelId },
           });
-          hotelId = updated.id;
         } else {
-          // IDがない新規ホテルの場合
-          const created = await tx.lh_hotels.create({
-            data: item.hotel,
+          await prisma.lh_reviews.create({
+            data: { ...review, hotel_id: hotelId },
           });
-          hotelId = created.id;
-        }
-
-        // 口コミの保存
-        for (const review of item.reviews) {
-          if (review.id) {
-            await tx.lh_reviews.upsert({
-              where: { id: review.id },
-              update: { ...review, hotel_id: hotelId },
-              create: { ...review, hotel_id: hotelId },
-            });
-          } else {
-            await tx.lh_reviews.create({
-              data: { ...review, hotel_id: hotelId },
-            });
-          }
         }
       }
-    });
+    }
 
     return { success: true, count: hotelMap.size };
   } catch (error) {

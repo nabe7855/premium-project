@@ -1,6 +1,7 @@
 import HeroSlider from '@/components/sweetstay/HeroSlider';
 import HotelCard from '@/components/sweetstay/HotelCard';
 import QuickNav from '@/components/sweetstay/QuickNav';
+import TabelogSearch from '@/components/sweetstay/TabelogSearch';
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import Link from 'next/link';
 
@@ -22,8 +23,13 @@ export default async function SweetStayPortalPage() {
       {/* Premium Hero Slider Section */}
       <HeroSlider />
 
+      {/* Tabelog-style Search Bar */}
+      <TabelogSearch />
+
       {/* Quick Navigation Panel */}
-      <QuickNav />
+      <div className="mt-8">
+        <QuickNav />
+      </div>
 
       {/* Featured Picks */}
       <section className="bg-white/50 py-24 backdrop-blur-sm">

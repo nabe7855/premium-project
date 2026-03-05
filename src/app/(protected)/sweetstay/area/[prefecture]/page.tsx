@@ -20,7 +20,7 @@ export default async function SweetStayAreaPage({ params }: Props) {
   }
 
   // Get city list for this prefecture
-  const cityDetails = await getPrefectureDetails(prefId);
+  const { prefectureName, cities: cityDetails, description } = await getPrefectureDetails(prefId);
 
   return (
     <div className="bg-white py-24 duration-500 animate-in fade-in md:py-32">
@@ -30,12 +30,12 @@ export default async function SweetStayAreaPage({ params }: Props) {
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-rose-100 bg-rose-50 px-4 py-1.5 text-xs font-black uppercase italic tracking-widest text-rose-500">
               Local Expertise
             </div>
-            <h1 className="text-5xl font-black capitalize tracking-tighter text-gray-900 md:text-7xl">
-              {prefId}のホテル
+            <h1 className="text-5xl font-black tracking-tighter text-gray-900 md:text-7xl">
+              {prefectureName}のホテル
             </h1>
-            <p className="mt-8 text-lg font-medium leading-relaxed text-gray-400">
-              {prefId}で厳選されたプロ推奨のホテル。
-              エリアや設備から、あなたにとって最高の場所を見つけましょう。
+            <p className="mt-8 text-lg font-medium leading-relaxed text-gray-600">
+              {description ||
+                `${prefectureName}で厳選されたプロ推奨のホテル。エリアや設備、女子会やビジネスなど「利用目的」に合わせて、あなたにとって最高の場所を見つけましょう。`}
             </p>
           </div>
 
