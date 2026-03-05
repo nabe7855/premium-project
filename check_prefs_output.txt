@@ -1,0 +1,9 @@
+﻿[dotenv@17.2.3] injecting env (4) from .env.local -- tip: 柏 prevent building .env in docker: https://dotenvx.com/prebuild
+Prefectures in DB:
+  id=" Fukuoka" name="遖丞ｲ｡"
+  id="Kanagawa" name="逾槫･亥ｷ晉恁"
+
+eq "譁ｰ貎溽恁": null
+ilike "%譁ｰ貎・": null
+
+Cities for "遖丞ｲ｡": [{"id":"kitakyushu-city","name":"蛹嶺ｹ晏ｷ槫ｸ・},{"id":"fukuoka-city","name":"遖丞ｲ｡蟶・},{"id":"Kurume-shi","name":"荵・蕗邀ｳ蟶・},{"id":"Iizuka-shi","name":"鬟ｯ蝪壼ｸ・},{"id":"Omuta-shi","name":"螟ｧ迚溽伐蟶・}]

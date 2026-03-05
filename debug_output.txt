@@ -1,35 +1,16 @@
-﻿URL: 笨・found
-Key: 笨・found
-笨・Store ID: cf627a03-f600-45b8-86f5-60a9f513beac
-笨・繝｡繝ｳ繝舌・繧ｷ繝・・莉ｶ謨ｰ: 10
-笨・casts[0] 蝙・ object
-笨・casts[0] 繝・・繧ｿ: {
-  "id": "c788c210-41f4-4510-bf72-ceb63535fb80",
-  "age": 27,
-  "name": "繧ｭ繧ｻ繧ｭ",
-  "slug": "-348075",
-  "image_url": null,
-  "is_active": true,
-  "catch_copy": "",
-  "main_image_url": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/gallery/c788c210-41f4-4510-bf72-ceb63535fb80/1758644104662_t1ojzb.webp",
-  "sexiness_level": 3
-}
-笨・Cast IDs: 10 [
-  'c788c210-41f4-4510-bf72-ceb63535fb80',
-  '69ac8d1a-818e-4a10-9253-1a0897426f3a',
-  'd1ca5bcd-3777-415c-9405-c8fdf3154106'
-]
-笨・reviews莉ｶ謨ｰ: 146
-笨・sample: [
-  { cast_id: '013cd4f7-bc4f-4ce2-a956-4b942444ce4c', rating: 3 },
-  { cast_id: 'c788c210-41f4-4510-bf72-ceb63535fb80', rating: 5 },
-  { cast_id: '17fbda93-2223-4fdf-92e1-23bef2c7b291', rating: 5 }
-]
-笨・邨ｱ險・ [
-  '013cd4f7-bc4f-4ce2-a956-4b942444ce4c: avg=3.0, count=1',
-  'c788c210-41f4-4510-bf72-ceb63535fb80: avg=5.0, count=57',
-  '17fbda93-2223-4fdf-92e1-23bef2c7b291: avg=5.0, count=67',
-  'f4e7231b-6867-4563-9390-1db172148a71: avg=5.0, count=10',
-  'd730d89d-4c33-4b98-8d73-eb2010c4729f: avg=5.0, count=6',
-  'd1ca5bcd-3777-415c-9405-c8fdf3154106: avg=5.0, count=5'
-]
+﻿[dotenv@17.2.3] injecting env (4) from .env.local -- tip: 笞呻ｸ・ enable debug logging with { debug: true }
+=== lh_prefectures ===
+  " Fukuoka" -> "遖丞ｲ｡"
+  "Kanagawa" -> "逾槫･亥ｷ晉恁"
+Total: 2
+
+=== lh_cities prefecture_id (unique, first 20) ===
+  " Fukuoka"
+  "Kanagawa"
+
+=== Search fukushima cities ===
+eq fukushima: []
+eq " Fukushima": []
+ilike NaNukushima%:
+
+lh_cities total rows: 26
