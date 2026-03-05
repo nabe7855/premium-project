@@ -561,34 +561,37 @@ function CourseAccordion({
                 Time & Price
               </h4>
             </div>
-            <div className="grid grid-cols-1 gap-x-4 gap-y-1 min-[450px]:grid-cols-2 sm:gap-x-8 sm:gap-y-2">
-              {course.plans?.map((plan, idx) => (
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {course.plans?.map((plan) => (
                 <div
                   key={plan.id}
-                  className="group relative flex items-center justify-between gap-2 border-b border-dotted border-rose-100/50 py-3 transition-all"
+                  className="flex flex-col gap-2 rounded-2xl border border-rose-100 bg-rose-50/20 p-3 transition-all hover:bg-rose-50/40 sm:p-4"
                 >
-                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                    <span className="inline-block shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-[11px] font-bold text-rose-700 sm:px-3 sm:py-1 sm:text-xs">
-                      {plan.minutes >= 600
-                        ? `${plan.minutes / 60}時間`
-                        : plan.minutes === 0
-                          ? 'FREE'
-                          : `${plan.minutes}min`}
-                    </span>
-                    {plan.discount_info && (
-                      <div className="flex flex-wrap items-center gap-1">
-                        <span className="shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
-                          HOT
-                        </span>
-                        <span className="text-[9px] font-bold leading-tight text-rose-500 sm:text-[10px]">
-                          {plan.discount_info}
-                        </span>
-                      </div>
-                    )}
+                  {/* Row 1: Duration */}
+                  <div className="inline-block self-start rounded-full bg-rose-100 px-3 py-1 text-[10px] font-bold text-rose-700 sm:text-xs">
+                    {plan.minutes >= 600
+                      ? `${plan.minutes / 60}時間`
+                      : plan.minutes === 0
+                        ? 'FREE'
+                        : `${plan.minutes}min`}
                   </div>
-                  <span className="shrink-0 text-base font-black text-rose-900 sm:text-lg">
+
+                  {/* Row 2: Price */}
+                  <div className="text-lg font-black text-rose-900 sm:text-2xl">
                     ¥{plan.price.toLocaleString()}
-                  </span>
+                  </div>
+
+                  {/* Row 3: Campaign Info */}
+                  {plan.discount_info && (
+                    <div className="flex flex-col gap-1 border-t border-rose-100/50 pt-2">
+                      <span className="w-fit shrink-0 rounded bg-rose-500 px-1 text-[7px] font-bold text-white sm:text-[8px]">
+                        HOT
+                      </span>
+                      <p className="whitespace-pre-wrap text-[9px] font-bold leading-relaxed text-rose-500 sm:text-[10px]">
+                        {plan.discount_info}
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>
