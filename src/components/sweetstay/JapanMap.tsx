@@ -171,10 +171,17 @@ const JapanMap: React.FC<JapanMapProps> = ({
   };
 
   useEffect(() => {
-    fetch('/map-mobile.svg')
-      .then((res) => res.text())
-      .then((svg) => setSvgContent(svg))
-      .catch((err) => console.error('Failed to load map svg', err));
+    // Cache-busting fetch
+    fetch(`/map-mobile.svg?v=${Date.now()}`)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        return res.text();
+      })
+      .then((svg) => {
+        console.log('[JapanMap] SVG fetched successfully, length:', svg.length);
+        setSvgContent(svg);
+      })
+      .catch((err) => console.error('[JapanMap] Failed to load map svg', err));
   }, []);
 
   useEffect(() => {
@@ -199,13 +206,13 @@ const JapanMap: React.FC<JapanMapProps> = ({
     svgElement.style.pointerEvents = 'auto';
 
     // Centralized Click Handler
-    (svgElement as any).onclick = (e: MouseEvent) => {
+    const handleGlobalClick = (e: MouseEvent) => {
       const target = e.target as SVGElement;
       console.log(
-        '[JapanMap] Click target:',
+        '[JapanMap] Global Click target:',
         target.tagName,
-        'classes:',
-        target.classList.toString(),
+        'Classes:',
+        target.classList?.toString(),
       );
       const prefId = getPrefIdFromElement(target);
       console.log('[JapanMap] Resolved prefId:', prefId);
@@ -215,6 +222,8 @@ const JapanMap: React.FC<JapanMapProps> = ({
         handlePrefIdClick(prefId);
       }
     };
+
+    (svgElement as any).onclick = handleGlobalClick;
 
     const labels: { id: string; name: string; x: number; y: number }[] = [];
 
@@ -236,17 +245,23 @@ const JapanMap: React.FC<JapanMapProps> = ({
           el.style.cursor = 'pointer';
           el.style.transition = 'fill 0.3s ease, filter 0.2s ease';
 
-          if (selectedRegion) {
-            if (isRegionSelected) {
-              el.style.fill = getRegionColor('selected');
-              el.style.pointerEvents = 'auto';
-            } else {
-              el.style.fill = '#f8fafc'; // slate-50 background for non-selected
-              el.style.pointerEvents = 'none';
-            }
+          const color = selectedRegion
+            ? isRegionSelected
+              ? getRegionColor('selected')
+              : '#f1f5f9'
+            : getRegionColor(region.id);
+
+          el.setAttribute('fill', color);
+          el.style.fill = color;
+          el.setAttribute('stroke', '#ffffff');
+          el.style.stroke = '#ffffff';
+
+          if (selectedRegion && !isRegionSelected) {
+            el.style.pointerEvents = 'none';
+            el.style.opacity = '0.5';
           } else {
-            el.style.fill = getRegionColor(region.id);
             el.style.pointerEvents = 'auto';
+            el.style.opacity = '1';
           }
 
           // Hover effects
