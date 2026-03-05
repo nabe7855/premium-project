@@ -134,10 +134,10 @@ const SecondaryBannerSlider: React.FC = () => {
             <AnimatePresence mode="popLayout">
               <motion.div
                 key={activeItem.id}
-                initial={{ opacity: 0, scale: 1.1, x: 20 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.95, x: -30 }}
-                transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                initial={{ opacity: 0, scale: 1.05, x: 20, filter: 'blur(4px)' }}
+                animate={{ opacity: 1, scale: 1, x: 0, filter: 'blur(0px)' }}
+                exit={{ opacity: 0, scale: 0.98, x: -20, filter: 'blur(4px)' }}
+                transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
                 className="absolute inset-0 z-10 overflow-hidden rounded-[8px] border border-gray-100 shadow-xl"
               >
                 {renderSlideContent(activeItem, true)}
@@ -153,9 +153,10 @@ const SecondaryBannerSlider: React.FC = () => {
             <AnimatePresence mode="wait">
               <motion.h2
                 key={activeItem.title}
-                initial={{ y: 20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: -20, opacity: 0 }}
+                initial={{ y: 10, opacity: 0, filter: 'blur(2px)' }}
+                animate={{ y: 0, opacity: 1, filter: 'blur(0px)' }}
+                exit={{ y: -10, opacity: 0, filter: 'blur(2px)' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
                 className="truncate text-sm font-bold tracking-tight text-gray-800 md:text-xl"
               >
                 {activeItem.title}
