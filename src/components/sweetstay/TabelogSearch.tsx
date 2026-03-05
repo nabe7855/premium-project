@@ -2,16 +2,43 @@
 
 import { getPurposes } from '@/lib/lovehotelApi';
 import { Purpose } from '@/types/lovehotels';
-import { Map, MapPin, Search, Star, Ticket } from 'lucide-react';
+import {
+  ChevronRight,
+  Heart,
+  ListFilter,
+  MapPin,
+  Search,
+  Sparkles,
+  Wallet,
+  Zap,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import AreaSearchModal from './AreaSearchModal';
 
+const POPULAR_TAGS = ['女子会', '露天風呂', '格安', 'サウナ', '駅チカ', 'VOD'];
+
 const TabelogSearch: React.FC = () => {
   const [keyword, setKeyword] = useState('');
-  const [purposeId, setPurposeId] = useState('');
   const [purposes, setPurposes] = useState<Purpose[]>([]);
+
+  const [isAccordionOpen, setIsAccordionOpen] = useState(false);
   const [isAreaModalOpen, setIsAreaModalOpen] = useState(false);
+
+  const [activeFilters, setActiveFilters] = useState<{
+    tags: string[];
+    area: string;
+    price: string;
+    purpose: string;
+    amenity: string;
+  }>({
+    tags: [],
+    area: '',
+    price: '',
+    purpose: '',
+    amenity: '',
+  });
+
   const router = useRouter();
 
   useEffect(() => {
@@ -21,140 +48,142 @@ const TabelogSearch: React.FC = () => {
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (keyword.trim()) params.append('q', keyword.trim());
-    if (purposeId) params.append('purpose', purposeId);
+    if (activeFilters.purpose) params.append('purpose', activeFilters.purpose);
+    if (activeFilters.tags.length > 0) params.append('tags', activeFilters.tags.join(','));
 
     router.push(`/sweetstay/search?${params.toString()}`);
   };
 
+  const toggleTag = (tag: string) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      tags: prev.tags.includes(tag) ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag],
+    }));
+  };
+
   return (
-    <div className="container relative z-30 mx-auto mb-12 px-4 md:px-6">
-      {/* Main Search Form Container */}
-      <div className="relative z-30 flex flex-col gap-4 rounded-[2.5rem] bg-white px-6 pb-2 pt-6 shadow-[0_8px_30px_rgb(0,0,0,0.08)] md:mx-auto lg:max-w-3xl">
-        {/* WHERE Input */}
-        <div className="flex w-full items-center gap-4 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50/50 px-6 py-3.5 transition-all focus-within:border-rose-100 focus-within:bg-white">
-          <span className="w-20 flex-shrink-0 text-xs font-black uppercase tracking-widest text-[#F18EA4]">
-            WHERE
-          </span>
-          <input
-            type="text"
-            placeholder="駅名・地域名・ホテル名"
-            className="w-full bg-transparent text-sm font-bold text-gray-700 placeholder-gray-300 outline-none"
-            value={keyword}
-            onChange={(e) => setKeyword(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          />
-        </div>
+    <div className="container relative z-30 mx-auto mb-12 mt-4 px-4 md:px-6">
+      <div className="relative rounded-[2rem] border border-rose-50 bg-white p-4 text-slate-800 shadow-2xl shadow-rose-900/10 md:p-8 lg:mx-auto lg:max-w-4xl">
+        {/* Top Header Row */}
+        <div className="flex flex-col gap-3 md:flex-row">
+          <div className="group relative flex-grow">
+            <div className="pointer-events-none absolute inset-y-0 left-5 flex items-center text-gray-400 transition-colors group-focus-within:text-rose-500">
+              <Search size={22} />
+            </div>
+            <input
+              type="text"
+              placeholder="エリア・キーワードを入力（例：新宿 露天風呂 30代）"
+              className="w-full rounded-2xl border-2 border-slate-100 bg-slate-50 py-4 pl-14 pr-6 text-base font-bold text-gray-800 transition-all placeholder:font-medium placeholder:text-gray-400 hover:border-rose-200 focus:border-rose-400 focus:outline-none focus:ring-4 focus:ring-rose-500/10"
+              value={keyword}
+              onChange={(e) => setKeyword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+            />
+          </div>
 
-        {/* PURPOSE Select */}
-        <div className="relative flex w-full items-center gap-4 rounded-[1.5rem] border-2 border-slate-50 bg-slate-50/50 px-6 py-3.5 transition-all focus-within:border-rose-100 focus-within:bg-white">
-          <span className="w-20 flex-shrink-0 text-xs font-black uppercase tracking-widest text-[#F18EA4]">
-            PURPOSE
-          </span>
-          <select
-            className="w-full appearance-none bg-transparent text-sm font-bold text-gray-700 outline-none"
-            value={purposeId}
-            onChange={(e) => setPurposeId(e.target.value)}
+          <button
+            onClick={() => setIsAccordionOpen(!isAccordionOpen)}
+            className={`flex flex-shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-2xl px-6 py-4 font-black transition-all active:scale-95 ${
+              isAccordionOpen
+                ? 'bg-[#40C4C9] text-white shadow-lg shadow-cyan-400/30'
+                : 'border border-cyan-100 bg-cyan-50 text-[#40C4C9] hover:bg-cyan-100'
+            }`}
           >
-            <option value="">すべての目的</option>
-            {purposes.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name}
-              </option>
-            ))}
-          </select>
-          {/* Custom Chevron for select */}
-          <div className="pointer-events-none absolute right-6 text-gray-400">
-            <svg
-              width="12"
-              height="8"
-              viewBox="0 0 12 8"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M1 1.5L6 6.5L11 1.5"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </div>
-        </div>
-
-        {/* SEARCH Button */}
-        <button
-          onClick={handleSearch}
-          className="group flex w-full items-center justify-center gap-2 rounded-[1.5rem] bg-[#F18EA4] py-4 text-white shadow-md shadow-rose-200/50 transition-all hover:brightness-105 active:scale-[0.98]"
-        >
-          <Search size={20} strokeWidth={3} />
-          <span className="text-base font-black uppercase tracking-widest">SEARCH</span>
-        </button>
-
-        {/* Popular Tags */}
-        <div className="mb-2 mt-1 flex flex-wrap gap-x-4 gap-y-2">
-          {['女子会', '露天風呂', '格安', 'サウナ'].map((tag) => (
-            <button
-              key={tag}
-              onClick={() => {
-                setKeyword(tag);
-              }}
-              className="text-[11px] font-bold text-gray-400 transition-colors hover:text-[#F18EA4]"
-            >
-              #{tag}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 5 Bottom Buttons Group */}
-      <div className="relative -z-10 mx-auto -mt-10 flex items-start justify-between rounded-[2.5rem] bg-[#FFF8F9] px-4 pb-6 pt-16 shadow-sm md:justify-center md:gap-14 lg:max-w-3xl">
-        {/* Area Search */}
-        <button
-          onClick={() => setIsAreaModalOpen(true)}
-          className="group flex flex-col items-center gap-2"
-        >
-          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#FFEAEF] text-[#E65C7B] shadow-sm transition-transform group-hover:scale-105">
-            <MapPin size={26} strokeWidth={2} />
-          </div>
-          <span className="text-[10px] font-black tracking-tighter text-gray-600">エリア検索</span>
-        </button>
-
-        {/* Map Search */}
-        <button className="group flex flex-col items-center gap-2">
-          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[1.2rem] bg-[#FFEAEF] text-[#E65C7B] shadow-sm transition-transform group-hover:scale-105">
-            <Map size={26} strokeWidth={2} />
-          </div>
-          <span className="text-[10px] font-black tracking-tighter text-gray-600">
-            地図から探す
-          </span>
-        </button>
-
-        {/* Coupon */}
-        <button className="group flex flex-col items-center gap-2">
-          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-[1.2rem] bg-[#FFEAEF] text-[#E65C7B] shadow-sm transition-transform group-hover:scale-105">
-            <Ticket size={26} strokeWidth={2} />
-          </div>
-          <span className="text-[10px] font-black tracking-tighter text-gray-600">クーポン</span>
-        </button>
-
-        {/* Ranking */}
-        <button className="group flex flex-col items-center gap-2">
-          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#FFEAEF] text-[#E65C7B] shadow-sm transition-transform group-hover:scale-105">
-            <Star size={26} strokeWidth={2} />
-          </div>
-          <span className="text-[10px] font-black tracking-tighter text-gray-600">ランキング</span>
-        </button>
-
-        {/* Detailed Search */}
-        <button className="group flex flex-col items-center gap-2">
-          <div className="flex h-[56px] w-[56px] items-center justify-center rounded-full bg-[#FFEAEF] text-[#E65C7B] shadow-sm transition-transform group-hover:scale-105">
-            <Search size={26} strokeWidth={2} />
-          </div>
-          <span className="text-[10px] font-black tracking-tighter text-gray-600">
+            <ListFilter size={20} />
             こだわり検索
-          </span>
-        </button>
+            <ChevronRight
+              size={18}
+              className={`transition-transform duration-300 ${isAccordionOpen ? 'rotate-90' : ''}`}
+            />
+          </button>
+        </div>
+
+        {/* Accordion Content */}
+        <div
+          className={`overflow-hidden transition-all duration-500 ease-in-out ${
+            isAccordionOpen
+              ? 'mt-6 max-h-[1000px] space-y-6 opacity-100 md:mt-8 md:space-y-8'
+              : 'mt-0 max-h-0 space-y-0 opacity-0'
+          }`}
+        >
+          {/* Quick Tags */}
+          <div className="space-y-3">
+            <p className="flex items-center gap-1.5 pl-1 text-[11px] font-black uppercase tracking-widest text-gray-500">
+              <Zap size={14} className="fill-amber-500 text-amber-500" /> 人気の条件から即検索
+            </p>
+            <div className="flex gap-2.5 overflow-x-auto px-1 pb-2 scrollbar-hide">
+              {POPULAR_TAGS.map((tag, idx) => (
+                <button
+                  key={idx}
+                  className={`flex-shrink-0 rounded-full border px-5 py-2.5 text-xs font-black transition-all active:scale-95 ${
+                    activeFilters.tags.includes(tag)
+                      ? 'border-[#40C4C9] bg-[#40C4C9] text-white shadow-md shadow-cyan-400/20'
+                      : 'border-gray-200 bg-white text-gray-600 hover:border-[#40C4C9] hover:bg-cyan-50'
+                  }`}
+                  onClick={() => toggleTag(tag)}
+                >
+                  {tag}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* 4 Big Buttons */}
+          <div className="grid grid-cols-2 gap-3 px-1 md:grid-cols-4 md:gap-4">
+            {/* Area */}
+            <button
+              onClick={() => setIsAreaModalOpen(true)}
+              className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-[#40C4C9] hover:bg-cyan-50/30 active:scale-95 md:p-6"
+            >
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 shadow-sm transition-transform group-hover:scale-110">
+                <MapPin size={26} strokeWidth={2.5} className="text-[#40C4C9]" />
+              </div>
+              <span className="text-xs font-black tracking-tighter text-gray-700 md:text-sm">
+                エリアで探す
+              </span>
+            </button>
+
+            {/* Purpose */}
+            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-indigo-400 hover:bg-indigo-50/30 active:scale-95 md:p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 shadow-sm transition-transform group-hover:scale-110">
+                <Heart size={26} strokeWidth={2.5} className="text-indigo-500" />
+              </div>
+              <span className="text-xs font-black tracking-tighter text-gray-700 md:text-sm">
+                目的で探す
+              </span>
+            </button>
+
+            {/* Price */}
+            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-50/30 active:scale-95 md:p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 shadow-sm transition-transform group-hover:scale-110">
+                <Wallet size={26} strokeWidth={2.5} className="text-emerald-500" />
+              </div>
+              <span className="text-xs font-black tracking-tighter text-gray-700 md:text-sm">
+                金額で探す
+              </span>
+            </button>
+
+            {/* Amenities */}
+            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-50/30 active:scale-95 md:p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 shadow-sm transition-transform group-hover:scale-110">
+                <Sparkles size={26} strokeWidth={2.5} className="text-rose-500" />
+              </div>
+              <span className="text-xs font-black tracking-tighter text-gray-700 md:text-sm">
+                設備で探す
+              </span>
+            </button>
+          </div>
+
+          {/* Search Button */}
+          <div className="pt-2">
+            <button
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-[#4EA2F0] py-4 text-base font-black text-white shadow-xl shadow-blue-300/40 transition-all hover:brightness-105 active:scale-[0.98] md:py-5 md:text-lg"
+              onClick={handleSearch}
+            >
+              <Search size={22} strokeWidth={2.5} />
+              この条件で検索する
+            </button>
+          </div>
+        </div>
       </div>
 
       <AreaSearchModal isOpen={isAreaModalOpen} onClose={() => setIsAreaModalOpen(false)} />
