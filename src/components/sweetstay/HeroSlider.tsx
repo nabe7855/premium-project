@@ -1,6 +1,7 @@
 'use client';
 
 import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import Image from 'next/image';
 import React, { useEffect, useState } from 'react';
 
@@ -38,57 +39,77 @@ const HeroSlider: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
+  const nextSlide = () => setIndex((prev) => (prev + 1) % BANNERS.length);
+  const prevSlide = () => setIndex((prev) => (prev - 1 + BANNERS.length) % BANNERS.length);
+
   return (
-    <div className="relative h-[60vh] w-full overflow-hidden md:h-[70vh]">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={BANNERS[index].id}
-          initial={{ opacity: 0, scale: 1.1 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.5, ease: 'easeOut' }}
-          className="absolute inset-0"
-        >
-          <Image
-            src={BANNERS[index].image}
-            alt={BANNERS[index].title}
-            fill
-            className="object-cover"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-white" />
-        </motion.div>
-      </AnimatePresence>
+    <section className="container mx-auto px-4 pb-16 pt-10 md:px-6">
+      <div className="flex flex-col gap-6">
+        {/* Banner Image Area */}
+        <div className="relative aspect-[16/8] w-full overflow-hidden rounded-[2.5rem] bg-rose-50 shadow-xl md:aspect-[21/9]">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={BANNERS[index].id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8, ease: 'easeInOut' }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={BANNERS[index].image}
+                alt={BANNERS[index].title}
+                fill
+                className="object-cover"
+                priority
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-      <div className="container relative z-10 flex h-full flex-col justify-center px-4 md:px-6">
-        <motion.div
-          key={`text-${BANNERS[index].id}`}
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="max-w-2xl"
-        >
-          <h2 className="mb-4 font-serif text-4xl font-bold leading-tight text-white md:text-6xl">
-            {BANNERS[index].title}
-          </h2>
-          <p className="text-lg font-medium tracking-widest text-white/90 md:text-2xl">
-            {BANNERS[index].subtitle}
-          </p>
-        </motion.div>
-      </div>
+        {/* Info & Controls Area */}
+        <div className="flex items-end justify-between px-2">
+          {/* Left: Info */}
+          <div className="flex flex-col gap-1">
+            <motion.span
+              key={`tag-${BANNERS[index].id}`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xs font-black uppercase tracking-widest text-[#3d7a64]"
+            >
+              Recommend
+            </motion.span>
+            <motion.h2
+              key={`title-${BANNERS[index].id}`}
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-2xl font-black tracking-tight text-gray-800 md:text-3xl"
+            >
+              {BANNERS[index].title}
+            </motion.h2>
+          </div>
 
-      {/* Progress Indicators */}
-      <div className="absolute bottom-12 left-1/2 flex -translate-x-1/2 gap-3">
-        {BANNERS.map((_, i) => (
-          <div
-            key={i}
-            className={`h-1.5 rounded-full transition-all duration-500 ${
-              i === index ? 'w-8 bg-white' : 'w-2 bg-white/40'
-            }`}
-          />
-        ))}
+          {/* Right: Controls */}
+          <div className="flex items-center gap-3">
+            <button
+              onClick={prevSlide}
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#3d7a64] text-white shadow-lg transition-all hover:scale-105 active:scale-95"
+              aria-label="Previous slide"
+            >
+              <ChevronLeft size={24} />
+            </button>
+            <button
+              onClick={nextSlide}
+              className="flex h-12 w-12 items-center justify-center rounded-full bg-[#3d7a64] text-white shadow-lg transition-all hover:scale-105 active:scale-95"
+              aria-label="Next slide"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 
