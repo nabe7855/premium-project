@@ -70,9 +70,9 @@ export const getHotels = async (filters?: {
       lh_prefectures(name),
       lh_cities(name),
       lh_areas(name),
-      lh_hotel_amenities(lh_amenities(*)),
-      lh_hotel_services(lh_services(*)),
-      lh_hotel_purposes(lh_purposes(*)),
+      lh_hotel_amenities(amenity_id, lh_amenities(*)),
+      lh_hotel_services(service_id, lh_services(*)),
+      lh_hotel_purposes(purpose_id, lh_purposes(*)),
       lh_hotel_images(*)
     `;
 
@@ -82,9 +82,9 @@ export const getHotels = async (filters?: {
       lh_prefectures(name),
       lh_cities(name),
       lh_areas(name),
-      lh_hotel_amenities(lh_amenities(*)),
-      lh_hotel_services(lh_services(*)),
-      lh_hotel_purposes!inner(lh_purposes(*)),
+      lh_hotel_amenities(amenity_id, lh_amenities(*)),
+      lh_hotel_services(service_id, lh_services(*)),
+      lh_hotel_purposes!inner(purpose_id, lh_purposes(*)),
       lh_hotel_images(*)
     `;
   }
@@ -150,9 +150,9 @@ export const getHotelById = async (id: string) => {
       lh_prefectures(name),
       lh_cities(name),
       lh_areas(name),
-      lh_hotel_amenities(lh_amenities(*)),
-      lh_hotel_services(lh_services(*)),
-      lh_hotel_purposes(lh_purposes(*)),
+      lh_hotel_amenities(amenity_id, lh_amenities(*)),
+      lh_hotel_services(service_id, lh_services(*)),
+      lh_hotel_purposes(purpose_id, lh_purposes(*)),
       lh_hotel_images(*)
     `,
     )

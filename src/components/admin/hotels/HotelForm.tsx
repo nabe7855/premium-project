@@ -155,9 +155,21 @@ export default function HotelForm({ id }: HotelFormProps) {
         status: hotel.status || 'draft',
         price_details: hotel.price_details || [],
       });
-      setSelectedAmenities(hotel.lh_hotel_amenities.map((a: any) => a.amenity_id));
-      setSelectedServices(hotel.lh_hotel_services.map((s: any) => s.service_id));
-      setSelectedPurposes(hotel.lh_hotel_purposes.map((p: any) => p.purpose_id));
+      setSelectedAmenities(
+        hotel.lh_hotel_amenities
+          ?.map((a: any) => a.amenity_id || a.lh_amenities?.id)
+          .filter(Boolean) || [],
+      );
+      setSelectedServices(
+        hotel.lh_hotel_services
+          ?.map((s: any) => s.service_id || s.lh_services?.id)
+          .filter(Boolean) || [],
+      );
+      setSelectedPurposes(
+        hotel.lh_hotel_purposes
+          ?.map((p: any) => p.purpose_id || p.lh_purposes?.id)
+          .filter(Boolean) || [],
+      );
       setImages(
         hotel.lh_hotel_images.map((img: any) => ({
           id: img.id,
