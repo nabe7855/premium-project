@@ -15,6 +15,8 @@ import {
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import AreaSearchModal from './AreaSearchModal';
+import DetailedSearchModal from './DetailedSearchModal';
+import PriceSearchModal from './PriceSearchModal';
 
 const POPULAR_TAGS = ['女子会', '露天風呂', '格安', 'サウナ', '駅チカ', 'VOD'];
 
@@ -23,20 +25,26 @@ const TabelogSearch: React.FC = () => {
   const [purposes, setPurposes] = useState<Purpose[]>([]);
 
   const [isAccordionOpen, setIsAccordionOpen] = useState(false);
-  const [isAreaModalOpen, setIsAreaModalOpen] = useState(false);
+  const [activeModal, setActiveModal] = useState<'area' | 'purpose' | 'amenity' | 'price' | null>(
+    null,
+  );
 
   const [activeFilters, setActiveFilters] = useState<{
     tags: string[];
-    area: string;
-    price: string;
-    purpose: string;
-    amenity: string;
+    areaId: string;
+    cityIds: string[];
+    priceRange: [number, number];
+    dayType: 'weekday' | 'weekend' | 'holiday';
+    purposeIds: string[];
+    amenityIds: string[];
   }>({
     tags: [],
-    area: '',
-    price: '',
-    purpose: '',
-    amenity: '',
+    areaId: '',
+    cityIds: [],
+    priceRange: [0, 30000],
+    dayType: 'weekday',
+    purposeIds: [],
+    amenityIds: [],
   });
 
   const router = useRouter();
@@ -48,8 +56,15 @@ const TabelogSearch: React.FC = () => {
   const handleSearch = () => {
     const params = new URLSearchParams();
     if (keyword.trim()) params.append('q', keyword.trim());
-    if (activeFilters.purpose) params.append('purpose', activeFilters.purpose);
+    if (activeFilters.purposeIds.length > 0)
+      params.append('purposes', activeFilters.purposeIds.join(','));
+    if (activeFilters.amenityIds.length > 0)
+      params.append('amenities', activeFilters.amenityIds.join(','));
     if (activeFilters.tags.length > 0) params.append('tags', activeFilters.tags.join(','));
+
+    params.append('min_price', activeFilters.priceRange[0].toString());
+    params.append('max_price', activeFilters.priceRange[1].toString());
+    params.append('day_type', activeFilters.dayType);
 
     router.push(`/sweetstay/search?${params.toString()}`);
   };
@@ -58,6 +73,13 @@ const TabelogSearch: React.FC = () => {
     setActiveFilters((prev) => ({
       ...prev,
       tags: prev.tags.includes(tag) ? prev.tags.filter((t) => t !== tag) : [...prev.tags, tag],
+    }));
+  };
+
+  const toggleFilterId = (key: 'purposeIds' | 'amenityIds', id: string) => {
+    setActiveFilters((prev) => ({
+      ...prev,
+      [key]: prev[key].includes(id) ? prev[key].filter((i) => i !== id) : [...prev[key], id],
     }));
   };
 
@@ -131,7 +153,7 @@ const TabelogSearch: React.FC = () => {
           <div className="grid grid-cols-2 gap-3 px-1 md:grid-cols-4 md:gap-4">
             {/* Area */}
             <button
-              onClick={() => setIsAreaModalOpen(true)}
+              onClick={() => setActiveModal('area')}
               className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-[#40C4C9] hover:bg-cyan-50/30 active:scale-95 md:p-6"
             >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-cyan-50 shadow-sm transition-transform group-hover:scale-110">
@@ -143,7 +165,14 @@ const TabelogSearch: React.FC = () => {
             </button>
 
             {/* Purpose */}
-            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-indigo-400 hover:bg-indigo-50/30 active:scale-95 md:p-6">
+            <button
+              onClick={() => setActiveModal('purpose')}
+              className={`group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 p-5 shadow-sm transition-all active:scale-95 md:p-6 ${
+                activeFilters.purposeIds.length > 0
+                  ? 'border-indigo-400 bg-indigo-50/30'
+                  : 'border-slate-100 bg-white hover:border-indigo-400 hover:bg-indigo-50/30'
+              }`}
+            >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 shadow-sm transition-transform group-hover:scale-110">
                 <Heart size={26} strokeWidth={2.5} className="text-indigo-500" />
               </div>
@@ -153,7 +182,14 @@ const TabelogSearch: React.FC = () => {
             </button>
 
             {/* Price */}
-            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-emerald-400 hover:bg-emerald-50/30 active:scale-95 md:p-6">
+            <button
+              onClick={() => setActiveModal('price')}
+              className={`group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 p-5 shadow-sm transition-all active:scale-95 md:p-6 ${
+                activeFilters.priceRange[1] < 30000
+                  ? 'border-emerald-400 bg-emerald-50/30'
+                  : 'border-slate-100 bg-white hover:border-emerald-400 hover:bg-emerald-50/30'
+              }`}
+            >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-50 shadow-sm transition-transform group-hover:scale-110">
                 <Wallet size={26} strokeWidth={2.5} className="text-emerald-500" />
               </div>
@@ -163,7 +199,14 @@ const TabelogSearch: React.FC = () => {
             </button>
 
             {/* Amenities */}
-            <button className="group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-rose-400 hover:bg-rose-50/30 active:scale-95 md:p-6">
+            <button
+              onClick={() => setActiveModal('amenity')}
+              className={`group flex flex-col items-center justify-center gap-3 rounded-[1.5rem] border-2 p-5 shadow-sm transition-all active:scale-95 md:p-6 ${
+                activeFilters.amenityIds.length > 0
+                  ? 'border-rose-400 bg-rose-50/30'
+                  : 'border-slate-100 bg-white hover:border-rose-400 hover:bg-rose-50/30'
+              }`}
+            >
               <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-rose-50 shadow-sm transition-transform group-hover:scale-110">
                 <Sparkles size={26} strokeWidth={2.5} className="text-rose-500" />
               </div>
@@ -186,7 +229,26 @@ const TabelogSearch: React.FC = () => {
         </div>
       </div>
 
-      <AreaSearchModal isOpen={isAreaModalOpen} onClose={() => setIsAreaModalOpen(false)} />
+      <AreaSearchModal isOpen={activeModal === 'area'} onClose={() => setActiveModal(null)} />
+      <DetailedSearchModal
+        isOpen={activeModal === 'purpose' || activeModal === 'amenity'}
+        type={activeModal === 'purpose' ? 'purpose' : 'amenity'}
+        onClose={() => setActiveModal(null)}
+        selectedItems={
+          activeModal === 'purpose' ? activeFilters.purposeIds : activeFilters.amenityIds
+        }
+        onSelect={(id) =>
+          toggleFilterId(activeModal === 'purpose' ? 'purposeIds' : 'amenityIds', id)
+        }
+      />
+      <PriceSearchModal
+        isOpen={activeModal === 'price'}
+        onClose={() => setActiveModal(null)}
+        priceRange={activeFilters.priceRange}
+        onPriceChange={(range) => setActiveFilters((prev) => ({ ...prev, priceRange: range }))}
+        dayType={activeFilters.dayType}
+        onDayTypeChange={(dt) => setActiveFilters((prev) => ({ ...prev, dayType: dt }))}
+      />
     </div>
   );
 };
