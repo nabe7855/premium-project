@@ -1,5 +1,6 @@
+import HeroSlider from '@/components/sweetstay/HeroSlider';
 import HotelCard from '@/components/sweetstay/HotelCard';
-import SweetStayHero from '@/components/sweetstay/SweetStayHero';
+import QuickNav from '@/components/sweetstay/QuickNav';
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import Link from 'next/link';
 
@@ -16,16 +17,16 @@ export default async function SweetStayPortalPage() {
     { id: 'Tokyo', name: '東京', count: 50, link: '/sweetstay/area/tokyo' },
   ];
 
-  // Using the generated premium image
-  const heroBackgroundImage = '/sweet_stay_hero_bg_1772669990312.png';
-
   return (
-    <div className="duration-500 animate-in fade-in">
-      {/* Premium Hero Section */}
-      <SweetStayHero backgroundImage={heroBackgroundImage} />
+    <div className="bg-[#FFF8F6] duration-500 animate-in fade-in">
+      {/* Premium Hero Slider Section */}
+      <HeroSlider />
+
+      {/* Quick Navigation Panel */}
+      <QuickNav />
 
       {/* Featured Picks */}
-      <section className="bg-gray-50 py-24">
+      <section className="bg-white/50 py-24 backdrop-blur-sm">
         <div className="container mx-auto px-4 md:px-6">
           <div className="mb-16 flex items-end justify-between">
             <div>
@@ -91,32 +92,33 @@ export default async function SweetStayPortalPage() {
       </section>
 
       {/* Brand Integration Banner */}
-      <section className="relative overflow-hidden bg-gray-900 py-32">
-        <div className="pointer-events-none absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-rose-600/20 to-transparent"></div>
+      <section className="relative overflow-hidden bg-white/40 py-32 backdrop-blur-md">
+        <div className="pointer-events-none absolute left-0 top-0 h-full w-full bg-[radial-gradient(circle_at_50%_50%,rgba(255,139,167,0.1),transparent)]"></div>
         <div className="container relative z-10 mx-auto px-4 md:px-6">
           <div className="flex flex-col items-center text-center">
-            <div className="mb-8 flex h-16 w-16 rotate-12 transform items-center justify-center rounded-3xl bg-white shadow-xl shadow-rose-900/50">
-              <span className="text-3xl font-black text-rose-600">❤</span>
+            <div className="mb-8 flex h-20 w-20 rotate-12 transform items-center justify-center rounded-[2.5rem] bg-white shadow-2xl shadow-rose-200/50 transition-transform duration-700 hover:rotate-0">
+              <span className="text-4xl">🍓</span>
             </div>
-            <h2 className="mb-8 max-w-2xl text-5xl font-black leading-tight text-white">
+            <h2 className="premium-gradient-text mb-8 max-w-2xl text-5xl font-black leading-tight tracking-tight md:text-6xl">
               出会いから滞在まで。
               <br />
               あなたの時間をデザインする。
             </h2>
-            <p className="mb-12 max-w-xl text-lg font-medium text-gray-400">
+            <p className="mb-12 max-w-xl text-lg font-medium leading-relaxed text-[#4A4A4A]">
               Sweet Stayはイケオ・イケジョと完全に連携。
+              <br className="hidden md:block" />
               セラピストたちが推奨するホテルで、最高のマッチング体験を。
             </p>
-            <div className="flex gap-4">
+            <div className="flex flex-wrap justify-center gap-6">
               <Link
                 href="/ikeo"
-                className="flex h-12 items-center rounded-xl bg-rose-600 px-8 text-xs font-black text-white transition-colors hover:bg-rose-500"
+                className="group flex h-16 items-center rounded-full bg-[#FF8BA7] px-10 text-xs font-black uppercase tracking-widest text-white shadow-xl shadow-rose-200/50 transition-all hover:scale-105 hover:bg-rose-400 active:scale-95"
               >
                 Ikeo for Men
               </Link>
               <Link
                 href="/ikejo"
-                className="flex h-12 items-center rounded-xl bg-white px-8 text-xs font-black text-gray-900 transition-colors hover:bg-gray-100"
+                className="group flex h-16 items-center rounded-full border-2 border-rose-100 bg-white px-10 text-xs font-black uppercase tracking-widest text-[#FF8BA7] shadow-xl shadow-rose-100/30 transition-all hover:scale-105 hover:border-rose-300 hover:bg-rose-50 active:scale-95"
               >
                 Ikejo for Women
               </Link>
