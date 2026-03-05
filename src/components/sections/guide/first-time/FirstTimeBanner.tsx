@@ -25,7 +25,7 @@ export const FirstTimeBanner: React.FC<FirstTimeBannerProps> = ({
   if (data.isVisible === false && !isEditing) return null;
 
   return (
-    <section className={`w-full bg-white ${!data.isVisible ? 'opacity-50' : ''}`}>
+    <section className={`w-full ${!data.isVisible ? 'opacity-50' : ''}`}>
       <div className="container mx-auto px-0 md:px-4">
         <div className="relative w-full overflow-hidden md:rounded-2xl">
           <EditableImage

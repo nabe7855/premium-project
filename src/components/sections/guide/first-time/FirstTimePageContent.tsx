@@ -77,13 +77,10 @@ export default function FirstTimePageContent({
   }
 
   return (
-    <div className={`${zenMaruGothic.className} min-h-screen bg-[#FFFAFA]`}>
+    <div className={`${zenMaruGothic.className} min-h-screen bg-[#FFFAFA] pt-[70px] md:pt-[84px]`}>
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        html {
-          scroll-behavior: smooth;
-        }
         @keyframes float {
           0% { transform: translateY(0px); }
           50% { transform: translateY(-10px); }

@@ -40,7 +40,7 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <section
-      className={`relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 pb-20 pt-8 md:pb-32 md:pt-12 ${!data.isVisible ? 'opacity-50' : ''}`}
+      className={`relative overflow-hidden bg-gradient-to-br from-pink-50 via-white to-red-50 pb-16 pt-2 md:pb-32 md:pt-6 ${!data.isVisible ? 'opacity-50' : ''}`}
     >
       <div className="container relative z-10 mx-auto px-4">
         <div className="flex flex-col items-center text-center">
