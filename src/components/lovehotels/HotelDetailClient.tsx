@@ -981,30 +981,41 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                               </div>
                             </div>
 
-                            {/* Detailed metrics (Optional small dots/bars) */}
-                            <div className="mb-8 flex flex-wrap gap-x-8 gap-y-4 rounded-3xl bg-gray-50/50 p-6">
-                              {[
-                                { label: '清掃', score: review.cleanliness },
-                                { label: '接客', score: review.service },
-                                { label: '部屋', score: review.rooms },
-                                { label: '価格', score: review.value },
-                                { label: 'デザイン', score: review.design },
-                                { label: '設備', score: review.facilities },
-                              ].map((item, idx) => (
-                                <div key={idx} className="flex flex-col gap-1.5">
-                                  <span className="text-[8px] font-black uppercase tracking-wider text-gray-400">
-                                    {item.label}
-                                  </span>
-                                  <div className="flex gap-0.5">
-                                    {[1, 2, 3, 4, 5].map((v) => (
-                                      <div
-                                        key={v}
-                                        className={`h-1 w-2.5 rounded-full ${v <= (item.score || 0) ? 'bg-rose-400' : 'bg-gray-200'}`}
-                                      />
-                                    ))}
+                            {/* Dynamic Evaluation Badges (Premium Enhancement) */}
+                            <div className="mb-8 flex flex-wrap gap-2 text-[8px] font-black uppercase tracking-widest">
+                              {review.rating === 5 && (
+                                <span className="flex items-center gap-1 rounded-full bg-rose-500 px-3 py-1.5 text-white shadow-lg shadow-rose-200 ring-1 ring-rose-400">
+                                  ✨ Exceptional Experience
+                                </span>
+                              )}
+                              {review.cleanliness === 5 && (
+                                <span className="flex items-center gap-1 rounded-full bg-emerald-500 px-3 py-1.5 text-white shadow-lg shadow-emerald-100 ring-1 ring-emerald-400">
+                                  💎 Cleanliness Excellent
+                                </span>
+                              )}
+                              {review.service === 5 && (
+                                <span className="flex items-center gap-1 rounded-full bg-amber-500 px-3 py-1.5 text-white shadow-lg shadow-amber-100 ring-1 ring-amber-400">
+                                  🤝 Perfect Service
+                                </span>
+                              )}
+                              <div className="flex-1" /> {/* Spacer */}
+                              <div className="flex gap-4 self-center rounded-2xl bg-gray-50/80 px-4 py-2 backdrop-blur-sm">
+                                {[
+                                  { label: '清掃', score: review.cleanliness },
+                                  { label: '接客', score: review.service },
+                                  { label: '部屋', score: review.rooms },
+                                  { label: '設備', score: review.facilities },
+                                ].map((item, idx) => (
+                                  <div key={idx} className="flex items-center gap-1.5">
+                                    <span className="text-[7px] text-gray-400">{item.label}</span>
+                                    <span
+                                      className={`font-black ${item.score && item.score >= 4 ? 'text-rose-500' : 'text-gray-900'}`}
+                                    >
+                                      {item.score || '-'}
+                                    </span>
                                   </div>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
 
                             {/* Review Content */}
@@ -1039,13 +1050,13 @@ export default function HotelDetailClient({ hotel }: { hotel: Hotel }) {
                             <div className="mt-10 flex items-center justify-between border-t border-gray-50 pt-8">
                               <button
                                 onClick={() => handleHelpfulClick(review.id)}
-                                className="inline-flex items-center gap-2 rounded-2xl bg-gray-50 px-6 py-3 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all hover:bg-rose-50 hover:text-rose-500 active:scale-95"
+                                className="group/btn relative inline-flex items-center gap-2 overflow-hidden rounded-2xl bg-gray-50 px-8 py-3.5 text-[10px] font-black uppercase tracking-widest text-gray-400 transition-all hover:bg-rose-500 hover:text-white hover:shadow-xl hover:shadow-rose-200 active:scale-95"
                               >
-                                <span>👍</span>
-                                <span>参考になった</span>
-                                <span className="ml-1 text-rose-300">
+                                <span className="relative z-10">👍 参考になった</span>
+                                <span className="relative z-10 ml-1 font-black text-rose-300 group-hover/btn:text-rose-100">
                                   {review.helpfulCount || 0}
                                 </span>
+                                <div className="absolute inset-x-0 bottom-0 h-0 w-full bg-gradient-to-t from-rose-600 to-rose-500 transition-all group-hover/btn:h-full" />
                               </button>
 
                               <button className="text-[10px] font-black uppercase tracking-widest text-gray-200 transition-colors hover:text-rose-300">
