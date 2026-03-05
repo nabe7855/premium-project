@@ -1,111 +1,186 @@
 'use client';
 
-import Link from 'next/link';
 import React, { useState } from 'react';
 
 const SNS_ITEMS = [
   {
     id: 1,
     title: 'SNSコレクション',
-    image:
-      'https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&q=80&w=800',
-    bgColor: 'bg-gradient-to-br from-[#E29587] via-[#D66D75] to-[#7D4E68]',
-    overlayText: '公式SNSで最新情報をチェック',
+    isSnsCollection: true,
   },
   {
     id: 2,
     title: '360°パノラマビュー',
     image:
       'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
-    overlayText: 'お部屋を360°見まわせるホテル',
+    overlayText: 'お部屋を360°見まわせる\nラブホテル',
     hasBadge: '360°',
   },
   {
     id: 3,
     title: 'HOTEL AWARD 2026',
+    awardText: true,
+  },
+  {
+    id: 4,
+    title: '女子会特集',
     image:
-      'https://images.unsplash.com/photo-1549463599-3d9730d68922?auto=format&fit=crop&q=80&w=800',
-    overlayText: '投票受付中！ポイントプレゼント',
-    label: 'VOTING NOW',
+      'https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&q=80&w=800',
+    overlayText: '女子会にオススメの\nホテル特集',
+  },
+  {
+    id: 5,
+    title: '露天風呂付き客室',
+    image:
+      'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
+    overlayText: '露天風呂がある\nプレミアムホテル',
   },
 ];
 
 const SecondaryBannerSlider: React.FC = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
 
+  // Shift the array so the currentIndex is first
+  const visibleItems = [...SNS_ITEMS.slice(currentIndex), ...SNS_ITEMS.slice(0, currentIndex)];
+
+  const activeItem = visibleItems[0];
+  const restItems = visibleItems.slice(1);
+
+  const renderSlideContent = (item: (typeof SNS_ITEMS)[0]) => {
+    if (item.isSnsCollection) {
+      return (
+        <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#8C83E5] via-[#A993E5] to-[#EEA1C7] p-3 md:p-4 lg:p-6">
+          <div className="relative z-10 flex h-[60%] w-[95%] flex-col items-center justify-center rounded-[1px] bg-black ring-2 ring-[#FF8BA7] ring-offset-[-6px]">
+            <div className="mb-1 flex items-center gap-1">
+              <span className="text-sm font-black text-[#FF8BA7] md:text-base">❀ カップルズ</span>
+            </div>
+            <span className="text-2xl font-black italic tracking-tighter text-white md:text-3xl lg:text-4xl">
+              SNSコレクション
+            </span>
+          </div>
+        </div>
+      );
+    }
+    if (item.hasBadge) {
+      return (
+        <div className="relative h-full w-full bg-gray-900">
+          <img
+            src={item.image}
+            alt={item.title}
+            className="h-full w-full object-cover opacity-80"
+          />
+          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-2 pb-2 pt-8 text-center">
+            <p className="whitespace-pre-line text-[11px] font-bold leading-tight text-white md:text-sm">
+              {item.overlayText}
+            </p>
+          </div>
+          <div className="absolute left-1/2 top-1/2 flex h-16 w-24 -translate-x-1/2 -translate-y-[60%] items-center justify-center rounded-full border-[5px] border-black bg-white shadow-lg md:h-20 md:w-[120px]">
+            <span className="mr-1 text-2xl font-black italic tracking-tighter text-black md:text-4xl">
+              360°
+            </span>
+          </div>
+        </div>
+      );
+    }
+    if (item.awardText) {
+      return (
+        <div className="relative flex h-full w-full flex-col">
+          {/* top graphic */}
+          <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFF5C3] via-[#FFE259] to-[#FFA751] p-2">
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-white/60 to-transparent opacity-40 mix-blend-overlay" />
+            <p className="z-10 mb-[-2px] text-[10px] font-bold tracking-widest text-black md:text-xs">
+              COUPLES
+            </p>
+            <p className="z-10 mb-[-4px] text-sm font-black tracking-wider text-black md:text-base">
+              HOTEL AWARD
+            </p>
+            <p className="z-10 text-2xl font-black tracking-widest text-black md:text-3xl lg:text-4xl">
+              2026
+            </p>
+            <div className="relative z-10 mt-1 rounded-sm bg-gradient-to-r from-[#8e0e00] to-[#1f1c18] px-6 py-1 text-xs font-bold text-white shadow-md md:py-1.5 md:text-sm">
+              投票受付中
+            </div>
+          </div>
+          {/* bottom bar */}
+          <div className="relative z-10 flex h-10 w-full shrink-0 items-center justify-center gap-1.5 bg-black px-2 text-white md:h-12">
+            <div className="flex h-5 w-5 items-center justify-center rounded-full bg-[#FFE259] text-[10px] font-black text-black md:h-6 md:w-6">
+              P
+            </div>
+            <span className="flex items-baseline gap-0.5 text-xl font-black italic text-[#FFE259] md:text-2xl">
+              1,000<span className="text-[10px] font-bold not-italic">円分</span>
+            </span>
+            <span className="text-left text-[9px] font-bold leading-[1.2] text-white md:text-[10px]">
+              カップルズポイント
+              <br />
+              プレゼント!!
+            </span>
+          </div>
+        </div>
+      );
+    }
+
+    // default for other items
+    return (
+      <div className="relative h-full w-full bg-gray-900">
+        <img src={item.image} alt={item.title} className="h-full w-full object-cover opacity-80" />
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 pb-2 pt-8 text-center">
+          <p className="whitespace-pre-line text-[11px] font-bold leading-tight text-white md:text-sm">
+            {item.overlayText}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <section className="container mx-auto mb-12 px-4 md:px-6">
-      <div className="mb-4 flex w-fit items-center gap-2 border-b-2 border-[#D66D75] pb-2 pr-8">
-        <span className="text-xs text-[#D66D75]">◀</span>
-        <h2 className="text-sm font-black tracking-tight text-gray-800">
-          Sweet Stay SNSコレクション
-        </h2>
+    <section className="container mx-auto mb-16 px-4 md:px-6">
+      <div className="flex flex-col items-stretch gap-4 md:flex-row md:gap-5">
+        {/* Left: Active Item (Main) */}
+        <div className="w-full flex-shrink-0 md:w-[45%] lg:w-[40%]">
+          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[2px] border border-gray-200 shadow-sm transition-all duration-300 sm:aspect-[4/3]">
+            {renderSlideContent(activeItem)}
+          </div>
+        </div>
+
+        {/* Right: Info & Other Items */}
+        <div className="flex w-full flex-col overflow-hidden py-1 md:w-[55%] lg:w-[60%]">
+          {/* Header / Title */}
+          <div className="mb-4 flex w-full flex-shrink-0 items-center gap-2 border-b-[3px] border-[#EB4E5A] pb-2">
+            <span className="text-xs text-[#EB4E5A]">◀</span>
+            <h2 className="text-lg font-bold tracking-tight text-gray-800 md:text-xl">
+              カップルズSNSコレクション
+            </h2>
+          </div>
+
+          {/* Rest of the items */}
+          <div className="flex snap-x items-start gap-3 overflow-x-auto pb-4 scrollbar-hide">
+            {restItems.map((item, idx) => (
+              <div
+                key={`${item.id}-${idx}`}
+                onClick={() => setCurrentIndex(SNS_ITEMS.findIndex((i) => i.id === item.id))}
+                className="w-[180px] flex-shrink-0 cursor-pointer snap-start transition-transform hover:opacity-90 active:scale-95 md:w-[220px] lg:w-[250px]"
+              >
+                <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[2px] border border-gray-200 shadow-sm">
+                  {renderSlideContent(item)}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      <div className="relative overflow-hidden">
-        <div className="flex snap-x gap-4 overflow-x-auto pb-6 scrollbar-hide">
-          {SNS_ITEMS.map((item, idx) => (
-            <div key={item.id} className="w-[280px] flex-shrink-0 snap-start md:w-[320px]">
-              <Link href="#" className="group block">
-                <div
-                  className={`relative aspect-[16/9] overflow-hidden rounded-2xl shadow-sm transition-all group-hover:shadow-md ${item.bgColor || 'bg-gray-100'}`}
-                >
-                  {item.bgColor ? (
-                    <div
-                      className={`absolute inset-0 ${item.bgColor} flex items-center justify-center p-6`}
-                    >
-                      <div className="flex flex-col items-center">
-                        <span className="mb-1 text-[10px] font-black tracking-widest text-white opacity-80">
-                          公式
-                        </span>
-                        <span className="text-xl font-black italic tracking-tighter text-white">
-                          SNS COLLECTION
-                        </span>
-                      </div>
-                    </div>
-                  ) : (
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  )}
-
-                  {/* Overlay for all */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-
-                  <div className="absolute bottom-0 left-0 right-0 p-3">
-                    <p className="text-[11px] font-bold leading-tight text-white">
-                      {item.overlayText}
-                    </p>
-                  </div>
-
-                  {item.hasBadge && (
-                    <div className="absolute left-1/2 top-1/2 flex h-14 w-14 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-white/40 bg-white/20 backdrop-blur-md">
-                      <span className="text-xs font-black text-white">{item.hasBadge}</span>
-                    </div>
-                  )}
-
-                  {item.label && (
-                    <div className="absolute right-3 top-3 rounded bg-red-600 px-2 py-0.5 text-[8px] font-black text-white">
-                      {item.label}
-                    </div>
-                  )}
-                </div>
-              </Link>
-            </div>
-          ))}
-        </div>
-
-        {/* Indicators */}
-        <div className="mt-2 flex justify-center gap-2">
-          {SNS_ITEMS.map((_, i) => (
-            <div
-              key={i}
-              className={`h-1.5 w-1.5 rounded-full transition-all ${i === 0 ? 'w-3 bg-gray-800' : 'bg-gray-300'}`}
-            />
-          ))}
-        </div>
+      {/* Dots (Pagination) */}
+      <div className="mt-4 flex justify-center gap-3">
+        {SNS_ITEMS.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`h-3 w-3 rounded-full transition-all ${
+              currentIndex === i ? 'w-4 bg-gray-800' : 'bg-gray-400 hover:bg-gray-500'
+            }`}
+            aria-label={`Go to slide ${i + 1}`}
+          />
+        ))}
       </div>
     </section>
   );
