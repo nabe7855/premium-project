@@ -84,7 +84,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
 
         <div className="px-2 md:px-8">
           <ul className="flex flex-col">
-            {sortedNewsPages.map((page: PageData, idx: number) => (
+            {sortedNewsPages.slice(0, 5).map((page: PageData, idx: number) => (
               <li
                 key={page.id}
                 className="group relative flex items-center justify-between border-b border-slate-300 py-4 transition-colors hover:bg-white/50"
