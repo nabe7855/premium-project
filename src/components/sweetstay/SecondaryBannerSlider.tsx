@@ -5,12 +5,12 @@ import React, { useState } from 'react';
 const SNS_ITEMS = [
   {
     id: 1,
-    title: 'SNSコレクション',
+    title: 'カップルズSNSコレクション',
     isSnsCollection: true,
   },
   {
     id: 2,
-    title: '360°パノラマビュー',
+    title: '360°見まわせるホテル',
     image:
       'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
     overlayText: 'お部屋を360°見まわせる\nラブホテル',
@@ -18,19 +18,19 @@ const SNS_ITEMS = [
   },
   {
     id: 3,
-    title: 'HOTEL AWARD 2026',
+    title: 'COUPLES HOTEL AWARD 2026',
     awardText: true,
   },
   {
     id: 4,
-    title: '女子会特集',
+    title: '女子会にオススメのホテル特集',
     image:
       'https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&q=80&w=800',
     overlayText: '女子会にオススメの\nホテル特集',
   },
   {
     id: 5,
-    title: '露天風呂付き客室',
+    title: '露天風呂があるプレミアムホテル',
     image:
       'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
     overlayText: '露天風呂がある\nプレミアムホテル',
@@ -134,31 +134,31 @@ const SecondaryBannerSlider: React.FC = () => {
 
   return (
     <section className="container mx-auto mb-16 px-4 md:px-6">
-      <div className="flex flex-col items-stretch gap-4 md:flex-row md:gap-5">
+      <div className="flex snap-x flex-row items-end gap-3 overflow-x-auto pb-4 scrollbar-hide md:gap-5">
         {/* Left: Active Item (Main) */}
-        <div className="w-full flex-shrink-0 md:w-[45%] lg:w-[40%]">
-          <div className="relative aspect-[5/4] w-full overflow-hidden rounded-[2px] border border-gray-200 shadow-sm transition-all duration-300 sm:aspect-[4/3]">
+        <div className="w-[80vw] flex-shrink-0 snap-start md:w-[45%] lg:w-[40%]">
+          <div className="relative aspect-[4/3] w-full overflow-hidden rounded-[4px] border border-gray-200 shadow-sm transition-all duration-300">
             {renderSlideContent(activeItem)}
           </div>
         </div>
 
         {/* Right: Info & Other Items */}
-        <div className="flex w-full flex-col overflow-hidden py-1 md:w-[55%] lg:w-[60%]">
+        <div className="flex flex-shrink-0 flex-col justify-end">
           {/* Header / Title */}
-          <div className="mb-4 flex w-full flex-shrink-0 items-center gap-2 border-b-[3px] border-[#EB4E5A] pb-2">
+          <div className="mb-3 flex w-full flex-shrink-0 items-center gap-2 border-b-[3px] border-[#EB4E5A] pb-1.5 md:mb-4 md:pb-2">
             <span className="text-xs text-[#EB4E5A]">◀</span>
-            <h2 className="text-lg font-bold tracking-tight text-gray-800 md:text-xl">
-              カップルズSNSコレクション
+            <h2 className="shrink-0 whitespace-nowrap text-base font-bold tracking-tight text-gray-800 md:text-xl">
+              {activeItem.title}
             </h2>
           </div>
 
           {/* Rest of the items */}
-          <div className="flex snap-x items-start gap-3 overflow-x-auto pb-4 scrollbar-hide">
+          <div className="flex flex-shrink-0 items-start gap-2 md:gap-3">
             {restItems.map((item, idx) => (
               <div
                 key={`${item.id}-${idx}`}
                 onClick={() => setCurrentIndex(SNS_ITEMS.findIndex((i) => i.id === item.id))}
-                className="w-[180px] flex-shrink-0 cursor-pointer snap-start transition-transform hover:opacity-90 active:scale-95 md:w-[220px] lg:w-[250px]"
+                className="w-[45vw] flex-shrink-0 cursor-pointer snap-start transition-transform hover:opacity-90 active:scale-95 sm:w-[160px] md:w-[200px] lg:w-[230px]"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[2px] border border-gray-200 shadow-sm">
                   {renderSlideContent(item)}
@@ -170,7 +170,7 @@ const SecondaryBannerSlider: React.FC = () => {
       </div>
 
       {/* Dots (Pagination) */}
-      <div className="mt-4 flex justify-center gap-3">
+      <div className="mt-2 flex justify-center gap-3 md:mt-4">
         {SNS_ITEMS.map((_, i) => (
           <button
             key={i}
