@@ -17,6 +17,7 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
     '/consent',
     '/survey',
     '/reflection',
+    '/sweetstay',
   ]; // これらの配下すべてでフッター非表示
 
   // ✅ /store/[slug]/recruit も非表示にするための正規表現チェック

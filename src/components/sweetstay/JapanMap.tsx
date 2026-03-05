@@ -137,22 +137,22 @@ interface RegionVisualData {
 }
 
 const REGION_VISUALS: RegionVisualData[] = [
-  { id: 'hokkaido', hue: 230, label: '北海道', labelPos: { x: 806, y: 154 } },
-  { id: 'tohoku', hue: 200, label: '東北', labelPos: { x: 662, y: 442 } },
-  { id: 'kanto', hue: 160, label: '関東', labelPos: { x: 620, y: 645 } },
-  { id: 'chubu', hue: 45, label: '中部', labelPos: { x: 515, y: 633 } },
-  { id: 'kansai', hue: 15, label: '関西', labelPos: { x: 417, y: 718 } },
-  { id: 'chugoku', hue: 340, label: '中国', labelPos: { x: 276, y: 701 } },
-  { id: 'shikoku', hue: 65, label: '四国', labelPos: { x: 310, y: 772 } },
-  { id: 'kyushu', hue: 280, label: '九州', labelPos: { x: 174, y: 700 } },
+  { id: 'hokkaido', hue: 220, label: '北海道', labelPos: { x: 346, y: 239 } },
+  { id: 'tohoku', hue: 190, label: '東北', labelPos: { x: 899, y: 218 } },
+  { id: 'kanto', hue: 275, label: '関東', labelPos: { x: 836, y: 590 } },
+  { id: 'chubu', hue: 145, label: '中部', labelPos: { x: 689, y: 457 } },
+  { id: 'kansai', hue: 42, label: '関西', labelPos: { x: 537, y: 635 } },
+  { id: 'chugoku', hue: 25, label: '中国', labelPos: { x: 319, y: 584 } },
+  { id: 'shikoku', hue: 0, label: '四国', labelPos: { x: 367, y: 717 } },
+  { id: 'kyushu', hue: 330, label: '九州・沖縄', labelPos: { x: 323, y: 800 } },
 ];
 
 const getSlotColor = (hue: number, slot: 'A' | 'B' | 'C' | 'D', isHovered = false) => {
   const variations = {
-    A: { s: 85, l: 55 },
-    B: { s: 60, l: 75 },
-    C: { s: 40, l: 35 },
-    D: { s: 70, l: 45 },
+    A: { s: 90, l: 55 },
+    B: { s: 80, l: 65 },
+    C: { s: 75, l: 45 },
+    D: { s: 85, l: 50 },
   };
   const { s, l } = variations[slot];
   return `hsl(${hue}, ${s}%, ${isHovered ? l + 10 : l}%)`;
@@ -165,17 +165,18 @@ const JapanMap: React.FC<JapanMapProps> = ({
   className = '',
 }) => {
   const [hoveredRegion, setHoveredRegion] = useState<RegionId | null>(null);
-  const nationalViewBox = '-15 -85 1120 1160';
+  const nationalViewBox = '0 0 1000 1000';
   const [currentViewBox, setCurrentViewBox] = useState(nationalViewBox);
 
   useEffect(() => {
     if (selectedRegion) {
       const b = DETAILED_MAP_DATA[selectedRegion.id].bbox;
-      const zoomFactor = selectedRegion.id === 'kyushu' ? 1.1 : 1.3;
-      const w = b.width / zoomFactor;
-      const h = b.height / zoomFactor;
-      const x = b.x + (b.width - w) / 2;
-      const y = b.y + (b.height - h) / 2;
+      // 加えた余白を最小限にし、全県が表示されるように調整
+      const padding = 20;
+      const x = b.x - padding;
+      const y = b.y - padding;
+      const w = b.width + padding * 2;
+      const h = b.height + padding * 2;
       setCurrentViewBox(`${x} ${y} ${w} ${h}`);
     } else {
       setCurrentViewBox(nationalViewBox);
@@ -189,26 +190,24 @@ const JapanMap: React.FC<JapanMapProps> = ({
     }
   };
 
-  const handlePrefClick = (prefName: string, regionId: RegionId) => {
+  const handlePrefClick = (prefCode: string, regionId: RegionId) => {
     const region = REGIONS_DATA.find((r) => r.id === regionId);
     if (!region) return;
 
-    // Find pref object by checking if the name matches or starts with the clicked name
-    // (e.g. "東京都" starts with "東京")
-    const pref = region.prefectures.find(
-      (p) => p.name === prefName || p.name.startsWith(prefName) || prefName.startsWith(p.name),
-    );
+    // codeをゼロ埋め2桁に統一して一致を探す
+    const normalizedCode = prefCode.padStart(2, '0');
+    const pref = region.prefectures.find((p) => p.code === normalizedCode || p.code === prefCode);
     if (pref && onPrefectureSelect) {
       onPrefectureSelect(pref);
     }
   };
 
   return (
-    <div className={`relative w-full overflow-hidden transition-all duration-700 ${className}`}>
+    <div className={`relative h-full w-full transition-all duration-700 ${className}`}>
       <svg
         viewBox={currentViewBox}
         className="duration-[1200ms] h-full w-full transition-all ease-in-out"
-        style={{ filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.1))' }}
+        style={{ filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.12))' }}
       >
         <defs>
           <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
@@ -217,92 +216,92 @@ const JapanMap: React.FC<JapanMapProps> = ({
           </filter>
         </defs>
 
-        {REGION_VISUALS.map((rv) => {
-          const isRegionActive = selectedRegion?.id === rv.id;
-          const isNational = !selectedRegion;
-          const detail = DETAILED_MAP_DATA[rv.id];
+        <g>
+          {REGION_VISUALS.map((rv) => {
+            const isRegionActive = selectedRegion?.id === rv.id;
+            const isNational = !selectedRegion;
+            const detail = DETAILED_MAP_DATA[rv.id];
 
-          // In regional view, we still show other regions but very faded (or hide them)
-          // The reference hides them in municipal, but here we only have regional level.
+            return (
+              <g
+                key={rv.id}
+                className={`transition-all duration-500 ${isNational ? 'cursor-pointer' : ''}`}
+                onClick={() => isNational && handleRegionClick(rv.id)}
+                onMouseEnter={() => isNational && setHoveredRegion(rv.id)}
+                onMouseLeave={() => isNational && setHoveredRegion(null)}
+                opacity={!selectedRegion || isRegionActive ? 1 : 0.1}
+              >
+                {detail.prefectures.map((pref) => {
+                  const isHovered = hoveredRegion === rv.id;
 
-          return (
-            <g
-              key={rv.id}
-              className={`transition-all duration-500 ${isNational ? 'cursor-pointer' : ''}`}
-              onClick={() => isNational && handleRegionClick(rv.id)}
-              onMouseEnter={() => isNational && setHoveredRegion(rv.id)}
-              onMouseLeave={() => isNational && setHoveredRegion(null)}
-              opacity={!selectedRegion || isRegionActive ? 1 : 0.1}
-            >
-              {detail.prefectures.map((pref) => {
-                const isHovered = hoveredRegion === rv.id;
+                  const fillColor = isNational
+                    ? getSlotColor(rv.hue, 'A', isHovered)
+                    : isRegionActive
+                      ? getSlotColor(rv.hue, pref.colorSlot)
+                      : 'rgba(200,200,200,0.2)';
 
-                const fillColor = isNational
-                  ? getSlotColor(rv.hue, 'A', isHovered)
-                  : isRegionActive
-                    ? getSlotColor(rv.hue, pref.colorSlot)
-                    : 'rgba(200,200,200,0.2)';
+                  return (
+                    <path
+                      key={pref.code}
+                      d={pref.path}
+                      onClick={(e) => {
+                        if (!isNational) {
+                          e.stopPropagation();
+                          handlePrefClick(pref.code, rv.id);
+                        }
+                      }}
+                      className={`transition-all duration-700 ease-out ${
+                        !isNational && isRegionActive ? 'cursor-pointer hover:opacity-80' : ''
+                      }`}
+                      fill={fillColor}
+                      stroke="#ffffff"
+                      strokeWidth={isRegionActive ? 1.5 : 0.5}
+                      strokeOpacity={0.8}
+                    />
+                  );
+                })}
 
-                return (
-                  <path
-                    key={pref.code}
-                    d={pref.path}
-                    onClick={(e) => {
-                      if (!isNational) {
-                        e.stopPropagation();
-                        handlePrefClick(pref.name, rv.id);
-                      }
-                    }}
-                    className={`transition-all duration-700 ease-out ${
-                      !isNational && isRegionActive ? 'cursor-pointer hover:opacity-80' : ''
-                    }`}
-                    fill={fillColor}
-                    stroke="#ffffff"
-                    strokeWidth={isRegionActive ? 1.5 : 0.5}
-                    strokeOpacity={0.8}
-                  />
-                );
-              })}
-
-              {/* Region Label (Only in National View) */}
-              {isNational && (
-                <text
-                  x={rv.labelPos.x}
-                  y={rv.labelPos.y}
-                  textAnchor="middle"
-                  className={`pointer-events-none fill-slate-800 text-[24px] font-black transition-all duration-500 ${
-                    hoveredRegion === rv.id ? 'scale-110 opacity-100' : 'opacity-60'
-                  }`}
-                  style={{
-                    textShadow: '0 2px 4px rgba(255,255,255,0.8)',
-                    transformOrigin: `${rv.labelPos.x}px ${rv.labelPos.y}px`,
-                  }}
-                >
-                  {rv.label}
-                </text>
-              )}
-
-              {/* Prefecture Labels (Only in Regional View) */}
-              {!isNational &&
-                isRegionActive &&
-                detail.prefectures.map((pref, idx) => (
+                {/* Region Label (Only in National View) */}
+                {isNational && (
                   <text
-                    key={`label-${pref.code}`}
-                    x={pref.labelPos.x}
-                    y={pref.labelPos.y}
+                    x={rv.labelPos.x}
+                    y={rv.labelPos.y}
                     textAnchor="middle"
-                    className="pointer-events-none fill-white text-[14px] font-black duration-700 animate-in fade-in zoom-in"
+                    className={`pointer-events-none fill-white text-[32px] font-black transition-all duration-500 ${
+                      hoveredRegion === rv.id ? 'scale-110 opacity-100' : 'opacity-100'
+                    }`}
                     style={{
-                      textShadow: '0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8)',
-                      animationDelay: `${idx * 50}ms`,
+                      textShadow: '0 2px 10px rgba(0,0,0,0.6)',
+                      transformOrigin: `${rv.labelPos.x}px ${rv.labelPos.y}px`,
                     }}
                   >
-                    {pref.name}
+                    {rv.label}
                   </text>
-                ))}
-            </g>
-          );
-        })}
+                )}
+
+                {/* Prefecture Labels (Only in Regional View) */}
+                {!isNational &&
+                  isRegionActive &&
+                  detail.prefectures.map((pref, idx) => (
+                    <text
+                      key={`label-${pref.code}`}
+                      x={pref.labelPos.x}
+                      y={pref.labelPos.y}
+                      textAnchor="middle"
+                      className="pointer-events-none fill-white text-[16px] font-black duration-700 animate-in fade-in zoom-in"
+                      style={{
+                        textShadow: '0 0 10px rgba(0,0,0,0.8), 0 0 5px rgba(0,0,0,0.8)',
+                        animationDelay: `${idx * 50}ms`,
+                        transformOrigin: `${pref.labelPos.x}px ${pref.labelPos.y}px`,
+                      }}
+                    >
+                      {pref.name}
+                    </text>
+                  ))}
+              </g>
+            );
+          })}
+        </g>
       </svg>
     </div>
   );

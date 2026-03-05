@@ -105,7 +105,7 @@ export const getHotels = async (filters?: {
   }
   if (filters?.keyword) {
     query = query.or(
-      `name.ilike.%${filters.keyword}%,address.ilike.%${filters.keyword}%,description.ilike.%${filters.keyword}%`,
+      `name.ilike."%${filters.keyword}%",address.ilike."%${filters.keyword}%",description.ilike."%${filters.keyword}%"`,
     );
   }
   if (filters?.status && filters.status.length > 0) {
@@ -362,19 +362,39 @@ export const syncMasterData = async (table: string, names: string[]) => {
   return cleanNames.map((name) => existingMap.get(name)).filter(Boolean) as string[];
 };
 
-export const getPrefectureDetails = async (prefectureId: string) => {
-  const cleanId = prefectureId.trim();
-  // 1. 都道府県情報を取得（IDまたは名前で検索）
-  const { data: prefData } = await supabase
-    .from('lh_prefectures')
-    .select('id, name, description')
-    .or(`id.eq.${cleanId},id.eq." ${cleanId}",name.ilike.%${cleanId}%`)
-    .single();
+export const getPrefectureDetails = async (prefectureSlug: string) => {
+  const cleanSlug = prefectureSlug.trim();
 
-  const targetPrefId = prefData?.id || cleanId;
+  // スラグからDBの都道府県を探す。DBのIDは " Fukuoka" のようにスペース付き英語の可能性あり。
+  // 複数候補を試行する
+  const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1).toLowerCase();
+  const candidateIds = [
+    cleanSlug,
+    ` ${cleanSlug}`,
+    ` ${capitalize(cleanSlug)}`,
+    capitalize(cleanSlug),
+  ];
+
+  let targetPrefId = cleanSlug; // fallback
+  let prefName: string | null = null;
+  let prefDescription: string | null = null;
+
+  for (const candidateId of candidateIds) {
+    const { data } = await supabase
+      .from('lh_prefectures')
+      .select('id, name, description')
+      .eq('id', candidateId)
+      .maybeSingle();
+    if (data) {
+      targetPrefId = data.id;
+      prefName = data.name;
+      prefDescription = data.description;
+      break;
+    }
+  }
 
   // 2. 市区町村とエリアを取得
-  const { data, error } = await supabase
+  const { data: cityData, error: cityError } = await supabase
     .from('lh_cities')
     .select(
       `
@@ -390,8 +410,8 @@ export const getPrefectureDetails = async (prefectureId: string) => {
     .eq('prefecture_id', targetPrefId)
     .order('name');
 
-  if (error) {
-    throw error;
+  if (cityError) {
+    console.error('[getPrefectureDetails] city fetch error:', cityError.message);
   }
 
   // 3. 各市区町村のホテル数を取得
@@ -400,15 +420,15 @@ export const getPrefectureDetails = async (prefectureId: string) => {
     .select('city_id')
     .eq('prefecture_id', targetPrefId);
 
-  const results = data.map((city: any) => ({
+  const results = (cityData || []).map((city: any) => ({
     ...city,
     count: hotels?.filter((h: any) => h.city_id === city.id).length || 0,
     areas: city.lh_areas?.map((a: any) => a.name) || [],
   }));
 
   return {
-    prefectureName: prefData?.name || cleanId,
-    description: prefData?.description || null,
+    prefectureName: prefName || cleanSlug,
+    description: prefDescription,
     cities: results,
   };
 };
