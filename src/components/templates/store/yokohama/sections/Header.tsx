@@ -2,7 +2,7 @@
 
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
-import { Camera, ChevronDown, Home, Link2, Menu, MessageCircle, Users, X } from 'lucide-react';
+import { Camera, ChevronDown, Home, Link2, Menu, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -319,14 +319,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
-            <div className="relative h-full w-24 md:w-32">
+            <div className="relative h-full w-20 md:w-32">
               <NextImage
                 src={getAbsoluteHref(config.logoUrl)}
                 alt="Logo"
                 fill
                 priority
                 className="object-contain object-left"
-                sizes="(max-width: 768px) 100px, 140px"
+                sizes="(max-width: 768px) 80px, 140px"
               />
             </div>
           ) : (
@@ -402,9 +402,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </Link>
           <Link
             href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
-            className="block h-12 w-auto max-w-[45vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+            className="block h-12 w-auto max-w-[35vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
-            <div className="relative h-full w-24 md:w-28">
+            <div className="relative h-full w-20 md:w-28">
               <NextImage
                 src={getAbsoluteHref(
                   config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
@@ -413,7 +413,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 fill
                 className="object-cover"
                 priority
-                sizes="120px"
+                sizes="80px"
               />
             </div>
           </Link>
@@ -422,31 +422,20 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* TOP Button */}
             <Link
               href={getAbsoluteHref('/store/{slug}')}
-              className="group flex min-w-[56px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 py-1.5 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="group flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 py-1.5 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
             >
-              <Home size={18} className="md:h-6 md:w-6" />
+              <Home size={16} className="md:h-6 md:w-6" />
               <span className="text-[7px] font-black tracking-tighter md:text-[10px]">TOP</span>
             </Link>
 
             {/* RESERVE Button */}
             <Link
               href="#reserve"
-              className="flex min-w-[56px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-[#D43D6F] transition-all hover:bg-pink-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-[#D43D6F] transition-all hover:bg-pink-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
             >
-              <Users size={18} className="md:h-6 md:w-6" />
+              <Users size={16} className="md:h-6 md:w-6" />
               <span className="text-[7px] font-black tracking-tighter md:text-[10px]">WEB予約</span>
             </Link>
-
-            {/* LINE Button */}
-            <a
-              href={`https://line.me/R/ti/p/${(config as any).lineId || ''}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex min-w-[56px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-[#56C361] px-1 py-1.5 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
-            >
-              <MessageCircle size={18} className="md:h-6 md:w-6" />
-              <span className="text-[7px] font-black tracking-tighter md:text-[10px]">LINE</span>
-            </a>
 
             {/* MENU Button */}
             <button
@@ -454,12 +443,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 if (!isMenuOpen) setIsMenuOpen(true);
                 else closeMenu();
               }}
-              className="flex min-w-[56px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-gray-400 transition-all hover:bg-gray-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-gray-400 transition-all hover:bg-gray-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
             >
               {isMenuOpen ? (
-                <X size={18} className="text-pink-500 md:h-6 md:w-6" />
+                <X size={16} className="text-pink-500 md:h-6 md:w-6" />
               ) : (
-                <Menu size={18} className="md:h-6 md:w-6" />
+                <Menu size={16} className="md:h-6 md:w-6" />
               )}
               <span
                 className={`text-[7px] font-black tracking-tighter md:text-[10px] ${isMenuOpen ? 'text-pink-500' : ''}`}
