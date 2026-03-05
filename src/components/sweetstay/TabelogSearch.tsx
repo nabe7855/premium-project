@@ -25,7 +25,7 @@ const TabelogSearch: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto -mt-24 px-4 md:px-6">
+    <div className="container relative z-30 mx-auto mt-2 px-4 md:px-6">
       <div className="relative z-30 rounded-[2.5rem] bg-white p-4 shadow-2xl shadow-rose-200/40 md:p-6 lg:mx-auto lg:max-w-4xl">
         <div className="flex flex-col gap-4 md:flex-row">
           {/* Where: Area / Station / Hotel Name */}
