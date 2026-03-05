@@ -1,4 +1,3 @@
-
 export type RatingValue = 1 | 2 | 3 | 4 | 5 | 'no_answer';
 
 export interface SurveyResponse {
@@ -6,7 +5,7 @@ export interface SurveyResponse {
   submittedAt: string;
   deviceType: string;
   formVersion: string;
-  
+
   // Block A
   overallSatisfaction: RatingValue;
   repeatIntent: RatingValue;
@@ -41,6 +40,11 @@ export interface SurveyResponse {
 
   // Block F
   freeText?: string;
+
+  // Block G: Hotel Feedback
+  hotelId?: string;
+  hotelRating?: RatingValue;
+  hotelComment?: string;
 
   skippedFlag: boolean;
 }

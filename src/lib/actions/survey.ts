@@ -1,7 +1,9 @@
 'use server';
 
+import { submitReview } from '@/lib/lovehotelApi';
 import { supabaseAdmin as supabase } from '@/lib/supabaseAdmin';
 import { SurveyResponse } from '@/types/service-feedback';
+import { getReservationDetails } from './consent';
 import { markStepCompleted } from './reservation';
 
 export async function saveSurvey(data: SurveyResponse & { reservationId: string }) {
@@ -36,12 +38,40 @@ export async function saveSurvey(data: SurveyResponse & { reservationId: string 
       search_keyword: data.searchKeyword,
       block_e_other: data.blockEOther,
       free_text: data.freeText,
+      hotel_id: data.hotelId || null,
+      hotel_rating: data.hotelRating || null,
+      hotel_comment: data.hotelComment || null,
       skipped_flag: data.skippedFlag,
     });
 
     if (error) {
       console.error('>>> [saveSurvey] ERROR:', error);
       return { success: false, error: error.message };
+    }
+
+    // ホテルフィードバックがあればlh_reviewsに同期
+    if (data.hotelId && (data.hotelComment || data.hotelRating !== 'no_answer')) {
+      try {
+        const resInfo = await getReservationDetails(data.reservationId);
+        const userName = data.blockAOther || resInfo?.client_nickname || 'Guest';
+
+        await submitReview(
+          {
+            hotelId: data.hotelId,
+            userName: userName,
+            rating: typeof data.hotelRating === 'number' ? data.hotelRating : 5,
+            content: data.hotelComment || '利用させていただきました。',
+            stayType: 'rest',
+            cleanliness: 5,
+            service: 5,
+            rooms: 5,
+            value: 5,
+          },
+          [],
+        );
+      } catch (syncError) {
+        console.error('>>> [saveSurvey] Hotel sync error:', syncError);
+      }
     }
 
     console.log('>>> [saveSurvey] SUCCESS');

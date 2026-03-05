@@ -1,4 +1,4 @@
-import { getHotelById, mapDbHotelToHotel } from '@/lib/lovehotelApi';
+import { getHotelById, getReviews, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -24,9 +24,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function SweetStayHotelDetailPage({ params }: Props) {
   let hotel;
+  let reviews = [];
   try {
     const dbHotel = await getHotelById(params.id);
     hotel = mapDbHotelToHotel(dbHotel);
+    reviews = await getReviews(params.id);
   } catch (e) {
     notFound();
   }
@@ -225,27 +227,109 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                 </div>
               </div>
 
-              {/* Reviews Section Placeholder */}
+              {/* Reviews Section */}
               <div className="mb-16 border-t border-gray-100 pt-16">
-                <div className="mb-8 flex items-center justify-between">
-                  <h2 className="text-2xl font-black tracking-tight text-gray-900">
-                    ユーザーレビュー
-                  </h2>
-                  <div className="flex items-center gap-2">
-                    <div className="text-2xl font-black text-rose-500">
-                      {hotel.rating?.toFixed(1) || '0.0'}
-                    </div>
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-gray-300">
-                      平均評価 ({hotel.reviewCount}件)
+                <div className="mb-12 flex items-center justify-between">
+                  <div>
+                    <h2 className="text-3xl font-black tracking-tight text-gray-900">
+                      Reports & Reviews
+                    </h2>
+                    <p className="mt-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                      プロフェッショナルな視点とユーザー体験
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <div className="text-4xl font-black text-rose-500">
+                        {hotel.rating?.toFixed(1) || '0.0'}
+                      </div>
+                      <div className="text-[10px] font-black uppercase tracking-widest text-gray-300">
+                        Total {reviews.length} Reviews
+                      </div>
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-gray-50 py-20 text-center">
-                  <div className="mb-4 text-4xl text-gray-200">✍</div>
-                  <p className="text-sm font-bold text-gray-400">
-                    現在、キャストとユーザーによるレビューを収集中です。
-                  </p>
-                </div>
+
+                {reviews.length > 0 ? (
+                  <div className="space-y-12">
+                    {reviews.map((review) => {
+                      const isPro = review.stayType === 'pro_report';
+                      return (
+                        <div
+                          key={review.id}
+                          className={`group relative rounded-[2.5rem] p-8 transition-all hover:shadow-2xl hover:shadow-gray-100 ${
+                            isPro ? 'bg-rose-50/50 ring-1 ring-rose-100' : 'bg-gray-50'
+                          }`}
+                        >
+                          {isPro && (
+                            <div className="absolute -top-3 left-8 flex items-center gap-1 rounded-full bg-rose-500 px-4 py-1.5 text-[8px] font-black uppercase tracking-widest text-white shadow-lg shadow-rose-200">
+                              Professional Report
+                            </div>
+                          )}
+                          <div className="mb-6 flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div
+                                className={`flex h-12 w-12 items-center justify-center rounded-2xl text-xl ${
+                                  isPro ? 'bg-rose-100 text-rose-500' : 'bg-white text-gray-400'
+                                }`}
+                              >
+                                {isPro ? '👑' : '👤'}
+                              </div>
+                              <div>
+                                <h4 className="font-black text-gray-900">{review.userName}</h4>
+                                <div className="flex items-center gap-2">
+                                  <div className="flex text-rose-500">
+                                    {[...Array(5)].map((_, i) => (
+                                      <span
+                                        key={i}
+                                        className={i < review.rating ? '' : 'opacity-20'}
+                                      >
+                                        ★
+                                      </span>
+                                    ))}
+                                  </div>
+                                  <span className="text-[10px] font-bold text-gray-400">
+                                    {review.date}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="prose prose-sm mb-6 max-w-none font-medium leading-relaxed text-gray-600">
+                            <p className="whitespace-pre-wrap">{review.content}</p>
+                          </div>
+
+                          {review.photos && review.photos.length > 0 && (
+                            <div className="flex gap-4 overflow-x-auto pb-4 scrollbar-hide">
+                              {review.photos.map((photo, pIdx) => (
+                                <div
+                                  key={pIdx}
+                                  className="h-32 min-w-[12rem] overflow-hidden rounded-2xl border border-white/50 bg-gray-200 shadow-sm transition-transform hover:scale-[1.02]"
+                                >
+                                  <img
+                                    src={photo.url}
+                                    alt="Review photo"
+                                    className="h-full w-full object-cover"
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center rounded-[2.5rem] bg-gray-50 py-24 text-center">
+                    <div className="mb-6 animate-pulse text-5xl text-gray-200">✍</div>
+                    <h4 className="text-lg font-black text-gray-900">No reviews yet</h4>
+                    <p className="mt-2 text-sm font-bold text-gray-400">
+                      現在、キャストとユーザーによるレビューを収集中です。
+                      <br />
+                      プロの目利きレポートを近日中に公開予定です。
+                    </p>
+                  </div>
+                )}
               </div>
             </div>
 

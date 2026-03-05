@@ -1,5 +1,6 @@
 'use client';
 
+import { HotelSearch } from '@/components/cast-reflection/HotelSearch';
 import { Layout } from '@/components/cast-reflection/Layout';
 import { MultiSelect } from '@/components/cast-reflection/MultiSelect';
 import { Rating } from '@/components/cast-reflection/Rating';
@@ -10,12 +11,19 @@ import {
 } from '@/data/cast-reflection';
 import { getReservationDetails } from '@/lib/actions/consent';
 import { saveReflection } from '@/lib/actions/reflection';
+import { uploadReviewImage } from '@/lib/lovehotelApi';
 import { ReflectionData } from '@/types/cast-reflection';
+import { Camera, Loader2, X } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-type TextFieldName = 'successMemo' | 'nextAction' | 'customerAnalysis' | 'incidentDetail';
+type TextFieldName =
+  | 'successMemo'
+  | 'nextAction'
+  | 'customerAnalysis'
+  | 'incidentDetail'
+  | 'hotelReport';
 
 export default function ReflectionPage() {
   const params = useParams();
@@ -33,8 +41,12 @@ export default function ReflectionPage() {
     customerAnalysis: '',
     hasIncident: false,
     incidentDetail: '',
+    hotelRating: 5,
+    hotelPhotos: [],
+    hotelReport: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isPhotoUploading, setIsPhotoUploading] = useState(false);
   const [activeVoiceField, setActiveVoiceField] = useState<TextFieldName | null>(null);
   const [isCompleted, setIsCompleted] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -92,6 +104,34 @@ export default function ReflectionPage() {
     };
 
     recognition.start();
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    setIsPhotoUploading(true);
+    const newPhotos = [...(reflection.hotelPhotos || [])];
+
+    try {
+      for (let i = 0; i < files.length; i++) {
+        const url = await uploadReviewImage(files[i]);
+        newPhotos.push(url);
+      }
+      setReflection({ ...reflection, hotelPhotos: newPhotos });
+      toast.success('画像をアップロードしました');
+    } catch (error) {
+      console.error('Photo upload error:', error);
+      toast.error('画像のアップロードに失敗しました');
+    } finally {
+      setIsPhotoUploading(false);
+    }
+  };
+
+  const removePhoto = (index: number) => {
+    const newPhotos = [...(reflection.hotelPhotos || [])];
+    newPhotos.splice(index, 1);
+    setReflection({ ...reflection, hotelPhotos: newPhotos });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -259,7 +299,7 @@ export default function ReflectionPage() {
           <Rating
             label="安全運用 (NG遵守/境界線)"
             value={reflection.safetyScore}
-            onChange={(v) => setReflection({ ...reflection, safetyScore: v })}
+            onChange={(v: number) => setReflection({ ...reflection, safetyScore: v })}
           />
         </section>
 
@@ -273,7 +313,7 @@ export default function ReflectionPage() {
             label=""
             options={SUCCESS_OPTIONS}
             selected={reflection.successPoints}
-            onChange={(v) => setReflection({ ...reflection, successPoints: v })}
+            onChange={(v: string[]) => setReflection({ ...reflection, successPoints: v })}
           />
           <textarea
             placeholder="一言メモ (任意・140字程度)"
@@ -298,7 +338,7 @@ export default function ReflectionPage() {
             label=""
             options={IMPROVEMENT_OPTIONS}
             selected={reflection.improvementPoints}
-            onChange={(v) => setReflection({ ...reflection, improvementPoints: v })}
+            onChange={(v: string[]) => setReflection({ ...reflection, improvementPoints: v })}
           />
           <textarea
             placeholder="次回の具体アクション (任意・140字程度)"
@@ -326,7 +366,7 @@ export default function ReflectionPage() {
             label="感じた特性"
             options={CUSTOMER_TRAITS_OPTIONS}
             selected={reflection.customerTraits}
-            onChange={(v) => setReflection({ ...reflection, customerTraits: v })}
+            onChange={(v: string[]) => setReflection({ ...reflection, customerTraits: v })}
           />
           <textarea
             placeholder="お客様の反応や雰囲気、気づいたこと (音声入力可)"
@@ -340,35 +380,99 @@ export default function ReflectionPage() {
           />
         </section>
 
-        {/* F. Incidents */}
-        <section className="rounded-2xl border border-orange-100 bg-orange-50 p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <label className="text-sm font-bold text-orange-800">トラブル・懸念事項の有無</label>
-            <div className="flex items-center gap-3">
-              {reflection.hasIncident && <VoiceButton field="incidentDetail" colorClass="orange" />}
-              <button
-                type="button"
-                onClick={() =>
-                  setReflection({ ...reflection, hasIncident: !reflection.hasIncident })
-                }
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${reflection.hasIncident ? 'bg-orange-500' : 'bg-slate-300'}`}
-              >
-                <span
-                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${reflection.hasIncident ? 'translate-x-6' : 'translate-x-1'}`}
-                />
-              </button>
-            </div>
+        {/* G. Love Hotel Report */}
+        <section className="rounded-3xl border border-rose-100 bg-gradient-to-br from-white to-rose-50/30 p-6 shadow-sm">
+          <div className="mb-6">
+            <h3 className="flex items-center gap-2 text-lg font-black text-rose-900">
+              <span className="text-xl">🏨</span>
+              ホテル報告 (Sweet Stay連携)
+            </h3>
+            <p className="mt-1 text-[10px] font-bold text-rose-400">
+              ※この内容は「Sweet Stay」のホテル詳細ページにプロのレポートとして掲載されます
+            </p>
           </div>
-          {reflection.hasIncident && (
-            <textarea
-              placeholder="詳細を入力してください (体調不良、認識ズレなど)"
-              className={`h-20 w-full rounded-xl border border-orange-200 bg-white p-3 text-sm shadow-sm transition-all focus:outline-none ${
-                activeVoiceField === 'incidentDetail' ? 'border-red-300 ring-2 ring-orange-200' : ''
-              }`}
-              value={reflection.incidentDetail}
-              onChange={(e) => setReflection({ ...reflection, incidentDetail: e.target.value })}
+
+          <div className="space-y-6">
+            <HotelSearch
+              selectedId={reflection.hotelId}
+              onSelect={(id, name) => setReflection({ ...reflection, hotelId: id })}
             />
-          )}
+
+            {reflection.hotelId && (
+              <div className="space-y-6 duration-300 animate-in fade-in slide-in-from-top-4">
+                <Rating
+                  label="ホテルの総合評価"
+                  value={reflection.hotelRating || 5}
+                  onChange={(v: number) => setReflection({ ...reflection, hotelRating: v })}
+                />
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-semibold text-slate-700">
+                      プロの視点レポート
+                    </label>
+                    <VoiceButton field="hotelReport" colorClass="rose" />
+                  </div>
+                  <textarea
+                    placeholder="スタッフの対応、清掃状態、アメニティの充実度など、プロの視点で詳しくお書きください（50文字以上推奨）"
+                    className={`h-32 w-full rounded-2xl border border-slate-200 bg-white p-4 text-sm shadow-sm transition-all focus:outline-none focus:ring-2 ${
+                      activeVoiceField === 'hotelReport'
+                        ? 'border-red-300 ring-rose-100'
+                        : 'focus:ring-rose-200'
+                    }`}
+                    value={reflection.hotelReport}
+                    onChange={(e) => setReflection({ ...reflection, hotelReport: e.target.value })}
+                  />
+                  <p className="text-[10px] text-slate-400">
+                    💡 良い点だけでなく、改善してほしい点も書くと読者の参考になります。
+                  </p>
+                </div>
+
+                <div className="space-y-3">
+                  <label className="text-sm font-semibold text-slate-700">内装・設備写真</label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {reflection.hotelPhotos?.map((url, index) => (
+                      <div
+                        key={index}
+                        className="group relative aspect-square overflow-hidden rounded-xl border border-slate-100 bg-slate-50"
+                      >
+                        <img
+                          src={url}
+                          alt={`Upload ${index}`}
+                          className="h-full w-full object-cover"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => removePhoto(index)}
+                          className="absolute right-1 top-1 flex h-6 w-6 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition-opacity group-hover:opacity-100"
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ))}
+                    <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-slate-200 bg-white text-slate-400 transition-colors hover:border-rose-300 hover:bg-rose-50 hover:text-rose-500">
+                      {isPhotoUploading ? (
+                        <Loader2 className="animate-spin" size={24} />
+                      ) : (
+                        <>
+                          <Camera size={24} />
+                          <span className="mt-1 text-[10px] font-bold">追加</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        className="hidden"
+                        onChange={handlePhotoUpload}
+                        disabled={isPhotoUploading}
+                      />
+                    </label>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
         </section>
 
         {/* Submission */}

@@ -61,7 +61,7 @@ export interface Review {
   content: string;
   date: string;
   roomNumber?: string;
-  stayType?: 'lodging' | 'rest'; // 宿泊 or 休憩
+  stayType?: 'lodging' | 'rest' | 'pro_report'; // 宿泊 or 休憩 or プロレポート
   cost?: number; // 利用金額
   photos?: ReviewPhoto[]; // カテゴリ付き写真
 }

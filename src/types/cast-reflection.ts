@@ -25,6 +25,12 @@ export interface ReflectionData {
   customerAnalysis: string;
   hasIncident: boolean;
   incidentDetail?: string;
+
+  // Hotel Feedback
+  hotelId?: string;
+  hotelRating?: number;
+  hotelReport?: string;
+  hotelPhotos?: string[];
 }
 
 export interface SessionLog extends ReflectionData {

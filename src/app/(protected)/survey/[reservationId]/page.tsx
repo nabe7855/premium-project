@@ -1,5 +1,6 @@
 'use client';
 
+import { HotelSearch } from '@/components/cast-reflection/HotelSearch';
 import MultiSelect from '@/components/service-feedback/MultiSelect';
 import ProgressBar from '@/components/service-feedback/ProgressBar';
 import RatingSelect from '@/components/service-feedback/RatingSelect';
@@ -55,6 +56,9 @@ const INITIAL_DATA: SurveyResponse = {
   searchKeyword: '',
   blockEOther: '',
   freeText: '',
+  hotelId: '',
+  hotelRating: 'no_answer',
+  hotelComment: '',
   skippedFlag: false,
 };
 
@@ -114,7 +118,7 @@ export default function SurveyPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const nextStep = () => setStep((s) => Math.min(s + 1, 6));
+  const nextStep = () => setStep((s) => Math.min(s + 1, 7));
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
 
   const handleSubmit = async () => {
@@ -221,7 +225,7 @@ export default function SurveyPage() {
           </section>
         ) : (
           <>
-            <ProgressBar currentStep={step} totalSteps={6} />
+            <ProgressBar currentStep={step} totalSteps={7} />
 
             <div className="mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm duration-300 animate-in slide-in-from-right-4">
               {step === 1 && (
@@ -429,6 +433,49 @@ export default function SurveyPage() {
                   </p>
                 </>
               )}
+
+              {step === 7 && (
+                <>
+                  <h3 className="mb-6 text-lg font-bold text-slate-800">
+                    ブロックG：ホテルのご感想
+                  </h3>
+                  <div className="mb-8 rounded-xl bg-rose-50 p-4">
+                    <p className="text-[10px] font-bold leading-relaxed text-rose-600">
+                      💡 ホテルについての感想は、ホテルまとめサイト「Sweet Stay」に掲載され、
+                      これから利用する他のお客様の参考になります。SEO向上のため具体的なご感想をお待ちしております！
+                    </p>
+                  </div>
+
+                  <div className="space-y-8">
+                    <HotelSearch
+                      selectedId={formData.hotelId}
+                      onSelect={(id, name) => updateField('hotelId', id)}
+                    />
+
+                    {formData.hotelId && (
+                      <div className="space-y-8 duration-300 animate-in fade-in slide-in-from-top-4">
+                        <RatingSelect
+                          label="【 ホテルの総合評価 】"
+                          value={formData.hotelRating || 'no_answer'}
+                          onChange={(v) => updateField('hotelRating', v)}
+                        />
+
+                        <div>
+                          <label className="mb-3 block text-sm font-semibold text-slate-700">
+                            【 ホテルの感想・口コミ 】（任意）
+                          </label>
+                          <textarea
+                            className="min-h-[140px] w-full rounded-xl border border-slate-200 bg-slate-50 p-4 text-sm outline-none transition-all focus:ring-2 focus:ring-rose-200"
+                            placeholder="部屋の清潔感、広さ、設備など、気兼ねなくご記入ください。"
+                            value={formData.hotelComment}
+                            onChange={(e) => updateField('hotelComment', e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="fixed bottom-0 left-0 right-0 border-t border-slate-200 bg-white p-4 sm:static sm:border-t-0 sm:bg-transparent sm:p-0">
@@ -441,7 +488,7 @@ export default function SurveyPage() {
                   戻る
                 </button>
 
-                {step < 6 ? (
+                {step < 7 ? (
                   <button
                     onClick={nextStep}
                     className="flex flex-[2] items-center justify-center gap-2 rounded-xl bg-indigo-600 py-3 font-bold text-white shadow-lg shadow-indigo-100 transition-colors hover:bg-indigo-700"
