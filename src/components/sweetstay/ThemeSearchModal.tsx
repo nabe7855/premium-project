@@ -1,7 +1,7 @@
 'use client';
 
 import { Dialog, Transition } from '@headlessui/react';
-import { Heart, Palmtree, Search, Sparkles, Users, X, Zap } from 'lucide-react';
+import { Heart, Palmtree, Search, ShieldCheck, Sparkles, Users, X, Zap } from 'lucide-react';
 import React, { Fragment } from 'react';
 
 interface ThemeSearchModalProps {
@@ -81,6 +81,50 @@ const THEMES = [
     ],
   },
   {
+    id: 'beauty',
+    label: '美容・アメニティ',
+    icon: <Sparkles size={20} className="text-rose-400" />,
+    items: [
+      'ReFa導入ホテル',
+      'Dysonヘアケア完備',
+      'ミラブルシャワー導入',
+      '高級ブランドアメニティ',
+      'スキンケア充実ホテル',
+      '手ぶら泊OKホテル',
+      '美容家電レンタル充実',
+      '女優ミラーがあるお部屋',
+      'ナノケアスチーマー完備',
+    ],
+  },
+  {
+    id: 'privacy',
+    label: 'プライバシー・安心',
+    icon: <ShieldCheck size={20} className="text-blue-500" />,
+    items: [
+      '非対面（自動精算機）完備',
+      'フロントを通らず入室可',
+      '出口2つ以上（秘匿性）',
+      'プライベート駐車場',
+      'ナンバー隠しサービス',
+      'ハイルーフ車対応',
+      '防音が強いホテル',
+      'セキュリティー万全',
+    ],
+  },
+  {
+    id: 'diversity',
+    label: 'ダイバーシティ',
+    icon: <Users size={20} className="text-purple-500" />,
+    items: [
+      '3名以上利用OK',
+      'LGBTQ+フレンドリー',
+      '同性カップル歓迎',
+      '男子会ができる',
+      'パーティー可',
+      'バリアフリー対応',
+    ],
+  },
+  {
     id: 'cost',
     label: '料金・コスパ',
     icon: <Zap size={20} className="text-amber-500" />,
@@ -88,30 +132,12 @@ const THEMES = [
       '安いラブホテル',
       '休憩3000円以下',
       '宿泊5000円以下',
-      'コスパ最強ホテル',
-      'クーポンありホテル',
+      'コスパ最強',
+      'クーポンあり',
       '平日割引ホテル',
-      'フリータイムが長いホテル',
-      '深夜休憩できるホテル',
-      '24時間休憩ホテル',
-      '学割があるホテル',
-    ],
-  },
-  {
-    id: 'special',
-    label: 'こだわり条件（特殊）',
-    icon: <Palmtree size={20} className="text-yellow-500" />,
-    items: [
-      '360°部屋ビュー',
-      '撮影できるホテル',
-      '防音が強いホテル',
-      'レンタル品が多いホテル',
-      'アメニティ充実ホテル',
-      '美容家電があるホテル',
-      '高級ブランドアメニティホテル',
-      '禁煙ルームホテル',
-      'バリアフリーホテル',
-      'ペットOKホテル',
+      'フリータイムが長い',
+      '深夜休憩できる',
+      '学割がある',
     ],
   },
 ];

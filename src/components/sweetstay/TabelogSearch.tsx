@@ -22,13 +22,14 @@ import ThemeSearchModal from './ThemeSearchModal';
 const POPULAR_TAGS = [
   '露天風呂付き',
   'サウナ付き',
-  '岩盤浴付き',
   '記念日デート',
-  '女子会',
-  '一人利用OK',
-  '安い',
-  '駐車場付き',
-  '駅近',
+  '女子会・推し活',
+  'ReFa・美容家電',
+  '非対面・秘密',
+  '3人以上OK',
+  '安い・コスパ',
+  '24時間休憩',
+  '駐車場あり',
 ];
 
 const TabelogSearch: React.FC = () => {
