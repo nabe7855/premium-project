@@ -273,7 +273,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
           </button>
           <a
             href="#qa"
-            className="w-full rounded-2xl bg-slate-800/80 px-8 py-4 text-center text-lg font-bold text-white transition-all hover:bg-slate-700 active:scale-95 sm:w-auto sm:px-10 sm:py-5 sm:text-xl"
+            className="w-full rounded-2xl border border-gray-200 bg-white px-8 py-4 text-center text-lg font-bold text-black transition-all hover:bg-gray-100 active:scale-95 sm:w-auto sm:px-10 sm:py-5 sm:text-xl"
           >
             Q&Aを先に見る
           </a>
