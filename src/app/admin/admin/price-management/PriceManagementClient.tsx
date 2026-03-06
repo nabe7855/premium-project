@@ -294,7 +294,10 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
             )}
 
             <FAQSection faqs={currentStore.faqs} />
-            <AdditionalInfoSection />
+            <AdditionalInfoSection
+              cancellationPolicy={currentStore.cancellation_policy}
+              prohibitions={currentStore.prohibitions}
+            />
           </div>
         </main>
 
