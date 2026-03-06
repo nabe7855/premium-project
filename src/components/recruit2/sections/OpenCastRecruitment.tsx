@@ -180,7 +180,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
             <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
               {/* Grand Opening Message - Moved and Prominent */}
               <div className="mb-8 text-center">
-                <div className="mb-3 flex items-center justify-center gap-2 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
+                <div className="mb-3 flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
                   {isEditing ? (
                     <input
                       type="date"
@@ -189,7 +189,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                       className="rounded border border-amber-500/50 bg-black/40 px-2 py-1 text-xl font-black text-amber-300 outline-none"
                     />
                   ) : (
-                    <p className="text-2xl font-black tracking-[0.1em] text-white sm:text-4xl">
+                    <p className="shrink-0 text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
                       {targetDate ? (
                         <>
                           {new Date(targetDate).getMonth() + 1}月{new Date(targetDate).getDate()}日
@@ -199,7 +199,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                       )}
                     </p>
                   )}
-                  <p className="text-2xl font-black tracking-[0.1em] text-white sm:text-4xl">
+                  <p className="shrink-0 text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
                     <span className="text-amber-300">グランドオープン</span>まで
                   </p>
                 </div>
@@ -209,9 +209,9 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
               {/* Limited Slots Indicator */}
               <div className="mb-10 flex items-center justify-center gap-4">
                 <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
-                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
-                  <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
-                  <div className="flex items-center gap-2 text-center text-lg font-medium text-amber-200 sm:text-2xl">
+                <div className="flex flex-nowrap items-center justify-center gap-2 sm:gap-3">
+                  <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
+                  <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-center text-sm font-medium text-amber-200 sm:gap-2 sm:text-2xl">
                     {isEditing ? (
                       <span
                         contentEditable
@@ -222,19 +222,19 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                         {slotsLabelBefore}
                       </span>
                     ) : (
-                      <span>{slotsLabelBefore}</span>
+                      <span className="shrink-0">{slotsLabelBefore}</span>
                     )}
                     {isEditing ? (
                       <span
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => onUpdate?.('slotsCount', e.currentTarget.innerText)}
-                        className="mx-1 cursor-text rounded text-4xl font-bold text-amber-400 outline-none drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] hover:bg-white/10 sm:text-6xl"
+                        className="mx-1 cursor-text rounded text-3xl font-bold text-amber-400 outline-none drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] hover:bg-white/10 sm:text-6xl"
                       >
                         {slotsCount}
                       </span>
                     ) : (
-                      <span className="mx-1 text-4xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:text-6xl">
+                      <span className="mx-0.5 text-3xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:mx-1 sm:text-6xl">
                         {slotsCount}
                       </span>
                     )}
@@ -248,10 +248,10 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                         {slotsLabelAfter}
                       </span>
                     ) : (
-                      <span>{slotsLabelAfter}</span>
+                      <span className="shrink-0">{slotsLabelAfter}</span>
                     )}
                   </div>
-                  <div className="h-2 w-2 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
+                  <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
                 </div>
                 <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/50 sm:w-12"></div>
               </div>
@@ -262,7 +262,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 <div className="relative mx-auto max-w-3xl">
                   <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-400/20 via-indigo-400/20 to-amber-400/20 blur-xl"></div>
                   <div className="relative rounded-2xl border border-amber-400/30 bg-gradient-to-br from-indigo-950/60 to-slate-900/60 px-4 py-8 backdrop-blur-sm sm:px-12 sm:py-10">
-                    <div className="mb-2 text-center font-mono text-4xl font-bold tabular-nums tracking-tight text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] sm:text-6xl md:text-7xl">
+                    <div className="mb-2 whitespace-nowrap text-center font-mono text-3xl font-bold tabular-nums tracking-tighter text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] sm:text-6xl md:text-7xl">
                       {formatTime(timeLeft)}
                     </div>
                     <div className="space-y-2 text-center">

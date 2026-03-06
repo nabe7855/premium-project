@@ -117,19 +117,22 @@ const PopCampaignHero: React.FC = () => {
             transition={{ delay: 0.8, duration: 0.4 }}
             className="space-y-4 text-center"
           >
-            <div className="inline-block rounded-2xl border-[4px] border-black bg-white px-8 py-4 shadow-[8px_8px_0_#000]">
-              <p className="mb-2 text-xl font-black text-black md:text-2xl">
+            <div className="inline-block whitespace-nowrap rounded-2xl border-[4px] border-black bg-white px-8 py-4 shadow-[8px_8px_0_#000]">
+              <p className="mb-2 text-base font-black text-black sm:text-lg md:text-2xl">
                 2月1日 OPEN までの残り時間
               </p>
-              <p className="font-mono text-3xl font-black tabular-nums tracking-tighter text-[#f59e0b] md:text-6xl">
+              <p className="font-mono text-2xl font-black tabular-nums tracking-tighter text-[#f59e0b] sm:text-4xl md:text-6xl">
                 {formatTime(timeLeft)}
               </p>
             </div>
 
-            <div className="mt-4 inline-block animate-bounce rounded-full bg-black px-6 py-2 text-white shadow-xl">
-              <p className="text-lg font-bold md:text-xl">
+            <div className="mt-4 inline-block animate-bounce whitespace-nowrap rounded-full bg-black px-4 py-2 text-white shadow-xl sm:px-6">
+              <p className="text-sm font-bold sm:text-lg md:text-xl">
                 今だけの「超・優待枠」残り{' '}
-                <span className="px-2 text-2xl text-yellow-400 md:text-4xl">4</span> 名
+                <span className="px-1 text-xl text-yellow-400 sm:px-2 sm:text-2xl md:text-4xl">
+                  4
+                </span>{' '}
+                名
               </p>
             </div>
           </motion.div>
