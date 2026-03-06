@@ -28,18 +28,30 @@ const StepCard: React.FC<StepCardProps> = ({
 
     {/* Image container - Left side */}
     <div className="relative h-20 w-24 flex-shrink-0 overflow-hidden rounded-xl bg-slate-50 sm:h-24 sm:w-32 md:h-28 md:w-36">
-      {imageSrc ? (
-        <EditableImage
-          isEditing={isEditing}
-          src={imageSrc}
-          alt=""
-          onUpload={onImageUpload}
-          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-        />
-      ) : (
-        <div className="text-primary-500 bg-primary-50 flex h-full w-full items-center justify-center">
+      {!imageSrc && (
+        <div className="bg-primary-50 text-primary-500 absolute inset-0 flex items-center justify-center">
           {icon}
         </div>
+      )}
+      {isEditing ? (
+        <EditableImage
+          isEditing={isEditing}
+          src={
+            imageSrc ||
+            'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
+          }
+          alt=""
+          onUpload={onImageUpload}
+          className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${!imageSrc ? 'opacity-0 group-hover:opacity-100' : ''}`}
+        />
+      ) : (
+        imageSrc && (
+          <img
+            src={imageSrc}
+            alt=""
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        )
       )}
     </div>
 
