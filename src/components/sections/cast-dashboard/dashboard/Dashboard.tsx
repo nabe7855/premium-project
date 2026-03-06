@@ -325,9 +325,20 @@ export default function Dashboard({ cast }: DashboardProps) {
   if (!currentStore) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-50 via-white to-rose-50">
-        <div className="text-center">
-          <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-pink-500"></div>
-          <p className="font-bold text-gray-600">Context Loading...</p>
+        <div className="max-w-sm rounded-2xl border border-pink-100 bg-white/80 p-8 text-center shadow-xl backdrop-blur">
+          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
+            <X className="h-6 w-6 text-red-500" />
+          </div>
+          <h2 className="mb-2 text-xl font-bold text-gray-800">店舗未設定</h2>
+          <p className="mb-6 text-sm text-gray-600">
+            所属店舗が設定されていません。管理者に連絡して店舗の割り当てを受けてください。
+          </p>
+          <button
+            onClick={logout}
+            className="w-full rounded-xl bg-gray-200 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-300"
+          >
+            ログアウト
+          </button>
         </div>
       </div>
     );

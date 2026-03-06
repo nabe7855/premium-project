@@ -51,10 +51,14 @@ export async function createCastProfile(
   name: string,
   slug: string,
   email: string,
+  storeId: string,
   password?: string,
-  storeId?: string,
 ) {
   try {
+    if (!storeId) {
+      throw new Error('所属店舗が指定されていません');
+    }
+
     // 1. Insert/Upsert into casts (Use user_id as conflict target)
     const { data: castData, error: castInsertError } = await supabaseAdmin
       .from('casts')

@@ -16,6 +16,11 @@ function generateSlug(name: string): string {
 }
 
 export async function signUpCast(name: string, email: string, password: string, storeId: string) {
+  // 0. 所属店舗が選択されているか確認
+  if (!storeId) {
+    throw new Error('所属店舗を選択してください');
+  }
+
   // 1. Supabase Auth にユーザー作成
   const {
     data: { user },
@@ -29,7 +34,7 @@ export async function signUpCast(name: string, email: string, password: string, 
   const slug = generateSlug(name);
 
   // 3. サーバー側でRSLをバイパスしてロール等を一括登録
-  const result = await createCastProfile(user.id, name, slug, email, password, storeId);
+  const result = await createCastProfile(user.id, name, slug, email, storeId, password);
 
   if (!result.success) {
     throw new Error(result.error || 'プロフィールの作成に失敗しました');
