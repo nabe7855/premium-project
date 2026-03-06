@@ -106,9 +106,9 @@ export default async function SweetStayPortalPage() {
                 Real Voice & Reviews
               </div>
               <h2 className="text-3xl font-black tracking-tight text-gray-900 md:text-4xl">
-                体験者の生の声。
+                ゲストによる真実の評価。
                 <br />
-                食べログ形式のリアルな評価。
+                信頼性にこだわったレビュープラットフォーム。
               </h2>
             </div>
             <Link
