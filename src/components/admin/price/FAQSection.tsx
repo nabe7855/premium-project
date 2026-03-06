@@ -17,7 +17,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
       >
         <div className="flex items-center gap-3">
           <span className="text-xl transition-transform group-hover:scale-110">🍓</span>
-          <span className="font-rounded font-bold leading-tight text-rose-900">{question}</span>
+          <span className="font-rounded font-bold leading-tight text-slate-900">{question}</span>
         </div>
         <span
           className={`text-rose-300 transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`}
@@ -36,7 +36,7 @@ const FAQItem: React.FC<FAQItemProps> = ({ question, answer }) => {
       <div
         className={`overflow-hidden transition-all duration-300 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}
       >
-        <div className="whitespace-pre-wrap px-10 pb-6 text-sm leading-relaxed text-rose-500">
+        <div className="whitespace-pre-wrap px-10 pb-6 text-sm leading-relaxed text-slate-700">
           {answer}
         </div>
       </div>

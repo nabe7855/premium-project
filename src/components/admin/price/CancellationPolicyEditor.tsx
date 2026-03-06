@@ -67,7 +67,7 @@ export default function CancellationPolicyEditor({
             type="text"
             value={policy.tokyo23ku.title}
             onChange={(e) => updateTokyo23kuTitle(e.target.value)}
-            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
             placeholder="例: 東京23区内の場合 / 福岡市内の場合"
           />
         </div>
@@ -89,7 +89,7 @@ export default function CancellationPolicyEditor({
                   type="text"
                   value={rule.period}
                   onChange={(e) => updateTokyo23kuRule(index, 'period', e.target.value)}
-                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
                   placeholder="期間 (例: 当日指定時刻の5時間前まで)"
                 />
               </div>
@@ -98,7 +98,7 @@ export default function CancellationPolicyEditor({
                   type="text"
                   value={rule.fee}
                   onChange={(e) => updateTokyo23kuRule(index, 'fee', e.target.value)}
-                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
                   placeholder="料金 (例: 無料)"
                 />
               </div>
@@ -121,7 +121,7 @@ export default function CancellationPolicyEditor({
             type="text"
             value={policy.outside23ku.title}
             onChange={(e) => updateOutside23ku('title', e.target.value)}
-            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
             placeholder="例: 東京23区外の場合 / 福岡市外の場合"
           />
         </div>
@@ -132,7 +132,7 @@ export default function CancellationPolicyEditor({
             value={policy.outside23ku.description}
             onChange={(e) => updateOutside23ku('description', e.target.value)}
             rows={3}
-            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
             placeholder="遠方の場合などの規定を入力してください"
           />
         </div>
@@ -148,7 +148,7 @@ export default function CancellationPolicyEditor({
             value={policy.reschedule}
             onChange={(e) => updateReschedule(e.target.value)}
             rows={2}
-            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+            className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
             placeholder="日程変更に関するルールを入力してください"
           />
         </div>

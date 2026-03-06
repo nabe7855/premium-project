@@ -16,30 +16,28 @@ const AdditionalInfoSection: React.FC<AdditionalInfoSectionProps> = ({
     <div className="mt-16 space-y-12 duration-1000 animate-in fade-in slide-in-from-bottom-4">
       {/* Cancellation Policy */}
       <section>
-        <div className="mb-8 text-center">
-          <h3 className="font-rounded text-2xl font-bold text-rose-900">
-            ご変更、キャンセルについて
-          </h3>
-          <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-rose-300">
+        <div className="mb-8 text-center text-slate-900">
+          <h3 className="font-rounded text-2xl font-bold">ご変更、キャンセルについて</h3>
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-rose-400">
             Cancellation Policy
           </p>
         </div>
         <div className="space-y-6 rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50">
           {policy.tokyo23ku && (
             <div>
-              <h4 className="mb-3 flex items-center gap-2 font-bold text-rose-800">
+              <h4 className="mb-3 flex items-center gap-2 font-bold text-slate-900">
                 <span className="text-rose-400">📍</span>
                 {policy.tokyo23ku.title || '地域Aの場合'}
               </h4>
-              <div className="space-y-2 pl-6 text-sm leading-relaxed text-rose-600">
-                <p>
+              <div className="space-y-2 pl-6 text-sm leading-relaxed text-slate-800">
+                <p className="font-medium">
                   下記の場合はキャンセル料金が発生します。ご変更やキャンセルは分かり次第、必ずお電話にてご連絡してください。
                 </p>
                 <div className="space-y-1">
                   {policy.tokyo23ku.rules?.map((rule: any, idx: number) => (
                     <div key={idx} className="flex justify-between border-b border-rose-50 pb-1">
-                      <span>{rule.period}</span>
-                      <span className="font-bold text-rose-500">{rule.fee}</span>
+                      <span className="text-slate-700">{rule.period}</span>
+                      <span className="font-bold text-rose-600">{rule.fee}</span>
                     </div>
                   ))}
                 </div>
@@ -49,14 +47,16 @@ const AdditionalInfoSection: React.FC<AdditionalInfoSectionProps> = ({
 
           {policy.outside23ku && (
             <div>
-              <h4 className="mb-3 flex items-center gap-2 font-bold text-rose-800">
+              <h4 className="mb-3 flex items-center gap-2 font-bold text-slate-900">
                 <span className="text-rose-400">🗺️</span>
                 {policy.outside23ku.title || '地域Bの場合'}
               </h4>
-              <div className="pl-6 text-sm leading-relaxed text-rose-600">
+              <div className="pl-6 text-sm leading-relaxed text-slate-800">
                 <p>{policy.outside23ku.description}</p>
                 {policy.reschedule && (
-                  <p className="mt-2 text-xs italic text-rose-400">※{policy.reschedule}</p>
+                  <p className="mt-2 text-xs font-bold italic text-emerald-600">
+                    ※{policy.reschedule}
+                  </p>
                 )}
               </div>
             </div>
@@ -66,18 +66,18 @@ const AdditionalInfoSection: React.FC<AdditionalInfoSectionProps> = ({
 
       {/* Prohibited Matters */}
       <section>
-        <div className="mb-8 text-center">
-          <h3 className="font-rounded text-2xl font-bold text-rose-900">禁止事項</h3>
-          <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-rose-300">
+        <div className="mb-8 text-center text-slate-900">
+          <h3 className="font-rounded text-2xl font-bold">禁止事項</h3>
+          <p className="mt-1 text-xs font-bold uppercase tracking-[0.2em] text-rose-400">
             Prohibited Matters
           </p>
         </div>
         <div className="rounded-[2rem] border-2 border-rose-100 bg-white p-8 shadow-lg shadow-rose-100/50">
-          <p className="mb-6 text-center text-sm font-bold text-rose-900">
+          <p className="mb-6 text-center text-sm font-bold text-slate-900">
             下記に該当、もしくは疑わしい方のご利用をお断りさせていただきます。
           </p>
 
-          <ul className="grid grid-cols-1 gap-x-8 gap-y-3 text-xs text-rose-600 md:grid-cols-2">
+          <ul className="grid grid-cols-1 gap-x-8 gap-y-3 text-xs text-slate-800 md:grid-cols-2">
             {(prohibitions && prohibitions.length > 0
               ? prohibitions
               : [
@@ -93,20 +93,20 @@ const AdditionalInfoSection: React.FC<AdditionalInfoSectionProps> = ({
                 ]
             ).map((item, idx) => (
               <li key={idx} className="flex items-start gap-2">
-                <span className="mt-1 text-rose-300">●</span>
+                <span className="mt-1 text-rose-400">●</span>
                 <span>{item}</span>
               </li>
             ))}
           </ul>
 
           <div className="mt-8 border-t border-rose-50 pt-8">
-            <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-rose-800">
+            <h4 className="mb-3 flex items-center gap-2 text-sm font-bold text-slate-900">
               <span>📱</span> 直接連絡システムについて
             </h4>
-            <p className="text-xs leading-relaxed text-rose-500">
+            <p className="text-xs leading-relaxed text-slate-700">
               SNS等での直接連絡はあくまで「ご予約」のツールです。精神的な相談、行き過ぎた長文、日常的な過度な連絡はセラピストの負担となるため禁止とさせて頂きます。事務局の判断により、無期限の利用禁止措置をとる場合もございます。
             </p>
-            <p className="mt-4 rounded-xl bg-rose-50/50 p-3 text-[10px] text-rose-400">
+            <p className="mt-4 rounded-xl bg-rose-50 p-3 text-[10px] font-medium text-rose-600">
               ※サービス中に該当行為が発覚した場合、即座に中断させていただきます。その際、料金の返金には応じかねますのでご了承ください。
             </p>
           </div>

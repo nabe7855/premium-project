@@ -57,7 +57,7 @@ export default function FAQEditor({ faqs, onUpdate }: FAQEditorProps) {
                   type="text"
                   value={faq.question}
                   onChange={(e) => updateFAQ(index, 'question', e.target.value)}
-                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
                   placeholder="質問を入力してください"
                 />
               </div>
@@ -68,7 +68,7 @@ export default function FAQEditor({ faqs, onUpdate }: FAQEditorProps) {
                   value={faq.answer}
                   onChange={(e) => updateFAQ(index, 'answer', e.target.value)}
                   rows={4}
-                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm focus:border-rose-500 focus:outline-none"
+                  className="w-full rounded-xl border-2 border-rose-100 px-4 py-3 text-sm text-slate-900 focus:border-rose-500 focus:outline-none"
                   placeholder="回答を入力してください"
                 />
               </div>

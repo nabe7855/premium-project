@@ -96,9 +96,6 @@ export default function PriceConfigEditor({
     { id: 'TRANSPORT', label: '送迎' },
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'CAMPAIGN', label: 'キャンペーン' },
-    { id: 'PROHIBITIONS', label: '禁止事項' },
-    { id: 'FAQ', label: 'よくある質問' },
-    { id: 'CANCELLATION', label: 'キャンセル' },
   ];
 
   return (
@@ -222,24 +219,25 @@ export default function PriceConfigEditor({
             onUpdate={(campaigns) => setConfig({ ...config, campaigns })}
           />
         )}
+      </div>
 
-        {activeTab === 'PROHIBITIONS' && (
-          <ProhibitionEditor
-            prohibitions={config.prohibitions}
-            onUpdate={(prohibitions) => setConfig({ ...config, prohibitions })}
-          />
-        )}
+      {/* 常設セクション (禁止事項, よくある質問, キャンセルポリシー) */}
+      <div className="mt-12 space-y-12 border-t border-rose-100 pt-12">
+        <ProhibitionEditor
+          prohibitions={config.prohibitions}
+          onUpdate={(prohibitions) => setConfig({ ...config, prohibitions })}
+        />
 
-        {activeTab === 'FAQ' && (
+        <div className="border-t border-rose-100 pt-12">
           <FAQEditor faqs={config.faqs} onUpdate={(faqs) => setConfig({ ...config, faqs })} />
-        )}
+        </div>
 
-        {activeTab === 'CANCELLATION' && (
+        <div className="border-t border-rose-100 pt-12">
           <CancellationPolicyEditor
             policy={config.cancellation_policy}
             onUpdate={(cancellation_policy) => setConfig({ ...config, cancellation_policy })}
           />
-        )}
+        </div>
       </div>
     </div>
   );
