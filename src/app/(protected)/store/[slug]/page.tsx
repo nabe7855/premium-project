@@ -99,7 +99,8 @@ export default async function StorePage({ params }: StorePageProps) {
       line_id: true,
       line_url: true,
       notification_email: true,
-    },
+      business_hours: true,
+    } as any,
   });
 
   const store = dbStore
@@ -111,11 +112,13 @@ export default async function StorePage({ params }: StorePageProps) {
           phone: dbStore.phone || staticStore?.contact.phone || '',
           line:
             dbStore.line_url ||
-            (dbStore.line_id
-              ? `https://line.me/R/ti/p/${dbStore.line_id.startsWith('@') ? dbStore.line_id : '@' + dbStore.line_id}`
+            ((dbStore as any).line_id
+              ? `https://line.me/R/ti/p/${(dbStore as any).line_id.startsWith('@') ? (dbStore as any).line_id : '@' + (dbStore as any).line_id}`
               : staticStore?.contact.line || ''),
           email: dbStore.notification_email || staticStore?.contact.email || '',
         },
+        address: dbStore.address || staticStore?.address || '',
+        businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
         seo: {
           ...staticStore?.seo,
           description: dbStore.description || staticStore?.seo.description || '',

@@ -15,6 +15,7 @@ interface StoreForm {
   image_url?: string;
   theme_color?: string;
   description?: string;
+  business_hours?: string;
   line_id?: string;
   line_url?: string;
   notification_email?: string;
@@ -106,6 +107,7 @@ export default function EditStorePage() {
         image_url: form.image_url,
         theme_color: form.theme_color,
         description: form.description,
+        business_hours: form.business_hours,
         line_id: form.line_id,
         line_url: form.line_url,
         notification_email: form.notification_email,
@@ -153,6 +155,12 @@ export default function EditStorePage() {
         value={form.catch_copy || ''}
         onChange={(e) => handleChange('catch_copy', e.target.value)}
         placeholder="キャッチコピー"
+      />
+      <input
+        className="w-full rounded border p-2"
+        value={form.business_hours || ''}
+        onChange={(e) => handleChange('business_hours', e.target.value)}
+        placeholder="営業時間 (例: 12:00〜翌朝4時)"
       />
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">

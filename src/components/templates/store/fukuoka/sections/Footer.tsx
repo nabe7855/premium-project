@@ -97,7 +97,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   onBlur={(e) => handleShopInfoUpdate('name', e.currentTarget.innerText)}
                   className={isEditing ? 'px-1 hover:bg-white/10' : ''}
                 >
-                  {config.shopInfo.name}
+                  {store.name || config.shopInfo.name}
                 </span>
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
@@ -109,7 +109,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
                     className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
                   >
-                    {config.shopInfo.address}
+                    {store.address || config.shopInfo.address}
                   </span>
                 </div>
                 <div className="flex gap-3">
@@ -131,7 +131,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     onBlur={(e) => handleShopInfoUpdate('businessHours', e.currentTarget.innerText)}
                     className={`whitespace-pre-line ${isEditing ? 'px-1 hover:bg-slate-50' : ''}`}
                   >
-                    {config.shopInfo.businessHours}
+                    {store.businessHours || config.shopInfo.businessHours}
                   </span>
                 </div>
               </div>

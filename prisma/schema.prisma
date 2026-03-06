@@ -55,6 +55,7 @@ model Store {
   line_id            String?
   line_url           String?
   notification_email String?
+  business_hours     String?
   is_active          Boolean               @default(true)
 
   @@map("stores")

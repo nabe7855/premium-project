@@ -3,6 +3,8 @@ export interface Store {
   template: 'common' | 'fukuoka' | 'yokohama';
   name: string;
   city: string;
+  address?: string; // Master address from DB
+  businessHours?: string; // Master business hours from DB
   theme: {
     primary: string;
     primaryLight: string;
@@ -22,6 +24,7 @@ export interface Store {
     phone: string;
     line: string;
     email: string;
+    businessHours?: string; // Fallback or additional
   };
   seo: {
     title: string;
@@ -404,6 +407,8 @@ const storeData: Record<string, Store> = {
     template: 'fukuoka',
     name: 'ストロベリーボーイズ福岡',
     city: '福岡',
+    address: '福岡県福岡市',
+    businessHours: '12:00〜翌朝4時',
     theme: {
       primary: 'rgb(239, 68, 68)',
       primaryLight: 'rgb(254, 202, 202)',
@@ -454,6 +459,8 @@ const storeData: Record<string, Store> = {
     template: 'yokohama',
     name: 'ストロベリーボーイズ横浜',
     city: '横浜',
+    address: '神奈川県横浜市',
+    businessHours: '12:00〜翌朝4時',
     theme: {
       primary: 'rgb(59, 130, 246)',
       primaryLight: 'rgb(219, 234, 254)',
