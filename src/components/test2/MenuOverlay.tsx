@@ -247,9 +247,11 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ isOpen, onClose: _onClose }) 
 
           {/* Phone & Time Block */}
           <div className="space-y-3 rounded-lg border-2 border-[#3C8296]/30 bg-white p-4 shadow-md">
-            <div className="flex items-center justify-center gap-3 text-[#3C8296]">
+            <div className="flex items-center justify-center gap-2 text-[#3C8296] sm:gap-3">
               <Phone size={24} fill="#3C8296" />
-              <span className="text-3xl font-black tracking-tighter">03-6356-3860</span>
+              <span className="whitespace-nowrap text-2xl font-black tracking-tighter sm:text-3xl">
+                03-6356-3860
+              </span>
             </div>
             <div className="flex flex-col items-center gap-1">
               <div className="flex w-full max-w-[240px] border border-gray-300 text-[11px] font-bold">

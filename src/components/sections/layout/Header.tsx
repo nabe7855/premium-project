@@ -424,11 +424,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   {/* Phone Section */}
                   <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
                     <div className="flex flex-col items-center">
-                      <div className="mb-4 flex items-center justify-center gap-4 text-[#D43D6F]">
-                        <div className="rounded-full bg-pink-50 p-3 ring-8 ring-pink-50/30">
+                      <div className="mb-4 flex items-center justify-center gap-2 text-[#D43D6F] sm:gap-4">
+                        <div className="shrink-0 rounded-full bg-pink-50 p-2.5 ring-8 ring-pink-50/30 sm:p-3">
                           <svg
-                            width="24"
-                            height="24"
+                            width="20"
+                            height="20"
+                            className="sm:h-6 sm:w-6"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -439,7 +440,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                             <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                           </svg>
                         </div>
-                        <span className="text-4xl font-black tabular-nums tracking-tighter">
+                        <span className="whitespace-nowrap text-2xl font-black tabular-nums tracking-tighter sm:text-4xl">
                           {config.phoneNumber || '03-6356-3860'}
                         </span>
                       </div>
