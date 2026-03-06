@@ -148,15 +148,25 @@ export default function Dashboard({ cast }: DashboardProps) {
           setStoreName(names.join('・'));
 
           if (storesData.length > 0) {
-            const slug = storesData[0].slug;
-            const store = getStoreData(slug);
-            if (store) {
-              setCurrentStore(store);
-            }
+            // 定義されている店舗（fukuoka, yokohama等）の中から最初に見つかったものを選択
+            const validStore = storesData.find((s: any) => getStoreData(s.slug));
 
-            const res = await getStoreTopConfig(slug);
-            if (res.success && res.config) {
-              setTopConfig(res.config);
+            if (validStore) {
+              const slug = validStore.slug;
+              const names = storesData.map((s: any) => s.name);
+              setStoreName(names.join('・'));
+
+              const store = getStoreData(slug);
+              if (store) {
+                setCurrentStore(store);
+              }
+
+              const res = await getStoreTopConfig(slug);
+              if (res.success && res.config) {
+                setTopConfig(res.config);
+              }
+            } else {
+              console.warn('[Dashboard] No supported store found for cast:', storesData);
             }
           }
         }
