@@ -284,8 +284,8 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
         </motion.div>
 
         {/* Profile Tabs */}
-        <div className="mb-12 overflow-x-auto md:mb-16">
-          <div className="flex justify-center gap-3 px-4 md:flex-wrap md:px-0">
+        <div className="-mx-4 mb-12 overflow-x-auto pb-4 scrollbar-hide md:mx-0 md:mb-16 md:pb-0">
+          <div className="flex justify-start gap-3 px-4 md:flex-wrap md:justify-center md:px-0">
             {displayProfiles.map((p) => (
               <button
                 key={p.id}

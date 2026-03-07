@@ -160,7 +160,7 @@ const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpl
           </p>
         </div>
 
-        <div className="mb-16 flex flex-wrap justify-center gap-3">
+        <div className="-mx-4 mb-16 flex gap-3 overflow-x-auto px-4 pb-4 scrollbar-hide sm:mx-0 sm:flex-wrap sm:justify-center sm:overflow-x-visible sm:pb-0">
           {profiles.map((p, idx) => (
             <button
               key={p.id}
