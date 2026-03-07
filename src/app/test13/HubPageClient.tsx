@@ -91,11 +91,21 @@ interface HubPageClientProps {
   stores: any[];
   videos: any[];
   diaries: any[];
+  mediaArticles: {
+    userArticles: any[]; // イケジョラボ + スイートステイ
+    recruitArticles: any[]; // イケオラボ
+  };
 }
 
 /* ─── メインコンポーネント ─────────────────────────────── */
 
-export default function HubPageClient({ casts, stores, videos, diaries }: HubPageClientProps) {
+export default function HubPageClient({
+  casts,
+  stores,
+  videos,
+  diaries,
+  mediaArticles,
+}: HubPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'cast' | 'store' | 'video'>('cast');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -474,6 +484,174 @@ export default function HubPageClient({ casts, stores, videos, diaries }: HubPag
           </div>
         </section>
       )}
+
+      {/* ─── 3.5 Group Media Ecosystem (オウンドメディア) ─── */}
+      <section className="bg-slate-950 px-6 py-24">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 border-l-4 border-amber-500 pl-6">
+            <span className="mb-2 block text-xs font-black uppercase tracking-[0.3em] text-amber-500">
+              Group Media Ecosystem
+            </span>
+            <h2 className="font-serif text-4xl font-black">運営メディアを探る</h2>
+            <p className="mt-2 text-slate-400">
+              ライフスタイル、ウェルネス、ホテルガイド。このグループの3つのメディアがマイライフを豊かにします。
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+            {/* イケジョラボ */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="group overflow-hidden rounded-3xl border border-pink-500/20 bg-gradient-to-b from-pink-950/40 to-slate-900"
+            >
+              <Link href="/ikejo">
+                <div className="relative p-8">
+                  <div className="absolute right-6 top-6 text-5xl opacity-20">💗</div>
+                  <span className="mb-4 inline-block rounded-full bg-pink-500/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-pink-400">
+                    Women's Wellness
+                  </span>
+                  <h3 className="mb-2 text-2xl font-black text-white transition-colors group-hover:text-pink-400">
+                    イケジョラボ
+                  </h3>
+                  <p className="mb-6 text-sm text-slate-400">
+                    自立した女性のライフスタイルメディア。セルフケア・恋愛・体験談などを記事で深掘り。
+                  </p>
+
+                  {mediaArticles.userArticles.length > 0 ? (
+                    <div className="space-y-3">
+                      {mediaArticles.userArticles.slice(0, 2).map((article: any) => (
+                        <div
+                          key={article.id}
+                          className="flex items-start gap-3 rounded-xl bg-white/5 p-3"
+                        >
+                          {article.thumbnail_url && (
+                            <img
+                              src={article.thumbnail_url}
+                              className="h-12 w-12 flex-shrink-0 rounded-lg object-cover"
+                              alt={article.title}
+                            />
+                          )}
+                          <div className="min-w-0">
+                            <p className="line-clamp-2 text-xs font-bold leading-snug text-white">
+                              {article.title}
+                            </p>
+                            {article.tags?.[0] && (
+                              <span className="mt-1 block text-[10px] text-pink-400">
+                                {article.tags[0].tag.name}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-white/5 p-4 text-xs text-slate-500">
+                      記事を準備中です
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex items-center gap-2 text-sm font-black text-pink-400 transition-all group-hover:gap-4">
+                    記事を読む <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* イケオラボ */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="group overflow-hidden rounded-3xl border border-blue-500/20 bg-gradient-to-b from-blue-950/40 to-slate-900"
+            >
+              <Link href="/ikeo">
+                <div className="relative p-8">
+                  <div className="absolute right-6 top-6 text-5xl opacity-20">⚡</div>
+                  <span className="mb-4 inline-block rounded-full bg-blue-500/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-blue-400">
+                    Men's Wellness
+                  </span>
+                  <h3 className="mb-2 text-2xl font-black text-white transition-colors group-hover:text-blue-400">
+                    イケオラボ
+                  </h3>
+                  <p className="mb-6 text-sm text-slate-400">
+                    メンズウェルネス &
+                    スタイル。ファッション・恋愛・会話力から「選ばれる男」をナビゲート。
+                  </p>
+
+                  {mediaArticles.recruitArticles.length > 0 ? (
+                    <div className="space-y-3">
+                      {mediaArticles.recruitArticles.slice(0, 2).map((article: any) => (
+                        <div
+                          key={article.id}
+                          className="flex items-start gap-3 rounded-xl bg-white/5 p-3"
+                        >
+                          {article.thumbnail_url && (
+                            <img
+                              src={article.thumbnail_url}
+                              className="h-12 w-12 flex-shrink-0 rounded-lg object-cover"
+                              alt={article.title}
+                            />
+                          )}
+                          <div className="min-w-0">
+                            <p className="line-clamp-2 text-xs font-bold leading-snug text-white">
+                              {article.title}
+                            </p>
+                            {article.tags?.[0] && (
+                              <span className="mt-1 block text-[10px] text-blue-400">
+                                {article.tags[0].tag.name}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="rounded-xl bg-white/5 p-4 text-xs text-slate-500">
+                      記事を準備中です
+                    </p>
+                  )}
+
+                  <div className="mt-6 flex items-center gap-2 text-sm font-black text-blue-400 transition-all group-hover:gap-4">
+                    記事を読む <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+
+            {/* スイートステイ */}
+            <motion.div
+              whileHover={{ y: -6 }}
+              className="group overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-b from-amber-950/30 to-slate-900"
+            >
+              <Link href="/sweetstay">
+                <div className="relative p-8">
+                  <div className="absolute right-6 top-6 text-5xl opacity-20">🏨</div>
+                  <span className="mb-4 inline-block rounded-full bg-amber-500/20 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-amber-400">
+                    Hotel Guide
+                  </span>
+                  <h3 className="mb-2 text-2xl font-black text-white transition-colors group-hover:text-amber-400">
+                    スイートステイ
+                  </h3>
+                  <p className="mb-6 text-sm text-slate-400">
+                    大人のための隠れ家ホテルガイド。全国のラブホテルからピッタリな一軒を見つけよう。
+                  </p>
+                  <div className="grid grid-cols-2 gap-3 rounded-xl bg-white/5 p-4">
+                    <div className="text-center">
+                      <p className="text-2xl font-black text-amber-400">3,700+</p>
+                      <p className="mt-1 text-[10px] text-slate-500">全国のホテル</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-2xl font-black text-amber-400">AI</p>
+                      <p className="mt-1 text-[10px] text-slate-500">紹介文自動生成</p>
+                    </div>
+                  </div>
+                  <div className="mt-6 flex items-center gap-2 text-sm font-black text-amber-400 transition-all group-hover:gap-4">
+                    ホテルを探す <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
 
       {/* ─── 4. 初心者ガイド・ナレッジセクション (SEO/AIO強化) ─── */}
       <section className="bg-slate-950 px-6 py-24">

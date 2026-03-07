@@ -1,4 +1,5 @@
 // Server Component - データを直接フェッチ
+import { getMediaArticles } from '@/lib/actions/media';
 import { getAllCasts } from '@/lib/getAllCasts';
 import { supabase } from '@/lib/supabaseClient';
 import HubPageClient from './HubPageClient';
@@ -33,14 +34,35 @@ async function getLatestDiaries() {
   return data || [];
 }
 
+async function getOwnedMediaArticles() {
+  // user = イケジョラボ + スイートステイ, recruit = イケオラボ
+  const [userRes, recruitRes] = await Promise.allSettled([
+    getMediaArticles('user'),
+    getMediaArticles('recruit'),
+  ]);
+
+  const userArticles =
+    userRes.status === 'fulfilled' && userRes.value.success
+      ? (userRes.value.articles?.filter((a: any) => a.status === 'published') ?? []).slice(0, 4)
+      : [];
+
+  const recruitArticles =
+    recruitRes.status === 'fulfilled' && recruitRes.value.success
+      ? (recruitRes.value.articles?.filter((a: any) => a.status === 'published') ?? []).slice(0, 2)
+      : [];
+
+  return { userArticles, recruitArticles };
+}
+
 export const dynamic = 'force-dynamic';
 
 export default async function Test13Page() {
-  const [casts, stores, videos, diaries] = await Promise.allSettled([
+  const [casts, stores, videos, diaries, mediaArticles] = await Promise.allSettled([
     getAllCasts(),
     getStores(),
     getLatestVideos(),
     getLatestDiaries(),
+    getOwnedMediaArticles(),
   ]);
 
   return (
@@ -49,6 +71,11 @@ export default async function Test13Page() {
       stores={stores.status === 'fulfilled' ? stores.value : []}
       videos={videos.status === 'fulfilled' ? videos.value : []}
       diaries={diaries.status === 'fulfilled' ? diaries.value : []}
+      mediaArticles={
+        mediaArticles.status === 'fulfilled'
+          ? mediaArticles.value
+          : { userArticles: [], recruitArticles: [] }
+      }
     />
   );
 }
