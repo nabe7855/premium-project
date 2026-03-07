@@ -2,502 +2,566 @@
 
 import { motion } from 'framer-motion';
 import {
-  BookOpen,
-  ChevronRight,
+  ArrowRight,
   Clock,
+  Eye,
   Filter,
-  Heart,
   Play,
   Search,
+  Settings,
   ShieldCheck,
   Sparkles,
   Star,
   User,
+  Volume2,
+  Zap,
 } from 'lucide-react';
 import { useState } from 'react';
 
-/* --- Helpers --- */
+/* --- 1. 高度なクラスター定義 (Cluster Metadata) --- */
 
-// Cluster-specific UI logic (Dynamic UI requirement)
+const CLUSTERS = [
+  {
+    id: '1',
+    name: 'プレ社会人',
+    tag: '音売れフード/ASMR',
+    accent: '#FF2D55',
+    font: 'font-sans',
+    focus: 'Vertical Video',
+    logic: 'Vibrant',
+  },
+  {
+    id: '2',
+    name: '若手シングル',
+    tag: '平成女児カルチャー',
+    accent: '#FF69B4',
+    font: 'font-serif',
+    focus: 'Immersive',
+    logic: 'Retro-Modern',
+  },
+  {
+    id: '3',
+    name: '中堅シングル',
+    tag: '平穏ミュート志向',
+    accent: '#94A3B8',
+    font: 'font-sans',
+    focus: 'Expertise',
+    logic: 'Minimal',
+  },
+  {
+    id: '4',
+    name: 'ベテランシングル',
+    tag: 'Re良質消費',
+    accent: '#D4AF37',
+    font: 'font-serif',
+    focus: 'Evidence',
+    logic: 'Premium',
+  },
+  {
+    id: '5',
+    name: 'ヤング夫婦',
+    tag: 'お金のペアスタイル',
+    accent: '#4F46E5',
+    font: 'font-sans',
+    focus: 'Sharing',
+    logic: 'Practical',
+  },
+  {
+    id: '6',
+    name: 'ミドル夫婦',
+    tag: '持たない住まい',
+    accent: '#475569',
+    font: 'font-serif',
+    focus: 'Authentic',
+    logic: 'Elegance',
+  },
+  {
+    id: '7',
+    name: '乳幼児期ママ',
+    tag: '家事速攻完了',
+    accent: '#10B981',
+    font: 'font-sans',
+    focus: 'Speed/Q&A',
+    logic: 'Instant',
+  },
+  {
+    id: '8',
+    name: '児童ママ',
+    tag: '異作業の一本化',
+    accent: '#F59E0B',
+    font: 'font-sans',
+    focus: 'Pillar Pages',
+    logic: 'Multi-functional',
+  },
+  {
+    id: '9',
+    name: '青年期ママ',
+    tag: '楽外出ファッション',
+    accent: '#EC4899',
+    font: 'font-sans',
+    focus: 'Mobile/Location',
+    logic: 'Social',
+  },
+  {
+    id: '10',
+    name: 'セカンドライフ',
+    tag: 'デジタルスキル65',
+    accent: '#3B82F6',
+    font: 'font-sans',
+    focus: 'Accessibility',
+    logic: 'Simple',
+  },
+];
+
+/* --- 2. クラスター別UIスタイルの決定 --- */
+
 const getClusterStyle = (id: string) => {
+  const c = CLUSTERS.find((x) => x.id === id) || CLUSTERS[2];
+
   switch (id) {
-    case '10': // Senior cluster: Large fonts, simplified visibility
+    case '10': // シニア: 高視認性・シンプル
       return {
-        heading: 'text-6xl md:text-9xl',
-        body: 'text-xl md:text-2xl font-bold',
-        accent: 'text-blue-400',
-        nav: 'text-lg',
+        heading: 'text-7xl md:text-9xl tracking-tight leading-[1.1]',
+        body: 'text-2xl md:text-3xl font-bold leading-relaxed',
+        accent: 'text-blue-500',
+        bg: 'bg-white',
+        text: 'text-slate-900',
+        nav: 'text-lg font-black',
+        card: 'p-10 border-4',
+        btn: 'px-12 py-8 text-2xl',
       };
-    case '1': // Gen Z cluster: Vibrant accents, visual-first
+    case '1': // Gen Z: ビビッド・短尺特化
       return {
-        heading: 'text-5xl md:text-8xl',
-        body: 'text-lg md:text-xl',
+        heading: 'text-5xl md:text-8xl font-black italic',
+        body: 'text-lg md:text-xl font-medium',
         accent: 'text-pink-500',
-        nav: 'text-sm',
+        bg: 'bg-black',
+        text: 'text-white',
+        nav: 'text-xs italic',
+        card: 'p-4 rounded-3xl',
+        btn: 'px-8 py-4 text-base',
       };
     default:
       return {
-        heading: 'text-5xl md:text-8xl',
-        body: 'text-lg md:text-xl',
+        heading: 'text-5xl md:text-7xl lg:text-8xl font-serif font-black',
+        body: 'text-lg md:text-xl font-normal leading-loose',
         accent: 'text-amber-500',
-        nav: 'text-sm',
+        bg: 'bg-slate-950',
+        text: 'text-white',
+        nav: 'text-sm tracking-[0.2em]',
+        card: 'p-6 rounded-2xl border-white/10',
+        btn: 'px-8 py-4 text-sm',
       };
   }
 };
 
-/* --- Components --- */
+/* --- 3. コンテンツデータ (AIO/SEO最適化) --- */
 
-// 1. Cinematic Hero Section (90-second rule)
-const CinematicHero = ({ style, activeCluster }: { style: any; activeCluster: string }) => (
-  <section className="relative h-screen min-h-[700px] w-full overflow-hidden bg-slate-950">
-    <div className="absolute inset-0 z-0">
-      <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/60 via-black/20 to-slate-950" />
-      <img
-        src="https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?auto=format&fit=crop&q=80&w=2000"
-        className="animate-subtle-zoom h-full w-full scale-105 object-cover opacity-60"
-        alt="Hero Cinematic"
-      />
-    </div>
-
-    <div className="container relative z-20 mx-auto flex h-full flex-col justify-center px-6">
-      <motion.div
-        key={activeCluster}
-        initial={{ opacity: 0, scale: 0.98 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 1 }}
-      >
-        <span
-          className={`mb-6 inline-flex items-center gap-2 rounded-full border bg-white/10 px-4 py-1.5 text-xs font-bold uppercase tracking-widest backdrop-blur-md ${activeCluster === '1' ? 'border-pink-500/30 text-pink-400' : 'border-amber-500/30 text-amber-400'}`}
-        >
-          <Sparkles className="h-3 w-3" />
-          Next-Gen Platform
-        </span>
-        <h1
-          className={`mb-6 max-w-4xl font-serif font-black leading-tight text-white drop-shadow-2xl ${style.heading}`}
-        >
-          自分を整える、
-          <br />
-          <span className={style.accent}>本質的な美しさ</span>への投資。
-        </h1>
-        <p
-          className={`mb-10 max-w-2xl leading-relaxed text-slate-300 drop-shadow-md ${style.body}`}
-        >
-          「デジタルの手間」から解放され、心身を充足させる五感体験へ。
-          AIが導く、あなただけにパーソナライズされたウェルネス・プラットフォーム。
-        </p>
-
-        <div className="flex flex-wrap gap-4">
-          <button className="flex items-center gap-2 rounded-xl bg-white px-8 py-4 font-bold text-slate-950 shadow-xl transition-transform hover:scale-105">
-            <Play className="h-4 w-4 fill-current" />
-            コンセプト動画
-          </button>
-          <button className="rounded-xl border border-white/30 bg-transparent px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10">
-            診断を開始
-          </button>
-        </div>
-      </motion.div>
-    </div>
-
-    <div className="absolute bottom-10 left-1/2 z-20 -translate-x-1/2 animate-bounce">
-      <div className="flex h-10 w-6 justify-center rounded-full border-2 border-white/20 p-1">
-        <div
-          className={`h-2 w-1 rounded-full ${activeCluster === '1' ? 'bg-pink-500' : 'bg-amber-500'}`}
-        />
-      </div>
-    </div>
-  </section>
-);
-
-// 2. Cluster Selector (10 Specialized Personas)
-const ClusterSelector = ({
-  activeId,
-  onSelect,
-}: {
-  activeId: string;
-  onSelect: (id: string) => void;
-}) => {
-  const clusters = [
-    { id: '1', name: 'プレ社会人', tag: '音売れフード/ASMR' },
-    { id: '2', name: '若手シングル', tag: '平成女児カルチャー' },
-    { id: '3', name: '中堅シングル', tag: '平穏ミュート志向' },
-    { id: '4', name: 'ベテランシングル', tag: 'Re良質消費' },
-    { id: '5', name: 'ヤング夫婦', tag: 'お金のペアスタイル' },
-    { id: '6', name: 'ミドル夫婦', tag: '持たない住まい' },
-    { id: '7', name: '乳幼児期ママ', tag: '家事速攻完了' },
-    { id: '8', name: '児童ママ', tag: '異作業の一本化' },
-    { id: '9', name: '青年期ママ', tag: '楽外出ファッション' },
-    { id: '10', name: 'セカンドライフ', tag: 'デジタルスキル65' },
-  ];
-
-  return (
-    <div className="overflow-hidden border-y border-white/5 bg-slate-900 py-20">
-      <div className="container mx-auto mb-10 px-6">
-        <h2 className="mb-4 font-serif text-3xl font-bold text-white">ライフスタイル別に探す</h2>
-        <p className="text-slate-400">10のクラスター別に最適化された、没入型のエクスペリエンス。</p>
-      </div>
-
-      <div className="no-scrollbar mask-gradient-sides flex gap-4 overflow-x-auto px-6 pb-6">
-        {clusters.map((c) => (
-          <button
-            key={c.id}
-            onClick={() => onSelect(c.id)}
-            className={`group w-[240px] flex-shrink-0 rounded-2xl border px-6 py-8 text-left transition-all ${
-              activeId === c.id
-                ? 'border-amber-400 bg-amber-500 text-white shadow-xl shadow-amber-900/40'
-                : 'border-white/10 bg-white/5 text-slate-300 hover:border-amber-500/50 hover:bg-white/10'
-            }`}
-          >
-            <div
-              className={`mb-4 flex h-10 w-10 items-center justify-center rounded-lg ${activeId === c.id ? 'bg-white/20' : 'bg-amber-500/20 text-amber-500'}`}
-            >
-              <User className="h-5 w-5" />
-            </div>
-            <div className="mb-1 text-xs font-bold uppercase tracking-widest opacity-60">
-              {c.tag}
-            </div>
-            <div className="text-xl font-bold">{c.name}</div>
-            <div className="mt-4 flex items-center text-xs font-semibold opacity-0 transition-opacity group-hover:opacity-100">
-              表示を切り替える <ChevronRight className="ml-1 h-3 w-3" />
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
+const CONTENT_DATA = {
+  pillar: {
+    title: '性的ウェルネス完全ガイド 2025',
+    description: '自己肯定感を最大化させる、現代女性のためのセルフケア投資。',
+  },
+  clusters: [
+    {
+      title: '週末のデジタルデトックス',
+      prep: 'P',
+      c: '情報の「消費」から自分を「整える」体験へ。',
+      tag: 'Mental',
+    },
+    {
+      title: '専門店が教える利用マナー',
+      prep: 'R',
+      c: '相互の信頼関係が、サービスの質を30%向上させます。',
+      tag: 'Guide',
+    },
+    {
+      title: '投資としてのウェルネス',
+      prep: 'E',
+      c: '精神的充足はLTV（QOL）を高める最良の資産です。',
+      tag: 'Finance',
+    },
+  ],
 };
 
-// 3. Netflix-style Selection (Content Rows)
-const ContentRow = ({ title, items }: { title: string; items: any[] }) => (
-  <div className="px-6 py-12">
-    <div className="container mx-auto">
-      <div className="mb-8 flex items-center justify-between px-4">
-        <h3 className="font-serif text-2xl font-bold text-white">{title}</h3>
-        <button className="text-sm font-bold text-amber-500 hover:underline">すべて表示</button>
-      </div>
+/* --- 4. メイン・コンポーネント --- */
 
-      <div className="no-scrollbar flex gap-6 overflow-x-auto px-4 pb-6">
-        {items.map((item, idx) => (
-          <motion.div
-            key={idx}
-            whileHover={{ y: -10 }}
-            className="group relative w-[300px] flex-shrink-0 overflow-hidden rounded-3xl border border-white/10 bg-slate-900 md:w-[350px]"
-          >
-            <div className="relative aspect-[16/9] w-full">
-              <img
-                src={item.image}
-                className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                alt={item.title}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90" />
-              <div className="absolute right-4 top-4">
-                <span className="rounded-full border border-white/20 bg-black/50 px-3 py-1 text-[10px] text-white backdrop-blur-md">
-                  {item.duration || '01:30'}
-                </span>
-              </div>
-              <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity group-hover:opacity-100">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/50 bg-white/20 backdrop-blur-md">
-                  <Play className="h-5 w-5 fill-current text-white" />
-                </div>
-              </div>
-            </div>
-            <div className="p-6">
-              <div className="mb-3 flex items-center gap-2">
-                <span className="rounded-md bg-amber-500/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-amber-500">
-                  {item.category}
-                </span>
-                <div className="flex items-center gap-1 text-[10px] text-slate-500">
-                  <Clock className="h-3 w-3" />
-                  {item.date}
-                </div>
-              </div>
-              <h4 className="line-clamp-2 text-lg font-bold text-white transition-colors group-hover:text-amber-500">
-                {item.title}
-              </h4>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-    </div>
-  </div>
-);
-
-// 4. Tablog-style Smart Search (Multi-axis Filter)
-const TablogSearch = () => (
-  <section className="container mx-auto px-6 py-20">
-    <div className="mx-auto max-w-4xl rounded-[2.5rem] border border-white/10 bg-slate-900/60 p-10 shadow-2xl backdrop-blur-2xl">
-      <div className="mb-10 flex flex-col items-center gap-8 md:flex-row">
-        <div className="group relative w-full flex-grow md:w-auto">
-          <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-slate-400 transition-colors group-focus-within:text-amber-500" />
-          <input
-            type="text"
-            placeholder="目的・お悩み・エリアから探す"
-            className="w-full rounded-2xl border border-white/10 bg-slate-950/50 py-6 pl-16 pr-6 text-lg text-white outline-none transition-all focus:ring-2 focus:ring-amber-500/50"
-          />
-        </div>
-        <button className="flex w-full items-center justify-center gap-2 rounded-2xl bg-amber-500 px-10 py-6 font-black text-slate-950 transition-transform hover:scale-105 md:w-auto">
-          <Filter className="h-4 w-4" />
-          多軸検索
-        </button>
-      </div>
-      <div className="grid grid-cols-2 gap-6 px-4 md:grid-cols-4">
-        {[
-          { label: 'エリア', val: '東京都内・近郊' },
-          { label: '予算', val: '30,000円〜' },
-          { label: '雰囲気', val: 'モダン・隠れ家' },
-          { label: '空き状況', val: '今日・明日' },
-        ].map((f, i) => (
-          <div key={i} className="group cursor-pointer">
-            <div className="mb-1 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-colors group-hover:text-amber-500">
-              {f.label}
-            </div>
-            <div className="font-bold text-slate-200 transition-colors group-hover:text-white">
-              {f.val}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  </section>
-);
-
-// 5. Education Pillar Section (PREP Method)
-const EducationSection = () => (
-  <section className="bg-white py-24 text-slate-950">
-    <div className="container mx-auto px-6">
-      <div className="flex flex-col items-start gap-16 lg:flex-row">
-        <div className="max-w-md lg:sticky lg:top-24">
-          <span className="mb-4 block text-xs font-black uppercase tracking-[0.2em] text-amber-600">
-            Education & Confidence
-          </span>
-          <h2 className="mb-8 font-serif text-4xl font-black leading-tight md:text-5xl">
-            「正しく知る」ことが、あなたの自信に。
-          </h2>
-          <p className="mb-8 leading-relaxed text-slate-600">
-            情報の非対称性を解消し、納得感のある選択を支援するための専門家監修コンテンツ。PREP法に基づき、結論ファーストであなたの疑問に答えます。
-          </p>
-          <div className="flex flex-col gap-4">
-            <div className="flex items-center gap-3 rounded-xl border border-amber-100 bg-amber-50 p-4">
-              <ShieldCheck className="h-6 w-6 text-amber-600" />
-              <div>
-                <dt className="text-sm font-bold text-amber-900">100% 専門家監修</dt>
-                <dd className="text-xs text-amber-700">エビデンスに基づいた一次情報のみ。</dd>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="flex-grow space-y-12">
-          {[
-            {
-              title: '性的ウェルネスとメンタルヘルスの密接な関係',
-              prep: 'P',
-              content: '美しさの根源は「自分を肯定する力」にあります。',
-              tag: 'Self Care',
-            },
-            {
-              title: '初めての利用マナー：スマートな大人の選択',
-              prep: 'R',
-              content: '相互尊重の精神は、体験の質を劇的に向上させます。',
-              tag: 'Guide',
-            },
-          ].map((item, i) => (
-            <motion.article
-              key={i}
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="rounded-3xl border border-slate-100 bg-slate-50 p-8 transition-all duration-500 hover:bg-white hover:shadow-2xl md:p-12"
-            >
-              <div className="mb-6 flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-500 font-black text-white">
-                  {item.prep}
-                </div>
-                <span className="rounded-full bg-slate-200 px-3 py-1 text-[10px] font-bold lowercase text-slate-600">
-                  {item.tag}
-                </span>
-              </div>
-              <h4 className="mb-4 text-2xl font-bold">{item.title}</h4>
-              <p className="mb-6 border-l-4 border-amber-500 pl-4 italic text-slate-600">
-                「{item.content}」
-              </p>
-              <button className="flex items-center gap-2 text-sm font-black text-amber-600 transition-all hover:gap-3">
-                記事全文を読む <ChevronRight className="h-4 w-4" />
-              </button>
-            </motion.article>
-          ))}
-        </div>
-      </div>
-    </div>
-  </section>
-);
-
-// Main Page Execution
-export default function ContentHub() {
+export default function ContentHubV2() {
   const [activeCluster, setActiveCluster] = useState('3');
+  const [artworkMode, setArtworkMode] = useState<'A' | 'B'>('A'); // サムネイル出し分けシミュレーター
   const style = getClusterStyle(activeCluster);
-  const [items] = useState([
-    {
-      category: 'Hot Picks',
-      title: '【密着】2025年最新。自分を慈しむ週末の過ごし方',
-      image:
-        'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=800',
-      date: '2025.03.01',
-    },
-    {
-      category: 'Education',
-      title: '専門医が語る「セロトニン分泌」を高めるトリートメント',
-      image:
-        'https://images.unsplash.com/photo-1512290923902-8a9f81dc2069?auto=format&fit=crop&q=80&w=800',
-      date: '2025.02.28',
-    },
-    {
-      category: 'Series',
-      title: '東京・隠れ家店舗シリーズ #04 代官山',
-      image:
-        'https://images.unsplash.com/photo-1522335789203-aabd1fc54bc9?auto=format&fit=crop&q=80&w=800',
-      date: '2025.02.25',
-    },
-    {
-      category: 'Trends',
-      title: 'プレ社会人が熱視線を送る「ASMRによる解放」',
-      image:
-        'https://images.unsplash.com/photo-1493225255756-d9584f8606e9?auto=format&fit=crop&q=80&w=800',
-      date: '2025.02.20',
-    },
-  ]);
+
+  // クラスターに応じたおすすめアイテムの出し分け
+  const getPersonalizedItems = () => {
+    const base = [
+      {
+        category: 'Hot',
+        title: '【密着】2025年最新。自分を慈しむ週末',
+        image:
+          artworkMode === 'A'
+            ? 'https://images.unsplash.com/photo-1544161515-4ae6b91827d1'
+            : 'https://images.unsplash.com/photo-1512290923902-8a9f81dc2069',
+      },
+      {
+        category: 'ASMR',
+        title: '耳から整う、究極の音響体験',
+        image:
+          artworkMode === 'A'
+            ? 'https://images.unsplash.com/photo-1493225255756-d9584f8606e9'
+            : 'https://images.unsplash.com/photo-1459749411177-042180ce673a',
+      },
+    ];
+    return base;
+  };
 
   return (
     <div
-      className={`min-h-screen bg-slate-950 font-sans text-white selection:bg-amber-500/30 ${activeCluster === '10' ? 'text-lg' : ''}`}
+      className={`min-h-screen transition-colors duration-700 ${style.bg} ${style.text} overflow-x-hidden selection:bg-amber-500/30`}
     >
-      {/* JSON-LD Implementation */}
+      {/* 6.4 構造化データ (JSON-LD) */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             '@context': 'https://schema.org',
             '@type': 'WebSite',
-            name: 'Next-Gen Female Content Hub',
-            description: '2025年女性向けデジタル市場の決定版・ハブプラットフォーム',
+            name: 'PLATFORM.HUB',
+            description: '2025年最新。検索・エンタメ・教育が融合する女性向けハブ',
+            author: { '@type': 'Organization', name: 'Next-Gen Dev Team' },
           }),
         }}
       />
 
-      {/* Cinematic Hero */}
-      <CinematicHero style={style} activeCluster={activeCluster} />
+      {/* --- Header --- */}
+      <nav className="fixed top-0 z-[100] flex w-full items-center justify-between border-b border-white/5 bg-slate-950/80 px-6 py-4 backdrop-blur-2xl">
+        <div className={`font-serif text-2xl font-black tracking-tighter ${style.accent}`}>
+          PLATFORM<span className="text-white">.HUB</span>
+        </div>
 
-      {/* Mini-Nav */}
-      <nav className="sticky top-0 z-50 w-full border-b border-white/5 bg-slate-950/80 px-6 py-4 backdrop-blur-xl">
-        <div className="container mx-auto flex items-center justify-between">
-          <div
-            className={`font-serif text-2xl font-black tracking-tighter ${activeCluster === '1' ? 'text-pink-500' : 'text-amber-500'}`}
+        <div className={`hidden items-center gap-10 lg:flex ${style.nav}`}>
+          {['Experience', 'Education', 'Clusters', 'AIO Search'].map((item) => (
+            <a key={item} href="#" className="uppercase transition-all hover:text-amber-500">
+              {item}
+            </a>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => setArtworkMode(artworkMode === 'A' ? 'B' : 'A')}
+            className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[10px] hover:bg-white/10"
           >
-            PLATFORM<span className="text-white">.HUB</span>
-          </div>
-          <div
-            className={`hidden items-center gap-8 font-bold tracking-widest text-slate-400 md:flex ${style.nav}`}
+            <Settings className="h-3 w-3" /> UI Mode: {artworkMode}
+          </button>
+          <button
+            className={`rounded bg-white px-6 py-2 font-black uppercase text-black ${style.nav}`}
           >
-            <a href="#" className="uppercase transition-colors hover:text-white">
-              Experience
-            </a>
-            <a href="#" className="uppercase transition-colors hover:text-white">
-              Education
-            </a>
-            <a href="#" className="uppercase transition-colors hover:text-white">
-              Clusters
-            </a>
-            <a href="#" className="uppercase transition-colors hover:text-white">
-              Search
-            </a>
-          </div>
-          <div className="flex items-center gap-4">
-            <button className="flex h-10 w-10 items-center justify-center rounded-full border border-white/10 transition-colors hover:bg-white/5">
-              <Search className="h-4 w-4" />
-            </button>
-            <button
-              className={`rounded-lg bg-white px-5 py-2 text-xs font-black uppercase tracking-widest text-slate-950 transition-colors ${activeCluster === '1' ? 'hover:bg-pink-500' : 'hover:bg-amber-500'}`}
-            >
-              Login
-            </button>
-          </div>
+            Login
+          </button>
         </div>
       </nav>
 
-      <main>
-        <ClusterSelector activeId={activeCluster} onSelect={setActiveCluster} />
-        <div className="bg-slate-950 py-10">
-          <ContentRow title="あなたへのおすすめ" items={items} />
-          <ContentRow title="ASMR/五感体験シリーズ" items={items.slice(1, 3)} />
-        </div>
-        <TablogSearch />
-        <EducationSection />
+      <main className="pt-20">
+        {/* --- 4.1 シネマティック・ファーストビュー (Hero) --- */}
+        <section className="relative flex h-[95vh] w-full items-center overflow-hidden">
+          <div className="absolute inset-0 z-0">
+            <div className="absolute inset-0 z-10 bg-gradient-to-r from-black via-black/40 to-transparent" />
+            <img
+              src="https://images.unsplash.com/photo-1516062423079-7ca13cdc7f5a?auto=format&fit=crop&q=80&w=2000"
+              className="animate-slow-zoom h-full w-full scale-100 object-cover opacity-60"
+            />
+          </div>
 
-        <section className="relative overflow-hidden bg-gradient-to-br from-indigo-900 to-slate-950 py-32">
-          <div className="absolute right-0 top-0 h-[600px] w-[600px] rounded-full bg-amber-500/10 blur-[150px]" />
-          <div className="container relative z-10 mx-auto max-w-4xl px-6 text-center">
-            <div className="mb-8 flex justify-center">
-              <div className="flex h-20 w-20 items-center justify-center rounded-3xl border border-white/20 bg-white/10 shadow-2xl backdrop-blur-md">
-                <Sparkles className="h-10 w-10 animate-pulse text-amber-400" />
+          <div className="container relative z-20 px-10">
+            <motion.div
+              key={activeCluster}
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1 }}
+              className="max-w-5xl"
+            >
+              <span
+                className={`mb-10 inline-flex items-center gap-2 rounded-full border bg-white/5 px-4 py-1.5 text-xs font-black uppercase tracking-[0.3em] ${style.accent}`}
+              >
+                <Zap className="h-4 w-4" /> 2025 Digital Labor Agency
+              </span>
+              <h1 className={`${style.heading} mb-8 drop-shadow-2xl`}>
+                自分を整える、
+                <br />
+                <span className={style.accent}>本質的な価値</span>への投資。
+              </h1>
+              <p className={`balance max-w-2xl ${style.body} mb-12 text-slate-300`}>
+                情報の過多から解放され、心身を充足させる五感体験へ。
+                <br />
+                AIによる「手間代行」が、あなただけに最適化されたウェルネスを提示します。
+              </p>
+
+              <div className="flex flex-wrap gap-6">
+                <button
+                  className={`flex items-center gap-3 rounded-full bg-white font-black text-black shadow-2xl transition-all hover:scale-105 ${style.btn}`}
+                >
+                  <Play className="h-5 w-5 fill-current" />
+                  90秒で体験する動画
+                </button>
+                <button
+                  className={`rounded-full border border-white/20 bg-transparent font-black text-white transition-all hover:bg-white/5 ${style.btn}`}
+                >
+                  AI診断を始める
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* --- 2.2 10クラスター・セレクター --- */}
+        <section className="border-y border-white/5 bg-slate-900/50 py-24">
+          <div className="container mb-12 px-10">
+            <h2 className="mb-4 font-serif text-3xl font-black">Clusters : あなたの属性を選択</h2>
+            <p className="text-slate-500">
+              10のクラスター別にUIとレコメンドをリアルタイム調整します。
+            </p>
+          </div>
+
+          <div className="no-scrollbar flex gap-6 overflow-x-auto px-10 pb-8">
+            {CLUSTERS.map((c) => (
+              <button
+                key={c.id}
+                onClick={() => setActiveCluster(c.id)}
+                className={`group relative w-[240px] flex-shrink-0 text-left transition-all ${style.card} ${activeCluster === c.id ? 'border-amber-400 bg-amber-500 ring-4 ring-amber-500/20' : 'border-white/10 bg-white/5 hover:border-amber-500/50'}`}
+              >
+                <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors group-hover:text-amber-500">
+                  {c.tag}
+                </div>
+                <div className="text-xl font-black text-white">{c.name}</div>
+                <div className="mt-4 flex items-center text-[10px] font-bold opacity-40">
+                  Detail <ArrowRight className="ml-2 h-3 w-3" />
+                </div>
+              </button>
+            ))}
+          </div>
+        </section>
+
+        {/* --- 4.2 Netflix型コンテンツ行 (Artwork Personalizationモデル) --- */}
+        <section className="px-10 py-20">
+          <div className="mb-12 flex items-center justify-between border-l-4 border-amber-500 pl-6">
+            <div>
+              <h3 className="font-serif text-3xl font-black">あなたに最適化された受動的発見</h3>
+              <p className="mt-1 text-xs uppercase tracking-widest text-slate-500">
+                Artwork Personalization :{' '}
+                {artworkMode === 'A' ? 'Romance Selection' : 'Comedy/Viral Selection'}
+              </p>
+            </div>
+            <button className="text-xs font-black uppercase tracking-widest hover:text-amber-500">
+              See All Videos
+            </button>
+          </div>
+
+          <div className="no-scrollbar flex gap-8 overflow-x-auto pb-10">
+            {getPersonalizedItems().map((item, i) => (
+              <motion.div
+                key={i}
+                whileHover={{ y: -12 }}
+                className="group relative w-[380px] flex-shrink-0 overflow-hidden rounded-[2rem] border border-white/10 bg-slate-900"
+              >
+                <div className="aspect-[16/9] w-full overflow-hidden">
+                  <img
+                    src={item.image}
+                    className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-all group-hover:opacity-100">
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-white/20 backdrop-blur-md">
+                      <Play className="h-6 w-6 fill-current text-white" />
+                    </div>
+                  </div>
+                </div>
+                <div className="p-8">
+                  <span className="mb-4 inline-block rounded bg-amber-500 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-black">
+                    {item.category}
+                  </span>
+                  <h4 className="text-xl font-bold leading-snug transition-colors group-hover:text-amber-500">
+                    {item.title}
+                  </h4>
+                  <div className="mt-6 flex items-center gap-4 text-xs text-slate-500">
+                    <span className="flex items-center gap-2">
+                      <Clock className="h-3 w-3" /> 01:30
+                    </span>
+                    <span className="flex items-center gap-2">
+                      <Volume2 className="h-3 w-3" /> ASMR ON
+                    </span>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+
+        {/* --- 4.2 多軸検索 (Tablog型) --- */}
+        <section className="container mx-auto px-10 py-32">
+          <div className="rounded-[3rem] border border-white/10 bg-slate-900/80 p-12 shadow-[0_0_100px_rgba(0,0,0,0.5)] backdrop-blur-3xl">
+            <div className="mb-16 flex flex-col gap-8 lg:flex-row">
+              <div className="group relative flex-grow">
+                <Search className="absolute left-8 top-1/2 -translate-y-1/2 text-slate-500 transition-colors group-focus-within:text-amber-500" />
+                <input
+                  type="text"
+                  placeholder="エリア・お悩み・目的から探す"
+                  className="h-24 w-full rounded-3xl border border-white/10 bg-black/40 pl-20 pr-8 text-xl text-white outline-none transition-all focus:ring-4 focus:ring-amber-500/20"
+                />
+              </div>
+              <button className="flex h-24 items-center justify-center gap-4 rounded-3xl bg-amber-500 px-16 text-xl font-black text-black transition-all hover:scale-[1.02]">
+                <Filter className="h-6 w-6" /> 多軸検索
+              </button>
+            </div>
+
+            <div className="grid grid-cols-2 gap-12 border-t border-white/5 pt-12 md:grid-cols-4">
+              {[
+                { l: 'Area', v: '東京都内', icon: <User className="h-3 w-3" /> },
+                { l: 'Budget', v: '30,000 yen~', icon: <Star className="h-3 w-3" /> },
+                { l: 'Atmosphere', v: 'ラグジュアリー', icon: <Eye className="h-3 w-3" /> },
+                { l: 'Condition', v: '今日・明日予約可', icon: <Zap className="h-3 w-3" /> },
+              ].map((item, i) => (
+                <div key={i} className="group cursor-pointer">
+                  <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-500 transition-colors group-hover:text-amber-500">
+                    {item.icon} {item.l}
+                  </div>
+                  <div className="text-xl font-bold text-slate-200 transition-colors group-hover:text-white">
+                    {item.v}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* --- 3.2 トピッククラスター & 6.3 PREP法 (Education) --- */}
+        <section className="relative z-40 rounded-[4rem] bg-white py-32 text-slate-950">
+          <div className="container mx-auto px-10">
+            <div className="flex flex-col gap-20 lg:flex-row">
+              <div className="lg:w-1/3">
+                <div className="sticky top-40">
+                  <span className="mb-6 block text-xs font-black uppercase tracking-widest text-amber-600">
+                    Education / Confident Choice
+                  </span>
+                  <h2 className="mb-8 font-serif text-5xl font-black leading-[1.1]">
+                    {CONTENT_DATA.pillar.title}
+                  </h2>
+                  <p className="mb-10 text-lg leading-relaxed text-slate-600">
+                    {CONTENT_DATA.pillar.description}
+                  </p>
+                  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                    <dt className="mb-2 flex items-center gap-2 text-sm font-black text-slate-900">
+                      <ShieldCheck className="h-5 w-5 text-amber-500" />{' '}
+                      専門家による「信頼のインフラ」
+                    </dt>
+                    <dd className="text-xs leading-relaxed text-slate-500">
+                      全ての情報は医療従事者・ウェルネス専門家が監修。情報の非対称性を解消します。
+                    </dd>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-12 lg:w-2/3">
+                {CONTENT_DATA.clusters.map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 30 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    className="group rounded-[3rem] border border-slate-200 bg-slate-50 p-12 transition-all duration-500 hover:bg-white hover:shadow-2xl"
+                  >
+                    <div className="mb-8 flex items-center gap-4">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-500 text-xl font-black text-black shadow-lg shadow-amber-500/20">
+                        {item.prep}
+                      </div>
+                      <span className="rounded-full border border-slate-200 px-4 py-1 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        {item.tag}
+                      </span>
+                    </div>
+                    <h4 className="mb-6 text-3xl font-black transition-colors group-hover:text-amber-600">
+                      {item.title}
+                    </h4>
+                    <p className="mb-10 border-l-4 border-amber-500 pl-8 text-lg italic leading-relaxed text-slate-600">
+                      「 {item.c} 」
+                    </p>
+                    <button className="flex items-center gap-3 text-sm font-black uppercase tracking-widest text-black underline decoration-amber-500 decoration-2 underline-offset-8 transition-all group-hover:gap-6">
+                      Read Cluster Content <ArrowRight className="h-4 w-4" />
+                    </button>
+                  </motion.div>
+                ))}
               </div>
             </div>
-            <h2 className="mb-8 font-serif text-4xl font-black leading-tight md:text-6xl">
-              AI診断で、もっと「わたし」らしい選択を。
+          </div>
+        </section>
+
+        {/* --- 7.2 AI診断 CTA (成約のトリガー) --- */}
+        <section className="relative overflow-hidden bg-slate-950 py-40">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.05)_0%,transparent_100%)] opacity-50" />
+          <div className="container relative z-10 mx-auto max-w-4xl px-10 text-center">
+            <div className="mb-12 inline-flex h-24 w-24 animate-pulse items-center justify-center rounded-[2.5rem] border border-white/10 bg-white/5 backdrop-blur-xl">
+              <Sparkles className="h-10 w-10 text-amber-500" />
+            </div>
+            <h2 className="mb-10 font-serif text-4xl font-black leading-[1.1] md:text-7xl">
+              AIが、あなただけの
+              <br />
+              <span className="bg-gradient-to-r from-amber-200 to-amber-600 bg-clip-text text-transparent">
+                最適解
+              </span>
+              を提示します。
             </h2>
-            <p className="mb-12 text-lg text-slate-300">
-              視聴履歴と行動ログから、あなたの潜在的な嗜好を分析。Netflixのような「受動的発見」をウェルネス体験にも。
+            <p className="mb-16 text-xl leading-relaxed text-slate-400">
+              90%のユーザーが利用する「AIアシスト診断」。
+              <br />
+              検索の手間から解放され、心から納得できる選択を。
             </p>
-            <button className="rounded-[2rem] bg-amber-500 px-12 py-6 text-xl font-black text-slate-950 shadow-2xl shadow-amber-500/40 transition-all hover:scale-105">
-              AI診断を開始
+            <button className="rounded-full bg-amber-500 px-16 py-8 text-2xl font-black text-black shadow-[0_20px_60px_rgba(245,158,11,0.4)] transition-all hover:scale-110 active:scale-95">
+              AIによるパーソナライズ診断を開始
             </button>
           </div>
         </section>
       </main>
 
-      <footer className="border-t border-white/5 bg-black px-6 py-20">
-        <div className="container mx-auto grid grid-cols-1 gap-12 text-slate-500 md:grid-cols-4">
-          <div className="col-span-2">
-            <div className="mb-6 font-serif text-3xl font-black text-amber-500">
-              PLATFORM<span className="text-white">.HUB</span>
+      <footer className="border-t border-white/20 bg-black px-10 py-32">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-1 gap-20 md:grid-cols-5">
+            <div className="col-span-2">
+              <div className={`mb-10 font-serif text-4xl font-black ${style.accent}`}>
+                PLATFORM<span className="text-white">.HUB</span>
+              </div>
+              <p className="max-w-md text-sm leading-relaxed text-slate-500">
+                2025年、女性のライフスタイルは情報の「消費」から「整え」へと進化します。
+                <br />
+                私たちは信頼のインフラとして、最高品質のエクスペリエンスを届けるハブであり続けます。
+              </p>
             </div>
-            <p className="mb-8 max-w-md text-sm leading-relaxed">
-              2025年、女性のライフスタイルは情報の「消費」から「整え」へと進化します。
-            </p>
-            <div className="flex gap-4">
-              <button className="rounded-full border border-white/10 p-3 hover:bg-white/5">
-                <Heart className="h-4 w-4" />
-              </button>
-              <button className="rounded-full border border-white/10 p-3 hover:bg-white/5">
-                <Star className="h-4 w-4" />
-              </button>
-              <button className="rounded-full border border-white/10 p-3 hover:bg-white/5">
-                <BookOpen className="h-4 w-4" />
-              </button>
+            {['Information', 'Safety', 'Company'].map((t) => (
+              <div key={t}>
+                <h5 className="mb-8 text-xs font-black uppercase tracking-widest text-white">
+                  {t}
+                </h5>
+                <ul className="space-y-4 text-xs text-slate-500">
+                  <li className="cursor-pointer transition-colors hover:text-white">利用規約</li>
+                  <li className="cursor-pointer transition-colors hover:text-white">
+                    プライバシーポリシー
+                  </li>
+                  <li className="cursor-pointer transition-colors hover:text-white">
+                    監修者プロフィール
+                  </li>
+                </ul>
+              </div>
+            ))}
+          </div>
+          <div className="mt-32 flex flex-col items-center justify-between gap-10 border-t border-white/10 pt-12 text-[10px] uppercase tracking-widest text-slate-600 md:flex-row">
+            <div>© 2025 NEXT-GEN CONTENT HUB PLATFORM. ALL RIGHTS RESERVED.</div>
+            <div className="flex gap-10">
+              <span className="cursor-pointer hover:text-white">Security Center</span>
+              <span className="cursor-pointer hover:text-white">Support</span>
             </div>
           </div>
-          <div className="pt-8 md:pt-0">
-            <h5 className="mb-6 text-xs font-bold uppercase tracking-widest text-white">
-              Information
-            </h5>
-            <ul className="space-y-4 text-xs">
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  ご利用ガイド
-                </a>
-              </li>
-              <li>
-                <a href="#" className="transition-colors hover:text-white">
-                  安心の取り組み
-                </a>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className="container mx-auto mt-20 flex flex-col items-center justify-between gap-4 border-t border-white/5 pt-8 text-[10px] md:flex-row">
-          <div>© 2025 NEXT-GEN HUB PLATFORM.</div>
         </div>
       </footer>
 
       <style jsx global>{`
-        @keyframes subtle-zoom {
+        @keyframes slow-zoom {
           from {
             transform: scale(1);
           }
@@ -505,8 +569,8 @@ export default function ContentHub() {
             transform: scale(1.1);
           }
         }
-        .animate-subtle-zoom {
-          animation: subtle-zoom 20s ease-in-out infinite alternate;
+        .animate-slow-zoom {
+          animation: slow-zoom 30s ease-in-out infinite alternate;
         }
         .no-scrollbar::-webkit-scrollbar {
           display: none;
@@ -515,8 +579,8 @@ export default function ContentHub() {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
-        .mask-gradient-sides {
-          mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        .balance {
+          text-wrap: balance;
         }
       `}</style>
     </div>
