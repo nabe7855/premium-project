@@ -186,16 +186,16 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
             <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
               {/* Grand Opening Message - Moved and Prominent */}
               <div className="mb-8 text-center">
-                <div className="mb-3 flex items-center justify-center gap-2 overflow-hidden whitespace-nowrap drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
+                <div className="mb-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
                   {isEditing ? (
                     <input
                       type="date"
                       value={targetDate ? new Date(targetDate).toISOString().split('T')[0] : ''}
                       onChange={(e) => onUpdate?.('targetDate', e.target.value)}
-                      className="rounded border border-amber-500/50 bg-black/40 px-2 py-1 text-xl font-black text-amber-300 outline-none"
+                      className="rounded border border-amber-500/50 bg-black/40 px-2 py-1 text-lg font-black text-amber-300 outline-none sm:text-xl"
                     />
                   ) : (
-                    <p className="shrink-0 text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
+                    <p className="text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
                       {targetDate ? (
                         <>
                           {new Date(targetDate).getMonth() + 1}月{new Date(targetDate).getDate()}日
@@ -205,7 +205,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                       )}
                     </p>
                   )}
-                  <p className="shrink-0 text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
+                  <p className="text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
                     <span className="text-amber-300">グランドオープン</span>まで
                   </p>
                 </div>
@@ -213,11 +213,11 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
               </div>
 
               {/* Limited Slots Indicator */}
-              <div className="mb-10 flex items-center justify-center gap-4">
-                <div className="h-px w-8 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
-                <div className="flex flex-nowrap items-center justify-center gap-2 sm:gap-3">
+              <div className="mb-10 flex items-center justify-center gap-2 sm:gap-4">
+                <div className="h-px w-4 bg-gradient-to-r from-transparent to-amber-400/50 sm:w-12"></div>
+                <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-3">
                   <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
-                  <div className="flex shrink-0 items-center gap-1 whitespace-nowrap text-center text-sm font-medium text-amber-200 sm:gap-2 sm:text-2xl">
+                  <div className="flex items-center gap-1 text-center text-sm font-medium text-amber-200 sm:gap-2 sm:text-2xl lg:text-3xl">
                     {isEditing ? (
                       <span
                         contentEditable
@@ -228,19 +228,19 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                         {slotsLabelBefore}
                       </span>
                     ) : (
-                      <span className="shrink-0">{slotsLabelBefore}</span>
+                      <span className="whitespace-nowrap">{slotsLabelBefore}</span>
                     )}
                     {isEditing ? (
                       <span
                         contentEditable
                         suppressContentEditableWarning
                         onBlur={(e) => onUpdate?.('slotsCount', e.currentTarget.innerText)}
-                        className="mx-1 cursor-text rounded text-3xl font-bold text-amber-400 outline-none drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] hover:bg-white/10 sm:text-6xl"
+                        className="mx-1 cursor-text rounded text-2xl font-bold text-amber-400 outline-none drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] hover:bg-white/10 sm:text-6xl"
                       >
                         {slotsCount}
                       </span>
                     ) : (
-                      <span className="mx-0.5 text-3xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:mx-1 sm:text-6xl">
+                      <span className="mx-0.5 text-2xl font-bold text-amber-400 drop-shadow-[0_0_10px_rgba(251,191,36,0.5)] sm:mx-1 sm:text-6xl">
                         {slotsCount}
                       </span>
                     )}
@@ -254,12 +254,12 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                         {slotsLabelAfter}
                       </span>
                     ) : (
-                      <span className="shrink-0">{slotsLabelAfter}</span>
+                      <span className="whitespace-nowrap">{slotsLabelAfter}</span>
                     )}
                   </div>
                   <div className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-emerald-400 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
                 </div>
-                <div className="h-px w-8 bg-gradient-to-l from-transparent to-amber-400/50 sm:w-12"></div>
+                <div className="h-px w-4 bg-gradient-to-l from-transparent to-amber-400/50 sm:w-12"></div>
               </div>
 
               {/* Timer Section */}
@@ -333,7 +333,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
               {/* Benefits Section */}
               <div className="mb-10">
-                <h3 className="mb-6 whitespace-nowrap text-center text-2xl font-bold text-orange-500 sm:text-3xl">
+                <h3 className="mb-6 text-center text-xl font-bold text-orange-500 sm:text-3xl">
                   オープンキャスト限定特典
                 </h3>
                 <div className="grid gap-6">
