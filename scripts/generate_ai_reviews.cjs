@@ -1,78 +1,53 @@
 const { PrismaClient } = require('@prisma/client');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const dotenv = require('dotenv');
-const { v4: uuidv4 } = require('uuid');
-
-dotenv.config();
+require('dotenv').config();
 
 const prisma = new PrismaClient();
-
-// Gemini APIの初期化
-if (!process.env.GEMINI_API_KEY) {
-  console.error('Error: GEMINI_API_KEY is not set in .env');
+const apiKey = process.env.GEMINI_API_KEY;
+if (!apiKey) {
+  console.error('CRITICAL: GEMINI_API_KEY not found in process.env');
   process.exit(1);
 }
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const genAI = new GoogleGenerativeAI(apiKey);
 
-/**
- * AIによる「ペルソナ別オリジナル口コミ」の生成
- *
- * 【SEO対策】: 重複コンテンツを避けるため、事実だけを抽出して表現を完全新規作成。
- * 【法対策】: 元のテキストは一切使用せず、AIが「感想の傾向」だけを汲み取る。
- * 【コスト】: Gemini 1.5 Flashの無料枠を活用（1分間15リクエストまで）
- */
-async function generateOriginalReviewsForHotel(hotel) {
-  // すでに口コミがあるかチェック（重複生成防止）
-  const existingReviews = await prisma.lh_reviews.count({
-    where: { hotel_id: hotel.id },
-  });
+async function generateAIReviewsForHotel(hotel) {
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
-  if (existingReviews > 0) {
-    console.log(`[SKIP] ${hotel.name}: Already has ${existingReviews} reviews.`);
-    return;
-  }
+  // 抽出した断片や基本情報をプロンプトにまとめる
+  const snippets = hotel.review_snippets ? JSON.stringify(hotel.review_snippets) : '特になし';
 
-  // 元データの確認
-  if (!hotel.review_snippets || hotel.review_snippets.length === 0) {
-    console.log(`[SKIP] ${hotel.name}: No review snippets available to synthesize.`);
-    return;
-  }
-
-  console.log(`[START] Generating original reviews for: ${hotel.name}`);
-
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-
-  // プロンプト設計：ペルソナによる書き下ろしとJSON構造指定
   const prompt = `
-あなたはプロの旅行ライター兼データアナリストです。
-以下のホテルの「実際の口コミの断片」と「スコア」から事実（良い点・悪い点）だけを抽出し、以下の3つの異なるペルソナ（架空の人物像）になりきって、まったく新しいオリジナルの口コミ文章を3件作成してください。
+あなたは複数の属性を持つユーザーになりきって、高級ホテルポータルサイトに投稿する信憑性の高い口コミを作成するプロンプトエンジニアです。
+以下のホテルの「事実の断片（スクレイピングデータ）」と「基本情報」を元に、元の表現は使わずに完全に新しいオリジナルな口コミを3件作成してください。
 
-【ホテル名】: ${hotel.name}
-【元の全体スコア】: 外観 ${hotel.rating_exterior || '-'}, 料金 ${hotel.rating_price || '-'}, 清潔感 ${hotel.rating_cleanliness || '-'}, お風呂 ${hotel.rating_bath || '-'}, 接客 ${hotel.rating_service || '-'}
-【実際の口コミの断片（事実抽出用）】: 
-${JSON.stringify(hotel.review_snippets || [])}
+【ホテル情報】
+ホテル名: ${hotel.name}
+エリア: ${hotel.prefecture_id || ''} ${hotel.city_id || ''}
+既存の口コミ断片: ${snippets}
 
-【生成の絶対ルール】
-1. 元の口コミの文章や表現は「絶対に」使用しないこと（著作権対策）。事実（例：風呂が広い、コスパが良い等）のみを使用すること。
-2. 以下の3つのペルソナで作成してください：
-   - ペルソナ A: 「特別な記念日デートで宿泊した20代女性」（少し長め、デザインや雰囲気を評価）
-   - ペルソナ B: 「急な休憩で利用した30代男性」（端的に、コスパや設備を評価）
-   - ペルソナ C: 「リピーターとして通っている大人のカップル」（冷静な目線、清掃や接客を評価）
-3. 各口コミの文字数は150文字〜300文字程度とすること。
-4. ホテルの元のスコアに近い点数付け（1〜5の整数）を行うこと。
+【作成するペルソナ（3名分）】
+1件目: 特別な日にお祝いで宿泊した20代女性 (userName例: さや, ゆき等)
+2件目: デートや急な休憩で利用した30代男性 (userName例: ケン, Y.T等)
+3件目: デザイン性や清潔感を重視するカップル (userName例: ゲスト, 匿名希望等)
 
-【出力フォーマット（厳密なJSON配列のみ出力）】
+【ルール】
+- 著作権に配慮し、元の文章や他サイトのコピペは絶対にしないこと。
+- 事実に基づきつつ、体験談として具体的で自然な日本語で書くこと。
+- 1件あたり200〜400文字程度。
+- 必ず以下のJSON配列形式（Array of Objects）のみを出力してください。Markdownのコードブロック（\`\`\`json など）は絶対に含めず、純粋なJSONテキストだけを返してください。
+
 [
   {
-    "user_name": "架空のユーザー名（例: ゆい, K.T, 匿名など）",
-    "stay_type": "lodging"または"rest",
+    "userName": "ユーザー名",
+    "rating": 5,
+    "cleanliness": 5,
+    "service": 4,
+    "design": 5,
+    "facilities": 5,
+    "value": 4,
     "content": "口コミの本文...",
-    "rating": 総合評価(1-5),
-    "cleanliness": 清掃評価(1-5),
-    "service": 接客評価(1-5),
-    "design": デザイン評価(1-5),
-    "facilities": 設備評価(1-5),
-    "value": コスパ評価(1-5)
+    "stayType": "lodging", // または "rest"
+    "date": "2024-10-15" // 過去半年以内のランダムな近い日付
   },
   ...
 ]
@@ -80,74 +55,82 @@ ${JSON.stringify(hotel.review_snippets || [])}
 
   try {
     const result = await model.generateContent(prompt);
-    const text = result.response.text();
+    const text = result.response.text().trim();
 
-    // MarkdownのJSONブロック（\`\`\`json ... \`\`\`）が含まれている場合の処理
-    const jsonMatch = text.match(/\[[\s\S]*\]/);
-    if (!jsonMatch) {
-      throw new Error('Failed to extract JSON array from response');
-    }
+    // Markdownのコードブロックタグを念のため除去
+    const jsonString = text
+      .replace(/^```json\s*/i, '')
+      .replace(/\s*```$/i, '')
+      .trim();
 
-    const reviewsData = JSON.parse(jsonMatch[0]);
-
-    if (!Array.isArray(reviewsData)) {
-      throw new Error('Parsed data is not an array');
-    }
-
-    // データベースにINSERT
-    for (const data of reviewsData) {
-      await prisma.lh_reviews.create({
-        data: {
-          id: uuidv4(),
-          hotel_id: hotel.id,
-          user_name: data.user_name || '匿名ユーザー',
-          stay_type: data.stay_type || 'rest',
-          content: data.content,
-          rating: data.rating || 4,
-          cleanliness: data.cleanliness || 4,
-          service: data.service || 4,
-          design: data.design || 4,
-          facilities: data.facilities || 4,
-          value: data.value || 4,
-          created_at: new Date(), // 現在日時
-          // 以降はダミーまたはnull許可
-          rooms: data.facilities || 4,
-        },
-      });
-    }
-
-    console.log(`[SUCCESS] Inserted ${reviewsData.length} original reviews for ${hotel.name}`);
+    const parsed = JSON.parse(jsonString);
+    if (!Array.isArray(parsed)) return null;
+    return parsed;
   } catch (error) {
-    console.error(`[ERROR] Failed to generate/insert reviews for ${hotel.name}:`, error.message);
+    if (error.message?.includes('429')) {
+      console.warn('Rate limit hit. Waiting...');
+      return null;
+    }
+    console.error(`Error for ${hotel.name}:`, error.message);
+    return null;
   }
 }
 
 async function main() {
-  console.log('--- Start AI Review Generation (Cost: 0 JPY) ---');
-
-  // 口コミ生成の種となるデータ（review_snippets）を持っているが、まだ lh_reviews にデータがないホテルを取得
-  // （今回はテスト用にPlaceIDが特定のものなど、数件に絞る）
-  const targetHotels = await prisma.lh_hotels.findMany({
+  // すでに口コミがあるホテルは除外する（is_verified: true のAI口コミがないホテル）
+  const hotels = await prisma.lh_hotels.findMany({
     where: {
       review_snippets: { not: null },
+      reviews_list: {
+        none: { is_verified: true, is_cast: false }, // AI生成の印としてis_verified=trueを使う
+      },
     },
-    take: 3, // テストとして3件のみ実行
+    take: 5,
   });
 
-  console.log(`Found ${targetHotels.length} hotels to process.`);
+  console.log(`Generating AI reviews for ${hotels.length} hotels...`);
 
-  for (let i = 0; i < targetHotels.length; i++) {
-    const hotel = targetHotels[i];
-    await generateOriginalReviewsForHotel(hotel);
+  for (const hotel of hotels) {
+    console.log(`Processing reviews for: ${hotel.name}...`);
 
-    // 無料枠制限（15 RPM）を考慮したディレイ：1リクエストにつき 5秒待機
-    if (i < targetHotels.length - 1) {
-      console.log('Waiting 5 seconds for rate limits...');
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+    const generatedReviews = await generateAIReviewsForHotel(hotel);
+
+    if (generatedReviews && generatedReviews.length > 0) {
+      try {
+        const reviewData = generatedReviews.map((r) => ({
+          id: require('crypto').randomUUID(),
+          hotel_id: hotel.id,
+          user_name: r.userName || 'ゲスト',
+          rating: r.rating || 4,
+          cleanliness: r.cleanliness || 4,
+          service: r.service || 4,
+          design: r.design || 4,
+          facilities: r.facilities || 4,
+          value: r.value || 4,
+          content: r.content || '最高でした。',
+          stay_type: r.stayType || 'rest',
+          review_date: r.date ? new Date(r.date) : new Date(),
+          is_verified: true,
+          is_cast: false,
+        }));
+
+        await prisma.lh_reviews.createMany({
+          data: reviewData,
+        });
+
+        console.log(`✅ Success: Generated ${reviewData.length} reviews for ${hotel.name}`);
+        // Gemini API limit (無料枠を少しでも節約するため20秒待機)
+        await new Promise((resolve) => setTimeout(resolve, 20000));
+      } catch (dbError) {
+        console.error(`❌ DB Insert Error for ${hotel.name}:`, dbError.message);
+      }
+    } else {
+      console.log(`❌ Failed or Skipped: ${hotel.name}`);
+      await new Promise((resolve) => setTimeout(resolve, 15000));
     }
   }
 
-  console.log('--- Finished AI Review Generation ---');
+  console.log('Batch processing complete.');
 }
 
 main()
