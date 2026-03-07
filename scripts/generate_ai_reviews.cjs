@@ -77,60 +77,67 @@ async function generateAIReviewsForHotel(hotel) {
 }
 
 async function main() {
-  // すでに口コミがあるホテルは除外する（is_verified: true のAI口コミがないホテル）
-  const hotels = await prisma.lh_hotels.findMany({
-    where: {
-      review_snippets: { not: null },
-      reviews_list: {
-        none: { is_verified: true, is_cast: false }, // AI生成の印としてis_verified=trueを使う
+  while (true) {
+    // すでに口コミがあるホテルは除外する（is_verified: true のAI口コミがないホテル）
+    const hotels = await prisma.lh_hotels.findMany({
+      where: {
+        review_snippets: { not: null },
+        reviews_list: {
+          none: { is_verified: true, is_cast: false }, // AI生成の印としてis_verified=trueを使う
+        },
       },
-    },
-    take: 5,
-  });
+      take: 5,
+    });
 
-  console.log(`Generating AI reviews for ${hotels.length} hotels...`);
-
-  for (const hotel of hotels) {
-    console.log(`Processing reviews for: ${hotel.name}...`);
-
-    const generatedReviews = await generateAIReviewsForHotel(hotel);
-
-    if (generatedReviews && generatedReviews.length > 0) {
-      try {
-        const reviewData = generatedReviews.map((r) => ({
-          id: require('crypto').randomUUID(),
-          hotel_id: hotel.id,
-          user_name: r.userName || 'ゲスト',
-          rating: r.rating || 4,
-          cleanliness: r.cleanliness || 4,
-          service: r.service || 4,
-          design: r.design || 4,
-          facilities: r.facilities || 4,
-          value: r.value || 4,
-          content: r.content || '最高でした。',
-          stay_type: r.stayType || 'rest',
-          review_date: r.date ? new Date(r.date) : new Date(),
-          is_verified: true,
-          is_cast: false,
-        }));
-
-        await prisma.lh_reviews.createMany({
-          data: reviewData,
-        });
-
-        console.log(`✅ Success: Generated ${reviewData.length} reviews for ${hotel.name}`);
-        // Gemini API limit (無料枠を少しでも節約するため20秒待機)
-        await new Promise((resolve) => setTimeout(resolve, 20000));
-      } catch (dbError) {
-        console.error(`❌ DB Insert Error for ${hotel.name}:`, dbError.message);
-      }
-    } else {
-      console.log(`❌ Failed or Skipped: ${hotel.name}`);
-      await new Promise((resolve) => setTimeout(resolve, 15000));
+    if (hotels.length === 0) {
+      console.log('All hotels processed or no candidates found.');
+      break;
     }
-  }
 
-  console.log('Batch processing complete.');
+    console.log(`Generating AI reviews for ${hotels.length} hotels...`);
+
+    for (const hotel of hotels) {
+      console.log(`Processing reviews for: ${hotel.name}...`);
+
+      const generatedReviews = await generateAIReviewsForHotel(hotel);
+
+      if (generatedReviews && generatedReviews.length > 0) {
+        try {
+          const reviewData = generatedReviews.map((r) => ({
+            id: require('crypto').randomUUID(),
+            hotel_id: hotel.id,
+            user_name: r.userName || 'ゲスト',
+            rating: r.rating || 4,
+            cleanliness: r.cleanliness || 4,
+            service: r.service || 4,
+            design: r.design || 4,
+            facilities: r.facilities || 4,
+            value: r.value || 4,
+            content: r.content || '最高でした。',
+            stay_type: r.stayType || 'rest',
+            review_date: r.date ? new Date(r.date) : new Date(),
+            is_verified: true,
+            is_cast: false,
+          }));
+
+          await prisma.lh_reviews.createMany({
+            data: reviewData,
+          });
+
+          console.log(`✅ Success: Generated ${reviewData.length} reviews for ${hotel.name}`);
+          // Gemini API limit (無料枠を少しでも節約するため20秒待機)
+          await new Promise((resolve) => setTimeout(resolve, 20000));
+        } catch (dbError) {
+          console.error(`❌ DB Insert Error for ${hotel.name}:`, dbError.message);
+        }
+      } else {
+        console.log(`❌ Failed or Skipped: ${hotel.name}`);
+        await new Promise((resolve) => setTimeout(resolve, 30000));
+      }
+    }
+    console.log('Batch complete, checking for more...');
+  }
+  console.log('Processing complete.');
 }
 
 main()

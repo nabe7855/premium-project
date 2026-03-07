@@ -41,35 +41,42 @@ async function generateHotelDescription(hotelName, rawDescription) {
 }
 
 async function main() {
-  const hotels = await prisma.lh_hotels.findMany({
-    where: {
-      raw_description: { not: null },
-      ai_description: null,
-    },
-    take: 10, // Process in small batches for safety
-  });
+  while (true) {
+    const hotels = await prisma.lh_hotels.findMany({
+      where: {
+        raw_description: { not: null },
+        ai_description: null,
+      },
+      take: 10, // Process in small batches
+    });
 
-  console.log(`Generating AI descriptions for ${hotels.length} hotels...`);
-
-  for (const hotel of hotels) {
-    console.log(`Processing: ${hotel.name}...`);
-    const aiDesc = await generateHotelDescription(hotel.name, hotel.raw_description);
-
-    if (aiDesc) {
-      await prisma.lh_hotels.update({
-        where: { id: hotel.id },
-        data: { ai_description: aiDesc },
-      });
-      console.log(`✅ Success: ${hotel.name}`);
-      // Sleep for 20 seconds
-      await new Promise((resolve) => setTimeout(resolve, 20000));
-    } else {
-      console.log(`❌ Failed or Skipped: ${hotel.name}`);
-      await new Promise((resolve) => setTimeout(resolve, 15000)); // Longer wait on error
+    if (hotels.length === 0) {
+      console.log('All hotels processed or no candidates found.');
+      break;
     }
-  }
 
-  console.log('Batch processing complete.');
+    console.log(`Generating AI descriptions for ${hotels.length} hotels...`);
+
+    for (const hotel of hotels) {
+      console.log(`Processing: ${hotel.name}...`);
+      const aiDesc = await generateHotelDescription(hotel.name, hotel.raw_description);
+
+      if (aiDesc) {
+        await prisma.lh_hotels.update({
+          where: { id: hotel.id },
+          data: { ai_description: aiDesc },
+        });
+        console.log(`✅ Success: ${hotel.name}`);
+        // Sleep for 20 seconds to be safe with free tier rate limits
+        await new Promise((resolve) => setTimeout(resolve, 20000));
+      } else {
+        console.log(`❌ Failed or Skipped: ${hotel.name}`);
+        await new Promise((resolve) => setTimeout(resolve, 30000)); // Longer wait on error
+      }
+    }
+    console.log('Batch complete, checking for more...');
+  }
+  console.log('Processing complete.');
 }
 
 main()
