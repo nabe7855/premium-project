@@ -22,8 +22,13 @@ export const STOCK_RECRUIT_CONFIG = {
   openCast: {
     isVisible: true,
     openCastImage: '/オープンキャスト募集.png',
-    timerTarget: '2026-02-01T00:00:00',
-    remainingSlots: 4,
+    targetDate: '2026-04-01T00:00:00',
+    slotsLabelBefore: '超好待遇',
+    slotsCount: '5',
+    slotsLabelAfter: '名限定',
+    entryDeadlineText: '23:59までにエントリーされた方のみ',
+    selectionTargetText: 'オープンキャスト枠として選考対象となります',
+    slotsLimitText: '育成体制の都合上、今回の採用は10名様までとさせていただいております',
     benefits: [
       {
         title: '専属プロデューサー\n制度',

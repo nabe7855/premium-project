@@ -36,6 +36,9 @@ export interface LandingPageConfig {
     slotsLabelBefore?: string;
     slotsCount?: string;
     slotsLabelAfter?: string;
+    entryDeadlineText?: string;
+    selectionTargetText?: string;
+    slotsLimitText?: string;
     benefits?: { title: string; desc: string }[];
   };
   fukuoka?: {
@@ -291,6 +294,9 @@ const LandingPage: React.FC<LandingPageProps> = ({
             slotsLabelBefore={config.openCast?.slotsLabelBefore}
             slotsCount={config.openCast?.slotsCount}
             slotsLabelAfter={config.openCast?.slotsLabelAfter}
+            entryDeadlineText={config.openCast?.entryDeadlineText}
+            selectionTargetText={config.openCast?.selectionTargetText}
+            slotsLimitText={config.openCast?.slotsLimitText}
             benefits={config.openCast?.benefits}
           />
         </div>

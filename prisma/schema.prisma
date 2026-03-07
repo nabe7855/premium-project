@@ -458,13 +458,13 @@ model lh_feature_articles {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model lh_hotel_amenities {
-  id         String   @id @default(uuid()) @db.Uuid
-  amenity_id String?  @db.Uuid
-  hotel_id   String?  @db.Uuid
+  amenity_id String  @db.Uuid
+  hotel_id   String  @db.Uuid
   
-  amenity    lh_amenities? @relation(fields: [amenity_id], references: [id], onDelete: Cascade)
-  hotel      lh_hotels?    @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
+  amenity    lh_amenities @relation(fields: [amenity_id], references: [id], onDelete: Cascade)
+  hotel      lh_hotels    @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
 
+  @@id([hotel_id, amenity_id])
   @@index([hotel_id])
   @@index([amenity_id])
 }
@@ -480,13 +480,13 @@ model lh_hotel_images {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model lh_hotel_services {
-  id         String   @id @default(uuid()) @db.Uuid
-  hotel_id   String?  @db.Uuid
-  service_id String?  @db.Uuid
+  hotel_id   String  @db.Uuid
+  service_id String  @db.Uuid
 
-  hotel      lh_hotels?   @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
-  service    lh_services? @relation(fields: [service_id], references: [id], onDelete: Cascade)
+  hotel      lh_hotels    @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
+  service    lh_services  @relation(fields: [service_id], references: [id], onDelete: Cascade)
 
+  @@id([hotel_id, service_id])
   @@index([hotel_id])
   @@index([service_id])
 }
@@ -520,6 +520,16 @@ model lh_hotels {
   stay_price_min_weekend Int?
   website                String?
   price_details          Json?
+  raw_description        String?
+  ai_description         String?
+  ai_summary             String?
+  ai_pros_cons           Json?
+  review_snippets        Json?
+  rating_exterior        Decimal?  @db.Decimal
+  rating_price           Decimal?  @db.Decimal
+  rating_cleanliness     Decimal?  @db.Decimal
+  rating_bath            Decimal?  @db.Decimal
+  rating_service         Decimal?  @db.Decimal
   
   amenities lh_hotel_amenities[]
   services  lh_hotel_services[]

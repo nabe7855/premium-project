@@ -14,6 +14,9 @@ interface OpenCastRecruitmentProps {
   slotsLabelBefore?: string;
   slotsCount?: string;
   slotsLabelAfter?: string;
+  entryDeadlineText?: string;
+  selectionTargetText?: string;
+  slotsLimitText?: string;
   benefits?: { title: string; desc: string }[];
 }
 
@@ -26,6 +29,9 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   slotsLabelBefore = '超好待遇残り',
   slotsCount = '4',
   slotsLabelAfter = '名様限定',
+  entryDeadlineText = '23:59までにエントリーされた方のみ',
+  selectionTargetText = 'オープンキャスト枠として選考対象となります',
+  slotsLimitText = '育成体制の都合上、今回の採用は10名様までとさせていただいております',
   benefits = [
     {
       title: '業界最高水準のバック率',
@@ -275,13 +281,50 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                         ) : (
                           '2月1日'
                         )}{' '}
-                        23:59までにエントリーされた方のみ
+                        {isEditing ? (
+                          <span
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) =>
+                              onUpdate?.('entryDeadlineText', e.currentTarget.innerText)
+                            }
+                            className="cursor-text rounded outline-none hover:bg-white/10"
+                          >
+                            {entryDeadlineText}
+                          </span>
+                        ) : (
+                          entryDeadlineText
+                        )}
                       </p>
                       <p className="text-sm font-medium text-indigo-200 sm:text-base">
-                        オープンキャスト枠として選考対象となります
+                        {isEditing ? (
+                          <span
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) =>
+                              onUpdate?.('selectionTargetText', e.currentTarget.innerText)
+                            }
+                            className="cursor-text rounded outline-none hover:bg-white/10"
+                          >
+                            {selectionTargetText}
+                          </span>
+                        ) : (
+                          selectionTargetText
+                        )}
                       </p>
                       <p className="mt-3 text-xs text-slate-400 sm:text-sm">
-                        育成体制の都合上、今回の採用は10名様までとさせていただいております
+                        {isEditing ? (
+                          <span
+                            contentEditable
+                            suppressContentEditableWarning
+                            onBlur={(e) => onUpdate?.('slotsLimitText', e.currentTarget.innerText)}
+                            className="cursor-text rounded outline-none hover:bg-white/10"
+                          >
+                            {slotsLimitText}
+                          </span>
+                        ) : (
+                          slotsLimitText
+                        )}
                       </p>
                     </div>
                   </div>

@@ -38,12 +38,13 @@ async function scrapeHotelDetail(hotel) {
 
   // 1. Basic Info
   const website = $('#officialsite').attr('href') || null;
-
-  // Station distance (taking the first one)
   const distText = $('.hd-header__train').text().trim().replace(/\s+/g, ' ');
 
-  // Room count from PR section or message
+  // PR text / Raw description for AI seed
   const prText = $('.hd-pr').text().trim();
+  const msgText = $('#premium_msg').text().trim() || $('.hd-message__text').text().trim();
+  const rawDescription = (prText + '\n' + msgText).trim();
+
   let roomCount = null;
   const roomMatch = prText.match(/全(\d+)室/);
   if (roomMatch) roomCount = parseInt(roomMatch[1]);
@@ -55,6 +56,7 @@ async function scrapeHotelDetail(hotel) {
 
   $('.hd-tablePrice tr').each((_, tr) => {
     const category = $(tr).find('.hd-tablePrice__category').text().trim();
+    const categoryPlans = [];
     $(tr)
       .find('.hd-pricePlan li')
       .each((_, li) => {
@@ -69,11 +71,54 @@ async function scrapeHotelDetail(hotel) {
           if (minPriceStay === null || (p !== null && p < minPriceStay)) minPriceStay = p;
         }
 
-        priceDetails.push({ category, title, priceRange, timezone });
+        categoryPlans.push({ title, price: priceRange, stay: timezone, time: '', note: '' });
       });
+    priceDetails.push({ category, plans: categoryPlans });
   });
 
-  // 3. Update lh_hotels
+  // 3. Reviews & Ratings
+  let ratingExterior = null;
+  let ratingPrice = null;
+  let ratingCleanliness = null;
+  let ratingBath = null;
+  let ratingService = null;
+  let reviewCount = null;
+  const reviewSnippets = [];
+
+  const reviewUrl = `${url}/review`;
+  const reviewHtml = await fetchPage(reviewUrl);
+  if (reviewHtml) {
+    const $rev = cheerio.load(reviewHtml);
+
+    // Score breakdown
+    const scoreText = $rev('.hd-reviewStarDetail__text').text();
+    const parseScore = (label) => {
+      const match = scoreText.match(new RegExp(`${label}：([\\d.]+)`));
+      return match ? parseFloat(match[1]) : null;
+    };
+
+    ratingExterior = parseScore('外観');
+    ratingPrice = parseScore('料金');
+    ratingCleanliness = parseScore('清潔感');
+    ratingBath = parseScore('お風呂');
+    ratingService = parseScore('接客');
+
+    // Review Count
+    const countText = $rev('.p-resultNumber .p-resultNumber__all').text();
+    if (countText) reviewCount = parseInt(countText.replace(/,/g, ''));
+
+    // Snippets (First 10)
+    $rev('.hd-reviewItem').each((i, el) => {
+      if (i >= 10) return;
+      const title = $rev(el).find('.hd-reviewItem__commentTitle').text().trim();
+      const body = $rev(el).find('.hd-reviewItem__commentText').first().text().trim();
+      if (title || body) {
+        reviewSnippets.push({ title, body });
+      }
+    });
+  }
+
+  // 4. Update lh_hotels
   await prisma.lh_hotels.update({
     where: { id: hotel.id },
     data: {
@@ -82,7 +127,17 @@ async function scrapeHotelDetail(hotel) {
       room_count: roomCount || hotel.room_count,
       min_price_rest: minPriceRest || hotel.min_price_rest,
       min_price_stay: minPriceStay || hotel.min_price_stay,
+      rest_price_min_weekday: minPriceRest || hotel.rest_price_min_weekday,
+      stay_price_min_weekday: minPriceStay || hotel.stay_price_min_weekday,
       price_details: priceDetails,
+      review_count: reviewCount || hotel.review_count,
+      raw_description: rawDescription || hotel.raw_description,
+      review_snippets: reviewSnippets.length > 0 ? reviewSnippets : hotel.review_snippets,
+      rating_exterior: ratingExterior,
+      rating_price: ratingPrice,
+      rating_cleanliness: ratingCleanliness,
+      rating_bath: ratingBath,
+      rating_service: ratingService,
     },
   });
 
@@ -97,32 +152,36 @@ async function scrapeHotelDetail(hotel) {
     );
   });
 
-  // Simple classification: if it's in the first section it might be amenity, else service
-  // But usually we just want to match existing masters
   for (const itemName of facilityItems) {
-    // Try to find in lh_amenities
     let amenity = await prisma.lh_amenities.findFirst({ where: { name: itemName } });
     if (!amenity) {
       amenity = await prisma.lh_amenities.create({ data: { name: itemName } });
     }
 
-    // Link if not exists
-    const exists = await prisma.lh_hotel_amenities.findFirst({
-      where: { hotel_id: hotel.id, amenity_id: amenity.id },
+    // Upsert link
+    await prisma.lh_hotel_amenities.upsert({
+      where: {
+        hotel_id_amenity_id: {
+          hotel_id: hotel.id,
+          amenity_id: amenity.id,
+        },
+      },
+      update: {},
+      create: {
+        hotel_id: hotel.id,
+        amenity_id: amenity.id,
+      },
     });
-    if (!exists) {
-      await prisma.lh_hotel_amenities.create({
-        data: { hotel_id: hotel.id, amenity_id: amenity.id },
-      });
-    }
   }
 }
 
 async function main() {
   const hotels = await prisma.lh_hotels.findMany({
-    where: { place_id: { not: null } },
-    // Optionally filter for those not yet processed
-    // where: { website: null }
+    where: {
+      place_id: { not: null },
+      website: null, // Only those not processed yet
+    },
+    take: 1000, // Process in chunks
   });
 
   console.log(`Starting Phase 2 for ${hotels.length} hotels...`);

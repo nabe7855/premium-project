@@ -1,3 +1,4 @@
+import ReviewFormClient from '@/components/lovehotels/ReviewFormClient';
 import { getHotelById, getReviews, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { Metadata } from 'next';
 import Link from 'next/link';
@@ -275,15 +276,9 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
 
               {/* Reviews Section */}
               <div className="mb-16 border-t border-gray-100 pt-16">
-                <div className="mb-12 flex items-center justify-between">
-                  <div>
-                    <h2 className="text-3xl font-black tracking-tight text-gray-900">
-                      Reports & Reviews
-                    </h2>
-                    <p className="mt-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-                      プロフェッショナルな視点とユーザー体験
-                    </p>
-                  </div>
+                <ReviewFormClient hotelId={hotel.id} />
+
+                <div className="mb-12 flex items-center justify-end">
                   <div className="flex items-center gap-8">
                     {/* Itemized Bar Chart (Small) */}
                     <div className="hidden gap-6 border-r border-gray-100 pr-10 md:flex">
