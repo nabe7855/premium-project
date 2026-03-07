@@ -131,6 +131,10 @@ export default function HotelForm({ id }: HotelFormProps) {
   const loadHotel = async () => {
     try {
       const hotel = await getHotelById(id!);
+      console.log('DEBUG: Hotel data fetched from API:', hotel);
+      console.log('DEBUG: price_details:', hotel.price_details);
+      console.log('DEBUG: website:', hotel.website);
+
       setFormData({
         name: hotel.name || '',
         prefecture_id: hotel.prefecture_id || '',

@@ -1,0 +1,87 @@
+l-column">
+        <main>
+            <div class="hd-header">
+                <div class="hd-header__inner">
+                    <div class="hd-header__wrap">
+                        <div class="hd-header__info">
+                            <ul class="hd-header__netTag">
+                                <li class="hd-header__net">カップルズ予約可</li>
+                                <li class="hd-header__point">ポイント利用可</li>
+                                <li class="hd-header__invoice">インボイス対応</li>
+                            </ul>
+                            <p class="hd-header__group"><a href="/hotel-groups/balian">バリアングループ</a></p>
+                            <p class="hd-header__ruby">ホテルバリアンリゾート シンジュクグランピングテン</p>
+                            <h2 class="hd-header__name">ホテルバリアンリゾート新宿グランピング店</h2>
+                            <ul class="hd-header__access">
+                                <li>東京都新宿区歌舞伎町2-29-11</li>
+                                <li class="hd-header__train">
+                                    新宿三丁目駅
+                                    （徒歩6分）
+                                </li>
+                                <li class="hd-header__car">
+                                    新宿IC
+                                    （車12分）
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="hd-header__other">
+                            <div class="hd-header__otherInner">
+                                <div class="hd-header__award">
+                                    <ul class="hd-header__awardList">
+                                        <li><a href="/award2023"><img src="/user_pc_theme/img/hoteldetail/award/icon-hotelaward-2023.png" width="68" height="70" alt="ホテルアワード2023"/></a></li>
+                                        <li><a href="/award2024"><img src="/user_pc_theme/img/hoteldetail/award/icon-hotelaward-2024.png" width="68" height="70" alt="ホテルアワード2024"/></a></li>
+                                        <li><a href="/award"><img src="/user_pc_theme/img/hoteldetail/award/icon-hotelaward-2025.png" width="68" height="70" alt="ホテルアワード2025"/></a></li>
+                                    </ul>
+                                </div>
+                                <div class="hd-header__action">
+        <div class="p-hotelRatingL hd-hotelRatingL"><div class="p-hotelRatingL__rating"><i class="p-hotelRatingL__ratingIcon p-hotelRatingL__ratingStar4half"><span class="p-hotelRatingL__alt">5つ星のうち4.5</span></i></div><div class="p-hotelRatingL__number hd-hotelRatingL__number">4.87<span class="hd-header__review">(<a href="/hotel-details/70291/review">2件</a>)</span></div></div><a id="toggle-favorite" data-href="/users/toggle-favorite">
+    <div class="hd-header__favoriteBtn ">
+        <span>お気に入りに追加</span>
+    </div>
+</a>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    <nav class="hd-nav" id="hd-nav">
+                        <ul class="hd-nav__list">
+                            <li class="hd-nav__item hd-nav__item--on">
+                                <a href="/hotel-details/70291"><span class="hd-nav__icon">ホテルTOP</span></a>
+                            </li>
+                            <li class="hd-nav__item ">
+                                <a href="/hotel-details/70291/room"><span class="hd-nav__icon hd-nav__icon--pic">写真</span></a>
+                            </li>
+                            <li class="hd-nav__item ">
+                                <a href="/hotel-details/70291/review"><span class="hd-nav__icon hd-nav__icon--review">口コミ</span></a>
+                            </li>
+                                                        <li class="hd-nav__item hd-nav__item--coupon">
+                                <a href="/hotel-details/70291/coupon"><span class="hd-nav__icon hd-nav__icon--coupon">クーポン</span></a>
+                            </li>
+                            <li class="hd-nav__item ">
+                                <a href="/hotel-details/70291/access"><span class="hd-nav__icon hd-nav__icon--map">地図</span></a>
+                            </li>
+                            <li class="hd-nav__item ">
+                                    <a href="/hotel-details/70291/plan"><span class="hd-nav__icon hd-nav__icon--booking">予約</span></a>
+                            </li>
+                        </ul>
+                    </nav>
+
+
+
+<script src='https://securepubads.g.doubleclick.net/tag/js/gpt.js'></script>
+
+<div class="l-column__in1010">
+    <div class="l-columnWrap">
+
+                            <!-- l-main690 -->
+                    <div class="l-main690 l-floatL">
+                        <!-- hd-topInfo -->
+                        <div class="hd-topInfo">
+                            <!-- hd-topImage -->
+
+
+                            <div class="hd-topImage">
+                                <ul class="hd-topImage__list is-slid

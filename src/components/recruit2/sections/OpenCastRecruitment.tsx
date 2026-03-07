@@ -348,7 +348,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                       </div>
                       <div className="flex-grow">
                         <h4
-                          className="mb-1 font-bold text-white outline-none"
+                          className="mb-1 text-sm font-bold text-white outline-none sm:text-base"
                           contentEditable={isEditing}
                           suppressContentEditableWarning={isEditing}
                           onBlur={(e) => {
@@ -364,7 +364,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                           {benefit.title}
                         </h4>
                         <p
-                          className="whitespace-pre-wrap break-words text-[10px] leading-relaxed text-orange-300/80 outline-none sm:text-sm"
+                          className="whitespace-pre-wrap break-words text-xs leading-relaxed text-orange-300/80 outline-none sm:text-sm"
                           contentEditable={isEditing}
                           suppressContentEditableWarning={isEditing}
                           onBlur={(e) => {

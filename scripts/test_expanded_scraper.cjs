@@ -1,0 +1,175 @@
+const { PrismaClient } = require('@prisma/client');
+const cheerio = require('cheerio');
+const prisma = new PrismaClient();
+
+async function fetchPage(url, retries = 3) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      const res = await fetch(url, {
+        headers: {
+          'User-Agent':
+            'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        },
+      });
+      if (res.ok) return await res.text();
+      console.log(`Fetch failed: ${url} - Status: ${res.status}`);
+    } catch (e) {
+      console.log(`Fetch error: ${url} - ${e.message}`);
+    }
+    await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
+  }
+  return null;
+}
+
+function parsePrice(text) {
+  if (!text) return null;
+  const match = text.replace(/,/g, '').match(/(\d+)/);
+  return match ? parseInt(match[1]) : null;
+}
+
+async function scrapeHotelDetail(hotel) {
+  const url = `https://couples.jp/hotel-details/${hotel.place_id}`;
+  console.log(`Scraping: ${hotel.name} (${url})`);
+
+  const html = await fetchPage(url);
+  if (!html) return;
+
+  const $ = cheerio.load(html);
+
+  // 1. Basic Info
+  const website = $('#officialsite').attr('href') || null;
+  const distText = $('.hd-header__train').text().trim().replace(/\s+/g, ' ');
+
+  // PR text / Raw description
+  const prText = $('.hd-pr').text().trim();
+  const msgText = $('#premium_msg').text().trim() || $('.hd-message__text').text().trim();
+  const rawDescription = (prText + '\n' + msgText).trim();
+
+  let roomCount = null;
+  const roomMatch = prText.match(/全(\d+)室/);
+  if (roomMatch) roomCount = parseInt(roomMatch[1]);
+
+  // 2. Prices
+  const priceDetails = [];
+  let minPriceRest = null;
+  let minPriceStay = null;
+
+  $('.hd-tablePrice tr').each((_, tr) => {
+    const category = $(tr).find('.hd-tablePrice__category').text().trim();
+    const categoryPlans = [];
+    $(tr)
+      .find('.hd-pricePlan li')
+      .each((_, li) => {
+        const title = $(li).find('.hd-pricePlan__title').text().trim();
+        const priceRange = $(li).find('.hd-priceRange__price').text().trim();
+        const timezone = $(li).find('.hd-timezone').text().trim().replace(/\s+/g, ' ');
+
+        const p = parsePrice(priceRange);
+        if (category.includes('休憩')) {
+          if (minPriceRest === null || (p !== null && p < minPriceRest)) minPriceRest = p;
+        } else if (category.includes('宿泊')) {
+          if (minPriceStay === null || (p !== null && p < minPriceStay)) minPriceStay = p;
+        }
+
+        categoryPlans.push({ title, price: priceRange, stay: timezone, time: '', note: '' });
+      });
+    priceDetails.push({ category, plans: categoryPlans });
+  });
+
+  // 3. Reviews & Ratings
+  let ratingExterior = null;
+  let ratingPrice = null;
+  let ratingCleanliness = null;
+  let ratingBath = null;
+  let ratingService = null;
+  let reviewCount = null;
+  const reviewSnippets = [];
+
+  const reviewUrl = `${url}/review`;
+  const reviewHtml = await fetchPage(reviewUrl);
+  if (reviewHtml) {
+    const $rev = cheerio.load(reviewHtml);
+
+    const scoreText = $rev('.hd-reviewStarDetail__text').text();
+    console.log(`Score breakdown text: ${scoreText}`);
+    const parseScore = (label) => {
+      const match = scoreText.match(new RegExp(`${label}：([\\d.]+)`));
+      return match ? parseFloat(match[1]) : null;
+    };
+
+    ratingExterior = parseScore('外観');
+    ratingPrice = parseScore('料金');
+    ratingCleanliness = parseScore('清潔感');
+    ratingBath = parseScore('お風呂');
+    ratingService = parseScore('接客');
+
+    const countText = $rev('.p-resultNumber .p-resultNumber__all').text();
+    if (countText) reviewCount = parseInt(countText.replace(/,/g, ''));
+
+    $rev('.hd-reviewItem').each((i, el) => {
+      if (i >= 5) return;
+      const title = $rev(el).find('.hd-reviewItem__commentTitle').text().trim();
+      const body = $rev(el).find('.hd-reviewItem__commentText').first().text().trim();
+      if (title || body) {
+        reviewSnippets.push({ title, body });
+      }
+    });
+  }
+
+  console.log(`Captured data for ${hotel.name}:`);
+  console.log(`- Website: ${website}`);
+  console.log(
+    `- Ratings: Ext:${ratingExterior}, Price:${ratingPrice}, Clean:${ratingCleanliness}, Bath:${ratingBath}, Svc:${ratingService}`,
+  );
+  console.log(`- Review Count: ${reviewCount}`);
+  console.log(`- Snippets Count: ${reviewSnippets.length}`);
+  console.log(`- Raw Description Length: ${rawDescription.length}`);
+
+  // 4. Update
+  const updatedHotel = await prisma.lh_hotels.update({
+    where: { id: hotel.id },
+    data: {
+      website,
+      distance_from_station: distText || hotel.distance_from_station,
+      room_count: roomCount || hotel.room_count,
+      min_price_rest: minPriceRest || hotel.min_price_rest,
+      min_price_stay: minPriceStay || hotel.min_price_stay,
+      rest_price_min_weekday: minPriceRest || hotel.rest_price_min_weekday,
+      stay_price_min_weekday: minPriceStay || hotel.stay_price_min_weekday,
+      price_details: priceDetails,
+      review_count: reviewCount || hotel.review_count,
+      raw_description: rawDescription || hotel.raw_description,
+      review_snippets: reviewSnippets.length > 0 ? reviewSnippets : hotel.review_snippets,
+      rating_exterior: ratingExterior,
+      rating_price: ratingPrice,
+      rating_cleanliness: ratingCleanliness,
+      rating_bath: ratingBath,
+      rating_service: ratingService,
+    },
+  });
+
+  return updatedHotel;
+}
+
+async function main() {
+  const targetPlaceId = '2206';
+  let hotel = await prisma.lh_hotels.findFirst({ where: { place_id: targetPlaceId } });
+
+  if (!hotel) {
+    console.log(
+      `Hotel with place_id ${targetPlaceId} not found. Picking any hotel with place_id...`,
+    );
+    hotel = await prisma.lh_hotels.findFirst({ where: { place_id: { not: null } } });
+  }
+
+  if (hotel) {
+    await scrapeHotelDetail(hotel);
+    console.log('Test scrape successful.');
+  } else {
+    console.log('No hotels with place_id found in DB.');
+  }
+}
+
+main()
+  .catch(console.error)
+  .finally(() => prisma.$disconnect());
