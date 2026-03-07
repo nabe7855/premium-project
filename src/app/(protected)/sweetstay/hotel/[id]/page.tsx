@@ -175,7 +175,8 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                 </h2>
                 <div className="prose prose-rose max-w-none">
                   <p className="text-lg font-medium leading-[2] text-gray-500">
-                    {hotel.description ||
+                    {hotel.aiDescription ||
+                      hotel.description ||
                       'このホテルについての詳細な紹介文を、現在プロの目利きたちが執筆中です。現時点では、以下の充実したアメニティとサービス、そしてその立地の良さから多くの方に選ばれています。'}
                   </p>
                 </div>

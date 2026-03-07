@@ -13,6 +13,7 @@ export interface HotelCSVRow {
   website: string;
   image_url: string;
   description: string;
+  ai_description: string;
   area_id: string;
   city_id: string;
   prefecture_id: string;
@@ -62,6 +63,7 @@ export async function exportHotelsToCSV() {
         website: hotel.website || '',
         image_url: hotel.imageUrl || '',
         description: hotel.description || '',
+        ai_description: hotel.aiDescription || hotel.ai_description || '',
         area_id: hotel.area_id || hotel.areaId || '',
         city_id: hotel.city_id || hotel.cityId || '',
         prefecture_id: hotel.prefecture_id || hotel.prefectureId || '',
@@ -161,6 +163,7 @@ export async function importHotelsFromCSV(csvContent: string) {
             website: row.website,
             image_url: row.image_url,
             description: row.description,
+            ai_description: row.ai_description,
             area_id: row.area_id,
             city_id: row.city_id,
             prefecture_id: row.prefecture_id,

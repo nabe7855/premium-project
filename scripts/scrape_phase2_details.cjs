@@ -141,7 +141,7 @@ async function scrapeHotelDetail(hotel) {
     },
   });
 
-  // 4. Amenities & Services
+  // 4. Amenities & Services (Standard list)
   const facilityItems = [];
   $('.hd-facility__list li').each((_, li) => {
     facilityItems.push(
@@ -151,6 +151,27 @@ async function scrapeHotelDetail(hotel) {
         .replace(/※一部$/, ''),
     );
   });
+
+  // 5. Heuristic Amenity Detection (NEW: Search within rawDescription for missing tags)
+  const heuristicMap = [
+    { name: 'Wi-Fi', keywords: ['Wi-Fi', 'ワイファイ', '無線LAN'] },
+    { name: '大型TV', keywords: ['大型テレビ', '大型TV', '50インチ', '60インチ', '70インチ'] },
+    { name: '浴室TV', keywords: ['浴室テレビ', '浴室TV', 'バスルームテレビ'] },
+    { name: '露天風呂', keywords: ['露天風呂', '露天'] },
+    { name: 'VOD', keywords: ['VOD', 'ビデオオンデマンド', '見放題'] },
+    { name: '人工温泉', keywords: ['人工温泉', '温泉'] },
+    { name: 'ジェットバス', keywords: ['ジェットバス', 'ブロアバス'] },
+    { name: '電子レンジ', keywords: ['電子レンジ', 'レンジ'] },
+    { name: '持込用冷蔵庫', keywords: ['持込用冷蔵庫', '持ち込み冷蔵庫'] },
+  ];
+
+  for (const h of heuristicMap) {
+    if (h.keywords.some((k) => rawDescription.includes(k))) {
+      if (!facilityItems.includes(h.name)) {
+        facilityItems.push(h.name);
+      }
+    }
+  }
 
   for (const itemName of facilityItems) {
     let amenity = await prisma.lh_amenities.findFirst({ where: { name: itemName } });
@@ -181,7 +202,7 @@ async function main() {
       place_id: { not: null },
       website: null, // Only those not processed yet
     },
-    take: 1000, // Process in chunks
+    take: 100, // Process in chunks
   });
 
   console.log(`Starting Phase 2 for ${hotels.length} hotels...`);

@@ -58,6 +58,7 @@ export default function HotelForm({ id }: HotelFormProps) {
     stay_price_min_weekend: '',
     stay_price_max_weekend: '',
     description: '',
+    ai_description: '',
     distance_from_station: '',
     room_count: '',
     place_id: '',
@@ -153,6 +154,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         stay_price_min_weekend: hotel.stay_price_min_weekend || '',
         stay_price_max_weekend: hotel.stay_price_max_weekend || '',
         description: hotel.description || '',
+        ai_description: hotel.ai_description || '',
         distance_from_station: hotel.distance_from_station || '',
         room_count: hotel.room_count || '',
         place_id: hotel.place_id || '',
@@ -843,6 +845,18 @@ export default function HotelForm({ id }: HotelFormProps) {
             className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+          />
+        </div>
+        <div className="mt-4">
+          <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
+            AI紹介文 (自動生成)
+          </label>
+          <textarea
+            rows={4}
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            value={formData.ai_description}
+            onChange={(e) => setFormData({ ...formData, ai_description: e.target.value })}
+            placeholder="Gemini等で生成した高品質な紹介文がここに入ります。空の場合は自動生成の対象になります。"
           />
         </div>
       </div>
