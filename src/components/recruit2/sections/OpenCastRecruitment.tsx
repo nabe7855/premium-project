@@ -385,39 +385,14 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 </div>
               </div>
 
-              {/* CTA Section */}
-              <div className="space-y-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
-                  <button
-                    onClick={onOpenChat}
-                    className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95"
-                  >
-                    <span className="relative z-10">簡単相談してみる</span>
-                    <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
-                  </button>
-                  <button
-                    onClick={onOpenChat}
-                    className="rounded-2xl border-2 border-amber-400/40 bg-slate-900/50 px-10 py-5 text-lg font-bold text-amber-300 backdrop-blur-sm transition-all hover:border-amber-400/60 hover:bg-slate-900/70 active:scale-95"
-                  >
-                    詳しい話を聞いてみる
-                  </button>
-                </div>
-
-                {/* Reassurance */}
-                <div className="text-center text-sm text-slate-400">
-                  <p>✓ 相談は30秒で完了します</p>
-                  <p>✓ 面接ではありません。まずはお気軽にご相談ください</p>
-                </div>
-
-                {/* Final Notice */}
-                <div className="mx-auto max-w-2xl rounded-xl border border-indigo-400/20 bg-gradient-to-r from-indigo-950/40 to-slate-900/40 px-6 py-4 text-center backdrop-blur-sm">
-                  <p className="mb-2 text-sm font-medium text-indigo-200 sm:text-base">
-                    研修リソースの関係上、定員に達し次第、次回募集は未定となります
-                  </p>
-                  <p className="text-xs text-slate-400">
-                    ※定員に達した場合、タイマー終了前でも受付終了となります
-                  </p>
-                </div>
+              {/* Final Notice */}
+              <div className="mx-auto max-w-2xl rounded-xl border border-indigo-400/20 bg-gradient-to-r from-indigo-950/40 to-slate-900/40 px-6 py-4 text-center backdrop-blur-sm">
+                <p className="mb-2 text-sm font-medium text-indigo-200 sm:text-base">
+                  研修リソースの関係上、定員に達し次第、次回募集は未定となります
+                </p>
+                <p className="text-xs text-slate-400">
+                  ※定員に達した場合、タイマー終了前でも受付終了となります
+                </p>
               </div>
             </div>
           </div>

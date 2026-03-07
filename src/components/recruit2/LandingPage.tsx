@@ -488,6 +488,31 @@ const LandingPage: React.FC<LandingPageProps> = ({
         </div>
       )}
 
+      {/* Mid-page CTA Section (Moved from OpenCastRecruitment) */}
+      <section className="bg-slate-900 py-12">
+        <div className="container mx-auto px-4">
+          <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
+            <button
+              onClick={onOpenChat}
+              className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95"
+            >
+              <span className="relative z-10">簡単相談してみる</span>
+              <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
+            </button>
+            <button
+              onClick={onOpenChat}
+              className="rounded-2xl border-2 border-amber-400/40 bg-slate-900/50 px-10 py-5 text-lg font-bold text-amber-300 backdrop-blur-sm transition-all hover:border-amber-400/60 hover:bg-slate-900/70 active:scale-95"
+            >
+              詳しい話を聞いてみる
+            </button>
+          </div>
+          <div className="mt-6 text-center text-sm text-slate-400">
+            <p>✓ 相談は30秒で完了します</p>
+            <p>✓ 面接ではありません。まずはお気軽にご相談ください</p>
+          </div>
+        </div>
+      </section>
+
       {/* Income Simulation Section */}
       {(config.income?.isVisible !== false || isEditing) && (
         <div
