@@ -8,17 +8,8 @@ export default function Loading() {
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-white/90 backdrop-blur-sm">
       <div className="relative flex flex-col items-center">
-        {/* Loading Video */}
-        <video
-          className="h-48 w-48 rounded-full object-cover shadow-2xl"
-          autoPlay
-          muted
-          loop
-          playsInline
-        >
-          <source src="/読み込み用動画.webm" type="video/webm" />
-          <source src="/読み込み用動画.mp4" type="video/mp4" />
-        </video>
+        {/* Loading Sprite Animation */}
+        <div className="animate-loading-sprite" />
 
         {/* Stylish Text */}
         <div className="mt-6 flex flex-col items-center gap-2">

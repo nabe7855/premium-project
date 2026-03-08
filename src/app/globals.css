@@ -689,3 +689,22 @@ body {
     0 0 5px #fff,
     0 0 10px #fff;
 }
+
+/* ===== Sprite Animation ===== */
+@keyframes loading-sprite-play {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: -4800px 0;
+  } /* 200px * 24 frames */
+}
+
+.animate-loading-sprite {
+  width: 200px;
+  height: 200px;
+  background-image: url('/loading/loading-sprite.webp');
+  background-repeat: no-repeat;
+  background-size: 4800px 200px; /* Width must match total sprite width */
+  animation: loading-sprite-play 0.8s steps(24) infinite;
+}

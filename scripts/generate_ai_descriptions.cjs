@@ -4,81 +4,79 @@ require('dotenv').config();
 
 const prisma = new PrismaClient();
 const apiKey = process.env.GEMINI_API_KEY;
+
 if (!apiKey) {
-  console.error('CRITICAL: GEMINI_API_KEY not found in process.env');
   process.exit(1);
 }
-const genAI = new GoogleGenerativeAI(apiKey);
 
-async function generateHotelDescription(hotelName, rawDescription) {
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' }); // Use 2.5-flash as it's available and working
+const genAI = new GoogleGenerativeAI(apiKey);
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function generateAIDescriptionForHotel(hotel) {
+  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+
+  const rawDesc = hotel.raw_description || '基本データのみ';
   const prompt = `
-あなたは高級ホテルポータルサイトの編集者です。
-以下のホテルの「生データ」を元に、ユーザーが泊まりたくなるような魅力的で清潔感のある紹介文（300文字程度）を作成してください。
+以下のホテルの紹介文ライターとなり、300〜500文字の魅力的な紹介文を本文のみ作成してください。
+ホテル名: ${hotel.name}
+住所: ${hotel.address || ''} 
+生データ: ${rawDesc}
 
 【ルール】
-- 誇大広告は避け、事実に基づいた魅力（設備、サービス、雰囲気）を強調してください。
-- ターゲットは20代〜30代のカップルや、女子会利用の層です。
-- 文字化けや不要な記号、他サイトへの誘導などは削除してください。
-- 出力は日本語の紹介文のみとしてください。
-
-ホテル名: ${hotelName}
-生データ: ${rawDescription}
+- 改行を適切に入れ、読みやすく。
+- 情緒的で高級感のある表現。
+- 紹介文のみを出力。Markdown禁止。
 `;
 
   try {
     const result = await model.generateContent(prompt);
-    const response = await result.response;
-    return response.text().trim();
+    const text = result.response.text().trim();
+    return text;
   } catch (error) {
-    if (error.message?.includes('429')) {
-      console.warn('Rate limit hit. Waiting...');
+    if (error.status === 429 || error.message?.includes('429')) {
+      console.warn('⚠️ レート制限! 65秒待機します...');
+      await sleep(65000);
       return null;
     }
-    console.error(`Error for ${hotelName}:`, error.message);
+    console.error(`❌ エラー: ${error.message}`);
     return null;
   }
 }
 
 async function main() {
+  console.log('🚀 AI紹介文生成開始（安全モード 1.2）');
+
   while (true) {
     const hotels = await prisma.lh_hotels.findMany({
-      where: {
-        raw_description: { not: null },
-        ai_description: null,
-      },
-      take: 10, // Process in small batches
+      where: { ai_description: { equals: null } },
+      take: 1, // 確実性を高めるための1件ずつ処理
     });
 
-    if (hotels.length === 0) {
-      console.log('All hotels processed or no candidates found.');
-      break;
-    }
-
-    console.log(`Generating AI descriptions for ${hotels.length} hotels...`);
+    if (hotels.length === 0) break;
 
     for (const hotel of hotels) {
-      console.log(`Processing: ${hotel.name}...`);
-      const aiDesc = await generateHotelDescription(hotel.name, hotel.raw_description);
+      console.log(`[${new Date().toLocaleTimeString()}] 🏢 ${hotel.name} 処理中...`);
 
-      if (aiDesc) {
-        await prisma.lh_hotels.update({
-          where: { id: hotel.id },
-          data: { ai_description: aiDesc },
-        });
-        console.log(`✅ Success: ${hotel.name}`);
-        // Sleep for 20 seconds to be safe with free tier rate limits
-        await new Promise((resolve) => setTimeout(resolve, 20000));
-      } else {
-        console.log(`❌ Failed or Skipped: ${hotel.name}`);
-        await new Promise((resolve) => setTimeout(resolve, 30000)); // Longer wait on error
+      const desc = await generateAIDescriptionForHotel(hotel);
+
+      if (desc && desc.length > 50) {
+        try {
+          await prisma.lh_hotels.update({
+            where: { id: hotel.id },
+            data: {
+              ai_description: desc,
+              updated_at: new Date(),
+            },
+          });
+          console.log(`  ✨ AI紹介文完了 (${desc.length}字)`);
+        } catch (dbError) {
+          console.error(`  ❌ DB保存エラー: ${dbError.message}`);
+        }
       }
+
+      await sleep(10000); // 10秒待機
     }
-    console.log('Batch complete, checking for more...');
   }
-  console.log('Processing complete.');
 }
 
-main()
-  .catch(console.error)
-  .finally(() => prisma.$disconnect());
+main();
