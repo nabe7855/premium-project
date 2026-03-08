@@ -265,30 +265,30 @@ export default function HubPageClient({
             >
               <div className="space-y-8 font-serif text-slate-600 md:text-lg md:leading-relaxed">
                 <div className="space-y-2">
-                  <p>ひとに相談できない「悩み」</p>
-                  <p>口に出しづらい「疑問」</p>
-                  <p>抑えきれない「欲望」と「妄想」</p>
+                  <p>誰にも打ち明けられなかった、胸の奥の疼き</p>
+                  <p>正解が見つからない、自分だけの迷い</p>
+                  <p>ずっと鍵をかけてきた、純粋な衝動</p>
                 </div>
 
                 <div className="py-4 font-black">
-                  <p className="text-rose-500">“性”をもっと自由にするための</p>
-                  <p>自分に正直に向きあうための</p>
-                  <p>ひとつの選択肢</p>
+                  <p className="text-rose-500">自分自身を慈しみ、心も体も自由になるために</p>
+                  <p>本当の気持ちから、もう目を逸らさないために</p>
+                  <p>あなたに寄り添う、確かな居場所</p>
                 </div>
 
                 <div className="py-2">
-                  <p className="text-2xl font-black text-slate-900">女性用風俗</p>
+                  <p className="text-2xl font-black text-slate-900">女性専用ウェルネスサービス</p>
                   <p className="text-xs font-black tracking-[0.3em] text-slate-400">
-                    -スイートスポット東京-
+                    - ストロベリーボーイズ -
                   </p>
                 </div>
 
                 <div className="space-y-2 pt-4">
-                  <p>少しだけ勇気をだして</p>
-                  <p>プロフェッショナルな</p>
-                  <p>男性セラピストと</p>
+                  <p>ほんの少し、心を開いて</p>
+                  <p>最上級の技術と優しさを持つセラピストと共に</p>
+                  <p>昨日までの自分を超えて</p>
                   <p className="mt-4 text-xl font-bold text-slate-900">
-                    まだ見ぬ扉を開けてみませんか
+                    まだ見ぬ、幸福な物語を始めませんか
                   </p>
                 </div>
               </div>
