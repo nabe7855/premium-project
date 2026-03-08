@@ -706,5 +706,5 @@ body {
   background-image: url('/loading/loading-sprite.webp');
   background-repeat: no-repeat;
   background-size: 4800px 200px; /* Width must match total sprite width */
-  animation: loading-sprite-play 0.8s steps(24) infinite;
+  animation: loading-sprite-play 1.6s steps(24) infinite;
 }
