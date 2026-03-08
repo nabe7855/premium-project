@@ -225,6 +225,97 @@ export default function HubPageClient({
         )}
       </section>
 
+      {/* ─── 1.2 Message from Store (Added Section) ─── */}
+      <section className="relative overflow-hidden bg-[#f0f9ff]/30 px-6 py-32">
+        {/* 背景の幾何学パターンをCSSで再現 */}
+        <div
+          className="absolute inset-0 opacity-[0.05]"
+          style={{
+            backgroundImage:
+              'linear-gradient(30deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(150deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(30deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(150deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(60deg, #999 25%, transparent 25.5%, transparent 75%, #999 75%, #999), linear-gradient(60deg, #999 25%, transparent 25.5%, transparent 75%, #999 75%, #999)',
+            backgroundSize: '40px 70px',
+            backgroundPosition: '0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-7xl">
+          <div className="flex flex-col items-center justify-center gap-12 lg:flex-row">
+            {/* 左のシルエット */}
+            <motion.div
+              initial={{ opacity: 0, x: -50 }}
+              whileInView={{ opacity: 0.15, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2 }}
+              className="hidden shrink-0 lg:block"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400"
+                alt="silhouette"
+                className="h-96 w-auto object-contain mix-blend-multiply grayscale"
+              />
+            </motion.div>
+
+            {/* テキストコンテンツ */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="max-w-2xl text-center"
+            >
+              <div className="space-y-8 font-serif text-slate-600 md:text-lg md:leading-relaxed">
+                <div className="space-y-2">
+                  <p>ひとに相談できない「悩み」</p>
+                  <p>口に出しづらい「疑問」</p>
+                  <p>抑えきれない「欲望」と「妄想」</p>
+                </div>
+
+                <div className="py-4 font-black">
+                  <p className="text-rose-500">“性”をもっと自由にするための</p>
+                  <p>自分に正直に向きあうための</p>
+                  <p>ひとつの選択肢</p>
+                </div>
+
+                <div className="py-2">
+                  <p className="text-2xl font-black text-slate-900">女性用風俗</p>
+                  <p className="text-xs font-black tracking-[0.3em] text-slate-400">
+                    -スイートスポット東京-
+                  </p>
+                </div>
+
+                <div className="space-y-2 pt-4">
+                  <p>少しだけ勇気をだして</p>
+                  <p>プロフェッショナルな</p>
+                  <p>男性セラピストと</p>
+                  <p className="mt-4 text-xl font-bold text-slate-900">
+                    まだ見ぬ扉を開けてみませんか
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+
+            {/* 右のシルエット */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 0.15, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 1.2 }}
+              className="hidden shrink-0 lg:block"
+            >
+              <img
+                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400"
+                alt="silhouette"
+                className="h-96 w-auto object-contain mix-blend-multiply grayscale"
+              />
+            </motion.div>
+          </div>
+        </div>
+
+        {/* 背景の境界線 */}
+        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
+      </section>
+
       {/* ─── 1.5 ライフスタイル別に探す (Layout from Image 2 but Bright Theme) ─── */}
       <section className="bg-white px-6 py-24">
         <div className="mx-auto max-w-7xl">
