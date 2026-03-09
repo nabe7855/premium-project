@@ -378,7 +378,7 @@ export default function HubPageClient({
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-8 overflow-x-auto pb-12 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3">
             {stores.map((store, i) => (
               <motion.div
                 key={store.id}
@@ -386,7 +386,7 @@ export default function HubPageClient({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="group relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-2 transition-all duration-500 hover:border-rose-200 hover:shadow-2xl hover:shadow-rose-500/10"
+                className="group relative w-[70vw] shrink-0 snap-center overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-2 transition-all duration-500 hover:border-rose-200 hover:shadow-2xl hover:shadow-rose-500/10 md:w-auto md:shrink"
               >
                 <Link href={`/store/${store.slug}`}>
                   <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem]">
