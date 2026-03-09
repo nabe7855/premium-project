@@ -316,6 +316,71 @@ export default function HubPageClient({
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
       </section>
 
+      {/* ─── 1.3 全国の店舗一覧 (New Section) ─── */}
+      <section className="bg-white px-6 py-24">
+        <div className="mx-auto max-w-7xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-16 text-center"
+          >
+            <h2 className="mb-4 text-4xl font-black tracking-tighter text-slate-900 md:text-6xl">
+              全国の<span className="text-rose-500">店舗一覧</span>
+            </h2>
+            <div className="mx-auto mb-6 h-1 w-24 rounded-full bg-rose-500" />
+            <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">
+              STORES NATIONWIDE
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {stores.map((store, i) => (
+              <motion.div
+                key={store.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="group relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-2 transition-all duration-500 hover:border-rose-200 hover:shadow-2xl hover:shadow-rose-500/10"
+              >
+                <Link href={`/store/${store.slug}`}>
+                  <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem]">
+                    <img
+                      src={
+                        store.image_url ||
+                        'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=800'
+                      }
+                      alt={store.name}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
+                      <span className="flex items-center gap-2 text-xs font-black text-white">
+                        VIEW STORE DETAIL <ArrowRight className="h-3 w-3" />
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <div className="mb-2 flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-rose-500" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-slate-400">
+                        {store.address?.includes(' ') ? store.address.split(' ')[0] : 'LOCATION'}
+                      </span>
+                    </div>
+                    <h3 className="mb-2 truncate text-2xl font-black text-slate-800 transition-colors group-hover:text-rose-500">
+                      {store.name}
+                    </h3>
+                    <p className="line-clamp-2 text-sm font-medium text-slate-500">
+                      {store.catch_copy || store.description || '至福のひとときをお約束します。'}
+                    </p>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── 1.4 全国から選ばれた人気者 (Marquee Version) ─── */}
       <section className="overflow-hidden bg-slate-50 py-24">
         <div className="mx-auto max-w-7xl px-6 text-center">
