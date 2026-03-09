@@ -368,12 +368,14 @@ export default function HubPageClient({
                         </div>
                       </div>
                       <div className="px-4 text-center">
-                        <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-rose-500">
-                          POPULAR
-                        </span>
                         <h3 className="text-xl font-black tracking-tight text-slate-800 transition-colors group-hover:text-rose-500">
                           {cast.name}
                         </h3>
+                        <p
+                          className={`mb-2 mt-0.5 truncate text-[10px] font-black uppercase tracking-widest text-rose-400 opacity-80`}
+                        >
+                          {cast.catch_copy || 'THERAPIST'}
+                        </p>
                         {cast.store && (
                           <p className="mt-1 text-xs font-bold italic text-slate-400">
                             @ {cast.store.name}
@@ -386,15 +388,6 @@ export default function HubPageClient({
               );
             })}
           </div>
-        </div>
-
-        <div className="mt-12 text-center">
-          <Link
-            href="/cast"
-            className="inline-flex items-center gap-2 text-sm font-black text-slate-400 transition-colors hover:text-rose-500"
-          >
-            全国のセラピストをもっと見る <ArrowRight className="h-4 w-4" />
-          </Link>
         </div>
       </section>
 
