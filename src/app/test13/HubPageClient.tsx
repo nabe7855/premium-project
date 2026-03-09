@@ -778,18 +778,20 @@ export default function HubPageClient({
         {
           title: 'イケジョラボ',
           sub: "Women's Wellness",
+          illustration: '/ハブページメディアイラスト/イケジョ.png',
           color: 'rose',
           bgColor: 'bg-rose-50',
           textColor: 'text-slate-900',
           subTextColor: 'text-slate-500',
           href: '/ikejo',
           icon: '💗',
-          desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常の整えまで、現代女性に寄り添うヒントを届けます。',
+          desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常의整えまで、現代女性に寄り添うヒントを届けます。',
           articles: mediaArticles.userArticles.slice(0, 4),
         },
         {
           title: 'イケオラボ',
           sub: "Men's Wellness",
+          illustration: '/ハブページメディアイラスト/イケオ.png',
           color: 'blue',
           bgColor: 'bg-blue-900',
           textColor: 'text-white',
@@ -802,6 +804,7 @@ export default function HubPageClient({
         {
           title: 'スイートステイ',
           sub: 'Hotel Guide',
+          illustration: '/ハブページメディアイラスト/スイートホテル.png',
           color: 'amber',
           bgColor: 'bg-sky-50',
           textColor: 'text-slate-900',
@@ -878,13 +881,17 @@ export default function HubPageClient({
                 >
                   <div className="relative aspect-square w-full max-w-[120px] md:max-w-md">
                     <img
-                      src="/media-illustration.png"
+                      src={(media as any).illustration}
                       alt={media.title}
                       className="relative z-10 h-full w-full object-contain"
                     />
                     <div
                       className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[40px] md:blur-[100px] ${
-                        media.title === 'イケオラボ' ? 'bg-blue-400' : 'bg-rose-400'
+                        media.title === 'イケオラボ'
+                          ? 'bg-blue-400'
+                          : media.title === 'イケジョラボ'
+                            ? 'bg-rose-400'
+                            : 'bg-amber-400'
                       }`}
                     />
                   </div>
