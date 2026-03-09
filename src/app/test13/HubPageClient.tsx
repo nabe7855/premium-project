@@ -819,30 +819,28 @@ export default function HubPageClient({
           key={media.title}
           className={`${media.bgColor} relative overflow-hidden px-6 py-24 transition-colors duration-500`}
         >
-          {/* 背景の巨大イラスト追加 */}
+          {/* 背景の巨大イラスト追加 - 大胆に巨大化 */}
           <motion.div
             initial={{
               opacity: 0,
-              x: media.title === 'イケオラボ' ? -100 : 100,
+              x: media.title === 'イケオラボ' ? -300 : 300,
               scale: 0.8,
             }}
             whileInView={{
-              opacity: 0.15,
-              x: 0,
-              scale: 1.1,
+              opacity: 0.25,
+              x: media.title === 'イケオラボ' ? -150 : 150, // 画面外からはみ出させる
+              scale: 1.25,
             }}
             viewport={{ once: true }}
-            transition={{ duration: 2, ease: 'easeOut' }}
+            transition={{ duration: 2.5, ease: 'easeOut' }}
             className={`pointer-events-none absolute bottom-0 top-0 z-0 hidden items-center md:flex ${
-              media.title === 'イケオラボ' ? 'left-[-10%]' : 'right-[-10%]'
-            } w-2/3 overflow-hidden`}
+              media.title === 'イケオラボ' ? 'left-0 justify-start' : 'right-0 justify-end'
+            } w-full overflow-hidden`}
           >
             <img
               src={(media as any).illustration}
               alt=""
-              className={`h-auto w-full object-contain ${
-                media.title === 'イケオラボ' ? 'object-left' : 'object-right'
-              } opacity-60 grayscale-[0.1]`}
+              className={`h-[150%] w-auto max-w-none object-contain opacity-70 grayscale-[0.2]`}
             />
           </motion.div>
 
