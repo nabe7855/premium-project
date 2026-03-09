@@ -8,7 +8,6 @@ import {
   ChevronUp,
   MapPin,
   Play,
-  Search,
   Sparkles,
   Users,
 } from 'lucide-react';
@@ -449,25 +448,6 @@ export default function HubPageClient({
                 <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl transition-transform group-hover:scale-150" />
               </motion.div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 検索バーセクション */}
-      <section className="bg-slate-50 px-6 pb-24">
-        <div className="mx-auto max-w-3xl">
-          <div className="relative flex items-center">
-            <Search className="absolute left-6 h-6 w-6 text-slate-400" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="キャスト名・キーワード・店舗・お悩み..."
-              className="h-20 w-full rounded-3xl border border-slate-200 bg-white pl-16 pr-40 text-lg text-slate-900 placeholder-slate-400 outline-none ring-rose-500/20 transition-all focus:border-rose-400 focus:shadow-xl focus:ring-4"
-            />
-            <button className="absolute right-3 rounded-2xl bg-rose-500 px-8 py-4 text-sm font-black text-white shadow-lg shadow-rose-500/20 transition-all hover:scale-105 active:scale-95">
-              SEARCH
-            </button>
           </div>
         </div>
       </section>
