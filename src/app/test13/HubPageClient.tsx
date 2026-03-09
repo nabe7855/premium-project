@@ -573,6 +573,9 @@ export default function HubPageClient({
           title: 'イケジョラボ',
           sub: "Women's Wellness",
           color: 'rose',
+          bgColor: 'bg-rose-50',
+          textColor: 'text-slate-900',
+          subTextColor: 'text-slate-500',
           href: '/ikejo',
           icon: '💗',
           desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常の整えまで、現代女性に寄り添うヒントを届けます。',
@@ -582,6 +585,9 @@ export default function HubPageClient({
           title: 'イケオラボ',
           sub: "Men's Wellness",
           color: 'blue',
+          bgColor: 'bg-blue-900',
+          textColor: 'text-white',
+          subTextColor: 'text-blue-200',
           href: '/ikeo',
           icon: '⚡',
           desc: 'メンズウェルネス。選ばれる男へのナビゲート。心身のコンディショニングを通じた新しいライフスタイルを提案。',
@@ -591,6 +597,9 @@ export default function HubPageClient({
           title: 'スイートステイ',
           sub: 'Hotel Guide',
           color: 'amber',
+          bgColor: 'bg-sky-50',
+          textColor: 'text-slate-900',
+          subTextColor: 'text-slate-500',
           href: '/sweetstay',
           icon: '🏨',
           desc: '大人の隠れ家ホテルガイド。AIが導く一軒。特別な夜を彩る、あなただけに最適な空間をナビゲートします。',
@@ -599,7 +608,7 @@ export default function HubPageClient({
       ].map((media, idx) => (
         <section
           key={media.title}
-          className={`${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} overflow-hidden px-6 py-24`}
+          className={`${media.bgColor} overflow-hidden px-6 py-24 transition-colors duration-500`}
         >
           <div className="mx-auto max-w-7xl">
             {/* 1段目: テキスト説明 */}
@@ -607,26 +616,30 @@ export default function HubPageClient({
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="mb-12 border-l-4 border-rose-500 pl-6"
+              className={`mb-12 border-l-4 ${media.title === 'イケオラボ' ? 'border-blue-400' : 'border-rose-500'} pl-6`}
             >
-              <span className="text-xs font-black uppercase tracking-widest text-rose-500">
+              <span
+                className={`text-xs font-black uppercase tracking-widest ${media.title === 'イケオラボ' ? 'text-blue-300' : 'text-rose-500'}`}
+              >
                 {media.sub}
               </span>
-              <h2 className="mt-2 flex items-center gap-3 text-4xl font-black text-slate-900">
+              <h2 className={`mt-2 flex items-center gap-3 text-4xl font-black ${media.textColor}`}>
                 {media.icon} {media.title}
               </h2>
-              <p className="mt-4 max-w-2xl text-lg font-medium leading-relaxed text-slate-500">
+              <p
+                className={`mt-4 max-w-2xl text-lg font-medium leading-relaxed ${media.subTextColor}`}
+              >
                 {media.desc}
               </p>
             </motion.div>
 
             {/* 2段目: コンテンツスライダー */}
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 40 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ delay: 0.2 }}
-              className="relative"
+              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+              className={`relative border-y py-12 ${media.title === 'イケオラボ' ? 'border-blue-800' : 'border-slate-100'}`}
             >
               <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto pb-8">
                 {media.articles && media.articles.length > 0
@@ -646,10 +659,12 @@ export default function HubPageClient({
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
                         </div>
-                        <h4 className="line-clamp-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-rose-500">
+                        <h4
+                          className={`line-clamp-2 text-lg font-bold transition-colors ${media.textColor} group-hover:text-rose-400`}
+                        >
                           {article.title}
                         </h4>
-                        <p className="mt-2 text-xs font-medium text-slate-400">
+                        <p className={`mt-2 text-xs font-medium ${media.subTextColor} opacity-60`}>
                           {new Date(article.published_at || Date.now()).toLocaleDateString('ja-JP')}
                         </p>
                       </Link>
@@ -663,7 +678,9 @@ export default function HubPageClient({
                     ))}
               </div>
               {/* スライドアシスト用フェード */}
-              <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l from-white to-transparent md:block" />
+              <div
+                className={`pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l ${media.bgColor === 'bg-blue-900' ? 'from-blue-900' : 'from-white'} to-transparent md:block`}
+              />
               <div className="group absolute -right-4 top-1/2 hidden -translate-y-1/2 cursor-pointer rounded-full border border-slate-100 bg-white p-4 shadow-xl transition-colors hover:bg-rose-500 hover:text-white md:block">
                 <ChevronRight className="h-6 w-6" />
               </div>
@@ -679,7 +696,11 @@ export default function HubPageClient({
             >
               <Link
                 href={media.href}
-                className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-black text-slate-700 shadow-sm transition-all hover:gap-5 hover:border-rose-500 hover:bg-rose-500 hover:text-white"
+                className={`flex items-center gap-3 rounded-full border px-8 py-3 text-sm font-black shadow-sm transition-all hover:gap-5 ${
+                  media.title === 'イケオラボ'
+                    ? 'border-blue-700 bg-blue-800 text-white hover:border-white hover:bg-white hover:text-blue-900'
+                    : 'border-slate-200 bg-white text-slate-700 hover:border-rose-500 hover:bg-rose-500 hover:text-white'
+                }`}
               >
                 サイトを見る <ArrowRight className="h-4 w-4" />
               </Link>
