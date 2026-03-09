@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowRight,
   ChevronDown,
+  ChevronRight,
   ChevronUp,
   MapPin,
   Play,
@@ -566,66 +567,126 @@ export default function HubPageClient({
         </section>
       )}
 
-      {/* ─── 3.5 オウンドメディア連携 ─── */}
-      <section className="bg-white px-6 py-24">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 border-l-4 border-rose-500 pl-6">
-            <span className="text-xs font-black uppercase tracking-widest text-rose-500">
-              Media Ecosystem
-            </span>
-            <h2 className="mt-2 text-4xl font-black text-slate-900">運営メディアを探る</h2>
-          </div>
+      {/* ─── 3.5 オウンドメディア連携 (各セクション化) ─── */}
+      {[
+        {
+          title: 'イケジョラボ',
+          sub: "Women's Wellness",
+          color: 'rose',
+          href: '/ikejo',
+          icon: '💗',
+          desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常の整えまで、現代女性に寄り添うヒントを届けます。',
+          articles: mediaArticles.userArticles.slice(0, 4),
+        },
+        {
+          title: 'イケオラボ',
+          sub: "Men's Wellness",
+          color: 'blue',
+          href: '/ikeo',
+          icon: '⚡',
+          desc: 'メンズウェルネス。選ばれる男へのナビゲート。心身のコンディショニングを通じた新しいライフスタイルを提案。',
+          articles: mediaArticles.recruitArticles.slice(0, 4),
+        },
+        {
+          title: 'スイートステイ',
+          sub: 'Hotel Guide',
+          color: 'amber',
+          href: '/sweetstay',
+          icon: '🏨',
+          desc: '大人の隠れ家ホテルガイド。AIが導く一軒。特別な夜を彩る、あなただけに最適な空間をナビゲートします。',
+          articles: mediaArticles.userArticles.slice(0, 4), // 本来はフィルタリングした方が良いが一旦流用
+        },
+      ].map((media, idx) => (
+        <section
+          key={media.title}
+          className={`${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'} overflow-hidden px-6 py-24`}
+        >
+          <div className="mx-auto max-w-7xl">
+            {/* 1段目: テキスト説明 */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="mb-12 border-l-4 border-rose-500 pl-6"
+            >
+              <span className="text-xs font-black uppercase tracking-widest text-rose-500">
+                {media.sub}
+              </span>
+              <h2 className="mt-2 flex items-center gap-3 text-4xl font-black text-slate-900">
+                {media.icon} {media.title}
+              </h2>
+              <p className="mt-4 max-w-2xl text-lg font-medium leading-relaxed text-slate-500">
+                {media.desc}
+              </p>
+            </motion.div>
 
-          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-            {[
-              {
-                title: 'イケジョラボ',
-                sub: "Women's Wellness",
-                color: 'rose',
-                href: '/ikejo',
-                icon: '💗',
-                desc: '自立した女性のライフスタイルメディア。',
-              },
-              {
-                title: 'イケオラボ',
-                sub: "Men's Wellness",
-                color: 'blue',
-                href: '/ikeo',
-                icon: '⚡',
-                desc: 'メンズウェルネス。選ばれる男へのナビゲート。',
-              },
-              {
-                title: 'スイートステイ',
-                sub: 'Hotel Guide',
-                color: 'amber',
-                href: '/sweetstay',
-                icon: '🏨',
-                desc: '大人の隠れ家ホテルガイド。AIが導く一軒。',
-              },
-            ].map((media) => (
-              <motion.div
-                key={media.title}
-                whileHover={{ y: -8 }}
-                className={`group relative overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-10`}
+            {/* 2段目: コンテンツスライダー */}
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.2 }}
+              className="relative"
+            >
+              <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto pb-8">
+                {media.articles && media.articles.length > 0
+                  ? media.articles.map((article: any, i: number) => (
+                      <Link
+                        key={article.id || i}
+                        href={`/media/article/${article.slug}`}
+                        className="group min-w-[300px] max-w-[350px] flex-shrink-0 snap-start"
+                      >
+                        <div className="mb-4 aspect-[4/3] overflow-hidden rounded-[2rem] bg-slate-100 shadow-lg ring-1 ring-slate-200/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-rose-500/10">
+                          <img
+                            src={
+                              article.thumbnail_url ||
+                              'https://images.unsplash.com/photo-1516589174184-c18259ec398e?auto=format&fit=crop&q=80&w=600'
+                            }
+                            alt={article.title}
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
+                        </div>
+                        <h4 className="line-clamp-2 text-lg font-bold text-slate-800 transition-colors group-hover:text-rose-500">
+                          {article.title}
+                        </h4>
+                        <p className="mt-2 text-xs font-medium text-slate-400">
+                          {new Date(article.published_at || Date.now()).toLocaleDateString('ja-JP')}
+                        </p>
+                      </Link>
+                    ))
+                  : // 記事がない場合のフォールバック
+                    [1, 2, 3, 4].map((i) => (
+                      <div key={i} className="min-w-[300px] max-w-[350px] flex-shrink-0 opacity-40">
+                        <div className="mb-4 aspect-[4/3] animate-pulse rounded-[2rem] bg-slate-200" />
+                        <div className="h-4 w-3/4 rounded bg-slate-200" />
+                      </div>
+                    ))}
+              </div>
+              {/* スライドアシスト用フェード */}
+              <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l from-white to-transparent md:block" />
+              <div className="group absolute -right-4 top-1/2 hidden -translate-y-1/2 cursor-pointer rounded-full border border-slate-100 bg-white p-4 shadow-xl transition-colors hover:bg-rose-500 hover:text-white md:block">
+                <ChevronRight className="h-6 w-6" />
+              </div>
+            </motion.div>
+
+            {/* 3段目: ボタン */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.4 }}
+              className="mt-12 flex justify-start pl-6"
+            >
+              <Link
+                href={media.href}
+                className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-8 py-3 text-sm font-black text-slate-700 shadow-sm transition-all hover:gap-5 hover:border-rose-500 hover:bg-rose-500 hover:text-white"
               >
-                <div className="absolute right-8 top-8 mb-6 text-4xl opacity-20">{media.icon}</div>
-                <span className={`text-[10px] font-black uppercase text-slate-400`}>
-                  {media.sub}
-                </span>
-                <h3 className="mt-2 text-2xl font-black text-slate-800">{media.title}</h3>
-                <p className="mb-8 mt-4 text-sm leading-relaxed text-slate-500">{media.desc}</p>
-                <Link
-                  href={media.href}
-                  className="flex items-center gap-2 text-sm font-black text-rose-500 transition-all hover:gap-4"
-                >
-                  READ MORE <ArrowRight className="h-4 w-4" />
-                </Link>
-                <div className="absolute -bottom-10 -right-10 h-32 w-32 bg-rose-500/5 blur-3xl" />
-              </motion.div>
-            ))}
+                サイトを見る <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
+      ))}
 
       {/* ─── 4. Knowledge Hub ─── */}
       <section className="bg-slate-50 px-6 py-24">
