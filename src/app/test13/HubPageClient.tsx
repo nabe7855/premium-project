@@ -692,7 +692,13 @@ export default function HubPageClient({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-              className={`relative border-y-2 py-12 ${media.title === 'イケオラボ' ? 'border-blue-700/50' : 'border-slate-200'}`}
+              className={`relative border-b-2 border-t-2 border-solid py-12 ${
+                media.title === 'イケオラボ'
+                  ? 'border-blue-500/40'
+                  : media.title === 'イケジョラボ'
+                    ? 'border-rose-200/60'
+                    : 'border-sky-200/60'
+              }`}
             >
               <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto pb-8">
                 {media.articles && media.articles.length > 0
