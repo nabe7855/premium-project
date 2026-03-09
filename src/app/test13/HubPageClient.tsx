@@ -817,9 +817,36 @@ export default function HubPageClient({
       ].map((media, idx) => (
         <section
           key={media.title}
-          className={`${media.bgColor} overflow-hidden px-6 py-24 transition-colors duration-500`}
+          className={`${media.bgColor} relative overflow-hidden px-6 py-24 transition-colors duration-500`}
         >
-          <div className="mx-auto max-w-7xl">
+          {/* 背景の巨大イラスト追加 */}
+          <motion.div
+            initial={{
+              opacity: 0,
+              x: media.title === 'イケオラボ' ? -100 : 100,
+              scale: 0.8,
+            }}
+            whileInView={{
+              opacity: 0.15,
+              x: 0,
+              scale: 1.1,
+            }}
+            viewport={{ once: true }}
+            transition={{ duration: 2, ease: 'easeOut' }}
+            className={`pointer-events-none absolute bottom-0 top-0 z-0 hidden items-center md:flex ${
+              media.title === 'イケオラボ' ? 'left-[-10%]' : 'right-[-10%]'
+            } w-2/3 overflow-hidden`}
+          >
+            <img
+              src={(media as any).illustration}
+              alt=""
+              className={`h-auto w-full object-contain ${
+                media.title === 'イケオラボ' ? 'object-left' : 'object-right'
+              } opacity-60 grayscale-[0.1]`}
+            />
+          </motion.div>
+
+          <div className="relative z-10 mx-auto max-w-7xl">
             {/* 1段目: メディア名と説明セクション */}
             <div className="mb-20">
               {/* レベル1: メディア名 */}
@@ -873,29 +900,25 @@ export default function HubPageClient({
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, x: media.title === 'イケオラボ' ? -30 : 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className={`flex justify-center ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'}`}
+                  className={`hidden justify-center md:flex ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'}`}
                 >
-                  <div className="relative aspect-square w-full max-w-[120px] md:max-w-md">
-                    <img
-                      src={(media as any).illustration}
-                      alt={media.title}
-                      className="relative z-10 h-full w-full object-contain"
-                    />
-                    <div
-                      className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[40px] md:blur-[100px] ${
-                        media.title === 'イケオラボ'
-                          ? 'bg-blue-400'
-                          : media.title === 'イケジョラボ'
-                            ? 'bg-rose-400'
-                            : 'bg-amber-400'
-                      }`}
-                    />
-                  </div>
+                  {/* グリッドレイアウト維持のための空のスペース（背景画像がここをカバーする） */}
+                  <div className="relative aspect-square w-full max-w-md" />
                 </motion.div>
+                {/* モバイル用イラスト（背景だと見づらいため、モバイルでは従来通り小さく表示） */}
+                <div
+                  className={`flex justify-center md:hidden ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'}`}
+                >
+                  <img
+                    src={(media as any).illustration}
+                    alt={media.title}
+                    className="relative z-10 h-24 w-24 object-contain opacity-50"
+                  />
+                </div>
               </div>
             </div>
 
