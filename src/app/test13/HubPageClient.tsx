@@ -8,7 +8,6 @@ import {
   ChevronUp,
   MapPin,
   Play,
-  Sparkles,
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -993,27 +992,6 @@ export default function HubPageClient({
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ─── 6. AI CTA ─── */}
-      <section className="relative overflow-hidden bg-rose-50 py-32">
-        <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-rose-500/10 blur-[120px]" />
-        <div className="relative mx-auto max-w-3xl px-6 text-center">
-          <div className="mx-auto mb-10 flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-xl">
-            <Sparkles className="h-10 w-10 animate-pulse text-rose-500" />
-          </div>
-          <h2 className="mb-8 text-5xl font-black leading-tight text-slate-900 md:text-7xl">
-            AIが導く、
-            <br />
-            <span className="text-rose-500">黄金の体験。</span>
-          </h2>
-          <p className="mb-12 text-lg font-black uppercase tracking-widest text-slate-400">
-            AI PERSONALIZED MATCHING
-          </p>
-          <button className="rounded-full bg-rose-500 px-12 py-6 text-xl font-black text-white shadow-2xl shadow-rose-500/40 transition-all hover:scale-105">
-            診断を開始する
-          </button>
         </div>
       </section>
 
