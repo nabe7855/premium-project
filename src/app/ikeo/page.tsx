@@ -8,6 +8,7 @@ import {
   ShirtIcon,
   ShoppingBagIcon,
   SparklesIcon,
+  TrophyIcon,
   ZapIcon,
 } from 'lucide-react';
 import Image from 'next/image';
@@ -50,6 +51,12 @@ export default async function CareerMediaTopPage({
     { title: '恋愛・デート', tag: '恋愛・デート', icon: HeartIcon, desc: '満足させる術。' },
     { title: '健康・ボディ', tag: '健康・ボディ', icon: DumbbellIcon, desc: '自信を鍛える。' },
     { title: 'ラブグッズ', tag: 'ラブグッズ', icon: ShoppingBagIcon, desc: '大人の嗜み。' },
+    {
+      title: 'セラピストの流儀',
+      tag: 'セラピストの流儀',
+      icon: TrophyIcon,
+      desc: '誇り高きプロの道。',
+    },
   ];
 
   const subNav = [
@@ -59,6 +66,7 @@ export default async function CareerMediaTopPage({
     { label: '会話力', tag: '会話・コミュ力' },
     { label: '健康・ボディ', tag: '健康・ボディ' },
     { label: 'ラブグッズ', tag: 'ラブグッズ' },
+    { label: 'セラピストの流儀', tag: 'セラピストの流儀' },
   ];
 
   return (

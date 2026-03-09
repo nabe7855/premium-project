@@ -385,13 +385,12 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 </div>
               </div>
 
-              {/* Final Notice */}
               <div className="mx-auto max-w-2xl rounded-xl border border-indigo-400/20 bg-gradient-to-r from-indigo-950/40 to-slate-900/40 px-6 py-4 text-center backdrop-blur-sm">
                 <p className="mb-2 text-sm font-medium text-indigo-200 sm:text-base">
-                  研修リソースの関係上、定員に達し次第、次回募集は未定となります
+                  研修リソースの関係上、定員に達し次第終了とさせていただきます。
                 </p>
                 <p className="text-xs text-slate-400">
-                  ※定員に達した場合、タイマー終了前でも受付終了となります
+                  ※募集定員に達した場合、表示のカウントダウン終了前でも受付終了となります。
                 </p>
               </div>
             </div>

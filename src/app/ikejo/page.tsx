@@ -66,6 +66,7 @@ export default async function MagazineTopPage({
     { title: '恋愛・相談', href: '/ikejo?tag=恋愛・相談' },
     { title: '体験談', href: '/ikejo?tag=体験談' },
     { title: 'ラブグッズ', href: '/ikejo?tag=ラブグッズ' },
+    { title: '女風ガイド', href: '/ikejo?tag=女風ガイド' },
   ];
 
   const renderEmptyState = () => (
@@ -231,6 +232,12 @@ export default async function MagazineTopPage({
                 desc: '大切な人との関係',
               },
               { name: '体験談', tag: '体験談', icon: BookOpenIcon, desc: 'ユーザーのリアルな声' },
+              {
+                name: '女風ガイド',
+                tag: '女風ガイド',
+                icon: SparklesIcon,
+                desc: 'プロの癒やしの嗜み方',
+              },
             ].map((cat) => (
               <Link
                 key={cat.tag}
