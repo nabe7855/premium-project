@@ -12,6 +12,7 @@ import {
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
+import Script from 'next/script';
 import { useState } from 'react';
 
 /* ─── 静的データ ─────────────────────────────────── */
@@ -644,52 +645,20 @@ export default function HubPageClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mx-auto max-w-2xl space-y-6"
+                className="mx-auto max-w-2xl px-4"
               >
-                {diaries.map((diary: any) => (
-                  <motion.div
-                    key={diary.id}
-                    whileHover={{ scale: 1.02 }}
-                    className="rounded-[2.5rem] border border-slate-100/50 bg-slate-50 p-8"
+                <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-4 shadow-xl">
+                  {/* Twitter Timeline Embed */}
+                  <a
+                    className="twitter-timeline"
+                    data-height="800"
+                    data-theme="light"
+                    href="https://twitter.com/hashtag/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC%E3%83%9C%E3%83%BC%E3%82%A4%E3%82%BA?src=hash&ref_src=twsrc%5Etfw"
                   >
-                    <div className="flex gap-4">
-                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-rose-100">
-                        <img
-                          src={
-                            diary.casts?.image_url ||
-                            diary.casts?.main_image_url ||
-                            FALLBACK_CAST_IMG
-                          }
-                          alt="cast"
-                          className="h-full w-full object-cover"
-                        />
-                      </div>
-                      <div className="min-w-0 flex-1">
-                        <div className="mb-1 flex items-center gap-2">
-                          <span className="font-black text-slate-800">
-                            {diary.casts?.name || 'THERAPIST'}
-                          </span>
-                          <span className="text-xs font-bold text-slate-400">
-                            @therapist_official
-                          </span>
-                          <span className="text-xs text-slate-300">
-                            • {new Date(diary.created_at).toLocaleDateString('ja-JP')}
-                          </span>
-                        </div>
-                        <p className="mb-4 leading-relaxed text-slate-700">{diary.title}</p>
-                        {diary.images?.[0]?.image_url && (
-                          <div className="overflow-hidden rounded-3xl border border-slate-200">
-                            <img
-                              src={diary.images[0].image_url}
-                              alt="diary"
-                              className="max-h-96 w-full object-cover"
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
+                    Tweets about #ストロベリーボーイズ
+                  </a>
+                  <Script src="https://platform.twitter.com/widgets.js" strategy="lazyOnload" />
+                </div>
               </motion.div>
             )}
 
