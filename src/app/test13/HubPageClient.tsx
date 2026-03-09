@@ -527,7 +527,11 @@ export default function HubPageClient({
             {diaries.length > 0
               ? diaries.map((diary, i) => {
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
-                  const castImg = diary.casts?.image_url || FALLBACK_CAST_IMG;
+                  const rawCast = (diary as any).casts || (diary as any).cast;
+                  const castData = Array.isArray(rawCast) ? rawCast[0] : rawCast;
+                  const castImg =
+                    castData?.main_image_url || castData?.image_url || FALLBACK_CAST_IMG;
+                  const castName = castData?.name || 'THERAPIST';
 
                   return (
                     <motion.div
@@ -553,11 +557,15 @@ export default function HubPageClient({
                         <div className="absolute bottom-0 left-0 w-full p-8 text-white">
                           <div className="mb-4 flex items-center gap-3">
                             <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white/30">
-                              <img src={castImg} className="h-full w-full object-cover" />
+                              <img
+                                src={castImg}
+                                alt={castName}
+                                className="h-full w-full object-cover"
+                              />
                             </div>
                             <div>
                               <p className="text-xs font-black tracking-wider opacity-80">
-                                {diary.casts?.name || 'THERAPIST'}
+                                {castName}
                               </p>
                               <p className="text-[10px] font-bold opacity-60">
                                 {new Date(diary.created_at).toLocaleDateString('ja-JP')}
