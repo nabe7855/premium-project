@@ -520,37 +520,59 @@ export default function HubPageClient({
           </motion.div>
 
           {/* 横スクロールカード */}
-          <div className="no-scrollbar flex gap-6 overflow-x-auto pb-8">
+          <div className="no-scrollbar flex gap-8 overflow-x-auto pb-12">
             {diaries.length > 0
               ? diaries.map((diary, i) => {
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                  const castImg = diary.casts?.image_url || FALLBACK_CAST_IMG;
 
                   return (
                     <motion.div
                       key={diary.id}
-                      initial={{ opacity: 0, x: 20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: i * 0.05 }}
-                      className="group relative min-w-[300px] max-w-[350px] cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-10 transition-all duration-500 hover:border-rose-200 hover:bg-white hover:shadow-2xl hover:shadow-rose-500/5"
+                      transition={{ delay: i * 0.1 }}
+                      className="group relative min-w-[320px] max-w-[320px] cursor-pointer"
                     >
-                      {/* 写メ画像サムネイル (円形) */}
-                      <div className="mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-rose-100 bg-white shadow-md transition-all duration-700 group-hover:scale-110">
-                        <img src={thumbnail} alt="thumb" className="h-full w-full object-cover" />
-                      </div>
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-rose-500/20">
+                        {/* メインの写メ画像 */}
+                        <img
+                          src={thumbnail}
+                          alt={diary.title}
+                          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                        />
 
-                      <div className="relative z-10">
-                        <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
-                          {diary.casts?.name || 'THERAPIST'} •{' '}
-                          {new Date(diary.created_at).toLocaleDateString('ja-JP')}
-                        </span>
-                        <h3 className="line-clamp-2 text-xl font-black leading-tight text-slate-800 transition-colors group-hover:text-rose-500">
-                          {diary.title}
-                        </h3>
-                      </div>
+                        {/* オーバーレイグラデーション */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
 
-                      {/* 装飾用サークル要素 */}
-                      <div className="absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-rose-500/5 blur-3xl transition-transform group-hover:scale-150" />
+                        {/* 下部コンテンツ */}
+                        <div className="absolute bottom-0 left-0 w-full p-8 text-white">
+                          <div className="mb-4 flex items-center gap-3">
+                            <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white/30">
+                              <img src={castImg} className="h-full w-full object-cover" />
+                            </div>
+                            <div>
+                              <p className="text-xs font-black tracking-wider opacity-80">
+                                {diary.casts?.name || 'THERAPIST'}
+                              </p>
+                              <p className="text-[10px] font-bold opacity-60">
+                                {new Date(diary.created_at).toLocaleDateString('ja-JP')}
+                              </p>
+                            </div>
+                          </div>
+                          <h3 className="line-clamp-2 text-xl font-black leading-tight tracking-tight">
+                            {diary.title}
+                          </h3>
+                        </div>
+
+                        {/* 日付バッジ (Top Left) */}
+                        <div className="absolute left-6 top-6 rounded-full bg-white/10 px-4 py-2 backdrop-blur-md">
+                          <span className="text-[10px] font-black tracking-widest text-white">
+                            NEW ENTRY
+                          </span>
+                        </div>
+                      </div>
                     </motion.div>
                   );
                 })
