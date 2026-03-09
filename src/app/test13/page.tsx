@@ -26,11 +26,16 @@ async function getLatestVideos() {
 
 async function getLatestDiaries() {
   const { data, error } = await supabase
-    .from('blog_posts')
-    .select('id, title, content, cast_id, created_at, casts(name), images:blog_images(image_url)')
+    .from('blogs')
+    .select(
+      'id, title, content, cast_id, created_at, casts(name, image_url), images:blog_images(image_url)',
+    )
     .order('created_at', { ascending: false })
     .limit(10);
-  if (error) return [];
+  if (error) {
+    console.error('getLatestDiaries error:', error.message);
+    return [];
+  }
   return data || [];
 }
 
