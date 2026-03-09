@@ -8,6 +8,7 @@ import {
   ChevronUp,
   MapPin,
   Play,
+  Sparkles,
   Users,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -106,22 +107,8 @@ export default function HubPageClient({
   mediaArticles,
 }: HubPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'cast' | 'store' | 'video'>('cast');
+  const [activeTab, setActiveTab] = useState<'news' | 'tweet' | 'video'>('news');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-  const [activeCluster, setActiveCluster] = useState('中堅シングル');
-
-  const CLUSTERS = [
-    { id: 'pre', label: 'プレ社会人', sub: '音売れフード/ASMR' },
-    { id: 'young', label: '若手シングル', sub: '平成女児カルチャー' },
-    { id: 'mid', label: '中堅シングル', sub: '平穏ミュート志向' },
-    { id: 'vet', label: 'ベテランシングル', sub: 'RE良質消費' },
-    { id: 'young-c', label: 'ヤング夫婦', sub: 'お金のペアスタイル' },
-    { id: 'mid-c', label: 'ミドル夫婦', sub: '持たない住まい' },
-    { id: 'baby', label: '乳幼児期ママ', sub: '育児ハック' },
-    { id: 'child', label: '児童ママ', sub: '体験型教育' },
-    { id: 'youth', label: '青年期ママ', sub: 'ウェルビーイング' },
-    { id: 'second', label: 'セカンドライフ', sub: '新・悠々自適' },
-  ];
 
   const filteredCasts = casts.filter(
     (c) =>
@@ -153,68 +140,125 @@ export default function HubPageClient({
       />
 
       {/* ─── 1. HERO + 検索セクション (Layout from Image 1 but Bright Theme) ─── */}
-      <section className="relative flex min-h-[90vh] flex-col items-center justify-center overflow-hidden px-6 pb-20 pt-16">
-        {/* クラスターセレクター (Top Nav) */}
-        <div className="absolute top-0 z-50 flex w-full items-center gap-4 overflow-x-auto border-b border-slate-100 bg-white/80 px-6 py-4 backdrop-blur-xl md:justify-center">
-          <span className="text-[10px] font-black tracking-widest text-rose-500">
-            CLUSTER SELECT:
-          </span>
-          {CLUSTERS.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveCluster(c.label)}
-              className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[10px] font-black transition-all ${
-                activeCluster === c.label
-                  ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20'
-                  : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
-              }`}
-            >
-              {c.label}
-            </button>
-          ))}
+      <section className="relative flex min-h-[95vh] flex-col items-center justify-center overflow-hidden px-6 pb-24 pt-32">
+        {/* メインナビゲーションタブ (Top Nav) */}
+        <div className="absolute top-0 z-50 flex w-full items-center justify-center border-b border-slate-100 bg-white/80 px-6 py-6 backdrop-blur-xl">
+          <div className="flex gap-4">
+            {(
+              [
+                { id: 'news', label: 'News', icon: <Sparkles className="h-4 w-4" /> },
+                { id: 'tweet', label: 'Tweet', icon: <Users className="h-4 w-4" /> },
+                { id: 'video', label: 'Video', icon: <Play className="h-4 w-4" /> },
+              ] as const
+            ).map((tab) => (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className={`flex items-center gap-2 rounded-full px-8 py-3 text-xs font-black transition-all ${
+                  activeTab === tab.id
+                    ? 'bg-rose-500 text-white shadow-xl shadow-rose-500/20'
+                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                }`}
+              >
+                {tab.icon}
+                {tab.label}
+              </button>
+            ))}
+          </div>
         </div>
 
-        {/* 背景 */}
-        <div className="absolute inset-0 z-0">
-          <div className="absolute inset-0 bg-white" />
-          <div className="absolute left-1/2 top-1/2 h-[120%] w-[120%] -translate-x-1/2 -translate-y-1/2 bg-[url('https://images.unsplash.com/photo-1516589174184-c18259ec398e?auto=format&fit=crop&q=80&w=2000')] bg-cover bg-center opacity-10 blur-sm grayscale-[0.5]" />
-          <div className="absolute bottom-0 h-64 w-full bg-gradient-to-t from-white to-transparent" />
-          <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-rose-500/5 via-transparent to-amber-500/5" />
-        </div>
+        {/* 動的コンテンツマッピング */}
+        {(() => {
+          const contentMap = {
+            news: {
+              title: '最新のトピックスを、\nこの一箇所で。',
+              desc: '女性のウェルネス、ライフスタイル、そして物語。情報の「ハブ」として、最新の情報をいち早くお届けします。',
+              img: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=2000',
+              accent: 'from-rose-500 via-rose-400 to-rose-600',
+            },
+            tweet: {
+              title: 'キャストの「いま」、\n日常を覗く。',
+              desc: 'セラピストたちが綴る、飾らない日常とリアルな声。写メ日記を通じて、もっと身近な物語に触れてください。',
+              img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=2000',
+              accent: 'from-blue-500 via-sky-400 to-blue-600',
+            },
+            video: {
+              title: '躍動する物語を、\nその目で。',
+              desc: '一分一秒に込められた想い。最高品質の映像コンテンツが、あなたの感性を刺激するプレミアムな体験を演出します。',
+              img: 'https://images.unsplash.com/photo-1485043433441-db091ef2b141?auto=format&fit=crop&q=80&w=2000',
+              accent: 'from-amber-500 via-orange-400 to-amber-600',
+            },
+          };
+          const current = contentMap[activeTab];
 
-        <div className="relative z-10 w-full max-w-7xl px-4 md:px-12 lg:px-24">
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 1 }}
-            className="text-left"
-          >
-            <h1 className="mb-12 font-serif text-6xl font-black leading-[1.1] tracking-tighter text-slate-900 md:text-8xl lg:text-[9rem]">
-              すべての「整え」を、
-              <br />
-              <span className="bg-gradient-to-r from-rose-500 via-rose-400 to-rose-600 bg-clip-text text-transparent">
-                この一箇所
-              </span>
-              で。
-            </h1>
-            <p className="max-w-xl text-lg font-medium leading-relaxed text-slate-500 md:text-2xl">
-              女性のウェルネス、ライフスタイル、そして物語。
-              情報の「ハブ」として、あなたに最適な体験をナビゲートします。
-            </p>
-          </motion.div>
-        </div>
+          return (
+            <>
+              {/* 背景 (フェード切り替え) */}
+              <div className="absolute inset-0 z-0">
+                <div className="absolute inset-0 bg-white" />
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 0.15 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 1 }}
+                    className="absolute inset-0 bg-cover bg-center grayscale-[0.3]"
+                    style={{ backgroundImage: `url(${current.img})` }}
+                  />
+                </AnimatePresence>
+                <div className="absolute bottom-0 h-64 w-full bg-gradient-to-t from-white to-transparent" />
+                <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-rose-500/5 via-transparent to-amber-500/5" />
+              </div>
+
+              <div className="relative z-10 w-full max-w-7xl px-4 md:px-12 lg:px-24">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activeTab}
+                    initial={{ opacity: 0, x: -30 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: 30 }}
+                    transition={{ duration: 0.8, ease: 'easeOut' }}
+                    className="text-left"
+                  >
+                    <h1 className="mb-12 font-serif text-6xl font-black leading-[1.15] tracking-tighter text-slate-900 md:text-8xl lg:text-[8rem]">
+                      {current.title.split('\n').map((line, idx) => (
+                        <span key={idx} className="block">
+                          {line.includes('この一箇所') ||
+                          line.includes('日常を覗く') ||
+                          line.includes('その目で') ? (
+                            <span
+                              className={`bg-gradient-to-r ${current.accent} bg-clip-text text-transparent`}
+                            >
+                              {line}
+                            </span>
+                          ) : (
+                            line
+                          )}
+                        </span>
+                      ))}
+                    </h1>
+                    <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-500 md:text-2xl">
+                      {current.desc}
+                    </p>
+                  </motion.div>
+                </AnimatePresence>
+              </div>
+            </>
+          );
+        })()}
 
         {/* 店舗マーキー */}
         {stores.length > 0 && (
           <div className="absolute bottom-0 z-10 w-full overflow-hidden border-t border-slate-100 bg-white/40 backdrop-blur-md">
-            <div className="animate-scroll-text flex whitespace-nowrap py-4">
+            <div className="animate-scroll-text flex whitespace-nowrap py-5">
               {[...stores, ...stores].map((store, i) => (
                 <Link
                   key={i}
                   href={`/store/${store.slug}`}
-                  className="group mx-8 flex items-center gap-2 text-sm font-bold text-slate-400 transition-colors hover:text-rose-500"
+                  className="group mx-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-rose-500"
                 >
-                  <MapPin className="h-3 w-3 text-rose-500/60" />
+                  <MapPin className="h-3 w-3 text-rose-500" />
                   {store.name}
                   <ArrowRight className="h-3 w-3 opacity-0 transition-all group-hover:opacity-100" />
                 </Link>
@@ -478,8 +522,6 @@ export default function HubPageClient({
           <div className="no-scrollbar flex gap-6 overflow-x-auto pb-8">
             {diaries.length > 0
               ? diaries.map((diary, i) => {
-                  const isActive =
-                    activeCluster === diary.id || (i === 0 && activeCluster === '中堅シングル');
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
 
                   return (
@@ -489,42 +531,25 @@ export default function HubPageClient({
                       whileInView={{ opacity: 1, x: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.05 }}
-                      onClick={() => setActiveCluster(diary.id)}
-                      className={`group relative min-w-[300px] max-w-[350px] cursor-pointer overflow-hidden rounded-[2.5rem] border p-10 transition-all duration-500 ${
-                        isActive
-                          ? 'border-rose-500 bg-rose-500 shadow-2xl shadow-rose-500/20'
-                          : 'border-slate-100 bg-slate-50 hover:border-rose-200 hover:bg-white'
-                      }`}
+                      className="group relative min-w-[300px] max-w-[350px] cursor-pointer overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-10 transition-all duration-500 hover:border-rose-200 hover:bg-white hover:shadow-2xl hover:shadow-rose-500/5"
                     >
                       {/* 写メ画像サムネイル (円形) */}
-                      <div
-                        className={`mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-solid shadow-md transition-all duration-700 ${
-                          isActive ? 'border-white/40' : 'border-rose-100 group-hover:scale-110'
-                        }`}
-                      >
+                      <div className="mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-rose-100 bg-white shadow-md transition-all duration-700 group-hover:scale-110">
                         <img src={thumbnail} alt="thumb" className="h-full w-full object-cover" />
                       </div>
 
                       <div className="relative z-10">
-                        <span
-                          className={`mb-2 block text-[10px] font-black uppercase tracking-[0.2em] ${
-                            isActive ? 'text-white/60' : 'text-slate-400'
-                          }`}
-                        >
+                        <span className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
                           {diary.casts?.name || 'THERAPIST'} •{' '}
                           {new Date(diary.created_at).toLocaleDateString('ja-JP')}
                         </span>
-                        <h3
-                          className={`line-clamp-2 text-xl font-black leading-tight ${
-                            isActive ? 'text-white' : 'text-slate-800 group-hover:text-rose-500'
-                          }`}
-                        >
+                        <h3 className="line-clamp-2 text-xl font-black leading-tight text-slate-800 transition-colors group-hover:text-rose-500">
                           {diary.title}
                         </h3>
                       </div>
 
                       {/* 装飾用サークル要素 */}
-                      <div className="absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-3xl transition-transform group-hover:scale-150" />
+                      <div className="absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-rose-500/5 blur-3xl transition-transform group-hover:scale-150" />
                     </motion.div>
                   );
                 })
@@ -549,15 +574,15 @@ export default function HubPageClient({
           <div className="mb-12 flex gap-2 overflow-x-auto pb-2">
             {(
               [
-                { id: 'cast', label: '人気キャスト', icon: <Users className="h-4 w-4" /> },
-                { id: 'store', label: '店舗一覧', icon: <MapPin className="h-4 w-4" /> },
-                { id: 'video', label: '動画', icon: <Play className="h-4 w-4" /> },
+                { id: 'news', label: 'ニュース一覧', icon: <Sparkles className="h-4 w-4" /> },
+                { id: 'tweet', label: 'ツイート一覧', icon: <Users className="h-4 w-4" /> },
+                { id: 'video', label: '動画一覧', icon: <Play className="h-4 w-4" /> },
               ] as const
             ).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex flex-shrink-0 items-center gap-2 rounded-full px-8 py-4 text-sm font-black transition-all ${
+                className={`flex shrink-0 items-center gap-2 rounded-full px-8 py-4 text-sm font-black transition-all ${
                   activeTab === tab.id
                     ? 'bg-rose-500 text-white shadow-xl shadow-rose-500/20'
                     : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
@@ -570,77 +595,99 @@ export default function HubPageClient({
           </div>
 
           <AnimatePresence mode="wait">
-            {activeTab === 'cast' && (
+            {activeTab === 'news' && (
               <motion.div
-                key="cast"
+                key="news"
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-2 gap-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
               >
-                {filteredCasts.slice(0, 15).map((cast) => (
-                  <motion.div key={cast.id} whileHover={{ y: -8 }} className="group cursor-pointer">
-                    <Link href={`/cast/${cast.slug || cast.id}`}>
-                      <div className="relative mb-4 aspect-[3/4] overflow-hidden rounded-[2rem] bg-slate-100 shadow-sm transition-shadow group-hover:shadow-2xl group-hover:shadow-rose-500/5">
-                        <img
-                          src={cast.image_url || cast.main_image_url || FALLBACK_CAST_IMG}
-                          alt={cast.name}
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-                        {cast.age && (
-                          <div className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-black text-slate-800 shadow-sm">
-                            {cast.age}歳
-                          </div>
-                        )}
-                      </div>
-                      <div className="px-1 text-center">
-                        <div className="text-lg font-black text-slate-800 transition-colors group-hover:text-rose-600">
-                          {cast.name}
+                {[...mediaArticles.userArticles, ...mediaArticles.recruitArticles]
+                  .slice(0, 9)
+                  .map((article: any) => (
+                    <motion.div
+                      key={article.id}
+                      whileHover={{ y: -8 }}
+                      className="group cursor-pointer overflow-hidden rounded-[2.5rem] bg-slate-50 p-2"
+                    >
+                      <Link href={article.url || '#'}>
+                        <div className="relative aspect-video overflow-hidden rounded-[2rem]">
+                          <img
+                            src={article.thumbnail_url || FALLBACK_CAST_IMG}
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            alt={article.title}
+                          />
                         </div>
-                        {cast.catch_copy && (
-                          <p className="mt-1 line-clamp-1 text-xs font-medium text-slate-400">
-                            {cast.catch_copy}
-                          </p>
-                        )}
-                      </div>
-                    </Link>
-                  </motion.div>
-                ))}
+                        <div className="p-6">
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">
+                              NEWS
+                            </span>
+                            <span className="text-[10px] font-bold text-slate-400">
+                              {new Date().toLocaleDateString('ja-JP')}
+                            </span>
+                          </div>
+                          <h3 className="line-clamp-2 text-xl font-black text-slate-800 transition-colors group-hover:text-rose-500">
+                            {article.title}
+                          </h3>
+                        </div>
+                      </Link>
+                    </motion.div>
+                  ))}
               </motion.div>
             )}
 
-            {activeTab === 'store' && (
+            {activeTab === 'tweet' && (
               <motion.div
-                key="store"
-                className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+                key="tweet"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mx-auto max-w-2xl space-y-6"
               >
-                {stores.map((store) => (
+                {diaries.map((diary: any) => (
                   <motion.div
-                    key={store.id}
-                    whileHover={{ y: -4 }}
-                    className="group overflow-hidden rounded-3xl border border-slate-100 bg-slate-50 p-2"
+                    key={diary.id}
+                    whileHover={{ scale: 1.02 }}
+                    className="rounded-[2.5rem] border border-slate-100/50 bg-slate-50 p-8"
                   >
-                    <Link href={`/store/${store.slug}`}>
-                      <div className="mb-4 aspect-video overflow-hidden rounded-2xl">
+                    <div className="flex gap-4">
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full ring-2 ring-rose-100">
                         <img
                           src={
-                            store.image_url ||
-                            'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=600'
+                            diary.casts?.image_url ||
+                            diary.casts?.main_image_url ||
+                            FALLBACK_CAST_IMG
                           }
+                          alt="cast"
                           className="h-full w-full object-cover"
                         />
                       </div>
-                      <div className="p-4">
-                        <h3 className="text-lg font-black text-slate-800 transition-colors group-hover:text-rose-500">
-                          {store.name}
-                        </h3>
-                        <p className="mt-1 flex items-center gap-1 text-xs text-slate-400">
-                          <MapPin className="h-3 w-3" />
-                          {store.address || '全国各店'}
-                        </p>
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-1 flex items-center gap-2">
+                          <span className="font-black text-slate-800">
+                            {diary.casts?.name || 'THERAPIST'}
+                          </span>
+                          <span className="text-xs font-bold text-slate-400">
+                            @therapist_official
+                          </span>
+                          <span className="text-xs text-slate-300">
+                            • {new Date(diary.created_at).toLocaleDateString('ja-JP')}
+                          </span>
+                        </div>
+                        <p className="mb-4 leading-relaxed text-slate-700">{diary.title}</p>
+                        {diary.images?.[0]?.image_url && (
+                          <div className="overflow-hidden rounded-3xl border border-slate-200">
+                            <img
+                              src={diary.images[0].image_url}
+                              alt="diary"
+                              className="max-h-96 w-full object-cover"
+                            />
+                          </div>
+                        )}
                       </div>
-                    </Link>
+                    </div>
                   </motion.div>
                 ))}
               </motion.div>
@@ -649,26 +696,38 @@ export default function HubPageClient({
             {activeTab === 'video' && (
               <motion.div
                 key="video"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
               >
                 {videos.map((video: any) => (
                   <motion.div
                     key={video.id}
                     whileHover={{ y: -8 }}
-                    className="group cursor-pointer rounded-3xl bg-slate-50 p-2"
+                    className="group cursor-pointer overflow-hidden rounded-[2.5rem] bg-slate-50 p-2"
                   >
-                    <div className="relative aspect-video overflow-hidden rounded-2xl">
+                    <div className="relative aspect-video overflow-hidden rounded-[2rem]">
                       <img
                         src={video.thumbnail_url}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                         alt={video.title}
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20">
-                        <Play className="h-10 w-10 fill-white text-white" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/10 transition-colors group-hover:bg-black/20">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-white/40 bg-white/20 shadow-2xl backdrop-blur-md transition-transform group-hover:scale-110">
+                          <Play className="h-8 w-8 translate-x-1 fill-white text-white" />
+                        </div>
                       </div>
                     </div>
-                    <div className="p-4">
-                      <p className="text-sm font-black text-slate-800">{video.title}</p>
+                    <div className="p-6">
+                      <h3 className="line-clamp-2 text-sm font-black leading-tight text-slate-800 transition-colors group-hover:text-rose-500">
+                        {video.title}
+                      </h3>
+                      {video.stores && (
+                        <p className="mt-2 text-[10px] font-black uppercase tracking-widest text-slate-400">
+                          {video.stores.name}
+                        </p>
+                      )}
                     </div>
                   </motion.div>
                 ))}
