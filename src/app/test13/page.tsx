@@ -27,9 +27,9 @@ async function getLatestVideos() {
 async function getLatestDiaries() {
   const { data, error } = await supabase
     .from('blog_posts')
-    .select('id, title, content, cast_id, created_at, images:blog_images(image_url)')
+    .select('id, title, content, cast_id, created_at, casts(name), images:blog_images(image_url)')
     .order('created_at', { ascending: false })
-    .limit(6);
+    .limit(10);
   if (error) return [];
   return data || [];
 }

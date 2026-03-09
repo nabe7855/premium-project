@@ -398,64 +398,90 @@ export default function HubPageClient({
         </div>
       </section>
 
-      {/* ─── 1.5 ライフスタイル別に探す (Layout from Image 2 but Bright Theme) ─── */}
+      {/* ─── 1.5 最新の写メ日記 (Diary Section Refined) ─── */}
       <section className="bg-white px-6 py-24">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-12"
+            className="mb-12 flex items-end justify-between"
           >
-            <h2 className="mb-4 text-4xl font-black text-slate-900">ライフスタイル別に探す</h2>
-            <p className="text-sm font-medium uppercase tracking-[0.2em] tracking-wide text-slate-500">
-              Select your cluster
-            </p>
+            <div>
+              <h2 className="mb-4 text-4xl font-black tracking-tighter text-slate-900">
+                最新の写メ日記
+              </h2>
+              <p className="text-sm font-black uppercase tracking-[0.3em] text-rose-500/60">
+                LATEST PHOTO DIARY
+              </p>
+            </div>
           </motion.div>
 
-          <div className="no-scrollbar flex gap-4 overflow-x-auto pb-8">
-            {CLUSTERS.map((c, i) => (
-              <motion.div
-                key={c.id}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                onClick={() => setActiveCluster(c.label)}
-                className={`group relative min-w-[280px] cursor-pointer overflow-hidden rounded-[2.5rem] border p-8 transition-all duration-500 ${
-                  activeCluster === c.label
-                    ? 'border-rose-500 bg-rose-500 shadow-xl shadow-rose-500/20'
-                    : 'border-slate-100 bg-slate-50 hover:border-rose-200 hover:bg-white'
-                }`}
-              >
-                <div
-                  className={`mb-8 flex h-12 w-12 items-center justify-center rounded-2xl transition-colors ${
-                    activeCluster === c.label ? 'bg-white/20' : 'bg-rose-50 group-hover:bg-rose-100'
-                  }`}
-                >
-                  <Users
-                    className={`h-6 w-6 ${activeCluster === c.label ? 'text-white' : 'text-rose-500'}`}
-                  />
-                </div>
-                <div className="relative z-10">
-                  <span
-                    className={`mb-1 block text-[10px] font-black uppercase tracking-widest ${
-                      activeCluster === c.label ? 'text-white/60' : 'text-slate-400'
-                    }`}
+          {/* 横スクロールカード */}
+          <div className="no-scrollbar flex gap-6 overflow-x-auto pb-8">
+            {diaries.length > 0
+              ? diaries.map((diary, i) => {
+                  const isActive =
+                    activeCluster === diary.id || (i === 0 && activeCluster === '中堅シングル');
+                  const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+
+                  return (
+                    <motion.div
+                      key={diary.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      whileInView={{ opacity: 1, x: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.05 }}
+                      onClick={() => setActiveCluster(diary.id)}
+                      className={`group relative min-w-[300px] max-w-[350px] cursor-pointer overflow-hidden rounded-[2.5rem] border p-10 transition-all duration-500 ${
+                        isActive
+                          ? 'border-rose-500 bg-rose-500 shadow-2xl shadow-rose-500/20'
+                          : 'border-slate-100 bg-slate-50 hover:border-rose-200 hover:bg-white'
+                      }`}
+                    >
+                      {/* 写メ画像サムネイル (円形) */}
+                      <div
+                        className={`mb-8 flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-solid shadow-md transition-all duration-700 ${
+                          isActive ? 'border-white/40' : 'border-rose-100 group-hover:scale-110'
+                        }`}
+                      >
+                        <img src={thumbnail} alt="thumb" className="h-full w-full object-cover" />
+                      </div>
+
+                      <div className="relative z-10">
+                        <span
+                          className={`mb-2 block text-[10px] font-black uppercase tracking-[0.2em] ${
+                            isActive ? 'text-white/60' : 'text-slate-400'
+                          }`}
+                        >
+                          {diary.casts?.name || 'THERAPIST'} •{' '}
+                          {new Date(diary.created_at).toLocaleDateString('ja-JP')}
+                        </span>
+                        <h3
+                          className={`line-clamp-2 text-xl font-black leading-tight ${
+                            isActive ? 'text-white' : 'text-slate-800 group-hover:text-rose-500'
+                          }`}
+                        >
+                          {diary.title}
+                        </h3>
+                      </div>
+
+                      {/* 装飾用サークル要素 */}
+                      <div className="absolute -bottom-12 -right-12 h-40 w-40 rounded-full bg-white/10 blur-3xl transition-transform group-hover:scale-150" />
+                    </motion.div>
+                  );
+                })
+              : // 記事がない場合のフォールバック
+                [1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="min-w-[300px] animate-pulse rounded-[2.5rem] border border-slate-100 bg-slate-50 p-10"
                   >
-                    {c.sub}
-                  </span>
-                  <h3
-                    className={`text-2xl font-black ${
-                      activeCluster === c.label ? 'text-white' : 'text-slate-800'
-                    }`}
-                  >
-                    {c.label}
-                  </h3>
-                </div>
-                <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-white/10 blur-2xl transition-transform group-hover:scale-150" />
-              </motion.div>
-            ))}
+                    <div className="mb-8 h-16 w-16 rounded-full bg-slate-200" />
+                    <div className="mb-4 h-4 w-1/4 rounded bg-slate-200" />
+                    <div className="h-6 w-3/4 rounded bg-slate-200" />
+                  </div>
+                ))}
           </div>
         </div>
       </section>
