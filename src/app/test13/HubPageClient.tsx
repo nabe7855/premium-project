@@ -523,7 +523,7 @@ export default function HubPageClient({
           </motion.div>
 
           {/* 横スクロールカード */}
-          <div className="no-scrollbar flex gap-8 overflow-x-auto pb-12">
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-12 md:gap-8">
             {diaries.length > 0
               ? diaries.map((diary, i) => {
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
@@ -540,9 +540,9 @@ export default function HubPageClient({
                       whileInView={{ opacity: 1, scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1 }}
-                      className="group relative min-w-[320px] max-w-[320px] cursor-pointer"
+                      className="group relative w-[35vw] shrink-0 cursor-pointer snap-center md:w-auto md:min-w-[320px] md:max-w-[320px]"
                     >
-                      <div className="relative aspect-[4/5] overflow-hidden rounded-[2.5rem] bg-slate-100 shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-rose-500/20">
+                      <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-slate-100 shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-rose-500/20 md:rounded-[2.5rem]">
                         {/* メインの写メ画像 */}
                         <img
                           src={thumbnail}
@@ -554,9 +554,9 @@ export default function HubPageClient({
                         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
 
                         {/* 下部コンテンツ */}
-                        <div className="absolute bottom-0 left-0 w-full p-8 text-white">
-                          <div className="mb-4 flex items-center gap-3">
-                            <div className="h-10 w-10 overflow-hidden rounded-full border-2 border-white/30">
+                        <div className="absolute bottom-0 left-0 w-full p-4 text-white md:p-8">
+                          <div className="mb-2 flex items-center gap-2 md:mb-4 md:gap-3">
+                            <div className="h-6 w-6 overflow-hidden rounded-full border-2 border-white/30 md:h-10 md:w-10">
                               <img
                                 src={castImg}
                                 alt={castName}
@@ -564,22 +564,22 @@ export default function HubPageClient({
                               />
                             </div>
                             <div>
-                              <p className="text-xs font-black tracking-wider opacity-80">
+                              <p className="text-[8px] font-black tracking-wider opacity-80 md:text-xs">
                                 {castName}
                               </p>
-                              <p className="text-[10px] font-bold opacity-60">
+                              <p className="text-[6px] font-bold opacity-60 md:text-[10px]">
                                 {new Date(diary.created_at).toLocaleDateString('ja-JP')}
                               </p>
                             </div>
                           </div>
-                          <h3 className="line-clamp-2 text-xl font-black leading-tight tracking-tight">
+                          <h3 className="line-clamp-2 text-xs font-black leading-tight tracking-tight md:text-xl">
                             {diary.title}
                           </h3>
                         </div>
 
                         {/* 日付バッジ (Top Left) */}
-                        <div className="absolute left-6 top-6 rounded-full bg-white/10 px-4 py-2 backdrop-blur-md">
-                          <span className="text-[10px] font-black tracking-widest text-white">
+                        <div className="absolute left-3 top-3 rounded-full bg-white/10 px-2 py-1 backdrop-blur-md md:left-6 md:top-6 md:px-4 md:py-2">
+                          <span className="text-[6px] font-black tracking-widest text-white md:text-[10px]">
                             NEW ENTRY
                           </span>
                         </div>
