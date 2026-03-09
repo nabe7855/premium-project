@@ -686,13 +686,9 @@ export default function HubPageClient({
               </div>
             </div>
 
-            {/* 2段目: コンテンツスライダー */}
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-              className={`relative border-b-2 border-t-2 border-solid py-12 ${
+            {/* 2段目: コンテンツスライダー (画面いっぱいの枠線) */}
+            <div
+              className={`-mx-6 border-b-2 border-t-2 border-solid px-6 py-12 ${
                 media.title === 'イケオラボ'
                   ? 'border-blue-500/40'
                   : media.title === 'イケジョラボ'
@@ -700,50 +696,65 @@ export default function HubPageClient({
                     : 'border-sky-200/60'
               }`}
             >
-              <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto pb-8">
-                {media.articles && media.articles.length > 0
-                  ? media.articles.map((article: any, i: number) => (
-                      <Link
-                        key={article.id || i}
-                        href={`/media/article/${article.slug}`}
-                        className="group min-w-[300px] max-w-[350px] flex-shrink-0 snap-start"
-                      >
-                        <div className="mb-4 aspect-[4/3] overflow-hidden rounded-[2rem] bg-slate-100 shadow-lg ring-1 ring-slate-200/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-rose-500/10">
-                          <img
-                            src={
-                              article.thumbnail_url ||
-                              'https://images.unsplash.com/photo-1516589174184-c18259ec398e?auto=format&fit=crop&q=80&w=600'
-                            }
-                            alt={article.title}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          />
-                        </div>
-                        <h4
-                          className={`line-clamp-2 text-lg font-bold transition-colors ${media.textColor} group-hover:text-rose-400`}
+              <motion.div
+                initial={{ opacity: 0, y: 40 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
+                className="relative mx-auto max-w-7xl"
+              >
+                <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto px-4 pb-8">
+                  {media.articles && media.articles.length > 0
+                    ? media.articles.map((article: any, i: number) => (
+                        <Link
+                          key={article.id || i}
+                          href={`/media/article/${article.slug}`}
+                          className="group min-w-[300px] max-w-[350px] flex-shrink-0 snap-start"
                         >
-                          {article.title}
-                        </h4>
-                        <p className={`mt-2 text-xs font-medium ${media.subTextColor} opacity-60`}>
-                          {new Date(article.published_at || Date.now()).toLocaleDateString('ja-JP')}
-                        </p>
-                      </Link>
-                    ))
-                  : // 記事がない場合のフォールバック
-                    [1, 2, 3, 4].map((i) => (
-                      <div key={i} className="min-w-[300px] max-w-[350px] flex-shrink-0 opacity-40">
-                        <div className="mb-4 aspect-[4/3] animate-pulse rounded-[2rem] bg-slate-200" />
-                        <div className="h-4 w-3/4 rounded bg-slate-200" />
-                      </div>
-                    ))}
-              </div>
-              {/* スライドアシスト用フェード */}
-              <div
-                className={`pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l ${media.bgColor === 'bg-blue-900' ? 'from-blue-900' : 'from-white'} to-transparent md:block`}
-              />
-              <div className="group absolute -right-4 top-1/2 hidden -translate-y-1/2 cursor-pointer rounded-full border border-slate-100 bg-white p-4 shadow-xl transition-colors hover:bg-rose-500 hover:text-white md:block">
-                <ChevronRight className="h-6 w-6" />
-              </div>
-            </motion.div>
+                          <div className="mb-4 aspect-[4/3] overflow-hidden rounded-[2rem] bg-slate-100 shadow-lg ring-1 ring-slate-200/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-rose-500/10">
+                            <img
+                              src={
+                                article.thumbnail_url ||
+                                'https://images.unsplash.com/photo-1516589174184-c18259ec398e?auto=format&fit=crop&q=80&w=600'
+                              }
+                              alt={article.title}
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            />
+                          </div>
+                          <h4
+                            className={`line-clamp-2 text-lg font-bold transition-colors ${media.textColor} group-hover:text-rose-400`}
+                          >
+                            {article.title}
+                          </h4>
+                          <p
+                            className={`mt-2 text-xs font-medium ${media.subTextColor} opacity-60`}
+                          >
+                            {new Date(article.published_at || Date.now()).toLocaleDateString(
+                              'ja-JP',
+                            )}
+                          </p>
+                        </Link>
+                      ))
+                    : // 記事がない場合のフォールバック
+                      [1, 2, 3, 4].map((i) => (
+                        <div
+                          key={i}
+                          className="min-w-[300px] max-w-[350px] flex-shrink-0 opacity-40"
+                        >
+                          <div className="mb-4 aspect-[4/3] animate-pulse rounded-[2rem] bg-slate-200" />
+                          <div className="h-4 w-3/4 rounded bg-slate-200" />
+                        </div>
+                      ))}
+                </div>
+                {/* スライドアシスト用フェード */}
+                <div
+                  className={`pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l ${media.bgColor === 'bg-blue-900' ? 'from-blue-900' : 'from-white'} to-transparent md:block`}
+                />
+                <div className="group absolute -right-4 top-1/2 hidden -translate-y-1/2 cursor-pointer rounded-full border border-slate-100 bg-white p-4 shadow-xl transition-colors hover:bg-rose-500 hover:text-white md:block">
+                  <ChevronRight className="h-6 w-6" />
+                </div>
+              </motion.div>
+            </div>
 
             {/* 3段目: ボタン */}
             <motion.div
