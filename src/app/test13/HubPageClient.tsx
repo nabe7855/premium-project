@@ -630,11 +630,11 @@ export default function HubPageClient({
               {/* レベル2: 説明文と画像の50/50分割 */}
               <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
                 <motion.div
-                  initial={{ opacity: 0, x: -30 }}
+                  initial={{ opacity: 0, x: media.title === 'イケオラボ' ? 30 : -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className="order-2 lg:order-1"
+                  className={`order-2 ${media.title === 'イケオラボ' ? 'lg:order-2' : 'lg:order-1'}`}
                 >
                   <div
                     className={`mb-6 inline-block rounded-full px-4 py-1 text-xs font-black uppercase tracking-widest ${
@@ -661,11 +661,11 @@ export default function HubPageClient({
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, x: 30 }}
+                  initial={{ opacity: 0, x: media.title === 'イケオラボ' ? -30 : 30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className="order-1 flex justify-center lg:order-2"
+                  className={`order-1 flex justify-center ${media.title === 'イケオラボ' ? 'lg:order-1' : 'lg:order-2'}`}
                 >
                   <div className="relative aspect-video w-full max-w-md md:aspect-square">
                     <img
