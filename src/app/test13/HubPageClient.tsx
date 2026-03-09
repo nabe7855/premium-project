@@ -316,14 +316,14 @@ export default function HubPageClient({
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
       </section>
 
-      {/* ─── 1.4 全国から選ばれた人気者 (New Section) ─── */}
-      <section className="overflow-hidden bg-slate-50 px-6 py-24">
-        <div className="mx-auto max-w-7xl">
+      {/* ─── 1.4 全国から選ばれた人気者 (Marquee Version) ─── */}
+      <section className="overflow-hidden bg-slate-50 py-24">
+        <div className="mx-auto max-w-7xl px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="mb-16 text-center"
+            className="mb-16"
           >
             <h2 className="mb-4 text-4xl font-black tracking-tighter text-slate-900 md:text-6xl">
               全国の<span className="text-rose-500">人気セラピスト</span>たち
@@ -333,60 +333,68 @@ export default function HubPageClient({
               NATIONAL POPULAR THERAPISTS
             </p>
           </motion.div>
+        </div>
 
-          <div className="relative">
-            <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto px-4 pb-12">
-              {casts.slice(0, 10).map((cast, i) => (
-                <motion.div
-                  key={cast.id}
-                  initial={{ opacity: 0, x: 30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="min-w-[280px] max-w-[320px] flex-shrink-0 snap-start"
-                >
+        {/* 自動無限スクロール (Marquee) */}
+        <div className="relative mt-8 flex overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-32 before:bg-gradient-to-r before:from-slate-50 before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-32 after:bg-gradient-to-l after:from-slate-50 after:to-transparent">
+          <div className="animate-scroll-text flex cursor-pointer space-x-12 whitespace-nowrap py-10 hover:[animation-play-state:paused]">
+            {[...casts.slice(0, 10), ...casts.slice(0, 10)].map((cast, i) => {
+              // 店舗スタイル (店舗名に応じてカラーリングを変更)
+              const getStoreStyle = (storeName?: string) => {
+                if (!storeName) return 'border-amber-400';
+                if (storeName.includes('福岡')) return 'border-blue-400';
+                if (storeName.includes('横浜')) return 'border-rose-400';
+                if (storeName.includes('梅田')) return 'border-emerald-400';
+                if (storeName.includes('渋谷')) return 'border-purple-400';
+                if (storeName.includes('新宿')) return 'border-sky-400';
+                return 'border-amber-400';
+              };
+              const storeBorder = getStoreStyle(cast.store?.name);
+
+              return (
+                <div key={`${cast.id}-${i}`} className="inline-block w-48 shrink-0 text-center">
                   <Link href={`/cast/${cast.slug || cast.id}`}>
-                    <div className="group relative aspect-[3/4] overflow-hidden rounded-[3rem] bg-white shadow-xl transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl hover:shadow-rose-500/20">
-                      <img
-                        src={cast.image_url || cast.main_image_url || FALLBACK_CAST_IMG}
-                        alt={cast.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-60 transition-opacity group-hover:opacity-80" />
-
-                      <div className="absolute inset-x-0 bottom-0 p-8 text-white">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="inline-block rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black uppercase">
-                            POPULAR
-                          </span>
-                          {cast.store && (
-                            <span className="text-[10px] font-bold opacity-80">
-                              @ {cast.store.name}
-                            </span>
-                          )}
+                    <div className="group">
+                      {/* 丸い画像と店舗別カラーの枠線 */}
+                      <div
+                        className={`relative mx-auto mb-6 h-44 w-44 overflow-hidden rounded-full border-4 border-solid ${storeBorder} bg-white p-1.5 shadow-xl transition-all duration-700 group-hover:scale-110 md:h-52 md:w-52`}
+                      >
+                        <div className="h-full w-full overflow-hidden rounded-full ring-2 ring-slate-50">
+                          <img
+                            src={cast.image_url || cast.main_image_url || FALLBACK_CAST_IMG}
+                            alt={cast.name}
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          />
                         </div>
-                        <h3 className="text-2xl font-black tracking-tight">{cast.name}</h3>
-                        <p className="mt-1 line-clamp-1 text-xs font-medium italic text-white/60">
-                          {cast.catch_copy || '極上の癒しをお届けいたします。'}
-                        </p>
+                      </div>
+                      <div className="px-4 text-center">
+                        <span className="mb-1 block text-[10px] font-black uppercase tracking-widest text-rose-500">
+                          POPULAR
+                        </span>
+                        <h3 className="text-xl font-black tracking-tight text-slate-800 transition-colors group-hover:text-rose-500">
+                          {cast.name}
+                        </h3>
+                        {cast.store && (
+                          <p className="mt-1 text-xs font-bold italic text-slate-400">
+                            @ {cast.store.name}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </Link>
-                </motion.div>
-              ))}
-            </div>
-            {/* スライドアシスト */}
-            <div className="pointer-events-none absolute right-0 top-0 hidden h-full w-32 bg-gradient-to-l from-slate-50 to-transparent md:block" />
+                </div>
+              );
+            })}
           </div>
+        </div>
 
-          <div className="mt-12 text-center">
-            <Link
-              href="/cast"
-              className="inline-flex items-center gap-2 text-sm font-black text-slate-400 transition-colors hover:text-rose-500"
-            >
-              全国のセラピストをもっと見る <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
+        <div className="mt-12 text-center">
+          <Link
+            href="/cast"
+            className="inline-flex items-center gap-2 text-sm font-black text-slate-400 transition-colors hover:text-rose-500"
+          >
+            全国のセラピストをもっと見る <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
