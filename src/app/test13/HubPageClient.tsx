@@ -628,16 +628,17 @@ export default function HubPageClient({
               </motion.div>
 
               {/* レベル2: 説明文と画像の50/50分割 */}
-              <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+              {/* レベル2: 説明文と画像の50/50分割 */}
+              <div className="grid grid-cols-2 items-center gap-4 md:gap-12">
                 <motion.div
                   initial={{ opacity: 0, x: media.title === 'イケオラボ' ? 30 : -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.2 }}
-                  className={`order-2 ${media.title === 'イケオラボ' ? 'lg:order-2' : 'lg:order-1'}`}
+                  className={`${media.title === 'イケオラボ' ? 'order-2' : 'order-1'}`}
                 >
                   <div
-                    className={`mb-6 inline-block rounded-full px-4 py-1 text-xs font-black uppercase tracking-widest ${
+                    className={`mb-4 inline-block rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest md:mb-6 md:px-4 md:text-xs ${
                       media.title === 'イケオラボ'
                         ? 'bg-blue-800 text-blue-300'
                         : 'bg-rose-100 text-rose-500'
@@ -646,15 +647,17 @@ export default function HubPageClient({
                     {media.sub}
                   </div>
                   <p
-                    className={`mb-8 text-xl font-bold leading-relaxed md:text-2xl ${media.textColor}`}
+                    className={`mb-4 text-sm font-bold leading-tight md:mb-8 md:text-2xl md:leading-relaxed ${media.textColor}`}
                   >
                     私たちのミッションは、
                     <br />
-                    <span className="bg-yellow-200/30 px-2">「{media.desc.split('。')[0]}」</span>
+                    <span className="bg-yellow-200/30 px-1 md:px-2">
+                      「{media.desc.split('。')[0]}」
+                    </span>
                     ことです。
                   </p>
                   <p
-                    className={`text-base font-medium leading-relaxed opacity-80 md:text-lg ${media.subTextColor}`}
+                    className={`line-clamp-3 text-[10px] font-medium leading-relaxed opacity-80 md:line-clamp-none md:text-lg ${media.subTextColor}`}
                   >
                     {media.desc}
                   </p>
@@ -665,16 +668,16 @@ export default function HubPageClient({
                   whileInView={{ opacity: 1, x: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.3 }}
-                  className={`order-1 flex justify-center ${media.title === 'イケオラボ' ? 'lg:order-1' : 'lg:order-2'}`}
+                  className={`flex justify-center ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'}`}
                 >
-                  <div className="relative aspect-video w-full max-w-md md:aspect-square">
+                  <div className="relative aspect-square w-full max-w-[120px] md:max-w-md">
                     <img
                       src="/media-illustration.png"
                       alt={media.title}
                       className="relative z-10 h-full w-full object-contain"
                     />
                     <div
-                      className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[100px] ${
+                      className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[40px] md:blur-[100px] ${
                         media.title === 'イケオラボ' ? 'bg-blue-400' : 'bg-rose-400'
                       }`}
                     />
@@ -689,7 +692,7 @@ export default function HubPageClient({
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-              className={`relative border-y py-12 ${media.title === 'イケオラボ' ? 'border-blue-800' : 'border-slate-100'}`}
+              className={`relative border-y-2 py-12 ${media.title === 'イケオラボ' ? 'border-blue-700/50' : 'border-slate-200'}`}
             >
               <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto pb-8">
                 {media.articles && media.articles.length > 0
