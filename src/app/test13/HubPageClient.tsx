@@ -611,27 +611,77 @@ export default function HubPageClient({
           className={`${media.bgColor} overflow-hidden px-6 py-24 transition-colors duration-500`}
         >
           <div className="mx-auto max-w-7xl">
-            {/* 1段目: テキスト説明 */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className={`mb-12 border-l-4 ${media.title === 'イケオラボ' ? 'border-blue-400' : 'border-rose-500'} pl-6`}
-            >
-              <span
-                className={`text-xs font-black uppercase tracking-widest ${media.title === 'イケオラボ' ? 'text-blue-300' : 'text-rose-500'}`}
+            {/* 1段目: メディア名と説明セクション */}
+            <div className="mb-20">
+              {/* レベル1: メディア名 */}
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-12"
               >
-                {media.sub}
-              </span>
-              <h2 className={`mt-2 flex items-center gap-3 text-4xl font-black ${media.textColor}`}>
-                {media.icon} {media.title}
-              </h2>
-              <p
-                className={`mt-4 max-w-2xl text-lg font-medium leading-relaxed ${media.subTextColor}`}
-              >
-                {media.desc}
-              </p>
-            </motion.div>
+                <h2
+                  className={`text-5xl font-black tracking-tighter md:text-7xl ${media.textColor}`}
+                >
+                  {media.title}
+                </h2>
+              </motion.div>
+
+              {/* レベル2: 説明文と画像の50/50分割 */}
+              <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
+                <motion.div
+                  initial={{ opacity: 0, x: -30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.2 }}
+                  className="order-2 lg:order-1"
+                >
+                  <div
+                    className={`mb-6 inline-block rounded-full px-4 py-1 text-xs font-black uppercase tracking-widest ${
+                      media.title === 'イケオラボ'
+                        ? 'bg-blue-800 text-blue-300'
+                        : 'bg-rose-100 text-rose-500'
+                    }`}
+                  >
+                    {media.sub}
+                  </div>
+                  <p
+                    className={`mb-8 text-xl font-bold leading-relaxed md:text-2xl ${media.textColor}`}
+                  >
+                    私たちのミッションは、
+                    <br />
+                    <span className="bg-yellow-200/30 px-2">「{media.desc.split('。')[0]}」</span>
+                    ことです。
+                  </p>
+                  <p
+                    className={`text-base font-medium leading-relaxed opacity-80 md:text-lg ${media.subTextColor}`}
+                  >
+                    {media.desc}
+                  </p>
+                </motion.div>
+
+                <motion.div
+                  initial={{ opacity: 0, x: 30 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.3 }}
+                  className="order-1 flex justify-center lg:order-2"
+                >
+                  <div className="relative aspect-video w-full max-w-md md:aspect-square">
+                    <img
+                      src="/media-illustration.png"
+                      alt={media.title}
+                      className="relative z-10 h-full w-full object-contain"
+                    />
+                    <div
+                      className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[100px] ${
+                        media.title === 'イケオラボ' ? 'bg-blue-400' : 'bg-rose-400'
+                      }`}
+                    />
+                  </div>
+                </motion.div>
+              </div>
+            </div>
 
             {/* 2段目: コンテンツスライダー */}
             <motion.div
