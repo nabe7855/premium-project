@@ -93,12 +93,34 @@ export const getAllCasts = async (): Promise<Cast[]> => {
     console.error('❌ gallery取得エラー:', galleryError.message);
   }
 
+  // 5.5 店舗情報を一括取得 (HubPage用に追加)
+  const { data: membershipData, error: membershipError } = await supabase
+    .from('cast_store_memberships')
+    .select(
+      `
+      cast_id,
+      store:stores (
+        id,
+        name,
+        slug
+      )
+    `,
+    )
+    .in('cast_id', castIds);
+
+  if (membershipError) {
+    console.error('❌ membership取得エラー:', membershipError.message);
+  }
+
   // 6. 正規化して返却
   return castData.map((cast) => {
     const castFeatures = featureData?.filter((f) => f.cast_id === cast.id) || [];
     const castStatuses = statusData?.filter((s) => s.cast_id === cast.id) || [];
     const castGallery = galleryData?.filter((g) => g.cast_id === cast.id) || [];
+    const castMemberships = membershipData?.filter((m) => m.cast_id === cast.id) || [];
+    const stores = castMemberships.map((m: any) => m.store).filter(Boolean);
 
-    return normalizeCast(cast, castFeatures, castStatuses, castGallery);
+    const normalized = normalizeCast(cast, castFeatures, castStatuses, castGallery);
+    return { ...normalized, stores };
   });
 };

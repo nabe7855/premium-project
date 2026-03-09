@@ -115,7 +115,7 @@ export default function HubPageClient({
     (c) =>
       !searchQuery ||
       c.name?.includes(searchQuery) ||
-      c.catch_copy?.includes(searchQuery) ||
+      c.catchCopy?.includes(searchQuery) ||
       c.profile?.includes(searchQuery),
   );
 
@@ -449,16 +449,19 @@ export default function HubPageClient({
           <div className="animate-scroll-text flex cursor-pointer space-x-12 whitespace-nowrap py-10 hover:[animation-play-state:paused]">
             {[...casts.slice(0, 10), ...casts.slice(0, 10)].map((cast, i) => {
               // 店舗スタイル (店舗名に応じてカラーリングを変更)
-              const getStoreStyle = (storeName?: string) => {
-                if (!storeName) return 'border-amber-400';
-                if (storeName.includes('福岡')) return 'border-blue-400';
-                if (storeName.includes('横浜')) return 'border-rose-400';
-                if (storeName.includes('梅田')) return 'border-emerald-400';
-                if (storeName.includes('渋谷')) return 'border-purple-400';
-                if (storeName.includes('新宿')) return 'border-sky-400';
+              const firstStore = cast.stores?.[0] || cast.store;
+              const storeName = firstStore?.name;
+
+              const getStoreStyle = (name?: string) => {
+                if (!name) return 'border-amber-400';
+                if (name.includes('福岡')) return 'border-blue-400';
+                if (name.includes('横浜')) return 'border-rose-400';
+                if (name.includes('梅田')) return 'border-emerald-400';
+                if (name.includes('渋谷')) return 'border-purple-400';
+                if (name.includes('新宿')) return 'border-sky-400';
                 return 'border-amber-400';
               };
-              const storeBorder = getStoreStyle(cast.store?.name);
+              const storeBorder = getStoreStyle(storeName);
 
               return (
                 <div key={`${cast.id}-${i}`} className="inline-block w-48 shrink-0 text-center">
@@ -470,7 +473,7 @@ export default function HubPageClient({
                       >
                         <div className="h-full w-full overflow-hidden rounded-full ring-2 ring-slate-50">
                           <img
-                            src={cast.image_url || cast.main_image_url || FALLBACK_CAST_IMG}
+                            src={cast.imageUrl || cast.mainImageUrl || FALLBACK_CAST_IMG}
                             alt={cast.name}
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
@@ -483,11 +486,11 @@ export default function HubPageClient({
                         <p
                           className={`mb-2 mt-0.5 truncate text-[10px] font-black uppercase tracking-widest text-rose-400 opacity-80`}
                         >
-                          {cast.catch_copy || 'THERAPIST'}
+                          {cast.catchCopy || 'THERAPIST'}
                         </p>
-                        {cast.store && (
+                        {storeName && (
                           <p className="mt-1 text-xs font-bold italic text-slate-400">
-                            @ {cast.store.name}
+                            @ {storeName}
                           </p>
                         )}
                       </div>
