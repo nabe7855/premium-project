@@ -538,7 +538,7 @@ export default function HubPageClient({
                       key={diary.id}
                       initial={{ opacity: 0, scale: 0.9 }}
                       whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: true }}
+                      viewport={{ once: false, amount: 0.1 }}
                       transition={{ delay: i * 0.1 }}
                       className="group relative w-[35vw] shrink-0 cursor-pointer snap-center md:w-auto md:min-w-[320px] md:max-w-[320px]"
                     >
@@ -635,7 +635,7 @@ export default function HubPageClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3"
+                className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
               >
                 {[...mediaArticles.userArticles, ...mediaArticles.recruitArticles]
                   .slice(0, 9)
@@ -643,26 +643,26 @@ export default function HubPageClient({
                     <motion.div
                       key={article.id}
                       whileHover={{ y: -8 }}
-                      className="group cursor-pointer overflow-hidden rounded-[2.5rem] bg-slate-50 p-2"
+                      className="group cursor-pointer overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2.5rem] md:p-2"
                     >
                       <Link href={article.url || '#'}>
-                        <div className="relative aspect-video overflow-hidden rounded-[2rem]">
+                        <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
                           <img
                             src={article.thumbnail_url || FALLBACK_CAST_IMG}
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                             alt={article.title}
                           />
                         </div>
-                        <div className="p-6">
+                        <div className="p-3 md:p-6">
                           <div className="mb-2 flex items-center gap-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
                               NEWS
                             </span>
-                            <span className="text-[10px] font-bold text-slate-400">
+                            <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
                               {new Date().toLocaleDateString('ja-JP')}
                             </span>
                           </div>
-                          <h3 className="line-clamp-2 text-xl font-black text-slate-800 transition-colors group-hover:text-rose-500">
+                          <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
                             {article.title}
                           </h3>
                         </div>
@@ -752,19 +752,26 @@ export default function HubPageClient({
                 <span className="text-rose-500">更新情報</span>
               </h2>
             </div>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
               {diaries.slice(0, 6).map((d: any) => (
                 <motion.div
                   key={d.id}
-                  whileHover={{ y: -8 }}
-                  className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-2"
+                  whileHover={{ y: -4 }}
+                  className="flex items-center gap-4 overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-2 md:rounded-[2rem] md:p-4"
                 >
-                  <div className="mb-6 aspect-video overflow-hidden rounded-3xl">
+                  <div className="aspect-square w-[22vw] shrink-0 overflow-hidden rounded-xl md:w-32 md:rounded-2xl">
                     <img src={d.images?.[0]?.image_url} className="h-full w-full object-cover" />
                   </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-slate-800">{d.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-slate-400">{d.content}</p>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="line-clamp-1 text-sm font-black text-slate-800 md:text-lg">
+                      {d.title}
+                    </h3>
+                    <p className="mt-1 line-clamp-2 text-[10px] font-medium text-slate-400 md:text-sm">
+                      {d.content}
+                    </p>
+                    <p className="mt-2 text-[8px] font-bold text-rose-300 md:hidden">
+                      {new Date(d.created_at).toLocaleDateString('ja-JP')}
+                    </p>
                   </div>
                 </motion.div>
               ))}
@@ -817,17 +824,17 @@ export default function HubPageClient({
       ].map((media, idx) => (
         <section
           key={media.title}
-          className={`${media.bgColor} relative overflow-hidden px-6 py-24 transition-colors duration-500`}
+          className={`${media.bgColor} relative overflow-hidden px-6 py-16 transition-colors duration-500`}
         >
           <div className="relative z-10 mx-auto max-w-7xl">
             {/* 1段目: メディア名と説明セクション */}
-            <div className="mb-20">
+            <div className="mb-12">
               {/* レベル1: メディア名 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                className="mb-12"
+                viewport={{ once: false, amount: 0.1 }}
+                className="mb-8"
               >
                 <h2
                   className={`text-5xl font-black tracking-tighter md:text-7xl ${media.textColor}`}
@@ -842,9 +849,9 @@ export default function HubPageClient({
                 <motion.div
                   initial={{ opacity: 0, x: media.title === 'イケオラボ' ? 30 : -30 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: false, amount: 0.1 }}
                   transition={{ delay: 0.2 }}
-                  className={`${media.title === 'イケオラボ' ? 'order-2' : 'order-1'}`}
+                  className={`${media.title === 'イケオラボ' ? 'order-2' : 'order-1'} relative z-20`}
                 >
                   <div
                     className={`mb-4 inline-block rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest md:mb-6 md:px-4 md:text-xs ${
@@ -873,20 +880,30 @@ export default function HubPageClient({
                 </motion.div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
+                  initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3 }}
-                  className={`flex justify-center ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'}`}
+                  viewport={{ once: false, amount: 0.1 }}
+                  transition={{
+                    duration: 0.8,
+                    delay: 0.3,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className={`flex ${media.title === 'イケオラボ' ? 'justify-start' : 'justify-end'} ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'} relative z-10`}
                 >
-                  <div className="relative aspect-square w-full max-w-[150px] md:max-w-md">
+                  <div
+                    className={`relative aspect-square w-[180%] max-w-[400px] md:w-[220%] md:max-w-[1000px] ${
+                      media.title === 'イケオラボ'
+                        ? '-translate-x-[20%] md:-translate-x-[30%]'
+                        : 'translate-x-[20%] md:translate-x-[30%]'
+                    }`}
+                  >
                     <img
                       src={(media as any).illustration}
                       alt={media.title}
-                      className="relative z-10 h-full w-full object-contain"
+                      className="h-full w-full object-contain drop-shadow-2xl transition-transform duration-700 hover:scale-105"
                     />
                     <div
-                      className={`absolute inset-0 -z-0 rounded-full opacity-20 blur-[40px] md:blur-[100px] ${
+                      className={`absolute inset-0 -z-10 rounded-full opacity-30 blur-[60px] md:blur-[120px] ${
                         media.title === 'イケオラボ'
                           ? 'bg-blue-400'
                           : media.title === 'イケジョラボ'
@@ -901,7 +918,7 @@ export default function HubPageClient({
 
             {/* 2段目: コンテンツスライダー (画面いっぱいの枠線) */}
             <div
-              className={`-mx-6 border-b-2 border-t-2 border-solid px-6 py-12 ${
+              className={`-mx-6 border-b-2 border-t-2 border-solid px-6 py-10 ${
                 media.title === 'イケオラボ'
                   ? 'border-blue-500/40'
                   : media.title === 'イケジョラボ'
@@ -912,7 +929,7 @@ export default function HubPageClient({
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.1 }}
                 transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
                 className="relative mx-auto max-w-7xl"
               >
@@ -973,9 +990,9 @@ export default function HubPageClient({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false, amount: 0.1 }}
               transition={{ delay: 0.4 }}
-              className="mt-12 flex justify-start pl-6"
+              className="mt-8 flex justify-start pl-6"
             >
               <Link
                 href={media.href}
