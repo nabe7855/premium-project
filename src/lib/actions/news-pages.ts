@@ -3,7 +3,7 @@
 import { PageData } from '@/components/admin/news/types';
 import { prisma } from '@/lib/prisma';
 import { supabase } from '@/lib/supabaseClient';
-import { revalidatePath } from 'next/cache';
+import { unstable_noStore as noStore, revalidatePath } from 'next/cache';
 
 // Map Prisma model to PageData type
 const mapPrismaToPageData = (record: any): PageData => {
@@ -36,6 +36,7 @@ export async function getAllPages(): Promise<PageData[]> {
 }
 
 export async function getPublishedPagesByStore(storeSlug: string): Promise<PageData[]> {
+  noStore();
   try {
     const allPublished = await prisma.pageRequest.findMany({
       where: {
@@ -98,7 +99,8 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
       },
     });
     revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'page');
+    revalidatePath('/store/[slug]', 'layout');
+    revalidatePath('/', 'layout');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('createPage Server Action Error:', error);
@@ -145,7 +147,8 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       data: updateData,
     });
     revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'page');
+    revalidatePath('/store/[slug]', 'layout');
+    revalidatePath('/', 'layout');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('Failed to update page:', error);
@@ -159,7 +162,8 @@ export async function deletePage(id: string): Promise<boolean> {
       where: { id },
     });
     revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'page');
+    revalidatePath('/store/[slug]', 'layout');
+    revalidatePath('/', 'layout');
     return true;
   } catch (error) {
     console.error('Failed to delete page:', error);
