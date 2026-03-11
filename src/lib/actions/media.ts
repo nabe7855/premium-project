@@ -10,6 +10,7 @@ export interface MediaArticleData {
   content: string;
   excerpt?: string | null;
   thumbnail_url?: string | null;
+  category: string;
   target_audience: 'user' | 'recruit';
   status: 'draft' | 'published';
   author_name?: string | null;
@@ -18,10 +19,13 @@ export interface MediaArticleData {
   published_at?: Date | null;
 }
 
-// -- 全記事取得（管理画面用） --
-export async function getMediaArticles(targetAudience?: 'user' | 'recruit') {
+// -- 全記事取得（管理画面用 / カテゴリ指定も可能） --
+export async function getMediaArticles(category?: string, targetAudience?: 'user' | 'recruit') {
   try {
-    const whereClause = targetAudience ? { target_audience: targetAudience } : {};
+    const whereClause: any = {};
+    if (category) whereClause.category = category;
+    if (targetAudience) whereClause.target_audience = targetAudience;
+
     const articles = await prisma.mediaArticle.findMany({
       where: whereClause,
       orderBy: { created_at: 'desc' },
@@ -225,6 +229,7 @@ export async function getRelatedArticles(
     const relatedArticles = await prisma.mediaArticle.findMany({
       where: {
         id: { not: articleId },
+        category: (article as any).category,
         target_audience: targetAudience,
         status: 'published',
         tags: {

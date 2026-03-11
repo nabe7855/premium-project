@@ -24,7 +24,7 @@ export default async function MagazineTopPage({
   const selectedTag = searchParams.tag;
 
   // お客様向け・公開済みの記事のみを取得
-  const result = await getMediaArticles('user');
+  const result = await getMediaArticles('ikejo', 'user');
   let allArticles = result.success
     ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];

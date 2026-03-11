@@ -4,7 +4,6 @@ import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-// 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
   params,
 }: {
@@ -19,7 +18,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${article.title}｜イケジョラボ`,
+    title: `${article.title}｜Sweet Stay`,
     description: article.seo_description || article.excerpt || '',
     openGraph: {
       title: article.seo_title || article.title,
@@ -30,8 +29,7 @@ export async function generateMetadata({
   };
 }
 
-export default async function MagazineArticlePage({ params }: { params: { slug: string } }) {
-  // DBから記事を取得、タグも結合して取得
+export default async function SweetStayArticlePage({ params }: { params: { slug: string } }) {
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: params.slug },
     include: {
@@ -41,16 +39,15 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     },
   });
 
-  // 記事がない、または下書きの場合は404ページへ
   if (!article || article.status !== 'published') {
     notFound();
   }
 
-  // 関連記事の取得
   const relatedResult = await getRelatedArticles(article.id, 'user');
-  const relatedArticles = relatedResult.success ? relatedResult.articles : [];
+  const relatedArticles = (relatedResult.success ? relatedResult.articles : []).filter(
+    (a: any) => a.category === 'sweetstay',
+  );
 
-  // 構造化データ（JSON-LD）
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'Article',
@@ -60,7 +57,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     dateModified: article.updated_at.toISOString(),
     author: {
       '@type': 'Person',
-      name: article.author_name || 'イケジョラボ 編集部',
+      name: article.author_name || 'Sweet Stay 編集部',
     },
   };
 
@@ -73,8 +70,8 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
       <NoteArticleUI
         article={article}
         relatedArticles={relatedArticles}
-        category="ikejo"
-        baseUrl="/ikejo"
+        category="sweetstay"
+        baseUrl="/sweetstay/articles"
       />
     </>
   );

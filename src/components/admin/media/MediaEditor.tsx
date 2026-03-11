@@ -36,9 +36,10 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
     thumbnail_url: initialData?.thumbnail_url || '',
     target_audience: initialData?.target_audience || 'user',
     status: initialData?.status || 'draft',
+    category: initialData?.category || 'ikejo',
     seo_title: initialData?.seo_title || '',
     seo_description: initialData?.seo_description || '',
-    author_name: initialData?.author_name || '運営事務局',
+    author_name: initialData?.author_name || '編集部',
   });
   const [tagsInput, setTagsInput] = useState<string>(
     initialData?.tags?.map((t: any) => t.tag.name).join(', ') || '',
@@ -322,6 +323,21 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
               <p className="mt-1 text-[11px] text-gray-500">
                 ここで選んだ項に合わせて、最終的なメディア掲載先が[お客様用]か[採用用]に自動で振り分けられます。
               </p>
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-1 block text-sm font-bold text-gray-700">カテゴリー</label>
+              <select
+                name="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+              >
+                <option value="ikejo">イケジョ・ラボ</option>
+                <option value="ikeo">イケオ・ラボ</option>
+                <option value="sweetstay">Sweet Stay (ホテルメディア)</option>
+              </select>
+              <p className="mt-1 text-[11px] text-gray-500">掲載先のメディア媒体を選択します。</p>
             </div>
 
             <div className="mb-4">

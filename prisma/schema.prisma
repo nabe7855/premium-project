@@ -759,6 +759,7 @@ model MediaArticle {
   content         String    @db.Text
   excerpt         String?   @db.Text
   thumbnail_url   String?
+  category        String    @default("ikejo") // "ikejo", "ikeo", "sweetstay"
   target_audience String    @default("user") // "user" または "recruit" で出し分ける
   status          String    @default("draft") // "draft" または "published"
   author_name     String?   @default("運営事務局")

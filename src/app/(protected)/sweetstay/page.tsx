@@ -3,8 +3,10 @@ import HotelCard from '@/components/sweetstay/HotelCard';
 import QuickNav from '@/components/sweetstay/QuickNav';
 import SecondaryBannerSlider from '@/components/sweetstay/SecondaryBannerSlider';
 import TabelogSearch from '@/components/sweetstay/TabelogSearch';
+import { getMediaArticles } from '@/lib/actions/media';
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { BookOpen, Heart, ShieldCheck, Sparkles, Star, Trophy, Users } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 
 export const revalidate = 3600; // 1 hour cache
@@ -13,6 +15,12 @@ export default async function SweetStayPortalPage() {
   // Fetch a selection of hotels for the portal
   const dbHotels = (await getHotels({ take: 6 })) || [];
   const featuredHotels = dbHotels.slice(0, 6).map(mapDbHotelToHotel);
+
+  // Fetch Media Articles for Sweet Stay
+  const articlesResult = await getMediaArticles('sweetstay', 'user');
+  const articles = articlesResult.success
+    ? articlesResult.articles?.filter((a: any) => a.status === 'published').slice(0, 6) || []
+    : [];
 
   const areas = [
     { id: 'Kanagawa', name: '横浜', count: 276, link: '/sweetstay/area/kanagawa' },
@@ -200,24 +208,51 @@ export default async function SweetStayPortalPage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {guidePillars.map((pillar, idx) => (
-              <Link
-                key={idx}
-                href="/sweetstay/guide"
-                className="group flex items-center gap-6 rounded-[2rem] bg-white p-6 shadow-lg shadow-gray-100 transition-all hover:shadow-2xl hover:shadow-rose-100 md:p-8"
-              >
-                <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gray-50 transition-colors group-hover:bg-rose-50">
-                  {pillar.icon}
-                </div>
-                <div>
-                  <h3 className="text-base font-black text-gray-900 group-hover:text-rose-500">
-                    {pillar.title}
-                  </h3>
-                  <p className="mt-1 text-xs text-gray-400">{pillar.desc}</p>
-                </div>
-              </Link>
-            ))}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {articles.length > 0
+              ? articles.map((article: any) => (
+                  <Link
+                    key={article.id}
+                    href={`/sweetstay/articles/${article.slug}`}
+                    className="group block overflow-hidden rounded-[2.5rem] bg-white p-4 shadow-xl shadow-gray-100 transition-all hover:-translate-y-1 hover:shadow-2xl md:p-6"
+                  >
+                    <div className="relative mb-6 aspect-[16/10] overflow-hidden rounded-[2rem] bg-gray-50">
+                      {article.thumbnail_url && (
+                        <Image
+                          src={article.thumbnail_url}
+                          alt={article.title}
+                          fill
+                          className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        />
+                      )}
+                    </div>
+                    <div className="px-2">
+                      <h3 className="mb-3 line-clamp-2 text-lg font-black leading-tight text-gray-900 group-hover:text-rose-500">
+                        {article.title}
+                      </h3>
+                      <p className="line-clamp-2 text-[13px] leading-relaxed text-gray-400">
+                        {article.excerpt}
+                      </p>
+                    </div>
+                  </Link>
+                ))
+              : guidePillars.map((pillar, idx) => (
+                  <Link
+                    key={idx}
+                    href="/sweetstay/guide"
+                    className="group flex items-center gap-6 rounded-[2rem] bg-white p-6 shadow-lg shadow-gray-100 transition-all hover:shadow-2xl hover:shadow-rose-100 md:p-8"
+                  >
+                    <div className="flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gray-50 transition-colors group-hover:bg-rose-50">
+                      {pillar.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-base font-black text-gray-900 group-hover:text-rose-500">
+                        {pillar.title}
+                      </h3>
+                      <p className="mt-1 text-xs text-gray-400">{pillar.desc}</p>
+                    </div>
+                  </Link>
+                ))}
           </div>
         </div>
       </section>

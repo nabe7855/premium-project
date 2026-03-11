@@ -10,6 +10,9 @@ export default function MediaManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [filterAudience, setFilterAudience] = useState<'all' | 'user' | 'recruit'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
+  const [filterCategory, setFilterCategory] = useState<'all' | 'ikejo' | 'ikeo' | 'sweetstay'>(
+    'all',
+  );
 
   const fetchArticles = async () => {
     setIsLoading(true);
@@ -50,6 +53,16 @@ export default function MediaManagementPage() {
             <option value="recruit">求職者向け</option>
           </select>
           <select
+            value={filterCategory}
+            onChange={(e) => setFilterCategory(e.target.value as any)}
+            className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-accent"
+          >
+            <option value="all">すべてのカテゴリ</option>
+            <option value="ikejo">イケジョ</option>
+            <option value="ikeo">イケオ</option>
+            <option value="sweetstay">Sweet Stay</option>
+          </select>
+          <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value as any)}
             className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-accent"
@@ -78,6 +91,9 @@ export default function MediaManagementPage() {
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   公開対象
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  カテゴリー
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                   ステータス
@@ -112,7 +128,8 @@ export default function MediaManagementPage() {
                     const audienceMatch =
                       filterAudience === 'all' || a.target_audience === filterAudience;
                     const statusMatch = filterStatus === 'all' || a.status === filterStatus;
-                    return audienceMatch && statusMatch;
+                    const categoryMatch = filterCategory === 'all' || a.category === filterCategory;
+                    return audienceMatch && statusMatch && categoryMatch;
                   })
                   .map((article) => (
                     <tr key={article.id} className="hover:bg-gray-50">
@@ -133,9 +150,26 @@ export default function MediaManagementPage() {
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">
                         <span
+                          className={`inline-flex rounded-full px-2 text-xs font-bold leading-5 ${
+                            article.category === 'sweetstay'
+                              ? 'bg-rose-100 text-rose-800'
+                              : article.category === 'ikeo'
+                                ? 'bg-blue-100 text-blue-800'
+                                : 'bg-pink-100 text-pink-800'
+                          }`}
+                        >
+                          {article.category === 'sweetstay'
+                            ? 'Sweet Stay'
+                            : article.category === 'ikeo'
+                              ? 'イケオ'
+                              : 'イケジョ'}
+                        </span>
+                      </td>
+                      <td className="whitespace-nowrap px-6 py-4">
+                        <span
                           className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
                             article.status === 'published'
-                              ? 'bg-pink-100 text-pink-800'
+                              ? 'bg-green-100 text-green-800'
                               : 'bg-gray-100 text-gray-800'
                           }`}
                         >

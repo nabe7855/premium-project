@@ -21,7 +21,7 @@ export default async function CareerMediaTopPage({
 }) {
   const selectedTag = searchParams.tag;
 
-  const result = await getMediaArticles('recruit');
+  const result = await getMediaArticles('ikeo', 'recruit');
   let allArticles = result.success
     ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];
