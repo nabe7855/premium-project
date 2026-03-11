@@ -172,7 +172,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
             {config?.sectionTitle || '8 YEARS'}
           </motion.h2>
           <h3
-            className="mb-8 whitespace-pre-wrap font-serif text-xl font-bold leading-relaxed text-white outline-none sm:text-3xl md:text-4xl"
+            className="mb-8 whitespace-pre-wrap text-balance font-serif text-xl font-bold leading-relaxed text-white outline-none sm:text-3xl md:text-4xl"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => onUpdate?.('mainHeading', e.currentTarget.innerText)}

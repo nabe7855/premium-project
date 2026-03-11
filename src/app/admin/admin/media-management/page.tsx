@@ -10,9 +10,9 @@ export default function MediaManagementPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [filterAudience, setFilterAudience] = useState<'all' | 'user' | 'recruit'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
-  const [filterCategory, setFilterCategory] = useState<'all' | 'ikejo' | 'ikeo' | 'sweetstay'>(
-    'all',
-  );
+  const [filterCategory, setFilterCategory] = useState<
+    'all' | 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten'
+  >('all');
 
   const fetchArticles = async () => {
     setIsLoading(true);
@@ -61,6 +61,7 @@ export default function MediaManagementPage() {
             <option value="ikejo">イケジョ</option>
             <option value="ikeo">イケオ</option>
             <option value="sweetstay">Sweet Stay</option>
+            <option value="ikejo-jiten">辞典</option>
           </select>
           <select
             value={filterStatus}

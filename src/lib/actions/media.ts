@@ -60,6 +60,24 @@ export async function getMediaArticleById(id: string) {
   }
 }
 
+// -- 単一記事取得（スラグから） --
+export async function getMediaArticleBySlug(slug: string) {
+  try {
+    const article = await prisma.mediaArticle.findUnique({
+      where: { slug },
+      include: {
+        tags: {
+          include: { tag: true },
+        },
+      },
+    });
+    return { success: true, article };
+  } catch (error: any) {
+    console.error('Error fetching media article by slug:', error);
+    return { success: false, error: error.message };
+  }
+}
+
 // -- 記事の新規作成 --
 export async function createMediaArticle(data: MediaArticleData, tags: string[] = []) {
   try {
@@ -237,7 +255,7 @@ export async function getRelatedArticles(
             tag_id: { in: tagIds },
           },
         },
-      },
+      } as any,
       take: limit,
       orderBy: { published_at: 'desc' },
       include: {

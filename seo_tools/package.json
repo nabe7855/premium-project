@@ -1,0 +1,13 @@
+{
+  "name": "premium-seo-tools",
+  "version": "1.0.0",
+  "description": "SEO data acquisition and analysis tools",
+  "main": "scripts/get_search_console_data.js",
+  "scripts": {
+    "fetch": "node scripts/get_search_console_data.js"
+  },
+  "dependencies": {
+    "googleapis": "^126.0.0",
+    "dotenv": "^16.3.1"
+  }
+}

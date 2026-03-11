@@ -12,7 +12,7 @@ import ReactMarkdown from 'react-markdown';
 interface NoteArticleUIProps {
   article: any;
   relatedArticles: any[];
-  category: 'ikejo' | 'ikeo' | 'sweetstay';
+  category: 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten';
   baseUrl: string;
 }
 
@@ -49,6 +49,15 @@ export default function NoteArticleUI({
       authorLabel: 'Stay',
       authorColor: 'text-rose-500',
       prose: 'prose-rose',
+    },
+    'ikejo-jiten': {
+      primary: 'slate',
+      bg: 'bg-slate-50',
+      text: 'text-slate-600',
+      accent: 'slate-200',
+      authorLabel: '辞典',
+      authorColor: 'text-slate-500',
+      prose: 'prose-slate',
     },
   };
 
@@ -107,6 +116,16 @@ export default function NoteArticleUI({
               className="object-cover"
               priority
             />
+          </div>
+        )}
+
+        {/* 結論・まとめボックス (辞典用) */}
+        {category === 'ikejo-jiten' && article.excerpt && (
+          <div className="mb-12 rounded-2xl border-l-4 border-slate-400 bg-slate-50 p-8 shadow-sm">
+            <div className="mb-2 text-[11px] font-bold uppercase tracking-widest text-slate-400">
+              Conclusion / 結論
+            </div>
+            <p className="text-lg font-bold leading-relaxed text-slate-700">{article.excerpt}</p>
           </div>
         )}
 

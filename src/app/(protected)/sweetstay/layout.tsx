@@ -3,13 +3,38 @@ import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | Sweet Stay by Strawberry Boys',
-    default: 'Sweet Stay - 現役セラピストが選ぶ、大人のラブホテルメディア',
+    template: '%s | SweetStay by ストロベリーボーイズ',
+    default:
+      '女性目線で選ぶ！おすすめラブホテルと極上デートプラン｜SweetStay by ストロベリーボーイズ',
   },
   description:
-    'Strawberry Boysが贈る、本物のプロが選んだ「本当に使いやすい」ホテルのまとめメディア。大人の上質なライフスタイルと愛の形を提案します。',
+    'ラブホテルのプロである女性用風俗店が運営するデートプラン＆ホテル体験メディア。カタログ情報だけでは分からない「実際の居心地」から、周辺のデートスポット、おすすめのご飯屋さんまで、失敗しない極上のデートをプロデュースします。',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'SweetStay',
+  url: 'https://www.sutoroberrys.jp/sweetstay',
+  description: '女性目線で選ぶ！おすすめラブホテルと極上デートプランメディア',
+  publisher: {
+    '@type': 'Organization',
+    name: 'ストロベリーボーイズ',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://www.sutoroberrys.jp/logo.png', // 仮のロゴURL
+    },
+  },
 };
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  return <SweetStayLayout>{children}</SweetStayLayout>;
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <SweetStayLayout>{children}</SweetStayLayout>
+    </>
+  );
 }

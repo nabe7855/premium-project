@@ -336,6 +336,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 <option value="ikejo">イケジョ・ラボ</option>
                 <option value="ikeo">イケオ・ラボ</option>
                 <option value="sweetstay">Sweet Stay (ホテルメディア)</option>
+                <option value="ikejo-jiten">イケジョ辞典</option>
               </select>
               <p className="mt-1 text-[11px] text-gray-500">掲載先のメディア媒体を選択します。</p>
             </div>

@@ -148,7 +148,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleInput('mainHeading', e)}
-              className="mb-6 cursor-text rounded font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white outline-none drop-shadow-md hover:bg-white/10 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
+              className="mb-6 cursor-text text-balance rounded font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white outline-none drop-shadow-md hover:bg-white/10 sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
               style={{ whiteSpace: 'pre-line' }}
             >
               {mainHeading}
@@ -166,7 +166,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
             </h1>
           ) : (
             <h1
-              className="mb-6 font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
+              className="mb-6 text-balance font-serif text-3xl font-bold leading-[1.2] tracking-tight text-white sm:text-5xl sm:leading-tight md:text-6xl lg:text-7xl"
               style={{ whiteSpace: 'pre-line' }}
             >
               {mainHeading}

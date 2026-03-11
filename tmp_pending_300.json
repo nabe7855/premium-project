@@ -1,0 +1,1202 @@
+[
+  {
+    "id": "91c61735-5c34-40e8-8180-85b388cd0dfc",
+    "name": "ホテル エトランゼ"
+  },
+  {
+    "id": "2da262bb-1bb9-4438-9ad7-3210df1458aa",
+    "name": "ホテル ハナヤ"
+  },
+  {
+    "id": "08529337-b41c-4f33-8056-b568d3259b0c",
+    "name": "ホテル ポラリス"
+  },
+  {
+    "id": "eeb47f9f-0438-401c-a9e1-ebed634ec7d2",
+    "name": "ホテル ガラスの城"
+  },
+  {
+    "id": "6f8bdb6c-1df6-4710-ab1f-1544427fc08f",
+    "name": "予約プラン一覧：シーラブ 大和店 / 大和市"
+  },
+  {
+    "id": "c8a441e2-c555-4ea1-a9ac-cec9dcf829ea",
+    "name": "カカオリゾート 奥州前沢店"
+  },
+  {
+    "id": "a785f6df-7bc0-4b6c-bd7a-544d69454c2b",
+    "name": "ホテル アネックス"
+  },
+  {
+    "id": "ea46c651-5bf4-4c08-a75f-17b76f070818",
+    "name": "予約プラン一覧：HOTEL TSUBAKI 大和 (ツバキ大和) / 大和市"
+  },
+  {
+    "id": "71dfb638-93db-405a-9d7c-54ca08a6c8e7",
+    "name": "予約プラン一覧：HOTEL COSTA RESORT 茅ヶ崎 (ホテル コスタリゾート 茅ヶ崎) / 茅ヶ崎市"
+  },
+  {
+    "id": "95277133-ae6b-4fee-ab26-b82761b1b5be",
+    "name": "RESORT HOTEL FUGA 小田原店 / 小田原市"
+  },
+  {
+    "id": "a4dca2a0-2232-4ff6-99eb-4fd38163fa12",
+    "name": "デザイナーズホテルR / 小田原市"
+  },
+  {
+    "id": "1fb03d32-c5bd-41b6-8e1d-97c727fc0c51",
+    "name": "よりみちキャロル"
+  },
+  {
+    "id": "45845df6-a762-4eac-91f6-5838a05717eb",
+    "name": "ホテル 夢キャロル"
+  },
+  {
+    "id": "db0321cd-278e-485e-9651-f535c9ee8b70",
+    "name": "予約プラン一覧：HOTEL 現代楽園 伊勢原店 (ゲンダイラクエン イセハラテン) / 伊勢原市"
+  },
+  {
+    "id": "df52c624-2d59-40e6-a46f-aabaa7f9da0b",
+    "name": "HOTEL PARAISO (ホテル パライソ) / 伊勢原市"
+  },
+  {
+    "id": "69dcebea-720e-4a78-808b-0119aebae1b9",
+    "name": "ホテル 二ノ丸 / 足柄上郡"
+  },
+  {
+    "id": "21ae7438-0669-4773-9db3-f82f4be70e94",
+    "name": "ホテル くちなし城 桃源郷 伊勢原 / 伊勢原市"
+  },
+  {
+    "id": "c42a2f5d-d12b-4438-b8bf-05ca5ca53d0b",
+    "name": "ホテル 城 / 鎌倉市"
+  },
+  {
+    "id": "c8d8f27c-69df-4531-bd9f-5c46d6a08bcd",
+    "name": "キャトルセゾン / 大和市"
+  },
+  {
+    "id": "d2c5b829-92e0-4700-af71-8f2f87e1aecb",
+    "name": "RESTAURANT HOTEL 銀の塔 / 伊勢原市"
+  },
+  {
+    "id": "2ea61926-9835-4e83-bafb-e69d01b5452a",
+    "name": "ホテル パフューム / 秦野市"
+  },
+  {
+    "id": "cc557be9-3336-4aa0-aa59-63c6e846b246",
+    "name": "ホテル ラブポケット"
+  },
+  {
+    "id": "5c9c5e7e-aca6-4ab9-bc40-ee9787c178d7",
+    "name": "予約プラン一覧：TIARA Brun (ティアラ ブラン) / 大和市"
+  },
+  {
+    "id": "8d97790b-efbe-4c75-8def-6b9622843ebf",
+    "name": "ホテル シンドバッド滝沢店"
+  },
+  {
+    "id": "b2e6cc7d-52d6-4c9e-96c3-fda4011eda60",
+    "name": "いなかのキャロル"
+  },
+  {
+    "id": "eb495ad5-8282-4633-8a31-f27c8fc00816",
+    "name": "ホテル ミスト"
+  },
+  {
+    "id": "31c9f4b2-8af4-43a6-97af-340b7dcff3a2",
+    "name": "予約プラン一覧：WILL RESORT 鎌倉 (ウィル リゾート鎌倉) / 鎌倉市"
+  },
+  {
+    "id": "dd70434b-c2fe-4914-8bdc-212709498e9d",
+    "name": "HOTEL ELDIA 町田店 (ホテル エルディア) 【Best Delight Group】 / 横浜市旭区"
+  },
+  {
+    "id": "444e16d6-2898-4e35-9ee2-1c459b01f544",
+    "name": "HOTEL CHECK INN BALI (ホテル チェックインバリ)"
+  },
+  {
+    "id": "bcb0800b-6567-4fc3-8a71-8de6b509b694",
+    "name": "ホテル カプチーノ"
+  },
+  {
+    "id": "0ea0a9d2-13d7-4c80-a52b-4aaafa4937ac",
+    "name": "ホテル バリス"
+  },
+  {
+    "id": "152bc458-7acf-46c5-9e62-daefa2df56ce",
+    "name": "ホテル コロン"
+  },
+  {
+    "id": "7e28bf8d-6efe-4ddc-9808-8b09f774d57d",
+    "name": "Hotel Anju (ホテル アンジュ)"
+  },
+  {
+    "id": "488371dd-7dd5-452e-bd40-f0961acff073",
+    "name": "おひるねキャロル"
+  },
+  {
+    "id": "5f6b8958-7e1a-4429-881d-5a64d6a20582",
+    "name": "ホテル ダンヒル"
+  },
+  {
+    "id": "0616a0ce-f3b1-4d25-b78d-0985e2ef2df7",
+    "name": "ホテル夢殿 盛岡店"
+  },
+  {
+    "id": "9ad28c0e-0386-4311-ba58-9b18cfd893d6",
+    "name": "ホテル ノースライン"
+  },
+  {
+    "id": "0cea0c1d-caf1-43de-8181-a3d4141ee4c5",
+    "name": "ホテルポップス107"
+  },
+  {
+    "id": "981a7ef6-3977-4646-8ec9-957f47a7aa67",
+    "name": "ホテル フォーシーズンズ北上"
+  },
+  {
+    "id": "b0ea067f-71b8-4a5e-8816-f490c5fa3657",
+    "name": "ホテル 星星星 北上店"
+  },
+  {
+    "id": "66f2b771-3ed9-4821-a91b-43e4cc8eebea",
+    "name": "Hotel Imon (ホテル イモン)"
+  },
+  {
+    "id": "daf927f2-dd2d-4672-9b71-f207bd82f951",
+    "name": "HOTEL SUZUKAKE (ホテル スズカケ)"
+  },
+  {
+    "id": "77e78593-d95f-4c57-9da1-cf5335fbaac3",
+    "name": "HOTEL RENAISSANCE 仙台店 (ホテル ルネッサンス) 【Best Delight Group】"
+  },
+  {
+    "id": "1c61cec5-f214-443d-8056-65fe590e0906",
+    "name": "ホテル Mikado"
+  },
+  {
+    "id": "f5bc45cd-0c60-4dba-a9d1-c29880e734bd",
+    "name": "ホテル アジアンリゾート 仙台"
+  },
+  {
+    "id": "886c0fc0-5c08-4139-bd05-0b7b1f7ddef2",
+    "name": "HOTEL LUCE (ホテル ルーチェ)"
+  },
+  {
+    "id": "60bb4b90-510c-4532-a904-9ad04c53cbcd",
+    "name": "ホテル フェアリー ウィンク / 横浜市中区"
+  },
+  {
+    "id": "99a2c3d8-1085-4d3c-923d-a36601ea96c4",
+    "name": "ホテル  ハイビスカス川口"
+  },
+  {
+    "id": "a8f11529-f8ac-4cc2-9504-166e3022df2c",
+    "name": "HOTEL COSTA RESORT 飯能 (コスタリゾート 飯能)"
+  },
+  {
+    "id": "aa561235-b31b-47c4-a026-cb64f362ec1f",
+    "name": "ファイヤーホテル ヌー 岩槻"
+  },
+  {
+    "id": "691aac21-74ee-4576-a9fe-74fd8ce950ad",
+    "name": "Xホテル (エックスホテル)"
+  },
+  {
+    "id": "7b63caee-0661-4098-bcce-872b62107ffc",
+    "name": "ホテル アン"
+  },
+  {
+    "id": "249e9437-ad07-4a1e-92d6-932a8ac4e3a1",
+    "name": "ホテル ヴィラジュリア・ナガラ 岐阜"
+  },
+  {
+    "id": "be6a590e-1102-402a-80a0-2087e7385990",
+    "name": "HOTEL GRASSINO URBAN RESORT URAWA (グラッシーノ アーバンリゾート ウラワ)"
+  },
+  {
+    "id": "83ebfd12-edbc-427a-ba27-6120b459bb77",
+    "name": "HOTEL PARCO (ホテル パルコ)"
+  },
+  {
+    "id": "bc3b72c0-d93e-4ab3-bcb5-43f0ff871fa6",
+    "name": "ちょっとP2"
+  },
+  {
+    "id": "de96d626-cc91-4a85-a7a1-260fa654929a",
+    "name": "HOTEL AROMA GATE(ホテル アロマゲート) 【Precious Hotelグループ】"
+  },
+  {
+    "id": "cd3421d0-54f0-410f-b703-7344d0eb9051",
+    "name": "HOTEL SAN MARINO by Bunny-inn(ホテル サンマリノ バイ バニーイン)"
+  },
+  {
+    "id": "d488010b-157f-4be8-9b59-340396bea9f2",
+    "name": "HOTEL SAN MARINO by GRANPRIX(ホテル サンマリノ バイ グランプリ)"
+  },
+  {
+    "id": "97018c62-b1c2-4b95-88e3-1145f8a280aa",
+    "name": "Luxury Hotel COLLECTION (ラグジュアリーホテル コレクション)"
+  },
+  {
+    "id": "8005424f-afa5-4577-8f9e-439e862203c8",
+    "name": "HOTEL JAZZ名東(ホテル ジャズ名東)"
+  },
+  {
+    "id": "8e0c126e-623a-4c5e-aca3-ab10aad6368c",
+    "name": "HOTEL K's MINE (ホテル ケイズマイン)"
+  },
+  {
+    "id": "ca9a3a9e-e619-4689-810c-d767f4ff6b5c",
+    "name": "HOTEL Allure EAST館 (ホテル アリュール)"
+  },
+  {
+    "id": "b5a550cf-4696-480a-92aa-1aca86644317",
+    "name": "Hotel Charmys"
+  },
+  {
+    "id": "fbbe1424-e34b-4f7a-a88d-52d985a99e4c",
+    "name": "HOTEL ZERO (ホテル ゼロ)"
+  },
+  {
+    "id": "192b944b-deba-4fb7-a5ef-044a731d9c9e",
+    "name": "ホテル スターゲート / 横浜市中区"
+  },
+  {
+    "id": "19b5c65a-92db-4d82-86f7-466e73098aea",
+    "name": "ホテル エスター / 横浜市中区"
+  },
+  {
+    "id": "96e76718-a070-4fa2-b7bb-6108f31898ff",
+    "name": "HOTEL ROY (ホテル ロイ) / 横浜市南区"
+  },
+  {
+    "id": "a972f0a8-00b7-4588-8d6e-5f97d3de0067",
+    "name": "ホテル 桃玄 (ホテル トウゲン) / 横浜市中区"
+  },
+  {
+    "id": "2cb002dc-3132-4d5c-b5fc-c40077663bbd",
+    "name": "FUN3 / 横浜市南区"
+  },
+  {
+    "id": "c44165de-2455-4815-957d-5849433252e9",
+    "name": "ホテル ファリーナドルチェ"
+  },
+  {
+    "id": "c95c7356-be23-4f82-806b-395efde4f393",
+    "name": "HOTEL ELDIA LUXURY 仙台店 【Best Delight Group】"
+  },
+  {
+    "id": "edbb4bee-43f6-44b0-b0a5-bd318eb34702",
+    "name": "ホテル ウォーターリゾート仙台"
+  },
+  {
+    "id": "f49c379b-a540-4944-ad7f-9a1a125bc117",
+    "name": "HOTEL LUCE REGALO (ホテル ルーチェレガーロ)"
+  },
+  {
+    "id": "d15405eb-bbb2-468e-86fb-6f0fabed3939",
+    "name": "HOTEL AnJu (ホテル アンジュ)"
+  },
+  {
+    "id": "d042c105-f31a-426f-bd56-15a094bf024f",
+    "name": "プレリュードルナシス"
+  },
+  {
+    "id": "08644dc2-7f14-4401-a551-3c894e5bda5e",
+    "name": "HOTEL ELDIA MODERN 仙台店 【Best Delight Group】"
+  },
+  {
+    "id": "c91f2524-51e0-4d5f-9fc7-8973707211d8",
+    "name": "ホテルARIA横浜関内 / 横浜市中区"
+  },
+  {
+    "id": "0c3dab53-6b06-4add-82ab-32f6201ebd5b",
+    "name": "HOTEL BALI (ホテル バリ)"
+  },
+  {
+    "id": "923bc555-5237-4ad7-8976-ebf226a51add",
+    "name": "ホテル リスタ"
+  },
+  {
+    "id": "a0e584f8-abcc-416b-86a0-3e99419dfe15",
+    "name": "HOTEL COCORU"
+  },
+  {
+    "id": "2b16f33c-9b50-49aa-ac96-2d0c14802578",
+    "name": "ふたりの夢を叶えましょう アネックス"
+  },
+  {
+    "id": "d1a07410-0483-45f3-ae7d-a7adb853148b",
+    "name": "ホテルキッス"
+  },
+  {
+    "id": "19d9fbf1-1f03-48fd-8347-d35f607b83aa",
+    "name": "ナトリナホテル"
+  },
+  {
+    "id": "47ba53a6-a159-4d1d-b820-539d87305df7",
+    "name": "HOTEL Le’PALIO (ホテル レパリオ)"
+  },
+  {
+    "id": "0c34b45e-e054-4062-a0c8-7343dd9148d3",
+    "name": "ツルガナホテル"
+  },
+  {
+    "id": "0eed8776-7a2a-492c-a2a3-d696527a88e8",
+    "name": "ホテル プリンス"
+  },
+  {
+    "id": "8a1207a2-5ccf-43f8-8c30-48515c1de9c2",
+    "name": "リゾートイン"
+  },
+  {
+    "id": "be48e359-db2d-4d81-b567-6215bf27d14e",
+    "name": "ホテル キャロルリゾート"
+  },
+  {
+    "id": "318499af-410f-4074-9f48-913d818dc889",
+    "name": "H GALLERY HOTEL"
+  },
+  {
+    "id": "52b5be7d-912a-463c-ad92-9bdb0f28faae",
+    "name": "ホテル わたしの部屋"
+  },
+  {
+    "id": "ba3abbcb-646a-4d68-be0d-c5ad6011bba7",
+    "name": "ホテル シルビア5150"
+  },
+  {
+    "id": "6f7033e5-75f7-42ff-afef-59015247b55c",
+    "name": "HOTEL La Calme (ホテル ラ・カーム)"
+  },
+  {
+    "id": "b6cbf564-60eb-4e32-8bab-f8cbc69f824e",
+    "name": "HOTEL ROUTE 08 (ホテル ルート ゼロハチ)"
+  },
+  {
+    "id": "fef89aae-2856-4c3f-9929-10f1288a7da6",
+    "name": "HOTEL  SELEVA (ホテル セレバ)"
+  },
+  {
+    "id": "590e5c3f-8f29-40bf-b2f6-187625018610",
+    "name": "HOTEL KITTY (ホテル キティ)"
+  },
+  {
+    "id": "65002ca9-816e-424a-85b7-be1f725a4eef",
+    "name": "ホテル ソウル"
+  },
+  {
+    "id": "dc13e68c-20bb-46a8-b514-e5ae1faae525",
+    "name": "ホテル ムーンラビット"
+  },
+  {
+    "id": "14bc72b5-ca88-47b2-9083-81f7f2804697",
+    "name": "ホテル プリウス5"
+  },
+  {
+    "id": "24e15549-6533-4e95-940c-0bf4dda09ac5",
+    "name": "ホテル 新宿"
+  },
+  {
+    "id": "bd9c0902-2fee-4e7a-9157-4e28f73c5a8b",
+    "name": "フェスタ 横須賀 / 横須賀市"
+  },
+  {
+    "id": "c9cff893-b83f-4755-b42e-f68fc0020d8a",
+    "name": "予約プラン一覧：HOTEL SALA (ホテル サーラ) / 横浜市港北区"
+  },
+  {
+    "id": "f9789812-5547-4a33-ab43-d147bac6ad8a",
+    "name": "ホテル グランリゾート 祇園"
+  },
+  {
+    "id": "84fd899a-ffa0-42a1-b16a-d95223762d10",
+    "name": "HOTEL LUNA 川越店 (ホテル ルナ) 【Best Delight Group】"
+  },
+  {
+    "id": "375c1cfb-7b28-466d-a489-d11598ebaa7c",
+    "name": "ホテル 行田アイネ"
+  },
+  {
+    "id": "69510451-7177-4077-bb1c-ed5f7a8e7f96",
+    "name": "HOTEL OASIS (ホテル オアシス)"
+  },
+  {
+    "id": "c8cb7a28-0714-4103-afb8-b2fd76fa7f00",
+    "name": "HOTEL Large (ホテル ラルジュ)"
+  },
+  {
+    "id": "376d5477-4e89-4911-8f63-611308fe9e80",
+    "name": "HOTEL NATURA (ホテル ナチュラ)"
+  },
+  {
+    "id": "846beaaf-0e90-4715-b3ee-64aba3bee625",
+    "name": "HOTEL GIG (ホテル ジーアイジー)"
+  },
+  {
+    "id": "1aaae8e8-d4bf-4c5f-a00b-b8c8070d3f3c",
+    "name": "ホテル ナパバレー"
+  },
+  {
+    "id": "f81f92d3-c818-4fd9-92a0-2bec9c87ccde",
+    "name": "HOTEL UNO (ホテル ウノ)"
+  },
+  {
+    "id": "e8f8fc77-bb70-4007-bfa9-ab272c6f4656",
+    "name": "HOTEL RIZE (ホテル リゼ)"
+  },
+  {
+    "id": "a3c411c8-3b7f-48fa-a417-5c50108b1b87",
+    "name": "HOTEL PASAR (ホテルパサール)"
+  },
+  {
+    "id": "76ac90d7-5953-46c3-8ca1-d7c584bec2a9",
+    "name": "ホテル ジュピター"
+  },
+  {
+    "id": "a50bafe6-a15a-41a5-9f7b-61c36de138a9",
+    "name": "HOTEL a (ホテル アー)"
+  },
+  {
+    "id": "233cf5a6-ac13-4938-8ac2-f6a06574bfa6",
+    "name": "ホテル カスティーユ / 横浜市港北区"
+  },
+  {
+    "id": "5808c1c6-fdc3-452a-a3e9-dc576b5d9194",
+    "name": "HOTEL PLAZA K (ホテル プラザ ケイ) / 横浜市港北区"
+  },
+  {
+    "id": "093860c9-2e79-4f50-a6d3-f77268149561",
+    "name": "HOTEL NaNa (ホテル ナナ)"
+  },
+  {
+    "id": "204a5abe-26a4-4b2c-a5e3-8a0ef0057505",
+    "name": "六丁の目のTHE HOTELION"
+  },
+  {
+    "id": "e598be4e-759f-4c59-bd7d-ebaade5c9e19",
+    "name": "予約プラン一覧：ホテル メトロ 新横浜（ホテル メトロ シンヨコハマ） / 横浜市港北区"
+  },
+  {
+    "id": "580a3744-e971-4021-99b8-0b9925ef8579",
+    "name": "CAROL Wa foo (キャロル ワフー)"
+  },
+  {
+    "id": "6f41bb5b-9774-4001-8807-951cd435e13a",
+    "name": "ホテル エグゼ"
+  },
+  {
+    "id": "38c10d51-6c81-4878-999d-374643c4db54",
+    "name": "HOTEL ISOLA (ホテルイゾラ)"
+  },
+  {
+    "id": "655076c8-39b4-45c4-b63f-31ead1f7da66",
+    "name": "ティファナイン"
+  },
+  {
+    "id": "eb827903-9b37-4f1f-88df-8f1ee26f770a",
+    "name": "ホテル ネクスト"
+  },
+  {
+    "id": "a453f959-e72f-46cd-99ce-2b014c5f818c",
+    "name": "HOTEL LULL KOMOREBI (ホテル ラルコモレビ)"
+  },
+  {
+    "id": "20a0e350-822b-4b7d-a3b2-9123bf2f419f",
+    "name": "キャロルとくじら"
+  },
+  {
+    "id": "e0d2f4b4-233f-411a-a961-20abb50faf92",
+    "name": "ホテル アンジェリカ"
+  },
+  {
+    "id": "6d7d0287-4e0f-4d11-a51f-9749da5ae434",
+    "name": "ホテル アジアの魔法"
+  },
+  {
+    "id": "9b8d7505-aba5-4170-b06b-cff3b2ab89a3",
+    "name": "ホテル ルンルン"
+  },
+  {
+    "id": "dbde24bc-9b11-470d-b07b-b27d6d833578",
+    "name": "ホテル カナディアン古川"
+  },
+  {
+    "id": "bdd319f2-9535-4c66-bcd9-77a01053addb",
+    "name": "ちょっと村田"
+  },
+  {
+    "id": "52c4c730-7fcf-4d65-a24f-1e6b11079f93",
+    "name": "ホテル ファンタジア"
+  },
+  {
+    "id": "d3fc6126-b5d9-49e5-97c5-e6f38f220c3b",
+    "name": "ホテル カラーズ"
+  },
+  {
+    "id": "6f1f5f0c-5445-407b-9101-4aafa0e6cfd7",
+    "name": "H TOWN HOTEL"
+  },
+  {
+    "id": "60362324-0f55-4559-8e3c-97916b13e45a",
+    "name": "ホテル レモンハート"
+  },
+  {
+    "id": "77bcedb2-a799-40b4-818c-2c22a938d39f",
+    "name": "HOTEL SWEET INN LAITY (ホテル スイート イン レイティ) / 横浜市栄区"
+  },
+  {
+    "id": "19248183-654f-4b80-b13b-74fc81fa23c4",
+    "name": "STAR RESORT I (スターリゾート アイ)"
+  },
+  {
+    "id": "186c8889-6c84-4d91-a3d6-58ed463e517a",
+    "name": "DESIGN HOTEL FABULAN (ホテル ファビュラン)"
+  },
+  {
+    "id": "e4fe8feb-f6cc-4753-88b9-c4a6fc483d2a",
+    "name": "ホテル フォンターナ / 横浜市港北区"
+  },
+  {
+    "id": "d7e709ee-d0ae-4619-aab5-fda52766256e",
+    "name": "HOTEL WILL BASE鶴見 (ホテル ウィル ベイス ツルミ) / 横浜市鶴見区"
+  },
+  {
+    "id": "ad022555-018e-4fbd-9ed5-59be4f133b5e",
+    "name": "HOTEL SOARE (ホテル ソアレ)"
+  },
+  {
+    "id": "8fdf8ba3-27f2-411c-9b40-8da10fb0d0ee",
+    "name": "HOTEL GRASIA2 PREMIUM RESORT (ホテルグラシア2 プレミアムリゾート)"
+  },
+  {
+    "id": "af46fb06-5449-4df5-bf43-03a228d33638",
+    "name": "HOTEL C.(シードット) 港北 / 横浜市都筑区"
+  },
+  {
+    "id": "1928eea9-77fa-487d-9855-1465881dc176",
+    "name": "隠宿 凛（石川）"
+  },
+  {
+    "id": "2bff71bd-5bae-42a7-a189-145ec028cf31",
+    "name": "ホテル クイーンズタウン / 横浜市緑区"
+  },
+  {
+    "id": "0c3f90a1-17f7-4e55-b208-77a22daec9a3",
+    "name": "ホテル艶 横浜町田店 / 横浜市旭区"
+  },
+  {
+    "id": "ff3e19d9-83e6-4c16-88a2-d287c329d4ae",
+    "name": "プレリュードキティーネ・ヨッテーネ"
+  },
+  {
+    "id": "4f92464d-7312-4b30-9c61-c3e888a35c44",
+    "name": "ホテル フォーシーズン"
+  },
+  {
+    "id": "69a5df18-2527-428f-a486-240277020edf",
+    "name": "ホテル・サンタモニカ"
+  },
+  {
+    "id": "f85099c2-c3aa-43fd-9b22-a9c8a60287d4",
+    "name": "ホテル ココ"
+  },
+  {
+    "id": "bde1e40c-079b-4242-a66c-de4dfa4884b6",
+    "name": "HOTEL Hill Top (ホテル ヒルトップ)"
+  },
+  {
+    "id": "3dc64802-9ab6-472a-a4b2-0a893d5acc45",
+    "name": "ホテル パルシス"
+  },
+  {
+    "id": "91de7000-76e9-4324-9b2c-5186be159b65",
+    "name": "HOTEL Carib (ホテル カリブ) / 横浜市旭区"
+  },
+  {
+    "id": "1950b5bd-1b0a-4649-ad7b-5d64e815b0ea",
+    "name": "SARA 五反田 (サラ ゴタンダ)"
+  },
+  {
+    "id": "7e293118-b433-434b-8696-d87ab1451760",
+    "name": "Hotel Age2 (ホテル アゲアゲ)"
+  },
+  {
+    "id": "acb9d238-c947-466b-af54-7c84b6ae9686",
+    "name": "ホテル キャンディ"
+  },
+  {
+    "id": "1f382e00-1101-431c-8a16-55be4ca710b7",
+    "name": "スイートホテル 蜜箱 (ミツバコ)"
+  },
+  {
+    "id": "0a4d9d9b-abd4-4fde-8672-6464c5e8fca5",
+    "name": "GOLF 保土ヶ谷 (ホテル ゴルフ 保土ヶ谷) / 横浜市保土ヶ谷区"
+  },
+  {
+    "id": "518641af-56c9-45e8-847e-1d3fcc6a1418",
+    "name": "ホテル イエローベル"
+  },
+  {
+    "id": "1979cedf-9147-4b40-a82e-a2a34bc9636d",
+    "name": "ホテル ラ・シエナ"
+  },
+  {
+    "id": "19891b01-86c4-46ac-b039-ce4bfa4aa080",
+    "name": "ホテル クインズコート"
+  },
+  {
+    "id": "1d6583c8-fbb9-423b-a58e-713facc9e9b4",
+    "name": "HOTEL AURA RESORT 伊賀店 (ホテル オーラ リゾート伊賀店)"
+  },
+  {
+    "id": "cf259646-5443-4f7c-8c0b-1c552e875d86",
+    "name": "HOTEL T's RESORT (ホテル ティーズリゾート)"
+  },
+  {
+    "id": "ca78a878-3157-4b56-a8e9-1ab6646b4c36",
+    "name": "HOTEL GRASIA ASIAN RESORT 渋川"
+  },
+  {
+    "id": "e17f793b-4653-4c31-8220-486ec8fd6f36",
+    "name": "JO JO HOTEL"
+  },
+  {
+    "id": "b8d9a32f-d431-43fa-8593-3a52aa113221",
+    "name": "HOTEL QUEEN ELIZABETH (ホテル クィーンエリザベス)"
+  },
+  {
+    "id": "a93b24c0-db2c-4042-b171-05a2283e22cb",
+    "name": "ホテル COCO安中 (ホテル ココ安中)"
+  },
+  {
+    "id": "c9327e5d-fbf1-44fd-897c-b462d36f6ecd",
+    "name": "アプリコット  グランデ"
+  },
+  {
+    "id": "19b0a6d5-bfae-4c29-a279-243836e86b3c",
+    "name": "HOTEL LX 諏訪 (レックス 諏訪)"
+  },
+  {
+    "id": "10894034-3aab-4597-a7eb-3ba648c5683f",
+    "name": "ホテル レモンティ"
+  },
+  {
+    "id": "eca85b7e-a198-468b-b00a-d4d73a45f933",
+    "name": "Queens Town Part３ (ホテルクイーンズタウン パート３) / 厚木市"
+  },
+  {
+    "id": "fdcc214a-e041-4587-a158-3c7cab0c5e7c",
+    "name": "ホテル クリスタルネロ"
+  },
+  {
+    "id": "370f5d95-572d-4992-a1aa-7ddf02a92f11",
+    "name": "ホテル パビリオン"
+  },
+  {
+    "id": "a64fa7f9-b78c-41e4-ba61-dfd9fa4c9628",
+    "name": "gull HOTEL (ガル ホテル)"
+  },
+  {
+    "id": "59462829-b709-4d45-9f62-076dd195dbf6",
+    "name": "HOTEL LUXE新栄店(ホテル リュクス新栄店)"
+  },
+  {
+    "id": "54739bb0-dcc5-46f1-a6a6-93979cea407e",
+    "name": "カーホテル みちのく"
+  },
+  {
+    "id": "62887920-df2c-4850-bbed-b4193dc15ff0",
+    "name": "HOTEL 瑞 MIZ (ホテル ミズ)"
+  },
+  {
+    "id": "b4ebcbe0-b1be-4e3c-9132-6b89eb5823e8",
+    "name": "ホテル る・テラスII"
+  },
+  {
+    "id": "734c11c0-8657-419e-add9-b209ed8ab74c",
+    "name": "ホテル ジュラシック"
+  },
+  {
+    "id": "e60b2375-ca1a-4b87-968f-afa0b0b1e8b3",
+    "name": "ホテル ムーンライト"
+  },
+  {
+    "id": "217fcf8a-5f2c-4e1d-98dc-66daa0c8282f",
+    "name": "HOTEL GEMⅡ"
+  },
+  {
+    "id": "4a8a3e71-2be3-4f6d-bc56-f1c5fa9a2cd2",
+    "name": "HOTEL RAMSES COTE (ホテル ラムセスコート) / 川崎市宮前区"
+  },
+  {
+    "id": "19d1f825-368c-4a3f-a4db-ac58ea29abad",
+    "name": "ホテル チャペルストーリー 堺"
+  },
+  {
+    "id": "19beb3e2-e2f2-4638-9c6f-367a9b630379",
+    "name": "HOTEL LUXE JAPANESQUE MODERN 一宮店 (ホテル リュクス ジャパネスク モダン 一宮店)"
+  },
+  {
+    "id": "d679f849-3586-4cf7-9def-146c985d124b",
+    "name": "ホテル ニューワールド"
+  },
+  {
+    "id": "9eea03fa-c978-4348-9482-f65c514ec673",
+    "name": "プリンセスプリンセス秋田大町 【AtoZ グループ】"
+  },
+  {
+    "id": "15acb4c8-305c-42a5-b5b3-52425f26a7c7",
+    "name": "La・北物語"
+  },
+  {
+    "id": "9d6fa4c7-464d-45b1-99e6-bf8cead9b1ec",
+    "name": "フォーシーズン秋田"
+  },
+  {
+    "id": "6a996d98-4344-4594-b8c8-2677a02877dc",
+    "name": "ホテル デジャヴー"
+  },
+  {
+    "id": "741b14b3-6988-4ad0-82fb-cf37c882d2bc",
+    "name": "ホテル デジャヴー アネックスヒルズ"
+  },
+  {
+    "id": "4c5968cd-5ff3-418b-b17c-98d9f3c98cb2",
+    "name": "ホテル プルミエあんじゅ"
+  },
+  {
+    "id": "db624bd6-d627-43ac-9239-0b723836c701",
+    "name": "M'S CACHE (エムズ カシェ)"
+  },
+  {
+    "id": "d75e88c6-319e-4ce3-9e7a-abee51c6ef02",
+    "name": "ホテル角館"
+  },
+  {
+    "id": "8fb8491a-f23a-4791-b955-1c85a23e64f0",
+    "name": "HOTEL SOLUNA（旧ラ・シュシュ）"
+  },
+  {
+    "id": "3e510ecb-4d3a-4fc8-aeea-336101362fd2",
+    "name": "ホテル メイプル"
+  },
+  {
+    "id": "64b767e0-71f2-4061-8819-58a1e8b9e777",
+    "name": "フォンタナと森のコテージ 未来予想図"
+  },
+  {
+    "id": "88b387f4-2840-48e9-8475-c18b9535c5c6",
+    "name": "ホテル 六甲 (ホテル ロッコウ)"
+  },
+  {
+    "id": "1a431f49-28d1-4812-9336-98959183ab84",
+    "name": "HOTEL MON-CHERI (ホテル モンシェリ)"
+  },
+  {
+    "id": "ed04ee73-07c7-4c21-a131-1458296f2f27",
+    "name": "ホテルバリアンリゾート横浜関内店 / 横浜市中区"
+  },
+  {
+    "id": "9e78e822-415b-4af4-a460-ab9017b1a87e",
+    "name": "ホテル ドルフィンイマージュ"
+  },
+  {
+    "id": "13010d8d-c075-4169-a0fc-9abdd919393b",
+    "name": "HOTEL YOUME TSUKASA (ホテル ユメ ツカサ)【ツカサグループ】"
+  },
+  {
+    "id": "ffc58b70-a9ed-435c-a17b-cd325fe81283",
+    "name": "ホテル ドルフィア"
+  },
+  {
+    "id": "57765a59-efed-47f6-b883-ce5e1abb9f58",
+    "name": "ホテル エルミタージュ 相模原 / 相模原市"
+  },
+  {
+    "id": "70338471-f172-4d29-91be-b8a15437eea6",
+    "name": "HOTEL acotte(ホテル アコッテ)"
+  },
+  {
+    "id": "48ef29fd-d115-4910-aa68-602d472253b3",
+    "name": "HOTEL SIGNAL (ホテル シグナル)"
+  },
+  {
+    "id": "76d45410-7c1a-413a-a87a-8d37d2de7ca3",
+    "name": "Riverside KOJO (リバーサイド コジョウ) / 相模原市"
+  },
+  {
+    "id": "d66b9604-88df-47de-b848-912b2dfd0314",
+    "name": "HAYAN 秋田 (ハヤン アキタ)"
+  },
+  {
+    "id": "d5c6c2ec-db74-46f4-ab6b-f063088bbf47",
+    "name": "ホテル ちょっと美郷"
+  },
+  {
+    "id": "6974c9d2-3c17-4532-a104-be59ba91c4e4",
+    "name": "ホテルちょっと"
+  },
+  {
+    "id": "9665cd20-fdf5-4196-8ef6-aea21c77a628",
+    "name": "ホテル ビビ / 相模原市"
+  },
+  {
+    "id": "c7407f48-e68b-4c4c-bfa3-ed64e48384ac",
+    "name": "Hotel Destiny (ホテル デスティニー)"
+  },
+  {
+    "id": "7e35fac5-0dae-43d7-9100-373ff14d73ff",
+    "name": "IKINA HOTEL (イキナ ホテル)"
+  },
+  {
+    "id": "753e0ba1-d937-4501-8d89-80a729a9dc90",
+    "name": "ホテル ジャルダン"
+  },
+  {
+    "id": "0ba64cf2-72fd-48a5-b947-7b76e7d54793",
+    "name": "キャロルはうす"
+  },
+  {
+    "id": "2c387785-5a02-4a33-8fb1-9e7c87c4a4f2",
+    "name": "ホテル ピアロード"
+  },
+  {
+    "id": "eb1f03ea-ce90-429f-b0a8-ea89f9448175",
+    "name": "ホテルリビエラ"
+  },
+  {
+    "id": "c6b99796-fe27-4782-8b4a-9fe5bb2f9068",
+    "name": "ホテルドルチェ"
+  },
+  {
+    "id": "fcbca3c7-fd3d-4211-b4a0-5cab59d61ffd",
+    "name": "ピンクのおもち"
+  },
+  {
+    "id": "5f49d7fc-808c-4d84-bf00-4a33136326b5",
+    "name": "HOTEL Hokuto (ホテル ホクト)"
+  },
+  {
+    "id": "82439a26-5163-4cf1-a457-b7dfc7d3eb2c",
+    "name": "ホテル ラブストーリー"
+  },
+  {
+    "id": "f4161bc4-e1c0-4b06-94bb-1bbe87e97daf",
+    "name": "ホテル 林檎帝"
+  },
+  {
+    "id": "5de77bd5-8f5b-4ec4-8ed2-af4090fcd7b7",
+    "name": "ホテルステラ"
+  },
+  {
+    "id": "c9854172-aba4-426a-b47a-03f762ffded3",
+    "name": "ホテル エリーゼ13"
+  },
+  {
+    "id": "a06c37c4-0fb0-4138-8b2f-7ebf9db9c0bf",
+    "name": "HOTEL555～Air～山形店 (ホテル スリーファイブエアー山形店)"
+  },
+  {
+    "id": "04b92c17-e95d-4ad1-949a-55faa020ce7f",
+    "name": "ホテル 十二月舎"
+  },
+  {
+    "id": "7bf7109b-f82c-4a19-ad75-b9a98091493a",
+    "name": "ホテル エリーゼマキシム・テラス"
+  },
+  {
+    "id": "b1565206-becf-4a16-80f0-6045abd89e25",
+    "name": "ホテル エリーゼティアラアルファ"
+  },
+  {
+    "id": "f8c404fa-fc7b-4832-9233-aa61363d5466",
+    "name": "ホテル夕陽"
+  },
+  {
+    "id": "b31beb49-4b02-478b-9bc1-3f19d30a8a94",
+    "name": "ホテル チャチャ山形店"
+  },
+  {
+    "id": "77cd2e26-d16c-4b66-9f45-449adaec1412",
+    "name": "ホテル ユーズ"
+  },
+  {
+    "id": "e1dd7f4e-de42-47f1-bd01-392b2dc9fcfb",
+    "name": "ホテル ティアラ"
+  },
+  {
+    "id": "813cb573-fb3f-46e1-a47c-33612cce9248",
+    "name": "ホテル クロス【SLPホテルズ】"
+  },
+  {
+    "id": "807b7743-65e9-482f-9e57-64370a72e4c7",
+    "name": "HOTEL M (ホテル エム)"
+  },
+  {
+    "id": "1a71f77e-0591-4883-9dce-fce76b5a6d4d",
+    "name": "SEAGULL HOTEL (シーガル ホテル)"
+  },
+  {
+    "id": "2a3a799d-ef38-494a-9747-8c562a1cb34a",
+    "name": "ホテル ドラゴンリゾートザ・ガーデン"
+  },
+  {
+    "id": "32c1cd0d-7645-46ac-a3c8-5c63b5b00201",
+    "name": "HOTEL La SaiSon (ホテル ラ・セゾン)"
+  },
+  {
+    "id": "4e928930-2b91-4bb5-828f-40fb4c50030a",
+    "name": "HOTEL BRUGE (ホテル ブルージェ)"
+  },
+  {
+    "id": "54d7fb31-a18a-4379-9b8c-6ec16a6b6f18",
+    "name": "ホテル フェスタ 伊勢崎"
+  },
+  {
+    "id": "e098ff07-c09c-4c4f-8f3d-9d9448922f5b",
+    "name": "ホテル キャンディー"
+  },
+  {
+    "id": "56f37c85-2a21-4bf4-8465-d1dd2d07b30e",
+    "name": "ホテル  KEIHAN（京阪）"
+  },
+  {
+    "id": "03a86eec-d699-482f-bf5b-1dc0dd7264fb",
+    "name": "ホテル  オークス"
+  },
+  {
+    "id": "03b6c093-f7b1-4e82-a437-27941c2480a2",
+    "name": "多治見ホテルロコガーデン"
+  },
+  {
+    "id": "f3f2e416-a7b4-4204-b91f-a0a6b876544d",
+    "name": "PRESENT HOTEL STYLISH（プレゼント ホテル スタイリッシュ）（旧サンエイト）"
+  },
+  {
+    "id": "7d0fffea-aac0-412d-9136-d18b92c584bd",
+    "name": "ホテル 24 (ホテル トゥウェンティフォー)"
+  },
+  {
+    "id": "f9722cfa-cf65-4553-b20f-ccd12e5a2d3e",
+    "name": "HOTEL ABnormal 泉大津店 (ホテル アブノーマル) 【Best Delight Group】"
+  },
+  {
+    "id": "730ac88d-e7a0-49c8-9c4b-96585d5b236d",
+    "name": "HOTEL ARTIA 泉大津店 (ホテル アルティア) 【Best Delight Group】"
+  },
+  {
+    "id": "71eb1683-8dd3-44e0-b801-07b9ff95a61b",
+    "name": "HOTEL FIVE plus(ホテル ファイブ プラス)"
+  },
+  {
+    "id": "e7bf3b0b-3ed1-4b52-8b4b-7778a3eb63d2",
+    "name": "HOTEL LOTUS Modern 堺店 (ホテル ロータス モダン) 【Best Delight Group】"
+  },
+  {
+    "id": "9b88aa70-4fc6-44ff-bfb4-4c0999c2362e",
+    "name": "HOTEL ROSAGE(ホテル ロサージュ)"
+  },
+  {
+    "id": "324e6bfd-3142-435f-9b55-3dbe7c7dccdc",
+    "name": "ホテル ポテト"
+  },
+  {
+    "id": "1a99d588-d129-4f70-86a1-7bd9b8e6f15f",
+    "name": "シーサイドヴィラ ヴィーナスコート"
+  },
+  {
+    "id": "19a0853d-5f4d-40c7-b41e-e5bbb231cc77",
+    "name": "HOTEL CUE PLUS 厚木 (ホテル キュープラス厚木) / 厚木市"
+  },
+  {
+    "id": "af6c886d-08d4-4b82-820a-1dddce29c5d1",
+    "name": "Queens Town PartⅠ (クイーンズタウン パート 1) / 厚木市"
+  },
+  {
+    "id": "05188a5a-17c7-4142-a125-3d6a1b72c3be",
+    "name": "ホテル くちなし城 桃源郷 厚木 / 厚木市"
+  },
+  {
+    "id": "6a8d1b5c-cf12-47aa-874c-2e6268fcc2e5",
+    "name": "HAYAN山形 (ハヤン山形)"
+  },
+  {
+    "id": "06d5f336-ed81-47f6-b73f-fb43101eff56",
+    "name": "ホテル騎士 (ホテルナイト)"
+  },
+  {
+    "id": "1ae169c2-b2c9-4b3b-b3d9-8534cc04922c",
+    "name": "Hotel Charbon (ホテルシャルボン)"
+  },
+  {
+    "id": "2cb40129-29b8-4156-ba63-8adcccd6972c",
+    "name": "ホテル 21世紀"
+  },
+  {
+    "id": "99e81b56-10c1-4491-9509-446f3f9e0199",
+    "name": "ホテル ナイアガラ"
+  },
+  {
+    "id": "0d2ac1fc-e7b3-4eef-a710-617af5c0f3df",
+    "name": "ホテルNOAH"
+  },
+  {
+    "id": "fc6f4de9-df3f-4358-8b06-535e01432465",
+    "name": "ホテルElk (エルク)"
+  },
+  {
+    "id": "9c85fffb-c8c1-48c2-a41d-1ff86974958a",
+    "name": "スカイ神町"
+  },
+  {
+    "id": "a3c2f75d-7985-4f8e-a35d-c6b9e83c8f21",
+    "name": "ホテル i (アイ)"
+  },
+  {
+    "id": "4892f51c-a205-45c4-a4f1-3eea05997a3a",
+    "name": "ホテル オーパ"
+  },
+  {
+    "id": "16f3c9db-f5e7-40ec-822b-e6b4836710fd",
+    "name": "ホテル シェ・プルミエ"
+  },
+  {
+    "id": "1ae3e237-d0cd-47d0-962e-2142fcd3622a",
+    "name": "ホテル レッドキャンディ"
+  },
+  {
+    "id": "e6e63f15-0099-48fb-ae6c-670a6f5d8b7e",
+    "name": "HOTEL Rosé (ホテル ロゼ)"
+  },
+  {
+    "id": "edd9f5de-d0b5-4a97-92e9-db98d281589b",
+    "name": "ホテルかじか荘"
+  },
+  {
+    "id": "2ceef527-4032-4317-bafe-f750ea79b3af",
+    "name": "CHA.CHA 443 鶴岡店 (チャチャ443 鶴岡店)"
+  },
+  {
+    "id": "5c88c012-0521-4da7-a76a-c63090a40809",
+    "name": "ホテルUFO"
+  },
+  {
+    "id": "975e2fbe-b07d-4abf-ab69-7d253bc3960d",
+    "name": "ホテル シンドバッド山形店"
+  },
+  {
+    "id": "1af08863-94d8-4803-8814-c0231be2ede7",
+    "name": "うわの宿"
+  },
+  {
+    "id": "b6956dd7-0cef-45dd-997b-b76c4ae660ec",
+    "name": "ホテル マーガレット"
+  },
+  {
+    "id": "a2bb88e0-6026-4c03-98be-44d4da46e6fb",
+    "name": "ホテル ラ・シオン"
+  },
+  {
+    "id": "f1ad1af7-a469-4c27-a405-9c1a57140f26",
+    "name": "ボニータ 山形空港店"
+  },
+  {
+    "id": "2ade96c0-7b4d-4984-855c-1ab621485fc1",
+    "name": "HOTEL７CARAT (セブンキャラット)"
+  },
+  {
+    "id": "9513e42d-0772-40f5-a92c-e69ed7769db7",
+    "name": "ホテル マイルーム"
+  },
+  {
+    "id": "4e41a37f-7599-482c-b859-72500225c687",
+    "name": "ふたりの夢を叶えましょう。"
+  },
+  {
+    "id": "d8029ad7-6917-4a6b-800d-894d07cfdcac",
+    "name": "ホテル スターライト"
+  },
+  {
+    "id": "df622f2b-de3f-46fd-8d2b-4171b63e7c62",
+    "name": "ホテル 72館"
+  },
+  {
+    "id": "681cfd1f-3d0b-4314-9f47-e24a941410f9",
+    "name": "HOTEL CHA.CHA Y2 (ホテル チャチャワイツー)"
+  },
+  {
+    "id": "6dae7c4c-3ed1-4f15-8b52-eb70316673d5",
+    "name": "HOTEL JP (ホテル ジェイピー)"
+  },
+  {
+    "id": "cdee92aa-7d5d-4aec-ad5b-057a0fbcfaf2",
+    "name": "ホテル ジル 酒田"
+  },
+  {
+    "id": "dcc9a0b4-1e65-40f7-a204-b8230a3d6673",
+    "name": "ホテル キララ"
+  },
+  {
+    "id": "1bd82f12-5c5e-402d-805b-6fbc3384ae75",
+    "name": "エリーゼ内野店"
+  },
+  {
+    "id": "cba9b830-b0f8-48e8-85e9-d2c54f091aa5",
+    "name": "LUSSO CROCE ASIAN RESORT (ルッソ クローチェ アジアンリゾート) / 横浜市南区"
+  },
+  {
+    "id": "951ecbcd-133b-4011-86e7-952f432cf57a",
+    "name": "KAZAN（ホテル カザン）"
+  },
+  {
+    "id": "46b3f26b-854e-42bb-8112-853c3a24b9e0",
+    "name": "レステイ 郡山"
+  },
+  {
+    "id": "6f0a9681-37cd-4021-bc6c-664f4771d14c",
+    "name": "ホテル バイパス"
+  },
+  {
+    "id": "b0ab91d9-2eb9-4089-86f9-bcf56a6e1fb3",
+    "name": "ホテル エムズ (Ｍ’s)"
+  },
+  {
+    "id": "cc5e9118-f46a-4295-a082-361d26430f85",
+    "name": "ホテル フェアリーズ"
+  },
+  {
+    "id": "e597303b-9630-4bc9-84fe-d1b5ce9252bb",
+    "name": "HOTEL Dior7 郡山 (ホテル ディオールセブン コオリヤマ)"
+  },
+  {
+    "id": "a760a17b-50d3-482b-a9f9-7f7ce5c5deb8",
+    "name": "ホテル フェアリーイレブン"
+  },
+  {
+    "id": "6667e05c-7c5f-4c8f-a750-7b4f65f96a1a",
+    "name": "ホテル・ドキュー"
+  },
+  {
+    "id": "eef2ea83-060d-46f0-9e5f-518403d7b059",
+    "name": "ホテル マラケシュ"
+  },
+  {
+    "id": "b877e375-6926-4936-a22f-9bc838f2eec3",
+    "name": "ホテル キャッスル"
+  },
+  {
+    "id": "449f5b60-1547-4bbe-b624-35def14d62fd",
+    "name": "ホテル ごっこ / 横須賀市"
+  },
+  {
+    "id": "1bdfa411-c2e0-46b9-becf-2dc0ba0923a4",
+    "name": "ホテル紡"
+  },
+  {
+    "id": "1c3a6fe9-7f51-4f67-a8b2-aa265291e3e7",
+    "name": "aqua vitae (アクアヴィータ) 【HOTELIA GROUP】"
+  }
+]

@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Script from 'next/script';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 /* ─── 静的データ ─────────────────────────────────── */
 
@@ -110,6 +110,21 @@ export default function HubPageClient({
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'news' | 'tweet' | 'video'>('news');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  // Twitterウィジェットの再初期化
+  useEffect(() => {
+    if (activeTab === 'tweet') {
+      try {
+        // @ts-ignore
+        if (window.twttr && window.twttr.widgets) {
+          // @ts-ignore
+          window.twttr.widgets.load();
+        }
+      } catch (e) {
+        console.error('Twitter widget load error:', e);
+      }
+    }
+  }, [activeTab]);
 
   const filteredCasts = casts.filter(
     (c) =>
@@ -690,7 +705,6 @@ export default function HubPageClient({
                   >
                     Tweets about #ストロベリーボーイズ
                   </a>
-                  <Script src="https://platform.twitter.com/widgets.js" strategy="lazyOnload" />
                 </div>
               </motion.div>
             )}
@@ -736,6 +750,7 @@ export default function HubPageClient({
               </motion.div>
             )}
           </AnimatePresence>
+          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
         </div>
       </section>
 

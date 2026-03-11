@@ -4,17 +4,38 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | イケオラボ - いけてる男になるためのメディア',
-    default: 'イケオラボ | いけてる男になるためのメディア',
+    template: '%s | イケオラボ by ストロベリーボーイズ',
+    default:
+      '「イケてる男」になるための自己研鑽とモテるノウハウ｜イケオラボ by ストロベリーボーイズ',
   },
   description:
-    '洗練された外見、心をつかむ会話、そして圧倒的な自信。イケオラボは、現代の男性が「選ばれる男」になるための知識とキャリアを提案する総合メディアです。',
+    '女性用風俗店がプロの目線で「女性を本当に喜ばせる方法」や垢抜け術を解説。自分磨きから会話術、女性を喜ばせるラブグッズの活用法まで、自信をつけて「選ばれる男」になるための情報と、その魅力を活かせる求人情報をお届けします。',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'イケオラボ',
+  url: 'https://www.sutoroberrys.jp/ikeo',
+  description: '「イケてる男」になるための自己研鑽とモテるノウハウメディア',
+  publisher: {
+    '@type': 'Organization',
+    name: 'ストロベリーボーイズ',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://www.sutoroberrys.jp/logo.png', // 仮のロゴURL
+    },
+  },
 };
 
 // 男性向け自己研鑽メディア専用レイアウト（洗練されたダーク＆クリーン）
 export default function CareerMediaLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#fcfdff] font-sans text-slate-800 selection:bg-blue-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* メディア専用ヘッダー */}
       <header className="sticky top-0 z-40 border-b border-slate-100 bg-white/95 shadow-sm backdrop-blur-sm">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">

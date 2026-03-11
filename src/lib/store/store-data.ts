@@ -430,9 +430,10 @@ const storeData: Record<string, Store> = {
       email: 'fukuoka@www.sutoroberrys.jp',
     },
     seo: {
-      title: '【福岡店】博多の夜に咲く一輪の花｜ストロベリーボーイズ',
-      description: '福岡で極上の癒し体験を。厳選されたキャストがあなたをお待ちしています。',
-      keywords: 'イケメン派遣,福岡,博多,中洲,癒し,女性向け,マッチング',
+      title: '【公式】ストロベリーボーイズ福岡｜安心と信頼の女性用風俗・出張ホスト',
+      description:
+        'プロの目線で女性に寄り添う、安心・安全な女性のための出張ホスト（女性用風俗）「ストロベリーボーイズ福岡」。メディア運営も行う確かな技術と信頼で、日常を忘れる極上のリラクゼーション体験をご提供いたします。',
+      keywords: '福岡,女性用風俗,女風,博多,天神,出張ホスト,安心,初心者',
       ogImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
     },
     casts: [],
@@ -482,9 +483,10 @@ const storeData: Record<string, Store> = {
       email: 'yokohama@www.sutoroberrys.jp',
     },
     seo: {
-      title: '【横浜店】港町横浜で叶える大人の恋｜ストロベリーボーイズ',
-      description: '横浜で大人のための上質な癒しを。洗練されたキャストがあなたをお待ちしています。',
-      keywords: 'イケメン派遣,横浜,みなとみらい,関内,癒し,女性向け,マッチング',
+      title: '【公式】ストロベリーボーイズ横浜｜安心と信頼の女性用風俗・出張ホスト',
+      description:
+        'プロの目線で女性に寄り添う、安心・安全な女性のための出張ホスト（女性用風俗）「ストロベリーボーイズ横浜」。メディア運営も行う確かな技術と信頼で、日常を忘れる極上のリラクゼーション体験をご提供いたします。',
+      keywords: '横浜,女性用風俗,女風,みなとみらい,関内,出張ホスト,安心,初心者',
       ogImage: 'https://images.pexels.com/photos/1758144/pexels-photo-1758144.jpeg',
     },
     casts: [],

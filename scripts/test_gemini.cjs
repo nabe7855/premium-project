@@ -1,19 +1,18 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-require('dotenv').config();
+
+// Alt key from .env
+const API_KEY = 'AIzaSyD1WKfwCbvtztk6EgUhVHUnMbjCKCVzGXE';
+const genAI = new GoogleGenerativeAI(API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
 async function test() {
-  const apiKey = process.env.GEMINI_API_KEY;
-  if (!apiKey) {
-    console.log('No API key');
-    return;
-  }
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
   try {
-    const result = await model.generateContent('Hello');
-    console.log('Success:', result.response.text());
-  } catch (error) {
-    console.error('FULL ERROR:', error);
+    const result = await model.generateContent("Say 'Ready' if you can read this.");
+    console.log('RESPONSE:', result.response.text());
+  } catch (err) {
+    console.error('FULL ERROR:', JSON.stringify(err, null, 2));
+    console.error('MESSAGE:', err.message);
   }
 }
+
 test();

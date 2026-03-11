@@ -1,5 +1,6 @@
 'use server';
 
+import { sendRecruitNotification } from '@/lib/mail';
 import { prisma } from '@/lib/prisma';
 import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
@@ -81,6 +82,14 @@ export async function submitRecruitApplication(formData: FormData) {
         },
       });
       uploadedPhotos.push(photo);
+    }
+
+    // 3. メール通知の送信
+    try {
+      await sendRecruitNotification(application, uploadedPhotos);
+    } catch (emailError) {
+      // メール送信に失敗しても応募自体は成功とする（ログ出力のみ）
+      console.error('Notification email failed:', emailError);
     }
 
     revalidatePath('/admin/admin/interview-reservations');

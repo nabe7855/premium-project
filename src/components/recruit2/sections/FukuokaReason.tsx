@@ -19,11 +19,11 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
   isEditing = false,
   onUpdate,
   backgroundImage,
-  heading = 'なぜ、いま福岡なのか。',
-  description1 = '数ある都市の中で、私たちが福岡を選んだのは、この街に「自分を変えたい」と強く願う熱量を感じたからです。',
+  heading = 'あなたと福岡で\n挑戦したい理由',
+  description1 = '博多エリアは、女性用風俗市場が急成長している街。「自分を変えたい」「本気で高収入を目指したい」そう願う男性が集まる場所だから、私たちは福岡を選びました。\n東京で培った育成ノウハウと、博多の勢いを掛け合わせ、未経験からでも成功できる環境を整えています。あなたの挑戦を、私たちは全力で支えます。',
   description2 = '私たちは、あなたのための場所を創るためにここに来ました。',
   description3 = '東京で磨き上げたクオリティと、福岡の情熱を掛け合わせ、新しい時代の働き方を定義します。',
-  italicText = '"あなたの挑戦を、私たちは全力で肯定します。"',
+  italicText = 'あなたの挑戦を\n私たちは本気で応援します！',
 }) => {
   const [localPreview, setLocalPreview] = React.useState<string | null>(null);
 
@@ -91,12 +91,12 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleInput('heading', e)}
-              className="mb-10 cursor-text rounded font-serif text-3xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 md:text-5xl"
+              className="mb-10 cursor-text text-balance rounded font-serif text-3xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 md:text-5xl"
             >
               {heading}
             </h3>
           ) : (
-            <h3 className="mb-10 font-serif text-3xl font-bold leading-tight drop-shadow-lg md:text-5xl">
+            <h3 className="mb-10 whitespace-pre-line text-balance font-serif text-3xl font-bold leading-tight drop-shadow-lg md:text-5xl">
               {heading}
             </h3>
           )}
@@ -134,20 +134,20 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => handleInput('italicText', e)}
-                  className="cursor-text rounded pt-4 font-serif text-2xl font-bold italic text-amber-500 outline-none drop-shadow-md hover:bg-white/10"
+                  className="cursor-text whitespace-pre-line rounded pt-4 font-serif text-2xl font-bold italic text-amber-500 outline-none drop-shadow-md hover:bg-white/10"
                 >
                   {italicText}
                 </p>
               </>
             ) : (
               <>
-                <p>{description1}</p>
-                <p>
+                <p className="whitespace-pre-line">{description1}</p>
+                <p className="whitespace-pre-line">
                   {description2}
-                  <br />
+                  {description2 && description3 && <br />}
                   {description3}
                 </p>
-                <p className="pt-4 font-serif text-2xl font-bold italic text-amber-500 drop-shadow-md">
+                <p className="whitespace-pre-line pt-4 font-serif text-2xl font-bold italic text-amber-500 drop-shadow-md">
                   {italicText}
                 </p>
               </>

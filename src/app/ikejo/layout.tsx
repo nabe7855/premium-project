@@ -4,17 +4,37 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | イケジョラボ - いけてる女になるためのメディア',
-    default: 'イケジョラボ | いけてる女になるためのメディア',
+    template: '%s | イケジョラボ by ストロベリーボーイズ',
+    default: '女性のための性のお悩み解決とリアルな体験談｜イケジョラボ by ストロベリーボーイズ',
   },
   description:
-    '女性のデリケートな悩み、セルフケア、そして日常から少し離れた特別なリラクゼーション体験に関する情報を発信しています。',
+    '女性用風俗店がプロの目線で女性の性の悩みやリアルな体験談を解説。セルフケアからラブグッズの活用法、パートナーとの関係構築まで、女性の性生活をより豊かで安心できるものにするための情報をお届けします。',
+};
+
+const structuredData = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'イケジョラボ',
+  url: 'https://www.sutoroberrys.jp/ikejo',
+  description: '女性のための性のお悩み解決とリアルな体験談メディア',
+  publisher: {
+    '@type': 'Organization',
+    name: 'ストロベリーボーイズ',
+    logo: {
+      '@type': 'ImageObject',
+      url: 'https://www.sutoroberrys.jp/logo.png', // 仮のロゴURL
+    },
+  },
 };
 
 // 女性向けメディア専用レイアウト（白と淡いピンク・ベージュ基調）
 export default function MagazineLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-[#FFFDFD] font-sans text-gray-800 selection:bg-pink-100">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* 女性向けクリーンヘッダー */}
       <header className="sticky top-0 z-40 border-b border-pink-50 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
