@@ -538,8 +538,16 @@ const LandingPage: React.FC<LandingPageProps> = ({
               href="https://lin.ee/pTajctJ"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center rounded-2xl border-2 border-amber-400/40 bg-slate-900/50 px-10 py-5 text-lg font-bold text-amber-300 backdrop-blur-sm transition-all hover:border-amber-400/60 hover:bg-slate-900/70 active:scale-95 sm:w-auto"
+              className="flex items-center justify-center gap-3 rounded-full bg-[#06C755] px-10 py-5 text-lg font-bold text-white shadow-lg shadow-green-900/20 transition-all hover:bg-[#05b34c] active:scale-95 sm:w-auto"
             >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-6 w-6"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path d="M12 2C6.48 2 2 6.48 2 12C2 13.59 2.39 15.09 3.07 16.42L2 22L7.58 20.93C8.91 21.61 10.41 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" />
+              </svg>
               LINEで直接質問してみる
             </a>
           </div>
