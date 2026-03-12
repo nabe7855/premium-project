@@ -59,6 +59,8 @@ export interface Store {
   lineId?: string;
   contactEmail?: string;
   notificationEmail?: string;
+  externalUrl?: string;
+  useExternalUrl?: boolean;
   isActive: boolean;
 }
 
