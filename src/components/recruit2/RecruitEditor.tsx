@@ -9,6 +9,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
 import { stores } from '@/data/stores';
 import { uploadRecruitImage } from '@/lib/uploadRecruitImage';
 import React from 'react';
@@ -247,6 +248,21 @@ export default function RecruitEditor() {
               ))}
             </SelectContent>
           </Select>
+
+          <div className="flex items-center gap-2 border-l pl-4">
+            <Label
+              htmlFor="header-visible"
+              className="shrink-0 text-[10px] font-bold text-gray-400"
+            >
+              共通ヘッダー表示
+            </Label>
+            <Switch
+              id="header-visible"
+              checked={config.header?.isVisible !== false}
+              onCheckedChange={(checked) => handleUpdate('header', 'isVisible', checked)}
+              className="scale-75 data-[state=checked]:bg-emerald-500"
+            />
+          </div>
         </div>
         <div className="flex items-center gap-4">
           <div className="text-sm text-gray-500">※ 画像をクリックして変更できます</div>
@@ -280,7 +296,7 @@ export default function RecruitEditor() {
           <LandingPage
             config={config}
             isEditing={true}
-            onUpdate={(section, key, value) => {
+            onUpdate={(section: string, key: string, value: any) => {
               console.log(
                 `📝 RecruitEditor update: [${section}] ${key}`,
                 value instanceof File ? 'File' : value,
