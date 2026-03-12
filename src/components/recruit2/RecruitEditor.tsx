@@ -217,6 +217,23 @@ export default function RecruitEditor() {
               placeholder="例: 福岡店"
             />
           </div>
+          <div className="flex items-center gap-2 border-r pr-4">
+            <Label
+              htmlFor="notification-emails"
+              className="shrink-0 text-xs font-bold text-gray-500"
+            >
+              通知先メール (カンマ区切り)
+            </Label>
+            <Input
+              id="notification-emails"
+              value={config.general?.notificationEmails || ''}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                handleUpdate('general', 'notificationEmails', e.target.value);
+              }}
+              className="h-8 w-[200px] bg-white text-sm"
+              placeholder="example1@gmail.com, ..."
+            />
+          </div>
           <Select value={selectedStore} onValueChange={setSelectedStore}>
             <SelectTrigger className="w-[250px] bg-white text-gray-900">
               <SelectValue placeholder="店舗を選択" />

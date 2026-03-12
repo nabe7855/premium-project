@@ -21,6 +21,7 @@ export interface LandingPageConfig {
     groupName?: string;
     storeName?: string;
     pageTitleSuffix?: string;
+    notificationEmails?: string;
   };
   hero?: {
     mainHeading?: string;

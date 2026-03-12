@@ -776,7 +776,6 @@ export default function StoreManagement() {
                                   businessHours: e.target.value,
                                 })
                               }
-                              placeholder="12:00〜翌3:00"
                               className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
                             />
                           </div>
@@ -789,9 +788,12 @@ export default function StoreManagement() {
                         <Mail size={16} className="text-yellow-400" />
                         <h3 className="text-sm font-bold text-white">通知用メールアドレス</h3>
                       </div>
-                      <div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                          通知用メールアドレス (複数はカンマ区切り)
+                        </label>
                         <input
-                          type="email"
+                          type="text"
                           value={editingStore.notificationEmail ?? ''}
                           onChange={(e) =>
                             setEditingStore({
@@ -799,9 +801,12 @@ export default function StoreManagement() {
                               notificationEmail: e.target.value,
                             })
                           }
-                          placeholder="shop@example.com"
+                          placeholder="shop1@example.com, shop2@example.com"
                           className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
                         />
+                        <p className="text-[10px] text-gray-500">
+                          応募や面接予約があった際、ここに指定した全てのメールに通知が飛びます。
+                        </p>
                       </div>
                     </div>
 
