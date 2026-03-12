@@ -271,7 +271,12 @@ export default function HubPageClient({
               {[...stores, ...stores].map((store, i) => (
                 <Link
                   key={i}
-                  href={`/store/${store.slug}`}
+                  href={
+                    store.use_external_url && store.external_url
+                      ? store.external_url
+                      : `/store/${store.slug}`
+                  }
+                  target={store.use_external_url && store.external_url ? '_blank' : undefined}
                   className="group mx-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-rose-500"
                 >
                   <MapPin className="h-3 w-3 text-rose-500" />
@@ -403,7 +408,14 @@ export default function HubPageClient({
                 transition={{ delay: i * 0.1 }}
                 className="group relative w-[70vw] shrink-0 snap-center overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-2 transition-all duration-500 hover:border-rose-200 hover:shadow-2xl hover:shadow-rose-500/10 md:w-auto md:shrink"
               >
-                <Link href={`/store/${store.slug}`}>
+                <Link
+                  href={
+                    store.use_external_url && store.external_url
+                      ? store.external_url
+                      : `/store/${store.slug}`
+                  }
+                  target={store.use_external_url && store.external_url ? '_blank' : undefined}
+                >
                   <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem]">
                     <img
                       src={

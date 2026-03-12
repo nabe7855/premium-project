@@ -7,7 +7,9 @@ import HubPageClient from './HubPageClient';
 async function getStores() {
   const { data, error } = await supabase
     .from('stores')
-    .select('id, name, slug, image_url, catch_copy, description, address, is_active')
+    .select(
+      'id, name, slug, image_url, catch_copy, description, address, is_active, use_external_url, external_url',
+    )
     .eq('is_active', true)
     .limit(10);
   if (error) return [];

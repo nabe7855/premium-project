@@ -49,7 +49,7 @@ export default function CommonStorePage({
   const safeConfig = topConfig ?? DEFAULT_STORE_TOP_CONFIG;
 
   return (
-    <div className={`min-h-screen ${store.theme.bodyClass}`}>
+    <div className={`min-h-screen ${store.theme?.bodyClass || ''}`}>
       {(safeConfig.header.isVisible || isEditing) && (
         <Header
           config={safeConfig.header}
