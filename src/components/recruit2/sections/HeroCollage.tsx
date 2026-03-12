@@ -12,6 +12,7 @@ interface HeroCollageProps {
   onUpdate?: (key: string, value: any) => void;
   heroImage?: string;
   stats?: { label: string; val: string }[];
+  hasHeader?: boolean;
 }
 
 const HeroCollage: React.FC<HeroCollageProps> = ({
@@ -22,6 +23,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   onUpdate,
   heroImage,
   stats,
+  hasHeader = true,
 }) => {
   const [localPreview, setLocalPreview] = React.useState<string | null>(null);
 
@@ -71,7 +73,9 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   };
 
   return (
-    <section className="flex w-full flex-col bg-slate-950 pt-16 font-sans">
+    <section
+      className={`flex w-full flex-col bg-slate-950 font-sans ${hasHeader ? 'pt-16' : 'pt-0'}`}
+    >
       {/* 
         1. Image Section: 
            Cinematic Zoom-out Entrance

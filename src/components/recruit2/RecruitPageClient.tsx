@@ -89,6 +89,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     flow: { ...localizedStock.flow, ...config?.flow },
     faq: { ...localizedStock.faq, ...config?.faq },
     income: { ...localizedStock.income, ...config?.income },
+    header: { ...localizedStock.header, ...config?.header },
     footer: { ...localizedStock.footer, ...config?.footer },
   };
 
@@ -96,12 +97,14 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     <div
       className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen || isDiagnosticOpen ? 'overflow-hidden' : ''}`}
     >
-      <Header
-        onOpenForm={openForm}
-        groupName={fullMergedConfig.general?.groupName}
-        storeName={fullMergedConfig.general?.storeName}
-        pageTitleSuffix={fullMergedConfig.general?.pageTitleSuffix}
-      />
+      {fullMergedConfig.header?.isVisible !== false && (
+        <Header
+          onOpenForm={openForm}
+          groupName={fullMergedConfig.general?.groupName}
+          storeName={fullMergedConfig.general?.storeName}
+          pageTitleSuffix={fullMergedConfig.general?.pageTitleSuffix}
+        />
+      )}
       <main className="flex-grow">
         <Routes>
           <Route

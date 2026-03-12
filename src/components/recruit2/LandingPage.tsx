@@ -23,6 +23,9 @@ export interface LandingPageConfig {
     pageTitleSuffix?: string;
     notificationEmails?: string;
   };
+  header?: {
+    isVisible?: boolean;
+  };
   hero?: {
     mainHeading?: string;
     subHeading?: string;
@@ -218,8 +221,31 @@ const LandingPage: React.FC<LandingPageProps> = ({
 
   return (
     <div className="overflow-hidden bg-slate-50">
-      {/* Visual Header Preview during Editing */}
+      {/* Global Header Settings (only when editing) */}
       {isEditing && (
+        <div className="fixed left-4 top-20 z-[60] flex flex-col gap-2 rounded-xl bg-slate-900/80 p-3 shadow-2xl backdrop-blur-md transition-all sm:left-auto sm:right-4 sm:top-24">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+            Global Header
+          </p>
+          <button
+            onClick={() => onUpdate?.('header', 'isVisible', config?.header?.isVisible === false)}
+            className={`flex items-center gap-2 rounded px-3 py-1.5 text-xs font-semibold text-white transition-all ${
+              config?.header?.isVisible === false
+                ? 'bg-rose-500 shadow-lg shadow-rose-900/20 hover:bg-rose-600'
+                : 'bg-emerald-500 shadow-lg shadow-emerald-900/20 hover:bg-emerald-600'
+            }`}
+          >
+            <span>
+              {config?.header?.isVisible === false
+                ? 'ヘッダーを表示する'
+                : 'ヘッダーを非表示にする'}
+            </span>
+          </button>
+        </div>
+      )}
+
+      {/* Visual Header Preview during Editing */}
+      {isEditing && config?.header?.isVisible !== false && (
         <div className="pointer-events-none relative h-16 opacity-80">
           <Header
             onOpenForm={() => {}}
@@ -259,6 +285,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             stats={config.hero?.stats}
             isEditing={isEditing}
             onUpdate={(key: string, value: any) => onUpdate?.('hero', key, value)}
+            hasHeader={config.header?.isVisible !== false}
           />
         </div>
       )}

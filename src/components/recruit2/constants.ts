@@ -5,6 +5,9 @@ export const STOCK_RECRUIT_CONFIG = {
     pageTitleSuffix: 'キャスト採用ページ',
     notificationEmails: '',
   },
+  header: {
+    isVisible: true,
+  },
   hero: {
     mainHeading: 'ただ「稼ぐ場所」ではなく\n“価値ある男”としてゼロから稼げる場所。',
     subHeading:
