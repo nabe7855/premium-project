@@ -2,6 +2,7 @@
 
 import { PageData } from '@/components/admin/news/types';
 import CommonHeader from '@/components/sections/layout/Header';
+import NewsCTA from '@/components/templates/news/NewsCTA';
 import NewsNavigation from '@/components/templates/news/NewsNavigation';
 import NewsPageRenderer from '@/components/templates/news/NewsPageRenderer';
 import SNSProfile from '@/components/templates/news/SNSProfile';
@@ -89,6 +90,7 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
           storeSlug={storeSlug}
         />
         <SNSProfile config={config.snsProfile} />
+        <NewsCTA storeSlug={storeSlug} />
       </main>
 
       {renderFooter()}
