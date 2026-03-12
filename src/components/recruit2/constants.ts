@@ -431,8 +431,8 @@ export const STOCK_RECRUIT_CONFIG = {
       '私たちは、福岡で「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
     linksHeading: 'Links',
     links: [
-      { label: '私たちの実績', url: '#trust' },
-      { label: '安心のサポート', url: '#benefits' },
+      { label: '私たちの実績', url: '#achievements' },
+      { label: '他社との比較', url: '#comparison' },
       { label: '報酬シミュレーション', url: '#income' },
       { label: 'よくあるご質問', url: '#faq' },
     ],
