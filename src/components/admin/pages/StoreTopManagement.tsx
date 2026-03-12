@@ -412,6 +412,54 @@ export default function StoreTopManagement() {
           右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
         </p>
       </div>
+
+      <div className="space-y-4 border-t border-gray-700/50 pt-6">
+        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+          <Layout className="h-3 w-3" />
+          おすすめ記事の設定
+        </h2>
+        <div className="space-y-4">
+          <p className="text-[10px] text-gray-400">
+            ニュース詳細ページの下部に表示される「ピックアップ」記事を選択します。
+          </p>
+          <div className="no-scrollbar max-h-60 space-y-2 overflow-y-auto pr-2">
+            {newsPages.map((page) => {
+              const isSelected = (config.recommendedNewsIds || []).includes(page.id);
+              return (
+                <button
+                  key={page.id}
+                  onClick={() => {
+                    const currentIds = config.recommendedNewsIds || [];
+                    const nextIds = isSelected
+                      ? currentIds.filter((id) => id !== page.id)
+                      : [...currentIds, page.id];
+                    setConfig((prev) => ({ ...prev, recommendedNewsIds: nextIds }));
+                  }}
+                  className={`w-full rounded-lg border p-3 text-left transition-all ${
+                    isSelected
+                      ? 'border-rose-500 bg-rose-500/10'
+                      : 'border-gray-700/30 bg-brand-primary/30 hover:bg-brand-primary/50'
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-2 w-2 rounded-full ${isSelected ? 'bg-rose-500' : 'bg-gray-600'}`}
+                    />
+                    <span className="flex-1 truncate text-xs font-medium text-gray-200">
+                      {page.title}
+                    </span>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          {(config.recommendedNewsIds || []).length > 0 && (
+            <p className="text-[10px] font-bold text-rose-500">
+              {(config.recommendedNewsIds || []).length}件 選択中
+            </p>
+          )}
+        </div>
+      </div>
     </div>
   );
 

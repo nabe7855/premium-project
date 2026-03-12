@@ -1,5 +1,4 @@
-import { PageData } from '@/components/admin/news/types';
-import { prisma } from '@/lib/prisma';
+import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -13,43 +12,16 @@ interface NewsDetailPageProps {
   };
 }
 
-async function getNewsPage(newsSlug: string, storeSlug: string) {
-  const record = await prisma.pageRequest.findUnique({
-    where: { slug: newsSlug },
-  });
-
-  if (!record || record.status !== 'published') {
-    return null;
-  }
-
-  // 対象店舗に含まれているか確認
-  const targetStoreSlugs = record.targetStoreSlugs as string[];
-  if (!targetStoreSlugs.includes(storeSlug)) {
-    return null;
-  }
-
-  const page: PageData = {
-    id: record.id,
-    slug: record.slug,
-    title: record.title,
-    status: record.status as 'published' | 'private',
-    updatedAt: record.updatedAt.getTime(),
-    sections: JSON.parse(JSON.stringify(record.sections || [])),
-    thumbnailUrl: record.thumbnailUrl || undefined,
-    targetStoreSlugs: targetStoreSlugs,
-  };
-
-  return page;
-}
-
 export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { slug, newsSlug } = params;
 
-  const [page, storeData, topConfigResult] = await Promise.all([
-    getNewsPage(newsSlug, slug),
+  const [allPages, storeData, topConfigResult] = await Promise.all([
+    getPublishedPagesByStore(slug),
     getStoreData(slug),
     getStoreTopConfig(slug),
   ]);
+
+  const page = allPages.find((p) => p.slug === newsSlug);
 
   if (!page || !storeData) {
     notFound();
@@ -61,5 +33,29 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
 
   const template = storeData.template || 'common';
 
-  return <NewsDetailClient page={page} storeSlug={slug} template={template} config={config} />;
+  // Navigation Logic
+  const currentIndex = allPages.findIndex((p) => p.id === page.id);
+  const prevPage = currentIndex < allPages.length - 1 ? allPages[currentIndex + 1] : undefined;
+  const nextPage = currentIndex > 0 ? allPages[currentIndex - 1] : undefined;
+
+  // Recommended News
+  const recommendedIds = config.recommendedNewsIds || [];
+  const recommendedPages = allPages.filter((p) => recommendedIds.includes(p.id));
+
+  // Related News (exclude current and recommended)
+  const excludeIds = [page.id, ...recommendedPages.map((p) => p.id)];
+  const relatedPages = allPages.filter((p) => !excludeIds.includes(p.id)).slice(0, 5);
+
+  return (
+    <NewsDetailClient
+      page={page}
+      storeSlug={slug}
+      template={template}
+      config={config}
+      prevPage={prevPage}
+      nextPage={nextPage}
+      relatedPages={relatedPages}
+      recommendedPages={recommendedPages}
+    />
+  );
 }

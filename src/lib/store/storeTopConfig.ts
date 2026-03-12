@@ -244,6 +244,7 @@ export interface StoreTopPageConfig {
   beginnerGuide: BeginnerGuideConfig;
   footer: FooterConfig;
   snsProfile?: SNSProfileConfig;
+  recommendedNewsIds?: string[];
   notificationEmail?: string;
   lineId?: string;
 }
@@ -816,4 +817,5 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     link: '/store/{slug}/first-time',
     isVisible: true,
   },
+  recommendedNewsIds: [],
 };

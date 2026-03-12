@@ -2,6 +2,7 @@
 
 import { PageData } from '@/components/admin/news/types';
 import CommonHeader from '@/components/sections/layout/Header';
+import NewsNavigation from '@/components/templates/news/NewsNavigation';
 import NewsPageRenderer from '@/components/templates/news/NewsPageRenderer';
 import SNSProfile from '@/components/templates/news/SNSProfile';
 import {
@@ -21,6 +22,10 @@ interface NewsDetailClientProps {
   storeSlug: string;
   template: string;
   config: StoreTopPageConfig;
+  prevPage?: PageData;
+  nextPage?: PageData;
+  relatedPages: PageData[];
+  recommendedPages: PageData[];
 }
 
 const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
@@ -28,6 +33,10 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
   storeSlug,
   template,
   config,
+  prevPage,
+  nextPage,
+  relatedPages,
+  recommendedPages,
 }) => {
   const renderHeader = () => {
     switch (template) {
@@ -71,6 +80,14 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
 
       <main className="min-h-screen">
         <NewsPageRenderer page={page} />
+        <NewsNavigation
+          currentPage={page}
+          prevPage={prevPage}
+          nextPage={nextPage}
+          relatedPages={relatedPages}
+          recommendedPages={recommendedPages}
+          storeSlug={storeSlug}
+        />
         <SNSProfile config={config.snsProfile} />
       </main>
 
