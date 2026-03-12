@@ -128,7 +128,20 @@ const Footer: React.FC<FooterProps> = ({
                       />
                     </>
                   ) : (
-                    <a href={link.url} className="transition-colors hover:text-amber-500">
+                    <a
+                      href={link.url}
+                      onClick={(e) => {
+                        if (link.url.startsWith('#')) {
+                          e.preventDefault();
+                          const id = link.url.substring(1);
+                          const element = document.getElementById(id);
+                          if (element) {
+                            element.scrollIntoView({ behavior: 'smooth' });
+                          }
+                        }
+                      }}
+                      className="transition-colors hover:text-amber-500"
+                    >
                       {link.label}
                     </a>
                   )}

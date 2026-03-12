@@ -434,7 +434,7 @@ export const STOCK_RECRUIT_CONFIG = {
       { label: '私たちの実績', url: '#trust' },
       { label: '安心のサポート', url: '#benefits' },
       { label: '報酬シミュレーション', url: '#income' },
-      { label: 'よくあるご質問', url: '#qa' },
+      { label: 'よくあるご質問', url: '#faq' },
     ],
     contactHeading: 'Contact',
     phone: '05054913991',
