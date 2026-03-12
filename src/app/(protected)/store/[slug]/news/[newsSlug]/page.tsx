@@ -1,7 +1,10 @@
 import { PageData } from '@/components/admin/news/types';
-import NewsPageRenderer from '@/components/templates/news/NewsPageRenderer';
 import { prisma } from '@/lib/prisma';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { getStoreData } from '@/lib/store/store-data';
+import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { notFound } from 'next/navigation';
+import NewsDetailClient from './NewsDetailClient';
 
 interface NewsDetailPageProps {
   params: {
@@ -42,15 +45,21 @@ async function getNewsPage(newsSlug: string, storeSlug: string) {
 export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { slug, newsSlug } = params;
 
-  const page = await getNewsPage(newsSlug, slug);
+  const [page, storeData, topConfigResult] = await Promise.all([
+    getNewsPage(newsSlug, slug),
+    getStoreData(slug),
+    getStoreTopConfig(slug),
+  ]);
 
-  if (!page) {
+  if (!page || !storeData) {
     notFound();
   }
 
-  return (
-    <main className="min-h-screen pt-20 md:pt-24">
-      <NewsPageRenderer page={page} />
-    </main>
-  );
+  const config = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
+
+  const template = storeData.template || 'common';
+
+  return <NewsDetailClient page={page} storeSlug={slug} template={template} config={config} />;
 }
