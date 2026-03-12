@@ -26,7 +26,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
       {/* Action Buttons - Second Row */}
       <div className="grid grid-cols-3 gap-0">
         <a
-          href="https://lin.ee/nM8ZQi7"
+          href="https://lin.ee/pTajctJ"
           target="_blank"
           rel="noopener noreferrer"
           className="flex flex-col items-center justify-center border-r border-white/20 bg-green-600 px-1 py-4 text-white shadow-md transition-all active:scale-[0.98] active:bg-green-700"

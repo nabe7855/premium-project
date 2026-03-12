@@ -397,7 +397,7 @@ const Flow: React.FC<FlowProps> = ({
             不安な点はいつでもLINEで相談可能です
           </p>
           <a
-            href="https://lin.ee/nM8ZQi7"
+            href="https://lin.ee/pTajctJ"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 rounded-full bg-[#06C755] px-8 py-4 text-xl font-bold text-white shadow-xl transition-all hover:bg-[#05b34c] hover:shadow-2xl active:scale-95 md:px-12 md:py-5"

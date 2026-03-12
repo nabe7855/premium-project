@@ -29,7 +29,7 @@ const PopClosingCTA: React.FC = () => {
 
           <div className="relative z-10 mx-auto flex max-w-md flex-col gap-6">
             <motion.a
-              href="https://lin.ee/nM8ZQi7"
+              href="https://lin.ee/pTajctJ"
               target="_blank"
               rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }}
