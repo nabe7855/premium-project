@@ -50,6 +50,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             )
           `,
           )
+          .eq('status', 'published')
           .order('created_at', { ascending: false });
 
         if (error) throw error;

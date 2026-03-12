@@ -32,6 +32,7 @@ async function getLatestDiaries() {
     .select(
       'id, title, content, cast_id, created_at, casts(name, image_url, main_image_url), images:blog_images(image_url)',
     )
+    .eq('status', 'published')
     .order('created_at', { ascending: false })
     .limit(10);
   if (error) {
