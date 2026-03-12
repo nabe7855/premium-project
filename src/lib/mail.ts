@@ -7,11 +7,7 @@ const getResend = () => {
   return new Resend(resendKey);
 };
 
-const DEFAULT_EMAILS = [
-  'sutoroberrys@yahoo.co.jp',
-  'sutoroberrysrecruit@gmail.com',
-  'nabe7855@gmail.com',
-];
+const DEFAULT_EMAILS = ['sutoroberrys@yahoo.co.jp', 'sutoroberrysrecruit@gmail.com'];
 
 async function getTargetEmails(storeInfo: string | null) {
   const emails = [...DEFAULT_EMAILS];
@@ -167,7 +163,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
   try {
     console.log('Attempting to send email via Resend...');
     const data = await resendInstance.emails.send({
-      from: 'Strawberry Recruit <apply@sutoroberrys.jp>',
+      from: 'Strawberry Recruit <apply@send.sutoroberrys.jp>',
       to: targetEmails,
       subject: subject,
       html: html,
