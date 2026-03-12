@@ -40,6 +40,7 @@ const SECTION_LABELS: Record<string, string> = {
   quickAccess: 'クイックアクセス',
   beginnerGuide: '初体験バナー',
   footer: 'フッター',
+  snsProfile: 'SNSプロフィール',
 };
 
 const SECTION_ORDER = [
@@ -54,6 +55,7 @@ const SECTION_ORDER = [
   'faq',
   'quickAccess',
   'beginnerGuide',
+  'snsProfile',
   'footer',
 ];
 

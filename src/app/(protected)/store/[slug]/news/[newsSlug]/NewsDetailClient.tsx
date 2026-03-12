@@ -3,6 +3,7 @@
 import { PageData } from '@/components/admin/news/types';
 import CommonHeader from '@/components/sections/layout/Header';
 import NewsPageRenderer from '@/components/templates/news/NewsPageRenderer';
+import SNSProfile from '@/components/templates/news/SNSProfile';
 import {
   default as CommonFooter,
   default as FukuokaFooter,
@@ -70,6 +71,7 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
 
       <main className="min-h-screen">
         <NewsPageRenderer page={page} />
+        <SNSProfile config={config.snsProfile} />
       </main>
 
       {renderFooter()}

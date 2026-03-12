@@ -216,6 +216,19 @@ export interface BeginnerGuideConfig {
   isVisible: boolean;
 }
 
+export interface SNSProfileConfig {
+  iconUrl: string;
+  title: string;
+  description: string;
+  followLink: string;
+  instagramUrl?: string;
+  xUrl?: string;
+  facebookUrl?: string;
+  youtubeUrl?: string;
+  rssUrl?: string;
+  isVisible: boolean;
+}
+
 export interface StoreTopPageConfig {
   header: HeaderConfig;
   hero: HeroConfig;
@@ -230,6 +243,7 @@ export interface StoreTopPageConfig {
   quickAccess: QuickAccessConfig;
   beginnerGuide: BeginnerGuideConfig;
   footer: FooterConfig;
+  snsProfile?: SNSProfileConfig;
   notificationEmail?: string;
   lineId?: string;
 }
@@ -238,6 +252,15 @@ export interface StoreTopPageConfig {
 export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
   notificationEmail: '',
   lineId: '',
+  snsProfile: {
+    iconUrl: 'https://note.com/images/logo/logo-notee.svg',
+    title: 'Strawberry Boys 公式',
+    description: 'Strawberry Boysの最新情報やセラピストの日常、キャンペーン情報をお届けします。',
+    followLink: 'https://line.me',
+    instagramUrl: 'https://instagram.com',
+    xUrl: 'https://x.com',
+    isVisible: true,
+  },
   header: {
     logoText: 'LUMIÈRE',
     logoUrl: '',

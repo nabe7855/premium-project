@@ -8,6 +8,7 @@ import Footer from '../sections/Footer';
 import Header from '../sections/Header';
 
 import ReviewSection from '@/components/sections/store/ReviewSection';
+import SNSProfile from '@/components/templates/news/SNSProfile';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
@@ -139,6 +140,12 @@ export default function FukuokaPage({
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <FAQSection config={safeConfig?.faq} isEditing={isEditing} onUpdate={onUpdate} />
       )}
+      <SNSProfile
+        config={safeConfig?.snsProfile}
+        isEditing={isEditing}
+        onUpdate={(key, value) => onUpdate?.('snsProfile', key, value)}
+        onImageUpload={(file) => onImageUpload?.('snsProfile', file, undefined, 'iconUrl')}
+      />
       <Footer
         config={safeConfig?.footer}
         isEditing={isEditing}
