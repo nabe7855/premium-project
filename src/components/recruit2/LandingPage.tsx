@@ -849,30 +849,11 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </p>
           )}
 
-          <div className="flex flex-col gap-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="flex flex-col items-center gap-6">
+            <div className="w-full max-w-md">
               <button
                 onClick={onOpenChat}
-                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-green-600 py-6 text-lg font-bold text-white shadow-xl transition-all hover:bg-green-700 hover:shadow-green-900/40 active:scale-95"
-              >
-                <span className="text-2xl transition-transform group-hover:scale-110">💬</span>
-                {isEditing ? (
-                  <span
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => onUpdate?.('cta', 'chatButtonText', e.currentTarget.innerText)}
-                    className="cursor-text outline-none"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {config?.cta?.chatButtonText ?? 'チャットでまずは話を聞いてみる'}
-                  </span>
-                ) : (
-                  <span>{config?.cta?.chatButtonText ?? 'チャットでまずは話を聞いてみる'}</span>
-                )}
-              </button>
-              <button
-                onClick={onOpenChat}
-                className="group relative flex items-center justify-center space-x-3 rounded-2xl bg-yellow-400 py-6 text-lg font-bold text-black shadow-xl transition-all hover:bg-yellow-500 hover:shadow-yellow-900/20 active:scale-95"
+                className="group relative flex w-full items-center justify-center space-x-3 rounded-full bg-yellow-400 py-6 text-lg font-bold text-black shadow-xl transition-all hover:bg-yellow-500 hover:shadow-yellow-900/20 active:scale-95"
               >
                 <span className="text-2xl transition-transform group-hover:scale-110">⚡</span>
                 {isEditing ? (
@@ -885,17 +866,17 @@ const LandingPage: React.FC<LandingPageProps> = ({
                     className="cursor-text outline-none"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    {config?.cta?.consultButtonText ?? '30秒で簡単相談してみる'}
+                    {config?.cta?.consultButtonText ?? '30秒で簡単応募してみる'}
                   </span>
                 ) : (
-                  <span>{config?.cta?.consultButtonText ?? '30秒で簡単相談してみる'}</span>
+                  <span>{config?.cta?.consultButtonText ?? '30秒で簡単応募してみる'}</span>
                 )}
               </button>
             </div>
 
             <button
               onClick={onOpenForm}
-              className="mx-auto flex w-full max-w-md items-center justify-center space-x-3 rounded-2xl border-2 border-slate-700 bg-transparent py-5 text-lg font-bold text-white transition-all hover:border-amber-500 hover:bg-amber-500/10 active:scale-95"
+              className="mx-auto flex w-full max-w-md items-center justify-center space-x-3 rounded-full bg-white py-5 text-lg font-bold text-black transition-all hover:bg-gray-100 active:scale-95"
             >
               <span className="text-xl">📝</span>
               {isEditing ? (
