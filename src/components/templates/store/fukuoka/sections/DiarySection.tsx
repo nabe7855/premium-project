@@ -72,12 +72,12 @@ const DiarySection: React.FC<DiarySectionProps> = ({
 
         if (filtered && filtered.length > 0) {
           setDiaries(filtered);
-        } else if (config?.items) {
-          setDiaries(config.items.slice(0, 4));
+        } else {
+          setDiaries([]);
         }
       } catch (err) {
         console.error('Error fetching diaries:', err);
-        if (config?.items) setDiaries(config.items.slice(0, 4));
+        setDiaries([]);
       } finally {
         setIsLoading(false);
       }
@@ -97,35 +97,41 @@ const DiarySection: React.FC<DiarySectionProps> = ({
         <SectionTitle en={config.subHeading} ja={config.heading} />
 
         <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
-          {diaries.map((item) => (
-            <Link
-              key={item.id}
-              href={`/store/${storeSlug}/diary/post/${item.id}`}
-              className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
-            >
-              <div className="relative aspect-square overflow-hidden">
-                <NextImage
-                  src={item.image}
-                  alt={item.title}
-                  fill
-                  className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 240px, 25vw"
-                  loading="lazy"
-                  unoptimized
-                />
-                <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0"></div>
-                <div className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-slate-800 backdrop-blur">
-                  {item.castName}
+          {diaries.length > 0 ? (
+            diaries.map((item) => (
+              <Link
+                key={item.id}
+                href={`/store/${storeSlug}/diary/post/${item.id}`}
+                className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
+              >
+                <div className="relative aspect-square overflow-hidden">
+                  <NextImage
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
+                    sizes="(max-width: 768px) 240px, 25vw"
+                    loading="lazy"
+                    unoptimized
+                  />
+                  <div className="absolute inset-0 bg-black/10 transition-colors group-hover:bg-black/0"></div>
+                  <div className="absolute bottom-3 left-3 rounded-full bg-white/90 px-3 py-1 text-[10px] font-bold text-slate-800 backdrop-blur">
+                    {item.castName}
+                  </div>
                 </div>
-              </div>
-              <div className="p-4">
-                <p className="mb-1 text-[9px] font-medium text-slate-400">{item.date}</p>
-                <h3 className="line-clamp-2 text-xs font-bold leading-relaxed text-slate-700">
-                  {item.title}
-                </h3>
-              </div>
-            </Link>
-          ))}
+                <div className="p-4">
+                  <p className="mb-1 text-[9px] font-medium text-slate-400">{item.date}</p>
+                  <h3 className="line-clamp-2 text-xs font-bold leading-relaxed text-slate-700">
+                    {item.title}
+                  </h3>
+                </div>
+              </Link>
+            ))
+          ) : (
+            <div className="col-span-4 flex w-full items-center justify-center py-20 text-center">
+              <p className="font-serif text-lg tracking-[0.3em] text-slate-300">日記準備中</p>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 text-center md:mt-12">
