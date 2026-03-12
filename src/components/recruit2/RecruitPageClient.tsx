@@ -148,7 +148,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
         storeName={fullMergedConfig.general?.storeName}
       />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
-      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={closeDiagnostic} />
+      <DiagnosticModal isOpen={isDiagnosticOpen} onClose={closeDiagnostic} onOpenChat={openChat} />
       <ScrollToTopButton />
     </div>
   );

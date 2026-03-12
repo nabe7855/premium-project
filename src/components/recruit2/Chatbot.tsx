@@ -17,7 +17,7 @@ type Step =
   | 'name'
   | 'phone'
   | 'email'
-  | 'birthday'
+  | 'age'
   | 'height'
   | 'weight'
   | 'job'
@@ -30,11 +30,8 @@ type Step =
   | 'review'
   | 'done';
 
-// Birthday options
-const currentYear = new Date().getFullYear();
-const YEAR_OPTIONS = Array.from({ length: 66 }, (_, i) => `${currentYear - 18 - i}`); // 18 years ago back to ~1940
-const MONTH_OPTIONS = Array.from({ length: 12 }, (_, i) => `${i + 1}`);
-const DAY_OPTIONS = Array.from({ length: 31 }, (_, i) => `${i + 1}`);
+// Age options
+const AGE_OPTIONS = Array.from({ length: 46 }, (_, i) => `${i + 20}`); // 20 to 65
 
 // Height options
 const HEIGHT_OPTIONS = Array.from({ length: 71 }, (_, i) => `${i + 140}`); // 140cm to 210cm
@@ -60,7 +57,7 @@ const STEP_LABELS: Record<string, string> = {
   name: 'お名前',
   phone: '電話番号',
   email: 'メールアドレス',
-  birthday: '生年月日',
+  age: '年齢',
   height: '身長',
   weight: '体重',
   job: '現在のご職業',
@@ -88,9 +85,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
   const [isTyping, setIsTyping] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  const yearPickerRef = useRef<HTMLDivElement>(null);
-  const monthPickerRef = useRef<HTMLDivElement>(null);
-  const dayPickerRef = useRef<HTMLDivElement>(null);
+  const agePickerRef = useRef<HTMLDivElement>(null);
   const heightPickerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -101,11 +96,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
   }, [messages, isTyping]);
 
   useEffect(() => {
-    if (currentStep === 'birthday') {
-      if (yearPickerRef.current)
-        yearPickerRef.current.scrollTo({ top: (currentYear - 1995 - 18) * 40 });
-      if (monthPickerRef.current) monthPickerRef.current.scrollTo({ top: 0 });
-      if (dayPickerRef.current) dayPickerRef.current.scrollTo({ top: 0 });
+    if (currentStep === 'age') {
+      if (agePickerRef.current) agePickerRef.current.scrollTo({ top: 5 * 40 }); // Default to ~25
     }
     if (currentStep === 'height' && heightPickerRef.current) {
       // Default to 170cm (index 30)
@@ -174,11 +166,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
         break;
       case 'email':
         updateFormData('email', userInput);
-        addModelMessage('ありがとうございます。次に【生年月日】をスクロールして選択してください。');
-        setCurrentStep('birthday');
+        addModelMessage('ありがとうございます。次に【年齢】をスクロールして選択してください。');
+        setCurrentStep('age');
         break;
-      case 'birthday':
-        updateFormData('birthday', userInput);
+      case 'age':
+        updateFormData('age', userInput);
         addModelMessage(
           'ありがとうございます。次に正確な【身長】をスクロールして教えてください。\n※当店では、身長165cm以上の方を募集対象としております。',
         );
@@ -252,7 +244,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
             dataToSubmit.append('type', 'chatbot');
             dataToSubmit.append('name', formData.name || '');
             dataToSubmit.append('phone', formData.phone || '');
-            dataToSubmit.append('age', formData.birthday || ''); // 生年月日を年齢として一旦入れる（または整形）
+            dataToSubmit.append('age', formData.age || '');
             dataToSubmit.append('height', formData.height || '');
             dataToSubmit.append('weight', formData.weight || '');
             dataToSubmit.append('store', storeName || '福岡店'); // 動的な店舗名を使用
@@ -310,17 +302,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
     });
   };
 
-  const handleBirthdayConfirm = () => {
-    if (!yearPickerRef.current || !monthPickerRef.current || !dayPickerRef.current) return;
-    const yIdx = Math.round(yearPickerRef.current.scrollTop / 40);
-    const mIdx = Math.round(monthPickerRef.current.scrollTop / 40);
-    const dIdx = Math.round(dayPickerRef.current.scrollTop / 40);
-
-    const year = YEAR_OPTIONS[yIdx];
-    const month = MONTH_OPTIONS[mIdx].padStart(2, '0');
-    const day = DAY_OPTIONS[dIdx].padStart(2, '0');
-
-    handleSend(`${year}年${month}月${day}日`);
+  const handleAgeConfirm = () => {
+    if (!agePickerRef.current) return;
+    const idx = Math.round(agePickerRef.current.scrollTop / 40);
+    const age = AGE_OPTIONS[idx];
+    handleSend(`${age}歳`);
   };
 
   const handleHeightConfirm = () => {
@@ -335,7 +321,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
   const currentOptions = STEP_OPTIONS[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in">
+    <div className="fixed inset-0 z-[100] flex w-full max-w-full flex-col overflow-x-hidden bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in">
       <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/50 p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 font-bold text-white">
@@ -471,77 +457,34 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
           </div>
         )}
 
-        {/* Smart Birthday Picker */}
-        {currentStep === 'birthday' && !isTyping && (
+        {/* Smart Age Picker */}
+        {currentStep === 'age' && !isTyping && (
           <div className="mb-6 animate-in slide-in-from-bottom-2">
-            <div className="relative mx-auto flex h-40 w-full max-w-md items-center justify-center gap-2 px-4">
-              <div className="pointer-events-none absolute top-1/2 z-0 h-10 w-[90%] -translate-y-1/2 rounded-sm border-y border-amber-500/40 bg-amber-500/20"></div>
-
-              <div className="flex h-full flex-1 flex-col items-center">
-                <div className="mb-1 text-[10px] font-bold text-amber-500">YEAR</div>
-                <div
-                  ref={yearPickerRef}
-                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                  <div className="h-16"></div>
-                  {YEAR_OPTIONS.map((y) => (
-                    <div
-                      key={y}
-                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
-                    >
-                      {y}
-                    </div>
-                  ))}
-                  <div className="h-16"></div>
-                </div>
-              </div>
-
-              <div className="flex h-full flex-1 flex-col items-center">
-                <div className="mb-1 text-[10px] font-bold text-amber-500">MONTH</div>
-                <div
-                  ref={monthPickerRef}
-                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                  <div className="h-16"></div>
-                  {MONTH_OPTIONS.map((m) => (
-                    <div
-                      key={m}
-                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
-                    >
-                      {m}
-                    </div>
-                  ))}
-                  <div className="h-16"></div>
-                </div>
-              </div>
-
-              <div className="flex h-full flex-1 flex-col items-center">
-                <div className="mb-1 text-[10px] font-bold text-amber-500">DAY</div>
-                <div
-                  ref={dayPickerRef}
-                  className="no-scrollbar relative z-10 h-full w-full snap-y snap-mandatory overflow-y-scroll"
-                  style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-                >
-                  <div className="h-16"></div>
-                  {DAY_OPTIONS.map((d) => (
-                    <div
-                      key={d}
-                      className="flex h-10 snap-center items-center justify-center text-lg font-bold text-white"
-                    >
-                      {d}
-                    </div>
-                  ))}
-                  <div className="h-16"></div>
-                </div>
+            <div className="relative mx-auto flex h-40 w-full max-w-xs flex-col items-center justify-center">
+              <div className="pointer-events-none absolute top-1/2 h-10 w-full -translate-y-1/2 rounded-sm border-y border-amber-500/40 bg-amber-500/20"></div>
+              <div
+                ref={agePickerRef}
+                className="no-scrollbar h-full w-full snap-y snap-mandatory overflow-y-scroll"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                <div className="h-16"></div>
+                {AGE_OPTIONS.map((a) => (
+                  <div
+                    key={a}
+                    className="flex h-10 snap-center items-center justify-center text-xl font-bold text-white"
+                  >
+                    {a}
+                    <span className="ml-1 text-xs font-normal opacity-60">歳</span>
+                  </div>
+                ))}
+                <div className="h-16"></div>
               </div>
             </div>
             <button
-              onClick={handleBirthdayConfirm}
+              onClick={handleAgeConfirm}
               className="mt-4 w-full rounded-full bg-amber-600 py-3 font-bold text-white shadow-lg transition-all hover:bg-amber-700 active:scale-95"
             >
-              生年月日を決定する
+              年齢を決定する
             </button>
           </div>
         )}
@@ -607,7 +550,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
 
         {currentStep !== 'done' &&
         currentStep !== 'review' &&
-        currentStep !== 'birthday' &&
+        currentStep !== 'age' &&
         currentStep !== 'height' ? (
           <div className="flex items-end gap-2 rounded-3xl bg-slate-800 p-2 pl-4 transition-all focus-within:ring-2 focus-within:ring-amber-500/50">
             <textarea

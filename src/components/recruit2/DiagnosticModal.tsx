@@ -7,6 +7,7 @@ import React, { useState } from 'react';
 interface DiagnosticModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onOpenChat?: () => void;
 }
 
 const QUESTIONS = [
@@ -37,7 +38,7 @@ const QUESTIONS = [
   },
 ];
 
-const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) => {
+const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose, onOpenChat }) => {
   const [step, setStep] = useState<'intro' | 'quiz' | 'result'>('intro');
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [yesCount, setYesCount] = useState(0);
@@ -221,10 +222,13 @@ const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose }) =>
 
                     <div className="w-full space-y-4">
                       <button
-                        onClick={resetAll}
+                        onClick={() => {
+                          onOpenChat?.();
+                          resetAll();
+                        }}
                         className="w-full transform rounded-2xl bg-yellow-400 py-5 text-xl font-bold text-slate-950 shadow-lg transition-all hover:scale-[1.02] hover:bg-yellow-500 active:scale-[0.98]"
                       >
-                        今すぐ相談してみる
+                        今すぐ簡単応募してみる
                       </button>
                       <button
                         onClick={() => setStep('intro')}
