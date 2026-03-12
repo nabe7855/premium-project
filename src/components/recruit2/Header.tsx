@@ -36,7 +36,7 @@ const Header: React.FC<HeaderProps> = ({
             onClick={onOpenForm}
             className="transform whitespace-nowrap rounded-full bg-yellow-400 px-3 py-1.5 text-xs font-bold text-black shadow-md transition-all hover:scale-105 hover:bg-yellow-500 sm:px-4 sm:py-2 sm:text-sm"
           >
-            簡単相談
+            簡単応募
           </button>
         </nav>
       </div>

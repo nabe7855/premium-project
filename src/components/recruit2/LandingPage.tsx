@@ -531,7 +531,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
               onClick={onOpenChat}
               className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95"
             >
-              <span className="relative z-10">簡単相談してみる</span>
+              <span className="relative z-10">簡単応募してみる</span>
               <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
             </button>
             <button
@@ -542,7 +542,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </div>
           <div className="mt-6 text-center text-sm text-slate-400">
-            <p>✓ 相談は30秒で完了します</p>
+            <p>✓ 応募は30秒で完了します</p>
             <p>✓ 面接ではありません。まずはお気軽にご相談ください</p>
           </div>
         </div>
@@ -857,7 +857,27 @@ const LandingPage: React.FC<LandingPageProps> = ({
           )}
 
           <div className="flex flex-col items-center gap-6">
-            <div className="w-full max-w-md">
+            <button
+              onClick={onOpenForm}
+              className="mx-auto flex w-full max-w-xl items-center justify-center space-x-4 rounded-full bg-white py-7 text-xl font-black text-black shadow-2xl transition-all hover:bg-gray-100 active:scale-95"
+            >
+              <span className="text-2xl">📝</span>
+              {isEditing ? (
+                <span
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onUpdate?.('cta', 'formButtonText', e.currentTarget.innerText)}
+                  className="cursor-text outline-none"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {config?.cta?.formButtonText ?? '応募フォームから応募する'}
+                </span>
+              ) : (
+                <span>{config?.cta?.formButtonText ?? '応募フォームから応募する'}</span>
+              )}
+            </button>
+
+            <div className="w-full max-w-xl">
               <button
                 onClick={onOpenChat}
                 className="group relative flex w-full items-center justify-center space-x-3 rounded-full bg-yellow-400 py-6 text-lg font-bold text-black shadow-xl transition-all hover:bg-yellow-500 hover:shadow-yellow-900/20 active:scale-95"
@@ -880,26 +900,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 )}
               </button>
             </div>
-
-            <button
-              onClick={onOpenForm}
-              className="mx-auto flex w-full max-w-md items-center justify-center space-x-3 rounded-full bg-white py-5 text-lg font-bold text-black transition-all hover:bg-gray-100 active:scale-95"
-            >
-              <span className="text-xl">📝</span>
-              {isEditing ? (
-                <span
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => onUpdate?.('cta', 'formButtonText', e.currentTarget.innerText)}
-                  className="cursor-text outline-none"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {config?.cta?.formButtonText ?? '応募フォームから応募する'}
-                </span>
-              ) : (
-                <span>{config?.cta?.formButtonText ?? '応募フォームから応募する'}</span>
-              )}
-            </button>
           </div>
         </div>
       </section>
