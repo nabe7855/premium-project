@@ -228,11 +228,18 @@ const LandingPage: React.FC<LandingPageProps> = ({
             Global Header
           </p>
           <button
-            onClick={() => onUpdate?.('header', 'isVisible', config?.header?.isVisible === false)}
+            onClick={() => {
+              const currentVisibility = config?.header?.isVisible !== false;
+              const nextVisibility = !currentVisibility;
+              console.log(
+                `🌐 Toggling header visibility: ${currentVisibility} -> ${nextVisibility}`,
+              );
+              onUpdate?.('header', 'isVisible', nextVisibility);
+            }}
             className={`flex items-center gap-2 rounded px-3 py-1.5 text-xs font-semibold text-white transition-all ${
               config?.header?.isVisible === false
-                ? 'bg-rose-500 shadow-lg shadow-rose-900/20 hover:bg-rose-600'
-                : 'bg-emerald-500 shadow-lg shadow-emerald-900/20 hover:bg-emerald-600'
+                ? 'bg-emerald-500 shadow-lg shadow-emerald-900/20 hover:bg-emerald-600'
+                : 'bg-rose-500 shadow-lg shadow-rose-900/20 hover:bg-rose-600'
             }`}
           >
             <span>
