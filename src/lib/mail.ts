@@ -190,8 +190,9 @@ export async function sendRecruitNotification(application: any, photos: { url: s
     });
 
     console.log('Resend Recruit Notification Result:', JSON.stringify(data, null, 2));
-    if ((data as any).error) {
-      console.error('Resend returned an error in result:', (data as any).error);
+    if (data.error) {
+      console.error('Resend returned an error:', data.error);
+      return { success: false, error: `Resend Error: ${data.error.message}` };
     }
     return { success: true, data };
   } catch (error: any) {
@@ -201,7 +202,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
       stack: error.stack,
       response: error.response?.data,
     });
-    return { success: false, error };
+    return { success: false, error: error.message || 'Unknown email error' };
   }
 }
 
@@ -262,8 +263,9 @@ export async function sendInterviewReservationNotification(application: any) {
       html: html,
     });
     console.log('Interview Notification Result:', JSON.stringify(data, null, 2));
-    if ((data as any).error) {
-      console.error('Resend returned an error in result:', (data as any).error);
+    if (data.error) {
+      console.error('Resend returned an error:', data.error);
+      return { success: false, error: `Resend Error: ${data.error.message}` };
     }
     return { success: true, data };
   } catch (error: any) {
@@ -273,6 +275,6 @@ export async function sendInterviewReservationNotification(application: any) {
       stack: error.stack,
       response: error.response?.data,
     });
-    return { success: false, error };
+    return { success: false, error: error.message || 'Unknown email error' };
   }
 }
