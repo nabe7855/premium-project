@@ -8,6 +8,7 @@ interface NewsDashboardProps {
   pages: PageData[];
   onCreatePage: () => void;
   onEditPage: (id: string) => void;
+  onDuplicatePage: (id: string) => void;
   onDeletePage: (id: string) => void;
   onToggleStatus: (id: string) => void;
   onUpdatePage: (id: string, data: Partial<PageData>) => void;
@@ -25,6 +26,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   pages,
   onCreatePage,
   onEditPage,
+  onDuplicatePage,
   onDeletePage,
   onToggleStatus,
   onUpdatePage,
@@ -177,6 +179,15 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                         className="scale-90 transform rounded-full bg-white px-8 py-3 text-sm font-black text-slate-900 shadow-2xl transition-transform hover:bg-rose-500 hover:text-white group-hover:scale-100"
                       >
                         エディタを開く
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onDuplicatePage(page.id);
+                        }}
+                        className="scale-90 transform rounded-full bg-indigo-500 px-8 py-3 text-sm font-black text-white shadow-2xl transition-transform hover:bg-indigo-600 group-hover:scale-100"
+                      >
+                        ページをコピー
                       </button>
                       <button
                         onClick={(e) => {

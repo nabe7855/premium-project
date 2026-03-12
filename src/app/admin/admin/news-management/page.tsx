@@ -3,7 +3,13 @@
 import NewsDashboard from '@/components/admin/news/NewsDashboard';
 import NewsEditor from '@/components/admin/news/NewsEditor';
 import { PageData } from '@/components/admin/news/types';
-import { createPage, deletePage, getAllPages, updatePage } from '@/lib/actions/news-pages';
+import {
+  createPage,
+  deletePage,
+  duplicatePage,
+  getAllPages,
+  updatePage,
+} from '@/lib/actions/news-pages';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -87,6 +93,18 @@ export default function NewsManagementPage() {
     }
   };
 
+  const handleDuplicatePage = async (id: string) => {
+    try {
+      const duplicated = await duplicatePage(id);
+      if (duplicated) {
+        setPages((prev) => [duplicated, ...prev]);
+        toast.success('ページをコピーしました');
+      }
+    } catch (error) {
+      toast.error('コピーに失敗しました');
+    }
+  };
+
   const handleToggleStatus = async (id: string) => {
     const page = pages.find((p) => p.id === id);
     if (!page) return;
@@ -126,6 +144,7 @@ export default function NewsManagementPage() {
         pages={pages}
         onCreatePage={handleCreatePage}
         onEditPage={handleEditPage}
+        onDuplicatePage={handleDuplicatePage}
         onDeletePage={handleDeletePage}
         onToggleStatus={handleToggleStatus}
         onUpdatePage={handleUpdatePage}

@@ -171,6 +171,33 @@ export async function deletePage(id: string): Promise<boolean> {
   }
 }
 
+export async function duplicatePage(id: string): Promise<PageData | null> {
+  try {
+    const original = await prisma.pageRequest.findUnique({
+      where: { id },
+    });
+    if (!original) return null;
+
+    const record = await prisma.pageRequest.create({
+      data: {
+        title: `${original.title} (コピー)`,
+        slug: `${original.slug}-copy-${Date.now()}`,
+        status: 'private',
+        sections: original.sections || [],
+        thumbnailUrl: original.thumbnailUrl,
+        targetStoreSlugs: original.targetStoreSlugs || [],
+        referenceUrls: original.referenceUrls || {},
+      },
+    });
+
+    revalidatePath('/admin/news-management');
+    return mapPrismaToPageData(record);
+  } catch (error) {
+    console.error('Failed to duplicate page:', error);
+    return null;
+  }
+}
+
 export async function uploadNewsImage(formData: FormData): Promise<string | null> {
   try {
     const file = formData.get('file') as File;
