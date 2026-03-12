@@ -117,9 +117,8 @@ export async function sendRecruitNotification(application: any, photos: { url: s
     finalTo.push(email);
   }
 
-  // Resend側の認証状況に合わせて、ドメインを切り替えて試行
-  // スクリーンショットでは send.sutoroberrys.jp が認証されているのでそちらを優先
-  const fromEmail = 'Strawberry Recruit <apply@send.sutoroberrys.jp>';
+  // 認証済みドメイン sutoroberrys.jp を使用（サブドメイン send. が原因でエラーになるため）
+  const fromEmail = 'Strawberry Recruit <apply@sutoroberrys.jp>';
 
   try {
     const data = await resendInstance.emails.send({
@@ -165,7 +164,7 @@ export async function sendInterviewReservationNotification(application: any) {
     finalTo.push(application.email);
   }
 
-  const fromEmail = 'Strawberry Recruit <apply@send.sutoroberrys.jp>';
+  const fromEmail = 'Strawberry Recruit <apply@sutoroberrys.jp>';
 
   try {
     const data = await resendInstance.emails.send({
