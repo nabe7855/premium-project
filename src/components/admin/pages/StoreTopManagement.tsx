@@ -6,10 +6,11 @@ import {
   ExternalLink,
   Eye,
   Layout,
-  Link2,
   Menu,
   Save,
+  Settings,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -30,7 +31,7 @@ import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/Top
 import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
-import { getAllStoresFromDb, updateStoreRedirect } from '@/lib/actions/store-actions';
+import { getAllStoresFromDb } from '@/lib/actions/store-actions';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -70,6 +71,7 @@ const SECTION_ORDER = [
 ];
 
 export default function StoreTopManagement() {
+  const router = useRouter();
   const [selectedStore, setSelectedStore] = useState('fukuoka');
   const [config, setConfig] = useState<StoreTopPageConfig>(DEFAULT_STORE_TOP_CONFIG);
   const [newsPages, setNewsPages] = useState<PageData[]>([]);
@@ -432,68 +434,6 @@ export default function StoreTopManagement() {
           右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
         </p>
       </div>
-
-      <div className="space-y-4 border-t border-gray-700/50 pt-4">
-        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-          <Link2 className="h-3 w-3" />
-          誘導設定 (Redirect)
-        </h2>
-
-        <div className="space-y-3 rounded-lg border border-gray-700/30 bg-brand-primary/20 p-3">
-          <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-200">外部URLへ誘導</span>
-            <Switch
-              checked={currentStoreData?.use_external_url || false}
-              onCheckedChange={async (checked) => {
-                if (!currentStoreData) return;
-                const toastId = toast.loading('更新中...');
-                const res = await updateStoreRedirect(
-                  currentStoreData.id,
-                  checked,
-                  currentStoreData.external_url || '',
-                );
-                if (res.success) {
-                  setCurrentStoreData({ ...currentStoreData, use_external_url: checked });
-                  toast.success('更新しました', { id: toastId });
-                } else {
-                  toast.error('更新に失敗しました', { id: toastId });
-                }
-              }}
-              className="scale-75"
-            />
-          </div>
-
-          {currentStoreData?.use_external_url && (
-            <div className="space-y-2 pt-2">
-              <label className="text-[10px] font-bold uppercase text-gray-400">誘導先URL</label>
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  className="w-full rounded border border-gray-700 bg-black/40 p-1.5 text-[11px] text-white focus:border-brand-accent focus:outline-none"
-                  placeholder="https://..."
-                  defaultValue={currentStoreData.external_url || ''}
-                  onBlur={async (e) => {
-                    const val = e.target.value;
-                    if (val === currentStoreData.external_url) return;
-                    const toastId = toast.loading('保存中...');
-                    const res = await updateStoreRedirect(
-                      currentStoreData.id,
-                      currentStoreData.use_external_url,
-                      val,
-                    );
-                    if (res.success) {
-                      setCurrentStoreData({ ...currentStoreData, external_url: val });
-                      toast.success('URLを更新しました', { id: toastId });
-                    } else {
-                      toast.error('更新に失敗しました', { id: toastId });
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
     </div>
   );
 
@@ -583,6 +523,20 @@ export default function StoreTopManagement() {
           <div className="hidden h-6 w-px bg-gray-700 sm:block"></div>
 
           <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                if (currentStoreData?.id) {
+                  router.push(`/admin/stores/${currentStoreData.id}/edit`);
+                }
+              }}
+              className="h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-4"
+            >
+              <Settings className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline">店舗情報の編集</span>
+            </Button>
+
             <Button
               variant={isPreviewMode ? 'secondary' : 'outline'}
               size="sm"
