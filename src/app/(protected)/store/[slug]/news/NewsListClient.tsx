@@ -296,6 +296,7 @@ export default function NewsListClient({
           relatedPages={[]} // We don't need related pages here
           recommendedPages={recommendedPages}
           storeSlug={storeSlug}
+          showListButton={false}
         />
 
         {/* SNS Profile */}

@@ -12,6 +12,7 @@ interface NewsNavigationProps {
   relatedPages: PageData[];
   recommendedPages: PageData[];
   storeSlug: string;
+  showListButton?: boolean;
 }
 
 const NewsNavigation: React.FC<NewsNavigationProps> = ({
@@ -21,6 +22,7 @@ const NewsNavigation: React.FC<NewsNavigationProps> = ({
   relatedPages,
   recommendedPages,
   storeSlug,
+  showListButton = true,
 }) => {
   return (
     <div className="mx-auto max-w-2xl space-y-16 px-6 py-12">
@@ -91,6 +93,16 @@ const NewsNavigation: React.FC<NewsNavigationProps> = ({
               </Link>
             ))}
           </div>
+          {showListButton && (
+            <div className="mt-8 text-center">
+              <Link
+                href={`/store/${storeSlug}/news`}
+                className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-10 py-3 text-sm font-bold text-slate-600 transition-all hover:bg-slate-50 hover:shadow-sm"
+              >
+                ニュース一覧を見る
+              </Link>
+            </div>
+          )}
         </section>
       )}
 
