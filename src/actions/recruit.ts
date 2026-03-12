@@ -87,18 +87,30 @@ export async function submitRecruitApplication(formData: FormData) {
     }
 
     // 3. メール通知の送信
+    let emailResult = null;
     try {
       console.log('📧 Sending recruitment notification email...');
-      await sendRecruitNotification(application, uploadedPhotos);
-      console.log('✅ Recruitment notification email sent successfully');
+      emailResult = await sendRecruitNotification(application, uploadedPhotos);
+      if (emailResult && !emailResult.success) {
+        console.error('❌ Email notification returned failure:', emailResult.error);
+      } else {
+        console.log('✅ Recruitment notification email sent successfully');
+      }
     } catch (emailError) {
       // メール送信に失敗しても応募自体は成功とする（ログ出力のみ）
-      console.error('Notification email failed:', emailError);
+      console.error('Notification email failed with exception:', emailError);
+      emailResult = { success: false, error: String(emailError) };
     }
 
     revalidatePath('/admin/admin/interview-reservations');
 
-    return { success: true, id: application.id };
+    return { 
+      success: true, 
+      id: application.id, 
+      debug: { 
+        emailStatus: emailResult
+      } 
+    };
   } catch (error: any) {
     console.error('Recruit submission error details:', {
       message: error.message,
@@ -122,7 +134,6 @@ export async function deleteRecruitApplication(id: string) {
 
     // 2. Storage から画像を削除
     if (photos.length > 0) {
-      // 公開URLからパスを抽出 (applications/ID/RANDOM.ext)
       const filePaths = photos
         .map((photo: { url: string }) => {
           const url = photo.url;
@@ -143,7 +154,7 @@ export async function deleteRecruitApplication(id: string) {
       }
     }
 
-    // 3. データベースから削除 (Cascade設定により RecruitPhoto も自動削除される)
+    // 3. データベースから削除
     await prisma.recruitApplication.delete({
       where: { id },
     });
@@ -184,15 +195,12 @@ export async function updateRecruitAdminData(
       },
     });
 
-    // 面接日時が設定・更新された場合に通知を送る
     if (data.interviewDate) {
       console.log('Sending interview notification for ID:', id);
       try {
         await sendInterviewReservationNotification(updatedApplication);
       } catch (mailError) {
         console.error('Failed to send interview notification email:', mailError);
-        // 通知に失敗しても保存自体は成功しているので、ここではエラーを握りつぶすか
-        // または上位に伝えるか検討が必要ですが、現状は続行します。
       }
     } else {
       console.log('ℹ️ Notification skipped: interviewDate is empty.');
@@ -254,7 +262,6 @@ export async function getRecruitPageConfig(slug: string) {
       config[page.section_key] = page.content;
     });
 
-    // Store basic info
     const storeInfo = {
       name: store.name,
       address: store.address,
@@ -262,7 +269,6 @@ export async function getRecruitPageConfig(slug: string) {
       slug: store.slug,
     };
 
-    // Use established getStoreTopConfig logic for merged configuration
     const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
     const topConfigResult = await getStoreTopConfig(slug);
     const topConfig = topConfigResult.success ? topConfigResult.config : null;
@@ -285,11 +291,7 @@ export async function saveRecruitPageConfig(slug: string, config: any) {
       return { success: false, error: '店舗が見つかりません。' };
     }
 
-    console.log(`✅ Store found: ${store.name} (${store.id})`);
-
-    // 各セクションごとに保存
     for (const [sectionKey, content] of Object.entries(config)) {
-      console.log(`📝 Upserting section: ${sectionKey}`);
       try {
         await prisma.recruitPage.upsert({
           where: {
@@ -307,14 +309,12 @@ export async function saveRecruitPageConfig(slug: string, config: any) {
             content: content as any,
           },
         });
-        console.log(`✨ Upserted ${sectionKey}`);
       } catch (upsertError: any) {
         console.error(`❌ Failed to upsert ${sectionKey}:`, upsertError);
-        throw upsertError; // Re-throw to catch block
+        throw upsertError;
       }
     }
 
-    console.log('🎉 Save complete');
     revalidatePath(`/store/${slug}/recruit`);
     return { success: true };
   } catch (error) {
