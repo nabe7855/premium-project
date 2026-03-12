@@ -149,21 +149,24 @@ const CheckSheet: React.FC<CheckSheetProps> = ({
                 {heading}
               </span>
             ) : (
-              <>
-                {heading.replace('適性', '')}
-                <span className="relative">
-                  適性
-                  <svg
-                    className="absolute -bottom-2 left-0 h-2 w-full text-rose-400"
-                    preserveAspectRatio="none"
-                    viewBox="0 0 100 10"
-                    fill="currentColor"
-                  >
-                    <path d="M0 5 Q 25 0, 50 5 T 100 5 L 100 8 Q 75 10, 50 8 T 0 8 Z" />
-                  </svg>
-                </span>
-                をチェック
-              </>
+              heading.split('適性').map((part, i, arr) => (
+                <React.Fragment key={i}>
+                  {part}
+                  {i < arr.length - 1 && (
+                    <span className="relative inline-block">
+                      適性
+                      <svg
+                        className="absolute -bottom-2 left-0 h-2 w-full text-rose-400"
+                        preserveAspectRatio="none"
+                        viewBox="0 0 100 10"
+                        fill="currentColor"
+                      >
+                        <path d="M0 5 Q 25 0, 50 5 T 100 5 L 100 8 Q 75 10, 50 8 T 0 8 Z" />
+                      </svg>
+                    </span>
+                  )}
+                </React.Fragment>
+              ))
             )}
           </h2>
           {editable(

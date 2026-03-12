@@ -265,7 +265,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
             onClick={onOpenChat}
             className="group relative w-full overflow-hidden rounded-2xl bg-yellow-400 px-8 py-4 text-lg font-bold text-black shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 active:scale-95 sm:w-auto sm:px-10 sm:py-5 sm:text-xl"
           >
-            <span className="relative z-10">今すぐ簡単相談してみる</span>
+            <span className="relative z-10">今すぐ簡単応募してみる</span>
             <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-1000 ease-in-out group-hover:translate-x-full"></div>
             {/* Ping effect */}
             <span className="absolute right-0 top-0 -mr-1 -mt-1 h-3 w-3 animate-ping rounded-full bg-white opacity-75"></span>
