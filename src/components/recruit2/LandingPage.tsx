@@ -529,17 +529,19 @@ const LandingPage: React.FC<LandingPageProps> = ({
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <button
               onClick={onOpenChat}
-              className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95"
+              className="group relative overflow-hidden rounded-2xl bg-yellow-400 px-10 py-5 text-lg font-bold text-slate-950 shadow-[0_0_30px_rgba(250,204,21,0.3)] transition-all hover:scale-105 hover:bg-yellow-500 hover:shadow-[0_0_50px_rgba(250,204,21,0.5)] active:scale-95 sm:w-auto"
             >
-              <span className="relative z-10">簡単応募してみる</span>
+              <span className="relative z-10">30秒で簡単応募してみる</span>
               <div className="absolute inset-0 -translate-x-full transform bg-gradient-to-r from-transparent via-white/40 to-transparent duration-700 ease-in-out group-hover:translate-x-full"></div>
             </button>
-            <button
-              onClick={onOpenChat}
-              className="rounded-2xl border-2 border-amber-400/40 bg-slate-900/50 px-10 py-5 text-lg font-bold text-amber-300 backdrop-blur-sm transition-all hover:border-amber-400/60 hover:bg-slate-900/70 active:scale-95"
+            <a
+              href="https://lin.ee/pTajctJ"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center rounded-2xl border-2 border-amber-400/40 bg-slate-900/50 px-10 py-5 text-lg font-bold text-amber-300 backdrop-blur-sm transition-all hover:border-amber-400/60 hover:bg-slate-900/70 active:scale-95 sm:w-auto"
             >
-              詳しい話を聞いてみる
-            </button>
+              LINEで直接質問してみる
+            </a>
           </div>
           <div className="mt-6 text-center text-sm text-slate-400">
             <p>✓ 応募は30秒で完了します</p>
@@ -857,26 +859,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
           )}
 
           <div className="flex flex-col items-center gap-6">
-            <button
-              onClick={onOpenForm}
-              className="mx-auto flex w-full max-w-xl items-center justify-center space-x-4 rounded-full bg-white py-7 text-xl font-black text-black shadow-2xl transition-all hover:bg-gray-100 active:scale-95"
-            >
-              <span className="text-2xl">📝</span>
-              {isEditing ? (
-                <span
-                  contentEditable
-                  suppressContentEditableWarning
-                  onBlur={(e) => onUpdate?.('cta', 'formButtonText', e.currentTarget.innerText)}
-                  className="cursor-text outline-none"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  {config?.cta?.formButtonText ?? '応募フォームから応募する'}
-                </span>
-              ) : (
-                <span>{config?.cta?.formButtonText ?? '応募フォームから応募する'}</span>
-              )}
-            </button>
-
             <div className="w-full max-w-xl">
               <button
                 onClick={onOpenChat}
@@ -900,6 +882,26 @@ const LandingPage: React.FC<LandingPageProps> = ({
                 )}
               </button>
             </div>
+
+            <button
+              onClick={onOpenForm}
+              className="mx-auto flex w-full max-w-xl items-center justify-center space-x-4 rounded-full bg-white py-8 text-xl font-black text-black shadow-2xl transition-all hover:bg-gray-100 active:scale-95"
+            >
+              <span className="text-2xl">📝</span>
+              {isEditing ? (
+                <span
+                  contentEditable
+                  suppressContentEditableWarning
+                  onBlur={(e) => onUpdate?.('cta', 'formButtonText', e.currentTarget.innerText)}
+                  className="cursor-text outline-none"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {config?.cta?.formButtonText ?? '応募フォームから応募する'}
+                </span>
+              ) : (
+                <span>{config?.cta?.formButtonText ?? '応募フォームから応募する'}</span>
+              )}
+            </button>
           </div>
         </div>
       </section>
