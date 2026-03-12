@@ -34,7 +34,7 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
   };
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-12">
+    <div className="mx-auto max-w-2xl px-6 py-4">
       <div className="flex flex-col gap-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm sm:flex-row sm:items-start sm:p-8">
         {/* Logo/Icon */}
         <div

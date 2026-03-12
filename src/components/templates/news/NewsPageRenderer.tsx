@@ -30,7 +30,7 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
           )}
 
           {(content.title || content.subtitle) && (
-            <div className="relative z-10 mx-auto max-w-5xl px-8 py-12 md:py-20">
+            <div className="relative z-10 mx-auto max-w-5xl px-8 py-6 md:py-10">
               <h1
                 className="mb-6 font-black leading-[1.1] text-slate-900"
                 style={{
@@ -67,7 +67,7 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
 
     case 'campaign':
       return (
-        <section className="bg-white px-10 py-32">
+        <section className="bg-white px-10 py-12 md:py-20">
           <div className="mx-auto flex max-w-6xl flex-col items-center gap-20 lg:flex-row">
             <div className="flex-1 text-left">
               <p className="mb-6 border-l-4 border-rose-500 pl-4 text-xs font-black uppercase tracking-[0.4em] text-rose-500">
@@ -100,7 +100,7 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
 
     case 'text_block':
       return (
-        <section className="bg-white px-10 py-32">
+        <section className="bg-white px-10 py-12 md:py-16">
           <div className="mx-auto max-w-4xl text-center md:text-left">
             {content.title && (
               <div className="mb-14">
@@ -119,7 +119,7 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
 
     case 'cta':
       return (
-        <section className="relative overflow-hidden bg-slate-900 px-10 py-40">
+        <section className="relative overflow-hidden bg-slate-900 px-10 py-20 md:py-32">
           <div className="absolute left-0 top-0 h-full w-full">
             <div className="absolute right-0 top-0 -mr-96 -mt-96 h-[800px] w-[800px] animate-pulse rounded-full bg-rose-600 opacity-20 blur-[180px]" />
             <div className="absolute bottom-0 left-0 -mb-48 -ml-48 h-[600px] w-[600px] rounded-full bg-rose-900 opacity-20 blur-[150px]" />
@@ -142,7 +142,7 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
 
     case 'gallery':
       return (
-        <section className="bg-slate-900 px-6 py-32">
+        <section className="bg-slate-900 px-6 py-16 md:py-24">
           <div className="mx-auto max-w-7xl">
             <h2 className="mb-24 text-center text-4xl font-black uppercase italic tracking-[0.4em] text-white opacity-90">
               {content.title || 'Visual Narrative'}
