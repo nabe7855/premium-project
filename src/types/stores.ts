@@ -12,13 +12,13 @@ export interface Store {
   title: string;
   portraitUrl: string;
   fullImageUrl: string;
-  stats: StoreStats;   // ←ここが必須
+  stats: StoreStats; // ←ここが必須
   description: string;
   bannerImage: string;
   themeColor: string;
   tags: string[];
   catch_copy?: string;
   address?: string;
-  phone?: string;
-  
+  external_url?: string;
+  use_external_url?: boolean;
 }

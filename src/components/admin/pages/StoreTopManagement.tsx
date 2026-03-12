@@ -1,6 +1,15 @@
 'use client';
 
-import { ChevronLeft, Eye, Layout, Menu, Save } from 'lucide-react';
+import {
+  AlertCircle,
+  ChevronLeft,
+  ExternalLink,
+  Eye,
+  Layout,
+  Link2,
+  Menu,
+  Save,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -21,9 +30,10 @@ import FukuokaPage from '@/components/templates/store/fukuoka/page-templates/Top
 import YokohamaPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
+import { getAllStoresFromDb, updateStoreRedirect } from '@/lib/actions/store-actions';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
-import { getAllStores, getStoreData } from '@/lib/store/store-data';
+import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
 
@@ -66,12 +76,22 @@ export default function StoreTopManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [dbStores, setDbStores] = useState<any[]>([]);
+  const [currentStoreData, setCurrentStoreData] = useState<any>(null);
 
   // 設定の取得
   useEffect(() => {
     const fetchConfig = async () => {
       setIsLoading(true);
       try {
+        // 店舗リストを取得
+        const storesResult = await getAllStoresFromDb();
+        if (storesResult.success) {
+          setDbStores(storesResult.stores || []);
+          const current = storesResult.stores?.find((s: any) => s.slug === selectedStore);
+          setCurrentStoreData(current || null);
+        }
+
         const result = await getStoreTopConfig(selectedStore);
         if (result.success && result.config) {
           setConfig(result.config as StoreTopPageConfig);
@@ -81,7 +101,7 @@ export default function StoreTopManagement() {
         }
       } catch (error) {
         console.error('Error fetching config:', error);
-        toast.error('設定の取得に失敗しました');
+        toast.error('データの取得に失敗しました');
       } finally {
         setIsLoading(false);
       }
@@ -412,6 +432,68 @@ export default function StoreTopManagement() {
           右側のプレビュー画面でテキストを直接クリックしたり、画像アイコンをクリックすることで編集が可能です。
         </p>
       </div>
+
+      <div className="space-y-4 border-t border-gray-700/50 pt-4">
+        <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+          <Link2 className="h-3 w-3" />
+          誘導設定 (Redirect)
+        </h2>
+
+        <div className="space-y-3 rounded-lg border border-gray-700/30 bg-brand-primary/20 p-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-200">外部URLへ誘導</span>
+            <Switch
+              checked={currentStoreData?.use_external_url || false}
+              onCheckedChange={async (checked) => {
+                if (!currentStoreData) return;
+                const toastId = toast.loading('更新中...');
+                const res = await updateStoreRedirect(
+                  currentStoreData.id,
+                  checked,
+                  currentStoreData.external_url || '',
+                );
+                if (res.success) {
+                  setCurrentStoreData({ ...currentStoreData, use_external_url: checked });
+                  toast.success('更新しました', { id: toastId });
+                } else {
+                  toast.error('更新に失敗しました', { id: toastId });
+                }
+              }}
+              className="scale-75"
+            />
+          </div>
+
+          {currentStoreData?.use_external_url && (
+            <div className="space-y-2 pt-2">
+              <label className="text-[10px] font-bold uppercase text-gray-400">誘導先URL</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  className="w-full rounded border border-gray-700 bg-black/40 p-1.5 text-[11px] text-white focus:border-brand-accent focus:outline-none"
+                  placeholder="https://..."
+                  defaultValue={currentStoreData.external_url || ''}
+                  onBlur={async (e) => {
+                    const val = e.target.value;
+                    if (val === currentStoreData.external_url) return;
+                    const toastId = toast.loading('保存中...');
+                    const res = await updateStoreRedirect(
+                      currentStoreData.id,
+                      currentStoreData.use_external_url,
+                      val,
+                    );
+                    if (res.success) {
+                      setCurrentStoreData({ ...currentStoreData, external_url: val });
+                      toast.success('URLを更新しました', { id: toastId });
+                    } else {
+                      toast.error('更新に失敗しました', { id: toastId });
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 
@@ -475,19 +557,25 @@ export default function StoreTopManagement() {
                 <SelectValue placeholder="店舗を選択" />
               </SelectTrigger>
               <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
-                {getAllStores().map((store) => {
-                  const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
-                  const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
-                  return (
-                    <SelectItem
-                      key={store.slug}
-                      value={store.slug}
-                      className="cursor-pointer font-bold focus:bg-slate-100 focus:text-black"
-                    >
-                      {finalName}
-                    </SelectItem>
-                  );
-                })}
+                {dbStores.length > 0 ? (
+                  dbStores.map((store) => {
+                    const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
+                    const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
+                    return (
+                      <SelectItem
+                        key={store.slug}
+                        value={store.slug}
+                        className="cursor-pointer font-bold focus:bg-slate-100 focus:text-black"
+                      >
+                        {finalName}
+                      </SelectItem>
+                    );
+                  })
+                ) : (
+                  <SelectItem value="loading" disabled>
+                    読み込み中...
+                  </SelectItem>
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -523,6 +611,38 @@ export default function StoreTopManagement() {
           </div>
         </div>
       </div>
+
+      {/* Redirect Status Banner */}
+      {currentStoreData?.use_external_url && (
+        <div className="mb-2 flex items-center justify-between gap-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="rounded-full bg-amber-500/20 p-2">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+            </div>
+            <div>
+              <p className="text-sm font-bold text-amber-200">外部サイト誘導モードが有効です</p>
+              <p className="text-xs text-amber-200/70">
+                「入店する」ボタンは以下の外部URLにリダイレクトされます：
+                <span
+                  className="ml-2 cursor-help break-all font-mono text-amber-400 underline"
+                  title={currentStoreData.external_url}
+                >
+                  {currentStoreData.external_url}
+                </span>
+              </p>
+            </div>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="hidden h-8 shrink-0 border-amber-500/50 text-amber-500 hover:bg-amber-500/10 sm:flex"
+            onClick={() => window.open(currentStoreData.external_url, '_blank')}
+          >
+            <ExternalLink className="mr-2 h-3.5 w-3.5" />
+            URLを確認
+          </Button>
+        </div>
+      )}
 
       <div className="flex flex-grow flex-col gap-2 overflow-hidden sm:flex-row sm:gap-4">
         {/* Sidebar: Controls (Desktop Only) */}

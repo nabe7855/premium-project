@@ -1,11 +1,11 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { Store } from '@/types/stores';
-import StoreDetails from './StoreDetails';
-import StoreCard from './StoreCards';
 import { AnimatePresence, motion } from 'framer-motion';
+import React, { useEffect, useState } from 'react';
+import StoreCard from './StoreCards';
+import StoreDetails from './StoreDetails';
 
 const StoreSelectionScreen: React.FC = () => {
   const [stores, setStores] = useState<Store[]>([]);
@@ -22,27 +22,33 @@ const StoreSelectionScreen: React.FC = () => {
     const fetchStores = async () => {
       const { data, error } = await supabase
         .from('stores')
-        .select('id, name, slug, catch_copy, description, image_url, theme_color, tags');
+        .select(
+          'id, name, slug, catch_copy, description, image_url, theme_color, tags, external_url, use_external_url',
+        );
 
       if (error) {
         console.error('❌ stores取得エラー:', error.message);
         return;
       }
 
-      const formatted: Store[] = (data || []).map((s: any): Store => ({
-        id: s.id,
-        name: s.name,
-        slug: s.slug,
-        title: s.name,
-        portraitUrl: s.image_url || '/no-image.png',
-        fullImageUrl: s.image_url || '/no-image.png',
-        stats: { quality: 50, variety: 50, service: 50, rarity: 50 },
-        catch_copy: s.catch_copy || '',
-        description: s.description || '',
-        bannerImage: s.image_url || '/no-image.png',
-        themeColor: s.theme_color || '#ec4899',
-        tags: s.tags || [],
-      }));
+      const formatted: Store[] = (data || []).map(
+        (s: any): Store => ({
+          id: s.id,
+          name: s.name,
+          slug: s.slug,
+          title: s.name,
+          portraitUrl: s.image_url || '/no-image.png',
+          fullImageUrl: s.image_url || '/no-image.png',
+          stats: { quality: 50, variety: 50, service: 50, rarity: 50 },
+          catch_copy: s.catch_copy || '',
+          description: s.description || '',
+          bannerImage: s.image_url || '/no-image.png',
+          themeColor: s.theme_color || '#ec4899',
+          tags: s.tags || [],
+          external_url: s.external_url || '',
+          use_external_url: s.use_external_url || false,
+        }),
+      );
 
       setStores(formatted);
       if (formatted.length > 0) {
@@ -95,70 +101,66 @@ const StoreSelectionScreen: React.FC = () => {
   };
 
   if (!selectedStore) {
-    return <div className="text-center p-6">⏳ 店舗を読み込み中...</div>;
+    return <div className="p-6 text-center">⏳ 店舗を読み込み中...</div>;
   }
 
   return (
-    <div className="relative flex flex-col min-h-screen">
+    <div className="relative flex min-h-screen flex-col">
       {/* 店舗情報 */}
-      <div className="flex-grow p-6 sm:p-10 pb-[200px] overflow-y-auto">
+      <div className="flex-grow overflow-y-auto p-6 pb-[200px] sm:p-10">
         <header className="relative mb-12 text-center">
-  {/* 背景に放射状グラデーション */}
-  <div className="absolute inset-0 bg-gradient-to-br from-rose-700 via-pink-600 to-rose-800 opacity-90 rounded-3xl -z-10"></div>
-  <div className="absolute inset-0 bg-gradient-radial from-white/20 via-transparent to-transparent blur-2xl -z-10"></div>
+          {/* 背景に放射状グラデーション */}
+          <div className="absolute inset-0 -z-10 rounded-3xl bg-gradient-to-br from-rose-700 via-pink-600 to-rose-800 opacity-90"></div>
+          <div className="bg-gradient-radial absolute inset-0 -z-10 from-white/20 via-transparent to-transparent blur-2xl"></div>
 
-  {/* タイトル */}
-  <motion.h1
-    className="mb-6 font-serif text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent 
-               bg-gradient-to-r from-pink-200 via-white to-pink-300 drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)]"
-    initial={{ opacity: 0, y: -30 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, ease: 'easeOut' }}
-  >
-    いちご一会の招待状
-  </motion.h1>
+          {/* タイトル */}
+          <motion.h1
+            className="mb-6 bg-gradient-to-r from-pink-200 via-white to-pink-300 bg-clip-text font-serif text-4xl font-extrabold text-transparent drop-shadow-[0_2px_6px_rgba(0,0,0,0.6)] sm:text-5xl"
+            initial={{ opacity: 0, y: -30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut' }}
+          >
+            いちご一会の招待状
+          </motion.h1>
 
-  {/* 区切りライン */}
-  <motion.div
-    className="flex items-center justify-center mb-6 text-rose-300"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.8, delay: 0.3 }}
-  >
-    <span className="h-[1px] w-16 bg-rose-200/70"></span>
-    <span className="mx-3 text-lg">❤</span>
-    <span className="h-[1px] w-16 bg-rose-200/70"></span>
-  </motion.div>
+          {/* 区切りライン */}
+          <motion.div
+            className="mb-6 flex items-center justify-center text-rose-300"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            <span className="h-[1px] w-16 bg-rose-200/70"></span>
+            <span className="mx-3 text-lg">❤</span>
+            <span className="h-[1px] w-16 bg-rose-200/70"></span>
+          </motion.div>
 
-  {/* サブメッセージ */}
-  <motion.p
-    className="text-xl sm:text-2xl font-semibold text-white mb-4 leading-relaxed drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)]"
-    initial={{ opacity: 0, x: -40 }}
-    animate={{ opacity: 1, x: 0 }}
-    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
-  >
-    お帰りなさい。<br className="sm:hidden" />
-    あなたにぴったりの極上の
-<span 
-  className="text-pink-300 font-extrabold 
-             bg-gradient-to-r from-pink-200 via-pink-300 to-pink-100 
-             bg-clip-text text-transparent 
-             drop-shadow-[0_0_8px_rgba(255,200,200,0.9)]"
->イチゴ一会</span>
-    をご用意いたしました。
-  </motion.p>
+          {/* サブメッセージ */}
+          <motion.p
+            className="mb-4 text-xl font-semibold leading-relaxed text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] sm:text-2xl"
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
+          >
+            お帰りなさい。
+            <br className="sm:hidden" />
+            あなたにぴったりの極上の
+            <span className="bg-gradient-to-r from-pink-200 via-pink-300 to-pink-100 bg-clip-text font-extrabold text-pink-300 text-transparent drop-shadow-[0_0_8px_rgba(255,200,200,0.9)]">
+              イチゴ一会
+            </span>
+            をご用意いたしました。
+          </motion.p>
 
-  {/* サブテキスト */}
-  <motion.p
-    className="mt-3 text-base text-gray-200 tracking-wide drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
-  >
-    心ときめくひとときを、ここから。
-  </motion.p>
-</header>
-
+          {/* サブテキスト */}
+          <motion.p
+            className="mt-3 text-base tracking-wide text-gray-200 drop-shadow-[0_1px_3px_rgba(0,0,0,0.7)]"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: 'easeOut', delay: 0.8 }}
+          >
+            心ときめくひとときを、ここから。
+          </motion.p>
+        </header>
 
         {/* ✅ 店舗切り替えごとにアニメーション再生 */}
         <AnimatePresence mode="wait">
@@ -175,9 +177,9 @@ const StoreSelectionScreen: React.FC = () => {
       </div>
 
       {/* スライダー（画面下固定） */}
-<div className="fixed bottom-0 left-0 right-0 bg-black/80 backdrop-blur-md border-t border-gray-700 z-20">
+      <div className="fixed bottom-0 left-0 right-0 z-20 border-t border-gray-700 bg-black/80 backdrop-blur-md">
         <div
-          className="relative w-full h-[180px] sm:h-[220px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none overflow-hidden touch-pan-y"
+          className="relative flex h-[180px] w-full cursor-grab touch-pan-y select-none items-center justify-center overflow-hidden active:cursor-grabbing sm:h-[220px]"
           style={{ perspective: '1200px' }}
           onMouseDown={handleDragStart}
           onTouchStart={handleDragStart}
@@ -216,8 +218,7 @@ const StoreSelectionScreen: React.FC = () => {
             return (
               <div
                 key={store.id}
-                className="absolute top-0 bottom-0 left-0 right-0 
-                  w-[clamp(200px,40vw,280px)] aspect-[16/9] m-auto"
+                className="absolute bottom-0 left-0 right-0 top-0 m-auto aspect-[16/9] w-[clamp(200px,40vw,280px)]"
                 style={style}
                 onClick={() => goToIndex(index)}
               >

@@ -19,6 +19,8 @@ interface StoreForm {
   line_id?: string;
   line_url?: string;
   notification_email?: string;
+  external_url?: string;
+  use_external_url?: boolean;
 }
 
 export default function EditStorePage() {
@@ -111,6 +113,8 @@ export default function EditStorePage() {
         line_id: form.line_id,
         line_url: form.line_url,
         notification_email: form.notification_email,
+        external_url: form.external_url,
+        use_external_url: form.use_external_url,
       })
       .eq('id', id);
 
@@ -190,6 +194,36 @@ export default function EditStorePage() {
             onChange={(e) => handleChange('notification_email', e.target.value)}
             placeholder="contact@example.com"
           />
+        </div>
+        <div className="space-y-2 border-t pt-4 md:col-span-2">
+          <h3 className="text-lg font-bold text-gray-800">外部誘導設定</h3>
+          <div className="flex items-center gap-4">
+            <label className="flex cursor-pointer items-center gap-2">
+              <input
+                type="checkbox"
+                checked={form.use_external_url || false}
+                onChange={(e) =>
+                  setForm((prev) => (prev ? { ...prev, use_external_url: e.target.checked } : prev))
+                }
+                className="h-4 w-4 rounded border-gray-300 focus:ring-indigo-500"
+              />
+              <span className="text-sm font-medium text-gray-700">外部URLへ誘導する</span>
+            </label>
+          </div>
+          {form.use_external_url && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700">外部誘導先URL</label>
+              <input
+                className="w-full rounded border p-2"
+                value={form.external_url || ''}
+                onChange={(e) => handleChange('external_url', e.target.value)}
+                placeholder="https://example.com/external-store"
+              />
+              <p className="mt-1 text-xs text-gray-500">
+                ※チェックが入っている場合、「入店する」ボタンはこのURLへ飛びます。
+              </p>
+            </div>
+          )}
         </div>
       </div>
 
