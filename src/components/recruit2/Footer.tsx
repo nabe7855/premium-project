@@ -27,10 +27,10 @@ const Footer: React.FC<FooterProps> = ({
   description = '私たちは、福岡で「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
   linksHeading = 'Links',
   links = [
-    { label: '私たちの実績', url: '#trust' },
+    { label: '私たちの実績', url: '#achievements' },
     { label: '安心のサポート', url: '#benefits' },
     { label: '報酬シミュレーション', url: '#income' },
-    { label: 'よくあるご質問', url: '#qa' },
+    { label: 'よくあるご質問', url: '#faq' },
   ],
   contactHeading = 'Contact',
   phone = '05054913991',
