@@ -104,9 +104,59 @@ export async function sendRecruitNotification(application: any, photos: { url: s
         <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">メールアドレス</th>
         <td style="padding: 8px; border-bottom: 1px solid #ddd;">${email || '未入力'}</td>
       </tr>
+      <tr>
+        <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">年齢</th>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${age || '未入力'}</td>
+      </tr>
+      <tr>
+        <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">身長/体重</th>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${height || '-'}cm / ${weight || '-'}kg</td>
+      </tr>
+      <tr>
+        <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">住所</th>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd;">${address || '未入力'}</td>
+      </tr>
+      ${
+        details
+          ? Object.entries(details)
+              .map(
+                ([key, value]) => `
+        <tr>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">${key}</th>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${value || '-'}</td>
+        </tr>
+      `,
+              )
+              .join('')
+          : ''
+      }
+      <tr>
+        <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">メッセージ</th>
+        <td style="padding: 8px; border-bottom: 1px solid #ddd; white-space: pre-wrap;">${message || 'なし'}</td>
+      </tr>
     </table>
-    <h3 style="margin-top: 20px;">メッセージ</h3>
-    <p style="white-space: pre-wrap;">${message || 'なし'}</p>
+
+    ${photos && photos.length > 0 ? `
+    <h3 style="margin-top: 20px;">添付写真 (${photos.length}枚)</h3>
+    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+      ${photos
+        .map(
+          (p) => `
+        <div style="width: 200px; margin-bottom: 10px;">
+          <a href="${p.url}" target="_blank">
+            <img src="${p.url}" style="width: 100%; border-radius: 8px; border: 1px solid #eee;" />
+          </a>
+        </div>
+      `,
+        )
+        .join('')}
+    </div>
+    ` : ''}
+
+    <p style="margin-top: 30px; color: #666; font-size: 12px;">
+      このメールはシステムによって自動送信されています。<br>
+      管理画面から詳細を確認・ステータス変更が可能です。
+    </p>
   `;
 
   const resendInstance = getResend();
