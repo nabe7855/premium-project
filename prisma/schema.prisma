@@ -234,6 +234,8 @@ model Blog {
   cast         Cast        @relation(fields: [cast_id], references: [id])
   images       BlogImage[]
   tags         BlogTag[]   @relation("BlogToBlogTag")
+
+  @@map("blogs")
 }
 
 model BlogImage {
@@ -241,12 +243,16 @@ model BlogImage {
   blog_id   String
   image_url String
   blog      Blog   @relation(fields: [blog_id], references: [id])
+
+  @@map("blog_images")
 }
 
 model BlogTag {
   id    String @id @default(uuid())
   name  String
   blogs Blog[] @relation("BlogToBlogTag")
+
+  @@map("blog_tags")
 }
 
 model Video {
