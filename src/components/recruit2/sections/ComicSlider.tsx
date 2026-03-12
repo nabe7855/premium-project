@@ -152,12 +152,12 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
                 className="group/item relative w-[280px] flex-shrink-0 snap-center sm:w-[350px] sm:snap-start"
               >
                 <div className="flex h-full flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition-shadow hover:shadow-md">
-                  <div className="relative w-full border-b border-slate-100">
+                  <div className="relative aspect-[3/4] w-full overflow-hidden">
                     {isEditing ? (
                       <EditableImage
                         src={step.img}
                         alt={step.title}
-                        className="h-auto w-full"
+                        className="h-full w-full object-cover"
                         isEditing={isEditing}
                         onUpload={handleImageUpload(idx)}
                       />
@@ -165,11 +165,11 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
                       <NextImage
                         src={step.img}
                         alt={step.title}
-                        width={0}
-                        height={0}
+                        fill
                         sizes="(max-width: 640px) 280px, 350px"
-                        className="h-auto w-full"
+                        className="object-cover"
                         loading="lazy"
+                        unoptimized
                       />
                     )}
                   </div>
