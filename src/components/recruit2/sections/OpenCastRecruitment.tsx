@@ -129,10 +129,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
         className="relative z-10 flex w-full flex-col items-center justify-start px-4"
       >
         {/* Open Cast Recruitment Heading Image */}
-        <motion.div
-          variants={itemVariants}
-          className="flex w-full max-w-5xl flex-col items-center px-4"
-        >
+        <motion.div variants={itemVariants} className="flex w-full max-w-5xl flex-col items-center">
           <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
             {/* Banner Image Component */}
             {isEditing ? (
@@ -172,7 +169,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
         {/* Premium Recruitment Section - Luxury Design */}
         <motion.div
           variants={itemVariants}
-          className="mt-8 flex w-full max-w-5xl flex-col items-center px-4"
+          className="mt-8 flex w-full max-w-5xl flex-col items-center"
         >
           {/* Main Card Container */}
           <div className="relative w-full overflow-hidden rounded-3xl border border-amber-500/20 bg-gradient-to-br from-slate-900 via-indigo-950/50 to-slate-900 p-1 shadow-2xl">
@@ -183,7 +180,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
             <div className="absolute bottom-0 right-0 h-20 w-20 border-b-2 border-r-2 border-amber-400/40"></div>
 
             {/* Inner content */}
-            <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 p-8 backdrop-blur-xl sm:p-12">
+            <div className="relative rounded-3xl bg-gradient-to-br from-slate-900/95 via-indigo-950/80 to-slate-900/95 px-4 py-10 backdrop-blur-xl sm:p-12">
               {/* Grand Opening Message - Moved and Prominent */}
               <div className="mb-8 text-center">
                 <div className="mb-3 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 drop-shadow-[0_0_15px_rgba(251,191,36,0.6)]">
