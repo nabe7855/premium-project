@@ -36,7 +36,8 @@ export default function RecruitEditor() {
           console.log('📡 Fetched recruit config:', result.config);
           // Merge with default config at the section level to ensure all sections and their defaults exist
           setConfig((prev) => {
-            const merged = { ...STOCK_RECRUIT_CONFIG } as any;
+            // Use JSON parse/stringify for a quick deep clone of the default config
+            const merged = JSON.parse(JSON.stringify(STOCK_RECRUIT_CONFIG)) as any;
             // Merge each section from fetched config
             if (result.config) {
               Object.keys(result.config).forEach((section) => {

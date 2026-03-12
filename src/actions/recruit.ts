@@ -253,7 +253,6 @@ export async function getRecruitPageConfig(slug: string) {
     const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
     const topConfigResult = await getStoreTopConfig(slug);
     const topConfig = topConfigResult.success ? topConfigResult.config : null;
-
     return { success: true, config, storeInfo, topConfig };
   } catch (error) {
     console.error('Failed to get recruit page config:', error);
@@ -303,6 +302,7 @@ export async function saveRecruitPageConfig(slug: string, config: any) {
     }
 
     console.log('🎉 Save complete');
+    revalidatePath(`/store/${slug}/recruit`);
     return { success: true };
   } catch (error) {
     console.error('Failed to save recruit page config:', error);
