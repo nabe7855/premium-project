@@ -12,6 +12,7 @@ export async function getStoreContactData(slug: string) {
         phone: true,
         line_id: true,
         line_url: true,
+        contact_email: true,
         notification_email: true,
       },
     });
@@ -29,9 +30,9 @@ export async function getStoreContactData(slug: string) {
       finalLineUrl = `https://line.me/R/ti/p/${lineId.startsWith('@') ? lineId : '@' + lineId}`;
     }
 
-    const email = configResult.success
-      ? configResult.config.notificationEmail
-      : store?.notification_email;
+    const email =
+      store?.contact_email ||
+      (configResult.success ? configResult.config.notificationEmail : store?.notification_email);
 
     return {
       success: true,

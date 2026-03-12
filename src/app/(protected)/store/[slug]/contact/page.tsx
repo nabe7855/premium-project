@@ -123,7 +123,7 @@ export default function ContactPage() {
             <div className="text-center">
               <div className="text-sm font-medium text-gray-500">メール</div>
               <div className="text-sm font-bold text-gray-800">
-                {contactInfo.email ? contactInfo.email.split('@')[0] + '@' : 'contact@'}
+                {contactInfo.email || 'contact@'}
               </div>
             </div>
           </a>
@@ -287,7 +287,9 @@ export default function ContactPage() {
                 <div className="space-y-2 text-sm text-gray-700">
                   <p className="font-bold text-blue-800">※ご注意点</p>
                   <p>
-                    <span className="font-mono text-xs">contactsutoroberrys@gmail.com</span>
+                    <span className="font-mono text-xs">
+                      {contactInfo.email || 'contactsutoroberrys@gmail.com'}
+                    </span>
                     こちらのアドレスからメールが届きます。
                   </p>
                   <p>

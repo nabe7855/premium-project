@@ -1,6 +1,6 @@
 'use server';
 
-import { sendRecruitNotification } from '@/lib/mail';
+import { sendInterviewReservationNotification, sendRecruitNotification } from '@/lib/mail';
 import { prisma } from '@/lib/prisma';
 import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
@@ -171,13 +171,20 @@ export async function updateRecruitAdminData(
   data: { adminMemo?: string; interviewDate?: string },
 ) {
   try {
-    await prisma.recruitApplication.update({
+    const updatedApplication = await prisma.recruitApplication.update({
       where: { id },
       data: {
         adminMemo: data.adminMemo,
         interviewDate: data.interviewDate,
       },
     });
+
+    // 面接日時が設定・更新された場合に通知を送る
+    if (data.interviewDate) {
+      console.log('Sending interview notification for ID:', id);
+      await sendInterviewReservationNotification(updatedApplication);
+    }
+
     revalidatePath('/admin/admin/interview-reservations');
     return { success: true };
   } catch (error) {

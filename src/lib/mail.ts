@@ -7,7 +7,11 @@ const getResend = () => {
   return new Resend(resendKey);
 };
 
-const DEFAULT_EMAILS = ['sutoroberrys@yahoo.co.jp', 'sutoroberrysrecruit@gmail.com'];
+const DEFAULT_EMAILS = [
+  'sutoroberrys@yahoo.co.jp',
+  'sutoroberrysrecruit@gmail.com',
+  'contactsutoroberrys@gmail.com',
+];
 
 async function getTargetEmails(storeInfo: string | null) {
   const emails = [...DEFAULT_EMAILS];
@@ -224,7 +228,7 @@ export async function sendInterviewReservationNotification(application: any) {
 
   try {
     const data = await resendInstance.emails.send({
-      from: 'Strawberry Recruit <apply@sutoroberrys.jp>',
+      from: 'Strawberry Recruit <apply@send.sutoroberrys.jp>',
       to: targetEmails,
       subject: subject,
       html: html,

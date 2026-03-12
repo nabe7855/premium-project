@@ -54,6 +54,7 @@ model Store {
   first_time_config  FirstTimeConfig?
   line_id            String?
   line_url           String?
+  contact_email      String?
   notification_email String?
   business_hours     String?
   is_active          Boolean               @default(true)

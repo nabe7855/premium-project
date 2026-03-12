@@ -57,6 +57,7 @@ export interface Store {
   businessHours?: string;
   lineUrl?: string;
   lineId?: string;
+  contactEmail?: string;
   notificationEmail?: string;
   isActive: boolean;
 }

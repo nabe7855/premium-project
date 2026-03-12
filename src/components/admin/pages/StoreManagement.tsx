@@ -142,6 +142,7 @@ export default function StoreManagement() {
         photoUrl: s.image_url || '',
         lineId: s.line_id || '',
         lineUrl: s.line_url || '',
+        contactEmail: s.contact_email || '',
         notificationEmail: s.notification_email || '',
         isActive: s.is_active ?? true,
       }));
@@ -215,6 +216,7 @@ export default function StoreManagement() {
         businessHours: config.header.businessHours || '',
         lineUrl: config.header.specialBanner?.link || store.lineUrl || '',
         lineId: config.lineId || store.lineId || '',
+        contactEmail: store.contactEmail || '',
         notificationEmail: config.notificationEmail || store.notificationEmail || '',
       });
     } catch (error) {
@@ -366,6 +368,7 @@ export default function StoreManagement() {
           image_url: imageUrl,
           line_id: editingStore.lineId || null,
           line_url: editingStore.lineUrl || null,
+          contact_email: editingStore.contactEmail || null,
           notification_email: editingStore.notificationEmail || null,
         })
         .eq('id', editingStore.id);
@@ -806,6 +809,35 @@ export default function StoreManagement() {
                         />
                         <p className="text-[10px] text-gray-500">
                           応募や面接予約があった際、ここに指定した全てのメールに通知が飛びます。
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 rounded-xl border border-emerald-500/20 bg-emerald-500/5 p-4">
+                      <div className="flex items-center gap-2 border-b border-emerald-500/30 pb-2">
+                        <Mail size={16} className="text-emerald-400" />
+                        <h3 className="text-sm font-bold text-white">
+                          お問い合わせ用メールアドレス
+                        </h3>
+                      </div>
+                      <div className="space-y-1">
+                        <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                          お問い合わせ用 (サイト表示用)
+                        </label>
+                        <input
+                          type="email"
+                          value={editingStore.contactEmail ?? ''}
+                          onChange={(e) =>
+                            setEditingStore({
+                              ...editingStore,
+                              contactEmail: e.target.value,
+                            })
+                          }
+                          placeholder="contactsutoroberrys@gmail.com"
+                          className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                        />
+                        <p className="mt-1 text-[10px] text-gray-500">
+                          ※ このアドレスはお問い合わせページに公開されます。
                         </p>
                       </div>
                     </div>
