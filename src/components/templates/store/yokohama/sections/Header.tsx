@@ -432,7 +432,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
             {/* RESERVE Button */}
             <Link
-              href="#reserve"
+              href={getAbsoluteHref('/store/{slug}/reservation')}
               className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-[#D43D6F] transition-all hover:bg-pink-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
             >
               <Users size={16} className="md:h-6 md:w-6" />

@@ -18,6 +18,7 @@ const mapPrismaToPageData = (record: any): PageData => {
     thumbnailUrl: record.thumbnailUrl || undefined,
     shortDescription: misc.shortDescription,
     category: misc.category,
+    tags: misc.tags || [],
     showInSlider: misc.showInSlider,
     targetStoreSlugs: record.targetStoreSlugs || [],
   };
@@ -82,10 +83,11 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
       targetStoreSlugs,
       shortDescription,
       category,
+      tags,
       showInSlider,
     } = data;
 
-    const miscData = { shortDescription, category, showInSlider };
+    const miscData = { shortDescription, category, tags, showInSlider };
 
     const record = await prisma.pageRequest.create({
       data: {
@@ -119,6 +121,7 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       targetStoreSlugs,
       shortDescription,
       category,
+      tags,
       showInSlider,
     } = data;
 
@@ -139,6 +142,7 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
     const newMisc = { ...currentMisc };
     if (shortDescription !== undefined) newMisc.shortDescription = shortDescription;
     if (category !== undefined) newMisc.category = category;
+    if (tags !== undefined) newMisc.tags = tags;
     if (showInSlider !== undefined) newMisc.showInSlider = showInSlider;
     updateData.referenceUrls = newMisc;
 

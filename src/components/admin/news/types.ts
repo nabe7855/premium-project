@@ -51,5 +51,6 @@ export interface PageData {
   shortDescription?: string;
   targetStoreSlugs?: string[];
   category?: string;
+  tags?: string[];
   showInSlider?: boolean;
 }

@@ -230,6 +230,45 @@ const Inspector: React.FC<InspectorProps> = ({
               {page.shortDescription?.length || 0} 文字
             </p>
           </div>
+
+          <div>
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
+              タグ設定（ハッシュタグ）
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {(page.tags || []).map((tag, idx) => (
+                <span
+                  key={idx}
+                  className="flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold text-slate-600"
+                >
+                  #{tag}
+                  <button
+                    onClick={() => {
+                      const next = (page.tags || []).filter((_, i) => i !== idx);
+                      onUpdatePage({ tags: next });
+                    }}
+                    className="hover:text-red-500"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <input
+                type="text"
+                placeholder="タグを追加してEnter"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    const val = e.currentTarget.value.trim().replace(/^#/, '');
+                    if (val && !(page.tags || []).includes(val)) {
+                      onUpdatePage({ tags: [...(page.tags || []), val] });
+                      e.currentTarget.value = '';
+                    }
+                  }
+                }}
+                className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-bold outline-none focus:border-rose-400"
+              />
+            </div>
+          </div>
         </div>
       </div>
     );

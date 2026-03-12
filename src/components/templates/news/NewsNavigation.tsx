@@ -1,7 +1,7 @@
 'use client';
 
 import { PageData } from '@/components/admin/news/types';
-import { ChevronLeft, MessageCircle } from 'lucide-react';
+import { ChevronLeft, ChevronRight, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import React from 'react';
 
@@ -26,40 +26,54 @@ const NewsNavigation: React.FC<NewsNavigationProps> = ({
 }) => {
   return (
     <div className="mx-auto max-w-2xl space-y-16 px-6 py-12">
-      {/* Prev / Next */}
-      <div className="flex flex-col gap-4 border-t border-slate-100 pt-8 sm:flex-row sm:items-center">
-        {prevPage && (
-          <Link
-            href={`/store/${storeSlug}/news/${prevPage.slug}`}
-            className="group flex flex-1 items-start gap-4 rounded-xl p-4 transition-colors hover:bg-slate-50"
-          >
-            <ChevronLeft className="mt-1 h-5 w-5 text-slate-400" />
-            <div className="flex-1">
-              <span className="text-[10px] font-bold text-slate-400">前の記事</span>
-              <h4 className="mt-1 line-clamp-2 text-sm font-bold text-slate-700 group-hover:text-slate-900">
-                {prevPage.title}
-              </h4>
-            </div>
-          </Link>
-        )}
-        <div className="hidden h-12 w-px bg-slate-100 sm:block" />
-        {nextPage && (
-          <Link
-            href={`/store/${storeSlug}/news/${nextPage.slug}`}
-            className="group flex flex-1 items-start gap-4 rounded-xl p-4 text-right transition-colors hover:bg-slate-50"
-          >
-            <div className="flex-1">
-              <span className="text-[10px] font-bold text-slate-400">次の記事</span>
-              <h4 className="mt-1 line-clamp-2 text-sm font-bold text-slate-700 group-hover:text-slate-900">
-                {nextPage.title}
-              </h4>
-            </div>
-            <div className="mt-1 rotate-180">
-              <ChevronLeft className="h-5 w-5 text-slate-400" />
-            </div>
-          </Link>
-        )}
-      </div>
+      {/* Prev / Next Article Navigation (note.com style) */}
+      <nav className="border-y border-dashed border-slate-200">
+        <div className="grid grid-cols-1 sm:grid-cols-2">
+          {/* Previous */}
+          <div className="flex min-h-[100px] items-center border-b border-dashed border-slate-100 sm:border-b-0 sm:border-r">
+            {prevPage ? (
+              <Link
+                href={`/store/${storeSlug}/news/${prevPage.slug}`}
+                className="group flex w-full items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-50"
+              >
+                <ChevronLeft className="h-6 w-6 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" />
+                <div className="min-w-0 flex-1">
+                  <span className="block text-xs font-bold tracking-wider text-slate-400">
+                    前の記事
+                  </span>
+                  <h4 className="mt-1 line-clamp-2 text-[15px] font-bold leading-snug text-slate-800 group-hover:text-rose-500">
+                    {prevPage.title}
+                  </h4>
+                </div>
+              </Link>
+            ) : (
+              <div className="w-full px-6 py-5" />
+            )}
+          </div>
+
+          {/* Next */}
+          <div className="flex min-h-[100px] items-center">
+            {nextPage ? (
+              <Link
+                href={`/store/${storeSlug}/news/${nextPage.slug}`}
+                className="group flex w-full items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-50"
+              >
+                <div className="min-w-0 flex-1">
+                  <span className="block text-left text-xs font-bold tracking-wider text-slate-400 sm:text-right">
+                    次の記事
+                  </span>
+                  <h4 className="mt-1 line-clamp-2 text-left text-[15px] font-bold leading-snug text-slate-800 group-hover:text-rose-500 sm:text-right">
+                    {nextPage.title}
+                  </h4>
+                </div>
+                <ChevronRight className="h-6 w-6 shrink-0 text-slate-300 transition-colors group-hover:text-rose-600" />
+              </Link>
+            ) : (
+              <div className="w-full px-6 py-5" />
+            )}
+          </div>
+        </div>
+      </nav>
 
       {/* Recommended (Pickup) */}
       {recommendedPages.length > 0 && (
