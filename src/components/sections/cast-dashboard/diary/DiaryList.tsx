@@ -21,6 +21,33 @@ export default function DiaryList({ diaries, onEdit, onDelete, onCreate }: Diary
     ).padStart(2, '0')}`;
   };
 
+  const getStatusBadge = (status?: string, publishedAt?: string) => {
+    switch (status) {
+      case 'draft':
+        return (
+          <span className="rounded bg-gray-100 px-2 py-0.5 text-[10px] font-bold text-gray-500">
+            下書き
+          </span>
+        );
+      case 'scheduled':
+        const isPast = publishedAt ? new Date(publishedAt) <= new Date() : false;
+        return (
+          <span
+            className={`rounded px-2 py-0.5 text-[10px] font-bold ${isPast ? 'bg-green-100 text-green-700' : 'bg-blue-100 text-blue-700'}`}
+          >
+            {isPast ? '予約投稿(公開済)' : '投稿予約中'}
+          </span>
+        );
+      case 'published':
+      default:
+        return (
+          <span className="rounded bg-green-100 px-2 py-0.5 text-[10px] font-bold text-green-700">
+            公開中
+          </span>
+        );
+    }
+  };
+
   return (
     <div className="relative space-y-4">
       {/* PC/Tablet Header with Create Button */}
@@ -83,8 +110,16 @@ export default function DiaryList({ diaries, onEdit, onDelete, onCreate }: Diary
                 {diary.title}
               </h3>
               <div className="flex flex-col space-y-1 text-xs text-gray-500 sm:flex-row sm:items-center sm:space-x-4 sm:space-y-0 sm:text-sm">
-                <span>{formatDate(diary.createdAt)}</span>
-                <span>投稿: {formatCreatedAt(diary.createdAt)}</span>
+                <div className="flex items-center gap-2">
+                  {getStatusBadge(diary.status, diary.publishedAt)}
+                  <span>{formatDate(diary.publishedAt || diary.createdAt)}</span>
+                </div>
+                <span>作成: {formatCreatedAt(diary.createdAt)}</span>
+                {diary.status === 'scheduled' && (
+                  <span className="font-medium text-blue-600">
+                    公開予定: {formatCreatedAt(diary.publishedAt!)}
+                  </span>
+                )}
               </div>
             </div>
 

@@ -224,14 +224,16 @@ model CastBadge {
 }
 
 model Blog {
-  id         String      @id @default(uuid())
-  cast_id    String
-  title      String
-  content    String
-  created_at DateTime    @default(now())
-  cast       Cast        @relation(fields: [cast_id], references: [id])
-  images     BlogImage[]
-  tags       BlogTag[]   @relation("BlogToBlogTag")
+  id           String      @id @default(uuid())
+  cast_id      String
+  title        String
+  content      String
+  status       String      @default("published") // "published", "draft", "scheduled"
+  published_at DateTime    @default(now())
+  created_at   DateTime    @default(now())
+  cast         Cast        @relation(fields: [cast_id], references: [id])
+  images       BlogImage[]
+  tags         BlogTag[]   @relation("BlogToBlogTag")
 }
 
 model BlogImage {

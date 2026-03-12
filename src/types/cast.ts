@@ -303,6 +303,8 @@ export interface CastDiary {
   content: string;
   images: string[];
   tags: string[];
+  status?: 'published' | 'draft' | 'scheduled';
+  publishedAt?: string;
   createdAt: string;
 }
 

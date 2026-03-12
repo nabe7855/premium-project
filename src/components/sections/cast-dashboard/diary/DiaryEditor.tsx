@@ -26,6 +26,8 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState('');
   const [presetTags, setPresetTags] = useState<TagMaster[]>([]);
+  const [status, setStatus] = useState<'published' | 'draft' | 'scheduled'>('published');
+  const [publishedAt, setPublishedAt] = useState('');
   const [uploading, setUploading] = useState(false);
 
   // ✅ 初期データセット
@@ -34,6 +36,17 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
       setTitle(initialData.title);
       setContent(initialData.content);
       setTags(initialData.tags);
+      setStatus(initialData.status || 'published');
+      if (initialData.publishedAt) {
+        // datetime-local 用のフォーマット (YYYY-MM-DDThh:mm)
+        const date = new Date(initialData.publishedAt);
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        const h = String(date.getHours()).padStart(2, '0');
+        const min = String(date.getMinutes()).padStart(2, '0');
+        setPublishedAt(`${y}-${m}-${d}T${h}:${min}`);
+      }
       // 既存画像: url と file_path 両方を持たせる
       setExistingImages(
         (initialData.images || []).map((url) => ({
@@ -105,7 +118,16 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         // ---- 新規作成 ----
         const { data: blog, error: blogError } = await supabase
           .from('blogs')
-          .insert({ cast_id: castId, title, content })
+          .insert({
+            cast_id: castId,
+            title,
+            content,
+            status,
+            published_at:
+              status === 'scheduled' && publishedAt
+                ? new Date(publishedAt).toISOString()
+                : new Date().toISOString(),
+          })
           .select()
           .single();
         if (blogError) throw blogError;
@@ -114,7 +136,17 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         // ---- 更新 ----
         const { error: updateError } = await supabase
           .from('blogs')
-          .update({ title, content })
+          .update({
+            title,
+            content,
+            status,
+            published_at:
+              status === 'scheduled' && publishedAt
+                ? new Date(publishedAt).toISOString()
+                : status === 'published'
+                  ? new Date().toISOString()
+                  : initialData.publishedAt || new Date().toISOString(),
+          })
           .eq('id', blogId);
         if (updateError) throw updateError;
 
@@ -167,6 +199,9 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         content,
         images: [...existingImages.map((i) => i.url), ...newImageUrls],
         tags,
+        status,
+        publishedAt:
+          status === 'scheduled' ? new Date(publishedAt).toISOString() : new Date().toISOString(),
       });
     } catch (err) {
       console.error('❌ 保存エラー:', err);
@@ -194,6 +229,59 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         onChange={(e) => setContent(e.target.value)}
         className="min-h-[120px] w-full rounded border p-2"
       />
+
+      {/* 投稿ステータス設定 */}
+      <div className="rounded-lg bg-gray-50 p-4">
+        <label className="mb-2 block text-sm font-bold text-gray-700">投稿予約・公開設定</label>
+        <div className="flex flex-wrap gap-4">
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="radio"
+              name="status"
+              value="published"
+              checked={status === 'published'}
+              onChange={() => setStatus('published')}
+              className="accent-pink-500"
+            />
+            <span className="text-sm">今すぐ公開</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="radio"
+              name="status"
+              value="draft"
+              checked={status === 'draft'}
+              onChange={() => setStatus('draft')}
+              className="accent-pink-500"
+            />
+            <span className="text-sm">下書き保存</span>
+          </label>
+          <label className="flex cursor-pointer items-center gap-2">
+            <input
+              type="radio"
+              name="status"
+              value="scheduled"
+              checked={status === 'scheduled'}
+              onChange={() => setStatus('scheduled')}
+              className="accent-pink-500"
+            />
+            <span className="text-sm">予約投稿</span>
+          </label>
+        </div>
+
+        {status === 'scheduled' && (
+          <div className="mt-3 animate-in fade-in slide-in-from-top-1">
+            <label className="mb-1 block text-xs text-gray-500">公開日時を指定</label>
+            <input
+              type="datetime-local"
+              value={publishedAt}
+              onChange={(e) => setPublishedAt(e.target.value)}
+              className="w-full rounded border border-gray-300 p-2 text-sm focus:outline-none focus:ring-1 focus:ring-pink-500"
+              required={status === 'scheduled'}
+            />
+          </div>
+        )}
+      </div>
 
       {/* 既存画像プレビュー */}
       {existingImages.length > 0 && (

@@ -12,6 +12,8 @@ export async function getDiaryPostsByCastId(
       id,
       title,
       content,
+      status,
+      published_at,
       created_at,
       casts (
         id,
@@ -28,7 +30,9 @@ export async function getDiaryPostsByCastId(
     `,
     )
     .eq('cast_id', castId)
-    .order('created_at', { ascending: false });
+    .neq('status', 'draft') // 下書きは除外
+    .lte('published_at', new Date().toISOString()) // 未来の投稿は除外
+    .order('published_at', { ascending: false }); // 公開日時順に並べる
 
   if (error) {
     console.error('❌ getDiaryPostsByCastId error:', error.message);
@@ -43,7 +47,9 @@ export async function getDiaryPostsByCastId(
         title: post.title,
         content: post.content ?? '',
         excerpt: post.content?.slice(0, 100) ?? '',
-        date: new Date(post.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+        date: new Date(post.published_at || post.created_at)
+          .toLocaleDateString('ja-JP')
+          .replace(/\//g, '.'),
         tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
         storeSlug,
         castName: castData?.name ?? '不明なキャスト',

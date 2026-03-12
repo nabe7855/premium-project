@@ -10,6 +10,8 @@ export async function getCastDiaries(castId: string): Promise<CastDiary[]> {
       cast_id,
       title,
       content,
+      status,
+      published_at,
       created_at,
       blog_tags (
         blog_tag_master ( name )
@@ -34,6 +36,8 @@ export async function getCastDiaries(castId: string): Promise<CastDiary[]> {
     content: blog.content ?? '',
     images: blog.blog_images?.map((img: any) => img.image_url) ?? [],
     tags: blog.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
+    status: blog.status,
+    publishedAt: blog.published_at,
     createdAt: blog.created_at,
   }));
 }

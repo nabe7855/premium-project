@@ -9,6 +9,8 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
       id,
       title,
       content,
+      status,
+      published_at,
       created_at,
       casts ( id, name, image_url, slug ),
       blog_images ( image_url ),
@@ -16,7 +18,9 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
     `,
     )
     .eq('id', postId)
-    .single();
+    .neq('status', 'draft')
+    .lte('published_at', new Date().toISOString())
+    .maybeSingle(); // 406 error might occur with .single() if no row matches filter, .maybeSingle() is safer.
 
   if (error || !data) {
     return null;
@@ -29,7 +33,9 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
     title: data.title,
     content: data.content || '',
     excerpt: data.content ? data.content.slice(0, 100) : '',
-    date: new Date(data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+    date: new Date(data.published_at || data.created_at)
+      .toLocaleDateString('ja-JP')
+      .replace(/\//g, '.'),
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug: slug,
     castName: castData?.name || '不明なキャスト',

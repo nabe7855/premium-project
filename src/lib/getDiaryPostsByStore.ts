@@ -9,6 +9,8 @@ export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost
       id,
       title,
       content,
+      status,
+      published_at,
       created_at,
       casts (
         id,
@@ -21,7 +23,9 @@ export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost
       )
     `,
     )
-    .order('created_at', { ascending: false });
+    .neq('status', 'draft')
+    .lte('published_at', new Date().toISOString())
+    .order('published_at', { ascending: false });
 
   if (error) {
     console.error('❌ getDiaryPostsByStore error:', error.message);
@@ -41,7 +45,7 @@ export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost
         title: post.title,
         content: post.content ?? '',
         excerpt: post.content?.slice(0, 100) ?? '',
-        date: post.created_at,
+        date: post.published_at || post.created_at,
         storeSlug,
         castName: post.casts?.name ?? '不明なキャスト',
         castId: post.casts?.id ?? '',
