@@ -32,26 +32,51 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.warn('!!! handleSubmit TRIGERRED !!!');
+    
+    // 手動バリデーションチェック
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const name = formData.get('name') as string;
+    const phone = formData.get('phone') as string;
+    const email = formData.get('email') as string;
+    
+    console.log('Form Values from FormData:', { name, phone, email });
+    
+    if (!name || !phone || !email) {
+      console.error('❌ Validation Failed: Required fields missing');
+      setError('必須項目（お名前・電話番号・メールアドレス）を入力してください。');
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
-    const formData = new FormData(e.currentTarget);
-    formData.append('type', 'full'); // 応募種別をフルに設定
-    if (storeName) {
-      formData.append('store', storeName);
-    }
+    try {
+      const formData = new FormData(form);
+      formData.append('type', 'full');
+      if (storeName) {
+        formData.append('store', storeName);
+      }
 
-    const result = await submitRecruitApplication(formData);
+      console.warn('📤 Sending to server action...');
+      const result = await submitRecruitApplication(formData);
+      console.warn('📡 Server response:', result);
 
-    setLoading(false);
-    if (result.success) {
-      setSubmitted(true);
-      setTimeout(() => {
-        onClose();
-        setSubmitted(false);
-      }, 5000);
-    } else {
-      setError(result.error || '送信に失敗しました。');
+      setLoading(false);
+      if (result.success) {
+        setSubmitted(true);
+        setTimeout(() => {
+          onClose();
+          setSubmitted(false);
+        }, 5000);
+      } else {
+        setError(result.error || '送信に失敗しました。');
+      }
+    } catch (err: any) {
+      console.error('💥 Unexpected Error during submission:', err);
+      setError('予期せぬエラーが発生しました: ' + err.message);
+      setLoading(false);
     }
   };
 

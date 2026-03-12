@@ -112,11 +112,13 @@ export default function InterviewReservationsPage() {
 
   const handleSaveAdminData = async () => {
     if (!selectedApp) return;
+    console.log('🖱️ Save button clicked. Sending to server:', { id: selectedApp.id, adminMemo, interviewDate });
     setIsSavingAdminData(true);
     const result = await updateRecruitAdminData(selectedApp.id, {
       adminMemo,
       interviewDate,
     });
+    console.log('📡 Server responded:', result);
     if (result.success) {
       toast.success('管理情報を保存しました');
       fetchApplications();

@@ -19,12 +19,22 @@ async function getTargetEmails(storeInfo: string | null) {
   if (!storeInfo) return emails;
 
   try {
+    // 改行や空白を除去し、店舗名が一致しやすいように調整
+    const searchName = storeInfo.trim();
+    const searchNameAlternative = searchName.endsWith('店') ? searchName.slice(0, -1) : `${searchName}店`;
+
     const store = await prisma.store.findFirst({
       where: {
-        OR: [{ name: storeInfo }, { slug: storeInfo }],
+        OR: [
+          { name: searchName },
+          { name: searchNameAlternative },
+          { slug: searchName },
+          { slug: searchName.toLowerCase() }
+        ],
       },
       select: {
         id: true,
+        name: true,
         notification_email: true,
         recruit_pages: {
           where: { section_key: 'general' },
@@ -34,6 +44,7 @@ async function getTargetEmails(storeInfo: string | null) {
     });
 
     if (store) {
+      console.log(`[getTargetEmails] Store found: ${store.name} (ID: ${store.id})`);
       // 1. 店舗レコードのメールアドレスを追加
       if (store.notification_email) {
         const extraEmails = store.notification_email
@@ -41,6 +52,7 @@ async function getTargetEmails(storeInfo: string | null) {
           .map((e) => e.trim())
           .filter((e) => e.includes('@'));
 
+        console.log(`[getTargetEmails] Found notification_email in store record:`, extraEmails);
         extraEmails.forEach((email) => {
           if (!emails.includes(email)) emails.push(email);
         });
@@ -54,15 +66,19 @@ async function getTargetEmails(storeInfo: string | null) {
           .map((e: string) => e.trim())
           .filter((e: string) => e.includes('@'));
 
+        console.log(`[getTargetEmails] Found notificationEmails in recruit_pages config:`, extraEmails);
         extraEmails.forEach((email: string) => {
           if (!emails.includes(email)) emails.push(email);
         });
       }
+    } else {
+      console.log(`[getTargetEmails] No store found for identifier: ${storeInfo}. Falling back to default emails.`);
     }
   } catch (error) {
     console.error('[getTargetEmails] Error:', error);
   }
 
+  console.log(`[getTargetEmails] Final target list:`, emails);
   return emails;
 }
 
@@ -173,7 +189,10 @@ export async function sendRecruitNotification(application: any, photos: { url: s
       html: html,
     });
 
-    console.log('Resend Response Data:', JSON.stringify(data, null, 2));
+    console.log('Resend Recruit Notification Result:', JSON.stringify(data, null, 2));
+    if ((data as any).error) {
+      console.error('Resend returned an error in result:', (data as any).error);
+    }
     return { success: true, data };
   } catch (error: any) {
     console.error('Email sending error details:', {
@@ -182,6 +201,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
       stack: error.stack,
       response: error.response?.data,
     });
+    return { success: false, error };
   }
 }
 
@@ -226,17 +246,33 @@ export async function sendInterviewReservationNotification(application: any) {
     return { success: false, error: 'Resend API key missing' };
   }
 
+  // 宛先リストに募集者のメールアドレスも追加（もし本人の通知も兼ねている場合）
+  const finalTo = [...targetEmails];
+  if (application.email && !finalTo.includes(application.email)) {
+    console.log(`[sendInterviewReservationNotification] Adding applicant email to recipients: ${application.email}`);
+    finalTo.push(application.email);
+  }
+
   try {
+    console.log('Attempting to send interview email via Resend...');
     const data = await resendInstance.emails.send({
       from: 'Strawberry Recruit <apply@send.sutoroberrys.jp>',
-      to: targetEmails,
+      to: finalTo,
       subject: subject,
       html: html,
     });
-    console.log('Interview Notification Result:', data);
+    console.log('Interview Notification Result:', JSON.stringify(data, null, 2));
+    if ((data as any).error) {
+      console.error('Resend returned an error in result:', (data as any).error);
+    }
     return { success: true, data };
-  } catch (error) {
-    console.error('Interview Notification Error:', error);
+  } catch (error: any) {
+    console.error('Interview Notification Error Details:', {
+      message: error.message,
+      name: error.name,
+      stack: error.stack,
+      response: error.response?.data,
+    });
     return { success: false, error };
   }
 }

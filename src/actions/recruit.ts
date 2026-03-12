@@ -6,8 +6,8 @@ import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
 
 export async function submitRecruitApplication(formData: FormData) {
+  console.log('🚀 submitRecruitApplication called');
   try {
-    const type = formData.get('type') as string;
     const name = formData.get('name') as string;
     const phone = formData.get('phone') as string;
     const email = formData.get('email') as string;
@@ -17,7 +17,9 @@ export async function submitRecruitApplication(formData: FormData) {
     const address = formData.get('address') as string;
     const message = formData.get('message') as string;
     const store = formData.get('store') as string;
+    const type = formData.get('type') as string;
 
+    console.log('📝 Application info:', { name, email, store, type });
     const simulationResultStr = formData.get('simulationResult') as string;
     const simulationResult = simulationResultStr ? JSON.parse(simulationResultStr) : null;
 
@@ -86,7 +88,9 @@ export async function submitRecruitApplication(formData: FormData) {
 
     // 3. メール通知の送信
     try {
+      console.log('📧 Sending recruitment notification email...');
       await sendRecruitNotification(application, uploadedPhotos);
+      console.log('✅ Recruitment notification email sent successfully');
     } catch (emailError) {
       // メール送信に失敗しても応募自体は成功とする（ログ出力のみ）
       console.error('Notification email failed:', emailError);
@@ -170,6 +174,7 @@ export async function updateRecruitAdminData(
   id: string,
   data: { adminMemo?: string; interviewDate?: string },
 ) {
+  console.log('🚀 updateRecruitAdminData called with:', { id, ...data });
   try {
     const updatedApplication = await prisma.recruitApplication.update({
       where: { id },
@@ -182,7 +187,15 @@ export async function updateRecruitAdminData(
     // 面接日時が設定・更新された場合に通知を送る
     if (data.interviewDate) {
       console.log('Sending interview notification for ID:', id);
-      await sendInterviewReservationNotification(updatedApplication);
+      try {
+        await sendInterviewReservationNotification(updatedApplication);
+      } catch (mailError) {
+        console.error('Failed to send interview notification email:', mailError);
+        // 通知に失敗しても保存自体は成功しているので、ここではエラーを握りつぶすか
+        // または上位に伝えるか検討が必要ですが、現状は続行します。
+      }
+    } else {
+      console.log('ℹ️ Notification skipped: interviewDate is empty.');
     }
 
     revalidatePath('/admin/admin/interview-reservations');
