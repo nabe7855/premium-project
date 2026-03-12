@@ -91,7 +91,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleInput('heading', e)}
-              className="mb-10 cursor-text text-balance rounded font-serif text-3xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 md:text-5xl"
+              className="mb-10 cursor-text whitespace-pre-line text-balance rounded font-serif text-3xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 md:text-5xl"
             >
               {heading}
             </h3>
@@ -108,7 +108,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => handleInput('description1', e)}
-                  className="cursor-text rounded outline-none hover:bg-white/10"
+                  className="cursor-text whitespace-pre-line rounded outline-none hover:bg-white/10"
                 >
                   {description1}
                 </p>
@@ -117,7 +117,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => handleInput('description2', e)}
-                    className="cursor-text rounded outline-none hover:bg-white/10"
+                    className="cursor-text whitespace-pre-line rounded outline-none hover:bg-white/10"
                   >
                     {description2}
                   </p>
@@ -125,7 +125,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                     contentEditable
                     suppressContentEditableWarning
                     onBlur={(e) => handleInput('description3', e)}
-                    className="cursor-text rounded outline-none hover:bg-white/10"
+                    className="cursor-text whitespace-pre-line rounded outline-none hover:bg-white/10"
                   >
                     {description3}
                   </p>
