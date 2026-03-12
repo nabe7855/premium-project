@@ -21,46 +21,47 @@ const SectionRenderer: React.FC<{ section: SectionData }> = ({ section }) => {
   switch (type) {
     case 'hero':
       return (
-        <section className="relative flex h-[500px] items-center justify-center overflow-hidden text-center md:h-[700px]">
+        <section className="relative w-full overflow-hidden bg-slate-100 text-center">
           {content.imageUrl && (
-            <img
-              src={content.imageUrl}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover"
-            />
+            <div className="relative w-full">
+              <img src={content.imageUrl} alt="" className="h-auto w-full object-contain" />
+              {/* Removed absolute positioning and dark overlay to show full image */}
+            </div>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/70" />
-          <div className="relative z-10 max-w-5xl px-8">
-            <h1
-              className="mb-6 font-black leading-[1.1] text-white"
-              style={{
-                fontSize: `${content.titleStyle?.size || 64}px`,
-                transform: `translate(${(content.titleStyle?.x || 50) - 50}%, ${(content.titleStyle?.y || 35) - 35}%)`,
-              }}
-            >
-              {content.title}
-            </h1>
-            <p
-              className="mb-12 font-medium uppercase tracking-[0.2em] text-white/95"
-              style={{
-                fontSize: `${content.subtitleStyle?.size || 22}px`,
-                transform: `translate(${(content.subtitleStyle?.x || 50) - 50}%, ${(content.subtitleStyle?.y || 50) - 50}%)`,
-              }}
-            >
-              {content.subtitle}
-            </p>
-            {content.buttonText && (
-              <div
+
+          {(content.title || content.subtitle) && (
+            <div className="relative z-10 mx-auto max-w-5xl px-8 py-12 md:py-20">
+              <h1
+                className="mb-6 font-black leading-[1.1] text-slate-900"
                 style={{
-                  transform: `translate(${(content.buttonStyle?.x || 50) - 50}%, ${(content.buttonStyle?.y || 72) - 72}%)`,
+                  fontSize: `${content.titleStyle?.size || 64}px`,
+                  transform: `translate(${(content.titleStyle?.x || 50) - 50}%, ${(content.titleStyle?.y || 35) - 35}%)`,
                 }}
               >
-                <button className="rounded-full bg-white px-14 py-5 font-black text-slate-900 shadow-2xl transition-transform hover:scale-105">
-                  {content.buttonText}
-                </button>
-              </div>
-            )}
-          </div>
+                {content.title}
+              </h1>
+              <p
+                className="mb-12 font-medium uppercase tracking-[0.2em] text-slate-500"
+                style={{
+                  fontSize: `${content.subtitleStyle?.size || 22}px`,
+                  transform: `translate(${(content.subtitleStyle?.x || 50) - 50}%, ${(content.subtitleStyle?.y || 50) - 50}%)`,
+                }}
+              >
+                {content.subtitle}
+              </p>
+              {content.buttonText && (
+                <div
+                  style={{
+                    transform: `translate(${(content.buttonStyle?.x || 50) - 50}%, ${(content.buttonStyle?.y || 72) - 72}%)`,
+                  }}
+                >
+                  <button className="rounded-full bg-slate-900 px-14 py-5 font-black text-white shadow-2xl transition-transform hover:scale-105">
+                    {content.buttonText}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
         </section>
       );
 
