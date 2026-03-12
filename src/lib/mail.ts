@@ -45,7 +45,6 @@ async function getTargetEmails(storeInfo: string | null) {
 
     if (store) {
       matchedStore = store.name;
-      console.log(`[getTargetEmails] Store found: ${store.name} (ID: ${store.id})`);
       if (store.notification_email) {
         const extraEmails = store.notification_email
           .split(',')
@@ -118,14 +117,21 @@ export async function sendRecruitNotification(application: any, photos: { url: s
     finalTo.push(email);
   }
 
+  // Resend側の認証状況に合わせて、ドメインを切り替えて試行
+  // スクリーンショットでは send.sutoroberrys.jp が認証されているのでそちらを優先
+  const fromEmail = 'Strawberry Recruit <apply@send.sutoroberrys.jp>';
+
   try {
     const data = await resendInstance.emails.send({
-      from: 'Strawberry Recruit <apply@send.sutoroberrys.jp>',
+      from: fromEmail,
       to: finalTo,
       subject: subject,
       html: html,
     });
-    if (data.error) return { success: false, error: data.error.message, matchedStore, recipients: finalTo };
+    if (data.error) {
+       console.error('❌ Resend API Error:', data.error);
+       return { success: false, error: data.error.message, matchedStore, recipients: finalTo, attemptedFrom: fromEmail };
+    }
     return { success: true, data, matchedStore, recipients: finalTo };
   } catch (error: any) {
     return { success: false, error: error.message, matchedStore };
@@ -159,14 +165,16 @@ export async function sendInterviewReservationNotification(application: any) {
     finalTo.push(application.email);
   }
 
+  const fromEmail = 'Strawberry Recruit <apply@send.sutoroberrys.jp>';
+
   try {
     const data = await resendInstance.emails.send({
-      from: 'Strawberry Recruit <apply@send.sutoroberrys.jp>',
+      from: fromEmail,
       to: finalTo,
       subject: subject,
       html: html,
     });
-    if (data.error) return { success: false, error: data.error.message, matchedStore, recipients: finalTo };
+    if (data.error) return { success: false, error: data.error.message, matchedStore, recipients: finalTo, attemptedFrom: fromEmail };
     return { success: true, data, matchedStore, recipients: finalTo };
   } catch (error: any) {
     return { success: false, error: error.message, matchedStore };
