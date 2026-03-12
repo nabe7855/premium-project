@@ -40,6 +40,7 @@ export async function getRelatedPosts({
         )
         .eq('cast_id', castId)
         .neq('id', currentPostId)
+        .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(2);
 
@@ -69,6 +70,7 @@ export async function getRelatedPosts({
         `,
         )
         .neq('id', currentPostId)
+        .eq('status', 'published')
         .order('created_at', { ascending: false })
         .limit(limit * 3); // 多めに取ってフィルタリング
 

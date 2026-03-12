@@ -61,6 +61,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           )
         `,
         )
+        .eq('status', 'published')
         .order('created_at', { ascending: false });
 
       if (error) {
@@ -145,7 +146,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           Photo Diary
         </h1>
         <p className="mx-auto max-w-2xl font-serif text-sm text-gray-600 sm:text-base">
-          キャストが綴る、とびきり甘い"日常"の記録。誰にも言えない想いを、あなたにだけ。
+          キャストが綴る、とびきり甘い&quot;日常&quot;の記録。誰にも言えない想いを、あなたにだけ。
         </p>
       </div>
 

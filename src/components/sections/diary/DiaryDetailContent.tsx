@@ -40,6 +40,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
           `,
           )
           .eq('id', postId)
+          .eq('status', 'published')
           .single();
 
         if (error || !data) {
