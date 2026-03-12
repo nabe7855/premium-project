@@ -89,14 +89,6 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
                 ),
               },
               {
-                id: 'facebookUrl',
-                icon: (
-                  <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M22.675 0h-21.35c-.732 0-1.325.593-1.325 1.325v21.351c0 .731.593 1.324 1.325 1.324h11.495v-8.74h-2.94v-3.411h2.94v-2.511c0-2.915 1.782-4.502 4.379-4.502 1.244 0 2.316.092 2.627.134v3.047l-1.802.001c-1.414 0-1.687.672-1.687 1.654v2.17h3.374l-.439 3.411h-2.935v8.74h6.138c.732 0 1.325-.593 1.325-1.324v-21.351c0-.732-.593-1.325-1.325-1.325z" />
-                  </svg>
-                ),
-              },
-              {
                 id: 'youtubeUrl',
                 icon: (
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">

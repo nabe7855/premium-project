@@ -8,9 +8,15 @@ import NextImage from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
+import NewsNavigation from '@/components/templates/news/NewsNavigation';
+import SNSProfile from '@/components/templates/news/SNSProfile';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
+
 interface NewsListClientProps {
   news: PageData[];
   storeSlug: string;
+  config: StoreTopPageConfig;
+  recommendedPages: PageData[];
 }
 
 const CATEGORIES = [
@@ -24,7 +30,12 @@ const CATEGORIES = [
 
 const ITEMS_PER_PAGE = 10;
 
-export default function NewsListClient({ news, storeSlug }: NewsListClientProps) {
+export default function NewsListClient({
+  news,
+  storeSlug,
+  config,
+  recommendedPages,
+}: NewsListClientProps) {
   const [activeCategory, setActiveCategory] = useState('all');
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -276,6 +287,19 @@ export default function NewsListClient({ news, storeSlug }: NewsListClientProps)
             </button>
           </div>
         )}
+      </div>
+
+      <div className="mx-auto max-w-5xl">
+        {/* Recommended Articles Section (Reuse NewsNavigation) */}
+        <NewsNavigation
+          currentPage={news[0]} // Pass first news as dummy current page
+          relatedPages={[]} // We don't need related pages here
+          recommendedPages={recommendedPages}
+          storeSlug={storeSlug}
+        />
+
+        {/* SNS Profile */}
+        <SNSProfile config={config.snsProfile} />
       </div>
     </div>
   );

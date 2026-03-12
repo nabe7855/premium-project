@@ -33,6 +33,9 @@ export default async function StoreNewsPage({ params }: StoreNewsPageProps) {
     ? (topConfigResult.config as StoreTopPageConfig)
     : DEFAULT_STORE_TOP_CONFIG;
 
+  const recommendedIds = config.recommendedNewsIds || [];
+  const recommendedPages = newsPages.filter((page) => recommendedIds.includes(page.id));
+
   // Decide which Header/Footer to use based on template
   const isFukuoka = store.template === 'fukuoka';
   const isYokohama = store.template === 'yokohama';
@@ -50,7 +53,12 @@ export default async function StoreNewsPage({ params }: StoreNewsPageProps) {
       <HeaderComponent config={config.header} />
 
       <main className="flex-grow pt-20 md:pt-24">
-        <NewsListClient news={newsPages} storeSlug={slug} />
+        <NewsListClient
+          news={newsPages}
+          storeSlug={slug}
+          config={config}
+          recommendedPages={recommendedPages}
+        />
       </main>
 
       <FooterComponent config={config.footer} />
