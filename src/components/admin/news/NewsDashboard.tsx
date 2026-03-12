@@ -12,6 +12,8 @@ interface NewsDashboardProps {
   onDeletePage: (id: string) => void;
   onToggleStatus: (id: string) => void;
   onUpdatePage: (id: string, data: Partial<PageData>) => void;
+  onGetRecommendedIds: (storeSlug: string) => Promise<string[]>;
+  onSaveRecommendedIds: (storeSlug: string, ids: string[]) => Promise<void>;
 }
 
 const CATEGORIES = [
@@ -30,11 +32,26 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   onDeletePage,
   onToggleStatus,
   onUpdatePage,
+  onGetRecommendedIds,
+  onSaveRecommendedIds,
 }) => {
   const [editingPage, setEditingPage] = useState<PageData | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [selectedStore, setSelectedStore] = useState('fukuoka');
+  const [recommendedIds, setRecommendedIds] = useState<string[]>([]);
+  const [isSavingRecommended, setIsSavingRecommended] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const stores = getAllStores();
+
+  React.useEffect(() => {
+    onGetRecommendedIds(selectedStore).then(setRecommendedIds);
+  }, [selectedStore]);
+
+  const handleSaveRecommended = async () => {
+    setIsSavingRecommended(true);
+    await onSaveRecommendedIds(selectedStore, recommendedIds);
+    setIsSavingRecommended(false);
+  };
 
   const handleQuickEditSave = () => {
     if (!editingPage) return;
@@ -105,6 +122,75 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
             </svg>
             新規ページ作成
           </button>
+        </div>
+
+        {/* Recommended News Management */}
+        <div className="mb-12 overflow-hidden rounded-[3rem] border border-slate-100 bg-white p-8 shadow-sm">
+          <div className="mb-8 flex flex-col justify-between gap-4 border-b border-slate-50 pb-6 sm:flex-row sm:items-center">
+            <div>
+              <h2 className="text-xl font-bold text-slate-900">
+                おすすめ記事（ピックアップ）の管理
+              </h2>
+              <p className="text-sm text-slate-400">
+                ニュース詳細ページの下部に表示される「ピックアップ」記事を店舗ごとに設定します。
+              </p>
+            </div>
+            <div className="flex items-center gap-4">
+              <select
+                value={selectedStore}
+                onChange={(e) => setSelectedStore(e.target.value)}
+                className="rounded-xl bg-slate-50 px-4 py-2 text-sm font-bold text-slate-900 outline-none hover:bg-slate-100"
+              >
+                {stores.map((s) => (
+                  <option key={s.slug} value={s.slug}>
+                    {s.city}店
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleSaveRecommended}
+                disabled={isSavingRecommended}
+                className="flex items-center gap-2 rounded-xl bg-rose-500 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:bg-rose-600 disabled:opacity-50"
+              >
+                {isSavingRecommended ? '保存中...' : '設定を保存'}
+              </button>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            {pages
+              .filter((p) => p.status === 'published')
+              .map((page) => {
+                const isSelected = recommendedIds.includes(page.id);
+                return (
+                  <button
+                    key={page.id}
+                    onClick={() => {
+                      setRecommendedIds((prev) =>
+                        isSelected ? prev.filter((id) => id !== page.id) : [...prev, page.id],
+                      );
+                    }}
+                    className={`flex items-center gap-3 rounded-2xl border px-4 py-2.5 transition-all ${
+                      isSelected
+                        ? 'border-rose-500 bg-rose-50 text-rose-600 shadow-sm'
+                        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div
+                      className={`h-2 w-2 rounded-full ${isSelected ? 'animate-pulse bg-rose-500' : 'bg-slate-200'}`}
+                    />
+                    <span className="text-xs font-bold">{page.title}</span>
+                  </button>
+                );
+              })}
+          </div>
+          {recommendedIds.length > 0 && (
+            <div className="mt-6 flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-rose-500">
+                {recommendedIds.length}件 選択中
+              </span>
+            </div>
+          )}
         </div>
 
         {pages.length === 0 ? (

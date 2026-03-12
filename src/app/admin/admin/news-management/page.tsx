@@ -10,6 +10,9 @@ import {
   getAllPages,
   updatePage,
 } from '@/lib/actions/news-pages';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -133,6 +136,28 @@ export default function NewsManagementPage() {
     await updatePage(id, data);
   };
 
+  const handleGetRecommendedIds = async (storeSlug: string) => {
+    const result = await getStoreTopConfig(storeSlug);
+    if (result.success && result.config) {
+      return (result.config as StoreTopPageConfig).recommendedNewsIds || [];
+    }
+    return [];
+  };
+
+  const handleSaveRecommendedIds = async (storeSlug: string, ids: string[]) => {
+    const result = await getStoreTopConfig(storeSlug);
+    if (result.success && result.config) {
+      const config = result.config as StoreTopPageConfig;
+      const updatedConfig = { ...config, recommendedNewsIds: ids };
+      const saveResult = await saveStoreTopConfig(storeSlug, updatedConfig);
+      if (saveResult.success) {
+        toast.success('ピックアップ設定を保存しました');
+      } else {
+        toast.error('保存に失敗しました');
+      }
+    }
+  };
+
   const updateActivePage = (data: Partial<PageData>) => {
     if (!activePageId) return;
     handleUpdatePage(activePageId, data);
@@ -148,6 +173,8 @@ export default function NewsManagementPage() {
         onDeletePage={handleDeletePage}
         onToggleStatus={handleToggleStatus}
         onUpdatePage={handleUpdatePage}
+        onGetRecommendedIds={handleGetRecommendedIds}
+        onSaveRecommendedIds={handleSaveRecommendedIds}
       />
     );
   }
