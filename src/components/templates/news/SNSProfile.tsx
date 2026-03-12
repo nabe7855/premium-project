@@ -57,20 +57,6 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
             >
               {config.title}
             </h3>
-            <div className="flex items-center gap-2">
-              <a
-                href={isEditing ? '#' : config.followLink}
-                onClick={(e) => {
-                  if (isEditing) {
-                    e.preventDefault();
-                    handleEdit('followLink', config.followLink);
-                  }
-                }}
-                className={`rounded-full border border-slate-200 bg-white px-6 py-2 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 active:scale-95 ${isEditing ? 'ring-1 ring-rose-500' : ''}`}
-              >
-                フォロー中
-              </a>
-            </div>
           </div>
 
           <p
@@ -115,14 +101,6 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
                 icon: (
                   <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.612 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
-                  </svg>
-                ),
-              },
-              {
-                id: 'rssUrl',
-                icon: (
-                  <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M6.18 15.64a2.18 2.18 0 0 1 2.18 2.18C8.36 19 7.38 20 6.18 20 5 20 4 19 4 17.82a2.18 2.18 0 0 1 2.18-2.18zM4 4.44A15.56 15.56 0 0 1 19.56 20h-2.83A12.73 12.73 0 0 0 4 7.27V4.44zm0 5.66a9.9 9.9 0 0 1 9.9 9.9h-2.85A7.05 7.05 0 0 0 4 12.94V10.1z" />
                   </svg>
                 ),
               },
