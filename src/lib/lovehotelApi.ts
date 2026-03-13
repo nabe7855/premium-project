@@ -455,6 +455,17 @@ export const getCityDetails = async (cityId: string) => {
   return data;
 };
 
+// Normalize price_details: accepts both array [{category, plans}] and object {category: plans}
+const normalizePriceDetails = (raw: any): any[] | undefined => {
+  if (!raw) return undefined;
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'object') {
+    // Convert {宿泊: [...], 延長料金: [...]} => [{category: '宿泊', plans: [...]}, ...]
+    return Object.keys(raw).map((key) => ({ category: key, plans: raw[key] || [] }));
+  }
+  return undefined;
+};
+
 // Map DB hotel data to frontend Hotel interface
 export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
   // Use the first exterior image or legacy image_url
@@ -498,7 +509,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
     aiDescription: dbHotel.ai_description || '',
-    priceDetails: dbHotel.price_details,
+    priceDetails: normalizePriceDetails(dbHotel.price_details),
     status: dbHotel.status || 'draft',
   };
 };
