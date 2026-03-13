@@ -14,6 +14,7 @@ import {
   getServices,
   updateHotel,
   uploadHotelImage,
+  normalizePriceDetails,
 } from '@/lib/lovehotelApi';
 import { Review } from '@/types/lovehotels';
 import { useRouter } from 'next/navigation';
@@ -136,7 +137,14 @@ export default function HotelForm({ id }: HotelFormProps) {
       console.log('DEBUG: price_details:', hotel.price_details);
       console.log('DEBUG: website:', hotel.website);
 
+      console.log('DEBUG: hotel.price_details type:', typeof hotel.price_details);
+      console.log('DEBUG: hotel.price_details isArray:', Array.isArray(hotel.price_details));
+      const normalizedPd = normalizePriceDetails(hotel.price_details) || [];
+      console.log('DEBUG: normalizedPd type:', typeof normalizedPd);
+      console.log('DEBUG: normalizedPd isArray:', Array.isArray(normalizedPd));
+
       setFormData({
+        ...formData,
         name: hotel.name || '',
         prefecture_id: hotel.prefecture_id || '',
         city_id: hotel.city_id || '',
@@ -159,8 +167,9 @@ export default function HotelForm({ id }: HotelFormProps) {
         room_count: hotel.room_count || '',
         place_id: hotel.place_id || '',
         status: hotel.status || 'draft',
-        price_details: hotel.price_details || [],
+        price_details: normalizedPd,
       });
+      console.log('DEBUG: Normalized price_details:', normalizePriceDetails(hotel.price_details) || []);
       setSelectedAmenities(
         hotel.lh_hotel_amenities
           ?.map((a: any) => a.amenity_id || a.lh_amenities?.id)
@@ -681,7 +690,9 @@ export default function HotelForm({ id }: HotelFormProps) {
             </div>
 
             <div className="space-y-6">
-              {(formData.price_details || []).map((cat: any, catIdx: number) => (
+              {!Array.isArray(formData.price_details) ? (
+                <div className="text-red-500">Error: price_details is not an array. Actual type: {typeof formData.price_details}</div>
+              ) : (formData.price_details || []).map((cat: any, catIdx: number) => (
                 <div key={catIdx} className="rounded-lg border border-white/5 bg-black/20 p-4">
                   <div className="mb-4 flex items-center gap-4">
                     <input

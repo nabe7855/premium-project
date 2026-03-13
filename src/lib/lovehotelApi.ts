@@ -456,7 +456,7 @@ export const getCityDetails = async (cityId: string) => {
 };
 
 // Normalize price_details: accepts both array [{category, plans}] and object {category: plans}
-const normalizePriceDetails = (raw: any): any[] | undefined => {
+export const normalizePriceDetails = (raw: any): any[] | undefined => {
   if (!raw) return undefined;
   if (Array.isArray(raw)) return raw;
   if (typeof raw === 'object') {
