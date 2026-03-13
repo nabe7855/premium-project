@@ -1,6 +1,6 @@
 'use server';
 
-import { sendInterviewReservationNotification, sendRecruitNotification } from '@/lib/mail';
+import { sendInterviewReservationNotification, sendRecruitNotification, sendRecruitAutoReply } from '@/lib/mail';
 import { prisma } from '@/lib/prisma';
 import { supabase } from '@/lib/supabaseClient';
 import { revalidatePath } from 'next/cache';
@@ -95,6 +95,17 @@ export async function submitRecruitApplication(formData: FormData) {
         console.error('❌ Email notification returned failure:', emailResult.error);
       } else {
         console.log('✅ Recruitment notification email sent successfully');
+      }
+
+      // 4. 応募者への自動返信メール
+      if (application.email) {
+        console.log('📧 Sending auto-reply email to applicant...');
+        const autoReplyResult = await sendRecruitAutoReply(application);
+        if (autoReplyResult && !autoReplyResult.success) {
+          console.error('❌ Auto-reply email failed:', autoReplyResult.error);
+        } else {
+          console.log('✅ Auto-reply email sent successfully');
+        }
       }
     } catch (emailError) {
       // メール送信に失敗しても応募自体は成功とする（ログ出力のみ）

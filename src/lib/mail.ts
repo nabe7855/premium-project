@@ -163,9 +163,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
   if (!resendInstance) return { success: false, error: 'Resend not initialized' };
 
   const finalTo = [...targetEmails];
-  if (email && !finalTo.includes(email)) {
-    finalTo.push(email);
-  }
+  // 管理者のみに送信するように変更（応募者へは別メールで送信）
 
   // 認証済みドメイン sutoroberrys.jp を使用（サブドメイン send. が原因でエラーになるため）
   const fromEmail = 'Strawberry Recruit <apply@sutoroberrys.jp>';
@@ -227,5 +225,62 @@ export async function sendInterviewReservationNotification(application: any) {
     return { success: true, data, matchedStore, recipients: finalTo };
   } catch (error: any) {
     return { success: false, error: error.message, matchedStore };
+  }
+}
+
+export async function sendRecruitAutoReply(application: any) {
+  const { email, name } = application;
+  if (!email) {
+    console.warn('⚠️ Applicant email is missing, skipping auto-reply.');
+    return { success: false, error: 'Applicant email is missing' };
+  }
+
+  const subject = `【受領確認】求人へのご応募ありがとうございます`;
+  const html = `
+    <div style="font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px; overflow: hidden;">
+      <div style="background-color: #fdf2f8; padding: 20px; text-align: center; border-bottom: 2px solid #f9a8d4;">
+        <h1 style="color: #db2777; margin: 0; font-size: 24px;">Strawberry Recruit</h1>
+      </div>
+      <div style="padding: 30px; background-color: #fff;">
+        <p style="margin-top: 0;">${name} 様</p>
+        
+        <p>求人のお申込みありがとうございます。</p>
+        
+        <div style="background-color: #f9fafb; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #db2777;">
+          <p style="margin: 0; font-size: 14px;">※約２～３日のお時間をいただき、写真選考を含めた１次審査通過の方には、面接日程についてのご連絡をいたします。</p>
+          <p style="margin: 10px 0 0 0; font-size: 14px;">相当期間経過後も当店からの連絡がない場合はあしからずご了承下さい。</p>
+        </div>
+
+        <p style="font-size: 14px; color: #666; margin-top: 30px;">
+          本メールはシステムによる自動送信です。<br>
+          お心当たりがない場合は、お手数ですが本メールを破棄してください。
+        </p>
+      </div>
+      <div style="background-color: #f9fafb; padding: 15px; text-align: center; font-size: 12px; color: #999;">
+        &copy; ${new Date().getFullYear()} Strawberry Group. All rights reserved.
+      </div>
+    </div>
+  `;
+
+  const resendInstance = getResend();
+  if (!resendInstance) return { success: false, error: 'Resend not initialized' };
+
+  const fromEmail = 'Strawberry Recruit <apply@sutoroberrys.jp>';
+
+  try {
+    const data = await resendInstance.emails.send({
+      from: fromEmail,
+      to: [email],
+      subject: subject,
+      html: html,
+    });
+    if (data.error) {
+      console.error('❌ Resend Auto-Reply Error:', data.error);
+      return { success: false, error: data.error.message };
+    }
+    return { success: true, data };
+  } catch (error: any) {
+    console.error('❌ Auto-Reply Exception:', error);
+    return { success: false, error: error.message };
   }
 }
