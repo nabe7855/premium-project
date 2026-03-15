@@ -289,7 +289,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:h-20 md:px-6">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between pl-4 pr-0 md:h-20 md:pl-6">
         <Link
           href="/"
           className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
@@ -324,58 +324,56 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           )}
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          {/* Header Banner Image (Horizontal) */}
-          <Link
-            href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
-            className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
-          >
-            <img
-              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-              alt="Recruit Banner"
-              className="h-full w-full object-cover"
-            />
-          </Link>
-          <Link
-            href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
-            className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
-          >
-            <img
-              src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-              alt="Recruit Banner"
-              className="h-full w-full object-cover"
-            />
-          </Link>
+          <div className="flex h-16 items-center gap-3 sm:gap-4 md:h-20">
+            {/* Header Banner Image (Horizontal) */}
+            <Link
+              href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
+              className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
+            >
+              <img
+                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                alt="Recruit Banner"
+                className="h-full w-full object-cover"
+              />
+            </Link>
+            <Link
+              href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
+              className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+            >
+              <img
+                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                alt="Recruit Banner"
+                className="h-full w-full object-cover"
+              />
+            </Link>
 
-          <a
-            href={`tel:${(config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
-            className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:flex items-center gap-2"
-          >
-            <Phone size={18} />
-            <span>電話</span>
-          </a>
+            <a
+              href={`tel:${(config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
+              className="flex h-full items-center gap-2 bg-[#FFB800] px-4 text-sm font-black tracking-widest text-white transition-all hover:brightness-110 active:scale-95 sm:px-6 md:px-8"
+            >
+              <Phone size={18} />
+              <span>電話</span>
+            </a>
 
-          <button
-            onClick={() => {
-              if (!isMenuOpen) setIsMenuOpen(true);
-              else closeMenu();
-            }}
-            className={`flex flex-col items-center justify-center gap-1 rounded-full px-5 py-3 transition-all active:scale-95 md:gap-1.5 md:px-6 md:py-4 ${
-              isMenuOpen
-                ? 'bg-pink-50 text-pink-500'
-                : 'bg-gradient-to-r from-pink-400 to-pink-500 text-white shadow-md hover:shadow-lg'
-            }`}
-          >
-            {isMenuOpen ? (
-              <X size={24} className="md:h-7 md:w-7" />
-            ) : (
-              <Menu size={24} className="md:h-7 md:w-7" />
-            )}
-            <span className="text-xs font-black tracking-wider md:text-sm">
-              {isMenuOpen ? '閉じる' : 'MENU'}
-            </span>
-          </button>
-        </div>
+            <button
+              onClick={() => {
+                if (!isMenuOpen) setIsMenuOpen(true);
+                else closeMenu();
+              }}
+              className={`flex h-full flex-col items-center justify-center gap-1 px-5 transition-all active:scale-95 md:gap-1.5 md:px-8 ${
+                isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-[#333333] text-white shadow-md hover:shadow-lg'
+              }`}
+            >
+              {isMenuOpen ? (
+                <X size={24} className="md:h-7 md:w-7" />
+              ) : (
+                <Menu size={24} className="md:h-7 md:w-7" />
+              )}
+              <span className="text-xs font-black tracking-wider md:text-sm">
+                {isMenuOpen ? '閉じる' : 'MENU'}
+              </span>
+            </button>
+          </div>
       </div>
 
       {/* モバイルメニューオーバーレイ */}

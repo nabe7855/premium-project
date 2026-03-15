@@ -313,7 +313,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md' : 'bg-white'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
+      <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between pl-4 pr-0 md:h-[65px] md:pl-6">
         <Link
           href={getAbsoluteHref(
             config.logoLink === '/' || !config.logoLink ? '/store/{slug}' : config.logoLink,
@@ -371,7 +371,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           )}
         </Link>
 
-        <div className="flex items-center gap-3 sm:gap-4">
+        <div className="flex h-full items-center gap-3 sm:gap-4">
           {/* Header Banner Image (Horizontal) */}
           <Link
             href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}

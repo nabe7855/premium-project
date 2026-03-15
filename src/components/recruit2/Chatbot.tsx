@@ -244,9 +244,26 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
             dataToSubmit.append('type', 'chatbot');
             dataToSubmit.append('name', formData.name || '');
             dataToSubmit.append('phone', formData.phone || '');
+            dataToSubmit.append('email', formData.email || '');
             dataToSubmit.append('age', formData.age || '');
-            dataToSubmit.append('height', formData.height || '');
-            dataToSubmit.append('weight', formData.weight || '');
+
+            // 単位の重複を防ぐため、数値をクリーンアップして送信
+            const heightClean = (formData.height || '').replace(/cm/g, '');
+            const weightClean = (formData.weight || '').replace(/kg/g, '');
+            dataToSubmit.append('height', heightClean);
+            dataToSubmit.append('weight', weightClean);
+
+            // 追加フィールドのマッピング
+            dataToSubmit.append('address', formData.homeArea || '');
+            dataToSubmit.append('employment', formData.job || '');
+            dataToSubmit.append('source', formData.source || '');
+
+            const messageParts = [];
+            if (formData.motivation) messageParts.push(`【応募動機】\n${formData.motivation}`);
+            if (formData.workArea) messageParts.push(`【希望エリア】\n${formData.workArea}`);
+            if (formData.freeText) messageParts.push(`【自己PR・意気込み】\n${formData.freeText}`);
+            dataToSubmit.append('message', messageParts.join('\n\n'));
+
             dataToSubmit.append('store', storeName || '福岡店'); // 動的な店舗名を使用
 
             // 画像の変換 (base64 -> Blob -> File)
