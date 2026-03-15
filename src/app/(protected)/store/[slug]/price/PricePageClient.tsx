@@ -279,9 +279,11 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                       )}
                       <div className="p-6">
                         <div className="mb-2 flex items-center justify-between">
-                          <span className="rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white">
-                            {campaign.accent_text}
-                          </span>
+                          {campaign.accent_text && (
+                            <span className="rounded-full bg-rose-500 px-3 py-1 text-[10px] font-black uppercase tracking-wider text-white">
+                              {campaign.accent_text}
+                            </span>
+                          )}
                           {campaign.price_info && (
                             <span className="text-lg font-black text-rose-500">
                               {campaign.price_info}

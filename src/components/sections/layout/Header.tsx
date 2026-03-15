@@ -1,7 +1,7 @@
 'use client';
 
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
-import { Camera, ChevronDown, Menu, Users, X } from 'lucide-react';
+import { Camera, ChevronDown, Menu, Phone, Users, X } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -347,12 +347,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             />
           </Link>
 
-          <Link
-            href={`/store/${currentStoreId}/reservation`}
-            className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:block"
+          <a
+            href={`tel:${(config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
+            className="hidden whitespace-nowrap rounded-full bg-gradient-to-r from-[#D43D6F] to-[#FF6B95] px-6 py-2.5 text-sm font-black tracking-widest text-white shadow-lg shadow-pink-100 transition-all hover:scale-105 active:scale-95 sm:flex items-center gap-2"
           >
-            {config.reserveButtonText}
-          </Link>
+            <Phone size={18} />
+            <span>電話</span>
+          </a>
 
           <button
             onClick={() => {

@@ -1,7 +1,7 @@
 'use client';
 
 import { getStoreContactData } from '@/actions/store-contact';
-import { Calendar, CreditCard, Heart, MessageCircle, Phone } from 'lucide-react';
+import { Calendar, CreditCard, Heart, MessageCircle, Phone, Users } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -83,14 +83,11 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       badge: isFirstVisit ? '初' : null,
     },
     {
-      id: 'phone',
-      label: '電話',
-      icon: Phone,
-      href: `tel:${storeContact.phone.replace(/-/g, '')}`,
-      ariaLabel: isBusinessHours
-        ? '今すぐ電話で予約・相談'
-        : '営業時間外のためLINEをご利用ください',
-      urgent: isBusinessHours,
+      id: 'reservation',
+      label: '予約',
+      icon: Users,
+      href: `/store/${slug}/reservation`,
+      ariaLabel: 'WEB予約・空き状況確認',
     },
     {
       id: 'line',
@@ -108,6 +105,14 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       ariaLabel: '人気キャスト一覧・お気に入り確認',
     },
   ];
+
+  type FooterItem = typeof footerItems[number] & {
+    highlighted?: boolean;
+    urgent?: boolean;
+    badge?: string | null;
+  };
+
+  const items = footerItems as FooterItem[];
 
   return (
     <footer
@@ -144,7 +149,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
       <nav className="footer-nav__container">
         <ul className="footer-nav__list">
-          {footerItems.map((item) => (
+          {items.map((item) => (
             <li key={item.id} className="footer-nav__item">
               <a
                 href={item.href}

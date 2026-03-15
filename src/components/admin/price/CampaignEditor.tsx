@@ -136,7 +136,7 @@ export default function CampaignEditor({ campaigns, storeSlug, onUpdate }: Campa
               <div className="flex flex-wrap items-center gap-4">
                 <div className="flex-1">
                   <label className="mb-1 block text-xs font-bold text-rose-400">
-                    アクセントテキスト
+                    アクセントテキスト (左上)
                   </label>
                   <input
                     type="text"
@@ -148,7 +148,7 @@ export default function CampaignEditor({ campaigns, storeSlug, onUpdate }: Campa
                 </div>
                 <div className="flex-1">
                   <label className="mb-1 block text-xs font-bold text-rose-400">
-                    金額/割引情報
+                    右上のテキスト (例: MAX 4,000円引)
                   </label>
                   <input
                     type="text"

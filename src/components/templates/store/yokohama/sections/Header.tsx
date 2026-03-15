@@ -3,7 +3,7 @@
 import { useStore } from '@/contexts/StoreContext';
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
-import { Camera, ChevronDown, Home, Link2, Menu, Users, X } from 'lucide-react';
+import { Camera, ChevronDown, Home, Link2, Menu, Phone, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -430,14 +430,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               <span className="text-[7px] font-black tracking-tighter md:text-[10px]">TOP</span>
             </Link>
 
-            {/* RESERVE Button */}
-            <Link
-              href={getAbsoluteHref('/store/{slug}/reservation')}
+            {/* PHONE Button */}
+            <a
+              href={`tel:${(store.contact?.phone || config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
               className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-[#D43D6F] transition-all hover:bg-pink-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
             >
-              <Users size={16} className="md:h-6 md:w-6" />
-              <span className="text-[7px] font-black tracking-tighter md:text-[10px]">WEB予約</span>
-            </Link>
+              <Phone size={16} className="md:h-6 md:w-6" />
+              <span className="text-[7px] font-black tracking-tighter md:text-[10px]">電話</span>
+            </a>
 
             {/* MENU Button */}
             <button
