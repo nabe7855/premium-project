@@ -310,7 +310,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     <header
       id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-1 shadow-sm backdrop-blur-md' : 'bg-white py-2'
+        scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md' : 'bg-white'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between px-4 md:h-[65px] md:px-6">
@@ -420,11 +420,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             </div>
           </Link>
 
-          <div className="flex items-stretch overflow-hidden rounded-lg border border-gray-100 bg-white shadow-sm">
+          <div className="flex h-[54px] items-stretch overflow-hidden md:h-[65px]">
             {/* TOP Button */}
             <Link
               href={getAbsoluteHref('/store/{slug}')}
-              className="group flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 py-1.5 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="group flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               <Home size={16} className="md:h-6 md:w-6" />
               <span className="text-[7px] font-black tracking-tighter md:text-[10px]">TOP</span>
@@ -433,7 +433,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* PHONE Button */}
             <a
               href={`tel:${(store.contact?.phone || config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
-              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-[#D43D6F] transition-all hover:bg-pink-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#FFB800] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               <Phone size={16} className="md:h-6 md:w-6" />
               <span className="text-[7px] font-black tracking-tighter md:text-[10px]">電話</span>
@@ -445,15 +445,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 if (!isMenuOpen) setIsMenuOpen(true);
                 else closeMenu();
               }}
-              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 border-l border-gray-100 bg-white px-1 py-1.5 text-gray-400 transition-all hover:bg-gray-50 active:scale-95 md:min-w-[80px] md:px-5 md:py-2.5"
+              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#333333] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               {isMenuOpen ? (
-                <X size={16} className="text-pink-500 md:h-6 md:w-6" />
+                <X size={16} className="text-pink-400 md:h-6 md:w-6" />
               ) : (
                 <Menu size={16} className="md:h-6 md:w-6" />
               )}
               <span
-                className={`text-[7px] font-black tracking-tighter md:text-[10px] ${isMenuOpen ? 'text-pink-500' : ''}`}
+                className={`text-[7px] font-black tracking-tighter md:text-[10px] ${isMenuOpen ? 'text-pink-400' : ''}`}
               >
                 {isMenuOpen ? '閉じる' : 'MENU'}
               </span>
