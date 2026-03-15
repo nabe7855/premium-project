@@ -392,9 +392,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               {/* Menu Header (Sticky) */}
               <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
                 <div className="flex items-center gap-2">
-                  <span className="text-2xl font-black italic text-[#D43D6F]">
-                    {config.logoText}
-                  </span>
+                  {config.logoUrl ? (
+                    <img src={config.logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+                  ) : (
+                    <span className="text-2xl font-black italic text-[#D43D6F]">
+                      {config.logoText}
+                    </span>
+                  )}
                 </div>
                 <button onClick={closeMenu} className="rounded-full bg-pink-50 p-2 text-pink-500">
                   <X size={24} />
