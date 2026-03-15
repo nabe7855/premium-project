@@ -1,3 +1,5 @@
+'use client';
+
 import { submitRecruitApplication } from '@/actions/recruit';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
@@ -16,19 +18,25 @@ const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
     setLoading(true);
     setError(null);
 
-    const formData = new FormData(e.currentTarget);
-    formData.append('type', 'quick');
-    if (storeName) {
-      formData.append('store', storeName);
-    }
+    try {
+      const formData = new FormData(e.currentTarget);
+      formData.append('type', 'quick');
+      if (storeName) {
+        formData.append('store', storeName);
+      }
 
-    const result = await submitRecruitApplication(formData);
+      const result = await submitRecruitApplication(formData);
 
-    setLoading(false);
-    if (result.success) {
-      router.push('/thanks');
-    } else {
-      setError(result.error || '送信に失敗しました。');
+      setLoading(false);
+      if (result && result.success) {
+        router.push('/thanks');
+      } else {
+        setError(result?.error || '送信に失敗しました。');
+      }
+    } catch (err: any) {
+      console.error('Submission error:', err);
+      setLoading(false);
+      setError('通信エラーが発生しました。');
     }
   };
 

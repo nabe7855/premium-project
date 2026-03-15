@@ -1,4 +1,7 @@
+'use client';
+
 import { submitRecruitApplication } from '@/actions/recruit';
+import { resizeImage } from '@/lib/image-utils';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -37,10 +40,25 @@ const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
       formData.append('store', storeName);
     }
 
+    // 画像の圧縮処理
+    formData.delete('photos');
+    const photoNumbers = Object.keys(previews).map(Number);
+    for (const num of photoNumbers) {
+      try {
+        const blob = await resizeImage(previews[num]);
+        formData.append('photos', new File([blob], `photo_${num}.jpg`, { type: 'image/jpeg' }));
+      } catch (imgError) {
+        console.error('Image processing error:', imgError);
+        const res = await fetch(previews[num]);
+        const blob = await res.blob();
+        formData.append('photos', new File([blob], `photo_${num}.jpg`, { type: 'image/jpeg' }));
+      }
+    }
+
     const result = await submitRecruitApplication(formData);
 
     setLoading(false);
-    if (result.success) {
+    if (result && result.success) {
       navigate('/thanks');
     } else {
       setError(result.error || '送信に失敗しました。');

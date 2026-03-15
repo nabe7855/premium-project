@@ -1,4 +1,5 @@
 import { submitRecruitApplication } from '@/actions/recruit';
+import { resizeImage } from '@/lib/image-utils';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -240,52 +241,71 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
 
           // データを FormData に変換して送信
           const submitData = async () => {
-            const dataToSubmit = new FormData();
-            dataToSubmit.append('type', 'chatbot');
-            dataToSubmit.append('name', formData.name || '');
-            dataToSubmit.append('phone', formData.phone || '');
-            dataToSubmit.append('email', formData.email || '');
-            dataToSubmit.append('age', formData.age || '');
+            try {
+              const dataToSubmit = new FormData();
+              dataToSubmit.append('type', 'chatbot');
+              dataToSubmit.append('name', formData.name || '');
+              dataToSubmit.append('phone', formData.phone || '');
+              dataToSubmit.append('email', formData.email || '');
+              dataToSubmit.append('age', formData.age || '');
 
-            // 単位の重複を防ぐため、数値をクリーンアップして送信
-            const heightClean = (formData.height || '').replace(/cm/g, '');
-            const weightClean = (formData.weight || '').replace(/kg/g, '');
-            dataToSubmit.append('height', heightClean);
-            dataToSubmit.append('weight', weightClean);
+              // 単位の重複を防ぐため、数値をクリーンアップして送信
+              const heightClean = (formData.height || '').replace(/cm/g, '');
+              const weightClean = (formData.weight || '').replace(/kg/g, '');
+              dataToSubmit.append('height', heightClean);
+              dataToSubmit.append('weight', weightClean);
 
-            // 追加フィールドのマッピング
-            dataToSubmit.append('address', formData.homeArea || '');
-            dataToSubmit.append('employment', formData.job || '');
-            dataToSubmit.append('source', formData.source || '');
+              // 追加フィールドのマッピング
+              dataToSubmit.append('address', formData.homeArea || '');
+              dataToSubmit.append('employment', formData.job || '');
+              dataToSubmit.append('source', formData.source || '');
 
-            const messageParts = [];
-            if (formData.motivation) messageParts.push(`【応募動機】\n${formData.motivation}`);
-            if (formData.workArea) messageParts.push(`【希望エリア】\n${formData.workArea}`);
-            if (formData.freeText) messageParts.push(`【自己PR・意気込み】\n${formData.freeText}`);
-            dataToSubmit.append('message', messageParts.join('\n\n'));
+              const messageParts = [];
+              if (formData.motivation) messageParts.push(`【応募動機】\n${formData.motivation}`);
+              if (formData.workArea) messageParts.push(`【希望エリア】\n${formData.workArea}`);
+              if (formData.freeText) messageParts.push(`【自己PR・意気込み】\n${formData.freeText}`);
+              dataToSubmit.append('message', messageParts.join('\n\n'));
 
-            dataToSubmit.append('store', storeName || '福岡店'); // 動的な店舗名を使用
+              dataToSubmit.append('store', storeName || '福岡店');
 
-            // 画像の変換 (base64 -> Blob -> File)
-            for (let i = 0; i < userPhotos.length; i++) {
-              const res = await fetch(userPhotos[i]);
-              const blob = await res.blob();
-              dataToSubmit.append(
-                'photos',
-                new File([blob], `photo_${i}.jpg`, { type: 'image/jpeg' }),
-              );
-            }
+              // 画像の圧縮・変換 (base64 -> Blob -> File)
+              for (let i = 0; i < userPhotos.length; i++) {
+                try {
+                  const blob = await resizeImage(userPhotos[i]);
+                  dataToSubmit.append(
+                    'photos',
+                    new File([blob], `photo_${i}.jpg`, { type: 'image/jpeg' }),
+                  );
+                } catch (imgError) {
+                  console.error('Image processing error:', imgError);
+                  // 失敗した場合はオリジナルのfetchを試みる（フォールバック）
+                  const res = await fetch(userPhotos[i]);
+                  const blob = await res.blob();
+                  dataToSubmit.append(
+                    'photos',
+                    new File([blob], `photo_${i}.jpg`, { type: 'image/jpeg' }),
+                  );
+                }
+              }
 
-            const result = await submitRecruitApplication(dataToSubmit);
-            setIsTyping(false);
+              const result = await submitRecruitApplication(dataToSubmit);
+              setIsTyping(false);
 
-            if (result.success) {
+              if (result && result.success) {
+                addModelMessage(
+                  'すべての情報の入力ありがとうございました！\n担当者より24時間以内に折り返しご連絡させていただきます。本日はありがとうございました。',
+                );
+              } else {
+                const errorMsg = result?.error || '不明なエラーが発生しました。';
+                addModelMessage(
+                  `申し訳ありません。送信中にエラーが発生しました。\n[エラー内容: ${errorMsg}]\n\n写真のサイズが大きすぎる可能性があります。もう一度試すか、時間をおいてお試しください。`,
+                );
+              }
+            } catch (error: any) {
+              console.error('Submission error:', error);
+              setIsTyping(false);
               addModelMessage(
-                'すべての情報の入力ありがとうございました！\n担当者より24時間以内に折り返しご連絡させていただきます。本日はありがとうございました。',
-              );
-            } else {
-              addModelMessage(
-                '申し訳ありません。送信中にエラーが発生しました。もう一度「送信する」を押すか、時間をお試しください。',
+                '通信エラーが発生しました。インターネット接続を確認し、もう一度「送信する」ボタンを押してください。',
               );
             }
           };

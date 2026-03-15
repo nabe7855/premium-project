@@ -1,6 +1,7 @@
 'use client';
 
 import { submitRecruitApplication } from '@/actions/recruit';
+import { resizeImage } from '@/lib/image-utils';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 
@@ -57,6 +58,22 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
       formData.append('type', 'full');
       if (storeName) {
         formData.append('store', storeName);
+      }
+
+      // 画像の圧縮処理 (既存の 'photos' を削除して圧縮版を追加)
+      formData.delete('photos');
+      const photoNumbers = Object.keys(previews).map(Number);
+      for (const num of photoNumbers) {
+        try {
+          const blob = await resizeImage(previews[num]);
+          formData.append('photos', new File([blob], `photo_${num}.jpg`, { type: 'image/jpeg' }));
+        } catch (imgError) {
+          console.error('Image processing error:', imgError);
+          // 失敗した場合は previews の base64 から直接変換を試みる
+          const res = await fetch(previews[num]);
+          const blob = await res.blob();
+          formData.append('photos', new File([blob], `photo_${num}.jpg`, { type: 'image/jpeg' }));
+        }
       }
 
       console.warn('📤 Sending to server action...');
