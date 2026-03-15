@@ -1,8 +1,13 @@
 export async function resizeImage(base64Str: string, maxWidth = 1200, maxHeight = 1200, quality = 0.7): Promise<Blob> {
   return new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => {
+      reject(new Error('Image resize timeout'));
+    }, 10000);
+
     const img = new Image();
     img.src = base64Str;
     img.onload = () => {
+      clearTimeout(timeout);
       const canvas = document.createElement('canvas');
       let width = img.width;
       let height = img.height;
@@ -40,6 +45,9 @@ export async function resizeImage(base64Str: string, maxWidth = 1200, maxHeight 
         quality
       );
     };
-    img.onerror = (err) => reject(err);
+    img.onerror = (err) => {
+      clearTimeout(timeout);
+      reject(err);
+    };
   });
 }

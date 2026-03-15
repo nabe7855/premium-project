@@ -55,13 +55,19 @@ const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
       }
     }
 
-    const result = await submitRecruitApplication(formData);
+    try {
+      const result = await submitRecruitApplication(formData);
 
-    setLoading(false);
-    if (result && result.success) {
-      navigate('/thanks');
-    } else {
-      setError(result.error || '送信に失敗しました。');
+      setLoading(false);
+      if (result && result.success) {
+        navigate('/thanks');
+      } else {
+        setError(result?.error || '送信に失敗しました。詳細を確認してください。');
+      }
+    } catch (err: any) {
+      console.error('Submission error:', err);
+      setLoading(false);
+      setError('通信エラーが発生しました。ネットワーク状況を確認してください。');
     }
   };
 

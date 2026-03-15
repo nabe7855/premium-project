@@ -608,6 +608,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
               }
               disabled={currentStep === 'photos'}
               rows={currentStep === 'freeText' ? 2 : 1}
+              maxLength={2000}
               className="max-h-32 flex-grow overflow-y-auto border-none bg-transparent py-2 text-sm text-white focus:ring-0 disabled:opacity-50"
             />
             <input

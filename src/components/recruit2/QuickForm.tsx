@@ -1,7 +1,7 @@
 'use client';
 
 import { submitRecruitApplication } from '@/actions/recruit';
-import { useRouter } from 'next/navigation';
+import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
 interface QuickFormProps {
@@ -9,7 +9,7 @@ interface QuickFormProps {
 }
 
 const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
-  const router = useRouter();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -29,7 +29,7 @@ const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
 
       setLoading(false);
       if (result && result.success) {
-        router.push('/thanks');
+        navigate('/thanks');
       } else {
         setError(result?.error || '送信に失敗しました。');
       }
@@ -142,7 +142,7 @@ const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
 
         <div className="mt-8 text-center">
           <button
-            onClick={() => router.push('/')}
+            onClick={() => navigate('/')}
             className="text-sm font-bold text-slate-500 transition-colors hover:text-slate-900"
           >
             ← トップページに戻る
