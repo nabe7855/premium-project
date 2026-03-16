@@ -107,9 +107,9 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   </span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">営業時間</span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
                   <span className="whitespace-pre-line">
-                    {store.businessHours || config.shopInfo?.businessHours}
+                    {store.receptionHours || config.shopInfo?.receptionHours}
                   </span>
                 </div>
                 <div className="flex gap-3">
