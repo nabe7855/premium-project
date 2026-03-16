@@ -290,7 +290,9 @@ export default function FirstTimeManagement() {
                 <SelectValue placeholder="店舗を選択" />
               </SelectTrigger>
               <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
-                {getAllStores().map((store) => {
+                {getAllStores()
+                  .filter((store) => !!store.slug)
+                  .map((store) => {
                   const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
                   const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
                   return (
