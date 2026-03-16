@@ -91,57 +91,26 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             {/* Shop Info Box Below Logo (Image 2 style) */}
             <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
               <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
-                <span
-                  contentEditable={isEditing}
-                  suppressContentEditableWarning={isEditing}
-                  onBlur={(e) => handleShopInfoUpdate('name', e.currentTarget.innerText)}
-                  className={isEditing ? 'px-1 hover:bg-white/10' : ''}
-                >
+                <span>
                   {store.name || config.shopInfo.name}
                 </span>
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">店舗電話番号</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleShopInfoUpdate('phone', e.currentTarget.innerText)}
-                    className={isEditing ? 'px-1 font-bold hover:bg-slate-50' : 'font-bold'}
-                  >
+                  <span className="font-bold">
                     {store.contact?.phone || config.shopInfo.phone}
                   </span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleShopInfoUpdate('receptionHours', e.currentTarget.innerText)}
-                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
-                  >
-                    {store.receptionHours || config.shopInfo.receptionHours}
-                  </span>
-                </div>
-                <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">営業時間</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleShopInfoUpdate('businessHours', e.currentTarget.innerText)}
-                    className={`whitespace-pre-line ${isEditing ? 'px-1 hover:bg-slate-50' : ''}`}
-                  >
+                  <span className="whitespace-pre-line">
                     {store.businessHours || config.shopInfo.businessHours}
                   </span>
                 </div>
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">所在地</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
-                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
-                  >
+                  <span>
                     {store.address || config.shopInfo.address}
                   </span>
                 </div>

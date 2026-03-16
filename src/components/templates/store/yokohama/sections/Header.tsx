@@ -538,9 +538,6 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                         </span>
                       </div>
                       <p className="text-sm font-bold text-gray-400">
-                        電話受付: {config.receptionHours || '12:00〜23:00'}
-                      </p>
-                      <p className="text-sm font-bold text-gray-400">
                         営業時間: {config.businessHours || '12:00〜翌朝4時'}
                       </p>
                     </div>
