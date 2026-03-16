@@ -73,7 +73,8 @@ export const getHotels = async (filters?: {
       lh_hotel_amenities(amenity_id, lh_amenities(*)),
       lh_hotel_services(service_id, lh_services(*)),
       lh_hotel_purposes(purpose_id, lh_purposes(*)),
-      lh_hotel_images(*)
+      lh_hotel_images(*),
+      lh_reviews(rating)
     `;
 
   if (filters?.purposeId) {
@@ -85,7 +86,8 @@ export const getHotels = async (filters?: {
       lh_hotel_amenities(amenity_id, lh_amenities(*)),
       lh_hotel_services(service_id, lh_services(*)),
       lh_hotel_purposes!inner(purpose_id, lh_purposes(*)),
-      lh_hotel_images(*)
+      lh_hotel_images(*),
+      lh_reviews(rating)
     `;
   }
 

@@ -303,11 +303,21 @@ export default function HotelList() {
                         : '非公開'}
                   </span>
                   <div className="flex items-center gap-1 text-sm">
-                    <span className="text-yellow-400">★</span>
-                    <span className="font-bold text-white">{hotel.rating}</span>
-                    <span className="text-xs text-brand-text-secondary">
-                      ({hotel.review_count})
-                    </span>
+                    {(() => {
+                      const computedCount = hotel.lh_reviews?.length || 0;
+                      const computedRating = computedCount > 0
+                        ? (hotel.lh_reviews.reduce((acc: number, cur: any) => acc + (cur.rating || 0), 0) / computedCount).toFixed(1)
+                        : (hotel.rating || 0);
+                      return (
+                        <>
+                          <span className="text-yellow-400">★</span>
+                          <span className="font-bold text-white">{computedRating}</span>
+                          <span className="text-xs text-brand-text-secondary">
+                            ({computedCount})
+                          </span>
+                        </>
+                      );
+                    })()}
                   </div>
                 </div>
 
@@ -428,11 +438,21 @@ export default function HotelList() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-1">
-                        <span className="text-yellow-400">★</span>
-                        <span>{hotel.rating}</span>
-                        <span className="text-xs text-brand-text-secondary">
-                          ({hotel.review_count})
-                        </span>
+                        {(() => {
+                          const computedCount = hotel.lh_reviews?.length || 0;
+                          const computedRating = computedCount > 0
+                            ? (hotel.lh_reviews.reduce((acc: number, cur: any) => acc + (cur.rating || 0), 0) / computedCount).toFixed(1)
+                            : (hotel.rating || 0);
+                          return (
+                            <>
+                              <span className="text-yellow-400">★</span>
+                              <span>{computedRating}</span>
+                              <span className="text-xs text-brand-text-secondary">
+                                ({computedCount})
+                              </span>
+                            </>
+                          );
+                        })()}
                       </div>
                     </td>
                     <td className="space-x-2 px-6 py-4 text-right">
