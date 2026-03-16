@@ -42,7 +42,7 @@ const Sidebar: React.FC<SidebarProps> = ({
   };
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-sm">
+    <div className="flex h-full w-full shrink-0 flex-col overflow-y-auto border-r border-slate-200 bg-white shadow-sm md:w-80 md:shrink-0">
       <div className="flex items-center justify-between border-b border-slate-100 bg-slate-50/50 p-6">
         <div>
           <h2 className="mb-1 text-xl font-bold tracking-tight text-slate-800">Luxury CMS</h2>

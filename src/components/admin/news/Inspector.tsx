@@ -64,7 +64,7 @@ const Inspector: React.FC<InspectorProps> = ({
   if (!section) {
     if (!page) return null;
     return (
-      <div className="flex h-full w-80 shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white p-8 shadow-2xl">
+      <div className="flex h-full w-full shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white p-6 shadow-2xl md:w-80 md:p-8">
         <h3 className="mb-8 flex items-center gap-3 text-base font-black text-slate-900">
           <div className="rounded-xl bg-rose-500 p-2 text-white shadow-lg">
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +282,7 @@ const Inspector: React.FC<InspectorProps> = ({
   const hasImage = ['hero', 'campaign', 'cast_list', 'ranking', 'gallery'].includes(section.type);
 
   return (
-    <div className="flex h-full w-80 shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white p-8 shadow-2xl">
+    <div className="flex h-full w-full shrink-0 flex-col overflow-y-auto border-l border-slate-200 bg-white p-6 shadow-2xl md:w-80 md:p-8">
       <div className="mb-8 flex items-center justify-between">
         <h3 className="text-base font-black text-slate-900">セクション編集</h3>
         <button

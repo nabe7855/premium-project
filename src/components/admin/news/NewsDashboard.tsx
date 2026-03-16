@@ -99,18 +99,20 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 p-8 md:p-12">
+    <div className="min-h-screen bg-slate-50 p-6 md:p-12">
       <div className="mx-auto max-w-6xl">
-        <div className="mb-12 flex items-end justify-between">
+        <div className="mb-8 flex flex-col gap-6 md:mb-12 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-rose-500">
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-rose-500 md:text-xs">
               Luxury CMS Dashboard
             </p>
-            <h1 className="text-4xl font-black tracking-tight text-slate-900">制作ページ一覧</h1>
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 md:text-3xl lg:text-4xl">
+              制作ページ一覧
+            </h1>
           </div>
           <button
             onClick={onCreatePage}
-            className="flex transform items-center gap-2 rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white shadow-xl transition-all hover:bg-rose-600 active:scale-95"
+            className="flex w-full transform items-center justify-center gap-2 rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white shadow-xl transition-all hover:bg-rose-600 active:scale-95 md:w-auto"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -125,21 +127,21 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
         </div>
 
         {/* Recommended News Management */}
-        <div className="mb-12 overflow-hidden rounded-[3rem] border border-slate-100 bg-white p-8 shadow-sm">
-          <div className="mb-8 flex flex-col justify-between gap-4 border-b border-slate-50 pb-6 sm:flex-row sm:items-center">
+        <div className="mb-12 overflow-hidden rounded-[2rem] border border-slate-100 bg-white p-6 shadow-sm md:rounded-[3rem] md:p-8">
+          <div className="mb-8 flex flex-col justify-between gap-6 border-b border-slate-50 pb-6 lg:flex-row lg:items-center">
             <div>
-              <h2 className="text-xl font-bold text-slate-900">
+              <h2 className="text-lg font-bold text-slate-900 md:text-xl">
                 おすすめ記事（ピックアップ）の管理
               </h2>
-              <p className="text-sm text-slate-400">
+              <p className="text-xs text-slate-400 md:text-sm">
                 ニュース詳細ページの下部に表示される「ピックアップ」記事を店舗ごとに設定します。
               </p>
             </div>
-            <div className="flex items-center gap-4">
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <select
                 value={selectedStore}
                 onChange={(e) => setSelectedStore(e.target.value)}
-                className="rounded-xl bg-slate-50 px-4 py-2 text-sm font-bold text-slate-900 outline-none hover:bg-slate-100"
+                className="w-full rounded-xl bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-900 outline-none hover:bg-slate-100 sm:w-auto"
               >
                 {stores.map((s) => (
                   <option key={s.slug} value={s.slug}>
@@ -150,7 +152,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
               <button
                 onClick={handleSaveRecommended}
                 disabled={isSavingRecommended}
-                className="flex items-center gap-2 rounded-xl bg-rose-500 px-6 py-2 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:bg-rose-600 disabled:opacity-50"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-rose-500 px-6 py-2.5 text-sm font-bold text-white shadow-lg shadow-rose-500/20 transition-all hover:bg-rose-600 disabled:opacity-50 sm:w-auto"
               >
                 {isSavingRecommended ? '保存中...' : '設定を保存'}
               </button>
@@ -287,11 +289,11 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-1 flex-col p-10">
-                  <h3 className="mb-3 truncate text-2xl font-black tracking-tight text-slate-900">
+                <div className="flex flex-1 flex-col p-6 md:p-10">
+                  <h3 className="mb-3 truncate text-xl font-black tracking-tight text-slate-900 md:text-2xl">
                     {page.title}
                   </h3>
-                  <p className="mb-6 line-clamp-2 min-h-[2.5rem] text-sm font-medium leading-relaxed text-slate-400">
+                  <p className="mb-6 line-clamp-2 min-h-[2.5rem] text-xs font-medium leading-relaxed text-slate-400 md:text-sm">
                     {page.shortDescription ||
                       '説明文が設定されていません。編集画面から設定できます。'}
                   </p>
