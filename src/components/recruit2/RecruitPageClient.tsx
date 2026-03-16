@@ -126,11 +126,18 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
       </main>
       <Footer
         storeName={storeInfo?.name || fullMergedConfig.general?.storeName}
-        phone={fullMergedConfig.footer?.phone || storeInfo?.phone || topConfig?.header?.phoneNumber}
+        phone={storeInfo?.phone || topConfig?.header?.phoneNumber || fullMergedConfig.footer?.phone}
         receptionHours={
-          fullMergedConfig.footer?.receptionHours || topConfig?.header?.receptionHours
+          storeInfo?.business_hours ||
+          topConfig?.header?.receptionHours ||
+          fullMergedConfig.footer?.receptionHours
         }
-        address={fullMergedConfig.footer?.address || storeInfo?.address}
+        businessHours={
+          storeInfo?.business_hours ||
+          topConfig?.header?.businessHours ||
+          fullMergedConfig.footer?.businessHours
+        }
+        address={storeInfo?.address || fullMergedConfig.footer?.address}
         {...fullMergedConfig.footer}
       />
       {location.pathname === '/' && (

@@ -11,6 +11,7 @@ interface FooterProps {
   contactHeading?: string;
   phone?: string;
   receptionHours?: string;
+  businessHours?: string;
   address?: string;
   privacyLabel?: string;
   privacyUrl?: string;
@@ -35,6 +36,7 @@ const Footer: React.FC<FooterProps> = ({
   contactHeading = 'Contact',
   phone = '05054913991',
   receptionHours = '8:00〜23:00',
+  businessHours = '24時間営業',
   address = '福岡',
   privacyLabel = 'Privacy Policy',
   privacyUrl = '#',
@@ -205,6 +207,22 @@ const Footer: React.FC<FooterProps> = ({
                 )}
               </li>
               <li>
+                営業時間：
+                {isEditing ? (
+                  <span
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => onUpdate?.('businessHours', e.currentTarget.innerText)}
+                    className="cursor-text rounded outline-none hover:bg-white/5"
+                  >
+                    {businessHours}
+                  </span>
+                ) : (
+                  businessHours
+                )}
+              </li>
+              <li>
+                所在地：
                 {isEditing ? (
                   <span
                     contentEditable

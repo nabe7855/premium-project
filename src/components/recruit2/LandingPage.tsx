@@ -164,6 +164,7 @@ export interface LandingPageConfig {
     contactHeading?: string;
     phone?: string;
     receptionHours?: string;
+    businessHours?: string;
     address?: string;
     privacyLabel?: string;
     privacyUrl?: string;

@@ -62,6 +62,19 @@ const StoreCard: React.FC<{
     </p>
     <p className="mb-4 line-clamp-2 h-10 overflow-hidden text-xs text-gray-400">{store.overview}</p>
 
+    <div className="mb-4 grid grid-cols-2 gap-x-2 gap-y-1 rounded-lg bg-gray-900/40 p-2 font-mono text-[10px]">
+      <div className="flex items-center gap-1 text-gray-500">
+        <Edit2 size={10} />
+        <span>住所:</span>
+      </div>
+      <div className="truncate text-gray-300">{store.address || '未設定'}</div>
+      <div className="flex items-center gap-1 text-gray-500">
+        <Loader2 size={10} />
+        <span>営業:</span>
+      </div>
+      <div className="truncate text-gray-300">{store.businessHours || '未設定'}</div>
+    </div>
+
     <div className="space-y-3">
       {/* Primary Action */}
       <button
@@ -123,6 +136,7 @@ export default function StoreManagement() {
     overview: '',
     address: '',
     phone: '',
+    businessHours: '',
     externalUrl: '',
     useExternalUrl: false,
   });
@@ -153,6 +167,7 @@ export default function StoreManagement() {
         lineUrl: s.line_url || '',
         contactEmail: s.contact_email || '',
         notificationEmail: s.notification_email || '',
+        businessHours: s.business_hours || '',
         externalUrl: s.external_url || '',
         useExternalUrl: s.use_external_url ?? false,
         isActive: s.is_active ?? true,
@@ -263,6 +278,7 @@ export default function StoreManagement() {
             description: newStore.overview,
             address: newStore.address,
             phone: newStore.phone,
+            business_hours: (newStore as any).businessHours,
             image_url: imageUrl,
             external_url: newStore.externalUrl,
             use_external_url: newStore.useExternalUrl,
@@ -295,6 +311,9 @@ export default function StoreManagement() {
           overview: '',
           address: '',
           phone: '',
+          businessHours: '',
+          externalUrl: '',
+          useExternalUrl: false,
         });
         setSelectedFile(null);
         alert('店舗を作成しました');
@@ -381,6 +400,7 @@ export default function StoreManagement() {
           address: editingStore.address,
           phone: editingStore.phone,
           image_url: imageUrl,
+          business_hours: editingStore.businessHours || null,
           line_id: editingStore.lineId || null,
           line_url: editingStore.lineUrl || null,
           contact_email: editingStore.contactEmail || null,
@@ -474,7 +494,7 @@ export default function StoreManagement() {
                 className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white outline-none transition-all focus:ring-1 focus:ring-brand-accent"
               ></textarea>
             </div>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
                   住所
@@ -484,6 +504,7 @@ export default function StoreManagement() {
                   value={newStore.address}
                   onChange={(e) => handleInputChange('address', e.target.value)}
                   required
+                  placeholder="福岡県福岡市..."
                   className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white outline-none transition-all focus:ring-1 focus:ring-brand-accent"
                 />
               </div>
@@ -496,10 +517,53 @@ export default function StoreManagement() {
                   value={newStore.phone}
                   onChange={(e) => handleInputChange('phone', e.target.value)}
                   required
+                  placeholder="090-0000-0000"
                   className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white outline-none transition-all focus:ring-1 focus:ring-brand-accent"
                 />
               </div>
             </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                  営業時間
+                </label>
+                <input
+                  type="text"
+                  value={(newStore as any).businessHours}
+                  onChange={(e) => handleInputChange('businessHours' as any, e.target.value)}
+                  placeholder="24時間営業"
+                  className="mt-1 w-full rounded-md border border-gray-700 bg-brand-primary p-2 text-white outline-none transition-all focus:ring-1 focus:ring-brand-accent"
+                />
+              </div>
+              <div className="flex items-end pb-1.5">
+                <label className="flex cursor-pointer items-center gap-2 rounded-md bg-gray-800/50 px-3 py-2 transition-colors hover:bg-gray-800">
+                  <input
+                    type="checkbox"
+                    checked={newStore.useExternalUrl}
+                    onChange={(e) => handleInputChange('useExternalUrl', e.target.checked)}
+                    className="h-4 w-4 rounded border-gray-700 bg-brand-primary accent-brand-accent"
+                  />
+                  <span className="text-[10px] font-bold text-gray-300">外部リダイレクト</span>
+                </label>
+              </div>
+            </div>
+
+            {newStore.useExternalUrl && (
+              <div className="animate-in fade-in slide-in-from-top-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                  誘導先URL
+                </label>
+                <input
+                  type="text"
+                  value={newStore.externalUrl}
+                  onChange={(e) => handleInputChange('externalUrl', e.target.value)}
+                  required
+                  placeholder="https://example.com"
+                  className="mt-1 w-full rounded-md border border-brand-accent/50 bg-brand-primary p-2 text-white outline-none transition-all focus:ring-1 focus:ring-brand-accent"
+                />
+              </div>
+            )}
             <div>
               <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
                 店舗写真
