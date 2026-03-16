@@ -102,7 +102,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">採用担当直通</span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">店舗電話番号</span>
                   <span
                     contentEditable={isEditing}
                     suppressContentEditableWarning={isEditing}
