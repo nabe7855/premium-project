@@ -445,6 +445,19 @@ export default function StoreTopManagement() {
     );
   }
 
+  const baseStaticStore = getStoreData(selectedStore) || getStoreData('fukuoka')!;
+  const mergedStore = currentStoreData ? {
+    ...baseStaticStore,
+    name: currentStoreData.name || baseStaticStore.name,
+    address: currentStoreData.address || baseStaticStore.address,
+    businessHours: currentStoreData.business_hours || baseStaticStore.businessHours,
+    contact: {
+      ...(baseStaticStore.contact || {}),
+      phone: currentStoreData.phone || baseStaticStore.contact?.phone || '',
+      email: currentStoreData.notification_email || baseStaticStore.contact?.email || '',
+    }
+  } : baseStaticStore;
+
   return (
     <div className="flex h-[calc(100vh-120px)] flex-col gap-2 overflow-hidden sm:gap-4">
       {/* Header */}
@@ -569,19 +582,19 @@ export default function StoreTopManagement() {
       </div>
 
       {/* Redirect Status Banner */}
-      {currentStoreData?.use_external_url && (
-        <div className="mb-2 flex items-center justify-between gap-4 rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 sm:px-6">
+      {currentStoreData && currentStoreData.use_external_url && (
+        <div className="flex animate-in items-center justify-between rounded-xl border border-amber-500/20 bg-amber-500/5 p-4 fade-in slide-in-from-top-2">
           <div className="flex items-center gap-3">
-            <div className="rounded-full bg-amber-500/20 p-2">
-              <AlertCircle className="h-5 w-5 text-amber-500" />
-            </div>
+            <AlertCircle className="h-5 w-5 text-amber-500" />
             <div>
-              <p className="text-sm font-bold text-amber-200">外部サイト誘導モードが有効です</p>
-              <p className="text-xs text-amber-200/70">
-                「入店する」ボタンは以下の外部URLにリダイレクトされます：
+              <p className="font-bold text-amber-600 sm:text-base">
+                この店舗は外部誘導（リダイレクト）モードに設定されています
+              </p>
+              <p className="mt-1 flex items-center gap-2 text-xs text-amber-700/80">
+                <span>誘導先:</span>
                 <span
-                  className="ml-2 cursor-help break-all font-mono text-amber-400 underline"
                   title={currentStoreData.external_url}
+                  className="max-w-[150px] truncate rounded bg-white px-2 py-0.5 font-mono shadow-sm sm:max-w-xs md:max-w-md lg:max-w-xl"
                 >
                   {currentStoreData.external_url}
                 </span>
@@ -609,7 +622,7 @@ export default function StoreTopManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            <StoreProvider store={(getStoreData(selectedStore) || getStoreData('fukuoka'))!}>
+            <StoreProvider store={mergedStore as any}>
               {getStoreData(selectedStore)?.template === 'yokohama' ? (
                 <YokohamaPage
                   config={config}
