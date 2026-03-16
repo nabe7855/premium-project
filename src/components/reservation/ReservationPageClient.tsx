@@ -52,7 +52,7 @@ function CastOptions({ promise }: { promise: Promise<CastListMini[]> }) {
       <SelectLabel className="sticky top-0 z-10 bg-rose-50/95 py-3 text-center text-[10px] font-black tracking-[0.2em] text-rose-400 backdrop-blur-sm">
         ━━ セラピストを指名する ━━
       </SelectLabel>
-      {casts.map((cast) => (
+      {casts.filter((cast) => !!cast.id).map((cast) => (
         <SelectItem
           key={cast.id}
           value={cast.id}

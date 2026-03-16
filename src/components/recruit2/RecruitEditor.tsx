@@ -241,7 +241,7 @@ export default function RecruitEditor() {
               <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
             <SelectContent>
-              {Object.values(stores).map((store) => (
+              {Object.values(stores).filter((store) => !!store.id).map((store) => (
                 <SelectItem key={store.id} value={store.id}>
                   {store.emoji} {store.displayName}
                 </SelectItem>
