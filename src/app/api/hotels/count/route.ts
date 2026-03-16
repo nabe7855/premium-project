@@ -1,6 +1,7 @@
 import { prisma } from '@/lib/prisma';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const dynamic = 'force-dynamic';
 export const revalidate = 3600; // 1時間キャッシュ
 
 export async function GET(request: NextRequest) {
