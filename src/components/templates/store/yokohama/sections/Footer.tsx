@@ -106,18 +106,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
                 <div className="flex gap-3">
-                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Address</span>
-                  <span
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
-                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
-                  >
-                    {store.address || config.shopInfo?.address}
-                  </span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Phone</span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">採用担当直通</span>
                   <span
                     contentEditable={isEditing}
                     suppressContentEditableWarning={isEditing}
@@ -128,7 +117,18 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   </span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-14 flex-shrink-0 font-bold text-slate-500">Open-Close</span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
+                  <span
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleShopInfoUpdate('receptionHours', e.currentTarget.innerText)}
+                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
+                  >
+                    {store.receptionHours || config.shopInfo?.receptionHours}
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">営業時間</span>
                   <span
                     contentEditable={isEditing}
                     suppressContentEditableWarning={isEditing}
@@ -136,6 +136,17 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     className={`whitespace-pre-line ${isEditing ? 'px-1 hover:bg-slate-50' : ''}`}
                   >
                     {store.businessHours || config.shopInfo?.businessHours}
+                  </span>
+                </div>
+                <div className="flex gap-3">
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">所在地</span>
+                  <span
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleShopInfoUpdate('address', e.currentTarget.innerText)}
+                    className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
+                  >
+                    {store.address || config.shopInfo?.address}
                   </span>
                 </div>
               </div>

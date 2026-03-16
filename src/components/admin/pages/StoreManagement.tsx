@@ -437,6 +437,7 @@ export default function StoreManagement() {
             address: editingStore.address,
             phone: editingStore.phone,
             businessHours: editingStore.businessHours || '',
+            receptionHours: editingStore.receptionHours || '',
           },
         },
         notificationEmail: editingStore.notificationEmail || '',

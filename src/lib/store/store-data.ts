@@ -5,6 +5,7 @@ export interface Store {
   city: string;
   address?: string; // Master address from DB
   businessHours?: string; // Master business hours from DB
+  receptionHours?: string;
   theme: {
     primary: string;
     primaryLight: string;

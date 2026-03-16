@@ -203,6 +203,7 @@ export interface FooterConfig {
     address: string;
     phone: string;
     businessHours: string;
+    receptionHours?: string;
   };
   trustBadges: { imageUrl: string; link: string }[];
   largeBanner?: { imageUrl: string; link: string };
