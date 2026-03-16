@@ -57,6 +57,7 @@ model Store {
   contact_email      String?
   notification_email String?
   business_hours     String?
+  reception_hours    String?
   external_url       String?
   use_external_url   Boolean               @default(false)
   is_active          Boolean               @default(true)

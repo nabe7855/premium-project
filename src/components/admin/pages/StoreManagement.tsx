@@ -401,6 +401,7 @@ export default function StoreManagement() {
           phone: editingStore.phone,
           image_url: imageUrl,
           business_hours: editingStore.businessHours || null,
+          reception_hours: editingStore.receptionHours || null,
           line_id: editingStore.lineId || null,
           line_url: editingStore.lineUrl || null,
           contact_email: editingStore.contactEmail || null,

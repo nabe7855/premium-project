@@ -100,6 +100,7 @@ export default async function StorePage({ params }: StorePageProps) {
       line_url: true,
       notification_email: true,
       business_hours: true,
+      reception_hours: true,
     } as any,
   });
 
@@ -119,6 +120,7 @@ export default async function StorePage({ params }: StorePageProps) {
         },
         address: dbStore.address || staticStore?.address || '',
         businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
+        receptionHours: (dbStore as any).reception_hours || staticStore?.receptionHours || '',
         seo: {
           ...staticStore?.seo,
           description: dbStore.description || staticStore?.seo.description || '',

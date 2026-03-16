@@ -22,11 +22,12 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
       name: true,
       address: true,
       phone: true,
-      business_hours: true, // DBにフィールドがある前提
+      business_hours: true,
+      reception_hours: true,
       line_id: true,
       line_url: true,
       notification_email: true,
-    },
+    } as any,
   });
 
   const store = dbStore
@@ -37,7 +38,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         address: dbStore.address || staticStore?.address || '',
         city: (dbStore as any).city || staticStore?.city || '',
         businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
-        receptionHours: (dbStore as any).reception_hours || (staticStore as any)?.receptionHours || '',
+        receptionHours: (dbStore as any).reception_hours || staticStore?.receptionHours || '',
         contact: {
           phone: dbStore.phone || staticStore?.contact.phone || '',
           line:
