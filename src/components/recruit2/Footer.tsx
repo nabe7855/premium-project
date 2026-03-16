@@ -23,8 +23,8 @@ const Footer: React.FC<FooterProps> = ({
   isVisible = true,
   isEditing = false,
   onUpdate,
-  storeName = 'LIFE CHANGE FUKUOKA',
-  description = '私たちは、福岡で「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
+  storeName = 'ストロベリーボーイズ福岡',
+  description = '私たちは、「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
   linksHeading = 'Links',
   links = [
     { label: '私たちの実績', url: '#achievements' },
@@ -40,7 +40,7 @@ const Footer: React.FC<FooterProps> = ({
   privacyUrl = '#',
   termsLabel = 'Terms of Service',
   termsUrl = '#',
-  copyright = '© 2024 LIFE CHANGE RECRUIT 福岡. ALL RIGHTS RESERVED.',
+  copyright = '© 2024 STRAWBERRY BOYS RECRUIT. ALL RIGHTS RESERVED.',
 }) => {
   if (!isVisible && !isEditing) return null;
 
@@ -51,12 +51,12 @@ const Footer: React.FC<FooterProps> = ({
           <div className="col-span-1 md:col-span-2">
             <div className="mb-6 flex items-center space-x-2">
               <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-600">
-                <span className="font-bold text-white">L</span>
+                <span className="font-bold text-white">S</span>
               </div>
               <span className="font-serif text-xl font-bold tracking-wider text-white">
-                LIFE CHANGE{' '}
+                ストロベリーボーイズ{' '}
                 <span className="text-amber-500">
-                  {storeName.replace('ストロベリーボーイズ', '')}
+                  {storeName.replace(/ストロベリーボーイズ?/g, '').replace(/店$/, '').trim()}店
                 </span>
               </span>
             </div>
