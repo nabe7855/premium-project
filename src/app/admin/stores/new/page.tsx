@@ -9,7 +9,9 @@ export default function NewStorePage() {
     slug: '',
     address: '',
     phone: '',
+    business_hours: '',
     catch_copy: '',
+    description: '',
     image_url: '',
     theme_color: '#a855f7', // デフォルトカラー
   });
@@ -61,11 +63,36 @@ export default function NewStorePage() {
     <div className="p-4 space-y-4">
       <h1 className="text-xl font-bold">新規店舗追加</h1>
 
-      <input placeholder="店舗名" onChange={(e) => handleChange('name', e.target.value)} />
-      <input placeholder="slug (例: tokyo)" onChange={(e) => handleChange('slug', e.target.value)} />
-      <input placeholder="住所" onChange={(e) => handleChange('address', e.target.value)} />
-      <input placeholder="電話番号" onChange={(e) => handleChange('phone', e.target.value)} />
-      <input placeholder="キャッチコピー" onChange={(e) => handleChange('catch_copy', e.target.value)} />
+      <div className="grid gap-4 max-w-xl">
+        <div className="space-y-1">
+          <label className="text-sm font-medium">店舗名 (必須)</label>
+          <input className="w-full border rounded p-2" placeholder="例: ストロベリーボーイズ福岡" onChange={(e) => handleChange('name', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">slug (URL用、例: fukuoka)</label>
+          <input className="w-full border rounded p-2" placeholder="fukuoka" onChange={(e) => handleChange('slug', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">住所</label>
+          <input className="w-full border rounded p-2" placeholder="福岡県福岡市..." onChange={(e) => handleChange('address', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">電話番号</label>
+          <input className="w-full border rounded p-2" placeholder="092-1234-5678" onChange={(e) => handleChange('phone', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">営業時間</label>
+          <input className="w-full border rounded p-2" placeholder="12:00〜翌朝4時" onChange={(e) => handleChange('business_hours', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">キャッチコピー</label>
+          <input className="w-full border rounded p-2" placeholder="情熱的な夜をあなたに" onChange={(e) => handleChange('catch_copy', e.target.value)} />
+        </div>
+        <div className="space-y-1">
+          <label className="text-sm font-medium">店舗説明</label>
+          <textarea className="w-full border rounded p-2" rows={4} placeholder="店舗の紹介文を入力してください" onChange={(e) => handleChange('description', e.target.value)} />
+        </div>
+      </div>
 
       {/* 画像アップロード */}
       <div>

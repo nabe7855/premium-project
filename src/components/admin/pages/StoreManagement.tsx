@@ -429,6 +429,16 @@ export default function StoreManagement() {
             link: editingStore.lineUrl || '',
           },
         },
+        footer: {
+          ...(config.footer || {}),
+          shopInfo: {
+            ...(config.footer?.shopInfo || {}),
+            name: editingStore.name,
+            address: editingStore.address,
+            phone: editingStore.phone,
+            businessHours: editingStore.businessHours || '',
+          },
+        },
         notificationEmail: editingStore.notificationEmail || '',
         lineId: editingStore.lineId || '',
       } as StoreTopPageConfig;

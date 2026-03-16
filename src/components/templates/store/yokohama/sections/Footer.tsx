@@ -15,6 +15,8 @@ interface FooterProps {
 }
 
 const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
+  const { store } = useStore();
+
   if (!config) return null;
 
   const getAbsoluteHref = (href: any) => {
@@ -73,7 +75,6 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
     }
   };
 
-  const { store } = useStore();
 
   const adjustedMenuButtons = config.menuButtons.map((btn) => {
     if (btn.label.includes('料金') || btn.label.includes('コース')) {
@@ -176,13 +177,18 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             {/* Banners Area */}
             <div className="mt-10 overflow-hidden rounded-2xl">
               <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
-                {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => (
-                  <div key={idx} className="group relative flex flex-col items-start">
-                    <a
-                      href={getAbsoluteHref(banner.link || '#')}
-                      onClick={(e) => isEditing && e.preventDefault()}
-                      className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
-                    >
+                {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => {
+                  let bannerLink = getAbsoluteHref(banner.link || '#');
+                  if (bannerLink.startsWith('tel:') && store.contact?.phone) {
+                    bannerLink = `tel:${store.contact.phone.replace(/-/g, '')}`;
+                  }
+                  return (
+                    <div key={idx} className="group relative flex flex-col items-start">
+                      <a
+                        href={bannerLink}
+                        onClick={(e) => isEditing && e.preventDefault()}
+                        className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
+                      >
                       <NextImage
                         src={getAbsoluteHref(banner.imageUrl)}
                         alt=""
@@ -201,7 +207,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       className="mt-2.5 flex w-full items-start gap-1 text-left text-white decoration-white/80 transition-opacity hover:opacity-80"
                     >
                       <span className="text-[13px] font-medium leading-tight underline decoration-1 underline-offset-[3px] md:text-sm">
-                        バナータイトル
+                        {banner.label || 'バナータイトル'}
                       </span>
                       <Link2
                         className="mt-[2px] h-3.5 w-3.5 shrink-0 opacity-80"
@@ -242,8 +248,9 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         </button>
                       </div>
                     )}
-                  </div>
-                ))}
+                    </div>
+                  );
+                })}
               </div>
               {/* Large Square Banner at the Bottom */}
               <div className="mt-8 border-t border-white/20 pt-8">

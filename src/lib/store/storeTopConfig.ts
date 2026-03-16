@@ -196,8 +196,8 @@ export interface FooterConfig {
   logoImageUrl: string;
   logoLink?: string;
   menuButtons: { label: string; link: string }[];
-  banners: { imageUrl: string; link: string }[];
-  smallBanners: { imageUrl: string; link: string }[];
+  banners: { imageUrl: string; link: string; label?: string }[];
+  smallBanners: { imageUrl: string; link: string; label?: string }[];
   shopInfo: {
     name: string;
     address: string;

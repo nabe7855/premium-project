@@ -18,6 +18,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
   const dbStore = await prisma.store.findUnique({
     where: { slug: params.slug },
     select: {
+      id: true,
       name: true,
       address: true,
       phone: true,
@@ -34,6 +35,7 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         ...dbStore,
         name: dbStore.name || staticStore?.name || '',
         address: dbStore.address || staticStore?.address || '',
+        city: (dbStore as any).city || staticStore?.city || '',
         businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
         contact: {
           phone: dbStore.phone || staticStore?.contact.phone || '',
@@ -45,7 +47,8 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
           email: dbStore.notification_email || staticStore?.contact.email || '',
         },
         slug: params.slug,
-      }
+        id: dbStore.id,
+      } as any
     : staticStore;
 
   if (!store) {
