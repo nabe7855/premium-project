@@ -506,6 +506,7 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     services: dbHotel.lh_hotel_services?.map((s: any) => s.lh_services?.name).filter(Boolean) || [],
     purposes: dbHotel.lh_hotel_purposes?.map((p: any) => p.lh_purposes?.name).filter(Boolean) || [],
     distanceFromStation: dbHotel.distance_from_station || '',
+    accessInfo: dbHotel.access_info || null,
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
     aiDescription: dbHotel.ai_description || '',

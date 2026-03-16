@@ -353,7 +353,9 @@
     "parking": "26台"
   },
   "00f8550b-f213-4476-babd-90170228a1c1": {
-    "stations": [],
+    "stations": [
+      "鶯谷駅 （徒歩3分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1262,7 +1264,9 @@
     "parking": ""
   },
   "06b83d90-1d23-41ba-99b5-50659fb78057": {
-    "stations": [],
+    "stations": [
+      "五稜郭駅 （車18分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1294,7 +1298,9 @@
     "parking": ""
   },
   "669b6f58-9efc-4a59-92b2-33e0dc557902": {
-    "stations": [],
+    "stations": [
+      "真駒内駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1304,7 +1310,9 @@
     "parking": ""
   },
   "0626847f-52ed-4bab-a1bf-ac76f4aea897": {
-    "stations": [],
+    "stations": [
+      "久留米大学前駅 （徒歩15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1327,17 +1335,23 @@
     "parking": "15台\n                                                ※内ハイルーフ車（全高1.55m ～ 2.00mまで）15台"
   },
   "02f38397-d86b-464c-9870-3796ea590b1f": {
-    "stations": [],
+    "stations": [
+      "湯の川温泉駅 （徒歩7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "1ebab63b-243b-4f3e-9650-6c8b0f216547": {
-    "stations": [],
+    "stations": [
+      "西鉄久留米駅 （徒歩6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "68db2ff0-b4eb-4bee-b2dd-498bfe8a5053": {
-    "stations": [],
+    "stations": [
+      "五稜郭駅 （車15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1347,7 +1361,9 @@
     "parking": ""
   },
   "39627d46-4e9e-4d87-b9e3-841207e0383c": {
-    "stations": [],
+    "stations": [
+      "遠賀川駅 （車8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1365,7 +1381,9 @@
     "parking": "15台\n                                            ハイルーフ可"
   },
   "5b8506a4-488f-440b-951b-1052439035ad": {
-    "stations": [],
+    "stations": [
+      "安武駅 （車3分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1383,7 +1401,9 @@
     "parking": ""
   },
   "123254d8-9252-4a83-b89c-090233b598ed": {
-    "stations": [],
+    "stations": [
+      "大網駅 （車7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1431,12 +1451,16 @@
     "parking": ""
   },
   "4c3764bf-592a-45e0-a0ed-8b6e92d935dd": {
-    "stations": [],
+    "stations": [
+      "五稜郭駅 （車15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "69dd498e-d9a6-460d-bcad-05277ca75105": {
-    "stations": [],
+    "stations": [
+      "近文駅 （車7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1492,7 +1516,9 @@
     "parking": ""
   },
   "3d9f53a1-8b2f-4223-8be0-2be8319a7fc9": {
-    "stations": [],
+    "stations": [
+      "香春駅 （車9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1511,7 +1537,9 @@
     "parking": "22台\n                                            内ハイルーフ可22台"
   },
   "06825b00-9584-4a17-848e-721963e360a5": {
-    "stations": [],
+    "stations": [
+      "椎田駅 （車6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1524,17 +1552,23 @@
     "parking": "25台\n                                            敷地内・裏ガレージ・地下駐車場"
   },
   "64500d34-338d-434d-90ba-b2a8b383c170": {
-    "stations": [],
+    "stations": [
+      "撫牛子駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "4fbde310-42d3-481d-bce7-4a301184fa13": {
-    "stations": [],
+    "stations": [
+      "旭川駅 （車9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "7896d94c-ad3d-401d-9cdc-66e9202302ce": {
-    "stations": [],
+    "stations": [
+      "福工大前駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1559,7 +1593,9 @@
     "parking": ""
   },
   "1f5aedff-b49d-45dd-95cf-8e61e7680e70": {
-    "stations": [],
+    "stations": [
+      "発寒駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1574,7 +1610,9 @@
     "parking": ""
   },
   "4b470220-bd67-4d3f-8be6-5c32194f4230": {
-    "stations": [],
+    "stations": [
+      "群馬八幡駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1608,7 +1646,9 @@
     "parking": "25台"
   },
   "78c48a2e-e1f7-4b74-876c-ac3c104a36ee": {
-    "stations": [],
+    "stations": [
+      "青森駅 （徒歩7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1618,7 +1658,9 @@
     "parking": ""
   },
   "58a18781-7b12-4977-bb93-91475ba94ac3": {
-    "stations": [],
+    "stations": [
+      "赤間駅 （徒歩10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1652,7 +1694,9 @@
     "parking": "23台\n                                            内ハイルーフ可23台"
   },
   "56335bb9-33bd-481a-8edb-7b58d37864c4": {
-    "stations": [],
+    "stations": [
+      "七戸十和田駅 （車9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1730,12 +1774,16 @@
     "parking": "50台"
   },
   "8449e285-0829-43a3-abef-52262598f53a": {
-    "stations": [],
+    "stations": [
+      "うきは駅 （車8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "1e65e9e1-af96-42f4-b48b-cad63a3989a5": {
-    "stations": [],
+    "stations": [
+      "池尻駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1759,7 +1807,9 @@
     "parking": "13台\n                                            内ハイルーフ可13台"
   },
   "50983d04-ba49-493d-9553-48f593396fe9": {
-    "stations": [],
+    "stations": [
+      "筒井駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1778,7 +1828,9 @@
     "parking": "5台\n                                                ※内ハイルーフ車（全高1.55m以上）5台\n                                                EV充電可能（ご利用時間中に限ります。ケーブルの貸出はございません。）"
   },
   "592f8482-60bd-4500-ae76-f8c4f1986ffd": {
-    "stations": [],
+    "stations": [
+      "中央弘前駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1873,7 +1925,9 @@
     "parking": "3台"
   },
   "0df32fda-3260-4f52-bfae-bf39a597d149": {
-    "stations": [],
+    "stations": [
+      "津軽大沢駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1885,7 +1939,9 @@
     "parking": "18台"
   },
   "f7918e0f-6a07-4b4a-9047-4b1854f999a1": {
-    "stations": [],
+    "stations": [
+      "焼津駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1895,7 +1951,9 @@
     "parking": ""
   },
   "65385162-fc76-484f-a573-dcc8f020db3b": {
-    "stations": [],
+    "stations": [
+      "新青森駅 （車7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1925,12 +1983,16 @@
     "parking": "35台\n                                            内、ハイルーフ可10台"
   },
   "5ab497d1-fc77-4184-ba20-27bff3e9d403": {
-    "stations": [],
+    "stations": [
+      "大久喜駅 （車12分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "0c706a5c-a881-4913-8ad5-9ebfa1287e6b": {
-    "stations": [],
+    "stations": [
+      "花巻空港駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1944,7 +2006,9 @@
     "parking": "58台\n                                                ※内ハイルーフ車（全高1.55m以上）2台\n                                                ※宿泊のお客様はチェックアウト後も最大60時間無料"
   },
   "0751088f-a99c-492e-af11-402e3f7399e2": {
-    "stations": [],
+    "stations": [
+      "大釈迦駅 （車3分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1956,7 +2020,9 @@
     "parking": "14台"
   },
   "8f94a441-dacd-40d1-9407-b3bb4d0b60d4": {
-    "stations": [],
+    "stations": [
+      "目時駅 （車4分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2031,12 +2097,16 @@
     "parking": ""
   },
   "444851e9-bc67-4c4a-b503-6bc2563b195f": {
-    "stations": [],
+    "stations": [
+      "八戸駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "5c76f975-ba52-4909-aba4-d5f9b4e9f074": {
-    "stations": [],
+    "stations": [
+      "弘前東高前駅 （徒歩12分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2053,7 +2123,9 @@
     "parking": ""
   },
   "84e8031c-8726-4990-bb4f-b5b2acef8c90": {
-    "stations": [],
+    "stations": [
+      "盛岡駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2066,12 +2138,16 @@
     "parking": "22台\n                                                ※内ハイルーフ車（全高1.55m以上）16台"
   },
   "7b9ae6ad-b0ec-461d-b23d-462c6803349d": {
-    "stations": [],
+    "stations": [
+      "東大更駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "81a8d8e2-72f8-4cea-877f-9b62738b418b": {
-    "stations": [],
+    "stations": [
+      "一ノ関駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2101,7 +2177,9 @@
     "parking": "60台\n                                                ※内ハイルーフ車（全高1.55m以上）60台\n                                                駐車場が広い！ハイエース、ランクルクラスのお車でも余裕で駐車できます！お車2台以上でのご来店も大丈夫です！"
   },
   "82247712-2a38-480b-af1f-38edca767f85": {
-    "stations": [],
+    "stations": [
+      "土沢駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2111,7 +2189,9 @@
     "parking": ""
   },
   "02ff49e5-3136-4c49-b3d9-b051ad4b1735": {
-    "stations": [],
+    "stations": [
+      "北上駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2121,7 +2201,9 @@
     "parking": ""
   },
   "3561374a-3e1c-4a43-9afd-77a5ba6934f3": {
-    "stations": [],
+    "stations": [
+      "小岩井駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2143,12 +2225,16 @@
     "parking": ""
   },
   "2da262bb-1bb9-4438-9ad7-3210df1458aa": {
-    "stations": [],
+    "stations": [
+      "水沢駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "08529337-b41c-4f33-8056-b568d3259b0c": {
-    "stations": [],
+    "stations": [
+      "村崎野駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2247,7 +2333,9 @@
     "parking": ""
   },
   "0616a0ce-f3b1-4d25-b78d-0985e2ef2df7": {
-    "stations": [],
+    "stations": [
+      "矢幅駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -3271,7 +3359,9 @@
     "parking": "41台"
   },
   "04b92c17-e95d-4ad1-949a-55faa020ce7f": {
-    "stations": [],
+    "stations": [
+      "十和田南駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -3374,7 +3464,9 @@
     "parking": ""
   },
   "03a86eec-d699-482f-bf5b-1dc0dd7264fb": {
-    "stations": [],
+    "stations": [
+      "茂林寺前駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -5097,7 +5189,9 @@
     "parking": ""
   },
   "0a0b4cb3-8581-49d1-ba32-e0b1007969f2": {
-    "stations": [],
+    "stations": [
+      "新大久保駅 （徒歩1分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -9070,7 +9164,9 @@
     "parking": "23台\n                                            内ハイルーフ可23台"
   },
   "09d1a30f-cb2d-40b5-8884-76ee1745b308": {
-    "stations": [],
+    "stations": [
+      "西武新宿駅 （徒歩3分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -11107,12 +11203,16 @@
     "parking": ""
   },
   "031583eb-31fd-4d38-84e1-76db72f2a9af": {
-    "stations": [],
+    "stations": [
+      "岡本駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "098242b4-7954-478e-a5b2-253b5d97f1f6": {
-    "stations": [],
+    "stations": [
+      "足利駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -11271,7 +11371,9 @@
     "parking": ""
   },
   "0699ac5b-3c10-47cb-b088-ae4ef804baa0": {
-    "stations": [],
+    "stations": [
+      "市川大門駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -13425,12 +13527,16 @@
     "parking": ""
   },
   "07a25b5d-a83e-4313-a8a5-51373b878468": {
-    "stations": [],
+    "stations": [
+      "安倍川駅 （車2分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "008a2873-8da3-4a4b-9174-32a8649104f0": {
-    "stations": [],
+    "stations": [
+      "さぎの宮駅 （車15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -13452,7 +13558,9 @@
     "parking": ""
   },
   "00c51a4d-b4fb-4aa8-9a7a-f5435b251509": {
-    "stations": [],
+    "stations": [
+      "新清水駅 （徒歩8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -16405,7 +16513,9 @@
     "parking": "28台\n                                            内ハイルーフ可28台"
   },
   "06259cdd-3ff6-4ad2-98f7-21f71389d1fc": {
-    "stations": [],
+    "stations": [
+      "高野駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -17782,7 +17892,9 @@
     "parking": ""
   },
   "02a3c074-9958-4fcf-888f-3f14ea957474": {
-    "stations": [],
+    "stations": [
+      "伊予和気駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -17972,7 +18084,9 @@
     "parking": ""
   },
   "086b4d35-22f3-40e4-ab6a-f77ab91736ca": {
-    "stations": [],
+    "stations": [
+      "安和駅 （徒歩9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -19092,7 +19206,9 @@
     "parking": "11台"
   },
   "09d8e49a-9250-47e6-9bdf-7427df8ef48a": {
-    "stations": [],
+    "stations": [
+      "五十市駅 （車7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -19639,7 +19755,9 @@
     "parking": ""
   },
   "05e8abf5-fa96-4a28-a274-d4865ac9c602": {
-    "stations": [],
+    "stations": [
+      "山谷駅 （車9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -20404,7 +20522,9 @@
     "parking": ""
   },
   "09e14ce4-6a85-45a8-bf55-775ae388aa51": {
-    "stations": [],
+    "stations": [
+      "山前駅 （徒歩8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -20873,7 +20993,9 @@
     "parking": "16台"
   },
   "0032d897-e7bd-49cc-a4da-62895cef6b59": {
-    "stations": [],
+    "stations": [
+      "福大前駅 （車12分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -20953,7 +21075,9 @@
     "parking": "24台"
   },
   "0322dc08-b362-453a-850e-accb10709c66": {
-    "stations": [],
+    "stations": [
+      "薩摩板敷駅 （車3分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -22046,17 +22170,23 @@
     "parking": ""
   },
   "01336bbf-1d4e-488c-aa7b-53b9357a3a63": {
-    "stations": [],
+    "stations": [
+      "前沢駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "0154f2a5-2acc-4366-b436-bcdf3a2e4928": {
-    "stations": [],
+    "stations": [
+      "上総一ノ宮駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "019eba78-60e6-4ba4-bc16-6b787e6a9c93": {
-    "stations": [],
+    "stations": [
+      "巣鴨駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -22066,7 +22196,9 @@
     "parking": ""
   },
   "0442c72e-f538-4903-b867-0461c3dd0eb3": {
-    "stations": [],
+    "stations": [
+      "駒形駅 （車8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -22095,12 +22227,16 @@
     "parking": ""
   },
   "00414fb7-db34-4169-b327-16e5160c5cfe": {
-    "stations": [],
+    "stations": [
+      "鹿児島中央駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "02411f72-69ab-4b82-89e6-8a5a432f45b1": {
-    "stations": [],
+    "stations": [
+      "松崎駅 （車6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -22117,37 +22253,51 @@
     "parking": "19台\n                                            ハイルーフ不可"
   },
   "070a7c68-d3c4-43f1-83b7-819415556a0c": {
-    "stations": [],
+    "stations": [
+      "南仙台駅 （車15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "074872bf-b7a6-4fcf-8dd4-26a61931c74e": {
-    "stations": [],
+    "stations": [
+      "鳥取駅 （車17分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "07cd8cf9-f501-49a0-8883-c50668e36861": {
-    "stations": [],
+    "stations": [
+      "御代志駅 （車17分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "082c5cbf-d8f9-4594-81e6-636b4cf62f8f": {
-    "stations": [],
+    "stations": [
+      "徳山駅 （徒歩15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "0846ef5f-7f51-4a50-9102-14e5756a21de": {
-    "stations": [],
+    "stations": [
+      "筒井駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "090c6553-22a8-4024-b9fc-c64ffd9bf041": {
-    "stations": [],
+    "stations": [
+      "瀬田駅 （車6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "09cac0d1-4854-4fed-8b6b-579d9bfccf50": {
-    "stations": [],
+    "stations": [
+      "西船橋駅 （徒歩6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -24179,6 +24329,20 @@
   },
   "9c4d6c0e-c3e0-4581-9915-c9a737ad23b1": {
     "stations": [],
+    "interchanges": [],
+    "parking": ""
+  },
+  "07bd6215-0da1-4bd7-ac5d-c787361ed130": {
+    "stations": [
+      "平塚駅 （車10分）"
+    ],
+    "interchanges": [],
+    "parking": ""
+  },
+  "5c8efaea-ba6f-43d6-b344-dc8f9b3b4270": {
+    "stations": [
+      "京急川崎駅 （徒歩7分）"
+    ],
     "interchanges": [],
     "parking": ""
   }

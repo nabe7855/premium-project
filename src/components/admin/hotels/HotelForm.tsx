@@ -65,6 +65,7 @@ export default function HotelForm({ id }: HotelFormProps) {
     place_id: '',
     status: 'draft',
     price_details: [],
+    access_info: { stations: [], interchanges: [], parking: '' },
   });
   const [selectedAmenities, setSelectedAmenities] = useState<string[]>([]);
   const [selectedServices, setSelectedServices] = useState<string[]>([]);
@@ -168,6 +169,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         place_id: hotel.place_id || '',
         status: hotel.status || 'draft',
         price_details: normalizedPd,
+        access_info: hotel.access_info || { stations: [], interchanges: [], parking: '' },
       });
       console.log('DEBUG: Normalized price_details:', normalizePriceDetails(hotel.price_details) || []);
       setSelectedAmenities(
@@ -499,7 +501,7 @@ export default function HotelForm({ id }: HotelFormProps) {
 
           <div>
             <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
-              アクセス
+              アクセス (簡易表示用)
             </label>
             <input
               type="text"
@@ -508,6 +510,91 @@ export default function HotelForm({ id }: HotelFormProps) {
               value={formData.distance_from_station}
               onChange={(e) => setFormData({ ...formData, distance_from_station: e.target.value })}
             />
+          </div>
+        </div>
+
+        {/* 詳細アクセス情報 */}
+        <div className="mt-6 space-y-4 border-t border-white/5 pt-6">
+          <h3 className="text-sm font-bold text-white">詳細アクセス情報 (SweetStay用)</h3>
+          
+          <div className="space-y-3">
+            <label className="block text-xs font-medium text-brand-text-secondary">駅からのアクセス</label>
+            {(formData.access_info?.stations || []).map((station: string, idx: number) => (
+              <div key={idx} className="flex gap-2">
+                <input
+                  type="text"
+                  className="flex-1 rounded-lg border border-white/10 bg-brand-primary px-3 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                  value={station}
+                  onChange={(e) => {
+                    const newStations = [...formData.access_info.stations];
+                    newStations[idx] = e.target.value;
+                    setFormData({
+                      ...formData,
+                      access_info: { ...formData.access_info, stations: newStations }
+                    });
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const newStations = formData.access_info.stations.filter((_: any, i: number) => i !== idx);
+                    setFormData({
+                      ...formData,
+                      access_info: { ...formData.access_info, stations: newStations }
+                    });
+                  }}
+                  className="rounded-lg bg-red-400/20 px-3 text-red-400 hover:bg-red-400/30"
+                >
+                  削除
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newStations = [...(formData.access_info?.stations || []), ''];
+                setFormData({
+                  ...formData,
+                  access_info: { ...formData.access_info, stations: newStations }
+                });
+              }}
+              className="text-xs text-brand-accent hover:underline"
+            >
+              + 駅を追加
+            </button>
+          </div>
+
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label className="mb-2 block text-xs font-medium text-brand-text-secondary">インターチェンジ</label>
+              <input
+                type="text"
+                placeholder="例: 東名高速 横浜ICより車で10分"
+                className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                value={formData.access_info?.interchanges?.[0] || ''}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    access_info: { ...formData.access_info, interchanges: [e.target.value] }
+                  });
+                }}
+              />
+            </div>
+            <div>
+              <label className="mb-2 block text-xs font-medium text-brand-text-secondary">駐車場</label>
+              <input
+                type="text"
+                placeholder="例: 20台 (ハイルーフ可)"
+                className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-brand-accent"
+                value={formData.access_info?.parking || ''}
+                onChange={(e) => {
+                  setFormData({
+                    ...formData,
+                    access_info: { ...formData.access_info, parking: e.target.value }
+                  });
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

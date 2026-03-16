@@ -433,6 +433,39 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                     <span className="text-gray-400">電話番号</span>
                     <span className="text-gray-900">{hotel.phone}</span>
                   </div>
+
+                  {/* アクセス情報 */}
+                  {(hotel.accessInfo?.stations?.length || hotel.distanceFromStation) && (
+                    <div className="border-t border-gray-50 pt-4">
+                      <div className="mb-2 text-[10px] font-black uppercase tracking-widest text-gray-400">
+                        Access
+                      </div>
+                      {hotel.accessInfo?.stations?.length ? (
+                        <ul className="space-y-1">
+                          {hotel.accessInfo.stations.map((s, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs font-bold text-gray-700">
+                              <span className="mt-0.5 text-rose-400">🚃</span>
+                              <span>{s}</span>
+                            </li>
+                          ))}
+                          {hotel.accessInfo.interchanges?.map((ic, i) => (
+                            <li key={`ic-${i}`} className="flex items-start gap-2 text-xs font-bold text-gray-700">
+                              <span className="mt-0.5 text-blue-400">🚗</span>
+                              <span>{ic}</span>
+                            </li>
+                          ))}
+                          {hotel.accessInfo.parking && (
+                            <li className="flex items-start gap-2 text-xs font-bold text-gray-700">
+                              <span className="mt-0.5 text-green-500">🅿</span>
+                              <span>駐車場: {hotel.accessInfo.parking}</span>
+                            </li>
+                          )}
+                        </ul>
+                      ) : (
+                        <p className="text-xs font-bold text-gray-700">{hotel.distanceFromStation}</p>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="mb-8 space-y-4">

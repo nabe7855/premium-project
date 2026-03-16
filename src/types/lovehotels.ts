@@ -37,6 +37,7 @@ export interface Hotel {
   services: string[];
   purposes: string[];
   distanceFromStation: string;
+  accessInfo?: { stations: string[]; interchanges: string[]; parking: string } | null;
   roomCount: number;
   description?: string;
   aiDescription?: string;

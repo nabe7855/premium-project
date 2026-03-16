@@ -531,6 +531,7 @@ model lh_hotels {
   stay_price_min_weekend Int?
   website                String?
   price_details          Json?
+  access_info            Json?
   raw_description        String?
   ai_description         String?
   ai_summary             String?
