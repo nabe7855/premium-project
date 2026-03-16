@@ -30,6 +30,11 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     } as any,
   });
 
+  // 設定も取得してフォールバックとして使用
+  const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
+  const topConfigResult = await getStoreTopConfig(params.slug);
+  const topConfig = topConfigResult.success ? topConfigResult.config : null;
+
   const store = dbStore
     ? {
         ...staticStore,
@@ -37,8 +42,8 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         name: dbStore.name || staticStore?.name || '',
         address: dbStore.address || staticStore?.address || '',
         city: (dbStore as any).city || staticStore?.city || '',
-        businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
-        receptionHours: (dbStore as any).reception_hours || staticStore?.receptionHours || '',
+        businessHours: (dbStore as any).business_hours || topConfig?.footer?.shopInfo?.businessHours || staticStore?.businessHours || '',
+        receptionHours: (dbStore as any).reception_hours || topConfig?.footer?.shopInfo?.receptionHours || staticStore?.receptionHours || '',
         contact: {
           phone: dbStore.phone || staticStore?.contact.phone || '',
           line:

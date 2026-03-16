@@ -104,6 +104,17 @@ export default async function StorePage({ params }: StorePageProps) {
     } as any,
   });
 
+  // 各種データを並列で取得して表示速度を向上
+  const [topConfigResult, todayCasts, newsPages] = await Promise.all([
+    getStoreTopConfig(params.slug),
+    getTodayCastsByStore(params.slug),
+    getPublishedPagesByStore(params.slug),
+  ]);
+
+  const topConfig = topConfigResult.success
+    ? (topConfigResult.config as StoreTopPageConfig)
+    : DEFAULT_STORE_TOP_CONFIG;
+
   const store = dbStore
     ? ({
         ...staticStore,
@@ -119,8 +130,8 @@ export default async function StorePage({ params }: StorePageProps) {
           email: dbStore.notification_email || staticStore?.contact.email || '',
         },
         address: dbStore.address || staticStore?.address || '',
-        businessHours: (dbStore as any).business_hours || staticStore?.businessHours || '',
-        receptionHours: (dbStore as any).reception_hours || staticStore?.receptionHours || '',
+        businessHours: (dbStore as any).business_hours || topConfig?.footer?.shopInfo?.businessHours || staticStore?.businessHours || '',
+        receptionHours: (dbStore as any).reception_hours || topConfig?.footer?.shopInfo?.receptionHours || staticStore?.receptionHours || '',
         seo: {
           ...staticStore?.seo,
           description: dbStore.description || staticStore?.seo.description || '',
@@ -136,17 +147,6 @@ export default async function StorePage({ params }: StorePageProps) {
     console.error(`❌ Store data not found for slug: ${params.slug}`);
     notFound();
   }
-
-  // 各種データを並列で取得して表示速度を向上
-  const [topConfigResult, todayCasts, newsPages] = await Promise.all([
-    getStoreTopConfig(params.slug),
-    getTodayCastsByStore(params.slug),
-    getPublishedPagesByStore(params.slug),
-  ]);
-
-  const topConfig = topConfigResult.success
-    ? (topConfigResult.config as StoreTopPageConfig)
-    : DEFAULT_STORE_TOP_CONFIG;
 
   const structuredData = {
     '@context': 'https://schema.org',
