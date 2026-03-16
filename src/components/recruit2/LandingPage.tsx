@@ -369,6 +369,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             config={config?.trust}
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('trust', key, value)}
+            storeName={config.general?.storeName}
           />
         </div>
       )}

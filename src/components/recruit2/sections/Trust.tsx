@@ -19,6 +19,7 @@ interface TrustProps {
   };
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
+  storeName?: string;
 }
 
 const DEFAULT_PILLARS = [
@@ -89,7 +90,7 @@ const DEFAULT_LOCATIONS = [
   },
 ];
 
-const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
+const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName }) => {
   // Always base on the DEFAULT arrays to ensure consistent length and structure
   const locations = DEFAULT_LOCATIONS.map((d, i) => {
     const loc = config?.locations?.[i];
@@ -97,7 +98,13 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
       city: loc?.city || d.city,
       image: loc?.image || d.image,
       stores: loc?.stores ?? d.stores,
+      originalIndex: i, // keep track of original index for updates
     };
+  }).filter((loc) => {
+    if (!storeName) return true;
+    const normalizedStoreName = storeName.replace(/ストロベリーボーイズ?/g, '').replace(/店$/, '').trim();
+    const normalizedLocCity = loc.city.replace(/店$/, '').replace(/本店$/, '').trim();
+    return normalizedLocCity !== normalizedStoreName;
   });
 
   const stats = DEFAULT_STATS.map((d, i) => {
@@ -370,8 +377,8 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate }) => {
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-8 bg-gradient-to-l from-[#111827] to-transparent sm:w-24"></div>
 
           <div className="animate-infinite-scroll hover:pause flex w-max">
-            {[...locations, ...locations, ...locations, ...locations].map((location, idx) => {
-              const originalIdx = idx % locations.length;
+            {locations.length > 0 && [...locations, ...locations, ...locations, ...locations].map((location, idx) => {
+              const originalIdx = location.originalIndex;
               return (
                 <div
                   key={`loc-${idx}`}
