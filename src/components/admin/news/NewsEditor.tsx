@@ -104,7 +104,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({
 
   return (
     <div className="relative flex h-[calc(100vh-64px)] flex-col overflow-hidden bg-slate-50 md:flex-row">
-      <div className={`${activeTab === 'layers' ? 'flex' : 'hidden'} w-full shrink-0 md:flex md:w-80`}>
+      <div className={`${activeTab === 'layers' ? 'flex' : 'hidden'} w-full min-h-0 flex-1 md:flex md:w-80 md:flex-none`}>
         <Sidebar
           sections={activePage?.sections || []}
           activeSectionId={activeSectionId}
@@ -242,7 +242,7 @@ const NewsEditor: React.FC<NewsEditorProps> = ({
       </div>
 
       <div
-        className={`${activeTab === 'inspector' ? 'flex' : 'hidden'} w-full shrink-0 md:flex md:w-80`}
+        className={`${activeTab === 'inspector' ? 'flex' : 'hidden'} w-full min-h-0 flex-1 md:flex md:w-80 md:flex-none`}
       >
         <Inspector
           section={activeSection}
