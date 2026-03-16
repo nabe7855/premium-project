@@ -34,6 +34,11 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
     notFound();
   }
 
+  const recommendedCount = reviews.filter(r => r.isRecommended).length;
+  const recommendationRate = reviews.length > 0 
+    ? Math.round((recommendedCount / reviews.length) * 100) 
+    : 0;
+
   const reviewMetrics = [
     {
       label: '清掃',
@@ -294,6 +299,17 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                         </div>
                       ))}
                     </div>
+                    {/* Recommendation Rate */}
+                    {reviews.length > 0 && (
+                      <div className="flex flex-col items-center justify-center border-r border-gray-100 pr-10">
+                        <div className="text-3xl font-black text-[#FF8BA7]">
+                          {recommendationRate}%
+                        </div>
+                        <div className="text-[8px] font-black uppercase tracking-widest text-gray-400">
+                          Recommended
+                        </div>
+                      </div>
+                    )}
                     <div className="text-right">
                       <div className="text-4xl font-black text-rose-500">
                         {hotel.rating?.toFixed(1) || '0.0'}
@@ -332,7 +348,7 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                               </div>
                               <div>
                                 <h4 className="font-black text-gray-900">{review.userName}</h4>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-3">
                                   <div className="flex text-rose-500">
                                     {[...Array(5)].map((_, i) => (
                                       <span
@@ -343,6 +359,11 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                                       </span>
                                     ))}
                                   </div>
+                                  {review.isRecommended && (
+                                    <span className="flex items-center gap-1 rounded-full bg-rose-500/10 px-2 py-0.5 text-[8px] font-black text-rose-500">
+                                      <span>👍</span> RECOMMENDED
+                                    </span>
+                                  )}
                                   <span className="text-[10px] font-bold text-gray-400">
                                     {review.date}
                                   </span>

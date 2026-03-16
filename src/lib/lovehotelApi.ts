@@ -604,6 +604,7 @@ export const mapDbReviewToReview = (dbReview: any): Review => {
     helpfulCount: dbReview.helpful_count || 0,
     isCast: dbReview.is_cast,
     isVerified: dbReview.is_verified,
+    isRecommended: dbReview.is_recommended ?? true,
   };
 };
 
@@ -643,6 +644,7 @@ export const submitReview = async (
         stay_type: reviewData.stayType,
         room_number: reviewData.roomNumber,
         cost: reviewData.cost,
+        is_recommended: reviewData.isRecommended ?? true,
       },
     ])
     .select()

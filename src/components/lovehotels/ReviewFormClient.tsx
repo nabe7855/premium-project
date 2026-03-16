@@ -31,6 +31,7 @@ export default function ReviewFormClient({ hotelId }: { hotelId: string }) {
     rooms: 5,
     value: 5,
     content: '',
+    isRecommended: true,
   });
 
   const [tempPhotos, setTempPhotos] = useState<
@@ -95,6 +96,7 @@ export default function ReviewFormClient({ hotelId }: { hotelId: string }) {
           rooms: formData.rooms,
           value: formData.value,
           content: formData.content,
+          isRecommended: formData.isRecommended,
         },
         tempPhotos.map((p) => ({ file: p.file, category: p.category })),
       );
@@ -113,6 +115,7 @@ export default function ReviewFormClient({ hotelId }: { hotelId: string }) {
         rooms: 5,
         value: 5,
         content: '',
+        isRecommended: true,
       });
       setTempPhotos([]);
       alert('口コミを投稿しました。ありがとうございました！');
@@ -298,7 +301,28 @@ export default function ReviewFormClient({ hotelId }: { hotelId: string }) {
               </div>
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-4 rounded-3xl bg-gray-50 p-6 md:p-8">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-black text-gray-900">このホテルをおすすめしますか？</h3>
+                  <p className="mt-1 text-[10px] font-bold text-gray-400">あなたの推薦が他のユーザーの参考になります</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setFormData({ ...formData, isRecommended: !formData.isRecommended })}
+                  className={`flex items-center gap-2 rounded-2xl px-6 py-3 font-black transition-all ${
+                    formData.isRecommended 
+                    ? 'bg-rose-500 text-white shadow-lg shadow-rose-200' 
+                    : 'bg-gray-200 text-gray-500'
+                  }`}
+                >
+                  <span className="text-lg">{formData.isRecommended ? '👍' : '🤔'}</span>
+                  {formData.isRecommended ? 'おすすめする！' : 'おすすめしない'}
+                </button>
+              </div>
+            </div>
+
+            <div className="space-y-4">
               <textarea
                 className="w-full rounded-3xl border-2 border-transparent bg-gray-50 px-6 py-5 font-medium outline-none transition-all focus:border-rose-500 focus:bg-white"
                 rows={5}

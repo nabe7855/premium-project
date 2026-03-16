@@ -87,6 +87,7 @@ export interface Review {
   helpfulCount?: number;
   isCast?: boolean;
   isVerified?: boolean;
+  isRecommended?: boolean;
 }
 
 export interface Prefecture {

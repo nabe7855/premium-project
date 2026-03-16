@@ -603,8 +603,7 @@ model lh_reviews {
   value       Int?
   helpful_count Int?    @default(0)
   is_cast       Boolean?  @default(false)
-  is_verified   Boolean?  @default(false)
-  
+  is_recommended Boolean?  @default(true)
   hotel lh_hotels? @relation(fields: [hotel_id], references: [id], onDelete: Cascade)
 }
 
