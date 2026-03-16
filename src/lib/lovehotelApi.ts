@@ -53,6 +53,7 @@ export const getPurposes = async () => {
 export const getHotels = async (filters?: {
   prefectureId?: string;
   cityId?: string;
+  cityIds?: string[];
   areaId?: string;
   keyword?: string;
   status?: string[];
@@ -62,6 +63,12 @@ export const getHotels = async (filters?: {
   maxStayPrice?: number;
   minRating?: number;
   purposeId?: string;
+  purposeIds?: string[];
+  amenityIds?: string[];
+  tags?: string[];
+  prefectureName?: string;
+  dayType?: 'weekday' | 'weekend' | 'holiday';
+  stayType?: 'rest' | 'stay';
   sort?: { column: string; ascending: boolean };
   take?: number;
 }) => {
@@ -77,15 +84,19 @@ export const getHotels = async (filters?: {
       lh_reviews(rating)
     `;
 
-  if (filters?.purposeId) {
+  // Filter joins using !inner if needed
+  const hasPurposes = (filters?.purposeIds && filters.purposeIds.length > 0) || filters?.purposeId;
+  const hasAmenities = filters?.amenityIds && filters.amenityIds.length > 0;
+
+  if (hasPurposes || hasAmenities) {
     selectString = `
       *,
       lh_prefectures(name),
       lh_cities(name),
       lh_areas(name),
-      lh_hotel_amenities(amenity_id, lh_amenities(*)),
+      lh_hotel_amenities${hasAmenities ? '!inner' : ''}(amenity_id, lh_amenities(*)),
       lh_hotel_services(service_id, lh_services(*)),
-      lh_hotel_purposes!inner(purpose_id, lh_purposes(*)),
+      lh_hotel_purposes${hasPurposes ? '!inner' : ''}(purpose_id, lh_purposes(*)),
       lh_hotel_images(*),
       lh_reviews(rating)
     `;
@@ -93,43 +104,77 @@ export const getHotels = async (filters?: {
 
   let query = supabase.from('lh_hotels').select(selectString);
 
+  // Area Filters
   if (filters?.prefectureId) {
     const cleanId = filters.prefectureId.trim();
     query = query.in('prefecture_id', [cleanId, ` ${cleanId}`]);
+  }
+  if (filters?.prefectureName) {
+    query = query.eq('lh_prefectures.name', filters.prefectureName);
   }
   if (filters?.cityId) {
     const cleanId = filters.cityId.trim();
     query = query.in('city_id', [cleanId, ` ${cleanId}`]);
   }
+  if (filters?.cityIds && filters.cityIds.length > 0) {
+    query = query.in('city_id', filters.cityIds);
+  }
   if (filters?.areaId) {
     const cleanId = filters.areaId.trim();
     query = query.in('area_id', [cleanId, ` ${cleanId}`]);
   }
+
+  // Keyword / Tags
   if (filters?.keyword) {
+    const k = filters.keyword;
     query = query.or(
-      `name.ilike."%${filters.keyword}%",address.ilike."%${filters.keyword}%",description.ilike."%${filters.keyword}%"`,
+      `name.ilike."%${k}%",address.ilike."%${k}%",description.ilike."%${k}%",access_info->>stations.ilike."%${k}%"`,
     );
   }
+  if (filters?.tags && filters.tags.length > 0) {
+    // Treat tags as keywords for now to widen search
+    const tagQuery = filters.tags.map((t) => `description.ilike."%${t}%"`).join(',');
+    query = query.or(tagQuery);
+  }
+
+  // Status
   if (filters?.status && filters.status.length > 0) {
     query = query.in('status', filters.status);
   }
-  if (filters?.minRestPrice) {
-    query = query.gte('min_price_rest', filters.minRestPrice);
+
+  // Price Filters
+  const hasPriceFilter =
+    filters?.minRestPrice || filters?.maxRestPrice || filters?.minStayPrice || filters?.maxStayPrice;
+
+  if (hasPriceFilter) {
+    if (filters?.minRestPrice) {
+      query = query.gte('min_price_rest', filters.minRestPrice);
+    }
+    if (filters?.maxRestPrice) {
+      query = query.lte('min_price_rest', filters.maxRestPrice);
+    }
+    if (filters?.minStayPrice) {
+      query = query.gte('min_price_stay', filters.minStayPrice);
+    }
+    if (filters?.maxStayPrice) {
+      query = query.lte('min_price_stay', filters.maxStayPrice);
+    }
   }
-  if (filters?.maxRestPrice) {
-    query = query.lte('min_price_rest', filters.maxRestPrice);
-  }
-  if (filters?.minStayPrice) {
-    query = query.gte('min_price_stay', filters.minStayPrice);
-  }
-  if (filters?.maxStayPrice) {
-    query = query.lte('min_price_stay', filters.maxStayPrice);
-  }
+
+  // Rating
   if (filters?.minRating) {
     query = query.gte('rating', filters.minRating);
   }
+
+  // Purposes & Amenities (Joins)
   if (filters?.purposeId) {
     query = query.eq('lh_hotel_purposes.purpose_id', filters.purposeId);
+  } else if (filters?.purposeIds && filters.purposeIds.length > 0) {
+    query = query.in('lh_hotel_purposes.purpose_id', filters.purposeIds);
+  }
+
+  if (filters?.amenityIds && filters.amenityIds.length > 0) {
+    query = query.in('lh_hotel_amenities.amenity_id', filters.amenityIds);
   }
 
   const sortCol = filters?.sort?.column || 'created_at';

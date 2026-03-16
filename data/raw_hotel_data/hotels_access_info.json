@@ -1317,14 +1317,22 @@
     "parking": ""
   },
   "2d4a86a3-00ce-479b-adaf-7cbae14c24aa": {
-    "stations": [],
-    "interchanges": [],
-    "parking": ""
+    "stations": [
+      "JR呼人駅から徒歩圏内",
+      "女満別空港から車で15分"
+    ],
+    "interchanges": [
+      "網走市内中心部から車で"
+    ],
+    "parking": "10台"
   },
   "20b8bd14-0218-4e5b-8c3d-d0471cf035d9": {
-    "stations": [],
+    "stations": [
+      "遠軽駅から車で2分",
+      "遠軽駅から徒歩31分"
+    ],
     "interchanges": [],
-    "parking": ""
+    "parking": "9台"
   },
   "aa4de9f6-6829-4e79-8c2f-37ee578fc252": {
     "stations": [
@@ -1356,7 +1364,9 @@
     "parking": ""
   },
   "c395f61b-72fb-4f91-b3d3-a6fc47542eff": {
-    "stations": [],
+    "stations": [
+      "帯広駅 （徒歩8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1388,7 +1398,9 @@
     "parking": ""
   },
   "8ca1cb13-a0e7-4b67-8be0-995e9b6b90ce": {
-    "stations": [],
+    "stations": [
+      "新飯塚駅 （車15分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1408,14 +1420,22 @@
     "parking": ""
   },
   "a730a3cf-1956-4fce-8254-9ed600620c55": {
-    "stations": [],
-    "interchanges": [],
-    "parking": ""
+    "stations": [
+      "千歳駅から車で5分",
+      "千歳駅から徒歩15分",
+      "新千歳空港から車で15分"
+    ],
+    "interchanges": [
+      "千歳ICから車で15分"
+    ],
+    "parking": "19台"
   },
   "85e0c915-530d-4919-9519-6af6c8464d11": {
     "stations": [],
-    "interchanges": [],
-    "parking": ""
+    "interchanges": [
+      "国道5号線 花川看板から車で3分"
+    ],
+    "parking": "20台"
   },
   "e5af89d6-9151-48db-8c4f-b1117f772ba7": {
     "stations": [],
@@ -1423,7 +1443,9 @@
     "parking": ""
   },
   "88efcab0-8541-40d6-8ee9-b94553e97cc2": {
-    "stations": [],
+    "stations": [
+      "帯広駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1492,10 +1514,12 @@
   },
   "127769d6-9d46-46ba-b3c7-ceee06311975": {
     "stations": [
-      "JR東日本                                                            JR八高線(高麗川～高崎)                                                             / \n                                                                       \n                                                            北藤岡駅                                                            (徒歩20分)"
+      "北藤岡駅から車で2分"
     ],
-    "interchanges": [],
-    "parking": "19台\n                                                ※内ハイルーフ車（全高1.55m以上）19台"
+    "interchanges": [
+      "藤岡ICから車で2分"
+    ],
+    "parking": "19台"
   },
   "12e6059e-325c-4488-ad30-9dfaeccad0db": {
     "stations": [
@@ -1517,10 +1541,12 @@
   },
   "3d9f53a1-8b2f-4223-8be0-2be8319a7fc9": {
     "stations": [
-      "香春駅 （車9分）"
+      "香春駅から車で9分"
     ],
-    "interchanges": [],
-    "parking": ""
+    "interchanges": [
+      "行橋ICから車で13分"
+    ],
+    "parking": "21台"
   },
   "f930c94d-0caf-4dec-bc33-2f6e843006ac": {
     "stations": [],
@@ -1538,10 +1564,11 @@
   },
   "06825b00-9584-4a17-848e-721963e360a5": {
     "stations": [
-      "椎田駅 （車6分）"
+      "椎田駅から徒歩25分",
+      "上登松バス停から徒歩4分"
     ],
     "interchanges": [],
-    "parking": ""
+    "parking": "あり"
   },
   "12f2c477-d1e8-471f-97b9-a3dd3c846f51": {
     "stations": [
@@ -1553,10 +1580,13 @@
   },
   "64500d34-338d-434d-90ba-b2a8b383c170": {
     "stations": [
-      "撫牛子駅 （車5分）"
+      "弘前駅から車で5分",
+      "撫牛子駅から車で5分"
     ],
-    "interchanges": [],
-    "parking": ""
+    "interchanges": [
+      "大鰐弘前ICから車で12分"
+    ],
+    "parking": "26台"
   },
   "4fbde310-42d3-481d-bce7-4a301184fa13": {
     "stations": [
@@ -1578,9 +1608,13 @@
     "parking": ""
   },
   "e77f0ed4-d970-487e-80a0-b2f596dffce7": {
-    "stations": [],
-    "interchanges": [],
-    "parking": ""
+    "stations": [
+      "南平岸駅から徒歩10分"
+    ],
+    "interchanges": [
+      "北郷ICから車で9分"
+    ],
+    "parking": "20台"
   },
   "5c28ed8d-83c2-444c-976c-667fe76cf388": {
     "stations": [],
@@ -1600,14 +1634,19 @@
     "parking": ""
   },
   "3a62adf6-ef1e-4896-bad0-1e502db2c792": {
-    "stations": [],
+    "stations": [
+      "長都駅から徒歩24分",
+      "千歳駅から徒歩33分"
+    ],
     "interchanges": [],
-    "parking": ""
+    "parking": "15台"
   },
   "c77271b0-2112-448a-ad6b-7e89980467ce": {
     "stations": [],
-    "interchanges": [],
-    "parking": ""
+    "interchanges": [
+      "札樽自動車道 張碓ICからすぐ"
+    ],
+    "parking": "30台 (ハイルーフ可)"
   },
   "4b470220-bd67-4d3f-8be6-5c32194f4230": {
     "stations": [
@@ -1618,21 +1657,17 @@
   },
   "4b9836e7-9c34-4174-8066-915fb0d831f4": {
     "stations": [
-      "JR西日本                                                            JR東西線                                                             / \n                                                                       \n                                                            大阪城北詰駅                                                            (徒歩3分)",
-      "京阪電鉄                                                            京阪本線                                                             / \n                                                                       \n                                                            天満橋駅                                                            (徒歩8分)",
-      "京阪電鉄                                                            京阪中之島線                                                             / \n                                                                       \n                                                            天満橋駅                                                            (徒歩8分)",
-      "大阪メトロ                                                            大阪メトロ谷町線                                                             / \n                                                                       \n                                                            天満橋駅                                                            (徒歩8分)",
-      "JR西日本                                                            学研都市線                                                             / \n                                                                       \n                                                            京橋駅                                                            (徒歩9分)",
-      "JR西日本                                                            大阪環状線                                                             / \n                                                                       \n                                                            京橋駅                                                            (徒歩9分)",
-      "JR西日本                                                            JR東西線                                                             / \n                                                                       \n                                                            京橋駅                                                            (徒歩9分)",
-      "京阪電鉄                                                            京阪本線                                                             / \n                                                                       \n                                                            京橋駅                                                            (徒歩9分)",
-      "大阪メトロ                                                            大阪メトロ長堀鶴見緑地線                                                             / \n                                                                       \n                                                            京橋駅                                                            (徒歩9分)"
+      "北見駅から車で10分"
     ],
-    "interchanges": [],
-    "parking": ""
+    "interchanges": [
+      "北見川東ICから車で8分"
+    ],
+    "parking": "16台"
   },
   "9a0af524-3eb6-48c6-85b0-28bc40af40c9": {
-    "stations": [],
+    "stations": [
+      "帯広駅 （徒歩9分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1653,16 +1688,18 @@
     "parking": ""
   },
   "c99e7e25-c446-4107-9c80-bdd025678180": {
-    "stations": [],
+    "stations": [
+      "鷹野橋駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "58a18781-7b12-4977-bb93-91475ba94ac3": {
-    "stations": [
-      "赤間駅 （徒歩10分）"
+    "stations": [],
+    "interchanges": [
+      "国道3号線沿い"
     ],
-    "interchanges": [],
-    "parking": ""
+    "parking": "27台 (+予備6台)"
   },
   "e76913f4-854d-47e1-b6d7-20de4d63c578": {
     "stations": [
@@ -1682,33 +1719,42 @@
     "parking": ""
   },
   "f9769964-7a13-4d15-bf37-99186dce0b09": {
-    "stations": [],
+    "stations": [
+      "甘木駅 （車7分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "83ddeca1-274b-4de0-9f62-eac50d51aa36": {
     "stations": [
-      "JR西日本                                                            JR加古川線                                                             / \n                                                                       \n                                                            神野駅                                                            (徒歩10分)"
+      "本八戸駅から徒歩10分"
     ],
-    "interchanges": [],
-    "parking": "23台\n                                            内ハイルーフ可23台"
+    "interchanges": [
+      "八戸北ICから車で13分",
+      "八戸ICから車で6分"
+    ],
+    "parking": "12台"
   },
   "56335bb9-33bd-481a-8edb-7b58d37864c4": {
-    "stations": [
-      "七戸十和田駅 （車9分）"
+    "stations": [],
+    "interchanges": [
+      "十和田市内から車で"
     ],
-    "interchanges": [],
-    "parking": ""
+    "parking": "8台"
   },
   "5a4b1f54-0a99-4d17-8d81-c1e685eb63ba": {
     "stations": [
-      "JR九州                                                            JR鹿児島本線(博多～八代)                                                             / \n                                                                       \n                                                            松橋駅"
+      "新青森駅から車で5分"
     ],
-    "interchanges": [],
-    "parking": "25台\n                                            車高制限あり。ハイルーフは要確認。"
+    "interchanges": [
+      "青森ICから車で7分"
+    ],
+    "parking": "21台"
   },
   "fca5a0e7-7e98-403f-8e6e-ef7e63d8b49b": {
-    "stations": [],
+    "stations": [
+      "七戸十和田駅 （車14分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1740,17 +1786,23 @@
     "parking": ""
   },
   "b0ce4326-77b6-4a7c-b3d8-8ebc7d46e344": {
-    "stations": [],
+    "stations": [
+      "弘前東高前駅 （徒歩11分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "ba8f76d3-59dc-4f44-8a82-156df641e3a4": {
-    "stations": [],
+    "stations": [
+      "撫牛子駅 （徒歩11分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "87f4e04c-8c48-4d19-8862-78d1a53fd1a3": {
-    "stations": [],
+    "stations": [
+      "赤川駅 （車10分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1760,7 +1812,9 @@
     "parking": ""
   },
   "b649367d-718a-4e6b-9bd2-511c3d54ee1d": {
-    "stations": [],
+    "stations": [
+      "三沢駅 （車20分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1850,7 +1904,9 @@
     "parking": ""
   },
   "f0cf9637-93b0-4385-94ec-82719951a316": {
-    "stations": [],
+    "stations": [
+      "浅虫温泉駅 （車6分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -1946,7 +2002,9 @@
     "parking": ""
   },
   "e93d8753-8ef6-486b-9360-6207d79cb2d4": {
-    "stations": [],
+    "stations": [
+      "本八戸駅 （車8分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2046,7 +2104,9 @@
     "parking": "17台\n                                            車高2ｍ以上のお車でお越しの方は、北側入り口よりご入場下さい。"
   },
   "c57490d5-dd8d-4fd0-8fa2-171a2ecc4541": {
-    "stations": [],
+    "stations": [
+      "撫牛子駅 （車5分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2087,12 +2147,16 @@
     "parking": "55台\n                                            ハイルーフ可"
   },
   "d6037bbe-86d6-4dce-8abb-48fc63af003e": {
-    "stations": [],
+    "stations": [
+      "弘前東高前駅 （車4分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
   "c9815a96-ded8-426b-9ef4-15efd1a6be5b": {
-    "stations": [],
+    "stations": [
+      "本八戸駅 （徒歩12分）"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2118,7 +2182,9 @@
     "parking": "20台\n                                                ※内ハイルーフ車（全高1.55m以上）5台"
   },
   "ae2b7797-90dd-4403-a238-2a673ccdbe34": {
-    "stations": [],
+    "stations": [
+      "盛駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2184,7 +2250,9 @@
     "parking": ""
   },
   "a95a9451-3d49-45f6-a92e-be50d4e6e47d": {
-    "stations": [],
+    "stations": [
+      "六原駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2220,7 +2288,9 @@
     "parking": ""
   },
   "91c61735-5c34-40e8-8180-85b388cd0dfc": {
-    "stations": [],
+    "stations": [
+      "偕楽園駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -2247,7 +2317,9 @@
     "parking": "4台"
   },
   "c8a441e2-c555-4ea1-a9ac-cec9dcf829ea": {
-    "stations": [],
+    "stations": [
+      "前沢駅"
+    ],
     "interchanges": [],
     "parking": ""
   },
@@ -24342,6 +24414,13 @@
   "5c8efaea-ba6f-43d6-b344-dc8f9b3b4270": {
     "stations": [
       "京急川崎駅 （徒歩7分）"
+    ],
+    "interchanges": [],
+    "parking": ""
+  },
+  "d4fa824e-7ab1-43ad-88a7-10380292ba83": {
+    "stations": [
+      "片倉駅 （徒歩15分）"
     ],
     "interchanges": [],
     "parking": ""

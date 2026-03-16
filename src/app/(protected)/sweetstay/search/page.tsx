@@ -9,8 +9,18 @@ import { useEffect, useState } from 'react';
 
 const SweetStaySearchPage = () => {
   const searchParams = useSearchParams();
+
+  // Extract all query parameters
   const query = searchParams.get('q') || '';
-  const purpose = searchParams.get('purpose') || '';
+  const area = searchParams.get('area') || '';
+  const cities = searchParams.get('cities')?.split(',').filter(Boolean) || [];
+  const purposes = searchParams.get('purposes')?.split(',').filter(Boolean) || [];
+  const amenities = searchParams.get('amenities')?.split(',').filter(Boolean) || [];
+  const tags = searchParams.get('tags')?.split(',').filter(Boolean) || [];
+  const minPrice = searchParams.get('min_price') ? parseInt(searchParams.get('min_price')!, 10) : undefined;
+  const maxPrice = searchParams.get('max_price') ? parseInt(searchParams.get('max_price')!, 10) : undefined;
+  const dayType = (searchParams.get('day_type') as any) || 'weekday';
+  const stayType = (searchParams.get('stay_type') as any) || 'rest';
 
   const [hotels, setHotels] = useState<Hotel[]>([]);
   const [loading, setLoading] = useState(true);
@@ -21,17 +31,20 @@ const SweetStaySearchPage = () => {
       try {
         const dbHotels = await getHotels({
           keyword: query,
-          // TODO: Support purpose filter in getHotels
+          cityIds: cities,
+          purposeIds: purposes,
+          amenityIds: amenities,
+          tags: tags,
+          minRestPrice: stayType === 'rest' ? minPrice : undefined,
+          maxRestPrice: stayType === 'rest' ? maxPrice : undefined,
+          minStayPrice: stayType === 'stay' ? minPrice : undefined,
+          maxStayPrice: stayType === 'stay' ? maxPrice : undefined,
+          dayType: dayType,
+          stayType: stayType,
+          prefectureName: area
         });
 
-        // Manual filter for purpose names for now if getHotels doesn't support it yet
         let mapped = dbHotels.map(mapDbHotelToHotel);
-        if (purpose) {
-          // If purpose is an ID, we might need a different approach,
-          // but mapDbHotelToHotel returns purpose names.
-          // For now, let's assume purpose is a name or we add proper filtering to getHotels.
-        }
-
         setHotels(mapped);
       } catch (error) {
         console.error('Search error:', error);
@@ -40,7 +53,7 @@ const SweetStaySearchPage = () => {
       }
     }
     fetchResults();
-  }, [query, purpose]);
+  }, [query, area, cities.join(','), purposes.join(','), amenities.join(','), tags.join(','), minPrice, maxPrice, dayType, stayType]);
 
   return (
     <div className="min-h-screen bg-[#FFF8F6] pb-24 pt-12">
@@ -53,10 +66,15 @@ const SweetStaySearchPage = () => {
         <div className="mb-12 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <h1 className="text-3xl font-black tracking-tight text-gray-900 md:text-5xl">
-              {query || purpose ? (
+              {query || area || purposes.length > 0 ? (
                 <>
                   {query && <span className="text-[#FF8BA7]">「{query}」</span>}
-                  {purpose && <span className="ml-2 text-rose-300">#{purpose}</span>}
+                  {area && <span className="ml-2 text-rose-400">@{area}</span>}
+                  {purposes.length > 0 && (
+                    <span className="ml-2 text-rose-300">
+                      #{purposes.length}つの目的
+                    </span>
+                  )}
                   <span className="ml-4">の検索結果</span>
                 </>
               ) : (
