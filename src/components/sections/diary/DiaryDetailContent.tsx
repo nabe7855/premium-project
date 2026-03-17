@@ -190,12 +190,15 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             </div>
             <div className="p-4 sm:p-8">
               <h1 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">{post.title}</h1>
-              <div className="mb-6 flex items-center gap-2 text-sm text-gray-500">
-                <img src={post.castAvatar} className="h-8 w-8 rounded-full" alt="" />
-                <span>
+              <Link
+                href={`/store/${slug}/cast/${post.castSlug}`}
+                className="mb-6 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-pink-600"
+              >
+                <img src={post.castAvatar} className="h-8 w-8 rounded-full object-cover" alt="" />
+                <span className="font-medium">
                   {post.castName} • {post.date}
                 </span>
-              </div>
+              </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
               <div className="flex gap-4 border-t pt-4">
                 <button className="flex items-center gap-1 text-pink-500">

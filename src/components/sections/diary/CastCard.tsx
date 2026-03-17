@@ -59,7 +59,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
     <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6">
       <div className="flex items-start gap-3 sm:gap-4">
         <Link
-          href={`/store/${storeSlug}/${castSlug}`}
+          href={`/store/${storeSlug}/cast/${castSlug}`}
           className="relative transition-transform active:scale-95"
         >
           <img
@@ -73,7 +73,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
         </Link>
 
         <div className="flex-1">
-          <Link href={`/store/${storeSlug}/${castSlug}`} className="group mb-1 inline-block">
+          <Link href={`/store/${storeSlug}/cast/${castSlug}`} className="group mb-1 inline-block">
             <h3 className="text-base font-bold text-gray-800 transition-colors group-hover:text-pink-600 sm:text-lg">
               {cast.name}
             </h3>
@@ -113,7 +113,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
       {expanded && (
         <div className="mt-2 space-y-2">
           <Link
-            href={`/store/${storeSlug}/${castSlug}`}
+            href={`/store/${storeSlug}/cast/${castSlug}`}
             className="flex w-full items-center justify-center gap-2 rounded-lg bg-pink-50 px-3 py-2 text-xs font-bold text-pink-600 transition-colors hover:bg-pink-100 sm:px-4 sm:text-sm"
           >
             <UserCircle size={16} />
