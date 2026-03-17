@@ -131,22 +131,28 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         onTouchEnd={handleTouchEnd}
       >
         <div className="absolute bottom-10 left-0 right-0 top-0 bg-neutral-100">
-          {images.map((img, index) => (
-            <div
-              key={index}
-              className={`duration-1500 absolute inset-0 transition-opacity ease-in-out ${
-                index === currentHeroSlide ? 'opacity-100' : 'opacity-0'
-              }`}
-            >
-              <NextImage
-                src={img}
-                alt="Hero Image"
-                fill
-                priority={index === 0}
-                sizes="100vw"
-                className="scale-105 transform object-contain"
-                fetchPriority={index === 0 ? 'high' : 'low'}
-              />
+          {images.map((img, index) => {
+            const isFirst = index === 0;
+            const isActive = index === currentHeroSlide;
+            
+            return (
+              <div
+                key={index}
+                className={`duration-1500 absolute inset-0 transition-opacity ease-in-out ${
+                  isActive ? 'opacity-100' : 'opacity-0'
+                }`}
+                style={{ zIndex: isActive ? 10 : 0 }}
+              >
+                <NextImage
+                  src={img}
+                  alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                  fill
+                  priority={isFirst}
+                  sizes="100vw"
+                  className="scale-105 transform object-contain"
+                  fetchPriority={isFirst ? 'high' : 'low'}
+                  loading={isFirst ? undefined : 'lazy'}
+                />
 
               {isEditing && index === currentHeroSlide && (
                 <div className="absolute right-4 top-20 z-50 flex flex-col gap-2 md:right-10 md:top-10">
@@ -232,8 +238,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   </div>
                 </div>
               )}
-            </div>
-          ))}
+              </div>
+            );
+          })}
 
           {/* Add Image Button - Always visible in editing mode */}
           {isEditing && (

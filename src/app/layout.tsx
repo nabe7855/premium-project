@@ -1,4 +1,4 @@
-import { GoogleAnalytics } from '@next/third-parties/google';
+import { GoogleAnalytics, GoogleTagManager } from '@next/third-parties/google';
 import AgeVerificationGuard from '@/components/common/AgeVerificationGuard';
 import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
@@ -36,6 +36,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ja" className={`${inter.className} antialiased`} suppressHydrationWarning>
+      <GoogleTagManager gtmId="GTM-xxxxx" />
       <GoogleAnalytics gaId="G-2TCLB5C447" />
       <body>
         <Providers>

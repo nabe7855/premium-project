@@ -215,7 +215,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                   className={`relative flex min-w-[70px] flex-col items-center justify-center rounded-[2rem] py-3 transition-all duration-300 ${
                     selectedDate === d.date
                       ? 'bg-rose-500 text-white shadow-lg shadow-rose-200'
-                      : 'bg-transparent text-slate-400 hover:bg-rose-50'
+                      : 'bg-transparent text-slate-500 hover:bg-rose-50'
                   }`}
                 >
                   <span className="text-[10px] font-bold uppercase tracking-tighter">
@@ -353,7 +353,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <h3 className="truncate text-base font-black text-slate-800 sm:text-lg">
                                   {cast.name}
                                 </h3>
-                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-500">
+                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-700">
                                   {cast.age}歳
                                 </span>
                               </div>
@@ -387,7 +387,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <span className="text-sm font-black text-slate-700">
                                   {(cast.rating || 5.0).toFixed(1)}
                                 </span>
-                                <span className="text-xs font-bold text-slate-500">
+                                <span className="text-xs font-bold text-slate-700">
                                   ({cast.reviewCount || 10})
                                 </span>
                               </div>

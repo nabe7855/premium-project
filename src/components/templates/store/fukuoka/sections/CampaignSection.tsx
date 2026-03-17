@@ -171,7 +171,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center gap-3">
-                      <time className="text-xs text-slate-500">
+                      <time className="text-xs text-slate-700">
                         {new Date(page.updatedAt).toLocaleDateString('ja-JP', {
                           year: 'numeric',
                           month: '2-digit',
@@ -184,7 +184,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                     </div>
                     <h3 className="truncate font-bold text-slate-800 md:text-lg">{page.title}</h3>
                   </div>
-                  <ChevronRight size={20} className="group-hover:text-primary-600 text-slate-400" />
+                  <ChevronRight size={20} className="group-hover:text-primary-600 text-slate-600" />
                 </Link>
               </li>
             ))}
@@ -192,7 +192,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
 
           {isEditing && sortedNewsPages.length === 0 && (
             <div className="border-primary-200 rounded-[1rem] border-2 border-dashed p-12 text-center">
-              <p className="font-bold text-slate-400">
+              <p className="font-bold text-slate-600">
                 ニュース管理ページで作成・公開されたページがここに表示されます。
               </p>
             </div>
