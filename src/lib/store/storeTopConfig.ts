@@ -822,8 +822,8 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       name: 'ストロベリーボーイズ',
       address: '東京都新宿区',
       phone: '050-5212-5818',
-      businessHours:
-        '24時間営業（受付 8:00〜23:00）\n※あくまでも23時までの受付になり、それ以降のお申込みは翌日に対応をさせて頂きます。\n年中無休',
+      businessHours: '12:00〜翌朝4時',
+      receptionHours: '10:00〜23:00',
     },
     trustBadges: [{ imageUrl: 'https://placehold.jp/150x150.png?text=TRUST%26SAFETY', link: '#' }],
     logoLink: '#',

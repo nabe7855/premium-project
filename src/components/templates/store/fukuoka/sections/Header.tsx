@@ -36,9 +36,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  if (!config || (!config.isVisible && !isEditing)) return null;
+  // configがない場合でも枠組みは表示させる
+  // ただし config.isVisible が明示的に false の場合は非表示（編集時は表示）
+  if (config && !config.isVisible && !isEditing) return null;
 
-  const navLinks = config.navLinks;
+  const navLinks = config?.navLinks || [];
 
   const handleStoreChange = (newStoreId: string) => {
     const pagePath = pathname.replace(/^\/store\/[^/]+/, '');
@@ -311,16 +313,16 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
       id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
         scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md' : 'bg-white'
-      } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
+      } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto flex h-[54px] max-w-7xl items-center justify-between pl-4 pr-0 md:h-[65px] md:pl-6">
         <Link
           href={getAbsoluteHref(
-            config.logoLink === '/' || !config.logoLink ? '/store/{slug}' : config.logoLink,
+            config?.logoLink === '/' || !config?.logoLink ? '/store/{slug}' : config.logoLink,
           )}
           className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
-          {config.logoUrl ? (
+          {config?.logoUrl ? (
             <div className="relative h-full w-20 md:w-32">
               <NextImage
                 src={getAbsoluteHref(config.logoUrl)}
@@ -331,7 +333,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 sizes="(max-width: 768px) 80px, 140px"
               />
             </div>
-          ) : (
+          ) : config?.logoText ? (
             <>
               <span className="text-3xl drop-shadow-sm filter">🍓</span>
               <span
@@ -343,6 +345,8 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 {config.logoText}
               </span>
             </>
+          ) : (
+            <div className="h-8 w-32 animate-pulse rounded bg-slate-100" />
           )}
 
           {isEditing && (
@@ -374,20 +378,22 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         <div className="flex h-full items-center gap-3 sm:gap-4">
           {/* Header Banner Image (Horizontal) */}
           <Link
-            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
+            href={getAbsoluteHref(config?.specialBanner?.link || 'store/{slug}/first-time')}
             className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
           >
             <div className="relative h-full w-32 md:w-40">
-              <NextImage
-                src={getAbsoluteHref(
-                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
-                )}
-                alt="Recruit Banner"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 160px, 200px"
-              />
+              {config?.specialBanner?.imageUrl ? (
+                <NextImage
+                  src={getAbsoluteHref(config.specialBanner.imageUrl)}
+                  alt="Recruit Banner"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 160px, 200px"
+                />
+              ) : (
+                <div className="h-full w-full animate-pulse bg-slate-100" />
+              )}
               {isEditing && (
                 <button
                   onClick={(e) => {
@@ -403,20 +409,22 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             </div>
           </Link>
           <Link
-            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
+            href={getAbsoluteHref(config?.specialBanner?.link || 'store/{slug}/first-time')}
             className="block h-12 w-auto max-w-[35vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
             <div className="relative h-full w-20 md:w-28">
-              <NextImage
-                src={getAbsoluteHref(
-                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
-                )}
-                alt="Recruit Banner"
-                fill
-                className="object-cover"
-                priority
-                sizes="80px"
-              />
+              {config?.specialBanner?.imageUrl ? (
+                <NextImage
+                  src={getAbsoluteHref(config.specialBanner.imageUrl)}
+                  alt="Recruit Banner"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="80px"
+                />
+              ) : (
+                <div className="h-full w-full animate-pulse bg-slate-100" />
+              )}
             </div>
           </Link>
 
@@ -432,7 +440,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
             {/* PHONE Button */}
             <a
-              href={`tel:${(store.contact?.phone || config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
+              href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/-/g, '')}`}
               className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#FFB800] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               <Phone size={16} className="md:h-6 md:w-6" />
@@ -476,7 +484,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               {/* Menu Header (Sticky) */}
               <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
                 <div className="flex items-center gap-2">
-                  {config.logoUrl ? (
+                  {config?.logoUrl ? (
                     <div className="relative h-10 w-24 md:w-32">
                       <NextImage
                         src={getAbsoluteHref(config.logoUrl)}
@@ -488,7 +496,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     </div>
                   ) : (
                     <span className="text-2xl font-black italic text-[#D43D6F]">
-                      {config.logoText}
+                      {config?.logoText}
                     </span>
                   )}
                 </div>
@@ -534,20 +542,20 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           </svg>
                         </div>
                         <span className="whitespace-nowrap text-2xl font-black tabular-nums tracking-tighter sm:text-4xl">
-                          {store.contact?.phone || config.phoneNumber || '03-6356-3860'}
+                          {store.contact?.phone || config?.phoneNumber || '050-5491-3991'}
                         </span>
                       </div>
                       <p className="text-sm font-bold text-gray-400">
-                        受付時間: {config.receptionHours || '12:00〜23:00'}
+                        受付時間: {config?.receptionHours || '10:00〜23:00'}
                       </p>
                     </div>
                   </div>
 
                   {/* Special Banner */}
-                  {(config.menuBottomBanner?.isVisible ?? true) && (
+                  {(config?.menuBottomBanner?.isVisible ?? true) && (
                     <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
                       <Link
-                        href={getAbsoluteHref(config.menuBottomBanner?.link || '#recruit')}
+                        href={getAbsoluteHref(config?.menuBottomBanner?.link || '#recruit')}
                         onClick={closeMenu}
                         className="group relative block aspect-[16/7]"
                       >
@@ -563,21 +571,23 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                             <Link2 size={20} />
                           </button>
                         )}
-                        <NextImage
-                          src={getAbsoluteHref(
-                            config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png',
-                          )}
-                          alt="Special Banner"
-                          fill
-                          className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
-                          sizes="(max-width: 768px) 100vw, 400px"
-                        />
+                        {config?.menuBottomBanner?.imageUrl ? (
+                          <NextImage
+                            src={getAbsoluteHref(config.menuBottomBanner.imageUrl)}
+                            alt="Special Banner"
+                            fill
+                            className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                            sizes="(max-width: 768px) 100vw, 400px"
+                          />
+                        ) : (
+                          <div className="h-full w-full bg-slate-800" />
+                        )}
                         <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
                           <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                            {config.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
+                            {config?.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
                           </p>
                           <h3 className="text-xl font-black leading-tight text-white">
-                            {config.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
+                            {config?.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
                           </h3>
                         </div>
                       </Link>

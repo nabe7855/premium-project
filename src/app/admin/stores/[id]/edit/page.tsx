@@ -16,6 +16,7 @@ interface StoreForm {
   theme_color?: string;
   description?: string;
   business_hours?: string;
+  reception_hours?: string;
   line_id?: string;
   line_url?: string;
   notification_email?: string;
@@ -110,6 +111,7 @@ export default function EditStorePage() {
         theme_color: form.theme_color,
         description: form.description,
         business_hours: form.business_hours,
+        reception_hours: form.reception_hours,
         line_id: form.line_id,
         line_url: form.line_url,
         notification_email: form.notification_email,
@@ -318,13 +320,22 @@ export default function EditStorePage() {
                       placeholder="03-1234-5678"
                     />
                   </div>
-                  <div className="space-y-1 md:col-span-2">
+                  <div className="space-y-1">
                     <label className="text-sm font-medium text-gray-700">営業時間</label>
                     <input
                       className="w-full rounded-md border border-gray-300 p-2 shadow-sm"
                       value={form.business_hours || ''}
                       onChange={(e) => handleChange('business_hours', e.target.value)}
                       placeholder="例: 12:00〜翌朝4時"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-sm font-medium text-gray-700">受付時間</label>
+                    <input
+                      className="w-full rounded-md border border-gray-300 p-2 shadow-sm"
+                      value={form.reception_hours || ''}
+                      onChange={(e) => handleChange('reception_hours', e.target.value)}
+                      placeholder="例: 10:00〜23:00"
                     />
                   </div>
                 </div>
