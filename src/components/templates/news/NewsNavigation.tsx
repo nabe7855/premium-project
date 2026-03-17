@@ -28,48 +28,48 @@ const NewsNavigation: React.FC<NewsNavigationProps> = ({
     <div className="mx-auto max-w-2xl space-y-16 px-6 py-12">
       {/* Prev / Next Article Navigation (note.com style) */}
       <nav className="border-y border-dashed border-slate-200">
-        <div className="grid grid-cols-1 sm:grid-cols-2">
+        <div className="grid grid-cols-2">
           {/* Previous */}
-          <div className="flex min-h-[100px] items-center border-b border-dashed border-slate-100 sm:border-b-0 sm:border-r">
+          <div className="flex min-h-[80px] items-center border-r border-dashed border-slate-100">
             {prevPage ? (
               <Link
                 href={`/store/${storeSlug}/news/${prevPage.slug}`}
-                className="group flex w-full items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-50"
+                className="group flex w-full items-center gap-2 px-3 py-4 transition-colors hover:bg-slate-50 md:gap-4 md:px-6 md:py-5"
               >
-                <ChevronLeft className="h-6 w-6 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600" />
+                <ChevronLeft className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-slate-600 md:h-6 md:w-6" />
                 <div className="min-w-0 flex-1">
-                  <span className="block text-xs font-bold tracking-wider text-slate-400">
+                  <span className="block text-[10px] font-bold tracking-wider text-slate-400 md:text-xs">
                     前の記事
                   </span>
-                  <h4 className="mt-1 line-clamp-2 text-[15px] font-bold leading-snug text-slate-800 group-hover:text-rose-500">
+                  <h4 className="mt-0.5 line-clamp-2 text-[13px] font-bold leading-snug text-slate-800 group-hover:text-rose-500 md:mt-1 md:text-[15px]">
                     {prevPage.title}
                   </h4>
                 </div>
               </Link>
             ) : (
-              <div className="w-full px-6 py-5" />
+              <div className="w-full px-3 py-4 md:px-6 md:py-5" />
             )}
           </div>
 
           {/* Next */}
-          <div className="flex min-h-[100px] items-center">
+          <div className="flex min-h-[80px] items-center">
             {nextPage ? (
               <Link
                 href={`/store/${storeSlug}/news/${nextPage.slug}`}
-                className="group flex w-full items-center gap-4 px-6 py-5 transition-colors hover:bg-slate-50"
+                className="group flex w-full items-center gap-2 px-3 py-4 transition-colors hover:bg-slate-50 md:gap-4 md:px-6 md:py-5"
               >
                 <div className="min-w-0 flex-1">
-                  <span className="block text-left text-xs font-bold tracking-wider text-slate-400 sm:text-right">
+                  <span className="block text-right text-[10px] font-bold tracking-wider text-slate-400 md:text-xs">
                     次の記事
                   </span>
-                  <h4 className="mt-1 line-clamp-2 text-left text-[15px] font-bold leading-snug text-slate-800 group-hover:text-rose-500 sm:text-right">
+                  <h4 className="mt-0.5 line-clamp-2 text-right text-[13px] font-bold leading-snug text-slate-800 group-hover:text-rose-500 md:mt-1 md:text-[15px]">
                     {nextPage.title}
                   </h4>
                 </div>
-                <ChevronRight className="h-6 w-6 shrink-0 text-slate-300 transition-colors group-hover:text-rose-600" />
+                <ChevronRight className="h-4 w-4 shrink-0 text-slate-300 transition-colors group-hover:text-rose-600 md:h-6 md:w-6" />
               </Link>
             ) : (
-              <div className="w-full px-6 py-5" />
+              <div className="w-full px-3 py-4 md:px-6 md:py-5" />
             )}
           </div>
         </div>

@@ -41,46 +41,6 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page }) => {
           ))}
         </div>
 
-        {/* Tags Section (Style from Image 1) */}
-        {(page.category || (page.tags && page.tags.length > 0)) && (
-          <div className="mt-16 border-t border-slate-100 pt-10">
-            <h3 className="mb-6 text-[15px] font-bold leading-none text-slate-900">
-              この記事が参加している募集
-            </h3>
-
-            {/* Main Tag Card (Category as main recruitment) */}
-            {page.category && (
-              <div className="mb-6 block">
-                <div className="flex items-center justify-between rounded-2xl border border-slate-200 p-5 shadow-sm transition-all hover:border-rose-200 hover:bg-rose-50/20">
-                  <div className="flex items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-slate-50 text-[24px] font-black text-slate-400">
-                      #
-                    </div>
-                    <span className="text-[17px] font-bold text-slate-900">{page.category}</span>
-                  </div>
-                  <span className="text-[13px] font-medium text-slate-400">
-                    {Math.floor(Math.random() * 1000 + 100).toLocaleString()}件
-                  </span>
-                </div>
-              </div>
-            )}
-
-            {/* Small Hashtag Buttons */}
-            {page.tags && page.tags.length > 0 && (
-              <div className="flex flex-wrap gap-3">
-                {page.tags.map((tag, idx) => (
-                  <div
-                    key={idx}
-                    className="rounded-xl border border-slate-200 px-4 py-2.5 text-[15px] font-bold text-slate-700 transition-all hover:border-slate-300 hover:bg-slate-50"
-                  >
-                    #{tag}
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        )}
-
         {/* Action / CTA Section - Moved to bottom */}
         {ctaSections.length > 0 && (
           <div className="mt-10 space-y-8 border-t border-slate-100 pt-10">
