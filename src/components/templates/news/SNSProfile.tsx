@@ -64,9 +64,6 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
             onClick={() => handleEdit('description', config.description)}
           >
             {config.description}
-            <span className="ml-2 cursor-pointer text-slate-400 hover:text-slate-600">
-              もっとみる
-            </span>
           </p>
 
           {/* Social Icons */}
