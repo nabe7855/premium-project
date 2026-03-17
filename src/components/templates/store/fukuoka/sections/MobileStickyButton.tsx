@@ -13,6 +13,7 @@ const MobileStickyButton: React.FC = () => {
       <Link
         href={`/store/${storeSlug}/reservation`}
         className="from-primary-500 to-primary-600 flex w-full items-center justify-center rounded-2xl bg-gradient-to-r py-4 text-sm font-bold tracking-widest text-white shadow-lg transition-transform active:scale-95"
+        aria-label="WEB予約に移動する"
       >
         <Calendar className="mr-2" size={18} /> WEB RESERVATION
       </Link>

@@ -398,7 +398,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     </span>
                   )}
                 </div>
-                <button onClick={closeMenu} className="rounded-full bg-pink-50 p-2 text-pink-500">
+                <button onClick={closeMenu} className="rounded-full bg-pink-50 p-2 text-pink-500" aria-label="メニューを閉じる">
                   <X size={24} />
                 </button>
               </div>

@@ -180,13 +180,9 @@ export default async function StorePage({ params }: StorePageProps) {
     })),
   };
 
-  // Determine the primary LCP image URL for preloading
-  const lcpImageUrl = (topConfig?.hero?.images?.[0] || store.seo.ogImage || '').replace(/\{slug\}/g, params.slug);
-
   // テンプレート振り分け
   return (
     <>
-      <link rel="preload" href={lcpImageUrl} as="image" fetchPriority="high" />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}

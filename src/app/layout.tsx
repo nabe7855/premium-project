@@ -37,7 +37,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ja" className={`${inter.className} antialiased`} suppressHydrationWarning>
       <GoogleTagManager gtmId="GTM-xxxxx" />
-      <GoogleAnalytics gaId="G-2TCLB5C447" />
       <body>
         <Providers>
           {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}

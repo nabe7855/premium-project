@@ -35,6 +35,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
             if (isEditing) e.preventDefault();
           }}
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
+          aria-label="初めてのお客様ガイドページへ"
         >
           <div className="relative aspect-[25/4] w-full">
             <NextImage
