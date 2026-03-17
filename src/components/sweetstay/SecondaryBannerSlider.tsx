@@ -3,59 +3,73 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useCallback, useEffect, useState } from 'react';
 
-const SNS_ITEMS = [
+interface BannerData {
+  id: string;
+  image_url: string;
+  title: string;
+  subtitle?: string | null;
+  link_url?: string | null;
+  metadata?: any;
+}
+
+interface SecondaryBannerSliderProps {
+  banners?: BannerData[];
+}
+
+const DEFAULT_ITEMS = [
   {
-    id: 1,
+    id: 'default-1',
     title: 'カップルズSNSコレクション',
-    isSnsCollection: true,
+    metadata: { isSnsCollection: true },
+    image_url: '',
   },
   {
-    id: 2,
+    id: 'default-2',
     title: '360°見まわせるホテル',
-    image:
-      'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
-    overlayText: 'お部屋を360°見まわせる\nラブホテル',
-    hasBadge: '360°',
+    image_url: 'https://images.unsplash.com/photo-1618221195710-dd6b41faaea6?auto=format&fit=crop&q=80&w=800',
+    subtitle: 'お部屋を360°見まわせる\nラブホテル',
+    metadata: { hasBadge: '360°' },
   },
   {
-    id: 3,
+    id: 'default-3',
     title: 'COUPLES HOTEL AWARD 2026',
-    awardText: true,
+    metadata: { awardText: true },
+    image_url: '',
   },
   {
-    id: 4,
+    id: 'default-4',
     title: '女子会にオススメのホテル特集',
-    image:
-      'https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&q=80&w=800',
-    overlayText: '女子会にオススメの\nホテル特集',
+    image_url: 'https://images.unsplash.com/photo-1522228115018-d838bcce5c3a?auto=format&fit=crop&q=80&w=800',
+    subtitle: '女子会にオススメの\nホテル特集',
   },
   {
-    id: 5,
+    id: 'default-5',
     title: '露天風呂があるプレミアムホテル',
-    image:
-      'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
-    overlayText: '露天風呂がある\nプレミアムホテル',
+    image_url: 'https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&q=80&w=800',
+    subtitle: '露天風呂がある\nプレミアムホテル',
   },
 ];
 
-const SecondaryBannerSlider: React.FC = () => {
+const SecondaryBannerSlider: React.FC<SecondaryBannerSliderProps> = ({ banners }) => {
+  const currentItems = banners && banners.length > 0 ? banners : DEFAULT_ITEMS;
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const nextSlide = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % SNS_ITEMS.length);
-  }, []);
+    setCurrentIndex((prev) => (prev + 1) % currentItems.length);
+  }, [currentItems.length]);
 
   useEffect(() => {
     const timer = setInterval(nextSlide, 6000);
     return () => clearInterval(timer);
   }, [nextSlide]);
 
-  const visibleItems = [...SNS_ITEMS.slice(currentIndex), ...SNS_ITEMS.slice(0, currentIndex)];
+  const visibleItems = [...currentItems.slice(currentIndex), ...currentItems.slice(0, currentIndex)];
   const activeItem = visibleItems[0];
   const restItems = visibleItems.slice(1);
 
-  const renderSlideContent = (item: (typeof SNS_ITEMS)[0], isMain = false) => {
-    if (item.isSnsCollection) {
+  const renderSlideContent = (item: any, isMain = false) => {
+    const meta = item.metadata || {};
+    if (meta.isSnsCollection) {
       return (
         <div className="relative flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-[#8C83E5] via-[#A993E5] to-[#EEA1C7] p-3 md:p-6">
           <div className="relative z-10 flex h-[60%] w-[90%] flex-col items-center justify-center rounded-[1px] bg-black ring-2 ring-[#FF8BA7] ring-offset-[-6px]">
@@ -69,28 +83,28 @@ const SecondaryBannerSlider: React.FC = () => {
         </div>
       );
     }
-    if (item.hasBadge) {
+    if (meta.hasBadge) {
       return (
         <div className="relative h-full w-full bg-gray-900">
           <img
-            src={item.image}
+            src={item.image_url}
             alt={item.title}
             className="h-full w-full object-cover opacity-80"
           />
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent px-2 pb-2 pt-8 text-center">
             <p className="whitespace-pre-line text-[10px] font-bold leading-tight text-white md:text-xs">
-              {item.overlayText}
+              {item.subtitle}
             </p>
           </div>
           <div className="absolute left-1/2 top-1/2 flex h-14 w-20 -translate-x-1/2 -translate-y-[60%] items-center justify-center rounded-full border-[4px] border-black bg-white shadow-lg md:h-20 md:w-[120px]">
             <span className="text-xl font-black italic tracking-tighter text-black md:text-4xl">
-              360°
+              {meta.hasBadge}
             </span>
           </div>
         </div>
       );
     }
-    if (item.awardText) {
+    if (meta.awardText) {
       return (
         <div className="relative flex h-full w-full flex-col">
           <div className="relative flex flex-1 flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-[#FFF5C3] via-[#FFE259] to-[#FFA751] p-2">
@@ -115,10 +129,10 @@ const SecondaryBannerSlider: React.FC = () => {
     }
     return (
       <div className="relative h-full w-full bg-gray-900">
-        <img src={item.image} alt={item.title} className="h-full w-full object-cover opacity-80" />
+        <img src={item.image_url} alt={item.title} className="h-full w-full object-cover opacity-80" />
         <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent px-2 pb-2 pt-6 text-center">
           <p className="whitespace-pre-line text-[10px] font-bold leading-tight text-white md:text-xs">
-            {item.overlayText}
+            {item.subtitle}
           </p>
         </div>
       </div>
@@ -169,7 +183,7 @@ const SecondaryBannerSlider: React.FC = () => {
               <motion.div
                 key={item.id}
                 layout
-                onClick={() => setCurrentIndex(SNS_ITEMS.findIndex((i) => i.id === item.id))}
+                onClick={() => setCurrentIndex(currentItems.findIndex((i) => i.id === item.id))}
                 className="w-[20vw] flex-shrink-0 cursor-pointer transition-all hover:opacity-90 active:scale-95 sm:w-[150px] md:w-[180px] lg:w-[220px]"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[4px] border border-gray-100 bg-gray-50 shadow-sm">
@@ -182,7 +196,7 @@ const SecondaryBannerSlider: React.FC = () => {
       </div>
 
       <div className="mt-4 flex justify-center gap-2.5">
-        {SNS_ITEMS.map((_, i) => (
+        {currentItems.map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentIndex(i)}

@@ -7,34 +7,48 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-const SLIDES = [
+interface BannerData {
+  id: string;
+  image_url: string;
+  title: string;
+  subtitle?: string | null;
+  link_url?: string | null;
+  metadata?: any;
+}
+
+interface IkeoCarouselProps {
+  banners?: BannerData[];
+}
+
+const DEFAULT_SLIDES = [
   {
-    id: 1,
-    label: 'FEATURED',
+    id: 'default-1',
+    subtitle: 'FEATURED',
     title: '「モテる男」の全てが\nここに集まる。',
-    image: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1600',
-    link: '/ikeo?tag=ファッション・美容',
+    image_url: 'https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1600',
+    link_url: '/ikeo?tag=ファッション・美容',
     accent: 'bg-blue-600',
   },
   {
-    id: 2,
-    label: 'SELF CARE',
+    id: 'default-2',
+    subtitle: 'SELF CARE',
     title: '清潔感は才能じゃない。\n鍛えるものだ。',
-    image: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1600',
-    link: '/ikeo?tag=健康・ボディ',
+    image_url: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?q=80&w=1600',
+    link_url: '/ikeo?tag=健康・ボディ',
     accent: 'bg-indigo-600',
   },
   {
-    id: 3,
-    label: 'ROMANCE',
+    id: 'default-3',
+    subtitle: 'ROMANCE',
     title: '選ばれる男になる。\n恋愛を科学する。',
-    image: 'https://images.unsplash.com/photo-1529661197280-63b52efb72a6?q=80&w=1600',
-    link: '/ikeo?tag=恋愛・デート',
+    image_url: 'https://images.unsplash.com/photo-1529661197280-63b52efb72a6?q=80&w=1600',
+    link_url: '/ikeo?tag=恋愛・デート',
     accent: 'bg-slate-700',
   },
 ];
 
-export default function IkeoCarousel() {
+export default function IkeoCarousel({ banners }: IkeoCarouselProps) {
+  const currentSlides = banners && banners.length > 0 ? banners : DEFAULT_SLIDES;
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, align: 'center' }, [
     Autoplay({ delay: 5000, stopOnInteraction: false }),
   ]);
@@ -63,13 +77,13 @@ export default function IkeoCarousel() {
       {/* Embla viewport */}
       <div ref={emblaRef} className="overflow-hidden">
         <div className="flex">
-          {SLIDES.map((slide, index) => (
+          {currentSlides.map((slide, index) => (
             <div key={slide.id} className="relative min-w-0 flex-[0_0_100%] md:flex-[0_0_100%]">
-              <Link href={slide.link} className="group block">
+              <Link href={slide.link_url || '#'} className="group block">
                 {/* 画像 */}
                 <div className="relative aspect-[4/3] w-full md:aspect-[21/9]">
                   <Image
-                    src={slide.image}
+                    src={slide.image_url}
                     alt={slide.title}
                     fill
                     className="object-cover brightness-50 transition-transform duration-700 group-hover:scale-105"
@@ -81,9 +95,9 @@ export default function IkeoCarousel() {
                   {/* テキストコンテンツ */}
                   <div className="absolute inset-0 flex flex-col justify-end p-6 md:justify-center md:p-12 lg:p-20">
                     <span
-                      className={`mb-3 inline-block w-fit rounded-sm px-3 py-1 text-[10px] font-black tracking-[0.25em] text-white ${slide.accent}`}
+                      className={`mb-3 inline-block w-fit rounded-sm px-3 py-1 text-[10px] font-black tracking-[0.25em] text-white ${(slide as any).accent || 'bg-blue-600'}`}
                     >
-                      {slide.label}
+                      {slide.subtitle || 'FEATURED'}
                     </span>
                     <h2 className="mb-4 whitespace-pre-wrap font-serif text-2xl font-bold leading-tight text-white md:text-4xl lg:text-5xl">
                       {slide.title}

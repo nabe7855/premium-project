@@ -1,0 +1,50 @@
+﻿import {
+  deleteBanner,
+  getAllBanners,
+  upsertBanner,
+  BannerData
+} from '@/lib/actions/banners';
+import { deleteStorageFile } from '@/actions/storage';
+import { supabase } from '@/lib/supabaseClient';
+import {
+  Edit2,
+  Eye,
+  EyeOff,
+  Filter,
+  Image as ImageIcon,
+  Link as LinkIcon,
+  Loader2,
+  Plus,
+  Trash2,
+  X,
+  Settings,
+} from 'lucide-react';
+import { useEffect, useState } from 'react';
+
+// 陦ｨ遉ｺ蝣ｴ謇縺ｮ螳夂ｾｩ・域僑蠑ｵ諤ｧ繧定・・・・
+const BANNER_CATEGORIES = [
+  { id: 'all', label: '縺吶∋縺ｦ' },
+  { id: 'sweetstay', label: '繧ｹ繧､繝ｼ繝医せ繝・う' },
+  { id: 'amolab', label: '繧｢繝｢繝ｩ繝・ },
+  { id: 'ikeo', label: '繧､繧ｱ繧ｪ繝ｩ繝・ },
+];
+
+const BANNER_LOCATIONS = [
+  { id: 'all', label: '縺吶∋縺ｦ' },
+  { id: 'hero', label: '繝偵・繝ｭ繝ｼ繝舌リ繝ｼ' },
+  { id: 'secondary', label: '繧ｻ繧ｫ繝ｳ繝繝ｪ繝舌リ繝ｼ' },
+  { id: 'magazine', label: '繝槭ぎ繧ｸ繝ｳ繝舌リ繝ｼ' },
+  { id: 'carousel', label: '繧ｫ繝ｫ繝ｼ繧ｻ繝ｫ' },
+];
+
+interface Banner extends BannerData {
+  id: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export default function BannerManagementPage() {
+  const [banners, setBanners] = useState<Banner[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);

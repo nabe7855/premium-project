@@ -55,10 +55,10 @@ const SweetStayLayout: React.FC<SweetStayLayoutProps> = ({ children }) => {
               Ikeo
             </Link>
             <Link
-              href="/ikejo"
+              href="/amolab"
               className="text-xs font-black uppercase tracking-widest text-gray-400 transition-colors hover:text-rose-500"
             >
-              Ikejo
+              AmoLab
             </Link>
             <button className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 text-gray-500 transition-colors hover:bg-rose-50 hover:text-rose-500">
               <svg
@@ -145,8 +145,8 @@ const SweetStayLayout: React.FC<SweetStayLayoutProps> = ({ children }) => {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/ikejo" className="transition-colors hover:text-rose-500">
-                    イケジョ (Ikejo)
+                  <Link href="/amolab" className="transition-colors hover:text-rose-500">
+                    アモラボ (AmoLab)
                   </Link>
                 </li>
                 <li>

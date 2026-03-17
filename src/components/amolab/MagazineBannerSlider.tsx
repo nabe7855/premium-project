@@ -8,31 +8,44 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 
-const BANNER_ITEMS = [
+interface BannerData {
+  id: string;
+  image_url: string;
+  title: string;
+  subtitle?: string | null;
+  link_url?: string | null;
+}
+
+interface MagazineBannerSliderProps {
+  banners?: BannerData[];
+}
+
+const DEFAULT_BANNERS = [
   {
-    id: 1,
+    id: 'default-1',
     title: '漫画でわかる。\nはじめてのルミエール',
     subtitle: 'PICK UP',
-    image: 'https://images.unsplash.com/photo-1516589174163-475354e00fb4?q=80&w=1600',
-    link: '/ikejo?tag=はじめての方へ',
+    image_url: 'https://images.unsplash.com/photo-1516589174163-475354e00fb4?q=80&w=1600',
+    link_url: '/amolab?tag=はじめての方へ',
   },
   {
-    id: 2,
+    id: 'default-2',
     title: '新人モニター大募集\n施術料が最大無料！',
     subtitle: 'CAMPAIGN',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1600',
-    link: '/career',
+    image_url: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1600',
+    link_url: '/career',
   },
   {
-    id: 3,
+    id: 'default-3',
     title: '公式YouTubeチャンネル\n動画で癒やし体験',
     subtitle: 'CHANNEL',
-    image: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600',
-    link: 'https://youtube.com',
+    image_url: 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=1600',
+    link_url: 'https://youtube.com',
   },
 ];
 
-export default function MagazineBannerSlider() {
+export default function MagazineBannerSlider({ banners }: MagazineBannerSliderProps) {
+  const currentBanners = banners && banners.length > 0 ? banners : DEFAULT_BANNERS;
   const [emblaRef, emblaApi] = useEmblaCarousel(
     {
       loop: true,
@@ -66,11 +79,11 @@ export default function MagazineBannerSlider() {
       {/* カルーセルコンテナ */}
       <div className="embla" ref={emblaRef}>
         <div className="embla__container flex items-center">
-          {BANNER_ITEMS.map((item, index) => {
+          {currentBanners.map((item, index) => {
             const isActive = selectedIndex === index;
 
             // ループを考慮した隣接判定
-            const snapCount = BANNER_ITEMS.length;
+            const snapCount = currentBanners.length;
             const diff = (index - selectedIndex + snapCount) % snapCount;
             const isPrev = diff === snapCount - 1;
             const isNext = diff === 1;
@@ -102,9 +115,9 @@ export default function MagazineBannerSlider() {
                     isActive ? 'cursor-pointer' : 'pointer-events-none'
                   }`}
                 >
-                  <Link href={item.link}>
+                  <Link href={item.link_url || '#'}>
                     <Image
-                      src={item.image}
+                      src={item.image_url}
                       alt={item.title}
                       fill
                       className="object-cover"

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '女風辞典 (Jiten) | 女性用風俗の不安を安心に変える初心者ガイド',
+  title: 'アモラボ辞典 (Jiten) | 女性用風俗の不安を安心に変える初心者ガイド',
   description:
     '女性用風俗（女風）の用語、利用の流れ、マナー、料金などを分かりやすく解説。怖さや不安をあおらず、あなたが主体的に判断できるようになるための専門辞典です。',
 };
@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 export const revalidate = 3600;
 
 export default async function DictionaryTopPage() {
-  const result = await getMediaArticles('ikejo-jiten', 'user');
+  const result = await getMediaArticles('amolab-jiten', 'user');
   const articles = result.success ? result.articles || [] : [];
 
   // カテゴリ分けのロジック（実際にはタグなどで分けるのが理想だが、一旦モック的に整理）
@@ -51,7 +51,7 @@ export default async function DictionaryTopPage() {
             初心者向け解説メディア
           </div>
           <h1 className="mb-8 text-[32px] font-black leading-tight text-gray-900 md:text-[48px]">
-            女風辞典 <span className="text-pink-500">Jiten</span>
+            アモラボ辞典 <span className="text-pink-500">Jiten</span>
           </h1>
           <p className="mx-auto mb-12 max-w-2xl text-base leading-relaxed text-gray-500 md:text-lg">
             怖さや恥ずかしさをあおらず、分からない言葉や流れをやさしく整理し、
@@ -96,7 +96,7 @@ export default async function DictionaryTopPage() {
             {articles.slice(0, 3).map((article: any) => (
               <Link
                 key={article.id}
-                href={`/ikejo/jiten/words/${article.slug}`}
+                href={`/amolab/jiten/words/${article.slug}`}
                 className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:shadow-xl"
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
@@ -136,7 +136,7 @@ export default async function DictionaryTopPage() {
             {articles.map((article: any) => (
               <Link
                 key={article.id}
-                href={`/ikejo/jiten/words/${article.slug}`}
+                href={`/amolab/jiten/words/${article.slug}`}
                 className="flex items-center gap-2 py-2 text-[15px] font-medium text-gray-600 transition-colors hover:text-pink-500"
               >
                 <div className="h-1.5 w-1.5 rounded-full bg-gray-200 group-hover:bg-pink-400"></div>
@@ -155,20 +155,20 @@ export default async function DictionaryTopPage() {
       {/* 編集方針 */}
       <section className="border-t border-gray-100 bg-white py-20">
         <div className="container mx-auto max-w-2xl px-6 text-center">
-          <h2 className="mb-8 text-xl font-bold text-gray-800">女風辞典の編集方針</h2>
+          <h2 className="mb-8 text-xl font-bold text-gray-800">アモラボ辞典の編集方針</h2>
           <p className="mb-10 text-sm leading-relaxed text-gray-500">
             当辞典は、業界の専門用語を分かりやすく解説し、利用者が自分自身の意志で
             納得して判断できることを目的としています。誇張した表現や不安を煽る記載は行いません。
           </p>
           <div className="flex justify-center gap-6">
             <Link
-              href="/ikejo/jiten/policy"
+              href="/amolab/jiten/policy"
               className="text-xs font-bold text-gray-400 underline underline-offset-4 hover:text-gray-600"
             >
               編集方針について
             </Link>
             <Link
-              href="/ikejo/jiten/contacts"
+              href="/amolab/jiten/contacts"
               className="text-xs font-bold text-gray-400 underline underline-offset-4 hover:text-gray-600"
             >
               トラブル・相談先

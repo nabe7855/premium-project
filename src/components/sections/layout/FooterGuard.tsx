@@ -11,7 +11,7 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
   const hideFooterPaths = ['/', '/age-check', '/store-select', '/test8'];
   const hideFooterPrefixes = [
     '/admin',
-    '/ikejo',
+    '/amolab',
     '/ikeo',
     '/counseling',
     '/consent',

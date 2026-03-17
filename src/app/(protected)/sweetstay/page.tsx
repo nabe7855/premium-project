@@ -3,6 +3,7 @@ import HotelCard from '@/components/sweetstay/HotelCard';
 import QuickNav from '@/components/sweetstay/QuickNav';
 import SecondaryBannerSlider from '@/components/sweetstay/SecondaryBannerSlider';
 import TabelogSearch from '@/components/sweetstay/TabelogSearch';
+import { getBanners } from '@/lib/actions/banners';
 import { getMediaArticles } from '@/lib/actions/media';
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 import { BookOpen, Heart, ShieldCheck, Sparkles, Star, Trophy, Users } from 'lucide-react';
@@ -15,6 +16,14 @@ export default async function SweetStayPortalPage() {
   // Fetch a selection of hotels for the portal
   const dbHotels = (await getHotels({ take: 6 })) || [];
   const featuredHotels = dbHotels.slice(0, 6).map(mapDbHotelToHotel);
+
+  // Fetch Banners
+  const [heroBannersRes, secondaryBannersRes] = await Promise.all([
+    getBanners('sweetstay', 'hero'),
+    getBanners('sweetstay', 'secondary'),
+  ]);
+  const heroBanners = heroBannersRes.success ? heroBannersRes.banners : [];
+  const secondaryBanners = secondaryBannersRes.success ? secondaryBannersRes.banners : [];
 
   // Fetch Media Articles for Sweet Stay
   const articlesResult = await getMediaArticles('sweetstay', 'user');
@@ -92,10 +101,10 @@ export default async function SweetStayPortalPage() {
   return (
     <div className="bg-[#FFF8F6] duration-500 animate-in fade-in">
       {/* Premium Hero Slider Section */}
-      <HeroSlider />
+      <HeroSlider banners={heroBanners as any} />
 
       {/* Secondary SNS Banner Slider */}
-      <SecondaryBannerSlider />
+      <SecondaryBannerSlider banners={secondaryBanners as any} />
 
       {/* Tabelog-style Search Bar */}
       <TabelogSearch />
@@ -307,7 +316,7 @@ export default async function SweetStayPortalPage() {
               一目置く、価値ある滞在。
             </h2>
             <p className="mb-12 max-w-2xl text-lg font-medium leading-relaxed text-[#4A4A4A] md:text-xl">
-              Sweet Stayはイケオ・イケジョと完全に連携。
+              Sweet Stayはイケオ・アモラボと完全に連携。
               現役セラピスト・業界関係者のリアルな視点を取り入れた、大手の検索機能を超えた真に快適な空間をあなたへ。
             </p>
             <div className="flex flex-wrap justify-center gap-4">
@@ -318,10 +327,10 @@ export default async function SweetStayPortalPage() {
                 Ikeo for Men
               </Link>
               <Link
-                href="/ikejo"
+                href="/amolab"
                 className="flex h-16 items-center rounded-full border-2 border-rose-100 bg-white px-8 text-[10px] font-black uppercase tracking-widest text-[#FF8BA7] shadow-xl shadow-rose-100/20 transition-all hover:scale-105 active:scale-95"
               >
-                Ikejo for Women
+                AmoLab for Women
               </Link>
               <Link
                 href="/sweetstay/reviews"

@@ -4,8 +4,8 @@ import Link from 'next/link';
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | イケジョラボ by ストロベリーボーイズ',
-    default: '女性のための性のお悩み解決とリアルな体験談｜イケジョラボ by ストロベリーボーイズ',
+    template: '%s | アモラボ (AmoLab) by ストロベリーボーイズ',
+    default: '女性のための性のお悩み解決とリアルな体験談｜アモラボ by ストロベリーボーイズ',
   },
   description:
     '女性用風俗店がプロの目線で女性の性の悩みやリアルな体験談を解説。セルフケアからラブグッズの活用法、パートナーとの関係構築まで、女性の性生活をより豊かで安心できるものにするための情報をお届けします。',
@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  name: 'イケジョラボ',
-  url: 'https://www.sutoroberrys.jp/ikejo',
+  name: 'アモラボ',
+  url: 'https://www.sutoroberrys.jp/amolab',
   description: '女性のための性のお悩み解決とリアルな体験談メディア',
   publisher: {
     '@type': 'Organization',
@@ -38,16 +38,16 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
       {/* 女性向けクリーンヘッダー */}
       <header className="sticky top-0 z-40 border-b border-pink-50 bg-white/95 shadow-sm backdrop-blur-md">
         <div className="mx-auto flex h-14 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/ikejo" className="flex items-center gap-2">
+          <Link href="/amolab" className="flex items-center gap-2">
             <div className="flex items-center text-pink-300">
               <HeartIcon fill="currentColor" size={20} />
             </div>
-            <span className="font-serif text-lg tracking-[0.2em] text-gray-800">イケジョラボ</span>
+            <span className="font-serif text-lg tracking-[0.2em] text-gray-800">アモラボ</span>
           </Link>
 
           <nav className="hidden space-x-6 text-[11px] font-bold text-gray-400 md:flex">
             <Link
-              href="/ikejo"
+              href="/amolab"
               className="uppercase tracking-widest transition-colors hover:text-pink-500"
             >
               Magazine Top
@@ -83,7 +83,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             <HeartIcon size={24} />
           </div>
           <p className="mx-auto mb-10 max-w-2xl">
-            イケジョラボは、女性の心とからだの健康、そして日常を彩る特別な体験をご提案するメディアです。
+            アモラボは、女性の心とからだの健康、そして日常を彩る特別な体験をご提案するメディアです。
             <br />
             すべての女性が自分らしく、心地よい時間を過ごせるようサポートいたします。
           </p>
@@ -102,7 +102,7 @@ export default function MagazineLayout({ children }: { children: React.ReactNode
             </Link>
           </div>
           <p className="mt-12 text-[10px] tracking-widest">
-            © 2026 IKEJO LABO MEDIA GROUP. All rights reserved.
+            © 2026 AMOLAB MEDIA GROUP. All rights reserved.
           </p>
         </div>
       </footer>

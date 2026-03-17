@@ -1,4 +1,5 @@
 import IkeoCarousel from '@/components/ikeo/IkeoCarousel';
+import { getBanners } from '@/lib/actions/banners';
 import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
 import {
   ChevronRightIcon,
@@ -20,6 +21,9 @@ export default async function CareerMediaTopPage({
   searchParams: { tag?: string };
 }) {
   const selectedTag = searchParams.tag;
+
+  const [bannersRes] = await Promise.all([getBanners('ikeo', 'carousel')]);
+  const banners = bannersRes.success ? bannersRes.banners : [];
 
   const result = await getMediaArticles('ikeo', 'recruit');
   let allArticles = result.success
@@ -72,7 +76,7 @@ export default async function CareerMediaTopPage({
   return (
     <div className="min-h-screen bg-[#fcfdff]">
       {/* ① ファーストビュー：カルーセルスライダー */}
-      <IkeoCarousel />
+      <IkeoCarousel banners={banners as any} />
 
       {/* ② サブナビゲーション（スライダー直下） */}
       <nav className="sticky top-16 z-30 border-b border-slate-100 bg-slate-900 text-white shadow-md">

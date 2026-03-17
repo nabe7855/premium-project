@@ -14,7 +14,7 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
 
   // 除外対象のパス判定
   const isExcluded = () => {
-    const excludedPrefixes = ['/admin', '/cast', '/age-check', '/login', '/api', '/ikejo', '/ikeo'];
+    const excludedPrefixes = ['/admin', '/cast', '/age-check', '/login', '/api', '/amolab', '/ikeo'];
     // 保護中ルートの一部も除外
     const protectedExcluded = ['/counseling', '/survey', '/reflection', '/consent'];
 

@@ -11,7 +11,7 @@ export default function MediaManagementPage() {
   const [filterAudience, setFilterAudience] = useState<'all' | 'user' | 'recruit'>('all');
   const [filterStatus, setFilterStatus] = useState<'all' | 'published' | 'draft'>('all');
   const [filterCategory, setFilterCategory] = useState<
-    'all' | 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten'
+    'all' | 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten' | 'amolab' | 'amolab-jiten'
   >('all');
 
   const fetchArticles = async () => {
@@ -58,10 +58,10 @@ export default function MediaManagementPage() {
             className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-accent"
           >
             <option value="all">すべてのカテゴリ</option>
-            <option value="ikejo">イケジョ</option>
+            <option value="amolab">アモラボ</option>
             <option value="ikeo">イケオ</option>
             <option value="sweetstay">Sweet Stay</option>
-            <option value="ikejo-jiten">辞典</option>
+            <option value="amolab-jiten">アモラボ辞典</option>
           </select>
           <select
             value={filterStatus}
@@ -163,7 +163,7 @@ export default function MediaManagementPage() {
                             ? 'Sweet Stay'
                             : article.category === 'ikeo'
                               ? 'イケオ'
-                              : 'イケジョ'}
+                              : 'アモラボ'}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">

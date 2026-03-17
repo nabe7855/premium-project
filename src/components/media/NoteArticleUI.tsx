@@ -12,7 +12,7 @@ import ReactMarkdown from 'react-markdown';
 interface NoteArticleUIProps {
   article: any;
   relatedArticles: any[];
-  category: 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten';
+  category: 'ikejo' | 'ikeo' | 'sweetstay' | 'ikejo-jiten' | 'amolab' | 'amolab-jiten';
   baseUrl: string;
 }
 
@@ -51,6 +51,24 @@ export default function NoteArticleUI({
       prose: 'prose-rose',
     },
     'ikejo-jiten': {
+      primary: 'slate',
+      bg: 'bg-slate-50',
+      text: 'text-slate-600',
+      accent: 'slate-200',
+      authorLabel: '辞典',
+      authorColor: 'text-slate-500',
+      prose: 'prose-slate',
+    },
+    amolab: {
+      primary: 'pink',
+      bg: 'bg-pink-50',
+      text: 'text-pink-500',
+      accent: 'pink-200',
+      authorLabel: 'アモラボ',
+      authorColor: 'text-pink-400',
+      prose: 'prose-pink',
+    },
+    'amolab-jiten': {
       primary: 'slate',
       bg: 'bg-slate-50',
       text: 'text-slate-600',

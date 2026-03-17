@@ -36,10 +36,10 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
     thumbnail_url: initialData?.thumbnail_url || '',
     target_audience: initialData?.target_audience || 'user',
     status: initialData?.status || 'draft',
-    category: initialData?.category || 'ikejo',
+    category: initialData?.category || 'amolab',
     seo_title: initialData?.seo_title || '',
     seo_description: initialData?.seo_description || '',
-    author_name: initialData?.author_name || '編集部',
+    author_name: initialData?.author_name || 'アモラボ編集部',
   });
   const [tagsInput, setTagsInput] = useState<string>(
     initialData?.tags?.map((t: any) => t.tag.name).join(', ') || '',
@@ -333,10 +333,10 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 onChange={handleChange}
                 className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               >
-                <option value="ikejo">イケジョ・ラボ</option>
+                <option value="amolab">アモラボ</option>
                 <option value="ikeo">イケオ・ラボ</option>
                 <option value="sweetstay">Sweet Stay (ホテルメディア)</option>
-                <option value="ikejo-jiten">女風辞典</option>
+                <option value="amolab-jiten">アモラボ辞典</option>
               </select>
               <p className="mt-1 text-[11px] text-gray-500">掲載先のメディア媒体を選択します。</p>
             </div>
@@ -352,7 +352,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 className="w-full rounded-lg border border-gray-300 p-2.5 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-accent"
               />
               <p className="mt-1 text-[11px] text-gray-500">
-                URLの一部になります（例：/ikejo/how-to-choose）。英語とハイフンを推奨。
+                  URLの一部になります（例：/amolab/how-to-choose）。英語とハイフンを推奨。
               </p>
             </div>
 

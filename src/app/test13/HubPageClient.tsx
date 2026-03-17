@@ -93,7 +93,7 @@ interface HubPageClientProps {
   videos: any[];
   diaries: any[];
   mediaArticles: {
-    userArticles: any[]; // イケジョラボ + スイートステイ
+    userArticles: any[]; // アモラボ + スイートステイ
     recruitArticles: any[]; // イケオラボ
   };
 }

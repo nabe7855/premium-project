@@ -1,4 +1,5 @@
-import MagazineBannerSlider from '@/components/ikejo/MagazineBannerSlider';
+import MagazineBannerSlider from '@/components/amolab/MagazineBannerSlider';
+import { getBanners } from '@/lib/actions/banners';
 import { getMediaArticles, getMediaTags } from '@/lib/actions/media';
 import {
   BookOpenIcon,
@@ -23,8 +24,11 @@ export default async function MagazineTopPage({
 }) {
   const selectedTag = searchParams.tag;
 
+  const [bannersRes] = await Promise.all([getBanners('amolab', 'magazine')]);
+  const banners = bannersRes.success ? bannersRes.banners : [];
+
   // お客様向け・公開済みの記事のみを取得
-  const result = await getMediaArticles('ikejo', 'user');
+  const result = await getMediaArticles('amolab', 'user');
   let allArticles = result.success
     ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];
@@ -45,7 +49,7 @@ export default async function MagazineTopPage({
     {
       title: 'はじめての方へ',
       icon: InfoIcon,
-      href: '/ikejo?tag=はじめての方へ',
+      href: '/amolab?tag=はじめての方へ',
       label: 'FIRST',
     },
     {
@@ -60,13 +64,13 @@ export default async function MagazineTopPage({
   ];
 
   const subNav = [
-    { title: '初めての方へ', href: '/ikejo?tag=初めての方へ' },
-    { title: 'セルフケア', href: '/ikejo?tag=セルフケア' },
-    { title: 'パートナーと', href: '/ikejo?tag=パートナーと' },
-    { title: '恋愛・相談', href: '/ikejo?tag=恋愛・相談' },
-    { title: '体験談', href: '/ikejo?tag=体験談' },
-    { title: 'ラブグッズ', href: '/ikejo?tag=ラブグッズ' },
-    { title: '女風ガイド', href: '/ikejo?tag=女風ガイド' },
+    { title: '初めての方へ', href: '/amolab?tag=初めての方へ' },
+    { title: 'セルフケア', href: '/amolab?tag=セルフケア' },
+    { title: 'パートナーと', href: '/amolab?tag=パートナーと' },
+    { title: '恋愛・相談', href: '/amolab?tag=恋愛・相談' },
+    { title: '体験談', href: '/amolab?tag=体験談' },
+    { title: 'ラブグッズ', href: '/amolab?tag=ラブグッズ' },
+    { title: '女風ガイド', href: '/amolab?tag=女風ガイド' },
   ];
 
   const renderEmptyState = () => (
@@ -105,7 +109,7 @@ export default async function MagazineTopPage({
             {/* 中央ロゴ */}
             <div className="mx-12 flex flex-col items-center">
               <div className="mb-1 font-serif text-2xl font-bold uppercase tracking-[0.2em] text-pink-400">
-                イケジョ
+                アモ
               </div>
               <div className="h-[1px] w-16 bg-gradient-to-r from-transparent via-pink-200 to-transparent"></div>
               <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.3em] text-pink-200">
@@ -146,7 +150,7 @@ export default async function MagazineTopPage({
       </section>
       {/* 2. メインバナースライダー（複数見え構成） */}
       <section className="bg-white">
-        <MagazineBannerSlider />
+        <MagazineBannerSlider banners={banners as any} />
       </section>
       {/* 3. サブナビゲーションバー — 6項目を1行に均等配置 */}
       <section className="bg-pink-400 text-white shadow-md">
@@ -241,7 +245,7 @@ export default async function MagazineTopPage({
             ].map((cat) => (
               <Link
                 key={cat.tag}
-                href={`/ikejo/?tag=${cat.tag}`}
+                href={`/amolab/?tag=${cat.tag}`}
                 className={`group flex flex-col items-center rounded-3xl border p-8 transition-all hover:-translate-y-1 hover:shadow-xl hover:shadow-pink-100/50 ${
                   selectedTag === cat.tag
                     ? 'border-pink-300 bg-pink-50/50'
@@ -275,7 +279,7 @@ export default async function MagazineTopPage({
           {/* タグフィルター */}
           <div className="mb-16 flex flex-wrap items-center justify-center gap-3">
             <Link
-              href="/ikejo"
+              href="/amolab"
               className={`rounded-full px-6 py-2.5 text-[11px] font-bold tracking-widest transition-all ${
                 !selectedTag
                   ? 'bg-pink-500 text-white shadow-lg shadow-pink-200'
@@ -287,7 +291,7 @@ export default async function MagazineTopPage({
             {allTags.map((tag: any) => (
               <Link
                 key={tag.id}
-                href={`/ikejo/?tag=${tag.name}`}
+                href={`/amolab/?tag=${tag.name}`}
                 className={`rounded-full px-6 py-2.5 text-[11px] font-bold tracking-widest transition-all ${
                   selectedTag === tag.name
                     ? 'bg-pink-500 text-white shadow-lg shadow-pink-200'
@@ -306,7 +310,7 @@ export default async function MagazineTopPage({
               {allArticles.map((article: any) => (
                 <Link
                   key={article.id}
-                  href={`/ikejo/${article.slug}`}
+                  href={`/amolab/${article.slug}`}
                   className="group flex flex-col overflow-hidden"
                 >
                   <div className="relative mb-6 aspect-[16/10] w-full overflow-hidden rounded-[2rem] bg-pink-50 shadow-sm transition-shadow group-hover:shadow-xl group-hover:shadow-pink-100/30">

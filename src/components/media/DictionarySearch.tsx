@@ -51,7 +51,7 @@ export default function DictionarySearch({ articles }: DictionarySearchProps) {
               {filtered.map((article) => (
                 <Link
                   key={article.id}
-                  href={`/ikejo/jiten/words/${article.slug}`}
+                  href={`/amolab/jiten/words/${article.slug}`}
                   className="flex items-center gap-4 px-6 py-4 transition-colors hover:bg-gray-50"
                   onClick={() => setQuery('')}
                 >

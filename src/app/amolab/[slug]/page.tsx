@@ -19,7 +19,7 @@ export async function generateMetadata({
   }
 
   return {
-    title: `${article.title}｜イケジョラボ`,
+    title: `${article.title}｜アモラボ`,
     description: article.seo_description || article.excerpt || '',
     openGraph: {
       title: article.seo_title || article.title,
@@ -60,7 +60,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     dateModified: article.updated_at.toISOString(),
     author: {
       '@type': 'Person',
-      name: article.author_name || 'イケジョラボ 編集部',
+      name: article.author_name || 'アモラボ 編集部',
     },
   };
 
@@ -73,8 +73,8 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
       <NoteArticleUI
         article={article}
         relatedArticles={relatedArticles}
-        category="ikejo"
-        baseUrl="/ikejo"
+        category="amolab"
+        baseUrl="/amolab"
       />
     </>
   );

@@ -9,7 +9,7 @@ export default function HeaderGuard({ children }: { children: React.ReactNode })
 
   // ✅ ヘッダーを非表示にしたいパス一覧
   const hideHeaderPaths = ['/', '/age-check', '/store-select', '/test8'];
-  const hideHeaderPrefixes = ['/ikejo', '/ikeo'];
+  const hideHeaderPrefixes = ['/amolab', '/ikeo'];
 
   // ✅ /store/[slug]/recruit も非表示にするための正規表現チェック
   const isRecruitPage = /\/store\/[^/]+\/recruit$/.test(pathname);
