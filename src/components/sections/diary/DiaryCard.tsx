@@ -75,11 +75,13 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
       <Link href={linkHref} className="block">
         <div className={cardClasses}>
           <div className="flex items-start gap-2 sm:gap-3">
-            <img
-              src={imageSrc}
-              alt={post.title}
-              className="h-12 w-12 flex-shrink-0 rounded-lg object-cover sm:h-16 sm:w-16"
-            />
+            <div className="h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:h-16 sm:w-16">
+              <img
+                src={imageSrc}
+                alt={post.title}
+                className="h-full w-full object-contain"
+              />
+            </div>
             <div className="min-w-0 flex-1">
               <div className="mb-1 flex items-center gap-1 sm:gap-2">
                 {trending && (
@@ -115,11 +117,11 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
       <Link href={linkHref} className="block">
         <div className={cardClasses}>
           <div className="flex flex-col gap-4 p-4 sm:flex-row sm:gap-6 sm:p-6">
-            <div className="h-32 w-full flex-shrink-0 sm:w-48">
+            <div className="h-32 w-full flex-shrink-0 overflow-hidden rounded-lg bg-gray-100 sm:w-48">
               <img
                 src={imageSrc}
                 alt={post.title}
-                className="h-full w-full rounded-lg object-cover"
+                className="h-full w-full object-contain"
               />
             </div>
             <div className="flex-1">
@@ -178,8 +180,8 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
   return (
     <Link href={linkHref} className="block">
       <div className={cardClasses}>
-        <div className="relative">
-          <img src={imageSrc} alt={post.title} className="h-40 w-full object-cover sm:h-48" />
+        <div className="relative overflow-hidden bg-gray-100">
+          <img src={imageSrc} alt={post.title} className="h-40 w-full object-contain sm:h-48" />
           <div className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-1 text-xs backdrop-blur-sm sm:right-3 sm:top-3">
             <Clock size={10} className="mr-1 inline sm:h-3 sm:w-3" />
             {readTime}分

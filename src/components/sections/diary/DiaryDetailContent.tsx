@@ -181,7 +181,13 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <article className="mb-8 overflow-hidden rounded-2xl border border-pink-100 bg-white">
-            <img src={post.image} alt={post.title} className="aspect-video w-full object-cover" />
+            <div className="flex justify-center bg-gray-50/50">
+              <img
+                src={post.image}
+                alt={post.title}
+                className="h-auto max-h-[70vh] w-auto object-contain"
+              />
+            </div>
             <div className="p-4 sm:p-8">
               <h1 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">{post.title}</h1>
               <div className="mb-6 flex items-center gap-2 text-sm text-gray-500">

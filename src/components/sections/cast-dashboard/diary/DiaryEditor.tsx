@@ -1,6 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabaseClient';
+import { compressImage } from '@/lib/utils/imageCompressor';
 import { CastDiary } from '@/types/cast';
 import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
@@ -72,10 +73,14 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   }, []);
 
   // ✅ 画像追加
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files;
     if (!selected) return;
-    setFiles((prev) => [...prev, ...Array.from(selected)]);
+
+    const compressedFiles = await Promise.all(
+      Array.from(selected).map((file) => compressImage(file)),
+    );
+    setFiles((prev) => [...prev, ...compressedFiles]);
   };
 
   // ✅ 新規プレビュー削除
@@ -288,11 +293,13 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         <div className="grid grid-cols-3 gap-2">
           {existingImages.map((img, index) => (
             <div key={index} className="relative">
-              <img
-                src={img.url}
-                alt={`existing-${index}`}
-                className="h-24 w-full rounded object-cover"
-              />
+              <div className="h-24 w-full overflow-hidden rounded bg-gray-100">
+                <img
+                  src={img.url}
+                  alt={`existing-${index}`}
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => removeExistingImage(img.filePath)}
@@ -322,11 +329,13 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         <div className="grid grid-cols-3 gap-2">
           {files.map((file, index) => (
             <div key={index} className="relative">
-              <img
-                src={URL.createObjectURL(file)}
-                alt={`preview-${index}`}
-                className="h-24 w-full rounded object-cover"
-              />
+              <div className="h-24 w-full overflow-hidden rounded bg-gray-100">
+                <img
+                  src={URL.createObjectURL(file)}
+                  alt={`preview-${index}`}
+                  className="h-full w-full object-contain"
+                />
+              </div>
               <button
                 type="button"
                 onClick={() => handleRemoveFile(index)}
