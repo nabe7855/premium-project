@@ -210,7 +210,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                   key={d.date}
                   role="tab"
                   aria-selected={selectedDate === d.date}
-                  aria-label={`${d.isToday ? '本日' : d.day} ${d.display}`}
+                  aria-label={`${d.isToday ? '本日' : d.day} ${d.display}の出勤キャスト`}
                   onClick={() => setSelectedDate(d.date)}
                   className={`relative flex min-w-[70px] flex-col items-center justify-center rounded-[2rem] py-3 transition-all duration-300 ${
                     selectedDate === d.date
@@ -251,6 +251,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                 <button
                   onClick={() => setSearchTerm('')}
                   className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-300 hover:text-rose-400"
+                  aria-label="検索キーワードをクリア"
                 >
                   <RotateCcw className="h-4 w-4" />
                 </button>
@@ -281,6 +282,7 @@ const CastSection: React.FC<CastSectionProps> = ({
               <button
                 onClick={resetFilters}
                 className="flex items-center justify-center rounded-[2rem] border-2 border-rose-50 bg-white px-6 text-rose-300 transition-all hover:bg-rose-50 hover:text-rose-500 active:scale-95 md:px-8"
+                aria-label="検索・並べ替えの条件をリセットする"
               >
                 <RotateCcw className="h-5 w-5" />
               </button>
