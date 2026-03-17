@@ -116,6 +116,8 @@ export interface PriceConfig {
   subHeading: string;
   items: PriceItem[];
   itemsByTab?: PriceItem[][];
+  tabLabels?: string[];
+  tabDescriptions?: string[];
   notes: string[];
   isVisible: boolean;
 }
@@ -508,6 +510,12 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         description: '心身ともに深く癒される贅沢な時間',
         isPopular: false,
       },
+    ],
+    tabLabels: ['オープニングキャンペーン中', 'スタンダードコース', 'ロングコース'],
+    tabDescriptions: [
+      'オープンを記念して、期間限定の特別価格でご提供いたします。この機会にぜひ当店のトリートメントをご体験ください。',
+      'オイルトリートメント・タイ古式・ヘッド＆フェイシャル・リフレクソロジーの中から、お客様のお好みのコースをお好きな配分でご利用頂けます。',
+      '至福の時間をお約束するロングコース。熟練のセラピストが、お疲れの箇所を重点的に、ゆったりと丁寧に解きほぐします。',
     ],
     notes: [
       '全てのプランに消費税が含まれております。延長は30分 ¥6,000にて承ります。',

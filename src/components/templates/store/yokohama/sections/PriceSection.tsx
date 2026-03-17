@@ -46,19 +46,24 @@ interface PriceSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
+const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate }) => {
   const { store } = useStore();
   const [[page, direction], setPage] = useState([0, 0]);
   const activeTab = page;
 
   const tabs = [
-    { id: 0, label: 'オープニングキャンペーン中' },
-    { id: 1, label: 'スタンダードコース' },
-    { id: 2, label: 'ロングコース' },
+    { id: 0, label: config?.tabLabels?.[0] || 'オープニングキャンペーン中' },
+    { id: 1, label: config?.tabLabels?.[1] || 'スタンダードコース' },
+    { id: 2, label: config?.tabLabels?.[2] || 'ロングコース' },
   ];
 
   const prices = config?.itemsByTab?.[activeTab] || defaultPricesByTab[activeTab];
   const notes = config?.notes || defaultNotes;
+  const categoryDescriptions = config?.tabDescriptions || [
+    'オープンを記念して、期間限定の特別価格でご提供いたします。この機会にぜひ当店のトリートメントをご体験ください。',
+    'オイルトリートメント・タイ古式・ヘッド＆フェイシャル・リフレクソロジーの中から、お客様のお好みのコースをお好きな配分でご利用頂けます。',
+    '至福の時間をお約束するロングコース。熟練のセラピストが、お疲れの箇所を重点的に、ゆったりと丁寧に解きほぐします。',
+  ];
 
   const nextTab = () => {
     setPage([(page + 1) % tabs.length, 1]);
@@ -67,16 +72,71 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
     setPage([(page - 1 + tabs.length) % tabs.length, -1]);
   };
 
-  // カテゴリーに応じた説明文（モックまたはConfigから取得）
-  const categoryDescriptions = [
-    'オープンを記念して、期間限定の特別価格でご提供いたします。この機会にぜひ当店のトリートメントをご体験ください。',
-    'オイルトリートメント・タイ古式・ヘッド＆フェイシャル・リフレクソロジーの中から、お客様のお好みのコースをお好きな配分でご利用頂けます。',
-    '至福の時間をお約束するロングコース。熟練のセラピストが、お疲れの箇所を重点的に、ゆったりと丁寧に解きほぐします。',
-  ];
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('price', key, e.currentTarget.innerText);
+    }
+  };
+
+  const handleTabLabelUpdate = (index: number, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate && config) {
+      const newLabels = [...(config.tabLabels || tabs.map((t) => t.label))];
+      newLabels[index] = e.currentTarget.innerText;
+      onUpdate('price', 'tabLabels', newLabels);
+    }
+  };
+
+  const handleNoteUpdate = (index: number, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate && config) {
+      const newNotes = [...(config.notes || defaultNotes)];
+      newNotes[index] = e.currentTarget.innerText;
+      onUpdate('price', 'notes', newNotes);
+    }
+  };
 
   return (
     <section id="price" className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
-      <SectionTitle en={config?.subHeading || 'Price Menu'} ja={config?.heading || '料金プラン'} />
+      <div className="text-center">
+        <h2
+          contentEditable={isEditing}
+          onBlur={(e) => handleTextUpdate('heading', e)}
+          suppressContentEditableWarning
+          className="text-3xl font-black text-[#642B2B] md:text-5xl"
+        >
+          {config?.heading || '料金プラン'}
+        </h2>
+        <p
+          contentEditable={isEditing}
+          onBlur={(e) => handleTextUpdate('subHeading', e)}
+          suppressContentEditableWarning
+          className="mt-2 text-sm font-bold uppercase tracking-widest text-[#D4AF37] md:text-base"
+        >
+          {config?.subHeading || 'Price Menu'}
+        </p>
+      </div>
+
+      <div className="mt-8 flex flex-wrap justify-center gap-2 md:gap-4">
+        {tabs.map((tab, idx) => (
+          <button
+            key={tab.id}
+            onClick={() => setPage([tab.id, idx > activeTab ? 1 : -1])}
+            className={`rounded-full px-6 py-2 text-sm font-bold transition-all ${
+              activeTab === tab.id
+                ? 'bg-[#642B2B] text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <span
+              contentEditable={isEditing}
+              onBlur={(e) => handleTabLabelUpdate(idx, e)}
+              suppressContentEditableWarning
+              onClick={(e) => isEditing && e.stopPropagation()}
+            >
+              {tab.label}
+            </span>
+          </button>
+        ))}
+      </div>
 
       <div className="relative flex flex-col gap-8 md:flex-row md:justify-center">
         {/* メインメニューカードエリア */}
@@ -120,6 +180,18 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
                   title={tabs[activeTab].label}
                   description={categoryDescriptions[activeTab]}
                   items={prices}
+                  isEditing={isEditing}
+                  onUpdate={(key, value) => {
+                    if (key === 'description' && onUpdate && config) {
+                      const newDescs = [...categoryDescriptions];
+                      newDescs[activeTab] = value;
+                      onUpdate('price', 'tabDescriptions', newDescs);
+                    } else if (key === 'items' && onUpdate && config) {
+                      const newItemsByTab = config.itemsByTab ? [...config.itemsByTab] : [...defaultPricesByTab];
+                      newItemsByTab[activeTab] = value;
+                      onUpdate('price', 'itemsByTab', newItemsByTab);
+                    }
+                  }}
                 />
               </motion.div>
             </AnimatePresence>
@@ -132,7 +204,14 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing }) => {
         {notes.map((note: string, idx: number) => (
           <div key={idx} className="flex items-start gap-3">
             <AlertCircle size={16} className="mt-0.5 shrink-0 text-[#642B2B]/40" />
-            <p className="flex-grow font-medium leading-relaxed">{note}</p>
+            <p
+              contentEditable={isEditing}
+              onBlur={(e) => handleNoteUpdate(idx, e)}
+              suppressContentEditableWarning
+              className="flex-grow font-medium leading-relaxed"
+            >
+              {note}
+            </p>
           </div>
         ))}
       </div>
