@@ -144,13 +144,14 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 style={{ zIndex: isActive ? 10 : 0 }}
               >
                 {isFirst ? (
-                  <img
+                  <NextImage
                     src={img}
                     alt="店舗メインビジュアル"
+                    fill
+                    priority={true}
+                    sizes="100vw"
                     className="h-full w-full scale-105 transform object-contain"
-                    // Important for LCP: fetch priority high and sync decoding
-                    fetchPriority="high"
-                    decoding="sync"
+                    // NextImage with priority handles fetchPriority="high" automatically
                   />
                 ) : (
                   <NextImage

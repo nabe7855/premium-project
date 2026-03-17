@@ -3,6 +3,7 @@
 import { Cast, ScoredCast } from '@/types/cast';
 import { motion } from 'framer-motion';
 import { Clock, Pause, Play, Star } from 'lucide-react';
+import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 
@@ -109,10 +110,12 @@ const CastCard: React.FC<CastCardProps> = ({
     >
       <div className="relative aspect-[3/4]">
         <div className="h-full w-full overflow-hidden rounded-t-xl">
-          <img
-            src={cast.mainImageUrl ?? cast.imageUrl ?? cast.avatar}
+          <NextImage
+            src={cast.mainImageUrl ?? cast.imageUrl ?? cast.avatar ?? '/no-image.png'}
             alt={`${cast.name}のプロフィール写真`}
+            fill
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+            sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 300px"
             loading="lazy"
           />
         </div>

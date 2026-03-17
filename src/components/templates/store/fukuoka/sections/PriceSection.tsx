@@ -2,7 +2,6 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
-import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -169,35 +168,28 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate
 
           {/* New PriceCard with Animation */}
           <div className="overflow-hidden">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={page}
-                custom={direction}
-                initial={{ opacity: 0, x: direction > 0 ? 50 : -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction > 0 ? -50 : 50 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-              >
-                <PriceCard
-                  title={tabs[activeTab].label}
-                  description={categoryDescriptions[activeTab]}
-                  items={prices}
-                  isEditing={isEditing}
-                  onUpdate={(key, value) => {
-                    if (key === 'description' && onUpdate && config) {
-                      const newDescs = [...categoryDescriptions];
-                      newDescs[activeTab] = value;
-                      onUpdate('price', 'tabDescriptions', newDescs);
-                    } else if (key === 'items' && onUpdate && config) {
-                      // itemsByTab の更新
-                      const newItemsByTab = config.itemsByTab ? [...config.itemsByTab] : [...defaultPricesByTab];
-                      newItemsByTab[activeTab] = value;
-                      onUpdate('price', 'itemsByTab', newItemsByTab);
-                    }
-                  }}
-                />
-              </motion.div>
-            </AnimatePresence>
+            <div
+              key={page}
+              className="animate-in fade-in duration-300 ease-in-out"
+            >
+              <PriceCard
+                title={tabs[activeTab].label}
+                description={categoryDescriptions[activeTab]}
+                items={prices}
+                isEditing={isEditing}
+                onUpdate={(key, value) => {
+                  if (key === 'description' && onUpdate && config) {
+                    const newDescs = [...categoryDescriptions];
+                    newDescs[activeTab] = value;
+                    onUpdate('price', 'tabDescriptions', newDescs);
+                  } else if (key === 'items' && onUpdate && config) {
+                    const newItemsByTab = config.itemsByTab ? [...config.itemsByTab] : [...defaultPricesByTab];
+                    newItemsByTab[activeTab] = value;
+                    onUpdate('price', 'itemsByTab', newItemsByTab);
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>
