@@ -788,26 +788,35 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         imageUrl: '/フッターバナー/ライン公式.jpg',
         link: 'https://line.me',
+        label: 'LINE公式友だち登録',
       },
       {
         imageUrl: '/フッターバナー/電話番号.jpg',
         link: 'tel:050-5212-5818',
+        label: '050-5212-5818',
       },
       {
         imageUrl: '/フッターバナー/セラピスト大募集.jpg',
         link: '/recruit',
+        label: 'セラピスト大募集',
       },
     ],
     smallBanners: [
       {
         imageUrl: '/フッターバナー/モニター募集.jpg',
         link: '/recruit/monitor',
+        label: 'モニターさん大募集',
       },
       {
         imageUrl: '/フッターバナー/講師募集.jpg',
         link: '/recruit/instructor',
+        label: 'マッサージ女性講師募集',
       },
-      { imageUrl: '/フッターバナー/レッドリボン.jpg', link: '/stop-aids' },
+      {
+        imageUrl: '/フッターバナー/レッドリボン.jpg',
+        link: '/stop-aids',
+        label: 'STOP AIDS',
+      },
     ],
     shopInfo: {
       name: 'ストロベリーボーイズ',

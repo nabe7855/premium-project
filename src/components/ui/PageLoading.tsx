@@ -4,11 +4,8 @@ const PageLoading: React.FC = () => {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-white">
       <div className="relative mb-8 flex flex-col items-center">
-        {/* Loading Video */}
-        <video className="h-64 w-64 object-contain shadow-2xl" autoPlay muted loop playsInline>
-          <source src="/読み込み用動画.webm" type="video/webm" />
-          <p>お使いのブラウザはビデオタグをサポートしていません。</p>
-        </video>
+        {/* Loading Sprite Animation (Ichigo-chan) */}
+        <div className="animate-loading-sprite" />
 
         {/* Text */}
         <div className="mt-8 flex flex-col items-center gap-2">
