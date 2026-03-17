@@ -66,6 +66,7 @@ export default function FukuokaPage({
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
       )}
       <BeginnerGuideBanner

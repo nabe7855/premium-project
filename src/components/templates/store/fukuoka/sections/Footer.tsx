@@ -94,41 +94,31 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
         <div className="flex flex-col gap-10 md:flex-row">
           {/* Left: Store Image Wrapper (Removed) & Shop Info */}
           <div className="w-full flex-shrink-0 md:w-[240px]">
-            {/* Logo Image Wrapper Removed */}
-
-            {/* Shop Info Box Below Logo (Image 2 style) */}
+            {/* Shop Info Box Below Logo */}
             <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
               <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
-                <span>
-                  {store.name || config.shopInfo.name}
-                </span>
+                <span>{store.name || config.shopInfo.name}</span>
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">店舗電話番号</span>
-                  <span className="font-bold">
-                    {store.contact?.phone || config.shopInfo.phone}
-                  </span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-700">店舗電話番号</span>
+                  <span className="font-bold">{store.contact?.phone || config.shopInfo.phone}</span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
-                  <span className="whitespace-pre-line">
-                    {store.receptionHours || config.shopInfo.receptionHours}
-                  </span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-700">受付時間</span>
+                  <span className="whitespace-pre-line">{store.receptionHours || config.shopInfo.receptionHours}</span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-500">所在地</span>
-                  <span>
-                    {store.address || config.shopInfo.address}
-                  </span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-700">所在地</span>
+                  <span>{store.address || config.shopInfo.address}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Right: Buttons and Banners */}
-          <div className="flex-grow">
-            {/* Grid of buttons (12 buttons as in Image 2) */}
+          <nav className="flex-grow" aria-label="店舗情報案内">
+            {/* Grid of buttons */}
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               {adjustedMenuButtons.map((btn, idx) => (
                 <div key={idx} className="group relative">
@@ -158,9 +148,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               ))}
             </div>
 
-            {/* Banners Area (Background is now inherited from footer, keeping structure) */}
+            {/* Banners Area */}
             <div className="mt-10 overflow-hidden rounded-2xl">
-              {/* Grid of Banners (2 columns as requested) */}
               <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
                 {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => {
                   let bannerLink = getAbsoluteHref(banner.link || '#');
@@ -172,84 +161,87 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       <a
                         href={bannerLink}
                         onClick={(e) => isEditing && e.preventDefault()}
-                        aria-label={banner.label || "バナー"}
+                        aria-label={banner.label || 'バナー'}
                         className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                       >
-                      <NextImage
-                        src={getAbsoluteHref(banner.imageUrl)}
-                        alt=""
-                        width={0}
-                        height={0}
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                        className="h-auto w-full"
-                        loading="lazy"
-                      />
-                    </a>
-
-                    {/* Banner Title & Link Icon */}
-                    <div className="mt-2.5 flex w-full items-start gap-1 text-left text-white decoration-white/80 transition-opacity hover:opacity-80">
-                      <span
-                        contentEditable={isEditing}
-                        suppressContentEditableWarning={isEditing}
-                        onBlur={(e) => {
-                          const isSmall = idx >= (config.banners?.length || 0);
-                          const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
-                          handleBannerLabelUpdate(isSmall ? 'smallBanners' : 'banners', realIdx, e.currentTarget.innerText);
-                        }}
-                        className={`text-[13px] font-medium leading-tight underline decoration-1 underline-offset-[3px] md:text-sm ${isEditing ? 'cursor-text px-1 outline-none hover:bg-white/10' : ''}`}
-                      >
-                        {banner.label || 'バナータイトル'}
-                      </span>
-                      <a
-                        href={getAbsoluteHref(banner.link || '#')}
-                        onClick={(e) => isEditing && e.preventDefault()}
-                        aria-label={`${banner.label || "バナー"}の詳細を見る`}
-                      >
-                        <Link2
-                          className="mt-[2px] h-3.5 w-3.5 shrink-0 opacity-80"
-                          strokeWidth={2.5}
+                        <NextImage
+                          src={getAbsoluteHref(banner.imageUrl)}
+                          alt=""
+                          width={180}
+                          height={100}
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                          className="h-auto w-full"
+                          loading="lazy"
                         />
                       </a>
-                    </div>
 
-                    {isEditing && (
-                      <div className="absolute inset-0 top-0 mb-8 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                        <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
-                          <ImageIcon className="h-4 w-4" />
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept="image/*"
-                            onChange={(e) => {
-                              if (!e.target.files?.[0]) return;
+                      <div className="mt-2.5 flex w-full items-start gap-1 text-left text-slate-900 decoration-slate-900/80 transition-opacity hover:opacity-80">
+                        <span
+                          contentEditable={isEditing}
+                          suppressContentEditableWarning={isEditing}
+                          onBlur={(e) => {
+                            const isSmall = idx >= (config.banners?.length || 0);
+                            const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
+                            handleBannerLabelUpdate(
+                              isSmall ? 'smallBanners' : 'banners',
+                              realIdx,
+                              e.currentTarget.innerText,
+                            );
+                          }}
+                          className={`text-[13px] font-medium leading-tight underline decoration-1 underline-offset-[3px] md:text-sm ${
+                            isEditing ? 'cursor-text px-1 outline-none hover:bg-black/10' : ''
+                          }`}
+                        >
+                          {banner.label || 'バナータイトル'}
+                        </span>
+                        <a
+                          href={getAbsoluteHref(banner.link || '#')}
+                          onClick={(e) => isEditing && e.preventDefault()}
+                          aria-label={`${banner.label || 'バナー'}の詳細を見る`}
+                        >
+                          <Link2 className="mt-[2px] h-3.5 w-3.5 shrink-0 opacity-80" strokeWidth={2.5} />
+                        </a>
+                      </div>
+
+                      {isEditing && (
+                        <div className="absolute inset-0 top-0 mb-8 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                          <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
+                            <ImageIcon className="h-4 w-4" />
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => {
+                                if (!e.target.files?.[0]) return;
+                                const isSmall = idx >= config.banners.length;
+                                const realIdx = isSmall ? idx - config.banners.length : idx;
+                                onImageUpload?.(
+                                  'footer',
+                                  e.target.files[0],
+                                  realIdx,
+                                  isSmall ? 'smallBanners' : 'banners',
+                                );
+                              }}
+                            />
+                          </label>
+                          <button
+                            onClick={() => {
                               const isSmall = idx >= config.banners.length;
                               const realIdx = isSmall ? idx - config.banners.length : idx;
-                              onImageUpload?.(
-                                'footer',
-                                e.target.files[0],
-                                realIdx,
-                                isSmall ? 'smallBanners' : 'banners',
-                              );
+                              handleLinkUpdate(isSmall ? 'smallBanners' : 'banners', realIdx);
                             }}
-                          />
-                        </label>
-                        <button
-                          onClick={() => {
-                            const isSmall = idx >= config.banners.length;
-                            const realIdx = isSmall ? idx - config.banners.length : idx;
-                            handleLinkUpdate(isSmall ? 'smallBanners' : 'banners', realIdx);
-                          }}
-                          className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
-                        >
-                          <Link2 className="h-4 w-4" />
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-              {/* Large Square Banner at the Bottom */}
+                            className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                          >
+                            <Link2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Large Square Banner */}
               <div className="mt-8 border-t border-white/20 pt-8">
                 <div className="relative mx-auto aspect-square max-w-[400px]">
                   <div className="group relative h-full w-full">
@@ -261,8 +253,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     >
                       <NextImage
                         src={getAbsoluteHref(
-                          config.largeBanner?.imageUrl ||
-                            'https://placehold.jp/400x400.png?text=Large%20Banner',
+                          config.largeBanner?.imageUrl || 'https://placehold.jp/400x400.png?text=Large%20Banner',
                         )}
                         alt="Large Banner"
                         fill
@@ -280,8 +271,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                             className="hidden"
                             accept="image/*"
                             onChange={(e) =>
-                              e.target.files?.[0] &&
-                              onImageUpload?.('footer', e.target.files[0], undefined, 'largeBanner')
+                              e.target.files?.[0] && onImageUpload?.('footer', e.target.files[0], undefined, 'largeBanner')
                             }
                           />
                         </label>
@@ -297,7 +287,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 </div>
               </div>
             </div>
-          </div>
+          </nav>
 
           {/* Bottom Copyright */}
           <div className="mt-12 border-t border-slate-100/30 pt-6 text-center">

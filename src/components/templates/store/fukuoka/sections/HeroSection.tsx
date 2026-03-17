@@ -1,6 +1,5 @@
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
-import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
@@ -16,6 +15,7 @@ interface HeroSectionProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  storeSlug?: string;
 }
 
 const HeroSection: React.FC<HeroSectionProps> = ({
@@ -23,13 +23,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   isEditing,
   onUpdate,
   onImageUpload,
+  storeSlug,
 }) => {
   const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
   const [touchStart, setTouchStart] = useState(0);
   const [touchEnd, setTouchEnd] = useState(0);
 
-  const params = useParams();
-  const slug = (params?.slug as string) || '';
+  const slug = storeSlug || '';
 
   const images = (config?.images?.filter((img) => img) || defaultHeroImages).map((img) =>
     img.replace(/\{slug\}/g, slug),
@@ -157,6 +157,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       disabled={index === 0}
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
                       title="左へ移動"
+                      aria-label="前の画像を表示"
                     >
                       <svg
                         className="h-5 w-5"
@@ -191,6 +192,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       disabled={index === images.length - 1}
                       className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
                       title="右へ移動"
+                      aria-label="次の画像を表示"
                     >
                       <svg
                         className="h-5 w-5"
@@ -262,12 +264,12 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             <button
               key={index}
               onClick={() => setCurrentHeroSlide(index)}
-              className={`border-transparet h-4 w-4 rounded-full border transition-all duration-300 ${
+              className={`border-transparent h-4 w-4 rounded-full border transition-all duration-300 ${
                 index === currentHeroSlide
                   ? 'scale-110 bg-rose-500 shadow-md'
-                  : 'bg-gray-300 hover:bg-gray-400'
+                  : 'bg-gray-400 hover:bg-gray-500'
               }`}
-              aria-label={`Slide ${index + 1}`}
+              aria-label={`スライド ${index + 1} を表示`}
             />
           ))}
         </div>

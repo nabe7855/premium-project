@@ -112,7 +112,7 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
             ].map((platform) => (
               <a
                 key={platform.id}
-                href={isEditing ? '#' : (config as any)[platform.id]}
+                href={(isEditing ? '#' : (config as any)[platform.id]) || '#'}
                 onClick={(e) => {
                   if (isEditing) {
                     e.preventDefault();
@@ -122,7 +122,7 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={getPlatformLabel(platform.id)}
-                className={`text-slate-400 transition-colors hover:text-slate-600 ${isEditing ? 'rounded bg-rose-50 p-1 ring-1 ring-rose-300' : ''}`}
+                className={`text-slate-600 transition-colors hover:text-slate-900 ${isEditing ? 'rounded bg-rose-50 p-1 ring-1 ring-rose-300' : ''}`}
               >
                 {platform.icon}
               </a>
