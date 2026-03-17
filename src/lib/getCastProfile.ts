@@ -33,7 +33,8 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       catch_copy,
       sexiness_level,
       blood_type,
-      manager_comment
+      manager_comment,
+      slug
     `,
     )
     .or(`id.eq.${userId},user_id.eq.${userId}`)
@@ -146,6 +147,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     sexinessLevel: cast.sexiness_level ?? undefined,
     bloodType: cast.blood_type ?? undefined,
     managerComment: cast.manager_comment ?? undefined,
+    slug: cast.slug,
     personalityIds,
     appearanceIds,
     services,

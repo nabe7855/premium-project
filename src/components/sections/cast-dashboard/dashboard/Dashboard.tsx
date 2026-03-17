@@ -30,6 +30,7 @@ import { Badge, CastLevel } from '@/types/cast-dashboard';
 
 // API
 import Footer from '@/components/templates/store/fukuoka/sections/Footer';
+import CastFooterNav, { NavStore } from '../navigation/CastFooterNav';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { getCastDiaries } from '@/lib/getCastDiaries'; // ✅ 作成した関数
 import { getCastPerformance } from '@/lib/getCastPerformance';
@@ -60,6 +61,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   const [storeName, setStoreName] = useState<string | null>(null);
   const [topConfig, setTopConfig] = useState<StoreTopPageConfig | null>(null);
   const [currentStore, setCurrentStore] = useState<Store | null>(null);
+  const [allStores, setAllStores] = useState<NavStore[]>([]);
 
   // ✅ 能力チャート用データ（ダミー削除 → Supabaseから取得）
   const [performanceData, setPerformanceData] = useState<Record<string, number>>({});
@@ -143,7 +145,9 @@ export default function Dashboard({ cast }: DashboardProps) {
       .eq('cast_id', cast.id)
       .then(async ({ data, error }) => {
         if (!error && data) {
-          const storesData = data.map((item: any) => item.stores).filter(Boolean);
+          const storesData = data.map((item: any) => item.stores).filter(Boolean) as NavStore[];
+          setAllStores(storesData);
+
           const names = storesData.map((s: any) => s.name);
           setStoreName(names.join('・'));
 
@@ -214,7 +218,7 @@ export default function Dashboard({ cast }: DashboardProps) {
   ];
 
   const dashboardContent = (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50">
+    <div className="flex min-h-screen flex-col bg-gradient-to-br from-pink-50 via-white to-rose-50 pb-20 md:pb-0">
       {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/20 bg-white/70 shadow-sm backdrop-blur-md">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -329,6 +333,13 @@ export default function Dashboard({ cast }: DashboardProps) {
       </main>
 
       <Footer config={topConfig?.footer} />
+
+      <CastFooterNav 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
+        stores={allStores}
+        castSlug={castState.slug}
+      />
     </div>
   );
 

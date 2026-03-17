@@ -248,6 +248,7 @@ export interface CastProfile {
   };
 
   snsUrl?: string;
+  slug?: string;
 
   questions?: {
     [key: string]: string;
