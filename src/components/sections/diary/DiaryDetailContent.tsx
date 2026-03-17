@@ -6,7 +6,7 @@ import { mockDiaryPosts } from '@/data/diarydata';
 import { getStoreBySlug } from '@/lib/actions/reservation';
 import { supabase } from '@/lib/supabaseClient';
 import type { PostType } from '@/types/diary';
-import { Heart, Share2, Sparkles, Zap } from 'lucide-react';
+import { Share2 } from 'lucide-react';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -203,17 +203,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
                 </span>
               </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
-              <div className="flex gap-4 border-t pt-4">
-                <button className="flex items-center gap-1 text-pink-500">
-                  <Heart size={18} /> {post.reactions.likes}
-                </button>
-                <button className="flex items-center gap-1 text-yellow-500">
-                  <Sparkles size={18} /> {post.reactions.healing}
-                </button>
-                <button className="flex items-center gap-1 text-blue-500">
-                  <Zap size={18} /> {post.reactions.energized}
-                </button>
-              </div>
+
             </div>
           </article>
           <CastCard

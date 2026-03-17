@@ -1,7 +1,7 @@
 'use client';
 import { getRelatedPosts } from '@/lib/diary/getRelatedPosts';
 import { PostType } from '@/types/diary';
-import { Clock, Heart, MessageCircle } from 'lucide-react';
+import { Clock, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -77,10 +77,7 @@ const RelatedPosts: React.FC<RelatedPostsProps> = ({ currentPostId, castId, tagN
                 </h4>
                 <p className="mb-2 text-xs text-gray-600 sm:text-sm">{post.castName}</p>
                 <div className="flex items-center gap-2 text-xs text-gray-500 sm:gap-3">
-                  <span className="flex items-center gap-1">
-                    <Heart size={10} className="sm:h-3 sm:w-3" />
-                    {Object.values(post.reactions || {}).reduce((a, b) => a + b, 0)}
-                  </span>
+
                   <span className="flex items-center gap-1">
                     <MessageCircle size={10} className="sm:h-3 sm:w-3" />0
                   </span>

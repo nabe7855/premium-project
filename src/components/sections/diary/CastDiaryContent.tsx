@@ -147,16 +147,10 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
               {decodedCastName}が綴る、特別な日常の記録
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2 text-center sm:gap-4">
+          <div className="grid grid-cols-2 gap-2 text-center sm:gap-4">
             <div className="rounded-lg bg-white/70 p-2 sm:p-3">
               <div className="text-lg font-bold sm:text-xl md:text-2xl">{castPosts.length}</div>
               <div className="text-xs text-gray-600 sm:text-sm">投稿数</div>
-            </div>
-            <div className="rounded-lg bg-white/70 p-2 sm:p-3">
-              <div className="text-lg font-bold sm:text-xl md:text-2xl">
-                {castInfo.totalLikes.toLocaleString()}
-              </div>
-              <div className="text-xs text-gray-600 sm:text-sm">総いいね</div>
             </div>
             <div className="rounded-lg bg-white/70 p-2 sm:p-3">
               <div className="text-lg font-bold sm:text-xl md:text-2xl">

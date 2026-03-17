@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { Send, Heart, MessageCircle } from 'lucide-react';
+import { Send, MessageCircle } from 'lucide-react';
 import { getCommentsByPostId, postComment } from '@/lib/actions/diary-comment';
 
 interface MessageSectionProps {

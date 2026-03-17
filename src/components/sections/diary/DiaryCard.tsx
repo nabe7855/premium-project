@@ -96,10 +96,7 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
                 {post.title}
               </h3>
               <div className="flex items-center gap-2 text-xs text-gray-500 sm:gap-3 sm:text-sm">
-                <span className="flex items-center gap-1">
-                  <Heart size={12} className="sm:h-3.5 sm:w-3.5" />
-                  {post.reactions.total}
-                </span>
+
                 <span className="flex items-center gap-1">
                   <MessageCircle size={12} className="sm:h-3.5 sm:w-3.5" />
                   {post.commentCount}
@@ -152,24 +149,7 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
                   {readTime}分
                 </span>
               </div>
-              <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-                <span className="flex items-center gap-1 text-xs text-pink-600 sm:text-sm">
-                  <Heart size={12} className="sm:h-4 sm:w-4" />
-                  {post.reactions.likes ?? post.reactions.total}
-                </span>
-                <span className="flex items-center gap-1 text-xs text-yellow-600 sm:text-sm">
-                  <Sparkles size={12} className="sm:h-4 sm:w-4" />
-                  {post.reactions.healing ?? 0}
-                </span>
-                <span className="flex items-center gap-1 text-xs text-blue-600 sm:text-sm">
-                  <Zap size={12} className="sm:h-4 sm:w-4" />
-                  {post.reactions.energized ?? 0}
-                </span>
-                <span className="flex items-center gap-1 text-xs text-green-600 sm:text-sm">
-                  <Clap size={12} className="sm:h-4 sm:w-4" />
-                  {post.reactions.supportive ?? 0}
-                </span>
-              </div>
+
             </div>
           </div>
         </div>
@@ -224,10 +204,7 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
             </div>
 
             <div className="flex items-center gap-2 sm:gap-3">
-              <span className="flex items-center gap-1 text-xs text-pink-600 sm:text-sm">
-                <Heart size={12} className="sm:h-3.5 sm:w-3.5" />
-                {post.reactions.total}
-              </span>
+
               <span className="flex items-center gap-1 text-xs text-gray-500 sm:text-sm">
                 <MessageCircle size={12} className="sm:h-3.5 sm:w-3.5" />
                 {post.commentCount}

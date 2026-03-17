@@ -83,14 +83,10 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
           </p>
 
           {expanded && (
-            <div className="mb-3 grid grid-cols-3 gap-2 text-xs sm:mb-4 sm:gap-4 sm:text-sm">
+            <div className="mb-3 grid grid-cols-2 gap-2 text-xs sm:mb-4 sm:gap-4 sm:text-sm">
               <div className="text-center">
                 <div className="text-gray-600">今月の投稿</div>
                 <div className="font-bold text-gray-800">{cast.postsThisMonth}件</div>
-              </div>
-              <div className="text-center">
-                <div className="text-gray-600">総いいね</div>
-                <div className="font-bold text-gray-800">{cast.totalLikes.toLocaleString()}</div>
               </div>
               <div className="text-center">
                 <div className="text-gray-600">最終投稿</div>
