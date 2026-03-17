@@ -46,12 +46,16 @@ export async function getAllBanners() {
     });
     return { success: true, banners };
   } catch (error) {
+    const dbUrl = process.env.DATABASE_URL || 'undefined';
+    const maskedUrl = dbUrl.substring(0, 30) + '...';
     console.error('CRITICAL: Error fetching all banners from Prisma:', error);
-    if (error instanceof Error) {
-      console.error('Error message:', error.message);
-      console.error('Error stack:', error.stack);
-    }
-    return { success: false, error: 'バナー一覧の取得に失敗しました: ' + (error instanceof Error ? error.message : String(error)) };
+    console.error('DB URL (masked):', maskedUrl);
+    
+    let errorDetail = (error instanceof Error ? error.message : String(error));
+    return { 
+      success: false, 
+      error: `バナー一覧の取得に失敗しました (DB: ${maskedUrl}): ` + errorDetail 
+    };
   }
 }
 
