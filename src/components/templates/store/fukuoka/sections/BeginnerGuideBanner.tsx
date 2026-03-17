@@ -1,6 +1,7 @@
 'use client';
 import { BeginnerGuideConfig } from '@/lib/store/storeTopConfig';
 import { Camera } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
 
@@ -35,14 +36,18 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
           }}
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
         >
-          <img
-            src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace(
-              '{slug}',
-              slug || '',
-            )}
-            alt="女性用風俗初体験の方はこちら"
-            className="h-auto w-full object-contain"
-          />
+          <div className="relative aspect-[25/4] w-full">
+            <NextImage
+              src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace(
+                '{slug}',
+                slug || '',
+              )}
+              alt="女性用風俗初体験の方はこちら"
+              fill
+              className="object-contain"
+              sizes="100vw"
+            />
+          </div>
           {/* Shine effect */}
           {!isEditing && (
             <div className="absolute inset-0 z-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-transform duration-1000 group-hover:translate-x-full" />

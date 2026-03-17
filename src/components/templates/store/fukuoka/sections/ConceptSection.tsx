@@ -1,4 +1,5 @@
-import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import { Camera, ChevronDown, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import NextImage from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -33,14 +34,14 @@ const defaultConcepts = [
 
 const getConceptIcon = (title: string, index: number) => {
   if (title.includes('セラピスト')) return <Users size={20} />;
-  if (title.includes('安心')) return <Heart size={20} />;
+  if (title.includes('安心')) return <Users size={20} />;
   if (title.includes('プライベート')) return <Home size={20} />;
   if (title.includes('会計') || title.includes('料金')) return <Receipt size={20} />;
 
   // Fallback based on index
   const icons = [
     <Users size={20} />,
-    <Heart size={20} />,
+    <Users size={20} />,
     <Home size={20} />,
     <Receipt size={20} />,
   ];
@@ -181,10 +182,12 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                         className={`mt-3 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
                       >
                         <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
-                          <img
+                          <NextImage
                             src={concept.imageUrl}
                             alt={concept.title}
-                            className="h-full w-full object-cover"
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 800px"
                           />
                           {isEditing && (
                             <label

@@ -158,17 +158,16 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   className="flex w-full min-w-0 items-center justify-between gap-4 pr-4"
                 >
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md shadow-sm md:h-20 md:w-20">
-                    <NextImage
-                      src={
-                        page.thumbnailUrl ||
-                        'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=200'
-                      }
-                      alt={page.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes="80px"
-                      unoptimized
-                    />
+                        <NextImage
+                          src={
+                            page.thumbnailUrl ||
+                            'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=200'
+                          }
+                          alt={page.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          sizes="80px"
+                        />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center gap-3">

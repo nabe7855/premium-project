@@ -1,4 +1,5 @@
 import { EditableImage } from '@/components/admin/EditableImage';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface StepCardProps {
@@ -46,10 +47,12 @@ const StepCard: React.FC<StepCardProps> = ({
         />
       ) : (
         imageSrc && (
-          <img
+          <NextImage
             src={imageSrc}
             alt=""
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100px, 150px"
           />
         )
       )}

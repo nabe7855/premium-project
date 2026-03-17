@@ -65,7 +65,6 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 768px) 150px, 200px"
                       loading="lazy"
-                      unoptimized
                     />
 
                     {/* "New Face" Badge */}
