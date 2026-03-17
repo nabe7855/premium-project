@@ -143,16 +143,25 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 }`}
                 style={{ zIndex: isActive ? 10 : 0 }}
               >
-                <NextImage
-                  src={img}
-                  alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
-                  fill
-                  priority={isFirst}
-                  sizes="100vw"
-                  className="scale-105 transform object-contain"
-                  fetchPriority={isFirst ? 'high' : 'low'}
-                  loading={isFirst ? undefined : 'lazy'}
-                />
+                {isFirst ? (
+                  <img
+                    src={img}
+                    alt="店舗メインビジュアル"
+                    className="h-full w-full scale-105 transform object-contain"
+                    // Important for LCP: fetch priority high and sync decoding
+                    fetchPriority="high"
+                    decoding="sync"
+                  />
+                ) : (
+                  <NextImage
+                    src={img}
+                    alt={`Hero Image ${index + 1}`}
+                    fill
+                    sizes="100vw"
+                    className="scale-105 transform object-contain"
+                    loading="lazy"
+                  />
+                )}
 
               {isEditing && index === currentHeroSlide && (
                 <div className="absolute right-4 top-20 z-50 flex flex-col gap-2 md:right-10 md:top-10">

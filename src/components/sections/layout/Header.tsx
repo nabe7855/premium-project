@@ -243,7 +243,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           backgroundPosition: 'center',
         }}
       >
-        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center">
+        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center" aria-label={`${item.name}ページへ`}>
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
@@ -329,6 +329,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             <Link
               href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
               className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
+              aria-label="初めてのお客様へ"
             >
               <img
                 src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
@@ -339,6 +340,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             <Link
               href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
               className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+              aria-label="初めてのお客様へ"
             >
               <img
                 src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
@@ -462,6 +464,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                       href={config.menuBottomBanner?.link || '#recruit'}
                       onClick={closeMenu}
                       className="group relative block aspect-[16/7]"
+                      aria-label="求人情報を見る"
                     >
                       <img
                         src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
