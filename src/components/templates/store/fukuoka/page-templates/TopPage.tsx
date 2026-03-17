@@ -1,21 +1,22 @@
 'use client';
-import CampaignSection from '../sections/CampaignSection';
-import CastSection from '../sections/CastSection';
-import ConceptSection from '../sections/ConceptSection';
-import FAQSection from '../sections/FAQSection';
-import FlowSection from '../sections/FlowSection';
-import Footer from '../sections/Footer';
+import dynamic from 'next/dynamic';
 import Header from '../sections/Header';
-
-import ReviewSection from '@/components/sections/store/ReviewSection';
-import SNSProfile from '@/components/templates/news/SNSProfile';
-import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
-import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
-import MobileStickyButton from '../sections/MobileStickyButton';
-import NewcomerSection from '../sections/NewcomerSection';
-import PriceSection from '../sections/PriceSection';
-import QuickAccessMenu from '../sections/QuickAccessMenu';
+import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
+
+const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
+const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
+const CampaignSection = dynamic(() => import('../sections/CampaignSection'));
+const DiarySection = dynamic(() => import('../sections/DiarySection'));
+const CastSection = dynamic(() => import('../sections/CastSection'));
+const NewcomerSection = dynamic(() => import('../sections/NewcomerSection'));
+const PriceSection = dynamic(() => import('../sections/PriceSection'));
+const FlowSection = dynamic(() => import('../sections/FlowSection'));
+const ReviewSection = dynamic(() => import('@/components/sections/store/ReviewSection'));
+const FAQSection = dynamic(() => import('../sections/FAQSection'));
+const SNSProfile = dynamic(() => import('@/components/templates/news/SNSProfile'));
+const Footer = dynamic(() => import('../sections/Footer'));
+const MobileStickyButton = dynamic(() => import('../sections/MobileStickyButton'));
 
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';

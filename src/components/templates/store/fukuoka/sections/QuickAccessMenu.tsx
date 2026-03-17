@@ -101,6 +101,7 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
                 key={index}
                 href={isEditing ? undefined : resolveLink(item.href)}
                 onClick={(e) => scrollToSection(e, resolveLink(item.href))}
+                aria-label={item.ja}
                 className="group relative flex flex-col items-center justify-center overflow-hidden rounded-md border border-white/10 bg-rose-950 py-2 text-center shadow-sm transition-all duration-300 hover:bg-rose-900 hover:shadow-md"
               >
                 {/* Icon decoration */}

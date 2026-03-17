@@ -1,6 +1,7 @@
 'use client';
 
 import { SNSProfileConfig } from '@/lib/store/storeTopConfig';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface SNSProfileProps {
@@ -33,18 +34,33 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
     input.click();
   };
 
+  const getPlatformLabel = (id: string) => {
+    switch (id) {
+      case 'xUrl': return '公式Xを開く';
+      case 'instagramUrl': return '公式Instagramを開く';
+      case 'youtubeUrl': return '公式YouTubeを開く';
+      default: return 'SNSを開く';
+    }
+  };
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-4">
       <div className="flex flex-col gap-6 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm sm:flex-row sm:items-start sm:p-8">
         {/* Logo/Icon */}
         <div
-          className={`h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-50 transition-transform ${isEditing ? 'cursor-pointer ring-2 ring-rose-500 ring-offset-2 hover:scale-105' : ''}`}
+          role={isEditing ? 'button' : undefined}
+          aria-label={isEditing ? 'アイコンをアップロード' : undefined}
+          tabIndex={isEditing ? 0 : undefined}
+          className={`relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-slate-50 transition-transform ${isEditing ? 'cursor-pointer ring-2 ring-rose-500 ring-offset-2 hover:scale-105' : ''}`}
           onClick={handleIconClick}
+          onKeyDown={(e) => isEditing && e.key === 'Enter' && handleIconClick()}
         >
-          <img
+          <NextImage
             src={config.iconUrl || 'https://placehold.jp/150x150.png?text=SNS'}
             alt="Store Logo"
-            className="h-full w-full object-contain p-2"
+            fill
+            className="object-contain p-2"
+            sizes="64px"
           />
         </div>
 
@@ -105,6 +121,7 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
                 }}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label={getPlatformLabel(platform.id)}
                 className={`text-slate-400 transition-colors hover:text-slate-600 ${isEditing ? 'rounded bg-rose-50 p-1 ring-1 ring-rose-300' : ''}`}
               >
                 {platform.icon}

@@ -160,6 +160,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     e.stopPropagation();
                     triggerImageUpload(idx);
                   }}
+                  aria-label="画像をアップロード"
                   className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <Camera size={20} />
@@ -284,6 +285,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   e.stopPropagation();
                   triggerImageUpload(idx);
                 }}
+                aria-label="画像をアップロード"
                 className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
               >
                 <Camera size={20} />
@@ -320,6 +322,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           href={getAbsoluteHref(
             config?.logoLink === '/' || !config?.logoLink ? '/store/{slug}' : config.logoLink,
           )}
+          aria-label="トップページへ"
           className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config?.logoUrl ? (
@@ -432,6 +435,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* TOP Button */}
             <Link
               href={getAbsoluteHref('/store/{slug}')}
+              aria-label="トップページ"
               className="group flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               <Home size={16} className="md:h-6 md:w-6" />
@@ -441,6 +445,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* PHONE Button */}
             <a
               href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/-/g, '')}`}
+              aria-label="電話をかける"
               className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#FFB800] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               <Phone size={16} className="md:h-6 md:w-6" />
@@ -453,6 +458,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 if (!isMenuOpen) setIsMenuOpen(true);
                 else closeMenu();
               }}
+              aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
               className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#333333] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
             >
               {isMenuOpen ? (
@@ -500,7 +506,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     </span>
                   )}
                 </div>
-                <button onClick={closeMenu} className="rounded-full bg-pink-50 p-2 text-pink-500">
+                <button
+                  onClick={closeMenu}
+                  aria-label="メニューを閉じる"
+                  className="rounded-full bg-pink-50 p-2 text-pink-500"
+                >
                   <X size={24} />
                 </button>
               </div>
@@ -545,7 +555,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                           {store.contact?.phone || config?.phoneNumber || '050-5491-3991'}
                         </span>
                       </div>
-                      <p className="text-sm font-bold text-gray-400">
+                      <p className="text-sm font-bold text-gray-600">
                         受付時間: {config?.receptionHours || '10:00〜23:00'}
                       </p>
                     </div>

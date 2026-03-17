@@ -172,6 +172,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       <a
                         href={bannerLink}
                         onClick={(e) => isEditing && e.preventDefault()}
+                        aria-label={banner.label || "バナー"}
                         className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                       >
                       <NextImage
@@ -202,6 +203,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       <a
                         href={getAbsoluteHref(banner.link || '#')}
                         onClick={(e) => isEditing && e.preventDefault()}
+                        aria-label={`${banner.label || "バナー"}の詳細を見る`}
                       >
                         <Link2
                           className="mt-[2px] h-3.5 w-3.5 shrink-0 opacity-80"
@@ -254,6 +256,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     <a
                       href={getAbsoluteHref(config.largeBanner?.link || '#')}
                       onClick={(e) => isEditing && e.preventDefault()}
+                      aria-label="キャンペーン詳細を見る"
                       className="relative block h-full w-full overflow-hidden rounded-xl bg-white shadow-xl"
                     >
                       <NextImage
@@ -297,13 +300,13 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           </div>
 
           {/* Bottom Copyright */}
-          <div className="mt-12 border-t border-slate-100 pt-6 text-center">
-            <p className="text-[10px] tracking-widest text-[#666]">
+          <div className="mt-12 border-t border-slate-100/30 pt-6 text-center">
+            <p className="text-[10px] tracking-widest text-slate-800">
               <span
                 contentEditable={isEditing}
                 suppressContentEditableWarning={isEditing}
                 onBlur={(e) => onUpdate?.('footer', 'copyright', e.currentTarget.innerText)}
-                className={isEditing ? 'px-1 hover:bg-slate-50' : ''}
+                className={isEditing ? 'px-1 hover:bg-white/10' : ''}
               >
                 {config.copyright}
               </span>

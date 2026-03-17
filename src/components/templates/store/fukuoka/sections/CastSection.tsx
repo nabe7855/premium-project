@@ -204,10 +204,13 @@ const CastSection: React.FC<CastSectionProps> = ({
         <div className="mb-12 space-y-8">
           {/* 1. 日付検索 */}
           <div className="rounded-[2.5rem] border border-rose-50/50 bg-white p-2 shadow-sm">
-            <div className="flex gap-2 overflow-x-auto p-1 scrollbar-hide">
+            <div className="flex gap-2 overflow-x-auto p-1 scrollbar-hide" role="tablist" aria-label="出勤日を選択">
               {dates.map((d) => (
                 <button
                   key={d.date}
+                  role="tab"
+                  aria-selected={selectedDate === d.date}
+                  aria-label={`${d.isToday ? '本日' : d.day} ${d.display}`}
                   onClick={() => setSelectedDate(d.date)}
                   className={`relative flex min-w-[70px] flex-col items-center justify-center rounded-[2rem] py-3 transition-all duration-300 ${
                     selectedDate === d.date
@@ -237,6 +240,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                 type="text"
                 placeholder="キャストの名前で検索..."
                 value={searchTerm}
+                aria-label="キャスト名で検索"
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full rounded-[2rem] border-2 border-rose-50 bg-white py-4 pl-14 pr-6 text-sm font-bold text-slate-600 shadow-sm outline-none transition-all placeholder:text-slate-300 focus:border-rose-200 focus:ring-4 focus:ring-rose-100/20"
               />
@@ -256,7 +260,9 @@ const CastSection: React.FC<CastSectionProps> = ({
             {/* 3. 並び替え & リセット */}
             <div className="flex gap-2 lg:col-span-5">
               <div className="relative flex-1">
+                <label htmlFor="cast-sort" className="sr-only">並び替え条件</label>
                 <select
+                  id="cast-sort"
                   value={sortKey}
                   onChange={(e) => setSortKey(e.target.value as any)}
                   className="w-full appearance-none rounded-[2rem] border-2 border-rose-50 bg-white py-4 pl-6 pr-12 text-sm font-bold text-slate-600 shadow-sm outline-none transition-all focus:border-rose-200"
@@ -347,7 +353,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <h3 className="truncate text-base font-black text-slate-800 sm:text-lg">
                                   {cast.name}
                                 </h3>
-                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-400">
+                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-500">
                                   {cast.age}歳
                                 </span>
                               </div>
@@ -381,7 +387,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <span className="text-sm font-black text-slate-700">
                                   {(cast.rating || 5.0).toFixed(1)}
                                 </span>
-                                <span className="text-xs font-bold text-slate-400">
+                                <span className="text-xs font-bold text-slate-500">
                                   ({cast.reviewCount || 10})
                                 </span>
                               </div>
@@ -462,7 +468,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <h3 className="truncate text-base font-black text-slate-800 sm:text-lg">
                                   {cast.name}
                                 </h3>
-                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-400">
+                                <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-500">
                                   {cast.age}歳
                                 </span>
                               </div>
@@ -496,7 +502,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 <span className="text-sm font-black text-slate-700">
                                   {(cast.rating || 5.0).toFixed(1)}
                                 </span>
-                                <span className="text-xs font-bold text-slate-400">
+                                <span className="text-xs font-bold text-slate-500">
                                   ({cast.reviewCount || 10})
                                 </span>
                               </div>
