@@ -1,5 +1,5 @@
 import DiaryListContent from '@/components/sections/diary/DiaryListContent';
-import Header from '@/components/sections/layout/Header';
+import Header from '@/components/templates/store/fukuoka/sections/Header';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';

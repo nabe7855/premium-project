@@ -1,5 +1,5 @@
 import DiaryDetailContent from '@/components/sections/diary/DiaryDetailContent';
-import Header from '@/components/sections/layout/Header';
+import Header from '@/components/templates/store/fukuoka/sections/Header';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import { getDiaryPostById } from '@/lib/getDiaryPostById';
