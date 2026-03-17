@@ -46,8 +46,12 @@ export async function getAllBanners() {
     });
     return { success: true, banners };
   } catch (error) {
-    console.error('Error fetching all banners:', error);
-    return { success: false, error: 'バナー一覧の取得に失敗しました' };
+    console.error('CRITICAL: Error fetching all banners from Prisma:', error);
+    if (error instanceof Error) {
+      console.error('Error message:', error.message);
+      console.error('Error stack:', error.stack);
+    }
+    return { success: false, error: 'バナー一覧の取得に失敗しました: ' + (error instanceof Error ? error.message : String(error)) };
   }
 }
 
