@@ -10,6 +10,7 @@ export interface DiaryBase {
   castName: string;
   castId: string;
   castSlug: string;
+  isCommentEnabled?: boolean;
 }
 
 // 店舗用（日記一覧用）

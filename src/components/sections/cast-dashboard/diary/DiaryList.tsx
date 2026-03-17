@@ -1,5 +1,7 @@
 import { CastDiary } from '@/types/cast';
-import { Calendar, Edit, Plus, Trash2 } from 'lucide-react';
+import { Calendar, Edit, MessageCircle, Plus, Trash2, Eye, EyeOff, Loader2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { getAllCommentsByPostId, toggleCommentVisibility } from '@/lib/actions/diary-comment';
 
 interface DiaryListProps {
   diaries: CastDiary[];
@@ -9,6 +11,30 @@ interface DiaryListProps {
 }
 
 export default function DiaryList({ diaries, onEdit, onDelete, onCreate }: DiaryListProps) {
+  const [managingCommentBlogId, setManagingCommentBlogId] = useState<string | null>(null);
+  const [comments, setComments] = useState<any[]>([]);
+  const [isLoadingComments, setIsLoadingComments] = useState(false);
+
+  const handleToggleCommentVisibility = async (commentId: string, currentHidden: boolean) => {
+    const result = await toggleCommentVisibility(commentId, !currentHidden);
+    if (result.success) {
+      setComments(prev => prev.map(c => c.id === commentId ? { ...c, is_hidden: !currentHidden } : c));
+    }
+  };
+
+  const loadComments = async (blogId: string) => {
+    if (managingCommentBlogId === blogId) {
+      setManagingCommentBlogId(null);
+      return;
+    }
+    setManagingCommentBlogId(blogId);
+    setIsLoadingComments(true);
+    const result = await getAllCommentsByPostId(blogId);
+    if (result.success && result.data) {
+      setComments(result.data);
+    }
+    setIsLoadingComments(false);
+  };
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
     return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
@@ -175,8 +201,58 @@ export default function DiaryList({ diaries, onEdit, onDelete, onCreate }: Diary
             )}
 
             {/* Footer */}
-            <div className="flex items-center justify-between border-t border-gray-100 pt-4">
-              <div className="text-xs text-gray-500">ID: {diary.id}</div>
+            <div className="flex flex-col gap-4 border-t border-gray-100 pt-4">
+              <div className="flex items-center justify-between">
+                <div className="text-xs text-gray-500">ID: {diary.id}</div>
+                <button
+                  onClick={() => loadComments(diary.id)}
+                  className="flex items-center gap-2 rounded-lg bg-pink-50 px-3 py-1.5 text-xs font-bold text-pink-600 transition-colors hover:bg-pink-100 sm:text-sm"
+                >
+                  <MessageCircle size={14} />
+                  コメント管理
+                </button>
+              </div>
+
+              {/* Comment Management Section */}
+              {managingCommentBlogId === diary.id && (
+                <div className="mt-2 space-y-3 rounded-xl bg-gray-50 p-3 sm:p-4">
+                  <h4 className="text-sm font-bold text-gray-700">コメントの管理</h4>
+                  {isLoadingComments ? (
+                    <div className="flex justify-center py-4">
+                      <Loader2 className="h-6 w-6 animate-spin text-pink-500" />
+                    </div>
+                  ) : comments.length === 0 ? (
+                    <p className="py-2 text-center text-xs text-gray-500">コメントはありません</p>
+                  ) : (
+                    <div className="space-y-2">
+                      {comments.map((comment) => (
+                        <div key={comment.id} className="flex items-start justify-between gap-3 rounded-lg bg-white p-3 shadow-sm">
+                          <div className="min-w-0 flex-1">
+                            <div className="mb-1 flex items-center gap-2">
+                              <span className="text-xs font-bold text-gray-800">{comment.author_name}</span>
+                              <span className="text-[10px] text-gray-400">
+                                {new Date(comment.created_at).toLocaleString()}
+                              </span>
+                            </div>
+                            <p className="text-xs text-gray-700">{comment.content}</p>
+                          </div>
+                          <button
+                            onClick={() => handleToggleCommentVisibility(comment.id, comment.is_hidden)}
+                            className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg transition-colors ${
+                              comment.is_hidden 
+                                ? 'bg-gray-100 text-gray-400 hover:bg-gray-200' 
+                                : 'bg-green-50 text-green-600 hover:bg-green-100'
+                            }`}
+                            title={comment.is_hidden ? '表示する' : '非表示にする'}
+                          >
+                            {comment.is_hidden ? <EyeOff size={16} /> : <Eye size={16} />}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           </div>
         ))

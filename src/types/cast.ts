@@ -305,6 +305,7 @@ export interface CastDiary {
   images: string[];
   tags: string[];
   status?: 'published' | 'draft' | 'scheduled';
+  isCommentEnabled?: boolean;
   publishedAt?: string;
   createdAt: string;
 }

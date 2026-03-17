@@ -235,6 +235,8 @@ model Blog {
   cast         Cast        @relation(fields: [cast_id], references: [id])
   images       BlogImage[]
   tags         BlogTag[]   @relation("BlogToBlogTag")
+  comments     BlogComment[]
+  is_comment_enabled Boolean @default(true)
 
   @@map("blogs")
 }
@@ -254,6 +256,18 @@ model BlogTag {
   blogs Blog[] @relation("BlogToBlogTag")
 
   @@map("blog_tags")
+}
+
+model BlogComment {
+  id          String   @id @default(uuid())
+  blog_id     String
+  author_name String   @default("匿名")
+  content     String
+  is_hidden   Boolean  @default(false)
+  created_at  DateTime @default(now())
+  blog        Blog     @relation(fields: [blog_id], references: [id], onDelete: Cascade)
+
+  @@map("blog_comments")
 }
 
 model Video {

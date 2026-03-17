@@ -26,7 +26,9 @@ export async function getDiaryPostsByCastId(
       ),
       blog_tags (
         blog_tag_master ( name )
-      )
+      ),
+      is_comment_enabled,
+      blog_comments ( count )
     `,
     )
     .eq('cast_id', castId)
@@ -60,7 +62,8 @@ export async function getDiaryPostsByCastId(
         image_url: post.blog_images?.[0]?.image_url,
         castAvatar: castData?.image_url || '/images/avatar-placeholder.png',
         readTime: Math.max(Math.ceil((post.content?.length || 0) / 400), 1),
-        commentCount: 0,
+        commentCount: post.blog_comments?.[0]?.count || 0,
+        isCommentEnabled: post.is_comment_enabled ?? true,
         reactions: {
           total: 0,
           likes: 0,

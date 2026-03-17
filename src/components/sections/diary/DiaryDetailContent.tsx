@@ -36,7 +36,9 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             created_at,
             casts ( id, name, image_url, slug ),
             blog_images ( image_url ),
-            blog_tags ( blog_tag_master ( name ) )
+            blog_tags ( blog_tag_master ( name ) ),
+            is_comment_enabled,
+            blog_comments ( count )
           `,
           )
           .eq('id', postId)
@@ -66,7 +68,8 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               castData?.image_url ||
               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
-            commentCount: 0,
+            commentCount: data.blog_comments?.[0]?.count || 0,
+            isCommentEnabled: data.is_comment_enabled ?? true,
             reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
           };
           setPost(formatted);
@@ -228,7 +231,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             }}
             expanded
           />
-          <MessageSection postId={post.id} />
+          <MessageSection postId={post.id} isEnabled={post.isCommentEnabled} />
         </div>
         <aside className="space-y-6">
           <RelatedPosts currentPostId={post.id} castId={post.castId} tagNames={post.tags} />

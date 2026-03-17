@@ -14,7 +14,9 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
       created_at,
       casts ( id, name, image_url, slug ),
       blog_images ( image_url ),
-      blog_tags ( blog_tag_master ( name ) )
+      blog_tags ( blog_tag_master ( name ) ),
+      is_comment_enabled,
+      blog_comments ( count )
     `,
     )
     .eq('id', postId)
@@ -48,7 +50,8 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
       castData?.image_url ||
       `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
-    commentCount: 0,
+    commentCount: data.blog_comments?.[0]?.count || 0,
+    isCommentEnabled: data.is_comment_enabled ?? true,
     reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
   };
 }

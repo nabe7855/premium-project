@@ -35,7 +35,9 @@ export async function getRelatedPosts({
           id, title, content, created_at,
           casts ( id, name, image_url, slug ),
           blog_images ( image_url ),
-          blog_tags ( blog_tag_master ( name ) )
+          blog_tags ( blog_tag_master ( name ) ),
+          is_comment_enabled,
+          blog_comments ( count )
         `,
         )
         .eq('cast_id', castId)
@@ -66,7 +68,9 @@ export async function getRelatedPosts({
             cast_store_memberships ( stores ( slug ) )
           ),
           blog_images ( image_url ),
-          blog_tags ( blog_tag_master ( name ) )
+          blog_tags ( blog_tag_master ( name ) ),
+          is_comment_enabled,
+          blog_comments ( count )
         `,
         )
         .neq('id', currentPostId)
@@ -115,6 +119,7 @@ function formatPost(data: any, storeSlug: string): PostType {
     castAvatar: castData?.image_url || 'https://via.placeholder.com/100?text=Avatar',
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
     reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
-    commentCount: 0,
+    commentCount: data.blog_comments?.[0]?.count || 0,
+    isCommentEnabled: data.is_comment_enabled ?? true,
   };
 }

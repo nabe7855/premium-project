@@ -1,39 +1,29 @@
 'use client';
 import React, { useState } from 'react';
 import { Send, Heart, MessageCircle } from 'lucide-react';
+import { getCommentsByPostId, postComment } from '@/lib/actions/diary-comment';
 
 interface MessageSectionProps {
   postId: string;
+  isEnabled?: boolean;
 }
 
-const MessageSection: React.FC<MessageSectionProps> = ({}) => {
+const MessageSection: React.FC<MessageSectionProps> = ({ postId, isEnabled = true }) => {
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    {
-      id: 1,
-      author: 'あやか',
-      content: 'いつも癒されてます！今日も素敵な日記をありがとう💕',
-      time: '2時間前',
-      likes: 12,
-      isFromCast: false,
-    },
-    {
-      id: 2,
-      author: 'みく',
-      content: 'あやかちゃんありがとう！そう言ってもらえて嬉しいです🍓',
-      time: '1時間前',
-      likes: 8,
-      isFromCast: true,
-    },
-    {
-      id: 3,
-      author: 'たかし',
-      content: '今度お話しできるのを楽しみにしてます！',
-      time: '30分前',
-      likes: 5,
-      isFromCast: false,
-    },
-  ]);
+  const [messages, setMessages] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  React.useEffect(() => {
+    const fetchComments = async () => {
+      setIsLoading(true);
+      const result = await getCommentsByPostId(postId);
+      if (result.success && result.data) {
+        setMessages(result.data);
+      }
+      setIsLoading(false);
+    };
+    fetchComments();
+  }, [postId]);
 
   const quickMessages = [
     'いつもありがとう💕',
@@ -42,21 +32,22 @@ const MessageSection: React.FC<MessageSectionProps> = ({}) => {
     '応援してます👏',
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (message.trim()) {
-      const newMessage = {
-        id: messages.length + 1,
-        author: 'あなた',
-        content: message,
-        time: 'たった今',
-        likes: 0,
-        isFromCast: false,
-      };
-      setMessages([...messages, newMessage]);
-      setMessage('');
+      const result = await postComment(postId, 'あなた', message);
+      if (result.success && result.data) {
+        setMessages([...messages, result.data]);
+        setMessage('');
+      } else {
+        alert('メッセージの投稿に失敗しました');
+      }
     }
   };
+
+  if (!isEnabled) {
+    return null;
+  }
 
   return (
     <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6">
@@ -114,36 +105,39 @@ const MessageSection: React.FC<MessageSectionProps> = ({}) => {
           </span>
         </div>
 
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`rounded-lg p-3 sm:p-4 ${msg.isFromCast ? 'border border-pink-200 bg-pink-50' : 'bg-gray-50'}`}
-          >
-            <div className="mb-2 flex items-start justify-between">
-              <div className="flex items-center gap-2">
-                <div
-                  className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white sm:h-8 sm:w-8 sm:text-sm ${msg.isFromCast ? 'bg-pink-500' : 'bg-gray-500'}`}
-                >
-                  {msg.author[0]}
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-800 sm:text-base">{msg.author}</p>
-                  <p className="text-xs text-gray-500">{msg.time}</p>
-                </div>
-                {msg.isFromCast && (
-                  <span className="rounded-full bg-pink-500 px-2 py-1 text-xs text-white">
-                    キャスト
-                  </span>
-                )}
-              </div>
-              <button className="flex items-center gap-1 text-gray-500 transition-colors hover:text-pink-600">
-                <Heart size={12} className="sm:h-3.5 sm:w-3.5" />
-                <span className="text-xs sm:text-sm">{msg.likes}</span>
-              </button>
-            </div>
-            <p className="text-sm text-gray-700 sm:text-base">{msg.content}</p>
+        {isLoading ? (
+          <div className="flex justify-center py-8">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-pink-500 border-t-transparent"></div>
           </div>
-        ))}
+        ) : messages.length === 0 ? (
+          <p className="py-8 text-center text-sm text-gray-500">まだメッセージはありません</p>
+        ) : (
+          messages.map((msg) => (
+            <div key={msg.id} className="rounded-lg bg-gray-50 p-3 sm:p-4">
+              <div className="mb-2 flex items-start justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-gray-500 text-xs font-bold text-white sm:h-8 sm:w-8 sm:text-sm">
+                    {(msg.author_name || '匿')[0]}
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-800 sm:text-base">
+                      {msg.author_name}
+                    </p>
+                    <p className="text-xs text-gray-500">
+                      {new Date(msg.created_at).toLocaleString('ja-JP', {
+                        month: 'short',
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit',
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <p className="text-sm text-gray-700 sm:text-base">{msg.content}</p>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

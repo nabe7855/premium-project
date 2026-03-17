@@ -29,6 +29,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   const [presetTags, setPresetTags] = useState<TagMaster[]>([]);
   const [status, setStatus] = useState<'published' | 'draft' | 'scheduled'>('published');
   const [publishedAt, setPublishedAt] = useState('');
+  const [isCommentEnabled, setIsCommentEnabled] = useState(true);
   const [uploading, setUploading] = useState(false);
 
   // ✅ 初期データセット
@@ -38,6 +39,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
       setContent(initialData.content);
       setTags(initialData.tags);
       setStatus(initialData.status || 'published');
+      setIsCommentEnabled(initialData.isCommentEnabled ?? true);
       if (initialData.publishedAt) {
         // datetime-local 用のフォーマット (YYYY-MM-DDThh:mm)
         const date = new Date(initialData.publishedAt);
@@ -128,6 +130,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
             title,
             content,
             status,
+            is_comment_enabled: isCommentEnabled,
             published_at:
               status === 'scheduled' && publishedAt
                 ? new Date(publishedAt).toISOString()
@@ -145,6 +148,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
             title,
             content,
             status,
+            is_comment_enabled: isCommentEnabled,
             published_at:
               status === 'scheduled' && publishedAt
                 ? new Date(publishedAt).toISOString()
@@ -205,6 +209,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         images: [...existingImages.map((i) => i.url), ...newImageUrls],
         tags,
         status,
+        isCommentEnabled,
         publishedAt:
           status === 'scheduled' ? new Date(publishedAt).toISOString() : new Date().toISOString(),
       });
@@ -286,6 +291,22 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
             />
           </div>
         )}
+      </div>
+
+      {/* コメント設定 */}
+      <div className="rounded-lg bg-gray-50 p-4">
+        <label className="flex cursor-pointer items-center justify-between">
+          <div>
+            <span className="block text-sm font-bold text-gray-700">コメント機能</span>
+            <span className="text-xs text-gray-500">この日記へのコメント投稿を許可する</span>
+          </div>
+          <input
+            type="checkbox"
+            checked={isCommentEnabled}
+            onChange={(e) => setIsCommentEnabled(e.target.checked)}
+            className="h-5 w-5 rounded border-gray-300 text-pink-600 focus:ring-pink-500"
+          />
+        </label>
       </div>
 
       {/* 既存画像プレビュー */}

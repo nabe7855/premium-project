@@ -58,7 +58,9 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           ),
           blog_tags (
             blog_tag_master ( name )
-          )
+          ),
+          is_comment_enabled,
+          blog_comments ( count )
         `,
         )
         .eq('status', 'published')
@@ -89,7 +91,8 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               date: post.created_at,
               tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
               reactions: { total: 0 },
-              commentCount: 0,
+              commentCount: post.blog_comments?.[0]?.count || 0,
+              isCommentEnabled: post.is_comment_enabled ?? true,
               storeSlug,
               castName: castObj?.name ?? '不明なキャスト',
               castAvatar: castObj?.image_url,
