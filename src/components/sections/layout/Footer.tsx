@@ -117,7 +117,6 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   return (
     <footer
       className={`footer-nav sm:relative sm:mt-10 ${className}`}
-      role="navigation"
       aria-label="主要サービスへのクイックアクセス"
       itemScope
       itemType="https://schema.org/LocalBusiness"

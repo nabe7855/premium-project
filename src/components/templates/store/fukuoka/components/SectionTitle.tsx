@@ -10,7 +10,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({ en, ja }) => (
     <h2 className="mb-2 font-serif text-2xl tracking-widest text-slate-800 md:text-4xl">{en}</h2>
     <div className="flex items-center justify-center gap-3">
       <div className="bg-primary-300 h-[1px] w-6 md:w-8"></div>
-      <p className="font-sans text-[10px] tracking-[0.2em] text-slate-500 md:text-sm">{ja}</p>
+      <p className="font-sans text-[10px] tracking-[0.2em] text-slate-700 md:text-sm">{ja}</p>
       <div className="bg-primary-300 h-[1px] w-6 md:w-8"></div>
     </div>
   </div>

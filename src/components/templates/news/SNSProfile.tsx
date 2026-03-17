@@ -122,7 +122,7 @@ const SNSProfile: React.FC<SNSProfileProps> = ({ config, isEditing, onUpdate, on
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={getPlatformLabel(platform.id)}
-                className={`text-slate-600 transition-colors hover:text-slate-900 ${isEditing ? 'rounded bg-rose-50 p-1 ring-1 ring-rose-300' : ''}`}
+                className={`text-slate-700 transition-colors hover:text-slate-900 ${isEditing ? 'rounded bg-rose-50 p-1 ring-1 ring-rose-300' : ''}`}
               >
                 {platform.icon}
               </a>

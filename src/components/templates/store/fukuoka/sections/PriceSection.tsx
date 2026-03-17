@@ -109,7 +109,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate
           contentEditable={isEditing}
           onBlur={(e) => handleTextUpdate('subHeading', e)}
           suppressContentEditableWarning
-          className="mt-2 text-sm font-bold uppercase tracking-widest text-[#D4AF37] md:text-base"
+          className="mt-2 text-sm font-bold uppercase tracking-widest text-[#967117] md:text-base"
         >
           {config?.subHeading || 'Price Menu'}
         </p>
@@ -144,7 +144,8 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate
           {/* Navigation Arrows (Floating) */}
           <button
             onClick={prevTab}
-            className="absolute left-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:left-[-24px] md:h-12 md:w-12"
+            className="absolute left-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#967117] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:left-[-24px] md:h-12 md:w-12"
+            aria-label="前のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -158,7 +159,8 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate
 
           <button
             onClick={nextTab}
-            className="absolute right-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:right-[-24px] md:h-12 md:w-12"
+            className="absolute right-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#967117] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:right-[-24px] md:h-12 md:w-12"
+            aria-label="次のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />

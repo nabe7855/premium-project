@@ -131,7 +131,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => handleTextUpdate('badge', e)}
-            className={`text-[10px] font-bold uppercase tracking-[0.4em] text-rose-400 md:text-xs ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
+            className={`text-[10px] font-bold uppercase tracking-[0.4em] text-rose-600 md:text-xs ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
           >
             {config?.badge || 'Our Concept'}
           </span>

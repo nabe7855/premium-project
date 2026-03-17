@@ -159,10 +159,10 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
 
           {/* Navigation */}
           <div className="mt-8 flex items-center justify-between">
-            <Button variant="outline" size="lg" onClick={prevSlide} className="rounded-full p-3">
+            <Button variant="outline" size="lg" onClick={prevSlide} className="rounded-full p-3" aria-label="前のキャストを表示">
               <ChevronLeft className="h-6 w-6" />
             </Button>
-            <Button variant="outline" size="lg" onClick={nextSlide} className="rounded-full p-3">
+            <Button variant="outline" size="lg" onClick={nextSlide} className="rounded-full p-3" aria-label="次のキャストを表示">
               <ChevronRight className="h-6 w-6" />
             </Button>
           </div>
