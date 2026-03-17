@@ -18,7 +18,13 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
     // 保護中ルートの一部も除外
     const protectedExcluded = ['/counseling', '/survey', '/reflection', '/consent'];
 
+    // PageSpeed計測用バイパス（?pagespeed=true で年齢認証をスキップ）
+    const hasBypass =
+      typeof window !== 'undefined' &&
+      new URLSearchParams(window.location.search).get('pagespeed') === 'true';
+
     return (
+      hasBypass ||
       excludedPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
       protectedExcluded.some((path) => pathname.includes(path))
     );
