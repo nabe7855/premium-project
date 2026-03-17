@@ -3,7 +3,7 @@ import React from 'react';
 
 interface PriceItem {
   title: string;
-  duration: number;
+  duration: string;
   price: number;
   description: string;
 }
@@ -71,18 +71,16 @@ const PriceCard: React.FC<PriceCardProps> = ({
                 <div
                   className={`flex items-center gap-2 rounded-lg bg-[#D37B47] px-4 py-2 text-white`}
                 >
-                  <Clock size={16} strokeWidth={3} />
                   <span
                     contentEditable={isEditing}
                     onBlur={(e) =>
-                      handleItemUpdate(idx, 'duration', parseInt(e.currentTarget.innerText) || 0)
+                      handleItemUpdate(idx, 'duration', e.currentTarget.innerText)
                     }
                     suppressContentEditableWarning
                     className="text-lg font-black tracking-tighter outline-none"
                   >
                     {item.duration}
                   </span>
-                  <span className="text-lg font-black tracking-tighter">分</span>
                 </div>
 
                 {/* Price */}

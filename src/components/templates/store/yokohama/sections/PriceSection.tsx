@@ -12,26 +12,26 @@ import SectionTitle from '../components/SectionTitle';
 const defaultPricesByTab = [
   // オープニングキャンペーン中
   [
-    { title: 'SHORT', duration: 60, price: 10000, description: 'キャンペーン特別価格' },
-    { title: 'STANDARD', duration: 90, price: 15000, description: '一番人気の定番コース' },
-    { title: 'LONG', duration: 120, price: 20000, description: '至福のロングタイム' },
+    { title: 'SHORT', duration: '🕒 60分', price: 10000, description: 'キャンペーン特別価格' },
+    { title: 'STANDARD', duration: '🕒 90分', price: 15000, description: '一番人気の定番コース' },
+    { title: 'LONG', duration: '🕒 120分', price: 20000, description: '至福のロングタイム' },
   ],
   // スタンダードコース
   [
-    { title: 'SHORT', duration: 60, price: 12000, description: 'お試し・部分的な集中ケアに' },
+    { title: 'SHORT', duration: '🕒 60分', price: 12000, description: 'お試し・部分的な集中ケアに' },
     {
       title: 'STANDARD',
-      duration: 90,
+      duration: '🕒 90分',
       price: 17000,
       description: '全身をゆっくりほぐす定番コース',
     },
-    { title: 'LONG', duration: 120, price: 23000, description: '心身ともに深く癒される贅沢な時間' },
+    { title: 'LONG', duration: '🕒 120分', price: 23000, description: '心身ともに深く癒される贅沢な時間' },
   ],
   // ロングコース
   [
-    { title: 'LUXURY', duration: 150, price: 28000, description: '最高級のトリートメント' },
-    { title: 'ROYAL', duration: 180, price: 33000, description: '究極의 癒やし体験' },
-    { title: 'VIP', duration: 210, price: 38000, description: '完全オーダーメイド' },
+    { title: 'LUXURY', duration: '🕒 150分', price: 28000, description: '最高級のトリートメント' },
+    { title: 'ROYAL', duration: '🕒 180分', price: 33000, description: '究極の癒やし体験' },
+    { title: 'VIP', duration: '🕒 210分', price: 38000, description: '完全オーダーメイド' },
   ],
 ];
 

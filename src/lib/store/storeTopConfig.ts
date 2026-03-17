@@ -105,7 +105,7 @@ export interface CastConfig {
 
 export interface PriceItem {
   title: string;
-  duration: number;
+  duration: string;
   price: number;
   description: string;
   isPopular?: boolean;
@@ -491,21 +491,21 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     items: [
       {
         title: 'Short',
-        duration: 60,
+        duration: '🕒 60分',
         price: 12000,
         description: 'お試し・部分的な集中ケアに',
         isPopular: false,
       },
       {
         title: 'Standard',
-        duration: 90,
+        duration: '🕒 90分',
         price: 17000,
         description: '全身をゆっくりほぐす定番コース',
         isPopular: true,
       },
       {
         title: 'Long',
-        duration: 120,
+        duration: '🕒 120分',
         price: 23000,
         description: '心身ともに深く癒される贅沢な時間',
         isPopular: false,
