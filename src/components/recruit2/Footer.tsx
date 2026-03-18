@@ -6,6 +6,7 @@ interface FooterProps {
   isEditing?: boolean;
   onUpdate?: (key: string, value: any) => void;
   storeName?: string;
+  storeSlug?: string;
   description?: string;
   linksHeading?: string;
   links?: { label: string; url: string }[];
@@ -26,6 +27,7 @@ const Footer: React.FC<FooterProps> = ({
   isEditing = false,
   onUpdate,
   storeName = 'ストロベリーボーイズ福岡',
+  storeSlug = 'fukuoka',
   description = '私たちは、「新しい自分」を見つけたいと願う全ての男性を応援します。\n創業8年の実績と、一人ひとりに寄り添う教育体制。',
   linksHeading = 'Links',
   links = [
@@ -241,7 +243,7 @@ const Footer: React.FC<FooterProps> = ({
           ) : (
             <div className="flex flex-col items-center gap-4 text-xs uppercase tracking-widest opacity-50 md:flex-row">
               {copyright}
-              <Link href="/links" className="hover:text-white hover:opacity-100 transition-all font-normal underline decoration-white/20">
+              <Link href={`/store/${storeSlug}/links`} className="hover:text-white hover:opacity-100 transition-all font-normal underline decoration-white/20">
                 相互リンク
               </Link>
             </div>

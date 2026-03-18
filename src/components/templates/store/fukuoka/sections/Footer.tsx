@@ -304,7 +304,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 {config.copyright}
               </span>
               {!isEditing && (
-                <a href="/links" className="underline decoration-slate-800/30 hover:text-white transition-colors">
+                <a href="/store/fukuoka/links" className="underline decoration-slate-800/30 hover:text-white transition-colors">
                   相互リンク
                 </a>
               )}

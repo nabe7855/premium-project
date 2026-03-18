@@ -126,6 +126,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
       </main>
       <Footer
         storeName={storeInfo?.name || fullMergedConfig.general?.storeName}
+        storeSlug={slug}
         phone={storeInfo?.phone || topConfig?.header?.phoneNumber || fullMergedConfig.footer?.phone}
         receptionHours={
           storeInfo?.business_hours ||

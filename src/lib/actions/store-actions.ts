@@ -55,3 +55,14 @@ export async function getInternalStores() {
     return { success: false, error: '店舗データの取得に失敗しました' };
   }
 }
+export async function getStoreBySlug(slug: string) {
+  try {
+    const store = await prisma.store.findUnique({
+      where: { slug },
+    });
+    return { success: true, store };
+  } catch (error) {
+    console.error('Failed to fetch store by slug:', error);
+    return { success: false, error: '店舗データの取得に失敗しました' };
+  }
+}
