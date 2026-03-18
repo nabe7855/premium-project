@@ -8,7 +8,7 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
   const pathname = usePathname();
 
   // ✅ フッターを非表示にしたいパスまたはプレフィックス
-  const hideFooterPaths = ['/', '/age-check', '/store-select', '/test8'];
+  const hideFooterPaths = ['/', '/age-check', '/store-select', '/test8', '/login'];
   const hideFooterPrefixes = [
     '/admin',
     '/amolab',
@@ -18,6 +18,7 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
     '/survey',
     '/reflection',
     '/sweetstay',
+    '/cast/',
   ]; // これらの配下すべてでフッター非表示
 
   // ✅ /store/[slug]/recruit も非表示にするための正規表現チェック
