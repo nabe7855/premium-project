@@ -156,7 +156,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
   ];
 
   return (
-    <section className="relative overflow-hidden bg-[#111827] py-24 sm:py-32">
+    <section id="trust" className="relative overflow-hidden bg-slate-950 py-32 text-white">
       {/* Background Decorative Elements */}
       <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
       <div className="pointer-events-none absolute left-0 top-0 h-96 w-96 -translate-x-1/2 -translate-y-1/2 rounded-full bg-amber-500/10 blur-3xl"></div>

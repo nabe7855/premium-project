@@ -50,8 +50,8 @@ const Benefits: React.FC<BenefitsProps> = ({
   };
 
   return (
-    <section className="overflow-hidden bg-white pb-12 pt-24">
-      <div className="container mx-auto px-4">
+    <section id="benefits" className="relative overflow-hidden bg-slate-950 py-32 text-white">
+      <div className="container relative mx-auto px-4">
         <div className="mx-auto max-w-5xl">
           <div className="mb-16 text-center">
             {isEditing ? (

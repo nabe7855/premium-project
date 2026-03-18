@@ -130,8 +130,8 @@ const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpl
   };
 
   return (
-    <section className="overflow-hidden bg-slate-950 py-24 text-white">
-      <div className="container mx-auto px-4">
+    <section id="income" className="relative bg-slate-950 py-32 overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4">
         <div className="mb-16 text-center">
           <h2
             className="mb-4 text-sm font-bold uppercase tracking-widest text-amber-600 outline-none"
