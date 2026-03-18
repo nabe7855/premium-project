@@ -6,6 +6,7 @@ import {
   upsertPartnerLink,
   PartnerLinkData,
 } from '@/lib/actions/partnerLinks';
+import { getInternalStores } from '@/lib/actions/store-actions';
 import { supabase } from '@/lib/supabaseClient';
 import {
   Edit2,
@@ -27,9 +28,8 @@ const CATEGORIES = [
   { id: 'media', label: '関連メディア' },
 ];
 
-const LOCATIONS = [
+const DEFAULT_LOCATIONS = [
   { id: 'all', label: '全店共通' },
-  { id: 'fukuoka', label: '福岡店' },
 ];
 
 interface PartnerLink extends Required<PartnerLinkData> {
@@ -60,8 +60,20 @@ export default function LinksManagementPage() {
   const [previewUrl, setPreviewUrl] = useState<string>('');
   const [filterCat, setFilterCat] = useState('all');
   const [filterLoc, setFilterLoc] = useState('all');
+  const [locations, setLocations] = useState(DEFAULT_LOCATIONS);
 
-  useEffect(() => { fetchLinks(); }, []);
+  useEffect(() => { 
+    fetchLinks(); 
+    fetchLocations();
+  }, []);
+
+  const fetchLocations = async () => {
+    const result = await getInternalStores();
+    if (result.success && result.stores) {
+      const dbLocs = result.stores.map((s: any) => ({ id: s.slug, label: s.name }));
+      setLocations([...DEFAULT_LOCATIONS, ...dbLocs]);
+    }
+  };
 
   const fetchLinks = async () => {
     setIsLoading(true);
@@ -209,7 +221,7 @@ export default function LinksManagementPage() {
           </div>
           <div className="h-4 w-px bg-gray-700 mx-2 hidden md:block" />
           <div className="flex flex-wrap gap-2">
-            {[...LOCATIONS].map((l) => (
+            {[...locations].map((l) => (
               <button
                 key={l.id}
                 onClick={() => setFilterLoc(l.id)}
@@ -266,7 +278,7 @@ export default function LinksManagementPage() {
                         {CATEGORIES.find((c) => c.id === link.category)?.label ?? link.category}
                       </span>
                       <span className="rounded-md bg-gray-800 px-2 py-0.5 text-[10px] font-bold text-gray-400">
-                        {LOCATIONS.find((l) => l.id === link.location)?.label ?? link.location}
+                        {locations.find((l) => l.id === link.location)?.label ?? link.location}
                       </span>
                       <span className="text-xs text-gray-500">表示順: {link.display_order}</span>
                     </div>
@@ -374,7 +386,7 @@ export default function LinksManagementPage() {
                     onChange={(e) => setForm({ ...form, location: e.target.value })}
                     className="w-full rounded-lg border border-gray-600 bg-brand-primary px-4 py-3 text-white focus:border-brand-accent focus:outline-none"
                   >
-                    {LOCATIONS.map((l) => (
+                    {locations.map((l) => (
                       <option key={l.id} value={l.id}>{l.label}</option>
                     ))}
                   </select>

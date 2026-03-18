@@ -228,7 +228,7 @@ const Footer: React.FC<FooterProps> = ({
           </div>
         </div>
 
-        <div className="flex flex-col items-center justify-between gap-6 border-t border-slate-900 pt-8 md:flex-row">
+        <div className="flex flex-col items-center justify-between gap-6 border-t border-slate-900 pt-8 pb-52 md:flex-row md:pb-8">
           {isEditing ? (
             <div
               contentEditable
@@ -239,9 +239,9 @@ const Footer: React.FC<FooterProps> = ({
               {copyright}
             </div>
           ) : (
-            <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-50">
+            <div className="flex flex-col items-center gap-4 text-xs uppercase tracking-widest opacity-50 md:flex-row">
               {copyright}
-              <Link href="/links" className="hover:text-white hover:opacity-100 transition-all font-normal">
+              <Link href="/links" className="hover:text-white hover:opacity-100 transition-all font-normal underline decoration-white/20">
                 相互リンク
               </Link>
             </div>

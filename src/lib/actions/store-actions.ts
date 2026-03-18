@@ -35,3 +35,23 @@ export async function updateStoreRedirect(
     return { success: false, error: '更新に失敗しました' };
   }
 }
+
+export async function getInternalStores() {
+  try {
+    const stores = await prisma.store.findMany({
+      where: {
+        use_external_url: false,
+        is_active: true,
+      },
+      select: {
+        slug: true,
+        name: true,
+      },
+      orderBy: { name: 'asc' },
+    });
+    return { success: true, stores };
+  } catch (error) {
+    console.error('Failed to fetch internal stores:', error);
+    return { success: false, error: '店舗データの取得に失敗しました' };
+  }
+}
