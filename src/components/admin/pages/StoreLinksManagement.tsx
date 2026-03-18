@@ -145,7 +145,13 @@ export default function StoreLinksManagement() {
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
               {dbStores
-                .filter((store) => store.slug && store.slug.trim() !== '')
+                .filter(
+                  (store) =>
+                    store.slug &&
+                    store.slug.trim() !== '' &&
+                    store.is_active &&
+                    !store.use_external_url
+                )
                 .map((store) => (
                   <SelectItem key={store.slug} value={store.slug} className="font-bold">
                     {store.name}

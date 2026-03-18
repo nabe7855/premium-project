@@ -49,19 +49,19 @@ export default function LinksPage({
           </div>
           <h1 
             contentEditable={isEditing}
-            onBlur={(e) => onUpdate?.('hero', 'title', e.currentTarget.textContent)}
+            onBlur={(e) => onUpdate?.('hero', 'title', e.currentTarget.innerText)}
             suppressContentEditableWarning
             className="mb-6 bg-gradient-to-br from-white via-rose-100 to-amber-200 bg-clip-text font-serif text-4xl font-black tracking-tight text-transparent outline-none sm:text-6xl"
           >
-            {config.hero.title || `${displayStoreName}おすすめパートナーサイト`}
+            {config.hero.title || (isEditing ? 'おすすめパートナーサイト' : `${displayStoreName}おすすめパートナーサイト`)}
           </h1>
           <p 
             contentEditable={isEditing}
-            onBlur={(e) => onUpdate?.('hero', 'description', e.currentTarget.textContent)}
+            onBlur={(e) => onUpdate?.('hero', 'description', e.currentTarget.innerText)}
             suppressContentEditableWarning
             className="mx-auto max-w-2xl text-base leading-relaxed text-slate-400 outline-none sm:text-lg"
           >
-            {config.hero.description || `ストロベリーボーイズ${displayStoreName}店が厳選した、信頼できる女性用風俗情報サイト・求人サイト・関連メディアをご紹介します。`}
+            {config.hero.description || (isEditing ? 'テキストを入力してください' : `ストロベリーボーイズ${displayStoreName}店が厳選した、信頼できる女性用風俗情報サイト・求人サイト・関連メディアをご紹介します。`)}
           </p>
 
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-sm text-slate-500">
