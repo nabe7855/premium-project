@@ -86,8 +86,8 @@ export default function AdminLoginForm() {
       }
 
       if (roleData.role === 'admin') {
-        console.log('[AdminLoginForm] Admin role confirmed, pushing to /admin/admin');
-        router.push('/admin/admin');
+        console.log('[AdminLoginForm] Admin role confirmed, pushing to /admin');
+        router.push('/admin');
       } else {
         console.warn(`[AdminLoginForm] User is not admin. Role: ${roleData.role}`);
         setError('管理者権限がありません。');

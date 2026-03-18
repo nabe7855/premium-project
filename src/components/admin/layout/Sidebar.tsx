@@ -89,9 +89,9 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     {
       title: 'ホーム・分析',
       items: [
-        { href: '/admin/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
+        { href: '/admin', icon: <ChartBarIcon />, label: 'ダッシュボード' },
         {
-          href: '/admin/admin/analytics',
+          href: '/admin/analytics',
           icon: <PresentationChartLineIcon />,
           label: 'データ分析',
         },
@@ -100,16 +100,16 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     {
       title: 'キャスト・店舗管理',
       items: [
-        { href: '/admin/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
+        { href: '/admin/all-cast', icon: <UsersIcon />, label: '全キャスト管理' },
         {
-          href: '/admin/admin/stores/casts',
+          href: '/admin/stores/casts',
           icon: <StorefrontIcon />,
           label: '店舗別キャスト管理',
         },
-        { href: '/admin/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
-        { href: '/admin/admin/price-management', icon: <ChartBarIcon />, label: '料金管理' },
+        { href: '/admin/stores', icon: <BuildingStorefrontIcon />, label: '店舗管理' },
+        { href: '/admin/price-management', icon: <ChartBarIcon />, label: '料金管理' },
         {
-          href: '/admin/admin/reservations',
+          href: '/admin/reservations',
           icon: <ChartBarIcon />,
           label: '予約管理',
           badgeKey: 'reservePendingCount',
@@ -120,35 +120,35 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
       title: '広告・AI生成',
       items: [
         {
-          href: '/admin/admin/advertising',
+          href: '/admin/advertising',
           icon: <PresentationChartLineIcon />,
           label: '広告・集客',
         },
-        { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
-        { href: '/admin/admin/links-management', icon: <DocumentTextIcon />, label: 'パートナーリンク管理' },
-        { href: '/admin/admin/stores/links', icon: <SparklesIcon />, label: '店舗リンク集を編集' },
-        { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
+        { href: '/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
+        { href: '/admin/links-management', icon: <DocumentTextIcon />, label: 'パートナーリンク管理' },
+        { href: '/admin/stores/links', icon: <SparklesIcon />, label: '店舗リンク集を編集' },
+        { href: '/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
         {
-          href: '/admin/admin/advertising/list',
+          href: '/admin/advertising/list',
           icon: <DocumentTextIcon />,
           label: '投稿済み広告',
         },
-        { href: '/admin/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
-        { href: '/admin/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
-        { href: '/admin/admin/auto-post', icon: <SparklesIcon />, label: 'AI自動投稿管理' },
+        { href: '/admin/ai/generate-intro', icon: <SparklesIcon />, label: 'AI新人紹介生成' },
+        { href: '/admin/intro-list', icon: <DocumentTextIcon />, label: '投稿済み紹介' },
+        { href: '/admin/auto-post', icon: <SparklesIcon />, label: 'AI自動投稿管理' },
       ],
     },
     {
       title: '求人・面接管理',
       items: [
         {
-          href: '/admin/admin/interview-reservations',
+          href: '/admin/interview-reservations',
           icon: <UsersIcon />,
           label: '面接予約管理',
           badgeKey: 'pendingCount',
         },
         {
-          href: '/admin/admin/recruit-management',
+          href: '/admin/recruit-management',
           icon: <DocumentTextIcon />,
           label: '採用ページ管理',
         },
@@ -157,9 +157,9 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     {
       title: 'ホテル管理',
       items: [
-        { href: '/admin/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
+        { href: '/admin/hotels', icon: <BuildingOfficeIcon />, label: 'ホテル管理' },
         {
-          href: '/admin/admin/hotels/masters',
+          href: '/admin/hotels/masters',
           icon: <PresentationChartLineIcon />,
           label: 'ホテルマスタ管理',
         },
@@ -168,25 +168,25 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     {
       title: 'サイト設定・記事',
       items: [
-        { href: '/admin/admin/header-management', icon: <PencilIcon />, label: '共通ヘッダー管理' },
+        { href: '/admin/header-management', icon: <PencilIcon />, label: '共通ヘッダー管理' },
         {
-          href: '/admin/admin/store-top-management',
+          href: '/admin/store-top-management',
           icon: <StorefrontIcon />,
           label: 'トップページ管理',
         },
         {
-          href: '/admin/admin/first-time-management',
+          href: '/admin/first-time-management',
           icon: <SparklesIcon />,
           label: '初めての方へページ管理',
         },
-        { href: '/admin/admin/page-request', icon: <PencilIcon />, label: 'ページ制作依頼' },
+        { href: '/admin/page-request', icon: <PencilIcon />, label: 'ページ制作依頼' },
         {
-          href: '/admin/admin/news-management',
+          href: '/admin/news-management',
           icon: <DocumentTextIcon />,
           label: 'ニュースページ管理',
         },
         {
-          href: '/admin/admin/media-management',
+          href: '/admin/media-management',
           icon: <DocumentTextIcon />,
           label: 'メディア記事管理',
         },

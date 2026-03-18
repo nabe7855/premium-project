@@ -1,5 +1,8 @@
-import AdminDashboard from '@/components/admin/AdminDashboard';
+'use client';
 
-export default function AdminPage() {
-  return <AdminDashboard />;
+import React from 'react';
+import Dashboard from '@/components/admin/pages/Dashboard';
+
+export default function AdminDashboardPage() {
+  return <Dashboard />;
 }

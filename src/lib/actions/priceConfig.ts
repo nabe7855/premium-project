@@ -219,7 +219,7 @@ export async function savePriceConfig(
 
     // キャッシュクリア
     revalidatePath(`/store/${storeSlug}/price`);
-    revalidatePath('/admin/admin/price-management');
+    revalidatePath('/admin/price-management');
 
     return { success: true };
   } catch (error: any) {

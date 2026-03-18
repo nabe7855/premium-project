@@ -190,7 +190,7 @@ export async function updateReservationStatus(
       },
       select: { id: true },
     });
-    revalidatePath('/admin/admin/reservations');
+    revalidatePath('/admin/reservations');
     return { success: true };
   } catch (error) {
     console.error('Error updating reservation status:', error);
@@ -214,7 +214,7 @@ export async function updateReservationStep(
       },
       select: { id: true },
     });
-    revalidatePath('/admin/admin/reservations');
+    revalidatePath('/admin/reservations');
     return { success: true };
   } catch (error) {
     console.error('Error updating reservation step:', error);
@@ -250,7 +250,7 @@ export async function markStepCompleted(reservationId: string, stepId: string) {
       select: { id: true },
     });
 
-    revalidatePath('/admin/admin/reservations');
+    revalidatePath('/admin/reservations');
     return { success: true };
   } catch (error) {
     console.error('Error marking step completed:', error);
@@ -303,7 +303,7 @@ export async function assignCastToReservation(reservationId: string, castId: str
       select: { id: true },
     });
 
-    revalidatePath('/admin/admin/reservations');
+    revalidatePath('/admin/reservations');
     return { success: true };
   } catch (error) {
     console.error('Error assigning cast:', error);

@@ -154,7 +154,7 @@ export default function HotelList() {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">ホテル一覧</h2>
         <Link
-          href="/admin/admin/hotels/new"
+          href="/admin/hotels/new"
           className="flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2 text-white transition-opacity hover:opacity-90"
         >
           <PlusIcon />
@@ -344,7 +344,7 @@ export default function HotelList() {
 
                 <div className="flex justify-end gap-3 border-t border-white/5 pt-3">
                   <Link
-                    href={`/admin/admin/hotels/${hotel.id}`}
+                    href={`/admin/hotels/${hotel.id}`}
                     className="flex flex-1 items-center justify-center gap-1 rounded-lg bg-white/10 py-2 text-sm font-bold text-white transition-all hover:bg-white/20"
                   >
                     <PencilIcon />
@@ -457,7 +457,7 @@ export default function HotelList() {
                     </td>
                     <td className="space-x-2 px-6 py-4 text-right">
                       <Link
-                        href={`/admin/admin/hotels/${hotel.id}`}
+                        href={`/admin/hotels/${hotel.id}`}
                         className="inline-flex rounded-lg p-2 text-brand-text-secondary transition-all hover:bg-white/10 hover:text-white"
                       >
                         <PencilIcon />

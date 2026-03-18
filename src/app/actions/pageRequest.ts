@@ -73,7 +73,7 @@ export async function createPageRequest(data: {
       },
     });
 
-    revalidatePath('/admin/admin/page-request');
+    revalidatePath('/admin/page-request');
     return { success: true, id: newRequest.id };
   } catch (error) {
     console.error('Failed to create page request:', error);
@@ -101,7 +101,7 @@ export async function updatePageRequest(
       },
     });
 
-    revalidatePath('/admin/admin/page-request');
+    revalidatePath('/admin/page-request');
     return { success: true };
   } catch (error) {
     console.error('Failed to update page request:', error);
@@ -115,7 +115,7 @@ export async function deletePageRequest(id: string) {
       where: { id },
     });
 
-    revalidatePath('/admin/admin/page-request');
+    revalidatePath('/admin/page-request');
     return { success: true };
   } catch (error) {
     console.error('Failed to delete page request:', error);

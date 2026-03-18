@@ -183,7 +183,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
       if (result.success) {
         alert('記事を保存しました！');
         router.refresh();
-        router.push('/admin/admin/media-management');
+        router.push('/admin/media-management');
       } else {
         alert('保存エラー: ' + result.error);
       }
@@ -200,7 +200,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
       <div className="flex items-center justify-between border-b pb-4">
         <div className="flex items-center gap-4">
           <Link
-            href="/admin/admin/media-management"
+            href="/admin/media-management"
             className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-gray-500 shadow hover:text-gray-700"
           >
             <ChevronLeftIcon size={20} />

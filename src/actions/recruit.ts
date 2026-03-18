@@ -116,7 +116,7 @@ export async function submitRecruitApplication(formData: FormData) {
       emailResult = { success: false, error: String(emailError) };
     }
 
-    revalidatePath('/admin/admin/interview-reservations');
+    revalidatePath('/admin/interview-reservations');
 
     return { 
       success: true, 
@@ -173,7 +173,7 @@ export async function deleteRecruitApplication(id: string) {
       where: { id },
     });
 
-    revalidatePath('/admin/admin/interview-reservations');
+    revalidatePath('/admin/interview-reservations');
     return { success: true };
   } catch (error) {
     console.error('Delete application error:', error);
@@ -187,7 +187,7 @@ export async function updateApplicationStatus(id: string, status: string) {
       where: { id },
       data: { status },
     });
-    revalidatePath('/admin/admin/interview-reservations');
+    revalidatePath('/admin/interview-reservations');
     return { success: true };
   } catch (error) {
     console.error('Update status error:', error);
@@ -220,7 +220,7 @@ export async function updateRecruitAdminData(
       console.log('ℹ️ Notification skipped: interviewDate is empty.');
     }
 
-    revalidatePath('/admin/admin/interview-reservations');
+    revalidatePath('/admin/interview-reservations');
     return { success: true };
   } catch (error) {
     console.error('Update admin data error:', error);

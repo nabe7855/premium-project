@@ -73,7 +73,7 @@ export default function MediaManagementPage() {
             <option value="draft">下書き</option>
           </select>
           <Link
-            href="/admin/admin/media-management/new"
+            href="/admin/media-management/new"
             className="ml-2 flex items-center gap-2 rounded-md bg-brand-accent px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-pink-600"
           >
             <PlusIcon size={16} />
@@ -198,7 +198,7 @@ export default function MediaManagementPage() {
                       <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-medium">
                         <div className="flex justify-end gap-3">
                           <Link
-                            href={`/admin/admin/media-management/${article.id}`}
+                            href={`/admin/media-management/${article.id}`}
                             className="text-brand-accent hover:text-pink-700"
                           >
                             <PencilIcon size={18} />

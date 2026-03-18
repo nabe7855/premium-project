@@ -113,7 +113,7 @@ export async function createMediaArticle(data: MediaArticleData, tags: string[] 
       }
     }
 
-    revalidatePath('/admin/admin/media-management');
+    revalidatePath('/admin/media-management');
     return { success: true, article };
   } catch (error: any) {
     console.error('Error creating media article:', error);
@@ -167,7 +167,7 @@ export async function updateMediaArticle(id: string, data: MediaArticleData, tag
       });
     }
 
-    revalidatePath('/admin/admin/media-management');
+    revalidatePath('/admin/media-management');
     return { success: true, article };
   } catch (error: any) {
     console.error('Error updating media article:', error);
@@ -181,7 +181,7 @@ export async function deleteMediaArticle(id: string) {
     await prisma.mediaArticle.delete({
       where: { id },
     });
-    revalidatePath('/admin/admin/media-management');
+    revalidatePath('/admin/media-management');
     return { success: true };
   } catch (error: any) {
     console.error('Error deleting media article:', error);

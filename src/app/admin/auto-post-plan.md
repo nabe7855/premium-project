@@ -2,11 +2,11 @@
 
 ## 1. 概要
 
-`premium-project` の管理画面（`/admin/admin/`）に、AIを活用したポータルサイト（kaikan, kaikanwork）への自動投稿管理機能を追加する。
+`premium-project` の管理画面（`/admin/`）に、AIを活用したポータルサイト（kaikan, kaikanwork）への自動投稿管理機能を追加する。
 
 ## 2. 開発場所 (Directries)
 
-- **ページパス**: `src/app/admin/admin/auto-post/`
+- **ページパス**: `src/app/admin/auto-post/`
 - **コンポーネント**: `src/components/admin/auto-post/`
 - **API**: `src/app/api/ai/generate-post/` (既存)
 
@@ -35,7 +35,7 @@
 
 ### Phase 1: 基礎構造作成 (完了)
 
-- [x] `src/app/admin/admin/auto-post/page.tsx` の作成
+- [x] `src/app/admin/auto-post/page.tsx` の作成
 - [x] メインレイアウト（タブ切り替え：作成 / 予約一覧 / 履歴）の実装
 - [x] サイドバーへのメニュー追加、AdminLayoutへのタイトル追加
 

@@ -67,7 +67,7 @@ export async function upsertBanner(data: BannerData) {
         data: rest as any,
       });
     }
-    revalidatePath('/admin/admin/banners');
+    revalidatePath('/admin/banners');
     revalidatePath('/amolab');
     revalidatePath('/ikeo');
     revalidatePath('/(protected)/sweetstay', 'page');
@@ -83,7 +83,7 @@ export async function deleteBanner(id: string) {
     await prisma.banner.delete({
       where: { id },
     });
-    revalidatePath('/admin/admin/banners');
+    revalidatePath('/admin/banners');
     return { success: true };
   } catch (error) {
     console.error('Error deleting banner:', error);

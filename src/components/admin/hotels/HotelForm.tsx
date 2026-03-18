@@ -342,7 +342,7 @@ export default function HotelForm({ id }: HotelFormProps) {
         );
         toast.success('作成しました');
       }
-      router.push('/admin/admin/hotels');
+      router.push('/admin/hotels');
     } catch (error) {
       console.error(error);
       toast.error('保存に失敗しました');
