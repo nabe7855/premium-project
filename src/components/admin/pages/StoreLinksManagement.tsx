@@ -144,11 +144,13 @@ export default function StoreLinksManagement() {
               <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
-              {dbStores.map((store) => (
-                <SelectItem key={store.slug} value={store.slug} className="font-bold">
-                  {store.name}
-                </SelectItem>
-              ))}
+              {dbStores
+                .filter((store) => store.slug && store.slug.trim() !== '')
+                .map((store) => (
+                  <SelectItem key={store.slug} value={store.slug} className="font-bold">
+                    {store.name}
+                  </SelectItem>
+                ))}
             </SelectContent>
           </Select>
 
