@@ -55,8 +55,8 @@ export const ThreePoints: React.FC<ThreePointsProps> = ({
     >
       <div className="container mx-auto px-4">
         <div className="mb-16 text-center">
-          {data.imageUrl ? (
-            <div className="relative mx-auto mb-4 max-w-2xl">
+          {data.imageUrl && data.imageUrl.trim() !== '' ? (
+            <div className="relative mx-auto mb-4 max-w-2xl min-h-[120px] md:min-h-[200px]">
               <EditableImage
                 isEditing={isEditing}
                 src={data.imageUrl}
