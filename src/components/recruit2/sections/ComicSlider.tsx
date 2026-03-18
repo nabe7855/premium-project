@@ -168,8 +168,6 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
                         fill
                         sizes="(max-width: 640px) 280px, 350px"
                         className="object-cover"
-                        loading="lazy"
-                        unoptimized
                       />
                     )}
                   </div>

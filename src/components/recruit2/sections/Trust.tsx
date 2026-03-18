@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import NextImage from 'next/image';
 import React from 'react';
 
 interface TrustProps {
@@ -389,10 +390,12 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
                   onClick={() => handleImageClick(originalIdx)}
                 >
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <img
+                    <NextImage
                       src={location.image}
                       alt={location.city}
-                      className="h-full w-full object-cover opacity-80 transition-transform duration-700 hover:scale-110"
+                      fill
+                      sizes="(max-width: 640px) 240px, 320px"
+                      className="object-cover opacity-80 transition-transform duration-700 hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/20 to-transparent"></div>
                     <div className="absolute bottom-4 left-4">

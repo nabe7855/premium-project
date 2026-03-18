@@ -1,20 +1,22 @@
 import React from 'react';
-import Header from './Header';
-import AchievementsAndLifestyle from './sections/AchievementsAndLifestyle';
-import Benefits from './sections/Benefits';
-import BrandingSupport from './sections/BrandingSupport';
-import CheckSheet from './sections/CheckSheet';
-import ComicSlider from './sections/ComicSlider';
-import Comparison from './sections/Comparison';
-import FAQ from './sections/FAQ';
-import Flow from './sections/Flow';
-import FukuokaReason from './sections/FukuokaReason';
-import HeroCollage from './sections/HeroCollage';
-import MetricsGrid from './sections/MetricsGrid';
+import dynamic from 'next/dynamic';
 
-import Income from './sections/Income';
-import OpenCastRecruitment from './sections/OpenCastRecruitment';
-import Trust from './sections/Trust';
+const Header = dynamic(() => import('./Header'));
+const AchievementsAndLifestyle = dynamic(() => import('./sections/AchievementsAndLifestyle'));
+const Benefits = dynamic(() => import('./sections/Benefits'));
+const BrandingSupport = dynamic(() => import('./sections/BrandingSupport'));
+const CheckSheet = dynamic(() => import('./sections/CheckSheet'));
+const ComicSlider = dynamic(() => import('./sections/ComicSlider'));
+const Comparison = dynamic(() => import('./sections/Comparison'));
+const FAQ = dynamic(() => import('./sections/FAQ'));
+const Flow = dynamic(() => import('./sections/Flow'));
+const FukuokaReason = dynamic(() => import('./sections/FukuokaReason'));
+import HeroCollage from './sections/HeroCollage'; 
+
+const Income = dynamic(() => import('./sections/Income'));
+const OpenCastRecruitment = dynamic(() => import('./sections/OpenCastRecruitment'));
+const Trust = dynamic(() => import('./sections/Trust'));
+const MetricsGrid = dynamic(() => import('./sections/MetricsGrid'));
 
 export interface LandingPageConfig {
   general?: {

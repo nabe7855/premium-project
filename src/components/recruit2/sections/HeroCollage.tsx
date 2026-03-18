@@ -82,8 +82,8 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
       */}
       <div className="relative w-full overflow-hidden">
         <motion.div
-          initial={{ scale: 1.15, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
+          initial={{ scale: 1.15 }}
+          animate={{ scale: 1 }}
           transition={{ duration: 1.8, ease: 'easeOut' }}
           className={`relative ${isEditing ? 'min-h-[300px] bg-slate-900' : ''}`}
         >
@@ -277,7 +277,7 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
           </button>
           <button
             onClick={() => {
-              const element = document.getElementById('faq');
+              const element = document.getElementById('qa');
               if (element) {
                 element.scrollIntoView({ behavior: 'smooth' });
               }
