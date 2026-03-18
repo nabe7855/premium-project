@@ -138,7 +138,7 @@ export default async function LinksPage() {
 
                     {/* Links Grid */}
                     <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                      {catLinks.map((link: any) => (
+                      {catLinks.map((link: any, index: number) => (
                         <a
                           key={link.id}
                           href={link.site_url}
@@ -146,24 +146,33 @@ export default async function LinksPage() {
                           rel="noopener noreferrer nofollow"
                           className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-xl ring-1 ring-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/30 hover:bg-white/10 hover:shadow-rose-500/10"
                         >
-                          {/* Banner Image */}
-                          {link.banner_url ? (
-                            <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900/50">
+                          {/* Banner container with blurred background for flexibility */}
+                          <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900/50">
+                            {/* Blurred background for inconsistent aspect ratios */}
+                            {link.banner_url && (
+                              <div
+                                className="absolute inset-0 bg-cover bg-center opacity-20 blur-xl scale-110 grayscale-[30%]"
+                                style={{ backgroundImage: `url(${link.banner_url})` }}
+                              />
+                            )}
+
+                            {link.banner_url ? (
                               <Image
                                 src={link.banner_url}
                                 alt={`${link.site_name} バナー`}
                                 fill
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                className="object-contain p-2 opacity-95 transition-transform duration-500 group-hover:scale-105"
+                                className="relative z-10 h-full w-full object-contain p-2 opacity-95 transition-transform duration-500 group-hover:scale-105"
+                                priority={index < 3}
                                 unoptimized
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13]/40 to-transparent pointer-events-none" />
-                            </div>
-                          ) : (
-                            <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-                              <span className="text-4xl opacity-40">🔗</span>
-                            </div>
-                          )}
+                            ) : (
+                              <div className="flex h-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+                                <span className="text-4xl opacity-40">🔗</span>
+                              </div>
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 h-10 bg-gradient-to-t from-black/20 to-transparent pointer-events-none z-20" />
+                          </div>
 
                           {/* Content */}
                           <div className="flex flex-1 flex-col p-5">
@@ -186,7 +195,9 @@ export default async function LinksPage() {
                               </svg>
                             </div>
                             {link.description && (
-                              <p className="mb-3 flex-1 text-sm leading-relaxed text-slate-400">{link.description}</p>
+                              <p className="mb-3 flex-1 text-sm leading-relaxed text-slate-400">
+                                {link.description}
+                              </p>
                             )}
                             {link.seo_keywords && (
                               <div className="mt-auto flex flex-wrap gap-1.5">
@@ -201,11 +212,13 @@ export default async function LinksPage() {
                               </div>
                             )}
                             <div className="mt-4 flex items-center gap-2 text-xs text-slate-500">
-                              <span className="truncate">{link.site_url.replace(/^https?:\/\//, '')}</span>
+                              <span className="truncate">
+                                {link.site_url.replace(/^https?:\/\//, '')}
+                              </span>
                             </div>
                           </div>
 
-                          {/* Hover accent */}
+                          {/* Hover accent line */}
                           <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-rose-500 to-amber-500 transition-transform duration-300 group-hover:scale-x-100" />
                         </a>
                       ))}

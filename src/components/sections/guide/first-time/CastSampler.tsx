@@ -3,6 +3,7 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import { CastData, getCastsByStore } from '@/lib/store/castActions';
 import { CastSectionConfig } from '@/lib/store/firstTimeConfig';
+import Image from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
@@ -168,10 +169,12 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
               key={cast.id}
               className="group relative w-[160px] flex-shrink-0 overflow-hidden rounded-2xl bg-white shadow-lg transition-all hover:-translate-y-1 md:w-full"
             >
-              <div className="aspect-[3/4] overflow-hidden">
-                <img
+              <div className="aspect-[3/4] relative overflow-hidden">
+                <Image
                   src={cast.image_url}
                   alt={cast.name}
+                  fill
+                  sizes="(max-width: 768px) 160px, 200px"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
               </div>

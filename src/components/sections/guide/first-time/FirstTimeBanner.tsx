@@ -34,6 +34,7 @@ export const FirstTimeBanner: React.FC<FirstTimeBannerProps> = ({
             alt="初めての方限定特典 特別割引キャンペーン"
             onUpload={(file) => onImageUpload?.('banner', file)}
             className="block h-auto w-full"
+            priority={true}
           />
         </div>
       </div>
