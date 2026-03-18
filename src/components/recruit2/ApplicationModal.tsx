@@ -152,7 +152,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
                   <>
                     <div className="mb-10 text-center">
                       <h2 className="mb-3 font-serif text-3xl font-bold text-slate-900">
-                        WEB本応募フォーム
+                        応募フォーム
                       </h2>
                       <p className="text-sm text-slate-500">
                         以下の項目をご入力の上、送信してください。
@@ -287,6 +287,35 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
                                  <input type="radio" name="transport" value="不可" className="text-amber-600" /> 不可
                                </label>
                              </div>
+                          </div>
+
+                          <div>
+                             <label className="mb-2 block text-xs font-bold text-slate-500">出会い系アプリを利用したことがあるか？</label>
+                             <div className="flex gap-6">
+                               <label className="flex cursor-pointer items-center gap-2 font-medium">
+                                 <input type="radio" name="dating_app_exp" value="あり" className="text-amber-600" /> あり
+                               </label>
+                               <label className="flex cursor-pointer items-center gap-2 font-medium">
+                                 <input type="radio" name="dating_app_exp" value="無し" className="text-amber-600" /> 無し
+                               </label>
+                             </div>
+                          </div>
+
+                          <div>
+                             <label className="mb-2 block text-xs font-bold text-slate-500">刺青</label>
+                             <div className="flex gap-6">
+                               <label className="flex cursor-pointer items-center gap-2 font-medium">
+                                 <input type="radio" name="tattoo" value="あり" className="text-amber-600" /> あり
+                               </label>
+                               <label className="flex cursor-pointer items-center gap-2 font-medium">
+                                 <input type="radio" name="tattoo" value="無し" className="text-amber-600" /> 無し
+                               </label>
+                             </div>
+                          </div>
+
+                          <div>
+                             <label className="mb-2 block text-xs font-bold text-slate-500">容姿に気になる事はありますか？</label>
+                             <textarea name="appearance_concerns" rows={2} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none focus:border-amber-500 focus:bg-white" placeholder="例 肌荒れ 体臭" />
                           </div>
                         </div>
                       </section>

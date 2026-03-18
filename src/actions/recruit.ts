@@ -33,6 +33,9 @@ export async function submitRecruitApplication(formData: FormData) {
       transport: formData.get('transport') as string,
       source: formData.get('source') as string,
       keyword: formData.get('keyword') as string,
+      dating_app_exp: formData.get('dating_app_exp') as string,
+      tattoo: formData.get('tattoo') as string,
+      appearance_concerns: formData.get('appearance_concerns') as string,
     };
 
     // 1. 応募者基本情報をデータベースに保存

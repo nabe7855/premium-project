@@ -28,6 +28,9 @@ type Step =
   | 'freeText'
   | 'photos'
   | 'source'
+  | 'datingApp'
+  | 'tattoo'
+  | 'appearance'
   | 'review'
   | 'done';
 
@@ -52,6 +55,8 @@ const STEP_OPTIONS: Partial<Record<Step, string[]>> = {
   workArea: ['天神・大名', '博多・中洲', '福岡市内他', '特にこだわらない'],
   motivation: ['高収入を得たい', '自分を変えたい', '副業として働きたい', '自由な時間が欲しい'],
   source: ['Instagram / X', 'ネット検索', '求人サイト', '知人の紹介', 'その他'],
+  datingApp: ['あり', '無し'],
+  tattoo: ['あり', '無し'],
 };
 
 const STEP_LABELS: Record<string, string> = {
@@ -67,6 +72,9 @@ const STEP_LABELS: Record<string, string> = {
   motivation: '応募動機',
   freeText: '自己PR・意気込み',
   source: '応募のきっかけ',
+  datingApp: '出会い系アプリ利用歴',
+  tattoo: '刺青の有無',
+  appearance: '容姿の懸念点',
 };
 
 const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
@@ -230,6 +238,21 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
         break;
       case 'source':
         updateFormData('source', userInput);
+        addModelMessage('ありがとうございます！出会い系アプリを利用したことがありますか？');
+        setCurrentStep('datingApp');
+        break;
+      case 'datingApp':
+        updateFormData('datingApp', userInput);
+        addModelMessage('刺青はありますか？');
+        setCurrentStep('tattoo');
+        break;
+      case 'tattoo':
+        updateFormData('tattoo', userInput);
+        addModelMessage('容姿に気になる事はありますか？（肌荒れ、体臭など）');
+        setCurrentStep('appearance');
+        break;
+      case 'appearance':
+        updateFormData('appearance', userInput);
         setCurrentStep('review');
         addModelMessage(
           'ありがとうございます！入力いただいた内容をご確認ください。修正したい項目があれば「修正」ボタンを押してください。',
@@ -263,7 +286,15 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
               const messageParts = [];
               if (formData.motivation) messageParts.push(`【応募動機】\n${formData.motivation}`);
               if (formData.workArea) messageParts.push(`【希望エリア】\n${formData.workArea}`);
+              if (formData.datingApp) messageParts.push(`【出会い系アプリ利用歴】\n${formData.datingApp}`);
+              if (formData.tattoo) messageParts.push(`【刺青】\n${formData.tattoo}`);
+              if (formData.appearance) messageParts.push(`【容姿の懸念点】\n${formData.appearance}`);
               if (formData.freeText) messageParts.push(`【自己PR・意気込み】\n${formData.freeText}`);
+
+              dataToSubmit.append('dating_app_exp', formData.datingApp || '');
+              dataToSubmit.append('tattoo', formData.tattoo || '');
+              dataToSubmit.append('appearance_concerns', formData.appearance || '');
+
               dataToSubmit.append('message', messageParts.join('\n\n'));
 
               dataToSubmit.append('store', storeName || '福岡店');
