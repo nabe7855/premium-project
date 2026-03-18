@@ -57,7 +57,7 @@ export default function FukuokaPage({
             onImageUpload={onImageUpload}
           />
           {/* Header Spacer */}
-          <div className="h-[70px] md:h-[81px]" />
+          <div className="h-[54px] md:h-[65px]" />
         </>
       )}
       {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (

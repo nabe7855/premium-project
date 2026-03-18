@@ -183,16 +183,6 @@ export default async function StorePage({ params }: StorePageProps) {
   // テンプレート振り分け
   return (
     <>
-      {/* LCP Image Preload */}
-      {topConfig?.hero?.images?.[0] && (
-        <link
-          rel="preload"
-          as="image"
-          href={topConfig.hero.images[0].replace(/\{slug\}/g, params.slug)}
-          imageSrcSet={undefined}
-          imageSizes="100vw"
-        />
-      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
