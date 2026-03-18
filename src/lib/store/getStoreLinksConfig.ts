@@ -1,4 +1,5 @@
 
+'use server';
 import { prisma } from '@/lib/prisma';
 import { DEFAULT_STORE_LINKS_CONFIG, StoreLinksConfig } from './storeLinksConfig';
 
