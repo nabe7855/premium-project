@@ -34,7 +34,8 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
     const fetchCasts = async () => {
       console.log(`[CastSampler] Fetching casts for slug: ${storeSlug}`);
       setIsLoading(true);
-      const result = await getCastsByStore(storeSlug, 6);
+      // 一時的に3件に制限して反映を確認する
+      const result = await getCastsByStore(storeSlug, 3);
       console.log('[CastSampler] Result:', result);
       if (result.success && result.casts) {
         setCasts(result.casts);

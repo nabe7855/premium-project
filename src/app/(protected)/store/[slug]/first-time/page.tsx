@@ -8,6 +8,9 @@ import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface PageProps {
   params: {
     slug: string;
