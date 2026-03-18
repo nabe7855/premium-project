@@ -22,9 +22,9 @@ export default async function LinksPage() {
   const links = result.links ?? [];
 
   const categories = [
-    { id: 'general', label: '女性用風俗 情報サイト', emoji: '', desc: '信頼できる女風情報をまとめたサイト' },
-    { id: 'recruit', label: '求人・募集サイト', emoji: '', desc: '業界の求人・採用情報サイト' },
-    { id: 'media', label: '関連メディア', emoji: '', desc: '女性向け風俗・癒しのメディア' },
+    { id: 'general', label: '女性用風俗 情報サイト', desc: '信頼できる女風情報をまとめたサイト' },
+    { id: 'recruit', label: '求人・募集サイト', desc: '業界の求人・採用情報サイト' },
+    { id: 'media', label: '関連メディア', desc: '女性向け風俗・癒しのメディア' },
   ];
 
   return (
@@ -117,17 +117,10 @@ export default async function LinksPage() {
                   <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
                     {/* Category Header */}
                     <div className="mb-10 flex flex-col items-center text-center sm:flex-row sm:text-left">
-                      {cat.emoji ? (
-                        <div className="mb-4 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 text-3xl shadow-lg ring-1 ring-white/10 sm:mb-0 sm:mr-5">
-                          {cat.emoji}
-                        </div>
-                      ) : (
-                        <div className="mb-4 flex h-1.5 w-8 flex-shrink-0 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 sm:mb-0 sm:mr-4" />
-                      )}
                       <div>
                         <h2
                           id={`cat-${cat.id}`}
-                          className="mb-1 font-serif text-2xl font-bold text-white sm:text-3xl"
+                          className="mb-1 font-serif text-2xl font-bold tracking-tight text-white sm:text-3xl"
                         >
                           {cat.label}
                         </h2>
