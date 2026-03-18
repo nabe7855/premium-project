@@ -27,16 +27,30 @@ export async function getAllPartnerLinks() {
   }
 }
 
-export async function getActivePartnerLinks() {
+export async function getActivePartnerLinks(locationSlug?: string) {
   try {
+    const whereClause: any = {
+      is_active: true,
+    };
+
+    // If location is provided, get 'all' OR that specific location
+    if (locationSlug) {
+      whereClause.OR = [
+        { location: 'all' },
+        { location: locationSlug },
+      ];
+    }
+
     const links = await prisma.partnerLink.findMany({
-      where: { is_active: true },
-      orderBy: { display_order: 'asc' },
+      where: whereClause,
+      orderBy: {
+        display_order: 'asc',
+      },
     });
     return { success: true, links };
-  } catch (error: any) {
-    console.error('getActivePartnerLinks error:', error);
-    return { success: false, error: error.message, links: [] };
+  } catch (error) {
+    console.error('Error fetching active partner links:', error);
+    return { success: false, error: 'パートナーリンクの取得に失敗しました' };
   }
 }
 
