@@ -156,7 +156,7 @@ const Comparison: React.FC<ComparisonProps> = ({
             {/* Our Store Header */}
             <div className="relative col-span-1">
               <div className="absolute -left-1 -right-1 -top-2 bottom-0 z-0 origin-bottom scale-y-105 transform rounded-t-xl bg-blue-600 shadow-lg sm:-left-2 sm:-right-2 sm:-top-4 sm:scale-y-110 sm:rounded-t-2xl sm:shadow-xl" />
-              <div className="relative z-10 px-1 py-3 text-white sm:px-4 sm:py-6">
+              <div className="relative z-10 flex h-full flex-col items-center justify-center px-1 py-3 text-white sm:px-4 sm:py-6">
                 <h4 
                   className="mb-0 text-base font-bold sm:mb-1 sm:text-2xl"
                   style={{ whiteSpace: 'pre-wrap' }}
