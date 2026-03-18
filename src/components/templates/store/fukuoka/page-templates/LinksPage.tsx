@@ -100,40 +100,25 @@ export default function LinksPage({
               return (
                 <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
                   <div className="mb-10 flex flex-col items-center text-center sm:flex-row sm:text-left">
-                    <div className="mb-4 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 text-3xl shadow-lg ring-1 ring-white/10 sm:mb-0 sm:mr-5">
-                      <span
-                        contentEditable={isEditing}
-                        onBlur={(e) => {
-                          const newCategories = config.categories.map(c => 
-                            c.id === cat.id ? { ...c, emoji: e.currentTarget.textContent || c.emoji } : c
-                          );
-                          onUpdate?.('categories', 'items', newCategories);
-                        }}
-                        suppressContentEditableWarning
-                        className="outline-none"
-                      >
-                        {cat.emoji}
-                      </span>
-                    </div>
                     <div>
-                      <h2 
-                        id={`cat-${cat.id}`} 
+                      <h2
+                        id={`cat-${cat.id}`}
                         contentEditable={isEditing}
                         onBlur={(e) => {
-                          const newCategories = config.categories.map(c => 
+                          const newCategories = config.categories.map((c) =>
                             c.id === cat.id ? { ...c, label: e.currentTarget.textContent || c.label } : c
                           );
                           onUpdate?.('categories', 'items', newCategories);
                         }}
                         suppressContentEditableWarning
-                        className="mb-1 font-serif text-2xl font-bold text-white outline-none sm:text-3xl"
+                        className="mb-1 font-serif text-2xl font-bold tracking-tight text-white outline-none sm:text-3xl"
                       >
                         {cat.label}
                       </h2>
-                      <p 
+                      <p
                         contentEditable={isEditing}
                         onBlur={(e) => {
-                          const newCategories = config.categories.map(c => 
+                          const newCategories = config.categories.map((c) =>
                             c.id === cat.id ? { ...c, desc: e.currentTarget.textContent || c.desc } : c
                           );
                           onUpdate?.('categories', 'items', newCategories);
@@ -145,12 +130,12 @@ export default function LinksPage({
                       </p>
                     </div>
                     <div className="ml-auto hidden h-px flex-1 bg-gradient-to-r from-slate-800 to-transparent sm:ml-6 sm:block" />
-                    
+
                     {isEditing && (
                       <div className="ml-4 flex items-center gap-2">
                         <button
                           onClick={() => {
-                            const newCategories = config.categories.map(c => 
+                            const newCategories = config.categories.map((c) =>
                               c.id === cat.id ? { ...c, isVisible: !c.isVisible } : c
                             );
                             onUpdate?.('categories', 'items', newCategories);
@@ -166,7 +151,7 @@ export default function LinksPage({
                   </div>
 
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-                    {catLinks.map((link: any) => (
+                    {catLinks.map((link: any, index: number) => (
                       <a
                         key={link.id}
                         href={isEditing ? undefined : link.site_url}
@@ -174,29 +159,41 @@ export default function LinksPage({
                         rel="noopener noreferrer nofollow"
                         className="group relative flex flex-col overflow-hidden rounded-2xl border border-white/5 bg-white/5 shadow-xl ring-1 ring-white/5 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-rose-500/30 hover:bg-white/10 hover:shadow-rose-500/10"
                       >
-                        {link.banner_url ? (
-                          <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900">
+                        <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900/50">
+                          {/* Blurred background for inconsistent aspect ratios */}
+                          {link.banner_url && (
+                             <div 
+                               className="absolute inset-0 bg-cover bg-center opacity-20 blur-xl scale-110 grayscale-[30%]"
+                               style={{ backgroundImage: `url(${link.banner_url})` }}
+                             />
+                           )}
+
+                          {link.banner_url ? (
                             <Image
                               src={link.banner_url}
                               alt={`${link.site_name} バナー`}
                               fill
                               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                              className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+                              className="relative z-10 h-full w-full object-contain p-2 opacity-95 transition-transform duration-500 group-hover:scale-105"
+                              priority={index < 3}
                               unoptimized
                             />
-                            {isEditing && (
-                              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                                <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold backdrop-blur-md">
-                                  バナー変更
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
-                            <span className="text-4xl opacity-40">🔗</span>
-                          </div>
-                        )}
+                          ) : (
+                            <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
+                              <span className="text-4xl opacity-40">🔗</span>
+                            </div>
+                          )}
+
+                          {isEditing && (
+                            <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                              <span className="rounded-full bg-white/20 px-3 py-1 text-[10px] font-bold backdrop-blur-md">
+                                バナー変更
+                              </span>
+                            </div>
+                          )}
+                          <div className="absolute inset-x-0 bottom-0 z-10 h-10 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                        </div>
+
                         <div className="flex flex-1 flex-col p-5">
                           <h3 className="font-bold text-white group-hover:text-rose-200 transition-colors">
                             {link.site_name}
@@ -210,6 +207,9 @@ export default function LinksPage({
                             <span className="truncate">{link.site_url.replace(/^https?:\/\//, '')}</span>
                           </div>
                         </div>
+
+                        {/* Hover accent line */}
+                        <div className="absolute inset-x-0 bottom-0 h-0.5 origin-left scale-x-0 bg-gradient-to-r from-rose-500 to-amber-500 transition-transform duration-300 group-hover:scale-x-100" />
                       </a>
                     ))}
                     
