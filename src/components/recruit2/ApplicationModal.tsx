@@ -334,7 +334,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
 
                            <div>
                               <label className="mb-2 block text-xs font-bold text-slate-500">自己PR・伝えたいこと</label>
-                              <textarea name="message" rows={5} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" placeholder="想いや志望動機など、自由にご記入ください。" />
+                              <textarea name="message" rows={5} className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 outline-none" placeholder="※重要事項となりますので、些細なことでも大丈夫です。できる範囲でご記入いただけますと幸いです。" />
                            </div>
 
                            <div className="space-y-3">
