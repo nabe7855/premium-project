@@ -219,7 +219,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
   };
 
   return (
-    <section className="overflow-hidden bg-slate-950 py-24 text-white md:py-32">
+    <section id="income" className="overflow-hidden bg-slate-950 py-24 text-white md:py-32">
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div

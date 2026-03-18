@@ -380,7 +380,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
       {/* Achievements Section */}
       {(config.achievements?.isVisible !== false || isEditing) && (
         <div
-          id="achievements"
+          id="income"
           className={`group relative transition-opacity duration-300 ${
             config?.achievements?.isVisible === false ? 'opacity-40' : ''
           }`}
@@ -535,7 +535,6 @@ const LandingPage: React.FC<LandingPageProps> = ({
       {/* Income Simulation Section */}
       {(config.income?.isVisible !== false || isEditing) && (
         <div
-          id="income"
           className={`group relative transition-opacity duration-300 ${
             config?.income?.isVisible === false ? 'opacity-40' : ''
           }`}
