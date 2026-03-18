@@ -71,6 +71,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${inter.variable} ${notoVariant.variable} ${notoSerif.variable} ${lora.variable} ${poppins.variable} antialiased`} 
       suppressHydrationWarning
     >
+      <head>
+        <link rel="preconnect" href="https://vkrztvkpjcpejccyiviw.supabase.co" crossOrigin="anonymous" />
+      </head>
       <GoogleTagManager gtmId="GTM-xxxxx" />
       <body>
         <Providers>

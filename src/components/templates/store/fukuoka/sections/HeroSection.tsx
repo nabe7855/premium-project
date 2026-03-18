@@ -149,9 +149,9 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     alt="店舗メインビジュアル"
                     fill
                     priority={true}
+                    fetchPriority="high"
                     sizes="100vw"
                     className="h-full w-full scale-105 transform object-cover"
-                    // NextImage with priority handles fetchPriority="high" automatically
                   />
                 ) : (
                   <NextImage

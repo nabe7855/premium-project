@@ -1,11 +1,22 @@
+'use client';
+
 import { cn } from '@/lib/utils';
 import { Camera } from 'lucide-react';
+import NextImage from 'next/image';
 import React, { useRef } from 'react';
 
-interface EditableImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
+/**
+ * 管理画面などで利用される編集可能な画像コンポーネント
+ * Next.jsのImageコンポーネントを使用するように最適化されています。
+ */
+interface EditableImageProps {
+  src: string;
   isEditing?: boolean;
   onUpload?: (file: File) => void;
-  storageKey?: string; // Identifier for DB saving later
+  storageKey?: string;
+  alt?: string;
+  className?: string;
+  priority?: boolean;
 }
 
 export const EditableImage: React.FC<EditableImageProps> = ({
@@ -14,7 +25,8 @@ export const EditableImage: React.FC<EditableImageProps> = ({
   className,
   storageKey,
   alt,
-  ...props
+  src,
+  priority = false,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -35,8 +47,24 @@ export const EditableImage: React.FC<EditableImageProps> = ({
     }
   };
 
+  // 画像要素本体 (Next.js Imageを使用)
+  const imageElement = (
+    <NextImage
+      src={src}
+      alt={alt || ''}
+      fill
+      priority={priority}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
+      className={cn('object-cover transition-all', className)}
+    />
+  );
+
   if (!isEditing) {
-    return <img className={className} alt={alt || ''} {...props} />;
+    return (
+      <div className={cn('relative overflow-hidden', className)}>
+        {imageElement}
+      </div>
+    );
   }
 
   return (
@@ -46,14 +74,10 @@ export const EditableImage: React.FC<EditableImageProps> = ({
       role="button"
       tabIndex={0}
     >
-      <img
-        className={cn('h-full w-full object-cover transition-all', className)}
-        alt={alt || ''}
-        {...props}
-      />
+      {imageElement}
 
-      {/* Overlay */}
-      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+      {/* 編集用オーバーレイ */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
         <div className="flex flex-col items-center text-white">
           <Camera className="mb-2 h-8 w-8" />
           <span className="text-sm font-bold">画像を変更</span>

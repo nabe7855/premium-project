@@ -46,7 +46,9 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
               alt="女性用風俗初体験の方はこちら"
               fill
               className="object-contain"
-              sizes="100vw"
+              priority={true}
+              fetchPriority="high"
+              sizes="(max-width: 768px) 100vw, 1200px"
             />
           </div>
           {/* Shine effect */}
