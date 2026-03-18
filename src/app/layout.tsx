@@ -5,12 +5,43 @@ import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Inter, Noto_Sans_JP, Noto_Serif_JP, Lora, Poppins } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
 import Providers from './providers';
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter({ 
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-inter',
+});
+
+const notoVariant = Noto_Sans_JP({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-noto-sans',
+});
+
+const notoSerif = Noto_Serif_JP({
+  weight: ['300', '400', '500', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-noto-serif',
+});
+
+const lora = Lora({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-lora',
+});
+
+const poppins = Poppins({
+  weight: ['300', '400', '500', '600', '700'],
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-poppins',
+});
 
 export const metadata: Metadata = {
   title: 'ストロベリーボーイズ - 女性向け癒しサービス',
@@ -35,7 +66,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ja" className={`${inter.className} antialiased`} suppressHydrationWarning>
+    <html 
+      lang="ja" 
+      className={`${inter.variable} ${notoVariant.variable} ${notoSerif.variable} ${lora.variable} ${poppins.variable} antialiased`} 
+      suppressHydrationWarning
+    >
       <GoogleTagManager gtmId="GTM-xxxxx" />
       <body>
         <Providers>

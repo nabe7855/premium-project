@@ -140,6 +140,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     <button
                       onClick={() => handleLinkUpdate('menuButtons', idx)}
                       className="absolute -right-1 -top-1 z-10 hidden rounded-full bg-white p-1 text-slate-800 shadow-sm transition-opacity group-hover:block"
+                      aria-label="リンクを編集"
                     >
                       <Link2 className="h-3 w-3" />
                     </button>
@@ -205,7 +206,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
 
                       {isEditing && (
                         <div className="absolute inset-0 top-0 mb-8 flex items-center justify-center gap-2 rounded-lg bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                          <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800">
+                          <label className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800" aria-label="画像をアップロード">
                             <ImageIcon className="h-4 w-4" />
                             <input
                               type="file"
@@ -213,8 +214,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                               accept="image/*"
                               onChange={(e) => {
                                 if (!e.target.files?.[0]) return;
-                                const isSmall = idx >= config.banners.length;
-                                const realIdx = isSmall ? idx - config.banners.length : idx;
+                                const isSmall = idx >= (config.banners?.length || 0);
+                                const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
                                 onImageUpload?.(
                                   'footer',
                                   e.target.files[0],
@@ -226,11 +227,12 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                           </label>
                           <button
                             onClick={() => {
-                              const isSmall = idx >= config.banners.length;
-                              const realIdx = isSmall ? idx - config.banners.length : idx;
+                              const isSmall = idx >= (config.banners?.length || 0);
+                              const realIdx = isSmall ? idx - (config.banners?.length || 0) : idx;
                               handleLinkUpdate(isSmall ? 'smallBanners' : 'banners', realIdx);
                             }}
                             className="cursor-pointer rounded-full bg-white/90 p-1.5 text-slate-800"
+                            aria-label="リンクを編集"
                           >
                             <Link2 className="h-4 w-4" />
                           </button>
@@ -264,7 +266,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                     </a>
                     {isEditing && (
                       <div className="absolute inset-0 flex items-center justify-center gap-2 rounded-xl bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                        <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800">
+                        <label className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800" aria-label="画像をアップロード">
                           <ImageIcon className="h-5 w-5" />
                           <input
                             type="file"
@@ -278,6 +280,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         <button
                           onClick={() => handleLinkUpdate('largeBanner')}
                           className="cursor-pointer rounded-full bg-white/90 p-2 text-slate-800"
+                          aria-label="リンクを編集"
                         >
                           <Link2 className="h-5 w-5" />
                         </button>

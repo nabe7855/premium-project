@@ -2,13 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ===== Google Fonts ===== */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;600;700&family=Noto+Serif+JP:wght@300;400;500;700&family=Lora:ital,wght@0,400..700;1,400..700&family=Poppins:wght@300;400;500;600;700&display=swap');
+/* ===== Fonts (provided by layout.tsx) ===== */
 
 /* ===== Root Variables ===== */
 :root {
-  --font-sans: 'Noto Sans JP', 'Hiragino Kaku Gothic ProN', system-ui, sans-serif;
-  --font-serif: 'Noto Serif JP', 'Noto Serif', serif;
+  --font-inter: var(--font-inter);
+  --font-noto-sans: var(--font-noto-sans);
+  --font-noto-serif: var(--font-noto-serif);
+  --font-lora: var(--font-lora);
+  --font-poppins: var(--font-poppins);
+
+  --font-sans: var(--font-noto-sans), var(--font-inter), 'Hiragino Kaku Gothic ProN', system-ui, sans-serif;
+  --font-serif: var(--font-noto-serif), 'Noto Serif', serif;
   --radius: 0.5rem;
   --background: #fafafa;
   --foreground: #171717;
@@ -449,10 +454,10 @@
 }
 
 body {
-  font-family: 'Poppins', sans-serif;
+  font-family: var(--font-poppins), sans-serif;
 }
 .font-lora {
-  font-family: 'Lora', serif;
+  font-family: var(--font-lora), serif;
 }
 
 /* Custom keyframes for animations */

@@ -69,15 +69,16 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
                 className="group relative overflow-hidden rounded-2xl border border-neutral-100 bg-white transition-all duration-300"
               >
                 {isEditing && (
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      removeItem(item.id);
-                    }}
-                    className="absolute right-14 top-5 z-20 rounded-full bg-red-500 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                  >
-                    <Trash2 size={14} />
-                  </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeItem(item.id);
+                      }}
+                      className="absolute right-14 top-5 z-20 rounded-full bg-red-500 p-1.5 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                      aria-label="このFAQ項目を削除"
+                    >
+                      <Trash2 size={14} />
+                    </button>
                 )}
 
                 <button
@@ -124,6 +125,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
             <button
               onClick={addItem}
               className="border-primary-200 text-primary-400 hover:text-primary-600 flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed bg-white/50 p-4 transition-all hover:bg-white"
+              aria-label="新しいFAQ項目を追加"
             >
               <Plus size={20} />
               <span className="text-sm font-bold">項目を追加</span>

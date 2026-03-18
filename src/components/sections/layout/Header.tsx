@@ -2,6 +2,7 @@
 
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { Camera, ChevronDown, Menu, Phone, Users, X } from 'lucide-react';
+import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -142,7 +143,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           <Link href={item.href} onClick={closeMenu} className="flex items-center gap-6 px-4 py-6">
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
-                <img src={item.imageUrl} alt="" className="h-full w-full object-contain" />
+                <NextImage 
+                  src={item.imageUrl} 
+                  alt="" 
+                  fill 
+                  sizes="96px"
+                  className="h-full w-full object-contain" 
+                />
               )}
               {isEditing && (
                 <button
@@ -152,6 +159,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                     triggerImageUpload(idx);
                   }}
                   className="absolute inset-0 flex items-center justify-center rounded-full bg-black/40 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                  aria-label="画像をアップロード"
                 >
                   <Camera size={20} />
                 </button>
@@ -205,7 +213,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           >
             {item.imageUrl ? (
               <div className="relative aspect-[4/1] w-full">
-                <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
+                <NextImage 
+                  src={item.imageUrl} 
+                  alt={item.name} 
+                  fill 
+                  sizes="(max-width: 480px) 100vw, 400px"
+                  className="h-full w-full object-contain" 
+                />
               </div>
             ) : (
               <>
@@ -246,7 +260,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center" aria-label={`${item.name}ページへ`}>
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
-              <img src={item.imageUrl} alt={item.name} className="h-full w-full object-contain" />
+              <NextImage 
+                src={item.imageUrl} 
+                alt={item.name} 
+                fill 
+                sizes="112px"
+                className="h-full w-full object-contain" 
+              />
             ) : (
               <div className="flex h-full w-full items-center justify-center rounded-3xl bg-pink-50">
                 <span className="text-2xl font-bold text-pink-300">{item.name.charAt(0)}</span>
@@ -295,7 +315,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
         >
           {config.logoUrl ? (
-            <img src={config.logoUrl} alt="Logo" className="h-10 w-auto object-contain" />
+            <div className="relative h-10 w-32">
+              <NextImage 
+                src={config.logoUrl} 
+                alt={`${currentStore?.name || '店舗'}ロゴ`} 
+                fill 
+                sizes="128px"
+                className="object-contain" 
+              />
+            </div>
           ) : (
             <>
               <span className="text-3xl drop-shadow-sm filter">🍓</span>
@@ -318,6 +346,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 triggerLogoUpload();
               }}
               className="absolute -right-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-black/40 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+              aria-label="ロゴをアップロード"
             >
               <Camera size={16} />
             </button>
@@ -331,22 +360,30 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
               aria-label="初めてのお客様へ"
             >
-              <img
-                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-                alt="Recruit Banner"
-                className="h-full w-full object-cover"
-              />
+              <div className="relative h-12 w-48 md:h-16 md:w-64">
+                <NextImage
+                  src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                  alt="初めてのお客様へバナー"
+                  fill
+                  sizes="(max-width: 768px) 0vw, 256px"
+                  className="object-cover"
+                />
+              </div>
             </Link>
             <Link
               href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
               className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
               aria-label="初めてのお客様へ"
             >
-              <img
-                src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-                alt="Recruit Banner"
-                className="h-full w-full object-cover"
-              />
+              <div className="relative h-12 w-40">
+                <NextImage
+                  src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
+                  alt="初めてのお客様へバナー"
+                  fill
+                  sizes="(max-width: 768px) 160px, 0vw"
+                  className="object-cover"
+                />
+              </div>
             </Link>
 
             <a
@@ -365,6 +402,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               className={`flex h-full flex-col items-center justify-center gap-1 px-5 transition-all active:scale-95 md:gap-1.5 md:px-8 ${
                 isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-[#333333] text-white shadow-md hover:shadow-lg'
               }`}
+              aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
             >
               {isMenuOpen ? (
                 <X size={24} className="md:h-7 md:w-7" />
@@ -393,7 +431,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   {config.logoUrl ? (
-                    <img src={config.logoUrl} alt="Logo" className="h-8 w-auto object-contain" />
+                    <div className="relative h-8 w-24">
+                      <NextImage 
+                        src={config.logoUrl} 
+                        alt="Logo" 
+                        fill 
+                        sizes="96px"
+                        className="object-contain" 
+                      />
+                    </div>
                   ) : (
                     <span className="text-2xl font-black italic text-[#D43D6F]">
                       {config.logoText}
@@ -466,9 +512,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                       className="group relative block aspect-[16/7]"
                       aria-label="求人情報を見る"
                     >
-                      <img
+                      <NextImage
                         src={config.menuBottomBanner?.imageUrl || '/福岡募集バナー.png'}
                         alt="Menu Bottom Banner"
+                        fill
+                        sizes="(max-width: 480px) 100vw, 400px"
                         className="h-full w-full object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">

@@ -221,6 +221,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                     <button
                       onClick={(e) => removeItem(idx, e)}
                       className="ml-2 rounded-full p-2 text-red-300 hover:bg-red-50 hover:text-red-500"
+                      aria-label="このコンセプト項目を削除"
                     >
                       <Trash2 size={16} />
                     </button>
@@ -237,6 +238,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
               <button
                 onClick={addItem}
                 className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
+                aria-label="新しいコンセプト項目を追加"
               >
                 <Plus size={20} />
                 <span>コンセプトを追加</span>

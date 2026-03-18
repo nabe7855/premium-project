@@ -2,7 +2,8 @@
 
 import { CastMember, Store } from '@/types/store';
 import { ChevronLeft, ChevronRight, Eye, Star } from 'lucide-react';
-import Link from 'next/link'; // ✅ 追加
+import NextImage from 'next/image';
+import Link from 'next/link';
 import React, { useState } from 'react';
 
 interface TodaysCastProps {
@@ -52,9 +53,12 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
             <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft">
               <Link href={`/store/${store.id}/cast/${currentCast.slug || currentCast.id}`}>
                 <div className="relative aspect-[3/4] overflow-hidden">
-                  <img
+                  <NextImage
                     src={currentCast.image}
                     alt={currentCast.name}
+                    fill
+                    priority
+                    sizes="(max-width: 768px) 100vw, 300px"
                     className="h-full w-full object-cover transition-transform duration-700"
                   />
                   {/* Status Badge */}
@@ -117,6 +121,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
               <button
                 onClick={prevSlide}
                 className={`rounded-full p-3 bg-${store.colors.primary} text-white transition-opacity hover:opacity-90`}
+                aria-label="前のキャストを表示"
               >
                 <ChevronLeft className="h-5 w-5" />
               </button>
@@ -126,6 +131,8 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                   <button
                     key={index}
                     onClick={() => setCurrentIndex(index)}
+                    aria-label={`${index + 1}番目のキャストを表示`}
+                    aria-current={index === currentIndex ? 'true' : 'false'}
                     className={`h-3 w-3 rounded-full transition-colors ${
                       index === currentIndex ? `bg-${store.colors.primary}` : 'bg-gray-300'
                     }`}
@@ -136,6 +143,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
               <button
                 onClick={nextSlide}
                 className={`rounded-full p-3 bg-${store.colors.primary} text-white transition-opacity hover:opacity-90`}
+                aria-label="次のキャストを表示"
               >
                 <ChevronRight className="h-5 w-5" />
               </button>
@@ -151,9 +159,11 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
               >
                 <Link href={`/store/${store.id}/cast/${cast.slug || cast.id}`}>
                   <div className="relative aspect-[3/4] overflow-hidden">
-                    <img
+                    <NextImage
                       src={cast.image}
                       alt={cast.name}
+                      fill
+                      sizes="(max-width: 1024px) 50vw, 25vw"
                       className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
                     {/* Status Badge */}
@@ -210,6 +220,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                     <Link
                       href={`/store/${store.id}/cast/${cast.slug || cast.id}`}
                       className="rounded-full bg-rose-500 p-2 text-white shadow-md shadow-rose-200 transition-transform active:scale-90"
+                      aria-label={`${cast.name}のプロフィールを見る`}
                     >
                       <Eye className="h-4 w-4" />
                     </Link>

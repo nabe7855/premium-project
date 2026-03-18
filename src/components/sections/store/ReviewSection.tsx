@@ -76,6 +76,7 @@ export default function ReviewSection() {
               <button
                 key={index}
                 onClick={() => setCurrentReview(index)}
+                aria-label={`${index + 1}番目のレビューを表示`}
                 className={`h-3 w-3 rounded-full transition-colors ${
                   index === currentReview ? `bg-gradient-to-r ${theme.gradient}` : 'bg-gray-300'
                 }`}
