@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 
 interface FooterProps {
   isVisible?: boolean;
@@ -238,7 +239,12 @@ const Footer: React.FC<FooterProps> = ({
               {copyright}
             </div>
           ) : (
-            <div className="text-xs uppercase tracking-widest opacity-50">{copyright}</div>
+            <div className="flex items-center gap-4 text-xs uppercase tracking-widest opacity-50">
+              {copyright}
+              <Link href="/links" className="hover:text-white hover:opacity-100 transition-all font-normal">
+                相互リンク
+              </Link>
+            </div>
           )}
           <div className="flex space-x-6">
             <div className="flex flex-col items-end gap-1">

@@ -83,6 +83,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     if (pathname.includes('/page-request')) return 'ページ制作依頼';
     if (pathname.includes('/news-management')) return 'ニュースページ管理';
     if (pathname.includes('/banners')) return 'バナー管理';
+    if (pathname.includes('/links-management')) return 'パートナーリンク管理';
     if (pathname.includes('/auto-post')) return 'AI自動投稿管理';
     if (pathname.includes('/media-management')) return 'メディア記事管理';
     if (pathname.includes('/analytics')) return 'データ分析';

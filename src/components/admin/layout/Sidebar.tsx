@@ -115,6 +115,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
           label: '広告・集客',
         },
         { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
+        { href: '/admin/admin/links-management', icon: <DocumentTextIcon />, label: 'パートナーリンク管理' },
         { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
         {
           href: '/admin/admin/advertising/list',

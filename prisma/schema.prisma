@@ -838,3 +838,20 @@ model Banner {
 
   @@map("banners")
 }
+
+model PartnerLink {
+  id            String   @id @default(uuid())
+  site_name     String
+  site_url      String
+  banner_url    String?
+  description   String?
+  seo_keywords  String?
+  category      String   @default("general")
+  location      String   @default("all") // "all", "fukuoka", "tokyo" など
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("partner_links")
+}
