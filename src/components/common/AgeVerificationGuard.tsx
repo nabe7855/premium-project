@@ -10,7 +10,8 @@ interface AgeVerificationGuardProps {
 
 const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children }) => {
   const pathname = usePathname();
-  const [isVerified, setIsVerified] = useState<boolean | null>(null);
+  const [isVerified, setIsVerified] = useState<boolean>(true); // Default to true to allow SSR content to be 'visible' to crawlers
+  const [hasChecked, setHasChecked] = useState(false);
 
   // 除外対象のパス判定
   const isExcluded = () => {
@@ -45,6 +46,7 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
     } else {
       setIsVerified(false);
     }
+    setHasChecked(true);
   }, [pathname]);
 
   const handleVerify = () => {
@@ -71,28 +73,15 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
       </div>
 
       {/* Modal Overlay without Framer Motion */}
-      {(isVerified === false || isVerified === null) && (
+      {!isVerified && hasChecked && (
         <div
-          className={`fixed inset-0 z-[99999] flex items-center justify-center bg-white p-4 backdrop-blur-xl transition-opacity duration-300 ease-in-out ${
-            isVerified === null ? 'opacity-100' : 'opacity-100'
-          }`}
+          className="fixed inset-0 z-[99999] flex items-center justify-center bg-white p-4 backdrop-blur-xl transition-opacity duration-300 ease-in-out"
           style={{
             backgroundImage: `radial-gradient(circle at 20% 20%, rgba(255, 192, 203, 0.2) 0%, transparent 40%),
                               radial-gradient(circle at 80% 80%, rgba(255, 182, 193, 0.2) 0%, transparent 40%)`,
           }}
         >
-          <div
-            className={`relative w-full max-w-lg overflow-hidden rounded-[3rem] border-4 border-rose-100 bg-white/95 p-8 text-center shadow-[0_20px_50px_rgba(255,182,193,0.3)] backdrop-blur-md transition-all duration-500 ease-out md:p-12 ${
-              isVerified === null ? 'translate-y-0 scale-100 opacity-100' : 'translate-y-0 scale-100 opacity-100'
-            }`}
-          >
-            {isVerified === null ? (
-              // 初期ロード時のプレースホルダー（チラつき防止）
-              <div className="flex flex-col items-center py-10">
-                <div className="h-12 w-12 animate-spin rounded-full border-4 border-rose-100 border-t-rose-500" />
-                <p className="mt-4 font-serif text-sm font-bold text-rose-300">Loading...</p>
-              </div>
-            ) : (
+          <div className="relative w-full max-w-lg overflow-hidden rounded-[3rem] border-4 border-rose-100 bg-white/95 p-8 text-center shadow-[0_20px_50px_rgba(255,182,193,0.3)] backdrop-blur-md transition-all duration-500 ease-out md:p-12 animate-in fade-in zoom-in">
               <div className="animate-in fade-in zoom-in duration-500">
                 {/* 装飾用イチゴアイコンイメージ */}
                 <div className="mb-6 flex justify-center">
@@ -144,7 +133,6 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
                   Strawberry Boys - Premium Healing Service
                 </p>
               </div>
-            )}
           </div>
         </div>
       )}
