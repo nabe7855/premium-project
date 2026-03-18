@@ -31,6 +31,7 @@ const zenMaruGothic = Zen_Maru_Gothic({
 
 interface FirstTimePageContentProps {
   slug?: string;
+  storeName?: string;
   isEditing?: boolean;
   config?: FirstTimeConfig;
   onUpdate?: (section: string, key: string, value: any) => void;
@@ -43,6 +44,7 @@ export default function FirstTimePageContent({
   config: propConfig,
   onUpdate,
   onImageUpload,
+  storeName: propStoreName,
 }: FirstTimePageContentProps) {
   const params = useParams();
   const slug = propSlug || (params?.slug as string) || 'fukuoka';
@@ -65,8 +67,9 @@ export default function FirstTimePageContent({
     fetchConfig();
   }, [slug, propConfig]);
 
-  const store = stores[slug] || stores['fukuoka'];
-  const storeName = store.name;
+  // 静的データからのフォールバック（propsがない場合のみ）
+  const staticStore = stores[slug] || stores['fukuoka'];
+  const storeName = propStoreName || staticStore.name;
 
   if (isLoading) {
     return (

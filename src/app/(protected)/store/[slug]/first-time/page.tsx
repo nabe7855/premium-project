@@ -32,7 +32,7 @@ export default async function Page({ params }: PageProps) {
       ) : store.template === 'yokohama' ? (
         <YokohamaHeader config={topConfig.header} />
       ) : null}
-      <FirstTimePageContent slug={params.slug} />
+      <FirstTimePageContent slug={params.slug} storeName={store.name} />
     </>
   );
 }

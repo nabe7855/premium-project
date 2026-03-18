@@ -27,6 +27,7 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
     }
 
     // 生SQLでキャスト情報を取得
+    console.log(`[getCastsByStore] Executing query for storeId: ${store.id}`);
     const castRows = await prisma.$queryRawUnsafe<any[]>(
       `
       SELECT 
@@ -43,13 +44,16 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
       FROM casts c
       JOIN cast_store_memberships m ON c.id = m.cast_id
       WHERE m.store_id = $1::uuid
-        AND (m.end_date IS NULL OR m.end_date > NOW() OR m.end_date > '2099-01-01'::date)
+        AND c.is_active = true
+        AND (m.end_date IS NULL OR m.end_date >= CURRENT_DATE OR m.end_date > '2099-01-01'::date)
       ORDER BY m.is_main DESC, m.priority ASC, m.start_date DESC
       LIMIT $2
       `,
       store.id,
       limit,
     );
+
+    console.log(`[getCastsByStore] Found ${castRows.length} casts for ${storeSlug}`);
 
     const casts: CastData[] = castRows.map((row, index) => ({
       id: row.id,
