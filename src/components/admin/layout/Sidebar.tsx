@@ -126,7 +126,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
         },
         { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
         { href: '/admin/admin/links-management', icon: <DocumentTextIcon />, label: 'パートナーリンク管理' },
-        { href: '/store/fukuoka/links', icon: <PresentationChartLineIcon />, label: '公開リンク集（福岡）を表示', target: '_blank' },
+        { href: '/admin/admin/stores/links', icon: <SparklesIcon />, label: '店舗リンク集を編集' },
         { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
         {
           href: '/admin/admin/advertising/list',

@@ -51,6 +51,7 @@ model Store {
   price_config       PriceConfig?
   recruit_pages      RecruitPage[]
   store_top_config   StoreTopConfig?
+  store_links_config StoreLinksConfig?
   first_time_config  FirstTimeConfig?
   line_id            String?
   line_url           String?
@@ -113,6 +114,17 @@ model FirstTimeConfig {
   store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
 
   @@map("first_time_configs")
+}
+
+model StoreLinksConfig {
+  id         String   @id @default(uuid())
+  store_id   String   @unique
+  config     Json
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  store      Store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+
+  @@map("store_links_configs")
 }
 
 model Schedule {
