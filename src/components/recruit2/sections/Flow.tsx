@@ -125,11 +125,17 @@ const Flow: React.FC<FlowProps> = ({
               suppressContentEditableWarning
               onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
               className="mx-auto max-w-2xl cursor-text rounded text-base text-slate-500 outline-none hover:bg-slate-200 md:text-lg"
+              style={{ whiteSpace: 'pre-wrap' }}
             >
               {description}
             </p>
           ) : (
-            <p className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg">{description}</p>
+            <p 
+              className="mx-auto max-w-2xl text-base text-slate-500 md:text-lg"
+              style={{ whiteSpace: 'pre-wrap' }}
+            >
+              {description}
+            </p>
           )}
 
           <div className="mt-8 inline-block rotate-2 transform animate-bounce rounded-xl border-2 border-yellow-400 bg-yellow-100 px-6 py-3">
@@ -258,11 +264,15 @@ const Flow: React.FC<FlowProps> = ({
                                 handleInput('steps', newSteps);
                               }}
                               className="cursor-text rounded text-sm font-medium leading-relaxed text-slate-600 outline-none hover:bg-slate-100 md:text-base"
+                              style={{ whiteSpace: 'pre-wrap' }}
                             >
                               {s.desc}
                             </p>
                           ) : (
-                            <p className="text-sm font-medium leading-relaxed text-slate-600 md:text-base">
+                            <p 
+                              className="text-sm font-medium leading-relaxed text-slate-600 md:text-base"
+                              style={{ whiteSpace: 'pre-wrap' }}
+                            >
                               {s.desc}
                             </p>
                           )}

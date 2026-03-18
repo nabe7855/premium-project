@@ -60,14 +60,14 @@ const Benefits: React.FC<BenefitsProps> = ({
                 suppressContentEditableWarning
                 onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
                 className="mb-6 cursor-text rounded font-serif text-3xl font-bold tracking-tight text-slate-900 outline-none hover:bg-slate-100 md:text-5xl"
-                style={{ whiteSpace: 'pre-line' }}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
               </h3>
             ) : (
               <h3
                 className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
-                style={{ whiteSpace: 'pre-line' }}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
               </h3>
@@ -79,11 +79,17 @@ const Benefits: React.FC<BenefitsProps> = ({
                 suppressContentEditableWarning
                 onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
                 className="mx-auto max-w-2xl cursor-text rounded text-lg text-slate-600 outline-none hover:bg-slate-100"
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {description}
               </p>
             ) : (
-              <p className="mx-auto max-w-2xl text-lg text-slate-600">{description}</p>
+              <p 
+                className="mx-auto max-w-2xl text-lg text-slate-600"
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
+                {description}
+              </p>
             )}
           </div>
 
@@ -105,6 +111,7 @@ const Benefits: React.FC<BenefitsProps> = ({
                         handleInput('points', newPoints);
                       }}
                       className="mb-4 cursor-text rounded text-xl font-bold text-slate-900 outline-none hover:bg-slate-100"
+                      style={{ whiteSpace: 'pre-wrap' }}
                     >
                       {p.title}
                     </h4>
@@ -117,14 +124,23 @@ const Benefits: React.FC<BenefitsProps> = ({
                         handleInput('points', newPoints);
                       }}
                       className="cursor-text rounded text-left text-sm leading-relaxed text-slate-500 opacity-90 outline-none hover:bg-slate-100"
+                      style={{ whiteSpace: 'pre-wrap' }}
                     >
                       {p.desc}
                     </p>
                   </>
                 ) : (
                   <>
-                    <h4 className="mb-4 text-xl font-bold text-slate-900">{p.title}</h4>
-                    <p className="text-left text-sm leading-relaxed text-slate-500 opacity-90">
+                    <h4 
+                      className="mb-4 text-xl font-bold text-slate-900"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
+                      {p.title}
+                    </h4>
+                    <p 
+                      className="text-left text-sm leading-relaxed text-slate-500 opacity-90"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
                       {p.desc}
                     </p>
                   </>

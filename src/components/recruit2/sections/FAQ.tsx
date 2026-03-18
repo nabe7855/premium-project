@@ -167,11 +167,17 @@ const FAQ: React.FC<FAQProps> = ({
               suppressContentEditableWarning
               onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
               className="cursor-text rounded px-4 text-sm text-slate-500 outline-none hover:bg-slate-100 sm:text-base"
+              style={{ whiteSpace: 'pre-wrap' }}
             >
               {description}
             </p>
           ) : (
-            <p className="px-4 text-sm text-slate-500 sm:text-base">{description}</p>
+            <p 
+              className="px-4 text-sm text-slate-500 sm:text-base"
+              style={{ whiteSpace: 'pre-wrap' }}
+            >
+              {description}
+            </p>
           )}
         </div>
 
@@ -230,11 +236,15 @@ const FAQ: React.FC<FAQProps> = ({
                         }
                       }}
                       className="cursor-text rounded text-sm font-bold leading-relaxed text-slate-900 outline-none hover:bg-slate-100 sm:text-base"
+                      style={{ whiteSpace: 'pre-wrap' }}
                     >
                       {faq.q}
                     </span>
                   ) : (
-                    <span className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base">
+                    <span 
+                      className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base"
+                      style={{ whiteSpace: 'pre-wrap' }}
+                    >
                       {faq.q}
                     </span>
                   )}
@@ -268,11 +278,12 @@ const FAQ: React.FC<FAQProps> = ({
                         }
                       }}
                       className="flex-grow cursor-text rounded outline-none hover:bg-slate-100"
+                      style={{ whiteSpace: 'pre-wrap' }}
                     >
                       {faq.a}
                     </div>
                   ) : (
-                    <div>{faq.a}</div>
+                    <div style={{ whiteSpace: 'pre-wrap' }}>{faq.a}</div>
                   )}
                 </div>
               </div>

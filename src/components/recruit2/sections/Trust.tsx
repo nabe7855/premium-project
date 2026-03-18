@@ -234,6 +234,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
                   newPillars[idx].title = e.currentTarget.innerText;
                   onUpdate?.('pillars', newPillars);
                 }}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {pillar.title}
               </h4>
@@ -246,6 +247,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
                   newPillars[idx].desc = e.currentTarget.innerText;
                   onUpdate?.('pillars', newPillars);
                 }}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {pillar.desc}
               </p>
@@ -336,6 +338,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
                   newStats[idx].desc = e.currentTarget.innerText;
                   onUpdate?.('stats', newStats);
                 }}
+                style={{ whiteSpace: 'pre-wrap' }}
               >
                 {stat.desc}
               </p>
