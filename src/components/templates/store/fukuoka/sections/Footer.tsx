@@ -88,7 +88,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   });
 
   return (
-    <footer id="footer" className="border-Pink-100 border-t bg-[#EE827C] py-8 text-slate-800">
+    <footer id="footer" className="border-Pink-100 border-t bg-[#EE827C] pt-8 pb-32 text-slate-800">
       <div className="mx-auto max-w-[1000px] px-4">
         {/* Main Content Area */}
         <div className="flex flex-col gap-10 md:flex-row">
@@ -293,8 +293,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
           </nav>
 
           {/* Bottom Copyright */}
-          <div className="mt-12 border-t border-slate-100/30 pt-6 text-center">
-            <p className="flex items-center justify-center gap-4 text-[10px] tracking-widest text-slate-800">
+          <div className="mt-12 border-t border-slate-100/30 pt-6 pb-20 text-center">
+            <p className="flex flex-col items-center justify-center gap-2 text-[10px] tracking-widest text-slate-800 md:flex-row md:gap-4">
               <span
                 contentEditable={isEditing}
                 suppressContentEditableWarning={isEditing}
