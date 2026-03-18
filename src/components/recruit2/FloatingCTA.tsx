@@ -34,14 +34,14 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
           <span className="mb-0.5 text-[8px] font-bold uppercase tracking-tighter opacity-80">
             LINE
           </span>
-          <span className="text-[11px] font-bold">チャット</span>
+          <span className="text-[11px] font-bold">質問してみる</span>
         </a>
         <button
           onClick={onOpenChat}
           className="flex flex-col items-center justify-center border-r border-yellow-600/20 bg-yellow-400 px-1 py-4 text-black shadow-md transition-all active:scale-[0.98] active:bg-yellow-500"
         >
           <span className="mb-0.5 text-[8px] font-bold uppercase tracking-tighter opacity-80">
-            Quick
+            QUICK
           </span>
           <span className="text-[11px] font-bold">簡単応募</span>
         </button>
@@ -50,9 +50,9 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
           className="flex flex-col items-center justify-center bg-slate-900 px-1 py-4 text-white shadow-md transition-all active:scale-[0.98] active:bg-slate-800"
         >
           <span className="mb-0.5 text-[8px] font-bold uppercase tracking-tighter opacity-80">
-            Form
+            FORM
           </span>
-          <span className="text-[11px] font-bold">フォーム応募</span>
+          <span className="text-[11px] font-bold">応募フォーム</span>
         </button>
       </div>
     </div>
