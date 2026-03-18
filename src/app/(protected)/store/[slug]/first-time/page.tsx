@@ -1,6 +1,8 @@
 import FirstTimePageContent from '@/components/sections/guide/first-time/FirstTimePageContent';
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
+import { getFirstTimeConfig } from '@/lib/store/firstTimeActions';
+import { mergeConfig } from '@/lib/store/firstTimeConfig';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -13,17 +15,26 @@ interface PageProps {
 }
 
 export default async function Page({ params }: PageProps) {
-  const store = getStoreData(params.slug);
+  const { slug } = params;
+  const store = getStoreData(slug);
 
   if (!store) {
     notFound();
   }
 
-  // 店舗トップ設定を取得
-  const topConfigResult = await getStoreTopConfig(params.slug);
+  // 設定データをサーバーサイドで並列取得して TTFB を最適化
+  const [topConfigResult, firstTimeConfigResult] = await Promise.all([
+    getStoreTopConfig(slug),
+    getFirstTimeConfig(slug),
+  ]);
+
   const topConfig = topConfigResult.success
     ? (topConfigResult.config as StoreTopPageConfig)
     : DEFAULT_STORE_TOP_CONFIG;
+
+  const firstTimeConfig = firstTimeConfigResult.success && firstTimeConfigResult.config
+    ? mergeConfig(firstTimeConfigResult.config)
+    : mergeConfig({});
 
   return (
     <>
@@ -32,7 +43,11 @@ export default async function Page({ params }: PageProps) {
       ) : store.template === 'yokohama' ? (
         <YokohamaHeader config={topConfig.header} />
       ) : null}
-      <FirstTimePageContent slug={params.slug} storeName={store.name} />
+      <FirstTimePageContent 
+        slug={slug} 
+        storeName={store.name} 
+        config={firstTimeConfig}
+      />
     </>
   );
 }

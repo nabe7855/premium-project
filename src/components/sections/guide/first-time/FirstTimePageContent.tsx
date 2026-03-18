@@ -48,12 +48,16 @@ export default function FirstTimePageContent({
 }: FirstTimePageContentProps) {
   const params = useParams();
   const slug = propSlug || (params?.slug as string) || 'fukuoka';
-  const [config, setConfig] = useState<FirstTimeConfig>(mergeConfig(propConfig));
+  
+  // サーバーサイドから渡された初期設定を使用し、不要なスピナー表示を回避
+  const [config, setConfig] = useState<FirstTimeConfig>(propConfig || mergeConfig({}));
   const [isLoading, setIsLoading] = useState(!propConfig);
 
   useEffect(() => {
+    // すでに Props で設定が渡されている場合は、マウント時のフェッチをスキップ
     if (propConfig) {
-      setConfig(mergeConfig(propConfig));
+      setConfig(propConfig);
+      setIsLoading(false);
       return;
     }
 
@@ -71,7 +75,8 @@ export default function FirstTimePageContent({
   const staticStore = stores[slug] || stores['fukuoka'];
   const storeName = propStoreName || staticStore.name;
 
-  if (isLoading) {
+  // 編集モード以外で設定がある場合はスピナーを出さない（SSR/ISR を最大活用）
+  if (isLoading && !propConfig) {
     return (
       <div className="flex h-screen items-center justify-center">
         <div className="h-12 w-12 animate-spin rounded-full border-b-2 border-pink-500"></div>
