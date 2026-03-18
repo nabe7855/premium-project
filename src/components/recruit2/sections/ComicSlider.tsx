@@ -127,7 +127,7 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
           <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
             マンガでわかる仕事の流れ
           </h3>
-          <p className="text-sm text-slate-500 sm:text-base">
+          <p className="whitespace-pre-wrap text-sm text-slate-800 sm:text-base">
             未経験からデビュー、そして人生が変わるまでの物語
           </p>
         </div>
@@ -196,7 +196,7 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
                         className="h-20 w-full rounded border border-slate-200 bg-transparent p-2 text-sm leading-relaxed text-slate-600 focus:border-amber-500 focus:outline-none"
                       />
                     ) : (
-                      <p className="text-sm leading-relaxed text-slate-600">{step.text}</p>
+                      <p className="whitespace-pre-wrap text-sm leading-relaxed text-slate-700">{step.text}</p>
                     )}
                   </div>
                 </div>

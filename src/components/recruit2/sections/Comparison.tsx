@@ -157,7 +157,10 @@ const Comparison: React.FC<ComparisonProps> = ({
             <div className="relative col-span-1">
               <div className="absolute -left-1 -right-1 -top-2 bottom-0 z-0 origin-bottom scale-y-105 transform rounded-t-xl bg-blue-600 shadow-lg sm:-left-2 sm:-right-2 sm:-top-4 sm:scale-y-110 sm:rounded-t-2xl sm:shadow-xl" />
               <div className="relative z-10 px-1 py-3 text-white sm:px-4 sm:py-6">
-                <h4 className="mb-0 text-base font-bold sm:mb-1 sm:text-2xl">
+                <h4 
+                  className="mb-0 text-base font-bold sm:mb-1 sm:text-2xl"
+                  style={{ whiteSpace: 'pre-wrap' }}
+                >
                   {editable(ourStoreLabel, 'ourStoreLabel', '')}
                 </h4>
                 <p className="text-[8px] font-bold text-blue-100 sm:text-xs">
@@ -168,7 +171,10 @@ const Comparison: React.FC<ComparisonProps> = ({
 
             {/* Company A Header */}
             <div className="col-span-1 flex flex-col justify-center rounded-t-lg bg-slate-200 px-1 py-3 text-slate-600 sm:rounded-t-xl sm:px-4 sm:py-6">
-              <h4 className="text-xs font-bold sm:text-lg">
+              <h4 
+                className="text-xs font-bold sm:text-lg"
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
                 {editable(storeALabel, 'storeALabel', '')}
               </h4>
               <p className="hidden text-[8px] opacity-70 sm:block sm:text-xs">
@@ -178,7 +184,10 @@ const Comparison: React.FC<ComparisonProps> = ({
 
             {/* Company B Header */}
             <div className="col-span-1 flex flex-col justify-center rounded-t-lg bg-slate-100 px-1 py-3 text-slate-500 sm:rounded-t-xl sm:px-4 sm:py-6">
-              <h4 className="text-xs font-bold sm:text-lg">
+              <h4 
+                className="text-xs font-bold sm:text-lg"
+                style={{ whiteSpace: 'pre-wrap' }}
+              >
                 {editable(storeBLabel, 'storeBLabel', '')}
               </h4>
               <p className="hidden text-[8px] opacity-70 sm:block sm:text-xs">
@@ -197,11 +206,12 @@ const Comparison: React.FC<ComparisonProps> = ({
                       suppressContentEditableWarning
                       onBlur={(e) => handleFeatureUpdate(idx, 'label', e.currentTarget.innerText)}
                       className="cursor-text outline-none hover:bg-black/5"
+                      style={{ whiteSpace: 'pre-wrap' }}
                     >
                       {item.label}
                     </span>
                   ) : (
-                    item.label
+                    <span style={{ whiteSpace: 'pre-wrap' }}>{item.label}</span>
                   )}
                 </div>
 

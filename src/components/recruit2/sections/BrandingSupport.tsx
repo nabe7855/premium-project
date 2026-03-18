@@ -73,16 +73,18 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
       <div className="container relative z-10 mx-auto px-4">
         <div className="mx-auto max-w-4xl text-center">
           {isEditing ? (
-            <h2
+            <h2 
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => onUpdate?.('heading', e.currentTarget.innerText)}
-              className="mb-8 cursor-text whitespace-pre-line rounded font-serif text-3xl font-light leading-tight tracking-wide text-white outline-none hover:bg-white/5 md:text-5xl lg:text-6xl"
+              className="mb-8 cursor-text whitespace-pre-wrap rounded font-serif text-3xl font-light leading-tight tracking-wide text-white outline-none hover:bg-white/5 md:text-5xl lg:text-6xl"
             >
               {heading}
             </h2>
           ) : (
-            <h2 className="mb-8 whitespace-pre-line font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl">
+            <h2 
+              className="mb-8 whitespace-pre-wrap font-serif text-3xl font-light leading-tight tracking-wide text-white md:text-5xl lg:text-6xl"
+            >
               {heading}
             </h2>
           )}
@@ -93,11 +95,15 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
               suppressContentEditableWarning
               onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
               className="mx-auto mb-16 max-w-2xl cursor-text rounded text-lg font-light leading-relaxed text-slate-300 outline-none hover:bg-white/5 md:text-xl"
+              style={{ whiteSpace: 'pre-wrap' }}
             >
               {description}
             </p>
           ) : (
-            <p className="mx-auto mb-16 max-w-2xl text-lg font-light leading-relaxed text-slate-300 md:text-xl">
+            <p 
+              className="mx-auto mb-16 max-w-2xl text-lg font-light leading-relaxed text-slate-300 md:text-xl"
+              style={{ whiteSpace: 'pre-wrap' }}
+            >
               {description}
             </p>
           )}
@@ -114,11 +120,17 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
                     suppressContentEditableWarning
                     onBlur={(e) => handleFeatureUpdate(i, 'title', e.currentTarget.innerText)}
                     className="mb-4 cursor-text rounded font-serif text-xl text-amber-50 outline-none hover:bg-white/5"
+                    style={{ whiteSpace: 'pre-wrap' }}
                   >
                     {f.title}
                   </h4>
                 ) : (
-                  <h4 className="mb-4 font-serif text-xl text-amber-50">{f.title}</h4>
+                  <h4 
+                    className="mb-4 font-serif text-xl text-amber-50"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {f.title}
+                  </h4>
                 )}
                 {isEditing ? (
                   <p
@@ -126,11 +138,17 @@ const BrandingSupport: React.FC<BrandingSupportProps> = ({
                     suppressContentEditableWarning
                     onBlur={(e) => handleFeatureUpdate(i, 'desc', e.currentTarget.innerText)}
                     className="cursor-text rounded text-base font-light leading-relaxed text-slate-400 outline-none hover:bg-white/5"
+                    style={{ whiteSpace: 'pre-wrap' }}
                   >
                     {f.desc}
                   </p>
                 ) : (
-                  <p className="text-base font-light leading-relaxed text-slate-400">{f.desc}</p>
+                  <p 
+                    className="text-base font-light leading-relaxed text-slate-400"
+                    style={{ whiteSpace: 'pre-wrap' }}
+                  >
+                    {f.desc}
+                  </p>
                 )}
               </div>
             ))}

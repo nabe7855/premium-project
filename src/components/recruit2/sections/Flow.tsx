@@ -187,11 +187,15 @@ const Flow: React.FC<FlowProps> = ({
                                 handleInput('steps', newSteps);
                               }}
                               className="ml-3 cursor-text rounded bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent outline-none hover:bg-slate-200 md:ml-4 md:text-3xl"
+                              style={{ whiteSpace: 'pre-wrap' }}
                             >
                               {s.title}
                             </span>
                           ) : (
-                            <span className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl">
+                            <span 
+                              className="ml-3 bg-gradient-to-r from-slate-800 to-slate-600 bg-clip-text text-xl font-bold text-transparent md:ml-4 md:text-3xl"
+                              style={{ whiteSpace: 'pre-wrap' }}
+                            >
                               {s.title}
                             </span>
                           )}
