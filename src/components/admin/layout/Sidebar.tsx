@@ -24,6 +24,14 @@ interface SidebarProps {
   setOpen: (isOpen: boolean) => void;
 }
 
+interface NavItemConfig {
+  href: string;
+  icon: React.ReactNode;
+  label: string;
+  badgeKey?: string;
+  target?: string;
+}
+
 // Navigation item component
 const NavItem: React.FC<{
   href: string;
@@ -32,9 +40,11 @@ const NavItem: React.FC<{
   isActive: boolean;
   setOpen: (isOpen: boolean) => void;
   badge?: number;
-}> = ({ href, icon, label, isActive, setOpen, badge }) => (
+  target?: string;
+}> = ({ href, icon, label, isActive, setOpen, badge, target }) => (
   <Link
     href={href}
+    target={target}
     onClick={() => setOpen(false)} // モバイル時は閉じる
     className={`relative flex w-full items-center rounded-lg px-4 py-3 text-sm font-medium transition-all duration-200 ${
       isActive
@@ -75,7 +85,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
     return () => clearInterval(interval);
   }, []);
 
-  const navCategories = [
+  const navCategories: { title: string; items: NavItemConfig[] }[] = [
     {
       title: 'ホーム・分析',
       items: [
@@ -116,6 +126,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
         },
         { href: '/admin/admin/banners', icon: <SparklesIcon />, label: 'バナー管理' },
         { href: '/admin/admin/links-management', icon: <DocumentTextIcon />, label: 'パートナーリンク管理' },
+        { href: '/links', icon: <PresentationChartLineIcon />, label: '公開リンク集を表示', target: '_blank' },
         { href: '/admin/admin/ai/copywriter', icon: <PencilIcon />, label: 'AI広告コピー生成' },
         {
           href: '/admin/admin/advertising/list',
@@ -258,6 +269,7 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
                         isActive={isActive}
                         setOpen={setOpen}
                         badge={badgeValue}
+                        target={item.target}
                       />
                     );
                   })}
