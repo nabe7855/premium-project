@@ -59,14 +59,14 @@ const Benefits: React.FC<BenefitsProps> = ({
                 contentEditable
                 suppressContentEditableWarning
                 onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
-                className="mb-6 cursor-text rounded font-serif text-3xl font-bold tracking-tight text-slate-900 outline-none hover:bg-slate-100 md:text-5xl"
+                className="mb-6 cursor-text rounded font-serif text-3xl font-bold tracking-tight text-white outline-none hover:bg-white/10 md:text-5xl"
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
               </h3>
             ) : (
               <h3
-                className="mb-6 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-5xl"
+                className="mb-6 font-serif text-3xl font-bold tracking-tight text-white md:text-5xl"
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
@@ -78,14 +78,14 @@ const Benefits: React.FC<BenefitsProps> = ({
                 contentEditable
                 suppressContentEditableWarning
                 onBlur={(e) => handleInput('description', e.currentTarget.innerText)}
-                className="mx-auto max-w-2xl cursor-text rounded text-lg text-slate-600 outline-none hover:bg-slate-100"
+                className="mx-auto max-w-2xl cursor-text rounded text-lg text-slate-300 outline-none hover:bg-white/10"
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {description}
               </p>
             ) : (
               <p 
-                className="mx-auto max-w-2xl text-lg text-slate-600"
+                className="mx-auto max-w-2xl text-lg text-slate-300"
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {description}
