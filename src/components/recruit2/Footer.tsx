@@ -31,7 +31,7 @@ const Footer: React.FC<FooterProps> = ({
     { label: '私たちの実績', url: '#achievements' },
     { label: '安心のサポート', url: '#benefits' },
     { label: '報酬シミュレーション', url: '#income' },
-    { label: 'よくあるご質問', url: '#faq' },
+    { label: 'よくあるご質問', url: '#qa' },
   ],
   contactHeading = 'Contact',
   phone = '05054913991',
@@ -188,7 +188,9 @@ const Footer: React.FC<FooterProps> = ({
                     {phone}
                   </span>
                 ) : (
-                  phone
+                  <a href={`tel:${phone.replace(/-/g, '')}`} className="transition-colors hover:text-amber-500">
+                    {phone}
+                  </a>
                 )}
               </li>
               <li>
@@ -219,21 +221,6 @@ const Footer: React.FC<FooterProps> = ({
                   </span>
                 ) : (
                   businessHours
-                )}
-              </li>
-              <li>
-                所在地：
-                {isEditing ? (
-                  <span
-                    contentEditable
-                    suppressContentEditableWarning
-                    onBlur={(e) => onUpdate?.('address', e.currentTarget.innerText)}
-                    className="cursor-text rounded outline-none hover:bg-white/5"
-                  >
-                    {address}
-                  </span>
-                ) : (
-                  address
                 )}
               </li>
             </ul>

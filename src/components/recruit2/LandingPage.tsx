@@ -746,7 +746,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
       {/* FAQ Section */}
       {(config.faq?.isVisible !== false || isEditing) && (
         <div
-          id="faq"
+          id="qa"
           className={`group relative transition-opacity duration-300 ${
             config?.faq?.isVisible === false ? 'opacity-40' : ''
           }`}
