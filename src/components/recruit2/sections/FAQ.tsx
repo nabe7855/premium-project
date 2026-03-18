@@ -143,7 +143,7 @@ const FAQ: React.FC<FAQProps> = ({
     activeTab === 'all' ? items : items.filter((f) => f.cat === activeTab || f.cat === 'general');
 
   return (
-    <section id="qa" className="bg-slate-900 py-32 text-white">
+    <section id="qa" className="bg-white py-32">
       <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-10 text-center sm:mb-16">
           {isEditing ? (
