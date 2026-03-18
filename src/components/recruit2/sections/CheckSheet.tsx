@@ -339,13 +339,11 @@ const CheckSheet: React.FC<CheckSheetProps> = ({
 
         <div className="mt-16 text-center">
           <div className="relative mx-auto inline-block">
-            <div className="absolute -left-4 -top-4 text-4xl opacity-20">❝</div>
             <div className="max-w-xl text-base font-bold leading-relaxed text-slate-700 md:text-lg">
               {editable(closingLine1, 'closingLine1', 'block')}
               {editable(closingLine2, 'closingLine2', 'block')}
               {editable(closingLine3, 'closingLine3', 'block')}
             </div>
-            <div className="absolute -bottom-4 -right-4 text-4xl opacity-20">❞</div>
           </div>
         </div>
       </div>
