@@ -30,21 +30,21 @@ export const DEFAULT_STORE_LINKS_CONFIG: StoreLinksConfig = {
     { 
       id: 'general', 
       label: '女性用風俗 情報サイト', 
-      emoji: '🌸', 
+      emoji: '', 
       desc: '信頼できる女風情報をまとめたサイト',
       isVisible: true
     },
     { 
       id: 'recruit', 
       label: '求人・募集サイト', 
-      emoji: '💼', 
+      emoji: '', 
       desc: '業界の求人・採用情報サイト',
       isVisible: true
     },
     { 
       id: 'media', 
       label: '関連メディア', 
-      emoji: '📰', 
+      emoji: '', 
       desc: '女性向け風俗・癒しのメディア',
       isVisible: true
     },

@@ -256,9 +256,9 @@ export default function LinksManagementPage() {
               >
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   {/* Banner preview */}
-                  <div className="relative h-20 w-36 flex-shrink-0 overflow-hidden rounded-xl bg-gray-800">
+                  <div className="relative h-20 w-36 flex-shrink-0 overflow-hidden rounded-xl bg-gray-800/50">
                     {link.banner_url ? (
-                      <img src={link.banner_url} alt={link.site_name} className="h-full w-full object-cover" />
+                      <img src={link.banner_url} alt={link.site_name} className="h-full w-full object-contain p-1" />
                     ) : (
                       <div className="flex h-full items-center justify-center text-gray-600">
                         <ImageIcon className="h-8 w-8" />
@@ -432,40 +432,56 @@ export default function LinksManagementPage() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-400">バナー画像</label>
                 {previewUrl && (
-                  <div className="mb-3 relative h-24 w-48 overflow-hidden rounded-xl border border-gray-700 bg-gray-900">
-                    <img src={previewUrl} alt="Preview" className="h-full w-full object-cover" />
+                  <div className="mb-3 relative h-24 w-48 overflow-hidden rounded-xl border border-gray-700 bg-gray-900/50">
+                    <img src={previewUrl} alt="Preview" className="h-full w-full object-contain p-1" />
                   </div>
                 )}
-                <div className="flex items-center gap-3">
-                  <label className="cursor-pointer rounded-lg border border-dashed border-gray-600 px-4 py-3 text-sm text-brand-accent hover:bg-gray-800">
-                    画像をアップロード
+                <div className="flex flex-col gap-3">
+                  <div className="flex items-center gap-3">
+                    <label className="cursor-pointer rounded-lg border border-dashed border-gray-600 px-4 py-3 text-sm text-brand-accent hover:bg-gray-800 shrink-0">
+                      画像をアップロード
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) {
+                            setSelectedFile(file);
+                            setPreviewUrl(URL.createObjectURL(file));
+                            setForm({ ...form, banner_url: '' }); // will be replaced after upload
+                          }
+                        }}
+                      />
+                    </label>
+                    <span className="text-xs text-gray-500">または</span>
                     <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
+                      type="text"
+                      value={selectedFile ? '（ローカルファイルを選択中）' : (form.banner_url ?? '')}
                       onChange={(e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          setSelectedFile(file);
-                          setPreviewUrl(URL.createObjectURL(file));
-                          setForm({ ...form, banner_url: '' }); // will be replaced after upload
+                        const val = e.target.value;
+                        let finalUrl = val;
+                        // HTMLタグが貼り付けられた場合に src を抽出する改善
+                        if (val.includes('<') && val.includes('src=')) {
+                          const match = val.match(/src=["'](.*?)["']/);
+                          if (match) {
+                            finalUrl = match[1];
+                          }
                         }
+                        setSelectedFile(null);
+                        setPreviewUrl(finalUrl);
+                        setForm({ ...form, banner_url: finalUrl });
                       }}
+                      readOnly={!!selectedFile}
+                      className="flex-1 rounded-lg border border-gray-600 bg-brand-primary px-3 py-3 text-sm text-white focus:border-brand-accent focus:outline-none disabled:opacity-50"
+                      placeholder="https://example.com/banner.jpg"
                     />
-                  </label>
-                  <span className="text-xs text-gray-500">または</span>
-                  <input
-                    type="url"
-                    value={selectedFile ? '（ファイル選択済み）' : (form.banner_url ?? '')}
-                    onChange={(e) => {
-                      setSelectedFile(null);
-                      setPreviewUrl(e.target.value);
-                      setForm({ ...form, banner_url: e.target.value });
-                    }}
-                    readOnly={!!selectedFile}
-                    className="flex-1 rounded-lg border border-gray-600 bg-brand-primary px-3 py-3 text-sm text-white focus:border-brand-accent focus:outline-none disabled:opacity-50"
-                    placeholder="バナー画像URL"
-                  />
+                  </div>
+                  <p className="text-[11px] text-gray-500 leading-relaxed">
+                    ※外部サイトのバナーを使う場合は、<span className="text-amber-400 font-semibold">バナー画像としてのURL（末尾が .jpg や .png など）</span>を入力してください。
+                    <br />
+                    HTMLタグ（&lt;a href=...&gt;等）を貼り付けると自動でURL部分のみ抽出を試みますが、正しく表示されない場合は直接URLをコピーして入力してください。
+                  </p>
                 </div>
               </div>
 

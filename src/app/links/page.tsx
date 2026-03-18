@@ -22,13 +22,14 @@ export default async function LinksPage() {
   const links = result.links ?? [];
 
   const categories = [
-    { id: 'general', label: '女性用風俗 情報サイト', emoji: '🌸', desc: '信頼できる女風情報をまとめたサイト' },
-    { id: 'recruit', label: '求人・募集サイト', emoji: '💼', desc: '業界の求人・採用情報サイト' },
-    { id: 'media', label: '関連メディア', emoji: '📰', desc: '女性向け風俗・癒しのメディア' },
+    { id: 'general', label: '女性用風俗 情報サイト', emoji: '', desc: '信頼できる女風情報をまとめたサイト' },
+    { id: 'recruit', label: '求人・募集サイト', emoji: '', desc: '業界の求人・採用情報サイト' },
+    { id: 'media', label: '関連メディア', emoji: '', desc: '女性向け風俗・癒しのメディア' },
   ];
 
   return (
     <>
+      {/* ... (structured data part remains the same) */}
       {/* JSON-LD 構造化データ（SEO） */}
       <script
         type="application/ld+json"
@@ -116,9 +117,13 @@ export default async function LinksPage() {
                   <section key={cat.id} aria-labelledby={`cat-${cat.id}`}>
                     {/* Category Header */}
                     <div className="mb-10 flex flex-col items-center text-center sm:flex-row sm:text-left">
-                      <div className="mb-4 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 text-3xl shadow-lg ring-1 ring-white/10 sm:mb-0 sm:mr-5">
-                        {cat.emoji}
-                      </div>
+                      {cat.emoji ? (
+                        <div className="mb-4 flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-rose-500/20 to-amber-500/20 text-3xl shadow-lg ring-1 ring-white/10 sm:mb-0 sm:mr-5">
+                          {cat.emoji}
+                        </div>
+                      ) : (
+                        <div className="mb-4 flex h-1.5 w-8 flex-shrink-0 rounded-full bg-gradient-to-r from-rose-500 to-amber-500 sm:mb-0 sm:mr-4" />
+                      )}
                       <div>
                         <h2
                           id={`cat-${cat.id}`}
@@ -143,16 +148,16 @@ export default async function LinksPage() {
                         >
                           {/* Banner Image */}
                           {link.banner_url ? (
-                            <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900">
+                            <div className="relative aspect-[16/7] w-full overflow-hidden bg-slate-900/50">
                               <Image
                                 src={link.banner_url}
                                 alt={`${link.site_name} バナー`}
                                 fill
                                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                                className="object-cover opacity-90 transition-transform duration-500 group-hover:scale-105"
+                                className="object-contain p-2 opacity-95 transition-transform duration-500 group-hover:scale-105"
                                 unoptimized
                               />
-                              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13]/80 to-transparent" />
+                              <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f13]/40 to-transparent pointer-events-none" />
                             </div>
                           ) : (
                             <div className="flex aspect-[16/7] w-full items-center justify-center bg-gradient-to-br from-slate-800 to-slate-900">
