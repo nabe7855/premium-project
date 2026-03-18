@@ -109,10 +109,32 @@ export default function LinksManagementPage() {
 
   const closeModal = () => { setIsModalOpen(false); setEditing(null); };
 
+  const convertToWebP = async (file: File): Promise<Blob> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0);
+        canvas.toBlob((blob) => {
+          if (blob) resolve(blob);
+          else reject(new Error('WebP変換に失敗しました'));
+        }, 'image/webp', 0.8);
+      };
+      img.onerror = reject;
+      img.src = URL.createObjectURL(file);
+    });
+  };
+
   const uploadBanner = async (file: File): Promise<string | null> => {
-    const ext = file.name.split('.').pop();
-    const path = `partner-links/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from('banners').upload(path, file, { upsert: false });
+    const webpBlob = await convertToWebP(file);
+    const path = `partner-links/${Date.now()}.webp`;
+    const { error } = await supabase.storage.from('banners').upload(path, webpBlob, { 
+      upsert: false,
+      contentType: 'image/webp'
+    });
     if (error) { console.error(error); return null; }
     const { data } = supabase.storage.from('banners').getPublicUrl(path);
     return data.publicUrl;
@@ -357,9 +379,24 @@ export default function LinksManagementPage() {
               <div>
                 <label className="mb-1.5 block text-sm font-semibold text-gray-400">リンク先URL *</label>
                 <input
-                  type="url"
+                  type="text"
                   value={form.site_url}
-                  onChange={(e) => setForm({ ...form, site_url: e.target.value })}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    let finalUrl = val;
+                    // HTMLタグからリンク先(href)と画像(src)を両方抽出
+                    if (val.includes('<') && (val.includes('href=') || val.includes('src='))) {
+                      const hrefMatch = val.match(/href=["'](.*?)["']/);
+                      const srcMatch = val.match(/src=["'](.*?)["']/);
+                      if (hrefMatch) finalUrl = hrefMatch[1];
+                      if (srcMatch && !form.banner_url && !selectedFile) {
+                        setForm(prev => ({ ...prev, site_url: finalUrl, banner_url: srcMatch[1] }));
+                        setPreviewUrl(srcMatch[1]);
+                        return;
+                      }
+                    }
+                    setForm({ ...form, site_url: finalUrl });
+                  }}
                   className="w-full rounded-lg border border-gray-600 bg-brand-primary px-4 py-3 text-white focus:border-brand-accent focus:outline-none"
                   placeholder="https://example.com"
                 />
@@ -461,11 +498,15 @@ export default function LinksManagementPage() {
                       onChange={(e) => {
                         const val = e.target.value;
                         let finalUrl = val;
-                        // HTMLタグが貼り付けられた場合に src を抽出する改善
-                        if (val.includes('<') && val.includes('src=')) {
-                          const match = val.match(/src=["'](.*?)["']/);
-                          if (match) {
-                            finalUrl = match[1];
+                        // HTMLタグからリンク先(href)と画像(src)を両方抽出
+                        if (val.includes('<') && (val.includes('href=') || val.includes('src='))) {
+                          const hrefMatch = val.match(/href=["'](.*?)["']/);
+                          const srcMatch = val.match(/src=["'](.*?)["']/);
+                          if (srcMatch) finalUrl = srcMatch[1];
+                          if (hrefMatch && !form.site_url) {
+                            setForm(prev => ({ ...prev, site_url: hrefMatch[1], banner_url: finalUrl }));
+                            setPreviewUrl(finalUrl);
+                            return;
                           }
                         }
                         setSelectedFile(null);
@@ -478,9 +519,7 @@ export default function LinksManagementPage() {
                     />
                   </div>
                   <p className="text-[11px] text-gray-500 leading-relaxed">
-                    ※外部サイトのバナーを使う場合は、<span className="text-amber-400 font-semibold">バナー画像としてのURL（末尾が .jpg や .png など）</span>を入力してください。
-                    <br />
-                    HTMLタグ（&lt;a href=...&gt;等）を貼り付けると自動でURL部分のみ抽出を試みますが、正しく表示されない場合は直接URLをコピーして入力してください。
+                    ※外部サイトのバナー用HTML（&lt;a href...&gt;等）を貼り付けると、自動で<span className="text-amber-400 font-semibold">リンク先と画像のURLを両方</span>抽出して設定します。
                   </p>
                 </div>
               </div>
