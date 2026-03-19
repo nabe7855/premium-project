@@ -21,18 +21,21 @@ export interface HeaderConfig {
     subHeading: string;
     mainHeading: string;
     link: string;
+    isVisible?: boolean;
   };
   specialBanner2?: {
     imageUrl: string;
     subHeading: string;
     mainHeading: string;
     link: string;
+    isVisible?: boolean;
   };
   specialBanner3?: {
     imageUrl: string;
     subHeading: string;
     mainHeading: string;
     link: string;
+    isVisible?: boolean;
   };
   menuBottomBanner: {
     imageUrl: string;
@@ -348,18 +351,21 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       subHeading: 'First Time',
       mainHeading: '初めての方へ',
       link: '/store/{slug}/first-time',
+      isVisible: true,
     },
     specialBanner2: {
       imageUrl: '/初めてのお客様へバナー.png',
       subHeading: 'Recruit',
       mainHeading: '求人募集',
       link: '/store/{slug}/recruit',
+      isVisible: true,
     },
     specialBanner3: {
       imageUrl: '/初めてのお客様へバナー.png',
       subHeading: 'Events',
       mainHeading: 'イベント',
       link: '/store/{slug}/campaign',
+      isVisible: true,
     },
     menuBottomBanner: {
       imageUrl: '/images/{slug}/recruit-banner.png',

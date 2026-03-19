@@ -149,25 +149,35 @@ export default function HeaderManagement() {
           const newNavLinks = [...config.header.navLinks];
           newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
           newHeader.navLinks = newNavLinks;
-        } else if (key === 'specialBanner') {
-          // バナー画像の更新
-          const oldImageUrl = config.header.specialBanner?.imageUrl;
-          if (
-            oldImageUrl &&
-            oldImageUrl.startsWith('http') &&
-            !oldImageUrl.includes('placehold') &&
-            !oldImageUrl.includes('福岡募集バナー')
-          ) {
-            const deleteResult = await deleteStorageFile(oldImageUrl);
-            if (!deleteResult.success) {
-              console.warn('⚠️ Special banner deletion failed:', deleteResult.error);
-              toast.error('古いバナー画像の削除に失敗しました', { id: toastId });
-            }
-          }
-
           newHeader.specialBanner = {
             ...config.header.specialBanner,
             imageUrl: publicUrl,
+          };
+        } else if (key === 'specialBanner2') {
+          // バナー2画像の更新
+          const oldImageUrl = config.header.specialBanner2?.imageUrl;
+          if (oldImageUrl && oldImageUrl.startsWith('http')) {
+            await deleteStorageFile(oldImageUrl);
+          }
+          newHeader.specialBanner2 = {
+            imageUrl: publicUrl,
+            subHeading: config.header.specialBanner2?.subHeading || '',
+            mainHeading: config.header.specialBanner2?.mainHeading || '',
+            link: config.header.specialBanner2?.link || '',
+            isVisible: config.header.specialBanner2?.isVisible ?? true,
+          };
+        } else if (key === 'specialBanner3') {
+          // バナー3画像の更新
+          const oldImageUrl = config.header.specialBanner3?.imageUrl;
+          if (oldImageUrl && oldImageUrl.startsWith('http')) {
+            await deleteStorageFile(oldImageUrl);
+          }
+          newHeader.specialBanner3 = {
+            imageUrl: publicUrl,
+            subHeading: config.header.specialBanner3?.subHeading || '',
+            mainHeading: config.header.specialBanner3?.mainHeading || '',
+            link: config.header.specialBanner3?.link || '',
+            isVisible: config.header.specialBanner3?.isVisible ?? true,
           };
         } else if (key === 'menuBottomBanner') {
           // ハンバーガーメニュー最下部バナー画像の更新
@@ -268,40 +278,38 @@ export default function HeaderManagement() {
   };
 
   // バナー画像削除処理
-  const handleBannerDelete = async () => {
+  const handleBannerDelete = async (key: 'specialBanner' | 'specialBanner2' | 'specialBanner3' = 'specialBanner') => {
     if (!selectedStore) return;
 
-    const imageUrl = config.header.specialBanner?.imageUrl;
+    const banner = config.header[key];
+    const imageUrl = banner?.imageUrl;
+    
     // デフォルト画像は削除しない
-    if (!imageUrl || imageUrl === '/福岡募集バナー.png') {
+    if (!imageUrl || imageUrl === '/福岡募集バナー.png' || !imageUrl.startsWith('http')) {
       toast.error('この画像は削除できません');
       return;
     }
 
     const toastId = toast.loading('画像を削除中...');
     try {
-      // httpで始まる場合のみ削除を試みる
-      if (imageUrl.startsWith('http')) {
-        const deleteResult = await deleteStorageFile(imageUrl);
-        if (!deleteResult.success) {
-          toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, { id: toastId });
-          return;
-        }
-      }
-
-      const newConfig = {
-        ...config,
-        header: {
-          ...config.header,
-          specialBanner: {
-            ...config.header.specialBanner,
-            imageUrl: '', // またはデフォルト画像に戻す
+      const deleteResult = await deleteStorageFile(imageUrl);
+      if (deleteResult.success) {
+        const newConfig = {
+          ...config,
+          header: {
+            ...config.header,
+            [key]: {
+              ...(banner || {}),
+              imageUrl: '',
+            },
           },
-        },
-      };
-      setConfig(newConfig);
-      await saveStoreTopConfig(selectedStore, newConfig);
-      toast.success('画像を削除しました', { id: toastId });
+        };
+        setConfig(newConfig);
+        await saveStoreTopConfig(selectedStore, newConfig);
+        toast.success('画像を削除しました', { id: toastId });
+      } else {
+        toast.error(`画像の削除に失敗しました: ${deleteResult.error}`, { id: toastId });
+      }
     } catch (error) {
       console.error('Banner delete failed:', error);
       toast.error('画像の削除に失敗しました', { id: toastId });
@@ -584,72 +592,269 @@ export default function HeaderManagement() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
-              <Camera className="h-3 w-3" />
-              特別バナー設定
-            </h2>
-            <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
-                <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
-                  <img
-                    src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
-                    alt="Special Banner"
-                    className="h-full w-full object-cover opacity-60"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                    <button
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = (e) => {
-                          const file = (e.target as HTMLInputElement).files?.[0];
-                          if (file) handleImageUpload('header', file, 0, 'specialBanner');
-                        };
-                        input.click();
-                      }}
-                      className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
-                    >
-                      <Camera size={16} />
-                    </button>
-                    {config.header.specialBanner?.imageUrl &&
-                      config.header.specialBanner.imageUrl !== '/福岡募集バナー.png' && (
-                        <button
-                          onClick={handleBannerDelete}
-                          className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                  </div>
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
-                <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
-                  <Link2 size={12} className="text-gray-500" />
-                  <input
-                    className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
-                    value={config.header.specialBanner?.link || ''}
-                    onChange={(e) => {
+            <div className="space-y-4">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <Camera className="h-3 w-3" />
+                特別バナー1 (左)
+              </h2>
+              <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">
+                    表示する
+                  </label>
+                  <Switch
+                    checked={config.header.specialBanner?.isVisible ?? true}
+                    onCheckedChange={(checked) => {
                       const newBanner = {
                         ...(config.header.specialBanner || {
                           imageUrl: '',
                           subHeading: '',
                           mainHeading: '',
+                          link: '',
                         }),
-                        link: e.target.value,
+                        isVisible: checked,
                       };
                       handleUpdate('header', 'specialBanner', newBanner);
                     }}
-                    placeholder="/store/slug/recruit"
+                    className="scale-75"
                   />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
+                  <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
+                    <img
+                      src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
+                      alt="Special Banner 1"
+                      className="h-full w-full object-cover opacity-60"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) handleImageUpload('header', file, 0, 'specialBanner');
+                          };
+                          input.click();
+                        }}
+                        className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
+                      >
+                        <Camera size={16} />
+                      </button>
+                      {config.header.specialBanner?.imageUrl &&
+                        config.header.specialBanner.imageUrl !== '/福岡募集バナー.png' && (
+                          <button
+                            onClick={() => handleBannerDelete('specialBanner')}
+                            className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
+                  <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                    <Link2 size={12} className="text-gray-500" />
+                    <input
+                      className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                      value={config.header.specialBanner?.link || ''}
+                      onChange={(e) => {
+                        const newBanner = {
+                          ...(config.header.specialBanner || {
+                            imageUrl: '',
+                            subHeading: '',
+                            mainHeading: '',
+                          }),
+                          link: e.target.value,
+                        };
+                        handleUpdate('header', 'specialBanner', newBanner);
+                      }}
+                      placeholder="/store/slug/recruit"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
+
+            <div className="space-y-4">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <Camera className="h-3 w-3" />
+                特別バナー2 (中央)
+              </h2>
+              <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">
+                    表示する
+                  </label>
+                  <Switch
+                    checked={config.header.specialBanner2?.isVisible ?? true}
+                    onCheckedChange={(checked) => {
+                      const newBanner = {
+                        ...(config.header.specialBanner2 || {
+                          imageUrl: '',
+                          subHeading: '',
+                          mainHeading: '',
+                          link: '',
+                        }),
+                        isVisible: checked,
+                      };
+                      handleUpdate('header', 'specialBanner2', newBanner);
+                    }}
+                    className="scale-75"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
+                  <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
+                    <img
+                      src={config.header.specialBanner2?.imageUrl || '/福岡募集バナー.png'}
+                      alt="Special Banner 2"
+                      className="h-full w-full object-cover opacity-60"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) handleImageUpload('header', file, 0, 'specialBanner2');
+                          };
+                          input.click();
+                        }}
+                        className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
+                      >
+                        <Camera size={16} />
+                      </button>
+                      {config.header.specialBanner2?.imageUrl &&
+                        config.header.specialBanner2.imageUrl !== '/福岡募集バナー.png' && (
+                          <button
+                            onClick={() => handleBannerDelete('specialBanner2')}
+                            className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
+                  <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                    <Link2 size={12} className="text-gray-500" />
+                    <input
+                      className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                      value={config.header.specialBanner2?.link || ''}
+                      onChange={(e) => {
+                        const newBanner = {
+                          ...(config.header.specialBanner2 || {
+                            imageUrl: '',
+                            subHeading: '',
+                            mainHeading: '',
+                          }),
+                          link: e.target.value,
+                        };
+                        handleUpdate('header', 'specialBanner2', newBanner);
+                      }}
+                      placeholder="/store/slug/..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
+                <Camera className="h-3 w-3" />
+                特別バナー3 (右)
+              </h2>
+              <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
+                <div className="flex items-center justify-between">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">
+                    表示する
+                  </label>
+                  <Switch
+                    checked={config.header.specialBanner3?.isVisible ?? true}
+                    onCheckedChange={(checked) => {
+                      const newBanner = {
+                        ...(config.header.specialBanner3 || {
+                          imageUrl: '',
+                          subHeading: '',
+                          mainHeading: '',
+                          link: '',
+                        }),
+                        isVisible: checked,
+                      };
+                      handleUpdate('header', 'specialBanner3', newBanner);
+                    }}
+                    className="scale-75"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">バナー画像</label>
+                  <div className="group relative aspect-[16/7] overflow-hidden rounded-lg bg-black/40">
+                    <img
+                      src={config.header.specialBanner3?.imageUrl || '/福岡募集バナー.png'}
+                      alt="Special Banner 3"
+                      className="h-full w-full object-cover opacity-60"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <button
+                        onClick={() => {
+                          const input = document.createElement('input');
+                          input.type = 'file';
+                          input.accept = 'image/*';
+                          input.onchange = (e) => {
+                            const file = (e.target as HTMLInputElement).files?.[0];
+                            if (file) handleImageUpload('header', file, 0, 'specialBanner3');
+                          };
+                          input.click();
+                        }}
+                        className="rounded bg-white/20 p-2 text-white backdrop-blur-sm hover:bg-white/30"
+                      >
+                        <Camera size={16} />
+                      </button>
+                      {config.header.specialBanner3?.imageUrl &&
+                        config.header.specialBanner3.imageUrl !== '/福岡募集バナー.png' && (
+                          <button
+                            onClick={() => handleBannerDelete('specialBanner3')}
+                            className="rounded bg-red-500/80 p-2 text-white backdrop-blur-sm hover:bg-red-600"
+                          >
+                            <Trash2 size={16} />
+                          </button>
+                        )}
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2">
+                  <label className="text-[10px] font-bold uppercase text-gray-500">リンク先URL</label>
+                  <div className="flex items-center gap-2 rounded-md bg-black/20 px-2 py-1">
+                    <Link2 size={12} className="text-gray-500" />
+                    <input
+                      className="w-full bg-transparent text-[10px] text-gray-400 outline-none"
+                      value={config.header.specialBanner3?.link || ''}
+                      onChange={(e) => {
+                        const newBanner = {
+                          ...(config.header.specialBanner3 || {
+                            imageUrl: '',
+                            subHeading: '',
+                            mainHeading: '',
+                          }),
+                          link: e.target.value,
+                        };
+                        handleUpdate('header', 'specialBanner3', newBanner);
+                      }}
+                      placeholder="/store/slug/..."
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
 
           <div className="space-y-4">
             <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
@@ -886,32 +1091,46 @@ export default function HeaderManagement() {
                     )}
                   </div>
 
-                  {/* Special Banner Preview in Header */}
-                  <div className="group relative mx-2 h-8 w-auto flex-shrink-0 overflow-hidden rounded-md border border-gray-100 bg-gray-50 md:h-10">
-                    <img
-                      src={config.header.specialBanner?.imageUrl || '/福岡募集バナー.png'}
-                      alt="Banner Preview"
-                      className="h-full w-full object-cover opacity-80"
-                    />
-                    {!isPreviewMode && (
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                        <button
-                          onClick={() => {
-                            const input = document.createElement('input');
-                            input.type = 'file';
-                            input.accept = 'image/*';
-                            input.onchange = (e) => {
-                              const file = (e.target as HTMLInputElement).files?.[0];
-                              if (file) handleImageUpload('header', file, 0, 'specialBanner');
-                            };
-                            input.click();
-                          }}
-                          className="rounded bg-white/20 p-1 text-white backdrop-blur-sm hover:bg-white/30"
-                          title="バナー画像をアップロード"
-                        >
-                          <Camera className="h-3 w-3" />
-                        </button>
-                      </div>
+                  {/* Special Banners Preview in Header */}
+                  <div className="flex flex-1 items-center justify-center gap-1 overflow-hidden px-2">
+                    {[
+                      { key: 'specialBanner' as const, data: config.header.specialBanner },
+                      { key: 'specialBanner2' as const, data: config.header.specialBanner2 },
+                      { key: 'specialBanner3' as const, data: config.header.specialBanner3 },
+                    ].map(
+                      (banner, idx) =>
+                        (banner.data?.isVisible ?? true) && (
+                          <div
+                            key={banner.key}
+                            className="group relative h-8 w-full flex-1 overflow-hidden rounded-md border border-gray-100 bg-gray-50 md:h-10"
+                          >
+                            <img
+                              src={banner.data?.imageUrl || '/福岡募集バナー.png'}
+                              alt={`Banner ${idx + 1}`}
+                              className="h-full w-full object-cover opacity-80"
+                            />
+                            {!isPreviewMode && (
+                              <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                                <button
+                                  onClick={() => {
+                                    const input = document.createElement('input');
+                                    input.type = 'file';
+                                    input.accept = 'image/*';
+                                    input.onchange = (e) => {
+                                      const file = (e.target as HTMLInputElement).files?.[0];
+                                      if (file) handleImageUpload('header', file, 0, banner.key);
+                                    };
+                                    input.click();
+                                  }}
+                                  className="rounded bg-white/20 p-1 text-white backdrop-blur-sm hover:bg-white/30"
+                                  title={`バナー${idx + 1}画像をアップロード`}
+                                >
+                                  <Camera className="h-3 w-3" />
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        ),
                     )}
                   </div>
 
