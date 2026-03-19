@@ -180,7 +180,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
             {config?.sectionTitle || '8 YEARS'}
           </motion.h2>
           <h3
-            className="mb-8 whitespace-pre-wrap text-balance font-serif text-xl font-bold leading-relaxed text-white outline-none sm:text-3xl md:text-4xl"
+            className="mb-8 break-keep whitespace-pre-wrap text-center font-serif text-xl font-bold leading-relaxed text-white outline-none sm:text-3xl md:text-4xl"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => onUpdate?.('mainHeading', e.currentTarget.innerText)}
@@ -190,7 +190,7 @@ const Trust: React.FC<TrustProps> = ({ config, isEditing, onUpdate, storeName })
           </h3>
           <div className="mx-auto mb-8 h-px w-24 bg-gradient-to-r from-transparent via-amber-500 to-transparent"></div>
           <p
-            className="mx-auto max-w-3xl whitespace-pre-wrap text-base leading-loose text-slate-300 outline-none sm:text-lg"
+            className="mx-auto max-w-3xl whitespace-pre-wrap text-center text-base leading-loose text-slate-300 outline-none sm:text-lg"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
