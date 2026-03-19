@@ -378,13 +378,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           )}
         </Link>
 
-        <div className="flex h-full items-center gap-3 sm:gap-4">
+        <div className="flex h-full items-center gap-1.5 pr-2 sm:gap-2 sm:pr-6">
           {/* Header Banner Image (Horizontal) */}
           <Link
             href={getAbsoluteHref(config?.specialBanner?.link || 'store/{slug}/first-time')}
-            className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
+            className="hidden h-[42px] w-auto overflow-hidden rounded-xl transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-[50px]"
           >
-            <div className="relative h-full w-32 md:w-40">
+            <div className="relative h-full w-[130px] md:w-40">
               {config?.specialBanner?.imageUrl ? (
                 <NextImage
                   src={getAbsoluteHref(config.specialBanner.imageUrl)}
@@ -413,9 +413,9 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </Link>
           <Link
             href={getAbsoluteHref(config?.specialBanner?.link || 'store/{slug}/first-time')}
-            className="block h-12 w-auto max-w-[35vw] overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
+            className="block h-[42px] w-auto max-w-[35vw] overflow-hidden rounded-xl transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
           >
-            <div className="relative h-full w-20 md:w-28">
+            <div className="relative h-full w-[95px] md:w-28">
               {config?.specialBanner?.imageUrl ? (
                 <NextImage
                   src={getAbsoluteHref(config.specialBanner.imageUrl)}
@@ -423,7 +423,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   fill
                   className="object-cover"
                   priority
-                  sizes="80px"
+                  sizes="100px"
                 />
               ) : (
                 <div className="h-full w-full animate-pulse bg-slate-100" />
@@ -431,25 +431,25 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             </div>
           </Link>
 
-          <div className="flex h-[54px] items-stretch overflow-hidden md:h-[65px]">
+          <div className="flex h-[42px] items-stretch gap-1.5 md:h-[50px]">
             {/* TOP Button */}
             <Link
               href={getAbsoluteHref('/store/{slug}')}
               aria-label="トップページ"
-              className="group flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-gradient-to-b from-[#FF6B95] to-[#D43D6F] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
+              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-pink-50 px-1 text-pink-500 transition-all hover:bg-pink-100 active:scale-95 md:min-w-[68px] md:px-3"
             >
-              <Home size={16} className="md:h-6 md:w-6" />
-              <span className="text-[7px] font-black tracking-tighter md:text-[10px]">TOP</span>
+              <Home size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
+              <span className="text-[9px] font-bold tracking-tighter md:text-[11px]">TOP</span>
             </Link>
 
             {/* PHONE Button */}
             <a
               href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/-/g, '')}`}
               aria-label="電話をかける"
-              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#FFB800] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
+              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-50 px-1 text-amber-500 transition-all hover:bg-amber-100 active:scale-95 md:min-w-[68px] md:px-3"
             >
-              <Phone size={16} className="md:h-6 md:w-6" />
-              <span className="text-[7px] font-black tracking-tighter md:text-[10px]">電話</span>
+              <Phone size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
+              <span className="text-[9px] font-bold tracking-tighter md:text-[11px]">電話</span>
             </a>
 
             {/* MENU Button */}
@@ -459,15 +459,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                 else closeMenu();
               }}
               aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
-              className="flex min-w-[52px] flex-col items-center justify-center gap-0.5 bg-[#333333] px-1 text-white transition-all hover:brightness-110 active:scale-95 md:min-w-[80px] md:px-5"
+              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-slate-100 px-1 text-slate-700 transition-all hover:bg-slate-200 active:scale-95 md:min-w-[68px] md:px-3"
             >
               {isMenuOpen ? (
-                <X size={16} className="text-pink-400 md:h-6 md:w-6" />
+                <X size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
               ) : (
-                <Menu size={16} className="md:h-6 md:w-6" />
+                <Menu size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
               )}
               <span
-                className={`text-[7px] font-black tracking-tighter md:text-[10px] ${isMenuOpen ? 'text-pink-400' : ''}`}
+                className={`text-[9px] font-bold tracking-tighter md:text-[11px] ${isMenuOpen ? 'text-pink-500' : ''}`}
               >
                 {isMenuOpen ? '閉じる' : 'MENU'}
               </span>
