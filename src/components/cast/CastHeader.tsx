@@ -28,30 +28,23 @@ const CastHeader: React.FC<CastHeaderProps> = ({
   }, []);
 
   return (
-    <div className="rounded-b-xl border border-red-400 bg-pink-50 px-4 pb-4 pt-6 shadow">
-      <div className="mb-2 text-center text-xs text-gray-500">※ CastHeader debug 表示中</div>
-
+    <div className="rounded-b-2xl bg-white px-4 pb-8 pt-6 shadow-sm">
       {hasImages ? (
-        <div className="relative mx-auto w-full max-w-md border border-green-400">
-          <div className="absolute left-1 top-1 rounded bg-white/80 px-1 text-xs text-green-700">
-            ✅ 画像あり
-          </div>
-          <ImageCarousel items={galleryItems} className="w-full rounded-lg" />
+        <div className="mx-auto w-full max-w-md">
+          <ImageCarousel items={galleryItems} className="w-full" />
         </div>
       ) : (
-        <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-lg border border-yellow-400 bg-white shadow-md">
-          <div className="absolute left-1 top-1 rounded bg-white/80 px-1 text-xs text-yellow-800">
-            ⚠ 画像なし
-          </div>
-          <div className="relative aspect-[4/5]">
-            <Image
-              src="/no-image.png"
-              alt="画像がありません"
-              fill
-              sizes="(max-width: 768px) 100vw, 50vw"
-              className="rounded-lg object-cover"
-              priority
-            />
+        <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-gray-50 aspect-[4/5] shadow-inner">
+          <Image
+            src="/no-image.png"
+            alt="画像がありません"
+            fill
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover opacity-20 filter grayscale"
+            priority
+          />
+          <div className="absolute inset-0 flex items-center justify-center">
+             <span className="text-xs font-bold text-gray-300 tracking-widest uppercase">No Photo Available</span>
           </div>
         </div>
       )}

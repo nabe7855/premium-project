@@ -18,10 +18,43 @@ interface GalleryEditorProps {
 
 // ✅ ファイル名を完全に英数字に変換（日本語・スペース対策）
 function sanitizeFileName(fileName: string): string {
-  const ext = fileName.includes('.') ? fileName.split('.').pop() : 'png';
-  // ランダム文字列を付けて衝突も防ぐ
+  // 拡張子を取り除いて .webp に統一
+  const nameWithoutExt = fileName.includes('.') ? fileName.split('.').slice(0, -1).join('.') : fileName;
   const random = Math.random().toString(36).substring(2, 8);
-  return `${Date.now()}_${random}.${ext}`;
+  return `${Date.now()}_${random}.webp`;
+}
+
+// ✅ WebP 変換関数
+async function convertToWebP(file: File): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new window.Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = img.width;
+        canvas.height = img.height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas context failed'));
+          return;
+        }
+        ctx.drawImage(img, 0, 0);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) resolve(blob);
+            else reject(new Error('Conversion failed'));
+          },
+          'image/webp',
+          0.85 // 画質 85%
+        );
+      };
+      img.onerror = reject;
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
 export default function GalleryEditor({ castId }: GalleryEditorProps) {
@@ -67,13 +100,16 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     setUploading(true);
 
     try {
+      // 1. WebP に変換
+      const webpBlob = await convertToWebP(file);
+      const webpFile = new File([webpBlob], sanitizeFileName(file.name), { type: 'image/webp' });
+
       // ファイル名を安全化
-      const safeFileName = sanitizeFileName(file.name);
-      const filePath = `${castId}/${safeFileName}`;
+      const filePath = `${castId}/${webpFile.name}`;
 
       const { error: storageError } = await supabase.storage
-        .from('gallery') // ← バケット名を確認
-        .upload(filePath, file, {
+        .from('gallery')
+        .upload(filePath, webpFile, {
           upsert: true,
           cacheControl: '3600',
         });
@@ -100,7 +136,18 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       if (insertError) throw insertError;
 
-      setItems([inserted as GalleryItem, ...items]);
+      const newItem = inserted as GalleryItem;
+
+      // ✅ もし最初の画像なら、casts の main_image_url をこれに設定する
+      if (items.length === 0) {
+        await supabase
+          .from('casts')
+          .update({ main_image_url: newItem.image_url })
+          .eq('id', castId);
+        setMainImageUrl(newItem.image_url);
+      }
+
+      setItems([newItem, ...items]);
       setFile(null);
       setCaption('');
     } catch (err) {

@@ -1,8 +1,14 @@
 'use client';
 
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
 import { GalleryItem } from '@/types/cast';
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from '@/components/ui/carousel';
 import clsx from 'clsx';
 
 interface ImageCarouselProps {
@@ -11,81 +17,74 @@ interface ImageCarouselProps {
 }
 
 const ImageCarousel: React.FC<ImageCarouselProps> = ({ items, className }) => {
-  const [current, setCurrent] = useState(0);
-
-  useEffect(() => {
-    console.log('🧩 ImageCarousel items:', items);
-    console.log('🧩 ImageCarousel items.length:', items.length);
-    console.log('🧩 current index:', current);
-  }, [items, current]);
-
-  const handlePrev = () => {
-    setCurrent((prev) => (prev === 0 ? items.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrent((prev) => (prev === items.length - 1 ? 0 : prev + 1));
-  };
+  if (!items || items.length === 0) {
+    return (
+      <div className={clsx("relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100/50", className)}>
+        <Image
+          src="/no-image.png"
+          alt="No image available"
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover opacity-50"
+        />
+      </div>
+    );
+  }
 
   return (
-    <div
-      className={clsx(
-        "relative aspect-[4/5] overflow-hidden rounded-lg shadow-md border border-blue-400",
-        className
-      )}
-    >
-      <div className="absolute top-1 left-1 z-30 bg-white/70 text-xs text-blue-800 px-2 py-0.5 rounded">
-        index: {current + 1} / {items.length}
-      </div>
+    <div className={clsx("group relative w-full h-full", className)}>
+      <Carousel
+        opts={{
+          align: "start",
+          loop: true,
+        }}
+        className="w-full"
+      >
+        <CarouselContent className="-ml-0">
+          {items.map((item, index) => (
+            <CarouselItem key={`gallery-${item.id || index}`} className="pl-0">
+              <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-pink-100/10 backdrop-blur-[2px]">
+                <Image
+                  src={item.imageUrl || '/no-image.png'}
+                  alt={`ギャラリー画像 ${index + 1}`}
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-contain transition-all duration-300"
+                  priority={index === 0}
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        
+        {items.length > 1 && (
+          <>
+            <div className="absolute inset-y-0 left-0 flex items-center justify-center p-3 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+              <CarouselPrevious className="pointer-events-auto relative left-0 bg-white/60 hover:bg-white/90 backdrop-blur shadow-sm border-pink-100 text-pink-500" />
+            </div>
+            <div className="absolute inset-y-0 right-0 flex items-center justify-center p-3 opacity-0 transition-opacity group-hover:opacity-100 pointer-events-none">
+              <CarouselNext className="pointer-events-auto relative right-0 bg-white/60 hover:bg-white/90 backdrop-blur shadow-sm border-pink-100 text-pink-500" />
+            </div>
+          </>
+        )}
 
-      {items.length > 0 ? (
-        items.map((item, index) => (
-          <div
-            key={`gallery-${item.id}-${index}`}
-            className={clsx(
-              "absolute inset-0 transition-opacity duration-500 ease-in-out",
-              index === current ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'
-            )}
-          >
-            <Image
-              src={item.imageUrl || '/no-image.png'}
-              alt={`ギャラリー画像 ${index + 1}`}
-              fill
-              sizes="(max-width: 768px) 100vw, 33vw"
-              style={{ objectFit: 'cover' }}
-              className="rounded-lg"
-            />
+        {/* 下部のインジケーター */}
+        <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-2 px-4">
+          <div className="inline-flex gap-1.5 rounded-full bg-black/20 backdrop-blur-md px-3 py-1.5 text-[10px] font-bold text-white">
+            {items.length} PHOTOS
           </div>
-        ))
-      ) : (
-        <div className="absolute inset-0 border border-yellow-500">
-          <Image
-            src="/no-image.png"
-            alt="No image available"
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            style={{ objectFit: 'cover' }}
-            className="rounded-lg"
-          />
         </div>
-      )}
+      </Carousel>
 
-      {items.length > 1 && (
-        <>
-          <button
-            onClick={handlePrev}
-            className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white/80 text-black text-lg font-bold rounded-full px-2 z-20"
-          >
-            ◀
-          </button>
-          <button
-            onClick={handleNext}
-            className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white/80 text-black text-lg font-bold rounded-full px-2 z-20"
-          >
-            ▶
-          </button>
-        </>
-      )}
+      {/* ドット */}
+      <div className="mt-4 flex justify-center gap-1.5">
+        {items.length > 1 && items.map((_, i) => (
+          <div 
+            key={i} 
+            className="h-1.5 w-1.5 rounded-full bg-pink-200"
+          />
+        ))}
+      </div>
     </div>
   );
 };
