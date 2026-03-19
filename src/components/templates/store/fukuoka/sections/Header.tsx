@@ -330,7 +330,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               alt={banner.mainHeading || 'Banner'}
               fill
               sizes="(max-width: 768px) 33vw, 20vw"
-              className="object-cover"
+              className="object-contain p-0.5"
             />
           </div>
         </Link>
