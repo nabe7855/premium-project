@@ -308,7 +308,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     return (
       <div
         key={key}
-        className={`group relative flex flex-1 items-center border-r border-slate-200 bg-white transition-colors hover:bg-slate-50 min-w-0 h-full ${
+        className={`group relative flex flex-1 items-center bg-white transition-colors hover:bg-slate-50 min-w-0 h-full ${
           banner.isVisible === false && isEditing ? 'opacity-30' : ''
         }`}
       >
@@ -356,7 +356,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           {/* Logo Section */}
           <Link
             href="/"
-            className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center border-r border-slate-200 bg-white px-1 transition-colors hover:bg-slate-50 md:px-4"
+            className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50 md:px-4"
           >
             {config.logoUrl ? (
               <div className="relative h-7 w-full md:h-10 md:w-24">
@@ -398,7 +398,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* TOP Button */}
             <Link
               href={`/store/${currentStoreId}`}
-              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-pink-50 text-pink-500 transition-all hover:bg-pink-100 active:bg-pink-200"
+              className="flex flex-1 min-w-0 flex-col items-center justify-center bg-pink-50 text-pink-500 transition-all hover:bg-pink-100 active:bg-pink-200"
             >
               <div className="flex h-4 w-4 items-center justify-center md:h-5 md:w-5">
                 <svg
@@ -421,7 +421,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* Phone Button */}
             <a
               href={`tel:${(config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
-              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-amber-50 text-amber-500 transition-all hover:bg-amber-100 active:bg-amber-200"
+              className="flex flex-1 min-w-0 flex-col items-center justify-center bg-amber-50 text-amber-500 transition-all hover:bg-amber-100 active:bg-amber-200"
             >
               <Phone size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
               <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">電話</span>
@@ -430,11 +430,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* MENU Button */}
             <button
               onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
-              className={`flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 px-1 transition-all active:bg-slate-300 ${
+              className={`flex flex-1 min-w-0 flex-col items-center justify-center px-1 transition-all active:bg-slate-300 ${
                 isMenuOpen
-                  ? 'bg-pink-100 text-pink-600'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
+                ? 'bg-pink-100 text-pink-600'
+                : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            }`}
               aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
             >
               {isMenuOpen ? (
