@@ -1,0 +1,88 @@
+﻿--- DB Config Record ---
+{
+  "cta": {
+    "imageUrl": ""
+  },
+  "faq": {
+    "imageUrl": ""
+  },
+  "hero": {},
+  "casts": {
+    "imageUrl": ""
+  },
+  "banner": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/fukuoka/first-time/banner/1770961135286.png"
+  },
+  "dayFlow": {
+    "steps": [
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "imageUrl": ""
+  },
+  "pricing": {
+    "courses": [
+      {},
+      {},
+      {}
+    ],
+    "imageUrl": ""
+  },
+  "welcome": {
+    "content": [
+      null,
+      null,
+      null
+    ],
+    "imageUrl": ""
+  },
+  "forbidden": {
+    "items": [
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "imageUrl": ""
+  },
+  "threePoints": {
+    "items": [
+      {},
+      {},
+      {}
+    ],
+    "imageUrl": ""
+  },
+  "sevenReasons": {
+    "reasons": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/fukuoka/first-time/sevenReasons/1773881554853.jpg"
+  },
+  "reservationFlow": {
+    "steps": [
+      {},
+      {
+        "details": [
+          null,
+          null,
+          null,
+          null
+        ]
+      },
+      {},
+      {}
+    ],
+    "imageUrl": ""
+  }
+}

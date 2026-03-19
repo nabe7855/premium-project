@@ -47,6 +47,8 @@ export const EditableImage: React.FC<EditableImageProps> = ({
     }
   };
 
+  console.log(`🎨 EditableImage: Rendering [${alt || 'Image'}] src="${src}" isEditing=${isEditing}`);
+
   // 画像要素本体 (Next.js Imageを使用)
   const imageElement = (
     <NextImage
@@ -56,6 +58,9 @@ export const EditableImage: React.FC<EditableImageProps> = ({
       priority={priority}
       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
       className={cn('object-cover transition-all', className)}
+      onError={(e) => {
+        console.error(`❌ EditableImage: Error loading image [${alt || 'Image'}] with src="${src}"`, e);
+      }}
     />
   );
 

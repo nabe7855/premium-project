@@ -59,13 +59,13 @@ export const Welcome: React.FC<WelcomeProps> = ({
 
             <div className="relative z-10 mb-12 inline-block w-full border-b-2 border-[#FF4B5C]/20 pb-4">
               {data.imageUrl ? (
-                <div className="relative mb-4 min-h-[120px] max-w-2xl md:min-h-[200px]">
+                <div className="relative mb-4 h-[120px] max-w-2xl md:h-[200px]">
                   <EditableImage
                     isEditing={isEditing}
                     src={data.imageUrl}
                     alt="Welcome to STRAWBERRY BOYS"
                     onUpload={(file) => onImageUpload?.('welcome', file)}
-                    className="h-auto w-full object-contain"
+                    className="h-full w-full object-contain"
                   />
                   {isEditing && (
                     <button
