@@ -18,6 +18,7 @@ interface OpenCastRecruitmentProps {
   selectionTargetText?: string;
   slotsLimitText?: string;
   benefits?: { title: string; desc: string }[];
+  benefitsSectionTitle?: string;
 }
 
 const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
@@ -46,6 +47,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
       desc: '独自のWEB戦略で秘密を厳守。安心して働ける環境を約束します。',
     },
   ],
+  benefitsSectionTitle = 'オープンキャスト限定特典',
 }) => {
   const [localPreview, setLocalPreview] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -330,9 +332,20 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
 
               {/* Benefits Section */}
               <div className="mb-10">
-                <h3 className="mb-6 text-center text-xl font-bold text-orange-500 sm:text-3xl">
-                  オープンキャスト限定特典
-                </h3>
+                {isEditing ? (
+                  <h3
+                    className="mb-6 cursor-text rounded text-center text-xl font-bold text-orange-500 outline-none hover:bg-white/10 sm:text-3xl"
+                    contentEditable
+                    suppressContentEditableWarning
+                    onBlur={(e) => onUpdate?.('benefitsSectionTitle', e.currentTarget.innerText)}
+                  >
+                    {benefitsSectionTitle}
+                  </h3>
+                ) : (
+                  <h3 className="mb-6 text-center text-xl font-bold text-orange-500 sm:text-3xl">
+                    {benefitsSectionTitle}
+                  </h3>
+                )}
                 <div className="grid gap-6">
                   {benefits.map((benefit, idx) => (
                     <motion.div

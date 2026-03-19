@@ -46,6 +46,7 @@ export interface LandingPageConfig {
     selectionTargetText?: string;
     slotsLimitText?: string;
     benefits?: { title: string; desc: string }[];
+    benefitsSectionTitle?: string;
   };
   fukuoka?: {
     backgroundImage?: string;
@@ -306,6 +307,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             selectionTargetText={config.openCast?.selectionTargetText}
             slotsLimitText={config.openCast?.slotsLimitText}
             benefits={config.openCast?.benefits}
+            benefitsSectionTitle={config.openCast?.benefitsSectionTitle}
           />
         </div>
       )}
