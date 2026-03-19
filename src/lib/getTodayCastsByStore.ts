@@ -1,4 +1,4 @@
-// lib/getTodayCastsByStore.ts
+import { getSupabasePublicUrl } from './image-url';
 import { supabase } from './supabaseClient';
 
 export interface TodayCast {
@@ -38,6 +38,16 @@ function getJSTDateString(date: Date): string {
 
   return `${jstDate.year}-${jstDate.month}-${jstDate.day}`;
 }
+
+// Supabase URL を取得
+const getBaseUrl = () => {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) {
+    console.warn('⚠️ getTodayCastsByStore: NEXT_PUBLIC_SUPABASE_URL is not defined!');
+    return '';
+  }
+  return url.endsWith('/') ? url.slice(0, -1) : url;
+};
 
 export async function getTodayCastsByStore(
   storeSlug: string,
@@ -95,17 +105,6 @@ export async function getTodayCastsByStore(
 
   const castMap = new Map<string, TodayCast>();
 
-  // URLをフルパスに変換するヘルパー
-  const normalizeUrl = (url: string | null | undefined) => {
-    if (!url || url.trim() === '') return undefined;
-    if (url.startsWith('http')) return url;
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    if (!supabaseUrl) return url;
-    // 従来のパス形式（相対パス）の場合は gallery バケットの公開URLを構成
-    const cleanPath = url.startsWith('/') ? url.slice(1) : url;
-    return `${supabaseUrl}/storage/v1/object/public/${cleanPath.includes('/') ? cleanPath : `gallery/${cleanPath}`}`;
-  };
-
   (data || []).forEach((item: any) => {
     const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
     if (!cast || !cast.is_active) return;
@@ -113,8 +112,8 @@ export async function getTodayCastsByStore(
     const castId = cast.id;
     const nameKey = cast.name; // 名前での重複もチェック対象とする
 
-    const mainImg = normalizeUrl(cast.main_image_url);
-    const fallbackImg = normalizeUrl(cast.image_url);
+    const mainImg = getSupabasePublicUrl(cast.main_image_url);
+    const fallbackImg = getSupabasePublicUrl(cast.image_url);
 
     const mapped: TodayCast = {
       id: castId,

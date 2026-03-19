@@ -1,4 +1,5 @@
 import { Cast, CastQuestion, CastStatus, GalleryItem, ServiceLevel, Status } from '@/types/cast';
+import { getSupabasePublicUrl } from './image-url';
 
 export function normalizeCast(
   cast: any,
@@ -59,7 +60,7 @@ export function normalizeCast(
     gallery?.map((g: any) => ({
       id: g.id,
       castId: g.cast_id,
-      imageUrl: g.image_url,
+      imageUrl: getSupabasePublicUrl(g.image_url) ?? '',
       caption: g.caption ?? undefined,
       isMain: g.is_main ?? false,
       createdAt: g.created_at,
@@ -79,8 +80,8 @@ export function normalizeCast(
     profile: cast.profile ?? undefined,
 
     // 画像
-    imageUrl: cast.main_image_url ?? cast.image_url ?? undefined,
-    mainImageUrl: cast.main_image_url ?? cast.image_url ?? undefined,
+    imageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
+    mainImageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
     galleryItems,
 
     // 音声
