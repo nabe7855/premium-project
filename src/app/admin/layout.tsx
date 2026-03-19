@@ -12,7 +12,6 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const router = useRouter();
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-
   useEffect(() => {
     const timestamp = new Date().toISOString();
     console.log(`[AdminLayout] useEffect triggered at ${timestamp}`, {
@@ -20,9 +19,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       hasUser: !!user,
       isAuthenticated: user?.isAuthenticated,
       role: user?.role,
+      pathname,
     });
 
     if (!loading) {
+      if (pathname === '/admin/login') {
+        console.log('[AdminLayout] On login page, skipping auth check');
+        return;
+      }
+
       if (!user || !user.isAuthenticated || user.role !== 'admin') {
         const redirectReason = !user
           ? 'No user session'
@@ -37,7 +42,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     } else {
       console.log('[AdminLayout] Still loading auth state...');
     }
-  }, [user, loading, router]);
+  }, [user, loading, router, pathname]);
+
+  // ログインページならそのまま表示
+  if (pathname === '/admin/login') {
+    return <>{children}</>;
+  }
 
   if (loading || !user || !user.isAuthenticated || user.role !== 'admin') {
     const reason = loading
