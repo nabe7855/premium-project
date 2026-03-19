@@ -140,7 +140,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             backgroundPosition: 'center',
           }}
         >
-          <Link href={item.href} onClick={closeMenu} className="flex items-center gap-6 px-4 py-6">
+          <Link href={item.href} onClick={closeMenu} className="flex items-center gap-6 pl-12 pr-4 py-6">
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
                 <NextImage 
@@ -257,7 +257,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           backgroundPosition: 'center',
         }}
       >
-        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center" aria-label={`${item.name}ページへ`}>
+        <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center pl-2" aria-label={`${item.name}ページへ`}>
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage 
