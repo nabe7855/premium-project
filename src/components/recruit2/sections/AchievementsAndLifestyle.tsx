@@ -693,9 +693,9 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                             </span>
                           )}
                         </div>
-                        <div className="h-1 overflow-hidden rounded-full bg-slate-800">
+                        <div className="h-1 w-full overflow-hidden rounded-full bg-slate-950">
                           <div
-                            className="h-full transition-all duration-1000 ease-out"
+                            className="h-full transition-all duration-1000 ease-out shadow-sm"
                             style={{
                               width: `${((s.end - s.start) / 24) * 100}%`,
                               backgroundColor: s.color,
