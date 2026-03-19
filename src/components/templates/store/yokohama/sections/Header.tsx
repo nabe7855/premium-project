@@ -139,7 +139,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           <Link
             href={getAbsoluteHref(item.href)}
             onClick={closeMenu}
-            className="flex items-center gap-6 px-4 py-6"
+            className="flex items-center gap-2 pl-8 pr-4 py-6"
           >
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
@@ -176,7 +176,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   onUpdate?.('header', 'navLinks', newLinks);
                 }}
               >
-                {item.name}
+                {item.name === '初めての方へのページ' ? (
+                  <div className="flex flex-col leading-tight">
+                    <span>初めての方へ</span>
+                    <span>のページ</span>
+                  </div>
+                ) : (
+                  item.name
+                )}
               </span>
               <div className="mt-1 flex h-2 w-2 rounded-full bg-pink-400" />
             </div>
@@ -259,7 +266,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         <Link
           href={getAbsoluteHref(item.href)}
           onClick={closeMenu}
-          className="flex w-full flex-col items-center"
+          className="flex w-full flex-col items-center pl-2"
         >
           <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
