@@ -117,6 +117,9 @@ const CastCard: React.FC<CastCardProps> = ({
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 45vw, (max-width: 1024px) 30vw, 300px"
             loading="lazy"
+            onError={(e) => {
+              console.error(`❌ CastCard Image Error [${cast.name}]:`, (e.target as any).src);
+            }}
           />
         </div>
 
