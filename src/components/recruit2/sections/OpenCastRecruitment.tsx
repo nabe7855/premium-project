@@ -132,13 +132,13 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
       >
         {/* Open Cast Recruitment Heading Image */}
         <motion.div variants={itemVariants} className="flex w-full max-w-5xl flex-col items-center">
-          <div className="group relative w-full overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
+          <div className="group relative w-full aspect-[2/1] overflow-hidden rounded-2xl border border-amber-500/30 shadow-2xl">
             {/* Banner Image Component */}
             {isEditing ? (
               <EditableImage
                 src={currentImage}
                 alt="オープンキャスト募集 - 10名限定超好待遇"
-                className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
                 isEditing={isEditing}
                 onUpload={handleImageUpdate}
               />
@@ -148,7 +148,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                 alt="オープンキャスト募集 - 10名限定超好待遇"
                 width={1200}
                 height={600}
-                className="h-auto w-full object-cover transition-transform duration-700 hover:scale-105"
+                className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
               />
             )}
             {isEditing && (
