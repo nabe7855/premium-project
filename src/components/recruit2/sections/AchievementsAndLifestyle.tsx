@@ -43,11 +43,11 @@ const PROFILES: CastProfile[] = [
     },
     lifestyle: '平日の夜や休日を有効活用。本業の収入にプラスして、ゆとりのある生活を。',
     routine: [
-      { start: 0, end: 8, label: '睡眠', color: '#1e293b', type: 'sleep' },
-      { start: 8, end: 18, label: '本業勤務', color: '#334155', type: 'personal' },
-      { start: 18, end: 19, label: '移動・準備', color: '#475569', type: 'break' },
-      { start: 19, end: 23, label: '施術（2件）', color: '#d97706', type: 'work' },
-      { start: 23, end: 24, label: '帰宅・リラックス', color: '#1e293b', type: 'personal' },
+      { start: 0, end: 2, label: '施術（続き）', color: '#d97706', type: 'work' },
+      { start: 2, end: 9, label: '睡眠', color: '#334155', type: 'sleep' },
+      { start: 9, end: 18, label: '本業勤務', color: '#475569', type: 'personal' },
+      { start: 18, end: 19, label: '移動・準備', color: '#64748b', type: 'break' },
+      { start: 19, end: 24, label: '施術（2件）', color: '#d97706', type: 'work' },
     ],
     label: 'Salary',
   },
@@ -64,11 +64,12 @@ const PROFILES: CastProfile[] = [
     },
     lifestyle: 'まずは研修を兼ねて無理のないシフトから。3ヶ月で一生モノのスキルを習得。',
     routine: [
-      { start: 0, end: 9, label: '睡眠', color: '#1e293b', type: 'sleep' },
-      { start: 9, end: 11, label: '自己研鑽', color: '#475569', type: 'personal' },
-      { start: 11, end: 12, label: '出勤準備', color: '#475569', type: 'break' },
-      { start: 12, end: 18, label: '施術・講習', color: '#b45309', type: 'work' },
-      { start: 18, end: 24, label: 'プライベート', color: '#1e293b', type: 'personal' },
+      { start: 0, end: 2, label: '帰宅・リラックス', color: '#334155', type: 'personal' },
+      { start: 2, end: 10, label: '睡眠', color: '#334155', type: 'sleep' },
+      { start: 10, end: 12, label: '自己研鑽', color: '#475569', type: 'personal' },
+      { start: 12, end: 13, label: '出勤準備', color: '#64748b', type: 'break' },
+      { start: 13, end: 19, label: '施術・講習', color: '#b45309', type: 'work' },
+      { start: 19, end: 24, label: 'プライベート', color: '#334155', type: 'personal' },
     ],
     label: 'Earnings',
   },
@@ -85,11 +86,12 @@ const PROFILES: CastProfile[] = [
     },
     lifestyle: 'リピーター様も増え、安定した高収入。趣味や自己投資にも時間を割ける。',
     routine: [
-      { start: 0, end: 9, label: '睡眠', color: '#1e293b', type: 'sleep' },
-      { start: 9, end: 12, label: '趣味・ジム', color: '#334155', type: 'personal' },
-      { start: 12, end: 13, label: '出勤準備', color: '#475569', type: 'break' },
-      { start: 13, end: 20, label: '施術（3~4件）', color: '#92400e', type: 'work' },
-      { start: 20, end: 24, label: 'ゆとりの時間', color: '#1e293b', type: 'personal' },
+      { start: 0, end: 1, label: 'リラックス', color: '#334155', type: 'personal' },
+      { start: 1, end: 9, label: '睡眠', color: '#334155', type: 'sleep' },
+      { start: 9, end: 13, label: '趣味・ジム', color: '#475569', type: 'personal' },
+      { start: 13, end: 14, label: '出勤準備', color: '#64748b', type: 'break' },
+      { start: 14, end: 21, label: '施術（3~4件）', color: '#92400e', type: 'work' },
+      { start: 21, end: 24, label: 'ゆとりの時間', color: '#334155', type: 'personal' },
     ],
     label: 'Income',
   },
@@ -106,14 +108,14 @@ const PROFILES: CastProfile[] = [
     },
     lifestyle: 'プロとしての誇りを持ち、圧倒的な支持を獲得。人生を劇的に変えるステージ。',
     routine: [
-      { start: 0, end: 6, label: '睡眠・泊まり', color: '#1e293b', type: 'sleep' },
-      { start: 6, end: 10, label: '朝のルーティン', color: '#334155', type: 'personal' },
+      { start: 0, end: 6, label: '睡眠・泊まり', color: '#334155', type: 'sleep' },
+      { start: 6, end: 10, label: '朝のルーティン', color: '#475569', type: 'personal' },
       { start: 10, end: 13, label: '1件目施術', color: '#d97706', type: 'work' },
-      { start: 13, end: 14, label: '休憩・SNS更新', color: '#475569', type: 'break' },
+      { start: 13, end: 14, label: '休憩・SNS更新', color: '#64748b', type: 'break' },
       { start: 14, end: 17, label: '2件目施術', color: '#b45309', type: 'work' },
-      { start: 17, end: 18, label: '休憩・ブログ', color: '#475569', type: 'break' },
+      { start: 17, end: 18, label: '休憩・ブログ', color: '#64748b', type: 'break' },
       { start: 18, end: 21, label: '3件目施術', color: '#92400e', type: 'work' },
-      { start: 21, end: 24, label: 'リラックス', color: '#1e293b', type: 'personal' },
+      { start: 21, end: 24, label: 'リラックス', color: '#334155', type: 'personal' },
     ],
     label: 'Success',
   },
@@ -202,8 +204,10 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
   const currentImage = castImages?.[activeProfile.id] || activeProfile.image;
 
   const describeArc = (startHour: number, endHour: number) => {
+    // Handle wrap around for circular chart
+    const duration = endHour - startHour;
     const startAngle = (startHour / 24) * 360 - 90;
-    const endAngle = (endHour / 24) * 360 - 90;
+    const endAngle = ((startHour + duration) / 24) * 360 - 90;
 
     const startRad = (Math.PI * startAngle) / 180;
     const endRad = (Math.PI * endAngle) / 180;
@@ -213,7 +217,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
     const x2 = 150 + 100 * Math.cos(endRad);
     const y2 = 150 + 100 * Math.sin(endRad);
 
-    const largeArcFlag = endHour - startHour <= 12 ? '0' : '1';
+    const largeArcFlag = duration <= 12 ? '0' : '1';
 
     return `M 150 150 L ${x1} ${y1} A 100 100 0 ${largeArcFlag} 1 ${x2} ${y2} Z`;
   };
@@ -384,21 +388,27 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                   />
 
                   {/* Routine Segments */}
-                  {activeProfile.routine.map((segment, idx) => (
-                    <path
-                      key={`${activeProfile.id}-${idx}`}
-                      d={describeArc(segment.start, segment.end)}
-                      fill={segment.color}
-                      className="origin-center transition-all duration-1000 ease-in-out hover:scale-[1.02] hover:brightness-125"
-                      stroke="#020617"
-                      strokeWidth="0.5"
-                    />
-                  ))}
+                  {activeProfile.routine.map((segment, idx) => {
+                    // Check if segment crosses midnight (not expected in current data but for robustness)
+                    if (segment.end > segment.start) {
+                      return (
+                        <path
+                          key={`${activeProfile.id}-${idx}`}
+                          d={describeArc(segment.start, segment.end)}
+                          fill={segment.color}
+                          className="origin-center transition-all duration-1000 ease-in-out hover:scale-[1.02] hover:brightness-125"
+                          stroke="#020617"
+                          strokeWidth="0.5"
+                        />
+                      );
+                    }
+                    return null;
+                  })}
 
                   {/* Hour Labels */}
                   {[0, 3, 6, 9, 12, 15, 18, 21].map((hour) => {
-                    const angle = (hour / 24) * 360 - 90;
-                    const rad = (Math.PI * angle) / 180;
+                    const angle = (hour / 24) * 360 - -0; // Adjusted for label position
+                    const rad = (Math.PI * (angle - 90)) / 180;
                     const tx = 150 + 125 * Math.cos(rad);
                     const ty = 150 + 125 * Math.sin(rad);
                     return (
@@ -441,7 +451,7 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                     {activeProfile.routine
                       .filter((s) => s.type === 'work')
                       .map((s, i) => {
-                        const mid = (s.start + s.end) / 2;
+                        const mid = (s.start + (s.end < s.start ? s.end + 24 : s.end)) / 2;
                         const angle = (mid / 24) * 360 - 90;
                         const rad = (Math.PI * angle) / 180;
                         const lx = 50 + 35 * Math.cos(rad);
@@ -618,93 +628,99 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                   </div>
                 )}
                 <div className="space-y-4">
-                  {activeProfile.routine.map((s, idx) => (
-                    <div key={idx} className="group flex items-center gap-2 md:gap-4">
-                      {isEditing ? (
-                        <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
-                          <span
-                            contentEditable
-                            suppressContentEditableWarning
-                            onBlur={(e) => {
-                              const val = parseInt(e.currentTarget.innerText.split(':')[0]);
-                              if (!isNaN(val)) handleRoutineUpdate(safeIdx, idx, 'start', val);
-                            }}
-                            className="rounded px-0.5 outline-none hover:bg-white/5"
-                          >
-                            {s.start}
-                          </span>
-                          :00
-                        </div>
-                      ) : (
-                        <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
-                          {s.start}:00
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-grow">
-                        <div className="mb-1 flex items-center justify-between gap-2">
-                          {isEditing ? (
+                  {activeProfile.routine.map((s, idx) => {
+                    const duration = s.end - s.start;
+                    return (
+                      <div key={idx} className="group flex items-center gap-2 md:gap-4">
+                        {isEditing ? (
+                          <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
                             <span
                               contentEditable
                               suppressContentEditableWarning
-                              onBlur={(e) =>
-                                handleRoutineUpdate(
-                                  safeIdx,
-                                  idx,
-                                  'label',
-                                  e.currentTarget.innerText,
-                                )
-                              }
-                              className={`cursor-text whitespace-nowrap rounded text-[clamp(0.7rem,3vw,0.875rem)] font-bold outline-none hover:bg-white/5 md:text-sm ${
-                                s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
-                              }`}
+                              onBlur={(e) => {
+                                const val = parseInt(e.currentTarget.innerText.split(':')[0]);
+                                if (!isNaN(val)) handleRoutineUpdate(safeIdx, idx, 'start', val);
+                              }}
+                              className="rounded px-0.5 outline-none hover:bg-white/5"
                             >
-                              {s.label}
+                              {s.start}
                             </span>
-                          ) : (
-                            <span
-                              className={`whitespace-nowrap text-[clamp(0.7rem,3vw,0.875rem)] font-bold md:text-sm ${
-                                s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
-                              }`}
-                            >
-                              {s.label}
-                            </span>
-                          )}
-                          {isEditing ? (
-                            <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                            :00
+                          </div>
+                        ) : (
+                          <div className="w-10 flex-shrink-0 font-mono text-[clamp(0.6rem,2.5vw,0.75rem)] text-slate-500 md:w-14 md:text-xs">
+                            {s.start}:00
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-grow">
+                          <div className="mb-1 flex items-center justify-between gap-2">
+                            {isEditing ? (
                               <span
                                 contentEditable
                                 suppressContentEditableWarning
-                                onBlur={(e) => {
-                                  const duration = parseInt(
-                                    e.currentTarget.innerText.replace('h', ''),
-                                  );
-                                  if (!isNaN(duration))
-                                    handleRoutineUpdate(safeIdx, idx, 'end', s.start + duration);
-                                }}
-                                className="rounded px-0.5 outline-none hover:bg-white/5"
+                                onBlur={(e) =>
+                                  handleRoutineUpdate(
+                                    safeIdx,
+                                    idx,
+                                    'label',
+                                    e.currentTarget.innerText,
+                                  )
+                                }
+                                className={`cursor-text whitespace-nowrap rounded text-[clamp(0.7rem,3vw,0.875rem)] font-bold outline-none hover:bg-white/5 md:text-sm ${
+                                  s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
+                                }`}
                               >
-                                {s.end - s.start}
+                                {s.label}
                               </span>
-                              h
-                            </span>
-                          ) : (
-                            <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
-                              {s.end - s.start}h
-                            </span>
-                          )}
-                        </div>
-                        <div className="h-1 w-full overflow-hidden rounded-full bg-slate-950">
-                          <div
-                            className="h-full transition-all duration-1000 ease-out shadow-sm"
-                            style={{
-                              width: `${((s.end - s.start) / 24) * 100}%`,
-                              backgroundColor: s.color,
-                            }}
-                          ></div>
+                            ) : (
+                              <span
+                                className={`whitespace-nowrap text-[clamp(0.7rem,3vw,0.875rem)] font-bold md:text-sm ${
+                                  s.type === 'work' ? 'text-amber-500' : 'text-slate-300'
+                                }`}
+                              >
+                                {s.label}
+                              </span>
+                            )}
+                            {isEditing ? (
+                              <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                                <span
+                                  contentEditable
+                                  suppressContentEditableWarning
+                                  onBlur={(e) => {
+                                    const duration = parseInt(
+                                      e.currentTarget.innerText.replace('h', ''),
+                                    );
+                                    if (!isNaN(duration))
+                                      handleRoutineUpdate(safeIdx, idx, 'end', s.start + duration);
+                                  }}
+                                  className="rounded px-0.5 outline-none hover:bg-white/5"
+                                >
+                                  {duration}
+                                </span>
+                                h
+                              </span>
+                            ) : (
+                              <span className="flex-shrink-0 text-[clamp(0.5rem,2vw,0.625rem)] text-slate-500 md:text-[10px]">
+                                {duration}h
+                              </span>
+                            )}
+                          </div>
+                          {/* Timeline Bar */}
+                          <div className="h-1.5 w-full overflow-hidden rounded-full bg-slate-950/50">
+                            <div
+                              className="h-full transition-all duration-1000 ease-out shadow-[0_0_8px_rgba(0,0,0,0.4)]"
+                              style={{
+                                width: `${(duration / 24) * 100}%`,
+                                marginLeft: `${(s.start / 24) * 100}%`,
+                                backgroundColor: s.color,
+                                boxShadow: `0 0 10px ${s.color}44`,
+                              }}
+                            ></div>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

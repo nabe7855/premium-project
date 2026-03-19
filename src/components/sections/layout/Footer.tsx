@@ -1,7 +1,7 @@
 'use client';
 
 import { getStoreContactData } from '@/actions/store-contact';
-import { Calendar, CreditCard, Heart, MessageCircle, Phone, Users } from 'lucide-react';
+import { Calendar, CreditCard, Heart, MessageCircle, Phone, Users, Home, Camera, Star } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -25,6 +25,9 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   // 初めての方へページかどうかを判定
   const isFirstTimePage = pathname?.includes('/first-time');
 
+  const [showRightFade, setShowRightFade] = useState(true);
+  const scrollRef = React.useRef<HTMLUListElement>(null);
+
   useEffect(() => {
     setIsMounted(true);
 
@@ -43,6 +46,19 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     updateBusinessHours();
     const interval = setInterval(updateBusinessHours, 60000);
 
+    const handleScroll = () => {
+      if (scrollRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = scrollRef.current;
+        setShowRightFade(scrollLeft + clientWidth < scrollWidth - 10);
+      }
+    };
+
+    const el = scrollRef.current;
+    if (el) {
+      el.addEventListener('scroll', handleScroll);
+      handleScroll(); // Initial check
+    }
+
     if (slug) {
       getStoreContactData(slug as string).then((res) => {
         if (res.success && res.data) {
@@ -54,7 +70,10 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       });
     }
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      if (el) el.removeEventListener('scroll', handleScroll);
+    };
   }, [slug]);
 
   const scrollToTop = () => {
@@ -67,6 +86,13 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   if (!isMounted) return null;
 
   const footerItems = [
+    {
+      id: 'home',
+      label: 'ホーム',
+      icon: Home,
+      href: `/store/${slug}`,
+      ariaLabel: '店舗トップページへ',
+    },
     {
       id: 'schedule',
       label: '出勤',
@@ -81,6 +107,20 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       href: `/store/${slug}/price`,
       ariaLabel: '料金システム・予算確認',
       badge: isFirstVisit ? '初' : null,
+    },
+    {
+      id: 'diary',
+      label: '写メ日記',
+      icon: Camera,
+      href: `/store/${slug}/diary`,
+      ariaLabel: 'キャストの写メ日記を見る',
+    },
+    {
+      id: 'reviews',
+      label: '口コミ',
+      icon: Star,
+      href: `/store/${slug}/reviews`,
+      ariaLabel: 'お客様の口コミを見る',
     },
     {
       id: 'reservation',
@@ -146,8 +186,14 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         </div>
       )}
 
+      {showRightFade && (
+        <div className="footer-nav__scroll-indicator md:hidden">
+          <span></span>
+        </div>
+      )}
+
       <nav className="footer-nav__container">
-        <ul className="footer-nav__list">
+        <ul ref={scrollRef} className="footer-nav__list scrollbar-hide">
           {items.map((item) => (
             <li key={item.id} className="footer-nav__item">
               <a

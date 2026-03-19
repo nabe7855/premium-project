@@ -22,6 +22,18 @@ export interface HeaderConfig {
     mainHeading: string;
     link: string;
   };
+  specialBanner2?: {
+    imageUrl: string;
+    subHeading: string;
+    mainHeading: string;
+    link: string;
+  };
+  specialBanner3?: {
+    imageUrl: string;
+    subHeading: string;
+    mainHeading: string;
+    link: string;
+  };
   menuBottomBanner: {
     imageUrl: string;
     subHeading: string;
@@ -336,6 +348,18 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       subHeading: 'First Time',
       mainHeading: '初めての方へ',
       link: '/store/{slug}/first-time',
+    },
+    specialBanner2: {
+      imageUrl: '/初めてのお客様へバナー.png',
+      subHeading: 'Recruit',
+      mainHeading: '求人募集',
+      link: '/store/{slug}/recruit',
+    },
+    specialBanner3: {
+      imageUrl: '/初めてのお客様へバナー.png',
+      subHeading: 'Events',
+      mainHeading: 'イベント',
+      link: '/store/{slug}/campaign',
     },
     menuBottomBanner: {
       imageUrl: '/images/{slug}/recruit-banner.png',

@@ -87,7 +87,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     }, 300); // 300msで閉じ切る
   };
 
-  const triggerImageUpload = (index: number) => {
+  const triggerImageUpload = (index: number, key: string = 'navLinks') => {
     if (!isEditing || !onImageUpload) return;
     const input = document.createElement('input');
     input.type = 'file';
@@ -95,7 +95,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        onImageUpload('header', file, index, 'navLinks');
+        onImageUpload('header', file, index, key);
       }
     };
     input.click();
@@ -303,117 +303,142 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     );
   };
 
+  const renderHeaderBanner = (banner: any, key: string) => {
+    if (!banner) return null;
+    return (
+      <div key={key} className="group relative flex flex-1 min-w-0 h-full items-center border-r border-slate-200 bg-white transition-colors hover:bg-slate-50">
+        <Link
+          href={banner.link || `/store/${currentStoreId}`}
+          className="block h-full w-full overflow-hidden"
+          aria-label={banner.mainHeading}
+        >
+          <div className="relative h-full w-full">
+            <NextImage
+              src={banner.imageUrl || '/初めてのお客様へバナー.png'}
+              alt={banner.mainHeading || 'Banner'}
+              fill
+              sizes="(max-width: 768px) 33vw, 20vw"
+              className="object-cover"
+            />
+          </div>
+        </Link>
+        {isEditing && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerImageUpload(0, key); }}
+              className="rounded-full bg-black/60 p-1.5 text-white"
+            >
+              <Camera size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <header
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 py-2 shadow-sm backdrop-blur-md' : 'bg-white py-4'
+        scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md py-1.5' : 'bg-white py-2'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between pl-4 pr-0 md:h-20 md:pl-6">
-        <Link
-          href="/"
-          className="group relative flex items-center gap-2 transition-transform hover:scale-[1.02]"
-        >
-          {config.logoUrl ? (
-            <div className="relative h-10 w-32">
-              <NextImage 
-                src={config.logoUrl} 
-                alt={`${currentStore?.name || '店舗'}ロゴ`} 
-                fill 
-                sizes="128px"
-                className="object-contain" 
-              />
-            </div>
-          ) : (
-            <>
-              <span className="text-3xl drop-shadow-sm filter">🍓</span>
-              <span
-                className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
-              >
-                {config.logoText}
+      <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
+        <div className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
+          {/* Logo Section */}
+          <Link
+            href="/"
+            className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center border-r border-slate-200 bg-white px-1 transition-colors hover:bg-slate-50 md:px-4"
+          >
+            {config.logoUrl ? (
+              <div className="relative h-7 w-full md:h-10 md:w-24">
+                <NextImage
+                  src={config.logoUrl}
+                  alt={`${currentStore?.name || '店舗'}ロゴ`}
+                  fill
+                  priority
+                  className="object-contain"
+                  sizes="(max-width: 768px) 60px, 96px"
+                />
+              </div>
+            ) : (
+              <span className="font-serif text-xs font-black italic tracking-tighter text-[#D43D6F] md:text-xl">
+                {config.logoText || '🍓'}
               </span>
-            </>
-          )}
-
-          {isEditing && (
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                triggerLogoUpload();
-              }}
-              className="absolute -right-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-full bg-black/40 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
-              aria-label="ロゴをアップロード"
-            >
-              <Camera size={16} />
-            </button>
-          )}
-        </Link>
-
-          <div className="flex h-16 items-center gap-3 sm:gap-4 md:h-20">
-            {/* Header Banner Image (Horizontal) */}
-            <Link
-              href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
-              className="hidden h-12 w-auto overflow-hidden rounded-lg transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-16"
-              aria-label="初めてのお客様へ"
-            >
-              <div className="relative h-12 w-48 md:h-16 md:w-64">
-                <NextImage
-                  src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-                  alt="初めてのお客様へバナー"
-                  fill
-                  sizes="(max-width: 768px) 0vw, 256px"
-                  className="object-cover"
-                />
+            )}
+            {isEditing && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
+                <button
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerLogoUpload(); }}
+                  className="rounded-full bg-black/60 p-1 text-white"
+                >
+                  <Camera size={12} />
+                </button>
               </div>
-            </Link>
+            )}
+          </Link>
+
+          {/* Banners Section */}
+          <div className="flex flex-[3] items-stretch overflow-hidden min-w-0">
+            {renderHeaderBanner(config.specialBanner, 'specialBanner')}
+            {renderHeaderBanner(config.specialBanner2, 'specialBanner2')}
+            {renderHeaderBanner(config.specialBanner3, 'specialBanner3')}
+          </div>
+
+          {/* Buttons Section */}
+          <div className="flex flex-[1.5] items-stretch min-w-0">
+            {/* TOP Button */}
             <Link
-              href={config.specialBanner?.link || `/store/${currentStoreId}/first-time`}
-              className="block h-12 w-auto overflow-hidden rounded-md transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
-              aria-label="初めてのお客様へ"
+              href={`/store/${currentStoreId}`}
+              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-pink-50 text-pink-500 transition-all hover:bg-pink-100 active:bg-pink-200"
             >
-              <div className="relative h-12 w-40">
-                <NextImage
-                  src={config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png'}
-                  alt="初めてのお客様へバナー"
-                  fill
-                  sizes="(max-width: 768px) 160px, 0vw"
-                  className="object-cover"
-                />
+              <div className="flex h-4 w-4 items-center justify-center md:h-5 md:w-5">
+                <svg
+                  width="100%"
+                  height="100%"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                  <polyline points="9 22 9 12 15 12 15 22" />
+                </svg>
               </div>
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">TOP</span>
             </Link>
 
+            {/* Phone Button */}
             <a
               href={`tel:${(config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
-              className="flex h-full items-center gap-2 bg-[#FFB800] px-4 text-sm font-black tracking-widest text-white transition-all hover:brightness-110 active:scale-95 sm:px-6 md:px-8"
+              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-amber-50 text-amber-500 transition-all hover:bg-amber-100 active:bg-amber-200"
             >
-              <Phone size={18} />
-              <span>電話</span>
+              <Phone size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">電話</span>
             </a>
 
+            {/* MENU Button */}
             <button
-              onClick={() => {
-                if (!isMenuOpen) setIsMenuOpen(true);
-                else closeMenu();
-              }}
-              className={`flex h-full flex-col items-center justify-center gap-1 px-5 transition-all active:scale-95 md:gap-1.5 md:px-8 ${
-                isMenuOpen ? 'bg-pink-50 text-pink-500' : 'bg-[#333333] text-white shadow-md hover:shadow-lg'
+              onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
+              className={`flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 px-1 transition-all active:bg-slate-300 ${
+                isMenuOpen
+                  ? 'bg-pink-100 text-pink-600'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
               aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
             >
               {isMenuOpen ? (
-                <X size={24} className="md:h-7 md:w-7" />
+                <X size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
               ) : (
-                <Menu size={24} className="md:h-7 md:w-7" />
+                <Menu size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
               )}
-              <span className="text-xs font-black tracking-wider md:text-sm">
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">
                 {isMenuOpen ? '閉じる' : 'MENU'}
               </span>
             </button>
           </div>
+        </div>
       </div>
 
       {/* モバイルメニューオーバーレイ */}

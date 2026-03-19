@@ -54,7 +54,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     }, 400);
   };
 
-  const triggerImageUpload = (index: number) => {
+  const triggerImageUpload = (index: number, key: string = 'navLinks') => {
     if (!isEditing || !onImageUpload) return;
     const input = document.createElement('input');
     input.type = 'file';
@@ -62,7 +62,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     input.onchange = (e) => {
       const file = (e.target as HTMLInputElement).files?.[0];
       if (file) {
-        onImageUpload('header', file, index, 'navLinks');
+        onImageUpload('header', file, index, key);
       }
     };
     input.click();
@@ -306,155 +306,125 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     );
   };
 
+  const renderHeaderBanner = (banner: any, key: string) => {
+    if (!banner) return null;
+    return (
+      <div key={key} className="group relative flex flex-1 min-w-0 h-full items-center border-r border-slate-200 bg-white transition-colors hover:bg-slate-50">
+        <Link
+          href={getAbsoluteHref(banner.link || 'store/{slug}/first-time')}
+          className="block h-full w-full overflow-hidden"
+          aria-label={banner.mainHeading}
+        >
+          <div className="relative h-full w-full">
+            <NextImage
+              src={getAbsoluteHref(banner.imageUrl || '/横浜募集バナー.png')}
+              alt={banner.mainHeading || 'Banner'}
+              fill
+              sizes="(max-width: 768px) 33vw, 20vw"
+              className="object-cover"
+            />
+          </div>
+        </Link>
+        {isEditing && (
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+            <button
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerImageUpload(0, key); }}
+              className="rounded-full bg-black/60 p-1.5 text-white"
+            >
+              <Camera size={14} />
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   return (
     <header
       id="header"
       className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md' : 'bg-white'
+        scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md py-1.5' : 'bg-white py-2'
       } ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto flex h-[58px] max-w-7xl items-center justify-between pl-4 pr-0 md:h-[72px] md:pl-6">
-        <Link
-          href={getAbsoluteHref(
-            config.logoLink === '/' || !config.logoLink ? '/store/{slug}' : config.logoLink,
-          )}
-          className="group relative flex h-full flex-shrink-0 items-center gap-2 transition-transform hover:scale-[1.02]"
-        >
-          {config.logoUrl ? (
-            <div className="relative h-full w-20 md:w-32">
-              <NextImage
-                src={getAbsoluteHref(config.logoUrl)}
-                alt="Logo"
-                fill
-                priority
-                className="object-contain object-left"
-                sizes="(max-width: 768px) 80px, 140px"
-              />
-            </div>
-          ) : (
-            <>
-              <span className="text-3xl drop-shadow-sm filter">🍓</span>
-              <span
-                className="font-serif text-2xl font-black italic tracking-tighter text-[#D43D6F] outline-none drop-shadow-sm"
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => onUpdate?.('header', 'logoText', e.currentTarget.innerText)}
-              >
-                {config.logoText}
+      <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
+        <div className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
+          {/* Logo Section */}
+          <Link
+            href={getAbsoluteHref(
+              config.logoLink === '/' || !config.logoLink ? '/store/{slug}' : config.logoLink,
+            )}
+            className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center border-r border-slate-200 bg-white px-1 transition-colors hover:bg-slate-50"
+          >
+            {config.logoUrl ? (
+              <div className="relative h-7 w-full md:h-10 md:w-24">
+                <NextImage
+                  src={getAbsoluteHref(config.logoUrl)}
+                  alt="Logo"
+                  fill
+                  priority
+                  className="object-contain"
+                  sizes="(max-width: 768px) 60px, 96px"
+                />
+              </div>
+            ) : (
+              <span className="font-serif text-xs font-black italic tracking-tighter text-[#D43D6F] md:text-xl">
+                {config.logoText || '🍓'}
               </span>
-            </>
-          )}
-
-          {isEditing && (
-            <div className="absolute -right-16 top-1/2 flex -translate-y-1/2 items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  triggerLogoUpload();
-                }}
-                className="flex items-center justify-center rounded-full bg-black/40 p-2 text-white"
-              >
-                <Camera size={16} />
-              </button>
-              <button
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleLinkUpdate('logoLink');
-                }}
-                className="flex items-center justify-center rounded-full bg-black/40 p-2 text-white"
-              >
-                <Link2 size={16} />
-              </button>
-            </div>
-          )}
-        </Link>
-
-        <div className="flex h-full items-center gap-1.5 pr-2 sm:gap-2 sm:pr-6">
-          {/* Header Banner Image (Horizontal) */}
-          <Link
-            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
-            className="hidden h-[42px] w-auto overflow-hidden rounded-xl transition-transform hover:scale-[1.02] active:scale-95 sm:block md:h-[50px]"
-          >
-            <div className="relative h-full w-[130px] md:w-40">
-              <NextImage
-                src={getAbsoluteHref(
-                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
-                )}
-                alt="Recruit Banner"
-                fill
-                className="object-cover"
-                priority
-                sizes="(max-width: 768px) 160px, 200px"
-              />
-              {isEditing && (
+            )}
+            {isEditing && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleNestedLinkUpdate('specialBanner', 'link');
-                  }}
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 text-white opacity-0 transition-opacity hover:opacity-100"
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerLogoUpload(); }}
+                  className="rounded-full bg-black/60 p-1 text-white"
                 >
-                  <Link2 size={24} />
+                  <Camera size={12} />
                 </button>
-              )}
-            </div>
-          </Link>
-          <Link
-            href={getAbsoluteHref(config.specialBanner?.link || 'store/{slug}/first-time')}
-            className="block h-[42px] w-auto max-w-[35vw] overflow-hidden rounded-xl transition-transform hover:scale-[1.02] active:scale-95 sm:hidden"
-          >
-            <div className="relative h-full w-[95px] md:w-28">
-              <NextImage
-                src={getAbsoluteHref(
-                  config.specialBanner?.imageUrl || '/初めてのお客様へバナー.png',
-                )}
-                alt="Recruit Banner"
-                fill
-                className="object-cover"
-                priority
-                sizes="100px"
-              />
-            </div>
+              </div>
+            )}
           </Link>
 
-          <div className="flex h-[42px] items-stretch gap-1.5 md:h-[50px]">
+          {/* Banners Section */}
+          <div className="flex flex-[3] items-stretch overflow-hidden min-w-0">
+            {renderHeaderBanner(config.specialBanner, 'specialBanner')}
+            {renderHeaderBanner(config.specialBanner2, 'specialBanner2')}
+            {renderHeaderBanner(config.specialBanner3, 'specialBanner3')}
+          </div>
+
+          {/* Buttons Section */}
+          <div className="flex flex-[1.5] items-stretch min-w-0">
             {/* TOP Button */}
             <Link
               href={getAbsoluteHref('/store/{slug}')}
-              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-pink-50 px-1 text-pink-500 transition-all hover:bg-pink-100 active:scale-95 md:min-w-[68px] md:px-3"
+              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-pink-50 text-pink-500 transition-all hover:bg-pink-100 active:bg-pink-200"
             >
-              <Home size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              <span className="text-[9px] font-bold tracking-tighter md:text-[11px]">TOP</span>
+              <Home size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">TOP</span>
             </Link>
 
             {/* PHONE Button */}
             <a
               href={`tel:${(store.contact?.phone || config.phoneNumber || '03-6356-3860').replace(/-/g, '')}`}
-              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-amber-50 px-1 text-amber-500 transition-all hover:bg-amber-100 active:scale-95 md:min-w-[68px] md:px-3"
+              className="flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 bg-amber-50 text-amber-500 transition-all hover:bg-amber-100 active:bg-amber-200"
             >
-              <Phone size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              <span className="text-[9px] font-bold tracking-tighter md:text-[11px]">電話</span>
+              <Phone size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">電話</span>
             </a>
 
             {/* MENU Button */}
             <button
-              onClick={() => {
-                if (!isMenuOpen) setIsMenuOpen(true);
-                else closeMenu();
-              }}
-              className="group flex min-w-[50px] flex-col items-center justify-center gap-0.5 rounded-xl bg-slate-100 px-1 text-slate-700 transition-all hover:bg-slate-200 active:scale-95 md:min-w-[68px] md:px-3"
+              onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
+              className={`flex flex-1 min-w-0 flex-col items-center justify-center border-l border-slate-200 px-1 transition-all active:bg-slate-300 ${
+                isMenuOpen
+                  ? 'bg-pink-100 text-pink-600'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+              }`}
             >
               {isMenuOpen ? (
-                <X size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
+                <X size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
               ) : (
-                <Menu size={18} strokeWidth={2.5} className="md:h-5 md:w-5" />
+                <Menu size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
               )}
-              <span
-                className={`text-[9px] font-bold tracking-tighter md:text-[11px] ${isMenuOpen ? 'text-pink-500' : ''}`}
-              >
+              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">
                 {isMenuOpen ? '閉じる' : 'MENU'}
               </span>
             </button>
