@@ -459,7 +459,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             isEditing={isEditing}
             onUpdate={(key, value) => onUpdate?.('comic', key, value)}
             onUpload={onUpload}
-            slides={config?.comic?.slides}
+            {...config?.comic}
           />
         </div>
       )}

@@ -12,6 +12,9 @@ interface ComicSlide {
 
 interface ComicSliderProps {
   isEditing?: boolean;
+  isVisible?: boolean;
+  heading?: string;
+  description?: string;
   onUpdate?: (key: string, value: any) => void;
   onUpload?: (file: File) => Promise<string | null>;
   slides?: ComicSlide[];
@@ -19,6 +22,9 @@ interface ComicSliderProps {
 
 const ComicSlider: React.FC<ComicSliderProps> = ({
   isEditing = false,
+  isVisible = true,
+  heading = 'マンガでわかる仕事の流れ',
+  description = '未経験からデビュー、そして人生が変わるまでの物語',
   onUpdate,
   onUpload,
   slides,
@@ -124,12 +130,34 @@ const ComicSlider: React.FC<ComicSliderProps> = ({
     <section className="border-y border-slate-100 bg-slate-50 py-16 sm:py-24">
       <div className="container mx-auto px-4">
         <div className="mb-10 text-center sm:mb-12">
-          <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
-            マンガでわかる仕事の流れ
-          </h3>
-          <p className="whitespace-pre-wrap text-sm text-slate-800 sm:text-base">
-            未経験からデビュー、そして人生が変わるまでの物語
-          </p>
+          {isEditing ? (
+            <h3
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('heading', e.currentTarget.innerText)}
+              className="mb-4 rounded font-serif text-2xl font-bold text-slate-900 outline-none hover:bg-black/5 sm:text-3xl"
+            >
+              {heading}
+            </h3>
+          ) : (
+            <h3 className="mb-4 font-serif text-2xl font-bold text-slate-900 sm:text-3xl">
+              {heading}
+            </h3>
+          )}
+          {isEditing ? (
+            <p
+              contentEditable
+              suppressContentEditableWarning
+              onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
+              className="rounded whitespace-pre-wrap text-sm text-slate-800 outline-none hover:bg-black/5 sm:text-base"
+            >
+              {description}
+            </p>
+          ) : (
+            <p className="whitespace-pre-wrap text-sm text-slate-800 sm:text-base">
+              {description}
+            </p>
+          )}
         </div>
 
         <div className="group relative">
