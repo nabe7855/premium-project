@@ -1,6 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabaseClient';
+import { Info } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface GalleryItem {
@@ -235,6 +236,21 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
           {uploading ? 'アップロード中…' : 'アップロード'}
         </button>
       </div>
+
+      {/* インストラクション */}
+      {items.length > 0 && (
+        <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="mt-0.5 shrink-0 rounded-full bg-blue-100 p-1 text-blue-600">
+            <Info size={16} strokeWidth={2.5} />
+          </div>
+          <div>
+            <p className="font-bold">メイン画像の設定（重要）</p>
+            <p className="mt-0.5 opacity-90 leading-relaxed">
+              画像をタップして表示される「<span className="font-bold underline">メインに設定</span>」ボタンを押すと、店舗一覧ページなどで貴女の顔（メイン画像）として表示されます。
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* ギャラリー一覧 */}
       {items.length > 0 ? (
