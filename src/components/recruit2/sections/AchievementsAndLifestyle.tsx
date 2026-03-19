@@ -355,12 +355,8 @@ const AchievementsAndLifestyle: React.FC<AchievementsAndLifestyleProps> = ({
                 </div>
                 <div className="pointer-events-none absolute inset-0 bg-slate-900/10 transition-colors duration-500 group-hover:bg-transparent"></div>
 
-                {/* Label Overlay */}
-                <div className="pointer-events-none absolute bottom-0 left-0 right-0 bg-gradient-to-t from-slate-950 via-slate-950/80 to-transparent p-3 lg:p-6">
-                  <div className="font-serif text-3xl italic text-amber-600/80 drop-shadow-md md:text-6xl lg:text-5xl">
-                    {activeProfile.label}
-                  </div>
-                </div>
+                {/* Visual Fade Overlay (Label removed) */}
+                <div className="pointer-events-none absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-slate-950 via-slate-950/90 to-transparent lg:h-32"></div>
               </motion.div>
 
               {/* 24-Hour Chart */}
