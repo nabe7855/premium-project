@@ -71,7 +71,7 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
       <div className="container mx-auto max-w-6xl px-4">
         <div className="mb-16 text-center">
           {data.imageUrl ? (
-            <div className="relative mx-auto mb-4 max-w-2xl">
+            <div className="relative mx-auto mb-4 min-h-[120px] max-w-2xl md:min-h-[200px]">
               <EditableImage
                 isEditing={isEditing}
                 src={data.imageUrl}

@@ -26,14 +26,16 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
       return { success: false, error: `Store not found: ${storeSlug}`, casts: [] };
     }
 
-    // 生SQLでキャスト情報を取得
-    console.log(`[getCastsByStore] Executing query for storeId: ${store.id}`);
+    // 生SQLでキャスト情報を取得 (キャッシュを避けるためタイムスタンプを出す)
+    const now = new Date().toISOString();
+    console.log(`[getCastsByStore] Executing @ ${now} for storeId: ${store.id}`);
     const castRows = await prisma.$queryRawUnsafe<any[]>(
       `
       SELECT 
         c.id, 
         c.name, 
         c.age, 
+        c.main_image_url,
         c.image_url, 
         c.profile,
         (SELECT fm.name FROM cast_features cf JOIN feature_master fm ON cf.feature_id = fm.id WHERE cf.cast_id = c.id AND fm.category = 'personality' LIMIT 1) as personality_name,
@@ -59,8 +61,8 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
       id: row.id,
       name: row.name,
       age: row.age,
-      // DBに画像がない場合は、パブリックフォルダの cast1.png 〜 cast8.png を順番に表示する
-      image_url: row.image_url || `/images/cast${(index % 8) + 1}.png`,
+      // main_image_url を優先し、なければ image_url、さらに中身がなければサンプル画像を表示
+      image_url: row.main_image_url || row.image_url || `/images/cast${(index % 8) + 1}.png`,
       profile: row.profile || '',
       features: {
         personality: row.personality_name ? { name: row.personality_name } : null,

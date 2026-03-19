@@ -31,7 +31,7 @@ export const CTA: React.FC<CTAProps> = ({
       <div className="container relative z-10 mx-auto max-w-4xl px-4 text-center">
         <div className="mb-8 flex justify-center">
           {data.imageUrl ? (
-            <div className="relative mx-auto max-w-[120px]">
+            <div className="relative mx-auto min-h-[80px] w-full max-w-[120px]">
               <EditableImage
                 isEditing={isEditing}
                 src={data.imageUrl}

@@ -59,7 +59,7 @@ export const Welcome: React.FC<WelcomeProps> = ({
 
             <div className="relative z-10 mb-12 inline-block w-full border-b-2 border-[#FF4B5C]/20 pb-4">
               {data.imageUrl ? (
-                <div className="relative mb-4 max-w-2xl">
+                <div className="relative mb-4 min-h-[120px] max-w-2xl md:min-h-[200px]">
                   <EditableImage
                     isEditing={isEditing}
                     src={data.imageUrl}
