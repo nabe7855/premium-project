@@ -40,7 +40,10 @@ const CastSection: React.FC<CastSectionProps> = ({
       comment: c.catch_copy || '',
       status: '本日出勤',
       tags: c.tags || [],
-      imageUrl: c.main_image_url || c.image_url || '',
+      imageUrl: 
+        c.main_image_url || 
+        c.image_url || 
+        'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
       schedule: [],
       mbtiType: c.mbti_name,
       faceType: c.face_name ? [c.face_name] : [],
@@ -106,7 +109,10 @@ const CastSection: React.FC<CastSectionProps> = ({
           comment: c.catch_copy || '',
           status: '本日出勤',
           tags: c.tags || [],
-          imageUrl: c.main_image_url || c.image_url || '',
+          imageUrl: 
+            c.main_image_url || 
+            c.image_url || 
+            'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
           schedule: [selectedDate],
           mbtiType: c.mbti_name,
           faceType: c.face_name ? [c.face_name] : [],

@@ -93,40 +93,71 @@ export async function getTodayCastsByStore(
     return [];
   }
 
-  const result = (data || [])
-    .filter((item: any) => {
-      // 1-to-1 か 1-to-N かで item.casts が配列かオブジェクトか変わる可能性があるため robust に処理
-      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
-      return cast?.is_active;
-    })
-    .map((item: any): TodayCast => {
-      const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
+  const castMap = new Map<string, TodayCast>();
 
-      return {
-        id: cast.id, // UUID (string)
-        name: cast.name,
-        slug: cast.slug,
-        age: cast.age,
-        height: cast.height,
-        catch_copy: cast.catch_copy,
-        main_image_url: cast.main_image_url,
-        image_url: cast.image_url,
-        // tags は status_master から取得
-        tags: (cast.cast_statuses || [])
-          .filter((cs: any) => cs.is_active)
-          .map((cs: any) => cs.status_master?.name)
-          .filter(Boolean),
-        // DBに未実装のカラムは一旦デフォルト値またはundefinedに
-        rating: 5.0,
-        review_count: 10,
-        sexiness_strawberry: '🍓🍓🍓',
-        // MBTI/Face は JOIN した name を取得
-        mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,
-        face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
-        start_datetime: item.start_datetime,
-        end_datetime: item.end_datetime,
-      };
-    });
+  // URLをフルパスに変換するヘルパー
+  const normalizeUrl = (url: string | null | undefined) => {
+    if (!url || url.trim() === '') return undefined;
+    if (url.startsWith('http')) return url;
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return url;
+    // 従来のパス形式（相対パス）の場合は gallery バケットの公開URLを構成
+    const cleanPath = url.startsWith('/') ? url.slice(1) : url;
+    return `${supabaseUrl}/storage/v1/object/public/${cleanPath.includes('/') ? cleanPath : `gallery/${cleanPath}`}`;
+  };
 
-  return result;
+  (data || []).forEach((item: any) => {
+    const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
+    if (!cast || !cast.is_active) return;
+    
+    const castId = cast.id;
+    const nameKey = cast.name; // 名前での重複もチェック対象とする
+
+    const mainImg = normalizeUrl(cast.main_image_url);
+    const fallbackImg = normalizeUrl(cast.image_url);
+
+    const mapped: TodayCast = {
+      id: castId,
+      name: cast.name,
+      slug: cast.slug,
+      age: cast.age,
+      height: cast.height,
+      catch_copy: cast.catch_copy,
+      main_image_url: mainImg,
+      image_url: fallbackImg,
+      tags: (cast.cast_statuses || [])
+        .filter((cs: any) => cs.is_active)
+        .map((cs: any) => cs.status_master?.name)
+        .filter(Boolean),
+      rating: 5.0,
+      review_count: 10,
+      sexiness_strawberry: '🍓🍓🍓',
+      mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,
+      face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
+      start_datetime: item.start_datetime,
+      end_datetime: item.end_datetime,
+    };
+
+    // 重複除去ロジック:
+    // 1. 同一 ID の場合は先に出現したものを優先
+    // 2. 同名の場合は、データが充実している方（画像がある、年齢がある等）を優先して残す
+    const existing = Array.from(castMap.values()).find(c => c.name === mapped.name);
+    
+    if (existing) {
+      // 既存の方がデータが薄く、新規の方が画像があるなら差し替える
+      const existingScore = (existing.main_image_url ? 2 : 0) + (existing.age ? 1 : 0);
+      const newScore = (mapped.main_image_url ? 2 : 0) + (mapped.age ? 1 : 0);
+      
+      if (newScore > existingScore) {
+        castMap.delete(existing.id);
+        castMap.set(mapped.id, mapped);
+      }
+    } else {
+      if (!castMap.has(mapped.id)) {
+        castMap.set(mapped.id, mapped);
+      }
+    }
+  });
+
+  return Array.from(castMap.values());
 }
