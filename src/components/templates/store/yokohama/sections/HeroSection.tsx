@@ -142,7 +142,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 fill
                 priority={index === 0}
                 sizes="100vw"
-                className="scale-105 transform object-contain"
+                className="h-full w-full object-contain object-center"
                 unoptimized
               />
 

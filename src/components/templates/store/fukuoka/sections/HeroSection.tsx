@@ -151,7 +151,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     priority={true}
                     fetchPriority="high"
                     sizes="100vw"
-                    className="h-full w-full scale-105 transform object-cover"
+                    className="h-full w-full object-contain object-center"
                   />
                 ) : (
                   <NextImage
@@ -159,7 +159,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                     alt={`Hero Image ${index + 1}`}
                     fill
                     sizes="100vw"
-                    className="scale-105 transform object-cover"
+                    className="h-full w-full object-contain object-center"
                     loading="lazy"
                   />
                 )}
