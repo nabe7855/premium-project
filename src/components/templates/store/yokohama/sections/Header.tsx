@@ -307,9 +307,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   };
 
   const renderHeaderBanner = (banner: any, key: string) => {
-    if (!banner) return null;
+    if (!banner || (banner.isVisible === false && !isEditing)) return null;
     return (
-      <div key={key} className="group relative flex flex-1 min-w-0 h-full items-center border-r border-slate-200 bg-white transition-colors hover:bg-slate-50">
+      <div
+        key={key}
+        className={`group relative flex flex-1 items-center border-r border-slate-200 bg-white transition-colors hover:bg-slate-50 min-w-0 h-full ${
+          banner.isVisible === false && isEditing ? 'opacity-30' : ''
+        }`}
+      >
         <Link
           href={getAbsoluteHref(banner.link || 'store/{slug}/first-time')}
           className="block h-full w-full overflow-hidden"
@@ -328,7 +333,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         {isEditing && (
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
             <button
-              onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerImageUpload(0, key); }}
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                triggerImageUpload(0, key);
+              }}
               className="rounded-full bg-black/60 p-1.5 text-white"
             >
               <Camera size={14} />
