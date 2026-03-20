@@ -57,18 +57,30 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
 
     console.log(`[getCastsByStore] Found ${castRows.length} casts for ${storeSlug}`);
 
-    const casts: CastData[] = castRows.map((row, index) => ({
-      id: row.id,
-      name: row.name,
-      age: row.age,
-      // main_image_url を優先し、なければ image_url、さらに中身がなければサンプル画像を表示
-      image_url: row.main_image_url || row.image_url || `/images/cast${(index % 8) + 1}.png`,
-      profile: row.profile || '',
-      features: {
-        personality: row.personality_name ? { name: row.personality_name } : null,
-        appearance: row.appearance_name ? { name: row.appearance_name } : null,
-      },
-    }));
+    const casts: CastData[] = castRows.map((row, index) => {
+      let imageUrl = row.main_image_url || row.image_url;
+      
+      // If none, fallback to no-image
+      if (!imageUrl) {
+        imageUrl = '/no-image.png';
+      } else if (!imageUrl.startsWith('http')) {
+        // Construct Supabase public URL if it's just a path/filename
+        const bucket = 'gallery';
+        imageUrl = `https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/${bucket}/${row.id}/${imageUrl}`;
+      }
+
+      return {
+        id: row.id,
+        name: row.name,
+        age: row.age,
+        image_url: imageUrl,
+        profile: row.profile || '',
+        features: {
+          personality: row.personality_name ? { name: row.personality_name } : null,
+          appearance: row.appearance_name ? { name: row.appearance_name } : null,
+        },
+      };
+    });
 
     return { success: true, casts };
   } catch (error) {

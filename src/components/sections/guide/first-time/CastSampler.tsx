@@ -176,6 +176,7 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
                   fill
                   sizes="(max-width: 768px) 160px, 200px"
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  unoptimized
                 />
               </div>
               <div className="p-3">

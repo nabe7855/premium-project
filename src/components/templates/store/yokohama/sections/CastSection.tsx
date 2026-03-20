@@ -302,6 +302,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                 loading="lazy"
+                                unoptimized
                               />
 
                               {/* バッジ装飾 */}
@@ -417,6 +418,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                 loading="lazy"
+                                unoptimized
                               />
 
                               {/* バッジ装飾 */}
