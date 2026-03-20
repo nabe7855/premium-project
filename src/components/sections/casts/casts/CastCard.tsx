@@ -235,35 +235,51 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {scoreSection}
-        {/* 変態係数 (Double Wi-Fi Gauge Style) */}
+        {/* 変態ゲージ (Redesigned Style) */}
         <div className="mb-2 flex items-center gap-3">
-          <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-500/70">
-            変態係数
+          <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">
+            変態ゲージ
           </span>
-          <div className="flex items-end gap-[1.5px] h-4">
-            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bar) => {
-              const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-100 -> 1-10
-              const isActive = bar <= level; // Grows larger to the right
-              const getColor = () => {
-                if (level <= 2) return 'bg-emerald-400';
-                if (level <= 4) return 'bg-lime-400';
-                if (level <= 6) return 'bg-yellow-400';
-                if (level <= 8) return 'bg-orange-400';
-                return 'bg-rose-500';
-              };
-              
-              return (
-                <div
-                  key={bar}
-                  className={`w-[2.5px] rounded-full transition-all duration-500 ${
-                    isActive ? getColor() : 'bg-neutral-100'
-                  }`}
-                  style={{
-                    height: `${bar * 10}%`, // Tallest on the right
-                  }}
-                />
-              );
-            })}
+          <div className="flex flex-col gap-[1px]">
+            <div className="flex items-end gap-[2px] h-6">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bar) => {
+                const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-100 -> 1-10
+                const isActive = bar <= level;
+                
+                const getColor = () => {
+                  if (bar <= 3) return 'bg-emerald-400';
+                  if (bar <= 5) return 'bg-lime-400';
+                  if (bar <= 7) return 'bg-yellow-400';
+                  if (bar <= 9) return 'bg-orange-400';
+                  return 'bg-rose-500';
+                };
+                
+                return (
+                  <div
+                    key={bar}
+                    className={`w-[6px] rounded-sm transition-all duration-500 ${
+                      isActive ? getColor() : 'bg-neutral-100'
+                    }`}
+                    style={{
+                      height: `${(bar) * 10}%`, // Tallest on the right (ascending)
+                    }}
+                  />
+                );
+              })}
+            </div>
+            {/* Base Horizontal Bar */}
+            <div className="h-[2px] w-full rounded-full bg-neutral-200 overflow-hidden">
+               <div 
+                 className={`h-full transition-all duration-700 ${
+                   (cast.sexinessLevel ?? 0) > 90 ? 'bg-rose-500' :
+                   (cast.sexinessLevel ?? 0) > 70 ? 'bg-orange-400' :
+                   (cast.sexinessLevel ?? 0) > 50 ? 'bg-yellow-400' :
+                   (cast.sexinessLevel ?? 0) > 30 ? 'bg-lime-400' :
+                   'bg-emerald-400'
+                 }`}
+                 style={{ width: `${cast.sexinessLevel ?? 0}%` }}
+               />
+            </div>
           </div>
         </div>
 
