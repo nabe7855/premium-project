@@ -70,13 +70,13 @@ export default function FaceSelector({ form, onChange, featureMasters }: Props) 
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="block text-sm font-medium">顔タイプ</label>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <label className="block text-sm font-medium text-gray-700">顔タイプ</label>
         <button
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={isAnalyzing}
-          className="flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-1.5 text-xs font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+          className="flex w-fit items-center gap-2 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 px-4 py-2 text-xs font-bold text-white shadow-lg transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
         >
           {isAnalyzing ? (
             <Loader2 className="h-4 w-4 animate-spin" />

@@ -61,7 +61,7 @@ export default function ProfileEditor({
   ];
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white p-6 pb-24 shadow-md">
+    <div className="overflow-x-hidden rounded-2xl border border-gray-200 bg-white p-6 pb-24 shadow-md">
       <h2 className="mb-4 text-xl font-bold">プロフィール編集</h2>
 
       {/* ✅ タブ切り替え */}

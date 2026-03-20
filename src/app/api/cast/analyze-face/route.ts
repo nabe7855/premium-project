@@ -18,7 +18,9 @@ const FACE_TYPE_DETAILS = {
 };
 
 export async function POST(req: NextRequest) {
+  console.log('🚀 AI顔診断リクエスト受信');
   if (!apiKey) {
+    console.error('❌ GEMINI_API_KEY が設定されていません');
     return NextResponse.json({ error: 'GEMINI_API_KEY is not configured' }, { status: 500 });
   }
 
@@ -27,12 +29,14 @@ export async function POST(req: NextRequest) {
     const image = formData.get('image') as File;
 
     if (!image) {
+      console.warn('⚠️ 画像が送信されていません');
       return NextResponse.json({ error: 'Image is required' }, { status: 400 });
     }
 
     // 画像データをメモリに読み込み
     const buffer = Buffer.from(await image.arrayBuffer());
     const base64Image = buffer.toString('base64');
+    console.log('📸 画像データ処理完了 (Base64)');
 
     // Gemini へのプロンプト設定
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
@@ -52,6 +56,7 @@ ${JSON.stringify(Object.keys(FACE_TYPE_DETAILS), null, 2)}
 }
 `;
 
+    console.log('🤖 Gemini API呼び出し開始...');
     const result = await model.generateContent([
       prompt,
       {
@@ -64,19 +69,25 @@ ${JSON.stringify(Object.keys(FACE_TYPE_DETAILS), null, 2)}
 
     const response = await result.response;
     const text = response.text();
+    console.log('📩 Gemini APIレスポンス取得完了');
     
     // JSON 部分を抽出
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      console.error('Gemini からの異常なレスポンス:', text);
+      console.error('❌ Gemini からの異常なレスポンス (JSONなし):', text);
       return NextResponse.json({ error: 'Analysis failed to produce JSON' }, { status: 500 });
     }
 
     const diagnosis = JSON.parse(jsonMatch[0]);
+    console.log('✅ 診断完了:', diagnosis.faceType);
     return NextResponse.json(diagnosis);
 
-  } catch (error) {
-    console.error('AI顔診断エラー:', error);
-    return NextResponse.json({ error: 'Server error during analysis' }, { status: 500 });
+  } catch (error: any) {
+    console.error('❌ AI顔診断エラー詳細:', error);
+    // モデルが見つからない、またはAPI制限などの詳細を返す（開発中のみ、商用ではラップ推奨）
+    return NextResponse.json({ 
+      error: 'Server error during analysis', 
+      detail: error.message || String(error) 
+    }, { status: 500 });
   }
 }
