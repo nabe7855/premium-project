@@ -3,7 +3,7 @@
 import { useStore } from '@/contexts/StoreContext';
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
-import { Camera, ChevronDown, Home, Link2, Menu, Phone, Users, X } from 'lucide-react';
+import { Camera, ChevronDown, Link2, Menu, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -411,25 +411,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </div>
 
           {/* Buttons Section */}
-          <div className="flex flex-[1.5] items-stretch min-w-0">
-            {/* TOP Button */}
-            <Link
-              href={getAbsoluteHref('/store/{slug}')}
-              className="flex flex-1 min-w-0 flex-col items-center justify-center bg-pink-50 text-pink-500 transition-all hover:bg-pink-100 active:bg-pink-200"
-            >
-              <Home size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">TOP</span>
-            </Link>
-
-            {/* PHONE Button */}
-            <a
-              href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/-/g, '')}`}
-              className="flex flex-1 min-w-0 flex-col items-center justify-center bg-amber-50 text-amber-500 transition-all hover:bg-amber-100 active:bg-amber-200"
-            >
-              <Phone size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">電話</span>
-            </a>
-
+          <div className="flex flex-[0.5] items-stretch min-w-0">
             {/* MENU Button */}
             <button
               onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}

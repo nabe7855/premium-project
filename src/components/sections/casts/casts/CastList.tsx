@@ -98,19 +98,6 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   return (
     <section className="bg-neutral-50 py-16" id="casts">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        {/* タイトル */}
-        <div className="mb-12 text-center">
-          <h2 className="mb-4 font-serif text-3xl font-bold text-neutral-800 md:text-4xl">
-            {isDiagnosisResult
-              ? '相性診断結果 - あなたにぴったりのキャスト'
-              : 'Cast - 心とろける極上のひとときを、あなたに。'}
-          </h2>
-          <p className="mx-auto max-w-2xl text-lg text-neutral-600">
-            {isDiagnosisResult
-              ? '診断結果に基づいて、相性の良いキャストを優先的に表示しています'
-              : '経験豊富なキャストが、あなただけの特別な時間をお届けします'}
-          </p>
-        </div>
 
         {/* 検索・フィルタ */}
         <div className="mb-8">

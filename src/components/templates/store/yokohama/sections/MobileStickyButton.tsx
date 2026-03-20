@@ -56,7 +56,7 @@ const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ config, isVisib
       <div className="border-t border-slate-200 bg-white/95 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.15)] backdrop-blur-xl">
         <div
           ref={scrollRef}
-          className="flex h-[72px] items-stretch overflow-x-auto scrollbar-hide snap-x snap-mandatory px-1"
+          className="flex h-[72px] items-stretch overflow-x-auto scrollbar-hide snap-x snap-mandatory"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {items.map((item, idx) => {
@@ -68,9 +68,10 @@ const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ config, isVisib
               <Link
                 key={idx}
                 href={resolvedHref}
-                className={`group flex min-w-[22%] flex-1 flex-col items-center justify-center gap-1 px-1 transition-all active:scale-95 snap-center ${
+                className={`group flex flex-shrink-0 flex-col items-center justify-center gap-1 transition-all active:scale-95 snap-center ${
                   isActive ? 'bg-slate-50/50' : 'bg-transparent'
                 }`}
+                style={{ width: '16.666%', minWidth: '16.666%' }}
               >
                 <div className={`relative flex h-8 w-8 items-center justify-center rounded-2xl transition-all duration-300 ${
                   isActive ? 'scale-110 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]' : 'group-hover:scale-110'

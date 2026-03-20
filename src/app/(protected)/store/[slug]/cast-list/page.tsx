@@ -67,14 +67,6 @@ export default async function CastListPage({ params }: Props) {
       {/* ✅ 本日のおすすめキャスト */}
       <Hero cast={randomCast} />
 
-      {/* セクション：見出し */}
-      <div className="bg-gradient-to-br from-secondary/20 via-white to-neutral-100 py-8 sm:py-12">
-        <div className="mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <h2 className="mb-4 font-serif text-2xl font-bold text-neutral-800 sm:text-3xl md:text-4xl">
-            {shopName} - キャスト一覧
-          </h2>
-        </div>
-      </div>
 
       {/* 相性診断セクション */}
       <div id="diagnosis" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
