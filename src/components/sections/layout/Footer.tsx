@@ -162,13 +162,20 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
             const { getIconByName } = require('@/lib/utils/icons');
             const { resolveStoreLink } = require('@/lib/utils/resolveStoreLink');
             const Icon = typeof item.icon === 'string' ? getIconByName(item.icon) : item.icon;
-            const resolvedHref = resolveStoreLink(item.href, slug as string);
+            
+            // 電話アイコンの場合の自動補完
+            let originalHref = item.href;
+            if ((item.icon === 'Phone' || item.label === '電話') && (!originalHref || originalHref === '/' || originalHref === '#')) {
+              originalHref = `tel:${storeContact.phone}`;
+            }
+
+            const resolvedHref = resolveStoreLink(originalHref, slug as string, storeContact.phone);
             
             return (
               <li key={item.id || idx} className="footer-nav__item">
                 <a
                   href={resolvedHref}
-                  className={`footer-nav__link ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
+                  className={`footer-nav__link ${item.color || ''} ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
                   aria-label={item.ariaLabel || item.label}
                 >
                   <div className="footer-nav__icon-container">
