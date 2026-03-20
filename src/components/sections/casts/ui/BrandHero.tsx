@@ -1,8 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { useParams } from 'next/navigation';
+import { getStoreData } from '@/lib/store/store-data';
 
 const BrandHero = () => {
+  const params = useParams();
+  const slug = (params?.slug as string) || '';
+  const storeData = getStoreData(slug);
+  const cityName = storeData?.city || '東京';
+
   return (
     <section className="relative flex h-[90vh] w-full items-center justify-center overflow-hidden bg-gradient-to-br from-pink-100 via-white to-neutral-50">
       {/* 動的な光の粒子 */}
@@ -53,7 +60,7 @@ const BrandHero = () => {
           transition={{ delay: 0.6, duration: 1 }}
           className="mx-auto mb-8 max-w-xl text-base text-neutral-600 sm:text-lg"
         >
-          東京の上質なラグジュアリーサービス。経験豊富なキャストが、
+          {cityName}の上質なラグジュアリーサービス。経験豊富なキャストが、
           あなただけの特別な時間をお届けします。
         </motion.p>
 

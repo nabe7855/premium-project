@@ -32,9 +32,10 @@ export async function saveStoreTopConfig(storeSlug: string, config: StoreTopPage
       },
     });
 
-    // ページをrevalidate
+    // ページをrevalidate (トップおよび全下層ページを対象)
+    revalidatePath(`/store/${storeSlug}`, 'layout');
     revalidatePath(`/store/${storeSlug}`);
-    console.log(`Successfully saved config for ${storeSlug}`);
+    console.log(`Successfully saved and revalidated config for ${storeSlug}`);
 
     return { success: true };
   } catch (error) {

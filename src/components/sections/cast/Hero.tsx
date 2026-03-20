@@ -1,11 +1,16 @@
-'use client';
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Star, Heart, Calendar } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { getStoreData } from '@/lib/store/store-data';
 import BookingModal from './BookingModal';
 
 const Hero: React.FC = () => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const params = useParams();
+  const slug = (params?.slug as string) || '';
+  const storeData = getStoreData(slug);
+  const cityName = storeData?.city || '東京';
 
   return (
     <section className="relative min-h-screen bg-gradient-to-br from-secondary via-white to-neutral-100 overflow-hidden">
@@ -41,7 +46,7 @@ const Hero: React.FC = () => {
               </h1>
               
               <p className="text-lg md:text-xl text-neutral-600 mb-8 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-                東京の上質なラグジュアリーサービス。経験豊富なキャストが、あなただけの特別な時間をお届けします。
+                {cityName}の上質なラグジュアリーサービス。経験豊富なキャストが、あなただけの特別な時間をお届けします。
               </p>
             </div>
 

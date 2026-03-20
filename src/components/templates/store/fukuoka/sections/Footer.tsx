@@ -97,20 +97,20 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             {/* Shop Info Box Below Logo */}
             <div className="mt-4 overflow-hidden rounded-md border border-neutral-800">
               <div className="bg-[#333] px-3 py-1.5 text-center text-[13px] font-bold tracking-widest text-white">
-                <span>{store.name || config.shopInfo.name}</span>
+                <span>{store.name || config.shopInfo?.name}</span>
               </div>
               <div className="space-y-3 bg-white p-4 text-xs leading-relaxed">
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-700">店舗電話番号</span>
-                  <span className="font-bold">{store.contact?.phone || config.shopInfo.phone}</span>
+                  <span className="font-bold">{store.contact?.phone || config.shopInfo?.phone}</span>
                 </div>
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-700">受付時間</span>
-                  <span className="whitespace-pre-line">{store.receptionHours || config.shopInfo.receptionHours}</span>
+                  <span className="whitespace-pre-line">{store.receptionHours || config.shopInfo?.receptionHours}</span>
                 </div>
                 <div className="flex gap-3">
-                  <span className="w-24 flex-shrink-0 font-bold text-slate-700">所在地</span>
-                  <span>{store.address || config.shopInfo.address}</span>
+                  <span className="w-24 flex-shrink-0 font-bold text-slate-700">営業時間</span>
+                  <span className="whitespace-pre-line">{store.businessHours || config.shopInfo?.businessHours}</span>
                 </div>
               </div>
             </div>

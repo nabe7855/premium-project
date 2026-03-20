@@ -204,6 +204,14 @@ export interface QuickAccessItem {
   icon: string;
 }
 
+export interface BottomNavItemConfig {
+  label: string;
+  icon: string;
+  href: string;
+  color?: string;
+  isVisible: boolean;
+}
+
 export interface QuickAccessConfig {
   items: QuickAccessItem[];
   isVisible: boolean;
@@ -226,6 +234,8 @@ export interface FooterConfig {
   largeBanner?: { imageUrl: string; link: string };
   copyright: string;
   isVisible: boolean;
+  isBottomNavVisible: boolean;
+  bottomNav: BottomNavItemConfig[];
 }
 
 export interface BeginnerGuideConfig {
@@ -859,6 +869,17 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     logoLink: '#',
     copyright: 'Copyright © ストロベリーボーイズ. All Rights Reserved.',
     isVisible: true,
+    isBottomNavVisible: true,
+    bottomNav: [
+      { label: 'ホーム', icon: 'Home', href: '/store/{slug}', color: 'text-slate-600', isVisible: true },
+      { label: '出勤', icon: 'Calendar', href: '/store/{slug}/schedule', color: 'text-pink-500', isVisible: true },
+      { label: '料金', icon: 'Coins', href: '/store/{slug}/system', color: 'text-amber-500', isVisible: true },
+      { label: '写メ日記', icon: 'Camera', href: '/store/{slug}/diary', color: 'text-blue-500', isVisible: true },
+      { label: '口コミ', icon: 'Star', href: '/store/{slug}/reviews', color: 'text-green-500', isVisible: true },
+      { label: '予約', icon: 'CalendarCheck', href: '/store/{slug}/reservation', color: 'text-rose-500', isVisible: true },
+      { label: 'LINE', icon: 'MessageCircle', href: 'https://line.me', color: 'text-emerald-500', isVisible: true },
+      { label: '推し活', icon: 'Heart', href: '/store/{slug}/favorite', color: 'text-violet-500', isVisible: true },
+    ],
   },
   beginnerGuide: {
     imageUrl: '/女性用風俗初体験の方はこちら.png',
@@ -867,3 +888,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
   },
   recommendedNewsIds: [],
 };
+
+export const DEFAULT_BOTTOM_NAV: BottomNavItemConfig[] = [
+  ...DEFAULT_STORE_TOP_CONFIG.footer.bottomNav
+];

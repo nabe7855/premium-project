@@ -216,6 +216,7 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-1',
     name: '星野 あかり',
+    slug: 'hoshino-akari',
     storeIds: ['store-1', 'store-2'],
     storePriorities: {},
     status: '在籍中',
@@ -237,6 +238,7 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-2',
     name: '月影 凛',
+    slug: 'tsukikage-rin',
     storeIds: ['store-3'],
     storePriorities: {},
     status: '在籍中',
@@ -258,6 +260,7 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-3',
     name: '桜井 ゆうな',
+    slug: 'sakurai-yuuna',
     storeIds: ['store-2'],
     storePriorities: {},
     status: '在籍中',
@@ -279,6 +282,7 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-4',
     name: '白鳥 麗奈',
+    slug: 'shiratori-reina',
     storeIds: ['store-1', 'store-4'],
     storePriorities: {},
     status: '在籍中',
@@ -300,6 +304,7 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-5',
     name: '黒崎 蘭',
+    slug: 'kurosaki-ran',
     storeIds: ['store-4'],
     storePriorities: {},
     status: '離籍',
@@ -321,6 +326,7 @@ export const mockCasts: Cast[] = [
   ...Array.from({ length: 15 }, (_, i) => ({
     id: `cast-${i + 6}`,
     name: `サンプルキャスト ${i + 6}`,
+    slug: `sample-cast-${i + 6}`,
     storeIds: [`store-${(i % 4) + 1}`],
     storePriorities: {},
     status: i % 5 === 0 ? ('離籍' as const) : ('在籍中' as const),

@@ -1,23 +1,27 @@
-import { Home, Camera, Star, Calendar, MessageCircle, PhoneCall, ChevronRight } from 'lucide-react';
+'use client';
+
+import { ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useRef, useEffect, useState } from 'react';
+import { BottomNavItemConfig, DEFAULT_BOTTOM_NAV } from '@/lib/store/storeTopConfig';
+import { getIconByName } from '@/lib/utils/icons';
+import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
 
-const MobileStickyButton: React.FC = () => {
+interface MobileStickyButtonProps {
+  config?: BottomNavItemConfig[];
+  isVisible?: boolean;
+}
+
+const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ config, isVisible = true }) => {
+  if (!isVisible) return null;
   const pathname = usePathname();
   const match = pathname.match(/^\/store\/([^/]+)/);
   const storeSlug = match?.[1] || '';
   const scrollRef = useRef<HTMLDivElement>(null);
   const [showRightFade, setShowRightFade] = useState(true);
 
-  const navItems = [
-    { label: 'HOME', icon: Home, href: `/store/${storeSlug}`, color: 'text-slate-600' },
-    { label: '写メ日記', icon: Camera, href: `/store/${storeSlug}/diary`, color: 'text-pink-500' },
-    { label: '口コミ', icon: Star, href: `/store/${storeSlug}/reviews`, color: 'text-amber-500' },
-    { label: 'WEB予約', icon: Calendar, href: `/store/${storeSlug}/reservation`, color: 'text-blue-500' },
-    { label: 'LINE予約', icon: MessageCircle, href: 'https://line.me', color: 'text-green-500' },
-    { label: '電話予約', icon: PhoneCall, href: 'tel:050-5491-3991', color: 'text-rose-500' },
-  ];
+  const items = (config && config.length > 0 ? config : DEFAULT_BOTTOM_NAV).filter(item => item.isVisible);
 
   const handleScroll = () => {
     if (scrollRef.current) {
@@ -33,47 +37,55 @@ const MobileStickyButton: React.FC = () => {
       handleScroll();
       return () => el.removeEventListener('scroll', handleScroll);
     }
-  }, []);
+  }, [items]);
 
   return (
-    <div className="fixed bottom-0 left-0 z-50 w-full md:hidden">
-      {/* Scroll Indicator Overlay */}
+    <div className="fixed bottom-0 left-0 z-50 w-full animate-in fade-in slide-in-from-bottom-5 duration-500 md:hidden">
+      {/* 🔮 Premium Scroll Hint Overlay */}
       {showRightFade && (
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-white via-white/40 to-transparent flex items-center justify-end pr-1">
-          <ChevronRight size={16} className="text-slate-400 animate-pulse" />
+        <div 
+          className="pointer-events-none absolute right-0 top-0 z-20 h-full w-14 bg-gradient-to-l from-white via-white/80 to-transparent flex items-center justify-end pr-1"
+          style={{ filter: 'drop-shadow(-4px 0 8px rgba(255,100,150,0.1))' }}
+        >
+          <div className="mr-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-pink-500/10 shadow-[0_0_15px_rgba(236,72,153,0.3)] animate-pulse">
+            <ChevronRight size={18} className="text-pink-500 ml-0.5" />
+          </div>
         </div>
       )}
 
-      <div className="border-t border-slate-200 bg-white/95 shadow-[0_-4px_20px_-5px_rgba(0,0,0,0.1)] backdrop-blur-md">
+      <div className="border-t border-slate-200 bg-white/95 shadow-[0_-8px_30px_-10px_rgba(0,0,0,0.15)] backdrop-blur-xl">
         <div
           ref={scrollRef}
-          className="flex h-16 items-stretch overflow-x-auto scrollbar-hide snap-x snap-mandatory px-1"
+          className="flex h-[72px] items-stretch overflow-x-auto scrollbar-hide snap-x snap-mandatory px-1"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
-          {navItems.map((item, idx) => {
-            const isActive = pathname === item.href;
+          {items.map((item, idx) => {
+            const resolvedHref = resolveStoreLink(item.href, storeSlug);
+            const isActive = pathname === resolvedHref;
+            const IconComponent = getIconByName(item.icon);
+            
             return (
               <Link
                 key={idx}
-                href={item.href}
-                className={`group flex min-w-[20%] flex-1 flex-col items-center justify-center gap-1 px-1 transition-all active:scale-95 snap-center ${
-                  isActive ? 'bg-slate-50' : 'bg-transparent'
+                href={resolvedHref}
+                className={`group flex min-w-[22%] flex-1 flex-col items-center justify-center gap-1 px-1 transition-all active:scale-95 snap-center ${
+                  isActive ? 'bg-slate-50/50' : 'bg-transparent'
                 }`}
               >
-                <div className={`relative flex h-7 w-7 items-center justify-center rounded-xl transition-all ${
-                  isActive ? 'scale-110 shadow-inner' : 'group-hover:scale-105'
+                <div className={`relative flex h-8 w-8 items-center justify-center rounded-2xl transition-all duration-300 ${
+                  isActive ? 'scale-110 bg-white shadow-[0_2px_10px_rgba(0,0,0,0.05)]' : 'group-hover:scale-110'
                 }`}>
-                  <item.icon
-                    size={22}
+                  <IconComponent
+                    size={24}
                     strokeWidth={isActive ? 2.5 : 2}
-                    className={`${item.color} ${isActive ? 'drop-shadow-[0_0_8px_rgba(0,0,0,0.1)]' : 'opacity-80'}`}
+                    className={`${item.color || 'text-slate-600'} transition-all ${isActive ? 'drop-shadow-[0_0_5px_currentColor]' : 'opacity-80'}`}
                   />
                   {isActive && (
-                    <span className="absolute -bottom-0.5 h-1 w-1 rounded-full bg-current" />
+                    <span className="absolute -bottom-1 h-1 w-1 rounded-full bg-pink-500 shadow-[0_0_8px_rgba(236,72,153,0.8)]" />
                   )}
                 </div>
-                <span className={`text-[9px] font-black tracking-tighter ${
-                  isActive ? 'text-slate-900 scale-105' : 'text-slate-500'
+                <span className={`text-[10px] font-black tracking-tighter transition-colors ${
+                  isActive ? 'text-slate-900' : 'text-slate-500'
                 }`}>
                   {item.label}
                 </span>
