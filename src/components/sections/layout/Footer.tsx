@@ -175,7 +175,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
               <li key={item.id || idx} className="footer-nav__item">
                 <a
                   href={resolvedHref}
-                  className={`footer-nav__link ${item.color || ''} ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
+                  className={`footer-nav__link ${item.color || 'text-slate-600'} ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
                   aria-label={item.ariaLabel || item.label}
                 >
                   <div className="footer-nav__icon-container">
