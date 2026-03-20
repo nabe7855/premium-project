@@ -14,19 +14,35 @@ interface NewcomerSectionProps {
 const NewcomerSection: React.FC<NewcomerSectionProps> = ({
   config,
   isEditing,
+  onUpdate,
   storeSlug = 'yokohama',
 }) => {
-  if (!config || !config.isVisible) return null;
+  if (!config || (!config.isVisible && !isEditing)) return null;
 
   return (
-    <section id="newcomer" className="bg-white py-16 md:py-24">
+    <section 
+      id="newcomer" 
+      className={`bg-white py-16 md:py-24 ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
+    >
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         {/* Image-matching Header */}
         <div className="mb-12 overflow-hidden rounded-xl bg-gradient-to-r from-[#9C7E4F] via-[#C4A97A] to-[#9C7E4F] py-6 text-center text-white shadow-lg md:py-8">
-          <h2 className="mb-2 font-serif text-xl font-bold tracking-[0.2em] md:text-3xl">
+          <h2 
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('newcomer', 'heading', e.currentTarget.innerText)}
+            className={`mb-2 font-serif text-xl font-bold tracking-[0.2em] md:text-3xl outline-none ${isEditing ? 'hover:bg-white/10 rounded px-2' : ''}`}
+          >
             {config.heading}
           </h2>
-          <p className="text-sm font-medium tracking-widest md:text-xl">{config.courseText}</p>
+          <p 
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => onUpdate?.('newcomer', 'courseText', e.currentTarget.innerText)}
+            className={`text-sm font-medium tracking-widest md:text-xl outline-none ${isEditing ? 'hover:bg-white/10 rounded px-2' : ''}`}
+          >
+            {config.courseText}
+          </p>
         </div>
 
         {isEditing && (
