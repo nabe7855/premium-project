@@ -78,16 +78,16 @@ const PriceSection: React.FC<PriceSectionProps> = ({ config, isEditing, onUpdate
   };
 
   const handleTabLabelUpdate = (index: number, e: React.FocusEvent<HTMLElement>) => {
-    if (onUpdate && config) {
-      const newLabels = [...(config.tabLabels || tabs.map((t) => t.label))];
+    if (onUpdate) {
+      const newLabels = [...(config?.tabLabels || tabs.map((t) => t.label))];
       newLabels[index] = e.currentTarget.innerText;
       onUpdate('price', 'tabLabels', newLabels);
     }
   };
 
   const handleNoteUpdate = (index: number, e: React.FocusEvent<HTMLElement>) => {
-    if (onUpdate && config) {
-      const newNotes = [...(config.notes || defaultNotes)];
+    if (onUpdate) {
+      const newNotes = [...(config?.notes || defaultNotes)];
       newNotes[index] = e.currentTarget.innerText;
       onUpdate('price', 'notes', newNotes);
     }

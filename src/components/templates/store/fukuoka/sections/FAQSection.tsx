@@ -54,9 +54,11 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
       <div className="mx-auto max-w-4xl px-4 md:px-6">
         <div className="text-center">
           <SectionTitle
-            en={config.subHeading}
-            ja={config.heading}
-            // Title editing is handled by props if needed, but for now we follow the pattern
+            en={config.subHeading || 'Common Questions'}
+            ja={config.heading || 'よくあるご質問'}
+            isEditing={isEditing}
+            onUpdateEn={(val) => onUpdate?.('faq', 'subHeading', val)}
+            onUpdateJa={(val) => onUpdate?.('faq', 'heading', val)}
           />
         </div>
 
