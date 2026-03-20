@@ -84,9 +84,27 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
             casts.map((cast, idx) => (
               <div
                 key={cast.id}
-                className="relative w-[280px] flex-shrink-0"
+                className="relative w-[300px] flex-shrink-0 pt-10"
                 style={{ scrollSnapAlign: 'center' }}
               >
+                {/* 🏷️ Cast Info Tag (Overlapping the card at the top) */}
+                <div className="absolute left-1/2 top-4 z-40 w-[80%] -translate-x-1/2">
+                  <div className="relative bg-[#7EEDFF] border-[3px] border-black px-3 py-2 text-center shadow-[4px_4px_0px_#000]">
+                    <div className="flex flex-col items-center">
+                      <span className="text-xs font-black tracking-tight text-black">
+                        {cast.name}
+                      </span>
+                      {cast.catch_copy && (
+                        <span className="mt-0.5 line-clamp-1 text-[8px] font-bold text-gray-800">
+                          {cast.catch_copy}
+                        </span>
+                      )}
+                    </div>
+                    {/* Bottom Point of the Tag */}
+                    <div className="absolute -bottom-[9px] left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-b-[3px] border-r-[3px] border-black bg-[#7EEDFF]" />
+                  </div>
+                </div>
+
                 <div
                   className={`relative h-[440px] w-full overflow-hidden rounded-[40px] border-[5px] border-black shadow-[10px_10px_0px_#000] ${
                     bgColors[idx % bgColors.length]
@@ -101,37 +119,30 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
                     }}
                   />
 
-                  {/* Amoeba Ornament 1 */}
-                  <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-white/30 blur-2xl" />
-                  {/* Amoeba Ornament 2 */}
-                  <div className="absolute -bottom-10 -right-10 h-60 w-60 rounded-full bg-[#FFD93D]/40 blur-3xl shadow-inner" />
+                  {/* Amoeba Ornaments */}
+                  <div className="absolute -left-10 top-1/2 h-40 w-40 rounded-full bg-white/30 blur-2xl" />
+                  <div className="absolute bottom-4 right-4 h-6 w-6 rounded-full bg-pink-300 border-2 border-black" />
+                  <div className="absolute top-20 left-4 h-4 w-4 rounded-full bg-yellow-300 border-2 border-black" />
 
-                  {/* Top Pick Badge (Gizagiza Star) */}
-                  <div className="absolute left-1/2 top-10 z-20 flex -translate-x-1/2 flex-col items-center">
-                    <div className="relative flex h-20 w-20 items-center justify-center">
-                      <svg
-                        viewBox="0 0 100 100"
-                        className="absolute h-full w-full animate-[spin_10s_linear_infinite] fill-[#FFD93D] drop-shadow-[2px_2px_0px_#000]"
-                      >
-                        <path d="M50 0 L58.8 35.4 L95.1 25 L75 50 L95.1 75 L58.8 64.6 L50 100 L41.2 64.6 L4.9 75 L25 50 L4.9 25 L41.2 35.4 Z" />
-                      </svg>
-                      <span className="relative z-10 text-center text-[10px] font-black leading-tight text-slate-900">
-                        TOP
-                        <br />
-                        PICK
-                      </span>
-                    </div>
-                  </div>
+                  {/* Spacer for the top tag */}
+                  <div className="h-20" />
 
-                  {/* Main Image Area with Clip Path */}
-                  <div className="relative mt-28 flex justify-center px-4">
+                  {/* Main Image Area with Flower/Amoeba Clip Path */}
+                  <div className="relative flex justify-center px-4 pt-4">
                     <div
-                      className="group relative h-56 w-56 border-4 border-black bg-white shadow-[6px_6px_0px_#000]"
+                      className="group relative h-64 w-64 border-4 border-black bg-white shadow-[6px_6px_0px_#000]"
                       style={{
-                        clipPath:
-                          'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                        clipPath: 'url(#flowerPath)',
                       }}
                     >
+                      {/* SVG definition for the flower path to use as clipPath */}
+                      <svg width="0" height="0">
+                        <defs>
+                          <clipPath id="flowerPath" clipPathUnits="objectBoundingBox">
+                            <path d="M0.5,0 C0.65,0 0.75,0.1 0.75,0.25 C0.9,0.25 1,0.35 1,0.5 C1,0.65 0.9,0.75 0.75,0.75 C0.75,0.9 0.65,1 0.5,1 C0.35,1 0.25,0.9 0.25,0.75 C0.1,0.75 0,0.65 0,0.5 C0,0.35 0.1,0.25 0.25,0.25 C0.25,0.1 0.35,0 0.5,0 Z" />
+                          </clipPath>
+                        </defs>
+                      </svg>
                       {cast.main_image_url ? (
                         <img
                           src={cast.main_image_url}
@@ -146,28 +157,11 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
                     </div>
                   </div>
 
-                  {/* Content Info */}
-                  <div className="mt-4 px-6 text-center">
-                    <h2 className="text-xl font-black tracking-tighter text-slate-900 drop-shadow-sm">
-                      {cast.name}
-                    </h2>
-                    {cast.catch_copy && (
-                      <p className="mt-1 line-clamp-1 text-[10px] font-bold text-slate-800">
-                        {cast.catch_copy}
-                      </p>
-                    )}
-
-                    {/* Visual Accent */}
-                    <div className="mt-2 flex justify-center gap-1">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          size={12}
-                          className="fill-[#FFD93D] text-black"
-                          strokeWidth={2.5}
-                        />
-                      ))}
-                    </div>
+                  {/* Additional Decoration stars/etc */}
+                  <div className="mt-8 flex justify-center gap-4 px-6 opacity-30">
+                    <Star size={24} className="text-black" />
+                    <Star size={32} className="text-black fill-white" />
+                    <Star size={24} className="text-black" />
                   </div>
                 </div>
               </div>
@@ -184,11 +178,6 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
       <div className="absolute bottom-4 left-4 h-12 w-12 opacity-40">
         <svg viewBox="0 0 100 100" className="fill-purple-400">
           <circle cx="50" cy="50" r="40" />
-        </svg>
-      </div>
-      <div className="absolute right-10 top-40 h-8 w-8 opacity-40">
-        <svg viewBox="0 0 100 100" className="fill-pink-400">
-          <rect x="10" y="10" width="80" height="80" rx="20" transform="rotate(20)" />
         </svg>
       </div>
     </div>
