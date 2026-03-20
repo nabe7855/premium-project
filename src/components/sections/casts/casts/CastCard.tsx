@@ -230,15 +230,15 @@ const CastCard: React.FC<CastCardProps> = ({
             MBTI: {cast.mbtiType || 'ヒミツ🍓'}
           </span>
           <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] text-purple-700 sm:text-xs">
-            顔型: {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
+            顔タイプ: {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
           </span>
         </div>
 
         {scoreSection}
         {/* 変態係数 (Double Wi-Fi Gauge Style) */}
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex items-center gap-3">
           <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-500/70">
-            Perversion Quotient
+            変態係数
           </span>
           <div className="flex items-end gap-[1.5px] h-4">
             {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bar) => {

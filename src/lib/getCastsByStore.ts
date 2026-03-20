@@ -147,7 +147,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
             ? [cast.face.name]
             : [],
         statuses,
-        sexinessLevel: cast.sexiness_level ?? 3,
+        sexinessLevel: (cast.sexiness_level ?? 3) * 20,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
         voiceUrl: urlData?.publicUrl ?? undefined,
         latestTweet: tweetsMap[cast.id] ?? null,
