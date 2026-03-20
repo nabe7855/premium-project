@@ -1,6 +1,5 @@
 import CastList from '@/components/sections/casts/casts/CastList';
 import DiagnosisSection from '@/components/sections/casts/casts/DiagnosisSection';
-import BrandHero from '@/components/sections/casts/ui/BrandHero'; // ✅ 追加
 import Hero from '@/components/sections/casts/ui/Hero';
 import { getRandomTodayCast } from '@/lib/getRandomTodayCast';
 import { Metadata } from 'next';
@@ -65,9 +64,6 @@ export default async function CastListPage({ params }: Props) {
         <YokohamaHeader config={topConfig.header} />
       ) : null}
 
-      {/* ゴージャスなブランドHero */}
-      <BrandHero />
-
       {/* ✅ 本日のおすすめキャスト */}
       <Hero cast={randomCast} />
 
@@ -77,9 +73,6 @@ export default async function CastListPage({ params }: Props) {
           <h2 className="mb-4 font-serif text-2xl font-bold text-neutral-800 sm:text-3xl md:text-4xl">
             {shopName} - キャスト一覧
           </h2>
-          <p className="mx-auto max-w-2xl text-base text-neutral-600 sm:text-lg">
-            心とろける極上のひとときを、あなたに。
-          </p>
         </div>
       </div>
 
