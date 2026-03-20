@@ -122,12 +122,6 @@ export default function YokohamaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      {!isEditing && (
-        <MobileStickyButton 
-          config={config?.footer?.bottomNav} 
-          isVisible={config?.footer?.isBottomNavVisible}
-        />
-      )}
     </div>
   );
 }

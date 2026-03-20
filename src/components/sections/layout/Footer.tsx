@@ -21,6 +21,8 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
     phone: '050-5212-5818',
     lineUrl: 'https://lin.ee/xxxxx',
   });
+  const [navItems, setNavItems] = useState<any[]>([]);
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
   // 初めての方へページかどうかを判定
   const isFirstTimePage = pathname?.includes('/first-time');
@@ -59,6 +61,27 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       handleScroll(); // Initial check
     }
 
+    const fetchConfig = async () => {
+      if (!slug) return;
+      try {
+        const { getStoreTopConfig } = await import('@/lib/store/getStoreTopConfig');
+        const res = await getStoreTopConfig(slug as string);
+        if (res.success && res.config) {
+          const config = res.config;
+          if (config.footer?.bottomNav) {
+            setNavItems(config.footer.bottomNav.filter((it: any) => it.isVisible));
+          }
+          if (typeof config.footer?.isBottomNavVisible === 'boolean') {
+            setIsNavVisible(config.footer.isBottomNavVisible);
+          }
+        }
+      } catch (err) {
+        console.error('Failed to fetch footer config:', err);
+      }
+    };
+
+    fetchConfig();
+
     if (slug) {
       getStoreContactData(slug as string).then((res) => {
         if (res.success && res.data) {
@@ -85,74 +108,15 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
   if (!isMounted) return null;
 
-  const footerItems = [
-    {
-      id: 'home',
-      label: 'ホーム',
-      icon: Home,
-      href: `/store/${slug}`,
-      ariaLabel: '店舗トップページへ',
-    },
-    {
-      id: 'schedule',
-      label: '出勤',
-      icon: Calendar,
-      href: `/store/${slug}/schedule/schedule`,
-      ariaLabel: '今日明日の出勤スケジュール確認',
-    },
-    {
-      id: 'pricing',
-      label: '料金',
-      icon: CreditCard,
-      href: `/store/${slug}/price`,
-      ariaLabel: '料金システム・予算確認',
-      badge: isFirstVisit ? '初' : null,
-    },
-    {
-      id: 'diary',
-      label: '写メ日記',
-      icon: Camera,
-      href: `/store/${slug}/diary`,
-      ariaLabel: 'キャストの写メ日記を見る',
-    },
-    {
-      id: 'reviews',
-      label: '口コミ',
-      icon: Star,
-      href: `/store/${slug}/reviews`,
-      ariaLabel: 'お客様の口コミを見る',
-    },
-    {
-      id: 'reservation',
-      label: '予約',
-      icon: Users,
-      href: `/store/${slug}/reservation`,
-      ariaLabel: 'WEB予約・空き状況確認',
-    },
-    {
-      id: 'line',
-      label: 'LINE',
-      icon: MessageCircle,
-      href: storeContact.lineUrl,
-      ariaLabel: 'LINEで手軽に予約・相談',
-      highlighted: !isBusinessHours,
-    },
-    {
-      id: 'cast',
-      label: '推し達',
-      icon: Heart,
-      href: `/store/${slug}/cast-list?sort=popular`,
-      ariaLabel: '人気キャスト一覧・お気に入り確認',
-    },
+  if (!isMounted || !isNavVisible) return null;
+
+  const items = navItems.length > 0 ? navItems : [
+    { id: 'home', label: 'ホーム', icon: Home, href: `/store/${slug}` },
+    { id: 'schedule', label: '出勤', icon: Calendar, href: `/store/${slug}/schedule/schedule` },
+    { id: 'pricing', label: '料金', icon: CreditCard, href: `/store/${slug}/price`, badge: isFirstVisit ? '初' : null },
+    { id: 'diary', label: '写メ日記', icon: Camera, href: `/store/${slug}/diary` },
+    { id: 'line', label: 'LINE', icon: MessageCircle, href: storeContact.lineUrl },
   ];
-
-  type FooterItem = typeof footerItems[number] & {
-    highlighted?: boolean;
-    urgent?: boolean;
-    badge?: string | null;
-  };
-
-  const items = footerItems as FooterItem[];
 
   return (
     <footer
@@ -194,22 +158,29 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
       <nav className="footer-nav__container">
         <ul ref={scrollRef} className="footer-nav__list scrollbar-hide">
-          {items.map((item) => (
-            <li key={item.id} className="footer-nav__item">
-              <a
-                href={item.href}
-                className={`footer-nav__link ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
-                aria-label={item.ariaLabel}
-              >
-                <div className="footer-nav__icon-container">
-                  <item.icon className="footer-nav__icon" aria-hidden="true" />
-                  {item.urgent && <span className="footer-nav__urgent-indicator">🔥</span>}
-                </div>
-                <span className="footer-nav__text">{item.label}</span>
-                {item.badge && <span className="footer-nav__badge">{item.badge}</span>}
-              </a>
-            </li>
-          ))}
+          {items.map((item, idx) => {
+            const { getIconByName } = require('@/lib/utils/icons');
+            const { resolveStoreLink } = require('@/lib/utils/resolveStoreLink');
+            const Icon = typeof item.icon === 'string' ? getIconByName(item.icon) : item.icon;
+            const resolvedHref = resolveStoreLink(item.href, slug as string);
+            
+            return (
+              <li key={item.id || idx} className="footer-nav__item">
+                <a
+                  href={resolvedHref}
+                  className={`footer-nav__link ${item.highlighted ? 'footer-nav__link--highlighted' : ''} ${item.urgent ? 'footer-nav__link--urgent' : ''}`}
+                  aria-label={item.ariaLabel || item.label}
+                >
+                  <div className="footer-nav__icon-container">
+                    <Icon className="footer-nav__icon" aria-hidden="true" />
+                    {item.urgent && <span className="footer-nav__urgent-indicator">🔥</span>}
+                  </div>
+                  <span className="footer-nav__text">{item.label}</span>
+                  {item.badge && <span className="footer-nav__badge">{item.badge}</span>}
+                </a>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 

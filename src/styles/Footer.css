@@ -41,7 +41,7 @@
 }
 
 .footer-nav__item {
-  flex: 0 0 20%; /* 常に 1/5 (20%) の幅を確保 */
+  flex: 0 0 16.666%; /* 常に 1/6 (16.666%) の幅を確保 */
   text-align: center;
   min-width: 0;
   border-right: 1px solid rgba(0, 0, 0, 0.03); /* 境界線を薄く追加 */

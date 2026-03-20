@@ -154,12 +154,6 @@ export default function FukuokaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
-      {!isEditing && (
-        <MobileStickyButton 
-          config={safeConfig?.footer?.bottomNav} 
-          isVisible={safeConfig?.footer?.isBottomNavVisible}
-        />
-      )}
     </div>
   );
 }
