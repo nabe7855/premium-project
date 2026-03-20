@@ -19,7 +19,7 @@ function getTodayDateString(): string {
   return jst.toISOString().slice(0, 10);
 }
 
-export async function getRandomTodayCast(storeSlug: string): Promise<RandomCast | null> {
+export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
   const today = getTodayDateString();
 
   // 1. 店舗取得
@@ -31,7 +31,7 @@ export async function getRandomTodayCast(storeSlug: string): Promise<RandomCast 
 
   if (storeError || !store) {
     console.error('❌ 店舗取得エラー:', storeError?.message);
-    return null;
+    return [];
   }
 
   // 2. 今日出勤予定キャストを取得
@@ -55,47 +55,48 @@ export async function getRandomTodayCast(storeSlug: string): Promise<RandomCast 
     .eq('store_id', store.id)
     .eq('work_date', today);
 
-  if (error) {
-    console.error('❌ getRandomTodayCast error:', error.message);
-    return null;
+  if (error || !data) {
+    console.error('❌ getTodayCasts error:', error?.message);
+    return [];
   }
 
-  if (!data || data.length === 0) {
-    console.warn('⚠️ 今日の出勤キャストは見つかりませんでした');
-    return null;
-  }
+  // 3. is_active のキャストをマッピング
+  const result: RandomCast[] = data
+    .filter((d: any) => d.casts?.is_active)
+    .map((d: any) => {
+      const cast = d.casts;
+      let mbti: string | null = null;
+      if (Array.isArray(cast.mbti) && cast.mbti.length > 0) {
+        mbti = cast.mbti[0]?.name ?? null;
+      } else if (cast.mbti && typeof cast.mbti === 'object') {
+        mbti = cast.mbti.name ?? null;
+      }
 
-  // 3. is_active のキャストだけ残す
-  const activeCasts = data.filter((d: any) => d.casts?.is_active);
-  if (activeCasts.length === 0) return null;
+      let face: string | null = null;
+      if (Array.isArray(cast.face) && cast.face.length > 0) {
+        face = cast.face[0]?.name ?? null;
+      } else if (cast.face && typeof cast.face === 'object') {
+        face = cast.face.name ?? null;
+      }
 
-  // 4. ランダムに1人選ぶ
-  const randomIndex = Math.floor(Math.random() * activeCasts.length);
-  const cast: any = activeCasts[randomIndex].casts;
+      return {
+        id: cast.id,
+        name: cast.name,
+        catch_copy: cast.catch_copy,
+        main_image_url: cast.main_image_url,
+        mbti_name: mbti,
+        face_name: face,
+        start_datetime: d.start_datetime,
+        end_datetime: d.end_datetime,
+      };
+    });
 
-  // 5. mbti / face の安全な取得
-  let mbti: string | null = null;
-  if (Array.isArray(cast.mbti) && cast.mbti.length > 0) {
-    mbti = cast.mbti[0]?.name ?? null;
-  } else if (cast.mbti && typeof cast.mbti === 'object') {
-    mbti = cast.mbti.name ?? null;
-  }
+  return result;
+}
 
-  let face: string | null = null;
-  if (Array.isArray(cast.face) && cast.face.length > 0) {
-    face = cast.face[0]?.name ?? null;
-  } else if (cast.face && typeof cast.face === 'object') {
-    face = cast.face.name ?? null;
-  }
-
-  return {
-    id: cast.id,
-    name: cast.name,
-    catch_copy: cast.catch_copy,
-    main_image_url: cast.main_image_url,
-    mbti_name: mbti,
-    face_name: face,
-    start_datetime: activeCasts[randomIndex].start_datetime,
-    end_datetime: activeCasts[randomIndex].end_datetime,
-  };
+export async function getRandomTodayCast(storeSlug: string): Promise<RandomCast | null> {
+  const casts = await getTodayCasts(storeSlug);
+  if (casts.length === 0) return null;
+  const randomIndex = Math.floor(Math.random() * casts.length);
+  return casts[randomIndex];
 }

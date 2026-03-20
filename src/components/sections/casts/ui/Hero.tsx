@@ -1,16 +1,44 @@
+'use client';
+
 import { RandomCast } from '@/lib/getRandomTodayCast';
 import { motion } from 'framer-motion';
 import { Menu, Star } from 'lucide-react';
-import React from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 interface HeroProps {
-  cast: RandomCast | null;
+  casts: RandomCast[];
 }
 
-const Hero: React.FC<HeroProps> = ({ cast }) => {
+const Hero: React.FC<HeroProps> = ({ casts }) => {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
   // カルーセルのアイテム用背景色
   const bgColors = ['bg-[#FF7EB3]', 'bg-[#7EEDFF]', 'bg-[#FFD93D]', 'bg-[#B088F9]'];
-  const cardBg = bgColors[0]; // 単一キャストの場合はピンクをデフォルトに
+
+  // 3秒ごとにスライド
+  useEffect(() => {
+    if (casts.length <= 1) return;
+
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % casts.length);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [casts.length]);
+
+  // インデックスが変わったらスクロール
+  useEffect(() => {
+    if (!scrollRef.current) return;
+    const target = scrollRef.current.children[currentIndex] as HTMLElement;
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+    }
+  }, [currentIndex]);
 
   return (
     <div className="relative w-full overflow-hidden bg-[#FFEB3B] pb-10">
@@ -46,95 +74,109 @@ const Hero: React.FC<HeroProps> = ({ cast }) => {
       </div>
 
       {/* 2. Main Carousel Area */}
-      <div className="mt-12 px-0">
+      <div className="mt-12">
         <div
-          className="flex gap-6 overflow-x-auto px-10 pb-12 scrollbar-hide"
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto px-6 pb-12 scrollbar-hide"
           style={{ scrollSnapType: 'x mandatory', WebkitOverflowScrolling: 'touch' }}
         >
-          {/* Card Item */}
-          <div
-            className="relative w-[320px] flex-shrink-0 scroll-snap-align-center"
-            style={{ scrollSnapAlign: 'center' }}
-          >
-            <div
-              className={`relative h-[480px] w-full overflow-hidden rounded-[40px] border-[6px] border-black shadow-[12px_12px_0px_#000] ${cardBg}`}
-            >
-              {/* Dot Pattern Background Overlay */}
+          {casts.length > 0 ? (
+            casts.map((cast, idx) => (
               <div
-                className="pointer-events-none absolute inset-0 opacity-20"
-                style={{
-                  backgroundImage:
-                    'radial-gradient(#000 2px, transparent 2px)',
-                  backgroundSize: '20px 20px',
-                }}
-              />
-
-              {/* Amoeba Ornament 1 */}
-              <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-white/30 blur-2xl" />
-              {/* Amoeba Ornament 2 */}
-              <div className="absolute -bottom-10 -right-10 h-60 w-60 rounded-full bg-[#FFD93D]/40 blur-3xl shadow-inner" />
-
-              {/* Top Pick Badge (Gizagiza Star) */}
-              <div className="absolute left-1/2 top-14 z-20 flex -translate-x-1/2 flex-col items-center">
-                <div className="relative flex h-24 w-24 items-center justify-center">
-                  <svg
-                    viewBox="0 0 100 100"
-                    className="absolute h-full w-full animate-[spin_10s_linear_infinite] fill-[#FFD93D] drop-shadow-[2px_2px_0px_#000]"
-                  >
-                    <path d="M50 0 L58.8 35.4 L95.1 25 L75 50 L95.1 75 L58.8 64.6 L50 100 L41.2 64.6 L4.9 75 L25 50 L4.9 25 L41.2 35.4 Z" />
-                  </svg>
-                  <span className="relative z-10 text-center text-[10px] font-black leading-tight text-slate-900">
-                    TOP<br />PICK
-                  </span>
-                </div>
-              </div>
-
-              {/* Main Image Area with Clip Path */}
-              <div className="relative mt-36 flex justify-center px-6">
+                key={cast.id}
+                className="relative w-[280px] flex-shrink-0"
+                style={{ scrollSnapAlign: 'center' }}
+              >
                 <div
-                  className="group relative h-64 w-64 border-4 border-black bg-white shadow-[8px_8px_0px_#000]"
-                  style={{
-                    clipPath:
-                      'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
-                  }}
+                  className={`relative h-[440px] w-full overflow-hidden rounded-[40px] border-[5px] border-black shadow-[10px_10px_0px_#000] ${
+                    bgColors[idx % bgColors.length]
+                  }`}
                 >
-                  {cast?.main_image_url ? (
-                    <img
-                      src={cast.main_image_url}
-                      alt={cast.name}
-                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                    />
-                  ) : (
-                    <div className="flex h-full w-full items-center justify-center bg-slate-100 text-xs font-bold text-slate-400">
-                      No Image
+                  {/* Dot Pattern Background Overlay */}
+                  <div
+                    className="pointer-events-none absolute inset-0 opacity-20"
+                    style={{
+                      backgroundImage: 'radial-gradient(#000 2px, transparent 2px)',
+                      backgroundSize: '20px 20px',
+                    }}
+                  />
+
+                  {/* Amoeba Ornament 1 */}
+                  <div className="absolute -left-10 -top-10 h-40 w-40 rounded-full bg-white/30 blur-2xl" />
+                  {/* Amoeba Ornament 2 */}
+                  <div className="absolute -bottom-10 -right-10 h-60 w-60 rounded-full bg-[#FFD93D]/40 blur-3xl shadow-inner" />
+
+                  {/* Top Pick Badge (Gizagiza Star) */}
+                  <div className="absolute left-1/2 top-10 z-20 flex -translate-x-1/2 flex-col items-center">
+                    <div className="relative flex h-20 w-20 items-center justify-center">
+                      <svg
+                        viewBox="0 0 100 100"
+                        className="absolute h-full w-full animate-[spin_10s_linear_infinite] fill-[#FFD93D] drop-shadow-[2px_2px_0px_#000]"
+                      >
+                        <path d="M50 0 L58.8 35.4 L95.1 25 L75 50 L95.1 75 L58.8 64.6 L50 100 L41.2 64.6 L4.9 75 L25 50 L4.9 25 L41.2 35.4 Z" />
+                      </svg>
+                      <span className="relative z-10 text-center text-[10px] font-black leading-tight text-slate-900">
+                        TOP
+                        <br />
+                        PICK
+                      </span>
                     </div>
-                  )}
-                </div>
-              </div>
+                  </div>
 
-              {/* Content Info */}
-              <div className="mt-6 px-8 text-center">
-                <h2 className="text-2xl font-black tracking-tighter text-slate-900 drop-shadow-sm">
-                  {cast ? cast.name : 'キャスト未定'}
-                </h2>
-                {cast?.catch_copy && (
-                  <p className="mt-1 line-clamp-1 text-xs font-bold text-slate-800">
-                    {cast.catch_copy}
-                  </p>
-                )}
-                
-                {/* Visual Accent */}
-                <div className="mt-4 flex justify-center gap-1">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={14} className="fill-[#FFD93D] text-black" strokeWidth={2.5} />
-                  ))}
+                  {/* Main Image Area with Clip Path */}
+                  <div className="relative mt-28 flex justify-center px-4">
+                    <div
+                      className="group relative h-56 w-56 border-4 border-black bg-white shadow-[6px_6px_0px_#000]"
+                      style={{
+                        clipPath:
+                          'polygon(30% 0%, 70% 0%, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0% 70%, 0% 30%)',
+                      }}
+                    >
+                      {cast.main_image_url ? (
+                        <img
+                          src={cast.main_image_url}
+                          alt={cast.name}
+                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                        />
+                      ) : (
+                        <div className="flex h-full w-full items-center justify-center bg-slate-100 text-xs font-bold text-slate-400">
+                          No Image
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Content Info */}
+                  <div className="mt-4 px-6 text-center">
+                    <h2 className="text-xl font-black tracking-tighter text-slate-900 drop-shadow-sm">
+                      {cast.name}
+                    </h2>
+                    {cast.catch_copy && (
+                      <p className="mt-1 line-clamp-1 text-[10px] font-bold text-slate-800">
+                        {cast.catch_copy}
+                      </p>
+                    )}
+
+                    {/* Visual Accent */}
+                    <div className="mt-2 flex justify-center gap-1">
+                      {[...Array(5)].map((_, i) => (
+                        <Star
+                          key={i}
+                          size={12}
+                          className="fill-[#FFD93D] text-black"
+                          strokeWidth={2.5}
+                        />
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="flex h-40 w-full items-center justify-center font-bold text-slate-400">
+              キャスト未定
             </div>
-          </div>
-
-          {/* Dummy Slide for Carousel Feel if only 1 cast */}
-          <div className="w-1 flex-shrink-0" />
+          )}
         </div>
       </div>
 

@@ -1,7 +1,7 @@
 import CastList from '@/components/sections/casts/casts/CastList';
 import DiagnosisSection from '@/components/sections/casts/casts/DiagnosisSection';
 import Hero from '@/components/sections/casts/ui/Hero';
-import { getRandomTodayCast } from '@/lib/getRandomTodayCast';
+import { getTodayCasts } from '@/lib/getRandomTodayCast';
 import { Metadata } from 'next';
 
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
@@ -51,8 +51,8 @@ export default async function CastListPage({ params }: Props) {
     ? (topConfigResult.config as StoreTopPageConfig)
     : DEFAULT_STORE_TOP_CONFIG;
 
-  // 本日出勤キャストをランダムに1人取得
-  const randomCast = await getRandomTodayCast(params.slug);
+  // 本日出勤キャストを複数取得（カルーセル用）
+  const todayCasts = await getTodayCasts(params.slug);
 
   const shopName = topConfig?.footer?.shopInfo?.name || store.name;
 
@@ -64,8 +64,8 @@ export default async function CastListPage({ params }: Props) {
         <YokohamaHeader config={topConfig.header} />
       ) : null}
 
-      {/* ✅ 本日のおすすめキャスト */}
-      <Hero cast={randomCast} />
+      {/* ✅ 本日のおすすめキャスト（カルーセル表示） */}
+      <Hero casts={todayCasts} />
 
 
       {/* 相性診断セクション */}
