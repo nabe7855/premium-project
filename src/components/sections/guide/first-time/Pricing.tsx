@@ -72,13 +72,13 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mb-12 text-center">
           {data.imageUrl ? (
-            <div className="relative mx-auto mb-4 max-w-2xl">
+            <div className="relative mx-auto mb-4 max-w-2xl min-h-[120px] md:min-h-[200px]">
               <EditableImage
                 isEditing={isEditing}
                 src={data.imageUrl}
                 alt="ご利用プランの一覧"
                 onUpload={(file) => onImageUpload?.('pricing', file)}
-                className="h-auto w-full object-contain"
+                className="h-full w-full object-contain"
               />
               {isEditing && (
                 <button
