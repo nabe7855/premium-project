@@ -83,7 +83,8 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
     // 🎯 年齢フィルター
     result = result.filter(
       (c) => {
-        const age = c.age ?? 0;
+        if (c.age === null || c.age === undefined) return true;
+        const age = c.age;
         return age >= ageRange[0] && age <= ageRange[1];
       }
     );
