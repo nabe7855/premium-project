@@ -116,9 +116,20 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 </div>
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
-                  <span className="whitespace-pre-line">
-                    {store.receptionHours || config.shopInfo?.receptionHours}
-                  </span>
+                  <div className="flex flex-col">
+                    <span className="font-bold">24時間営業（受付{store.receptionHours || config.shopInfo?.receptionHours || '8:00〜23:00'}）</span>
+                    <span className="mt-1 text-[10px] text-slate-500">
+                      ※あくまでも{(() => {
+                        const hours = store.receptionHours || config.shopInfo?.receptionHours || '8:00〜23:00';
+                        const match = hours.match(/(\d{1,2}):(\d{2})$/);
+                        if (match) {
+                          const [_, h, m] = match;
+                          return m === '00' ? `${h}時` : `${h}時${m}分`;
+                        }
+                        return '23時';
+                      })()}までの受付になり、それ以降のお申込みは翌日に対応をさせて頂きます。
+                    </span>
+                  </div>
                 </div>
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">営業時間</span>
