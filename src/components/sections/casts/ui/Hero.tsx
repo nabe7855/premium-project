@@ -27,15 +27,17 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
     return () => clearInterval(interval);
   }, [casts.length]);
 
-  // インデックスが変わったらスクロール
+  // インデックスが変わったら水平方向にのみスクロール
   useEffect(() => {
     if (!scrollRef.current) return;
-    const target = scrollRef.current.children[currentIndex] as HTMLElement;
+    const container = scrollRef.current;
+    const target = container.children[currentIndex] as HTMLElement;
     if (target) {
-      target.scrollIntoView({
+      // ターゲットをコンテナの中央に配置するための位置計算
+      const scrollLeft = target.offsetLeft - (container.offsetWidth - target.offsetWidth) / 2;
+      container.scrollTo({
+        left: scrollLeft,
         behavior: 'smooth',
-        block: 'nearest',
-        inline: 'center',
       });
     }
   }, [currentIndex]);
