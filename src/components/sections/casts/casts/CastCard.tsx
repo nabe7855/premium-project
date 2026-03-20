@@ -95,12 +95,6 @@ const CastCard: React.FC<CastCardProps> = ({
     </div>
   );
 
-  // セクシー度
-  const sexinessSection = (
-    <div className="mb-2 h-5 text-sm text-pink-500">
-      {cast.sexinessStrawberry ? `セクシー度: ${cast.sexinessStrawberry}` : ''}
-    </div>
-  );
 
   return (
     <motion.div
@@ -241,7 +235,37 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {scoreSection}
-        {sexinessSection}
+        {/* エロス係数 (Wi-Fi Gauge Style) */}
+        <div className="mb-2 flex items-center justify-between">
+          <span className="text-[10px] font-black uppercase tracking-wider text-pink-500/70">
+            Eros Quotient
+          </span>
+          <div className="flex items-end gap-[2px] h-3">
+            {[1, 2, 3, 4, 5].map((bar) => {
+              const level = Math.ceil((cast.sexinessLevel ?? 0) / 20);
+              const isActive = (6 - bar) <= level; // Grows larger to the left
+              const getColor = () => {
+                if (level <= 1) return 'bg-emerald-400';
+                if (level <= 2) return 'bg-lime-400';
+                if (level <= 3) return 'bg-yellow-400';
+                if (level <= 4) return 'bg-orange-400';
+                return 'bg-rose-500';
+              };
+              
+              return (
+                <div
+                  key={bar}
+                  className={`w-[3px] rounded-full transition-all duration-500 ${
+                    isActive ? getColor() : 'bg-neutral-200'
+                  }`}
+                  style={{
+                    height: `${(6 - bar) * 20}%`, // Tallest on the left
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
 
         <div className="mb-3 flex flex-wrap gap-1">
           {cast.tags?.slice(0, 2).map((tag) => (

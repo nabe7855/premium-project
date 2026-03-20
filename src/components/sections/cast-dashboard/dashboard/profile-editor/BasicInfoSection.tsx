@@ -69,15 +69,19 @@ export default function BasicInfoSection({ form, onChange }: Props) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">セクシー度 (0-100)</label>
-          <input
-            type="number"
-            value={form.sexinessLevel ?? ''}
-            onChange={(e) => onChange('sexinessLevel', Number(e.target.value))}
-            className="mt-1 w-full rounded border px-3 py-2"
-            min="0"
-            max="100"
-          />
+          <label className="block text-sm font-medium">エロス係数 ({form.sexinessLevel ?? 0}%)</label>
+          <div className="mt-2 flex items-center gap-4">
+            <input
+              type="range"
+              value={form.sexinessLevel ?? 0}
+              onChange={(e) => onChange('sexinessLevel', Number(e.target.value))}
+              className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 accent-pink-500"
+              min="0"
+              max="100"
+              step="1"
+            />
+            <span className="text-sm font-bold text-pink-500">{form.sexinessLevel ?? 0}%</span>
+          </div>
         </div>
       </div>
     </>
