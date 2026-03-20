@@ -201,7 +201,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
           <div className="mt-10 text-center">
             <Link
               href={`/store/${storeSlug}/news`}
-              className="inline-block rounded-full bg-[#006699] px-10 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-105 md:text-base"
+              className="inline-block rounded-full bg-[#FF3E7E] px-10 py-3 text-sm font-bold text-white shadow-md transition-transform hover:scale-105 md:text-base"
             >
               すべてを見る
             </Link>
