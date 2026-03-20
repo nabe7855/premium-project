@@ -235,31 +235,31 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {scoreSection}
-        {/* エロス係数 (Wi-Fi Gauge Style) */}
+        {/* 変態係数 (Double Wi-Fi Gauge Style) */}
         <div className="mb-2 flex items-center justify-between">
-          <span className="text-[10px] font-black uppercase tracking-wider text-pink-500/70">
-            Eros Quotient
+          <span className="text-[10px] font-black uppercase tracking-wider text-fuchsia-500/70">
+            Perversion Quotient
           </span>
-          <div className="flex items-end gap-[2px] h-3">
-            {[1, 2, 3, 4, 5].map((bar) => {
-              const level = Math.ceil((cast.sexinessLevel ?? 0) / 20);
-              const isActive = (6 - bar) <= level; // Grows larger to the left
+          <div className="flex items-end gap-[1.5px] h-4">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bar) => {
+              const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-100 -> 1-10
+              const isActive = bar <= level; // Grows larger to the right
               const getColor = () => {
-                if (level <= 1) return 'bg-emerald-400';
-                if (level <= 2) return 'bg-lime-400';
-                if (level <= 3) return 'bg-yellow-400';
-                if (level <= 4) return 'bg-orange-400';
+                if (level <= 2) return 'bg-emerald-400';
+                if (level <= 4) return 'bg-lime-400';
+                if (level <= 6) return 'bg-yellow-400';
+                if (level <= 8) return 'bg-orange-400';
                 return 'bg-rose-500';
               };
               
               return (
                 <div
                   key={bar}
-                  className={`w-[3px] rounded-full transition-all duration-500 ${
-                    isActive ? getColor() : 'bg-neutral-200'
+                  className={`w-[2.5px] rounded-full transition-all duration-500 ${
+                    isActive ? getColor() : 'bg-neutral-100'
                   }`}
                   style={{
-                    height: `${(6 - bar) * 20}%`, // Tallest on the left
+                    height: `${bar * 10}%`, // Tallest on the right
                   }}
                 />
               );
