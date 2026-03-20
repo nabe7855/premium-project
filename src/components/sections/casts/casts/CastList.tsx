@@ -57,6 +57,45 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const filteredAndSortedCasts = useMemo(() => {
     let result = originalCasts.filter((c) => c.isActive); // 在籍中のみ
 
+    // 🎯 キーワード検索
+    if (searchTerm) {
+      const lowerSearch = searchTerm.toLowerCase();
+      result = result.filter(
+        (c) =>
+          c.name.toLowerCase().includes(lowerSearch) ||
+          (c.catchCopy && c.catchCopy.toLowerCase().includes(lowerSearch)) ||
+          (c.tags && c.tags.some((tag) => tag.toLowerCase().includes(lowerSearch)))
+      );
+    }
+
+    // 🎯 MBTIフィルター
+    if (selectedMBTI) {
+      result = result.filter((c) => c.mbtiType === selectedMBTI);
+    }
+
+    // 🎯 顔タイプフィルター
+    if (selectedFaceTypes.length > 0) {
+      result = result.filter((c) =>
+        c.faceType?.some((type) => selectedFaceTypes.includes(type))
+      );
+    }
+
+    // 🎯 年齢フィルター
+    result = result.filter(
+      (c) => {
+        const age = c.age ?? 0;
+        return age >= ageRange[0] && age <= ageRange[1];
+      }
+    );
+
+    // 🎯 タグフィルター
+    if (selectedTags.length > 0) {
+      result = result.filter((c) =>
+        selectedTags.every((tag) => c.tags?.includes(tag))
+      );
+    }
+
+    // 🎯 ソート
     switch (sortBy) {
       case 'default': // おすすめ順 (priority大きい順)
         result = [...result].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
@@ -79,7 +118,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
     }
 
     return result;
-  }, [originalCasts, sortBy]);
+  }, [originalCasts, searchTerm, selectedMBTI, selectedFaceTypes, ageRange, selectedTags, sortBy]);
 
   // 🔄 ローディング時
   if (loading) {
