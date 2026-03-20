@@ -96,9 +96,11 @@ const CastCard: React.FC<CastCardProps> = ({
   );
 
   // セクシー度
-  const sexinessSection = cast.sexinessStrawberry ? (
-    <div className="mb-2 text-sm text-pink-500">セクシー度: {cast.sexinessStrawberry}</div>
-  ) : null;
+  const sexinessSection = (
+    <div className="mb-2 h-5 text-sm text-pink-500">
+      {cast.sexinessStrawberry ? `セクシー度: ${cast.sexinessStrawberry}` : ''}
+    </div>
+  );
 
   return (
     <motion.div
@@ -212,27 +214,30 @@ const CastCard: React.FC<CastCardProps> = ({
             <h3 className="truncate text-sm font-semibold text-neutral-800 sm:text-base">
               {cast.name}
             </h3>
-            {cast.catchCopy && (
-              <p className="mt-1 text-xs italic text-pink-600 sm:text-sm">「{cast.catchCopy}」</p>
-            )}
+            {/* キャッチコピーの高さ固定 */}
+            <div className="mt-1 h-4 sm:h-5">
+              {cast.catchCopy && (
+                <p className="truncate text-[10px] italic text-pink-600 sm:text-xs">
+                  「{cast.catchCopy}」
+                </p>
+              )}
+            </div>
           </div>
           <div className="ml-2 flex-shrink-0 text-right">
-            <div className="text-xs text-neutral-500 sm:text-sm">{cast.age}歳</div>
+            <div className="text-xs text-neutral-500 sm:text-sm">
+              {cast.age ? `${cast.age}歳` : '歳'}
+            </div>
           </div>
         </div>
 
-        {/* MBTI & 顔型 */}
+        {/* MBTI & 顔型 - 常に表示して高さを固定 */}
         <div className="mb-2 flex flex-wrap gap-2">
-          {cast.mbtiType && (
-            <span className="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700">
-              MBTI: {cast.mbtiType}
-            </span>
-          )}
-          {cast.faceType && cast.faceType.length > 0 && (
-            <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs text-purple-700">
-              顔型: {cast.faceType.join(', ')}
-            </span>
-          )}
+          <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] text-blue-700 sm:text-xs">
+            MBTI: {cast.mbtiType || 'ヒミツ🍓'}
+          </span>
+          <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] text-purple-700 sm:text-xs">
+            顔型: {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
+          </span>
         </div>
 
         {scoreSection}
