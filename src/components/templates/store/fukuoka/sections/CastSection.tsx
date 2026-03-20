@@ -19,7 +19,7 @@ interface CastSectionProps {
 const CastSection: React.FC<CastSectionProps> = ({
   config,
   isEditing,
-  onUpdate: _onUpdate,
+  onUpdate,
   onImageUpload: _onImageUpload,
   storeSlug = 'fukuoka',
   todayCasts,
@@ -191,6 +191,9 @@ const CastSection: React.FC<CastSectionProps> = ({
         <SectionTitle
           en={config?.subHeading || 'Strawberry Selection'}
           ja={config?.heading || '本日出勤のセラピスト'}
+          isEditing={isEditing}
+          onUpdateEn={(val) => onUpdate?.('cast', 'subHeading', val)}
+          onUpdateJa={(val) => onUpdate?.('cast', 'heading', val)}
         />
 
         {isEditing && (

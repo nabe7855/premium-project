@@ -102,10 +102,13 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
       className="bg-primary-50/50 border-primary-100/50 border-y py-16 transition-all duration-300 md:py-24"
     >
       <div className="mx-auto max-w-4xl px-4">
-        <div className="group/title relative">
+        <div className="relative">
           <SectionTitle
             en={config?.subHeading || 'News & Campaigns'}
             ja={config?.heading || '最新情報・キャンペーン'}
+            isEditing={isEditing}
+            onUpdateEn={(val) => onUpdate?.('campaign', 'subHeading', val)}
+            onUpdateJa={(val) => onUpdate?.('campaign', 'heading', val)}
           />
           {isEditing && (
             <div className="absolute right-0 top-0 flex gap-2">

@@ -24,6 +24,8 @@ interface DisplayDiary {
 const DiarySection: React.FC<DiarySectionProps> = ({
   config,
   isEditing,
+  onUpdate,
+  onImageUpload,
   storeSlug = 'yokohama',
 }) => {
   const [diaries, setDiaries] = useState<DisplayDiary[]>([]);
@@ -92,7 +94,13 @@ const DiarySection: React.FC<DiarySectionProps> = ({
   return (
     <section id="diary" className="bg-white py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <SectionTitle en="Cast Diary" ja="セラピスト日記" />
+        <SectionTitle
+          en={config.subHeading || 'Cast Diary'}
+          ja={config.heading || 'セラピスト日記'}
+          isEditing={isEditing}
+          onUpdateEn={(val) => onUpdate?.('diary', 'subHeading', val)}
+          onUpdateJa={(val) => onUpdate?.('diary', 'heading', val)}
+        />
         {isEditing && (
           <div className="border-primary-200 bg-primary-50 text-primary-600 mb-4 rounded border p-2 text-center text-xs">
             ※ 日記セクションの設定は管理者設定からのみ可能です

@@ -24,6 +24,8 @@ interface DisplayDiary {
 const DiarySection: React.FC<DiarySectionProps> = ({
   config,
   isEditing,
+  onUpdate,
+  onImageUpload,
   storeSlug = 'fukuoka',
 }) => {
   const [diaries, setDiaries] = useState<DisplayDiary[]>([]);
@@ -95,7 +97,18 @@ const DiarySection: React.FC<DiarySectionProps> = ({
       className={`bg-white py-16 md:py-24 ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6">
-        <SectionTitle en={config.subHeading} ja={config.heading} />
+        <SectionTitle
+          en={config.subHeading || 'Cast Diary'}
+          ja={config.heading || 'セラピスト日記'}
+          isEditing={isEditing}
+          onUpdateEn={(val) => onUpdate?.('diary', 'subHeading', val)}
+          onUpdateJa={(val) => onUpdate?.('diary', 'heading', val)}
+        />
+        {isEditing && (
+          <div className="border-primary-200 bg-primary-50 text-primary-600 mb-4 rounded border p-2 text-center text-xs">
+            ※ 日記セクションの設定は管理者設定からのみ可能です
+          </div>
+        )}
 
         <div className="-mx-4 flex snap-x snap-mandatory gap-4 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-4 md:gap-6 md:px-0">
           {diaries.length > 0 ? (

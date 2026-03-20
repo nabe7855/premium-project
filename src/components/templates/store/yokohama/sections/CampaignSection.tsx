@@ -66,8 +66,14 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
       className="bg-primary-50/50 border-primary-100/50 border-y py-16 md:py-24"
     >
       <div className="mx-auto max-w-4xl px-4">
-        <div className="group/title relative">
-          <SectionTitle en={config?.subHeading || subHeading} ja={config?.heading || heading} />
+        <div className="relative">
+          <SectionTitle
+            en={config?.subHeading || subHeading}
+            ja={config?.heading || heading}
+            isEditing={isEditing}
+            onUpdateEn={(val) => onUpdate?.('campaign', 'subHeading', val)}
+            onUpdateJa={(val) => onUpdate?.('campaign', 'heading', val)}
+          />
           {isEditing && (
             <div className="absolute right-0 top-0 flex gap-2">
               <div className="rounded border bg-white/80 px-2 py-1 text-[10px] text-slate-400">

@@ -9,7 +9,7 @@ interface FAQSectionProps {
   onUpdate?: (section: string, key: string, value: any) => void;
 }
 
-const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing }) => {
+const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) => {
   const [openIds, setOpenIds] = useState<string[]>([]);
 
   if (!config || !config.isVisible) return null;
@@ -21,7 +21,13 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing }) => {
   return (
     <section id="faq" className="bg-neutral-50 py-16 md:py-24">
       <div className="mx-auto max-w-4xl px-4 md:px-6">
-        <SectionTitle en="Common Questions" ja="よくあるご質問" />
+        <SectionTitle
+          en={config.subHeading || 'Common Questions'}
+          ja={config.heading || 'よくあるご質問'}
+          isEditing={isEditing}
+          onUpdateEn={(val) => onUpdate?.('faq', 'subHeading', val)}
+          onUpdateJa={(val) => onUpdate?.('faq', 'heading', val)}
+        />
         {isEditing && (
           <div className="border-primary-200 bg-primary-50 text-primary-600 mb-8 rounded border p-2 text-center text-xs">
             ※ FAQの編集はシステム設定からのみ可能です
