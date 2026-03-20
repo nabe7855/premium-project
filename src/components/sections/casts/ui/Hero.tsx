@@ -2,8 +2,9 @@
 
 import { RandomCast } from '@/lib/getRandomTodayCast';
 import { motion } from 'framer-motion';
-import { Menu, Star } from 'lucide-react';
+import { Star } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useStore } from '@/contexts/StoreContext';
 
 interface HeroProps {
   casts: RandomCast[];
@@ -42,10 +43,44 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
     }
   }, [currentIndex]);
 
+  const { store } = useStore();
+
   return (
-    <div className="relative w-full overflow-hidden bg-[#FFEB3B] pb-10 pt-4">
-      {/* 2. Main Carousel Area */}
-      <div className="mt-4">
+    <div className="relative w-full overflow-hidden bg-[#FFEB3B] pb-10 pt-24 md:pt-32">
+      {/* 1. Introductory Text (Luxury Service) */}
+      <div className="mb-8 px-6 text-center">
+        <p className="font-serif text-[11px] leading-relaxed tracking-widest text-slate-800 md:text-sm">
+          {store?.name || '当店舗'}の上質なラグジュアリーサービス。
+          <br />
+          経験豊富なキャストが、あなただけの特別な時間をお届けします。
+        </p>
+      </div>
+
+      {/* 2. Stylized Title (nicopi style with bounce) */}
+      <div className="mb-4 flex flex-col items-center justify-center">
+        <span className="mb-1 text-[10px] font-black uppercase tracking-[0.2em] text-slate-500">
+          Recommendation
+        </span>
+        <motion.div
+          animate={{ scale: [1, 1.1, 1], rotate: [0, -2, 2, 0] }}
+          transition={{
+            duration: 0.6,
+            repeat: Infinity,
+            repeatDelay: 4.4, // Totals 5 seconds cycle
+            ease: "easeInOut"
+          }}
+          className="relative px-8 py-2"
+        >
+          <h2 className="relative z-10 font-title text-2xl font-black italic tracking-tighter text-black md:text-4xl">
+            イチ押しセラピストをチェック
+          </h2>
+          {/* Decorative Background for Title */}
+          <div className="absolute inset-0 z-0 bg-[#FF7EB3] blur-xl opacity-20 rounded-full" />
+        </motion.div>
+      </div>
+
+      {/* 3. Main Carousel Area */}
+      <div className="mt-8">
         <div
           ref={scrollRef}
           className="flex gap-4 overflow-x-auto px-6 pb-12 scrollbar-hide"
