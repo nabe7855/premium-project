@@ -1,4 +1,5 @@
 import { supabase } from '../supabaseClient';
+import { compressAndConvertToWebP } from '../utils/image-processing';
 
 /**
  * 店舗トップページ用の画像をアップロードする
@@ -12,7 +13,23 @@ export async function uploadStoreTopImage(
   section: string,
   file: File,
 ): Promise<string | null> {
-  const fileExt = file.name.split('.').pop();
+  // WebP 圧縮・変換処理を試行
+  let uploadData: Blob | File = file;
+  let fileExt = file.name.split('.').pop();
+
+  try {
+    // クライアントサイドでのみ実行（SSR対策）
+    if (typeof window !== 'undefined') {
+      console.log('⚡ [uploadStoreTopImage] Compressing and converting to WebP...');
+      const webpBlob = await compressAndConvertToWebP(file);
+      uploadData = webpBlob;
+      fileExt = 'webp';
+      console.log('✨ [uploadStoreTopImage] WebP conversion success');
+    }
+  } catch (err) {
+    console.warn('⚠️ [uploadStoreTopImage] WebP conversion failed, using original file:', err);
+  }
+
   // 常に新規ファイルとして扱うため、秒単位まで含めたタイムスタンプを使用
   const timestamp = Date.now();
   const fileName = `${section}_${timestamp}.${fileExt}`;
@@ -26,7 +43,7 @@ export async function uploadStoreTopImage(
   // 公開されている追加権限(INSERT/SELECT)だけで動作するようにする
   const { error: uploadError } = await supabase.storage
     .from(bucketName)
-    .upload(filePath, file, { upsert: false });
+    .upload(filePath, uploadData, { upsert: false });
 
   if (uploadError) {
     console.error(

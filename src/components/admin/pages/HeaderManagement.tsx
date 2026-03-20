@@ -139,19 +139,22 @@ export default function HeaderManagement() {
           const oldImageUrl = config.header.navLinks[index]?.imageUrl;
           if (oldImageUrl && oldImageUrl.startsWith('http')) {
             console.log('Deleting old nav link image via server action:', oldImageUrl);
-            const deleteResult = await deleteStorageFile(oldImageUrl);
-            if (!deleteResult.success) {
-              console.warn('⚠️ Nav link image deletion failed:', deleteResult.error);
-              toast.error('古いナビ画像の削除に失敗しました', { id: toastId });
-            }
+            await deleteStorageFile(oldImageUrl);
           }
 
           const newNavLinks = [...config.header.navLinks];
           newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
           newHeader.navLinks = newNavLinks;
+        } else if (key === 'specialBanner') {
+          // バナー1画像の更新
+          const oldImageUrl = config.header.specialBanner?.imageUrl;
+          if (oldImageUrl && oldImageUrl.startsWith('http') && oldImageUrl !== '/福岡募集バナー.png') {
+            await deleteStorageFile(oldImageUrl);
+          }
           newHeader.specialBanner = {
             ...config.header.specialBanner,
             imageUrl: publicUrl,
+            isVisible: config.header.specialBanner?.isVisible ?? true,
           };
         } else if (key === 'specialBanner2') {
           // バナー2画像の更新
