@@ -1,8 +1,9 @@
 'use client';
 
 import { ANIMAL_INFO, LOVE_STYLES, MBTI_INFO } from '@/data/matchingData';
+import { FACE_TYPES } from '@/data/faceTypes'; // 顔タイプ追加
 import { motion } from 'framer-motion';
-import { ArrowRight, Brain, Heart, Sparkles } from 'lucide-react';
+import { ArrowRight, Brain, Heart, Sparkles, UserCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -32,6 +33,7 @@ const DiagnosisSection: React.FC = () => {
   const [selectedMBTI, setSelectedMBTI] = useState('');
   const [selectedAnimal, setSelectedAnimal] = useState('');
   const [selectedLoveStyle, setSelectedLoveStyle] = useState('');
+  const [selectedFaceType, setSelectedFaceType] = useState('');
 
   // アニメーション・結果用ステート
   const [scene, setScene] = useState<Scene>('idle');
@@ -83,6 +85,7 @@ const DiagnosisSection: React.FC = () => {
       mbti: selectedMBTI,
       animalType: selectedAnimal,
       loveStyles: selectedLoveStyle,
+      faceType: selectedFaceType,
     });
     setMatchResults(results.slice(0, 5)); // トップ5位まで
 
@@ -136,11 +139,11 @@ const DiagnosisSection: React.FC = () => {
           </h3>
         </div>
         <p className="text-sm text-neutral-600 sm:text-base">
-          3つの質問に答えるだけで、あなたと相性抜群のキャストをご提案します
+          4つの質問に答えるだけで、あなたと相性抜群のキャストをご提案します
         </p>
       </div>
 
-      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {/* MBTI */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -235,12 +238,44 @@ const DiagnosisSection: React.FC = () => {
             </div>
           </div>
         </motion.div>
+
+        {/* 顔の好み（印象タイプ） */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="rounded-xl bg-white/90 p-5 shadow-sm backdrop-blur-sm transition-all hover:shadow-md"
+        >
+          <div className="mb-3 flex flex-col items-center">
+            <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+              <UserCircle className="h-6 w-6 text-primary" />
+            </div>
+            <h4 className="text-sm font-bold text-neutral-800">好みの顔タイプ（印象）</h4>
+          </div>
+          <div className="relative">
+            <select
+              value={selectedFaceType}
+              onChange={(e) => setSelectedFaceType(e.target.value)}
+              className="w-full appearance-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            >
+              <option value="">お好みを選択</option>
+              {FACE_TYPES.map((type) => (
+                <option key={type.name} value={type.name}>
+                  {type.name}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
+              <span className="text-[10px]">▼</span>
+            </div>
+          </div>
+        </motion.div>
       </div>
 
       <div className="text-center">
         <motion.button
           onClick={handleDiagnosisClick}
-          disabled={!selectedMBTI || !selectedAnimal || !selectedLoveStyle}
+          disabled={!selectedMBTI || !selectedAnimal || !selectedLoveStyle || !selectedFaceType}
           onHoverStart={() => setIsHovered(true)}
           onHoverEnd={() => setIsHovered(false)}
           className="group inline-flex items-center rounded-full bg-gradient-to-r from-primary to-accent px-8 py-3 font-medium text-white shadow-luxury transition-all duration-300 hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-50"

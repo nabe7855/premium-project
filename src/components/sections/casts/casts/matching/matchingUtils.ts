@@ -9,7 +9,7 @@ export interface MatchingResult extends Cast {
  */
 export function calculateMatchScores(
   casts: Cast[],
-  inputs: { mbti: string; animalType: string; loveStyles: string },
+  inputs: { mbti: string; animalType: string; loveStyles: string; faceType?: string },
 ): MatchingResult[] {
   return casts
     .map((cast) => {
@@ -17,11 +17,15 @@ export function calculateMatchScores(
 
       // MBTIが一致または相性が良い場合の加算（簡易的なマッチング）
       if (cast.mbtiType === inputs.mbti) {
-        score += 10;
+        score += 8;
       } else if (inputs.mbti && cast.mbtiType) {
-        // 一部の文字が重なっている場合などの擬似加算
         const commonChars = [...inputs.mbti].filter((char) => cast.mbtiType?.includes(char)).length;
         score += commonChars * 2;
+      }
+
+      // 顔タイプが一致する場合の加算 (1枚目の理論に基づくマッチング)
+      if (inputs.faceType && cast.faceType?.includes(inputs.faceType)) {
+        score += 12; // 顔の好みは重要度が高いため少し高めに設定
       }
 
       // 99%を超えないように調整
