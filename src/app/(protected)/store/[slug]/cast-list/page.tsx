@@ -1,6 +1,7 @@
 import CastList from '@/components/sections/casts/casts/CastList';
 import DiagnosisSection from '@/components/sections/casts/casts/DiagnosisSection';
 import Hero from '@/components/sections/casts/ui/Hero';
+import MatchingBanner from '@/components/sections/casts/ui/MatchingBanner';
 import { getTodayCasts } from '@/lib/getRandomTodayCast';
 import { Metadata } from 'next';
 
@@ -68,9 +69,9 @@ export default async function CastListPage({ params }: Props) {
       <Hero casts={todayCasts} />
 
 
-      {/* 相性診断セクション */}
-      <div id="diagnosis" className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <DiagnosisSection />
+      {/* 相性診断ページへの誘導バナー */}
+      <div id="diagnosis" className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        <MatchingBanner storeSlug={params.slug} />
       </div>
 
       {/* ✅ 店舗のキャスト一覧 */}
