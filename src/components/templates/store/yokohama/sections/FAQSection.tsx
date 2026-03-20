@@ -1,4 +1,4 @@
-import { FAQConfig } from '@/lib/store/storeTopConfig';
+import { FAQConfig, DEFAULT_STORE_TOP_CONFIG } from '@/lib/store/storeTopConfig';
 import { ChevronDown } from 'lucide-react';
 import React, { useState } from 'react';
 import SectionTitle from '../components/SectionTitle';
@@ -12,7 +12,9 @@ interface FAQSectionProps {
 const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) => {
   const [openIds, setOpenIds] = useState<string[]>([]);
 
-  if (!config || !config.isVisible) return null;
+  if (!isEditing && (!config || !config.isVisible)) return null;
+
+  const faq = config || DEFAULT_STORE_TOP_CONFIG.faq;
 
   const toggleAccordion = (id: string) => {
     setOpenIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
@@ -22,8 +24,8 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
     <section id="faq" className="bg-neutral-50 py-16 md:py-24">
       <div className="mx-auto max-w-4xl px-4 md:px-6">
         <SectionTitle
-          en={config.subHeading || 'Common Questions'}
-          ja={config.heading || 'よくあるご質問'}
+          en={faq.subHeading || 'Common Questions'}
+          ja={faq.heading || 'よくあるご質問'}
           isEditing={isEditing}
           onUpdateEn={(val) => onUpdate?.('faq', 'subHeading', val)}
           onUpdateJa={(val) => onUpdate?.('faq', 'heading', val)}
@@ -35,7 +37,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
         )}
 
         <div className="space-y-4">
-          {config.items.map((item) => {
+          {faq.items.map((item) => {
             const isOpen = openIds.includes(item.id);
             return (
               <div
