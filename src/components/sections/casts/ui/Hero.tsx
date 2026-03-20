@@ -41,40 +41,9 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
   }, [currentIndex]);
 
   return (
-    <div className="relative w-full overflow-hidden bg-[#FFEB3B] pb-10">
-      {/* 1. Header Area (nicopi style) */}
-      <div className="sticky top-0 z-30 h-20 bg-[#FFEB3B] px-4 shadow-sm">
-        <div className="flex h-full items-center justify-between">
-          <div className="flex flex-col items-start pt-2">
-            <span className="text-[10px] font-bold tracking-tighter text-slate-800">
-              にこの生き物グッズ屋さん
-            </span>
-            <span className="font-title text-3xl font-black italic tracking-tighter text-slate-900">
-              nicopi
-            </span>
-          </div>
-          <div className="flex flex-col items-center gap-1">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-[4px_4px_0px_#000]">
-              <Menu size={24} className="text-slate-900" />
-            </div>
-            <span className="text-[10px] font-bold uppercase tracking-widest">menu</span>
-          </div>
-        </div>
-
-        {/* Wavy Border Bottom */}
-        <div className="absolute -bottom-[29px] left-0 w-full overflow-hidden leading-[0]">
-          <svg
-            viewBox="0 0 1200 120"
-            preserveAspectRatio="none"
-            className="relative block h-[30px] w-full fill-[#FFEB3B]"
-          >
-            <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5,73.84-4.36,147.54,16.88,218.2,35.26,69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"></path>
-          </svg>
-        </div>
-      </div>
-
+    <div className="relative w-full overflow-hidden bg-[#FFEB3B] pb-10 pt-4">
       {/* 2. Main Carousel Area */}
-      <div className="mt-12">
+      <div className="mt-4">
         <div
           ref={scrollRef}
           className="flex gap-4 overflow-x-auto px-6 pb-12 scrollbar-hide"
