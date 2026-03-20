@@ -117,7 +117,9 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">受付時間</span>
                   <div className="flex flex-col">
-                    <span className="font-bold">24時間営業（受付{store.receptionHours || config.shopInfo?.receptionHours || '8:00〜23:00'}）</span>
+                    <span className="font-bold">
+                      {store.receptionHours || config.shopInfo?.receptionHours || '8:00〜23:00'}
+                    </span>
                     <span className="mt-1 text-[10px] text-slate-500">
                       ※あくまでも{(() => {
                         const hours = store.receptionHours || config.shopInfo?.receptionHours || '8:00〜23:00';
@@ -133,8 +135,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                 </div>
                 <div className="flex gap-3">
                   <span className="w-24 flex-shrink-0 font-bold text-slate-500">営業時間</span>
-                  <span className="whitespace-pre-line">
-                    {store.businessHours || config.shopInfo?.businessHours}
+                  <span className="whitespace-pre-line font-bold">
+                    {store.businessHours || config.shopInfo?.businessHours || '年中無休'}
                   </span>
                 </div>
               </div>

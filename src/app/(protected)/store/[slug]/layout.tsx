@@ -42,8 +42,8 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
         name: dbStore.name || staticStore?.name || '',
         address: dbStore.address || staticStore?.address || '',
         city: (dbStore as any).city || staticStore?.city || '',
-        businessHours: (dbStore as any).business_hours || topConfig?.footer?.shopInfo?.businessHours || staticStore?.businessHours || '',
-        receptionHours: (dbStore as any).reception_hours || topConfig?.footer?.shopInfo?.receptionHours || staticStore?.receptionHours || '',
+        businessHours: dbStore.business_hours || topConfig?.footer?.shopInfo?.businessHours || staticStore?.businessHours || '',
+        receptionHours: dbStore.reception_hours || topConfig?.footer?.shopInfo?.receptionHours || staticStore?.receptionHours || '',
         contact: {
           phone: dbStore.phone || staticStore?.contact.phone || '',
           line:

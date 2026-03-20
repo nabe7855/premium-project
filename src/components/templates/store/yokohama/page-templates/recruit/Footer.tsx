@@ -8,10 +8,10 @@ const Footer: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 border-b border-slate-800 pb-12">
           <div className="mb-8 md:mb-0">
             <span className="text-2xl font-bold font-serif mb-2 block tracking-wider">
-              FUKUOKA <span className="text-amber-500">PREMIUM</span>
+              YOKOHAMA <span className="text-amber-500">PREMIUM</span>
             </span>
             <p className="text-slate-500 text-sm max-w-sm leading-relaxed">
-              福岡エリアで最高クラスのホスピタリティを提供する、女性専用風俗セラピスト派遣グループ。あなたの新しい挑戦を全力でサポートします。
+              横浜エリアで最高クラスのホスピタリティを提供する、女性専用風俗セラピスト派遣グループ。あなたの新しい挑戦を全力でサポートします。
             </p>
           </div>
           
