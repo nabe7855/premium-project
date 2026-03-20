@@ -72,7 +72,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
       <div className="container mx-auto max-w-5xl px-4">
         <div className="mb-12 text-center">
           {data.imageUrl ? (
-            <div className="relative mx-auto mb-4 max-w-2xl min-h-[120px] md:min-h-[200px]">
+            <div className="relative mx-auto mb-4 max-w-2xl h-[120px] md:h-[200px]">
               <EditableImage
                 isEditing={isEditing}
                 src={data.imageUrl}
