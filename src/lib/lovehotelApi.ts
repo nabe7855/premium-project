@@ -80,8 +80,7 @@ export const getHotels = async (filters?: {
       lh_hotel_amenities(amenity_id, lh_amenities(*)),
       lh_hotel_services(service_id, lh_services(*)),
       lh_hotel_purposes(purpose_id, lh_purposes(*)),
-      lh_hotel_images(*),
-      lh_reviews(rating)
+      lh_hotel_images(*)
     `;
 
   // Filter joins using !inner if needed
@@ -97,8 +96,7 @@ export const getHotels = async (filters?: {
       lh_hotel_amenities${hasAmenities ? '!inner' : ''}(amenity_id, lh_amenities(*)),
       lh_hotel_services(service_id, lh_services(*)),
       lh_hotel_purposes${hasPurposes ? '!inner' : ''}(purpose_id, lh_purposes(*)),
-      lh_hotel_images(*),
-      lh_reviews(rating)
+      lh_hotel_images(*)
     `;
   }
 
