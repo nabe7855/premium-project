@@ -13,6 +13,7 @@ import {
   User,
   X,
 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 // 各セクションコンポーネント
@@ -46,7 +47,19 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ cast }: DashboardProps) {
+  const router = useRouter();
   const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.push('/login');
+    } catch (err) {
+      console.error('Logout error:', err);
+      window.location.href = '/login';
+    }
+  };
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState<
@@ -254,7 +267,7 @@ export default function Dashboard({ cast }: DashboardProps) {
               <div className="hidden h-8 w-[1px] bg-gray-200 sm:block"></div>
 
               <button
-                onClick={logout}
+                onClick={handleLogout}
                 className="group flex items-center gap-2 rounded-full px-4 py-2 text-sm font-bold text-gray-600 transition-all hover:bg-rose-50 hover:text-rose-600 active:scale-95"
               >
                 <LogOut className="h-4 w-4 transition-transform group-hover:rotate-12" />
@@ -355,7 +368,7 @@ export default function Dashboard({ cast }: DashboardProps) {
             所属店舗が設定されていません。管理者に連絡して店舗の割り当てを受けてください。
           </p>
           <button
-            onClick={logout}
+            onClick={handleLogout}
             className="w-full rounded-xl bg-gray-200 py-2 text-sm font-bold text-gray-700 transition hover:bg-gray-300"
           >
             ログアウト
