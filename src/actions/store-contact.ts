@@ -49,3 +49,61 @@ export async function getStoreContactData(slug: string) {
     return { success: false, error: 'Failed to fetch store contact data' };
   }
 }
+
+export async function sendStoreInquiry(slug: string, formData: any) {
+  try {
+    const { sendStaffNotification } = await import('@/lib/mail');
+    
+    // inquiryType のラベル変換
+    const inquiryTypeLabels: Record<string, string> = {
+      reservation: 'ご予約',
+      monitor: 'モニター応募',
+      instructor: '講師応募',
+      collaboration: 'コラボ依頼',
+      interview: '取材依頼',
+      other: 'その他',
+    };
+
+    const contactMethodLabels: Record<string, string> = {
+      email: 'メール',
+      phone: '電話',
+      line: 'LINE',
+      other: 'その他',
+    };
+
+    await sendStaffNotification({
+      type: 'inquiry',
+      storeSlug: slug,
+      subject: 'ホームページお問い合わせ',
+      data: {
+        'お名前': formData.name,
+        'メールアドレス': formData.email,
+        '電話番号': formData.phone || '-',
+        '希望連絡方法': contactMethodLabels[formData.contactMethod] || formData.contactMethod,
+        '来店履歴': formData.visitHistory === 'first' ? '初めて' : '2回目以上',
+        'お問い合わせ種別': inquiryTypeLabels[formData.inquiryType] || formData.inquiryType,
+        '内容': formData.message,
+      }
+    });
+
+    // ユーザーへの自動返信
+    if (formData.email) {
+      try {
+        const { sendGenericAutoReply } = await import('@/lib/mail');
+        await sendGenericAutoReply({
+          to: formData.email,
+          name: formData.name,
+          subject: 'お問い合わせ',
+          body: '内容を確認の上、担当者より改めてご連絡させていただきます。',
+        });
+      } catch (err) {
+        console.error('Failed to send inquiry auto-reply:', err);
+      }
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    console.error('Error sending store inquiry:', error);
+    return { success: false, error: error.message };
+  }
+}

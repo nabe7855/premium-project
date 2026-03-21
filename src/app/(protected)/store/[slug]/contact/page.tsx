@@ -1,8 +1,8 @@
 'use client';
 
-import { getStoreContactData } from '@/actions/store-contact';
+import { getStoreContactData, sendStoreInquiry } from '@/actions/store-contact';
 import { stores } from '@/data/stores';
-import { AlertCircle, Mail, MessageCircle, Phone, Send } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Mail, MessageCircle, Phone, Send } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -19,6 +19,9 @@ export default function ContactPage() {
     inquiryType: '',
     message: '',
   });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const [contactInfo, setContactInfo] = useState({
     name: store.name || '',
@@ -44,10 +47,24 @@ export default function ContactPage() {
     }
   }, [slug, store.name, store.phone]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // フォーム送信処理（実装は後で）
-    console.log('Form submitted:', formData);
+    setIsSubmitting(true);
+    
+    try {
+      const result = await sendStoreInquiry(slug as string, formData);
+      if (result.success) {
+        setIsSubmitted(true);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        alert('送信に失敗しました: ' + (result.error || 'Unknown error'));
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      alert('エラーが発生しました。時間をおいて再度お試しください。');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleChange = (
@@ -58,6 +75,33 @@ export default function ContactPage() {
       [e.target.name]: e.target.value,
     });
   };
+
+  if (isSubmitted) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-50 via-white to-rose-50 px-4 py-20">
+        <div className="w-full max-w-lg rounded-3xl border-2 border-pink-100 bg-white p-12 text-center shadow-xl">
+          <div className="mb-6 flex justify-center">
+            <div className="rounded-full bg-green-100 p-4">
+              <CheckCircle2 className="h-12 w-12 text-green-600" />
+            </div>
+          </div>
+          <h2 className="mb-4 text-3xl font-black text-gray-800">
+            送信が完了しました
+          </h2>
+          <p className="mb-8 text-lg text-gray-600">
+            お問い合わせありがとうございます。<br />
+            内容を確認し次第、担当者よりご連絡させていただきます。
+          </p>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-8 py-3 font-bold text-white shadow-lg transition-all hover:shadow-xl"
+          >
+            トップに戻る
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-20 md:py-32">
@@ -305,10 +349,15 @@ export default function ContactPage() {
             {/* 送信ボタン */}
             <button
               type="submit"
-              className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-pink-600 hover:to-rose-600 hover:shadow-xl"
+              disabled={isSubmitting}
+              className="group flex w-full items-center justify-center gap-3 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 py-4 text-lg font-bold text-white shadow-lg transition-all hover:from-pink-600 hover:to-rose-600 hover:shadow-xl disabled:opacity-70 disabled:grayscale"
             >
-              <Send className="h-5 w-5 transition-transform group-hover:translate-x-1" />
-              送信する
+              {isSubmitting ? (
+                <Loader2 className="h-5 w-5 animate-spin" />
+              ) : (
+                <Send className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+              )}
+              {isSubmitting ? '送信中...' : '送信する'}
             </button>
           </div>
         </form>

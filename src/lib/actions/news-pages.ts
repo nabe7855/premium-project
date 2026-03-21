@@ -44,17 +44,36 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
       orderBy: { updatedAt: 'desc' },
     });
 
+    const now = new Date().getTime();
+
     const records = allPages.filter((record: any) => {
+      // 1. 店舗の配信対象に含まれているかチェック
       const slugs = record.targetStoreSlugs as string[];
       if (!Array.isArray(slugs) || !slugs.includes(storeSlug)) return false;
 
       const misc = (record.referenceUrls as any) || {};
       const settings = misc.storeSettings?.[storeSlug];
       
+      let isPublished = false;
+      let pubTime: number | null = null;
+
+      // 2. 店舗別設定を優先、なければグローバル設定を参照
       if (settings && settings.status) {
-        return settings.status === 'published';
+        isPublished = settings.status === 'published';
+        pubTime = settings.publishedAt ? new Date(settings.publishedAt).getTime() : null;
+      } else {
+        isPublished = record.status === 'published';
+        // 全般的な公開日時設定が misc にあればそれを使用（なければ updatedAt を仮の公開日時とする）
+        pubTime = misc.publishedAt ? new Date(misc.publishedAt).getTime() : record.updatedAt.getTime();
       }
-      return record.status === 'published';
+
+      // 3. 公開中ステータスでない場合は除外
+      if (!isPublished) return false;
+
+      // 4. 公開日時が未設定、または未来の日時の場合は除外（予約投稿対応 & ユーザー要望対応）
+      if (!pubTime || pubTime > now) return false;
+
+      return true;
     });
 
     const pageDataRecords = records.map(mapPrismaToPageData);

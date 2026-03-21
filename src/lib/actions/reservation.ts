@@ -62,6 +62,41 @@ export async function createReservation(formData: {
       },
     });
 
+    // スタッフ通知
+    try {
+      const { sendStaffNotification } = await import('@/lib/mail');
+      await sendStaffNotification({
+        type: 'reservation',
+        storeSlug: formData.storeId || '', // storeId as info
+        subject: '新規予約',
+        data: {
+          'お名前': formData.customerName,
+          '日時': formData.dateTime,
+          '電話番号': formData.phone || '未設定',
+          'メール': formData.email || '未設定',
+          '来店回数': `${formData.visitCount}回目`,
+          '備考': formData.notes || '-',
+        }
+      });
+    } catch (err) {
+      console.error('Failed to send reservation notification:', err);
+    }
+
+    // ユーザーへの自動返信
+    if (formData.email) {
+      try {
+        const { sendGenericAutoReply } = await import('@/lib/mail');
+        await sendGenericAutoReply({
+          to: formData.email,
+          name: formData.customerName,
+          subject: 'ご予約',
+          body: '内容を確認の上、担当者よりご連絡させていただきます。',
+        });
+      } catch (err) {
+        console.error('Failed to send reservation auto-reply:', err);
+      }
+    }
+
     return { success: true, data: reservation };
   } catch (error: any) {
     console.error('Error creating reservation:', error);

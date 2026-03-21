@@ -59,6 +59,9 @@ export interface Store {
   lineId?: string;
   contactEmail?: string;
   notificationEmail?: string;
+  recruitEmail?: string;
+  reservationEmail?: string;
+  inquiryEmail?: string;
   externalUrl?: string;
   useExternalUrl?: boolean;
   isActive: boolean;

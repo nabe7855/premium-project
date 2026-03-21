@@ -7,14 +7,17 @@ const getResend = () => {
   return new Resend(resendKey);
 };
 
-const DEFAULT_EMAILS = [
-  'sutoroberrys@yahoo.co.jp',
-  'sutoroberrysrecruit@gmail.com',
-  'contactsutoroberrys@gmail.com',
-];
+// カテゴリ別のデフォルト通知先
+const DEFAULT_EMAIL_MAP = {
+  recruit: ['sutoroberrysrecruit@gmail.com', 'sutoroberrys@yahoo.co.jp'],
+  reservation: ['contactsutoroberrys@gmail.com', 'contactsutoroberrys@ymail.ne.jp'],
+  inquiry: ['contactsutoroberrys@gmail.com', 'contactsutoroberrys@ymail.ne.jp'],
+} as const;
 
-async function getTargetEmails(storeInfo: string | null) {
-  const emails = [...DEFAULT_EMAILS];
+type NotificationType = keyof typeof DEFAULT_EMAIL_MAP;
+
+async function getTargetEmails(storeInfo: string | null, type: NotificationType = 'recruit') {
+  const emails: string[] = [...DEFAULT_EMAIL_MAP[type]];
   let matchedStore = 'fallback (default emails)';
 
   if (!storeInfo) return { emails, matchedStore };
@@ -36,6 +39,9 @@ async function getTargetEmails(storeInfo: string | null) {
         id: true,
         name: true,
         notification_email: true,
+        recruit_email: true,
+        reservation_email: true,
+        inquiry_email: true,
         recruit_pages: {
           where: { section_key: 'general' },
           select: { content: true },
@@ -44,21 +50,28 @@ async function getTargetEmails(storeInfo: string | null) {
     });
 
     if (store) {
-      matchedStore = store.name;
-      if (store.notification_email) {
-        const extraEmails = store.notification_email
-          .split(',')
-          .map((e) => e.trim())
-          .filter((e) => e.includes('@'));
+      const s = store as any;
+      matchedStore = s.name;
+      
+      // カテゴリ専用の上書き設定があればそれを優先（なければ全体通知設定や求人用特別設定をマージ）
+      let specificOverride: string | null = null;
+      if (type === 'recruit') specificOverride = s.recruit_email;
+      else if (type === 'reservation') specificOverride = s.reservation_email;
+      else if (type === 'inquiry') specificOverride = s.inquiry_email;
 
-        extraEmails.forEach((email) => {
+      if (specificOverride) {
+        // 上書き設定がある場合はデフォルトを消さずにマージ
+        const extraEmails = (specificOverride as string)
+          .split(',')
+          .map((e: string) => e.trim())
+          .filter((e: string) => e.includes('@'));
+
+        extraEmails.forEach((email: string) => {
           if (!emails.includes(email)) emails.push(email);
         });
-      }
-
-      const generalConfig = store.recruit_pages[0]?.content as any;
-      if (generalConfig?.notificationEmails) {
-        const extraEmails = generalConfig.notificationEmails
+      } else if (s.notification_email) {
+        // カテゴリ別設定がない場合は汎用の通知設定を使用
+        const extraEmails = (s.notification_email as string)
           .split(',')
           .map((e: string) => e.trim())
           .filter((e: string) => e.includes('@'));
@@ -67,9 +80,23 @@ async function getTargetEmails(storeInfo: string | null) {
           if (!emails.includes(email)) emails.push(email);
         });
       }
+
+      if (type === 'recruit') {
+        const generalConfig = s.recruit_pages?.[0]?.content as any;
+        if (generalConfig?.notificationEmails) {
+          const extraEmails = (generalConfig.notificationEmails as string)
+            .split(',')
+            .map((e: string) => e.trim())
+            .filter((e: string) => e.includes('@'));
+
+          extraEmails.forEach((email: string) => {
+            if (!emails.includes(email)) emails.push(email);
+          });
+        }
+      }
     }
   } catch (error) {
-    console.error('[getTargetEmails] Error:', error);
+    console.error(`[getTargetEmails] Error for type ${type}:`, error);
   }
 
   return { emails, matchedStore };
@@ -186,7 +213,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
 }
 
 export async function sendInterviewReservationNotification(application: any) {
-  const { emails: targetEmails, matchedStore } = await getTargetEmails(application.store);
+  const { emails: targetEmails, matchedStore } = await getTargetEmails(application.store, 'recruit');
 
   const subject = `【面接予約】${application.store || '店舗不明'} - ${application.name}様`;
   const html = `
@@ -281,6 +308,124 @@ export async function sendRecruitAutoReply(application: any) {
     return { success: true, data };
   } catch (error: any) {
     console.error('❌ Auto-Reply Exception:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * 汎用的な通知メール（予約や問い合わせに使用）
+ */
+export async function sendStaffNotification({
+  type,
+  storeSlug,
+  subject,
+  data,
+}: {
+  type: NotificationType;
+  storeSlug: string;
+  subject: string;
+  data: Record<string, string | number | null | undefined>;
+}) {
+  const { emails: targetEmails, matchedStore } = await getTargetEmails(storeSlug, type);
+  
+  const fromEmail = type === 'recruit' 
+    ? 'Strawberry Recruit <apply@sutoroberrys.jp>' 
+    : 'Strawberry Info <info@sutoroberrys.jp>';
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
+      <div style="background: #fdf2f8; padding: 20px; border-bottom: 2px solid #f9a8d4; text-align: center;">
+        <h2 style="margin: 0; color: #db2777;">通知: ${subject}</h2>
+        <p style="margin: 5px 0 0; font-size: 14px; color: #666;">店舗: ${matchedStore}</p>
+      </div>
+      <div style="padding: 24px;">
+        <table style="width: 100%; border-collapse: collapse;">
+          ${Object.entries(data).map(([key, value]) => `
+            <tr>
+              <th style="text-align: left; padding: 12px 8px; border-bottom: 1px solid #eee; width: 140px; font-size: 14px; color: #64748b;">${key}</th>
+              <td style="padding: 12px 8px; border-bottom: 1px solid #eee; font-size: 14px; color: #1e293b; white-space: pre-wrap;">${value ?? '-'}</td>
+            </tr>
+          `).join('')}
+        </table>
+      </div>
+    </div>
+  `;
+
+  const resendInstance = getResend();
+  if (!resendInstance) return { success: false, error: 'Resend not initialized' };
+
+  try {
+    const result = await resendInstance.emails.send({
+      from: fromEmail,
+      to: targetEmails,
+      subject: `【${subject}】${matchedStore}`,
+      html: html,
+    });
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error('❌ Staff Notification Error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * 一般ユーザー（予約・問い合わせ）向けの自動返信
+ */
+export async function sendGenericAutoReply({
+  to,
+  name,
+  subject,
+  body,
+}: {
+  to: string;
+  name: string;
+  subject: string;
+  body: string;
+}) {
+  if (!to) return { success: false, error: 'Recipient email is missing' };
+
+  const resendInstance = getResend();
+  if (!resendInstance) return { success: false, error: 'Resend not initialized' };
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 12px; overflow: hidden; color: #333;">
+      <div style="background: #fdf2f8; padding: 30px; border-bottom: 2px solid #f9a8d4; text-align: center;">
+        <h1 style="margin: 0; color: #db2777; font-size: 24px;">Strawberry Boys</h1>
+        <p style="margin: 5px 0 0; color: #be185d; font-size: 14px;">自動返信メール</p>
+      </div>
+      <div style="padding: 30px; line-height: 1.8;">
+        <p style="font-size: 16px; font-weight: bold;">${name} 様</p>
+        <p>この度は、${subject}をいただき誠にありがとうございます。</p>
+        <p>送信いただいた内容は無事に受け付けいたしました。</p>
+        
+        <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 25px 0; border-left: 4px solid #f9a8d4;">
+          <p style="margin: 0; font-size: 15px; color: #4b5563;">
+            内容を確認の上、担当者より改めてご連絡させていただきます。<br />
+            恐れ入りますが、今しばらくお待ちくださいますようお願い申し上げます。
+          </p>
+        </div>
+
+        <p style="font-size: 13px; color: #9ca3af;">
+          ※このメールは送信専用アドレスから自動送信されています。<br />
+          返信いただいてもお答えできませんのでご了承ください。
+        </p>
+      </div>
+      <div style="background: #f9fafb; padding: 20px; text-align: center; font-size: 12px; color: #9ca3af; border-top: 1px solid #eee;">
+        &copy; ${new Date().getFullYear()} Strawberry Boys. All rights reserved.
+      </div>
+    </div>
+  `;
+
+  try {
+    const result = await resendInstance.emails.send({
+      from: 'Strawberry Boys <info@sutoroberrys.jp>',
+      to: [to],
+      subject: `【Strawberry Boys】${subject}ありがとうございます`,
+      html: html,
+    });
+    return { success: true, data: result };
+  } catch (error: any) {
+    console.error('❌ Auto-Reply Error:', error);
     return { success: false, error: error.message };
   }
 }

@@ -57,6 +57,9 @@ model Store {
   line_url           String?
   contact_email      String?
   notification_email String?
+  recruit_email      String?
+  reservation_email  String?
+  inquiry_email      String?
   business_hours     String?
   reception_hours    String?
   external_url       String?

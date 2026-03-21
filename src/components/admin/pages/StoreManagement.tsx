@@ -168,6 +168,9 @@ export default function StoreManagement() {
         lineUrl: s.line_url || '',
         contactEmail: s.contact_email || '',
         notificationEmail: s.notification_email || '',
+        recruitEmail: s.recruit_email || '',
+        reservationEmail: s.reservation_email || '',
+        inquiryEmail: s.inquiry_email || '',
         businessHours: s.business_hours || '',
         receptionHours: s.reception_hours || '',
         externalUrl: s.external_url || '',
@@ -306,6 +309,10 @@ export default function StoreManagement() {
           photoUrl: created.image_url || '',
           externalUrl: created.external_url || '',
           useExternalUrl: created.use_external_url ?? false,
+          notificationEmail: created.notification_email || '',
+          recruitEmail: created.recruit_email || '',
+          reservationEmail: created.reservation_email || '',
+          inquiryEmail: created.inquiry_email || '',
           isActive: created.is_active ?? true,
         };
         setStores((prev) => [mapped, ...prev]);
@@ -412,6 +419,9 @@ export default function StoreManagement() {
           line_url: editingStore.lineUrl || null,
           contact_email: editingStore.contactEmail || null,
           notification_email: editingStore.notificationEmail || null,
+          recruit_email: editingStore.recruitEmail || null,
+          reservation_email: editingStore.reservationEmail || null,
+          inquiry_email: editingStore.inquiryEmail || null,
           external_url: editingStore.externalUrl || null,
           use_external_url: editingStore.useExternalUrl ?? false,
         })
@@ -949,24 +959,77 @@ export default function StoreManagement() {
                         <div className="space-y-4 rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4">
                           <div className="flex items-center gap-2 border-b border-yellow-500/30 pb-2">
                             <Mail size={16} className="text-yellow-400" />
-                            <h3 className="text-sm font-bold text-white">通知用メールアドレス</h3>
+                            <h3 className="text-sm font-bold text-white">通知設定</h3>
                           </div>
-                          <div className="space-y-1">
-                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                              通知用メールアドレス (複数はカンマ区切り)
-                            </label>
-                            <input
-                              type="text"
-                              value={editingStore.notificationEmail ?? ''}
-                              onChange={(e) =>
-                                setEditingStore({
-                                  ...editingStore,
-                                  notificationEmail: e.target.value,
-                                })
-                              }
-                              placeholder="shop1@example.com, shop2@example.com"
-                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                            />
+                          <div className="space-y-4">
+                            <div>
+                              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                                求人応募通知先 (複数はカンマ区切り)
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.recruitEmail ?? ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    recruitEmail: e.target.value,
+                                  })
+                                }
+                                placeholder="デフォルト: sutoroberrysrecruit@gmail.com, sutoroberrys@yahoo.co.jp"
+                                className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-[12px] text-white outline-none focus:ring-1 focus:ring-brand-accent placeholder:text-gray-600"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                                予約通知先 (複数はカンマ区切り)
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.reservationEmail ?? ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    reservationEmail: e.target.value,
+                                  })
+                                }
+                                placeholder="デフォルト: contactsutoroberrys@gmail.com, contactsutoroberrys@ymail.ne.jp"
+                                className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-[12px] text-white outline-none focus:ring-1 focus:ring-brand-accent placeholder:text-gray-600"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                                問い合わせ通知先 (複数はカンマ区切り)
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.inquiryEmail ?? ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    inquiryEmail: e.target.value,
+                                  })
+                                }
+                                placeholder="デフォルト: contactsutoroberrys@gmail.com, contactsutoroberrys@ymail.ne.jp"
+                                className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-[12px] text-white outline-none focus:ring-1 focus:ring-brand-accent placeholder:text-gray-600"
+                              />
+                            </div>
+                            <div className="pt-2">
+                              <label className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                                全共有通知先 (上記以外への追加通知用)
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.notificationEmail ?? ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    notificationEmail: e.target.value,
+                                  })
+                                }
+                                placeholder="その他のアドレスへも通知する場合に入力"
+                                className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-[12px] text-white outline-none focus:ring-1 focus:ring-brand-accent placeholder:text-gray-600"
+                              />
+                            </div>
                           </div>
                         </div>
 
@@ -974,12 +1037,12 @@ export default function StoreManagement() {
                           <div className="flex items-center gap-2 border-b border-emerald-500/30 pb-2">
                             <Mail size={16} className="text-emerald-400" />
                             <h3 className="text-sm font-bold text-white">
-                              お問い合わせ用メールアドレス
+                              サイト表示用メールアドレス
                             </h3>
                           </div>
                           <div className="space-y-1">
-                            <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                              お問い合わせ用 (サイト表示用)
+                            <label className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                              お客様への公開用 (mailtoリンク等に使用)
                             </label>
                             <input
                               type="email"
@@ -990,7 +1053,8 @@ export default function StoreManagement() {
                                   contactEmail: e.target.value,
                                 })
                               }
-                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                              placeholder="info@sutoroberrys.jp"
+                              className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-[12px] text-white outline-none focus:ring-1 focus:ring-brand-accent"
                             />
                           </div>
                         </div>
