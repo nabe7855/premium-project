@@ -31,7 +31,7 @@ const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
             <div className="flex items-center text-sm sm:text-base">
               <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
               <span className="font-semibold text-neutral-800">
-                {cast.sexinessLevel ?? 0}
+                {(cast.rating ?? 0).toFixed(1)}
               </span>
               <span className="text-neutral-600 ml-1">🍓評価</span>
             </div>

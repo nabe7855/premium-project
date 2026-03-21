@@ -15,6 +15,58 @@ import { CardFallScene, StrawberryOverlay, WhiteoutScene } from './matching/Matc
 import MatchingCarousel from './matching/MatchingCarousel';
 import { calculateMatchScores, MatchingResult } from './matching/matchingUtils';
 
+// 質問データの定義（好みの顔タイプ診断用）
+const PREFERENCE_QUESTIONS = [
+  // 軸1: 世代感 (A: スウィート/子供顔, B: ビター/大人顔)
+  {
+    text: 'Q1. 相手の男性には実年齢より…',
+    options: { A: '若く見えてほしい（若々しい・可愛い）', B: '大人っぽく見えてほしい（落ち着き）' },
+    axis: 'generation',
+  },
+  {
+    text: 'Q2. 好みの顔の縦の比率は…',
+    options: { A: 'やや短め（幼いバランス）', B: '長め（大人っぽいバランス）' },
+    axis: 'generation',
+  },
+  {
+    text: 'Q3. 相手の男性の全体的な雰囲気は…',
+    options: { A: '親しみやすくカジュアル', B: '落ち着いていてクール・セクシー' },
+    axis: 'generation',
+  },
+  // 軸2: 形状 (A: まろやか/曲線, B: すっきり/直線)
+  {
+    text: 'Q4. 好きな顔の輪郭は？',
+    options: { A: '丸みがある・卵型', B: '骨っぽさがある・シャープなベース型' },
+    axis: 'shape',
+  },
+  {
+    text: 'Q5. 好きな目元の形は？',
+    options: { A: '丸みがある・二重でパッチリ', B: '切れ長・一重や奥二重でスッキリ' },
+    axis: 'shape',
+  },
+  {
+    text: 'Q6. 鼻や唇の印象は？',
+    options: { A: '小ぶりで丸みがある・ぽってり', B: '鼻筋が通っている・薄めの唇' },
+    axis: 'shape',
+  },
+  // 軸3: 濃さ (A: ソフト/繊細, B: リッチ/はっきり)
+  {
+    text: 'Q7. 各パーツ（目や鼻など）の大きさは？',
+    options: { A: '小さめ〜普通・すっきりしている', B: '大きくてはっきりしている' },
+    axis: 'intensity',
+  },
+  {
+    text: 'Q8. 眉毛や輪郭の主張は？',
+    options: { A: '薄め・細め・柔らかい', B: 'しっかり濃いめ・骨格がハッキリ' },
+    axis: 'intensity',
+  },
+  {
+    text: 'Q9. 相手の第一印象はどちらが好き？',
+    options: { A: '優しそう・儚げな雰囲気', B: '目力がある・華やかな雰囲気' },
+    axis: 'intensity',
+  },
+];
+
 type Scene =
   | 'idle'
   | 'strawberry_fill'
@@ -35,12 +87,53 @@ const DiagnosisSection: React.FC = () => {
   const [selectedLoveStyle, setSelectedLoveStyle] = useState('');
   const [selectedFaceType, setSelectedFaceType] = useState('');
   const [isFaceModalOpen, setIsFaceModalOpen] = useState(false);
+  const [isQuestionModalOpen, setIsQuestionModalOpen] = useState(false);
+  const [questionStep, setQuestionStep] = useState(0);
+  const [questionAnswers, setQuestionAnswers] = useState<Record<number, 'A' | 'B'>>({});
 
   // アニメーション・結果用ステート
   const [scene, setScene] = useState<Scene>('idle');
   const [allCasts, setAllCasts] = useState<Cast[]>([]);
   const [matchResults, setMatchResults] = useState<MatchingResult[]>([]);
   const [mounted, setMounted] = useState(false);
+
+  const handleQuestionAnswer = (choice: 'A' | 'B') => {
+    const newAnswers = { ...questionAnswers, [questionStep]: choice };
+    setQuestionAnswers(newAnswers);
+
+    if (questionStep < PREFERENCE_QUESTIONS.length - 1) {
+      setQuestionStep(questionStep + 1);
+    } else {
+      // 診断結果を計算
+      let generationA = 0;
+      let shapeA = 0;
+      let intensityA = 0;
+
+      PREFERENCE_QUESTIONS.forEach((q, idx) => {
+        const isA = newAnswers[idx] === 'A';
+        if (q.axis === 'generation' && isA) generationA++;
+        if (q.axis === 'shape' && isA) shapeA++;
+        if (q.axis === 'intensity' && isA) intensityA++;
+      });
+
+      const isSweet = generationA >= 2;
+      const isMellow = shapeA >= 2;
+      const isSoft = intensityA >= 2;
+
+      let resultId = '';
+      if (isSweet && isMellow && isSoft) resultId = '章姫（あきひめ）';
+      else if (isSweet && isMellow && !isSoft) resultId = 'とちおとめ';
+      else if (isSweet && !isMellow && isSoft) resultId = 'パールホワイト';
+      else if (isSweet && !isMellow && !isSoft) resultId = 'さがほのか';
+      else if (!isSweet && isMellow && isSoft) resultId = '淡雪（あわゆき）';
+      else if (!isSweet && isMellow && !isSoft) resultId = 'あまおう';
+      else if (!isSweet && !isMellow && isSoft) resultId = 'ゆめのか';
+      else if (!isSweet && !isMellow && !isSoft) resultId = 'スカイベリー';
+
+      setSelectedFaceType(resultId);
+      setIsQuestionModalOpen(false);
+    }
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -184,6 +277,61 @@ const DiagnosisSection: React.FC = () => {
         )
       }
 
+      {/* 顔タイプ質問診断モーダル */}
+      {mounted && isQuestionModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity" onClick={() => setIsQuestionModalOpen(false)}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl w-full max-w-md overflow-hidden flex flex-col shadow-2xl p-6"
+            >
+              <div className="mb-4 flex items-center justify-between">
+                <span className="text-sm font-bold text-pink-500">
+                  好みのタイプ診断（{questionStep + 1} / {PREFERENCE_QUESTIONS.length}）
+                </span>
+                <button
+                  onClick={() => setIsQuestionModalOpen(false)}
+                  className="text-xs text-gray-400 hover:text-gray-600"
+                >
+                  キャンセル
+                </button>
+              </div>
+              
+              <div className="mb-8 h-2 w-full overflow-hidden rounded-full bg-gray-100">
+                <div 
+                  className="h-full bg-pink-400 transition-all duration-300" 
+                  style={{ width: `${((questionStep) / PREFERENCE_QUESTIONS.length) * 100}%` }} 
+                />
+              </div>
+
+              <p className="mb-8 text-center text-lg font-bold text-gray-800 leading-relaxed">
+                {PREFERENCE_QUESTIONS[questionStep].text}
+              </p>
+
+              <div className="flex flex-col gap-3">
+                <button
+                  onClick={() => handleQuestionAnswer('A')}
+                  className="flex items-center justify-between rounded-xl border-2 border-pink-100 bg-pink-50/50 p-4 text-left font-medium text-gray-700 transition-all hover:border-pink-300 hover:bg-pink-100/50 active:scale-95"
+                >
+                  <span className="text-sm sm:text-base">A. {PREFERENCE_QUESTIONS[questionStep].options.A}</span>
+                  <ArrowRight className="h-4 w-4 text-pink-400 ml-2 shrink-0" />
+                </button>
+                <button
+                  onClick={() => handleQuestionAnswer('B')}
+                  className="flex items-center justify-between rounded-xl border-2 border-indigo-100 bg-indigo-50/50 p-4 text-left font-medium text-gray-700 transition-all hover:border-indigo-300 hover:bg-indigo-100/50 active:scale-95"
+                >
+                  <span className="text-sm sm:text-base">B. {PREFERENCE_QUESTIONS[questionStep].options.B}</span>
+                  <ArrowRight className="h-4 w-4 text-indigo-400 ml-2 shrink-0" />
+                </button>
+              </div>
+            </motion.div>
+          </div>,
+          document.body,
+        )
+      }
+
       <div className="mb-6 text-center">
         <div className="mb-3 flex items-center justify-center">
           <span className="mr-2 text-2xl">💕</span>
@@ -306,16 +454,32 @@ const DiagnosisSection: React.FC = () => {
             <h4 className="text-sm font-bold text-neutral-800">好みのいちご系タイプ（顔の印象）</h4>
           </div>
           
-          <div className="mt-auto relative">
+          <div className="mt-auto relative w-full">
             {!selectedFaceType ? (
-              <button
-                 type="button"
-                 onClick={() => setIsFaceModalOpen(true)}
-                 className="w-full rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 px-3 py-4 text-sm font-bold text-primary hover:border-primary/50 hover:bg-primary/10 transition-all flex flex-col items-center justify-center gap-2"
-              >
-                 <span className="text-2xl">🖼️</span>
-                 <span>イラストから直感で選ぶ</span>
-              </button>
+              <div className="flex flex-col gap-2 w-full">
+                <button
+                   type="button"
+                   onClick={() => setIsFaceModalOpen(true)}
+                   className="w-full rounded-xl border border-primary/30 bg-primary/5 px-3 py-3 text-xs sm:text-sm font-bold text-primary hover:bg-primary/10 transition-all flex items-center justify-center gap-2 shadow-sm relative overflow-hidden group"
+                >
+                   <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                   <span className="text-xl relative z-10">🖼️</span>
+                   <span className="relative z-10">イラストから直感で選ぶ</span>
+                </button>
+                <button
+                   type="button"
+                   onClick={() => {
+                     setQuestionStep(0);
+                     setQuestionAnswers({});
+                     setIsQuestionModalOpen(true);
+                   }}
+                   className="w-full rounded-xl border border-indigo-300/40 bg-indigo-50/50 px-3 py-3 text-xs sm:text-sm font-bold text-indigo-600 hover:bg-indigo-50 transition-all flex items-center justify-center gap-2 shadow-sm relative overflow-hidden group"
+                >
+                   <div className="absolute inset-0 bg-white/40 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out" />
+                   <span className="text-xl relative z-10">✨</span>
+                   <span className="relative z-10">質問に答えて診断する</span>
+                </button>
+              </div>
             ) : (
               <div 
                 className="relative rounded-lg border border-primary/30 bg-white shadow-sm overflow-hidden group cursor-pointer hover:border-primary/50 transition-colors" 
