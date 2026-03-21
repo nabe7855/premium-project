@@ -15,6 +15,7 @@ export interface TodayCast {
   rating?: number;
   review_count?: number;
   sexiness_strawberry?: string | null;
+  sexiness_level?: number;
   tags?: string[];
   start_datetime: string;
   end_datetime: string;
@@ -76,6 +77,7 @@ export async function getTodayCastsByStore(
         main_image_url,
         image_url,
         is_active,
+        sexiness_level,
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name ),
         cast_statuses (
@@ -131,6 +133,7 @@ export async function getTodayCastsByStore(
       rating: 5.0,
       review_count: 10,
       sexiness_strawberry: '🍓🍓🍓',
+      sexiness_level: cast.sexiness_level ?? 100,
       mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,
       face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
       start_datetime: item.start_datetime,

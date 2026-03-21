@@ -107,10 +107,12 @@ export interface CastItem {
   faceType?: string[] | null;
   rating?: number;
   reviewCount?: number;
+  sexinessLevel?: number;
   sexinessStrawberry?: string | null;
   tags: string[];
   imageUrl: string;
   schedule?: string[]; // YYYY-MM-DD 形式
+  attendance?: string; // 例: "12:00〜21:00"
 }
 
 export interface CastConfig {

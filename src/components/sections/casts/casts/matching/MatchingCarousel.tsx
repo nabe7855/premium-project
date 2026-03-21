@@ -111,7 +111,7 @@ export default function MatchingCarousel({ results, onRestart }: MatchingCarouse
               style={getCardStyle(index)}
               onClick={() => {
                 if (isActive) {
-                  router.push(`/store/${storeSlug}/cast/${cast.id}`);
+                  router.push(`/store/${storeSlug}/cast/${cast.slug || cast.id}`);
                 }
               }}
             >

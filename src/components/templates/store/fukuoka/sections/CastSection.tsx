@@ -48,6 +48,10 @@ const CastSection: React.FC<CastSectionProps> = ({
       rating: c.rating,
       reviewCount: c.review_count,
       sexinessStrawberry: c.sexiness_strawberry,
+      sexinessLevel: c.sexiness_level ?? 100,
+      attendance: c.start_datetime && c.end_datetime 
+        ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
+        : 'お問い合わせください',
       schedule: [], // 後で補完される
     }));
   }, [todayCasts]);
@@ -119,6 +123,10 @@ const CastSection: React.FC<CastSectionProps> = ({
           rating: c.rating,
           reviewCount: c.review_count,
           sexinessStrawberry: c.sexiness_strawberry,
+          sexinessLevel: c.sexiness_level || 100,
+          attendance: c.start_datetime && c.end_datetime 
+            ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
+            : 'お問い合わせください',
           schedule: [selectedDate],
         }));
         setFetchedCasts(mappedCasts);
@@ -401,17 +409,47 @@ const CastSection: React.FC<CastSectionProps> = ({
                               </span>
                             </div>
 
-                            {/* セクシー度 */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[11px] font-black uppercase tracking-tighter text-rose-400">
-                                  セクシー度:
+                            {/* エロス係数 */}
+                            <div className="mb-4 flex flex-col gap-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">
+                                  エロス係数
                                 </span>
-                                <div className="flex gap-0.5">
-                                  <span className="text-xs">
-                                    {cast.sexinessStrawberry || '🍓🍓🍓'}
-                                  </span>
+                                <span className="text-[11px] font-bold text-rose-600">
+                                  {cast.sexinessLevel ?? 100}%
+                                </span>
+                              </div>
+                              <div className="flex flex-col gap-[2px]">
+                                <div className="flex items-end gap-[1px] h-4">
+                                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((bar) => {
+                                    const level = Math.ceil((cast.sexinessLevel ?? 100) / 10);
+                                    const isActive = bar <= level;
+                                    const getColor = () => {
+                                      if (bar <= 4) return 'bg-emerald-400';
+                                      if (bar <= 7) return 'bg-lime-400';
+                                      if (bar <= 10) return 'bg-yellow-400';
+                                      if (bar <= 13) return 'bg-orange-400';
+                                      return 'bg-rose-500';
+                                    };
+                                    return (
+                                      <div
+                                        key={bar}
+                                        className={`w-full rounded-sm transition-all duration-500 ${isActive ? getColor() : 'bg-neutral-100'}`}
+                                        style={{ height: `${Math.min(100, (bar / 15) * 100 + 10)}%` }}
+                                      />
+                                    );
+                                  })}
                                 </div>
+                              </div>
+                            </div>
+
+                            {/* 出勤時間 */}
+                            <div className="mt-auto border-t border-rose-50 pt-3">
+                              <div className="flex items-center justify-center gap-2 rounded-xl bg-orange-50/70 py-2.5">
+                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
+                                <span className="text-xs font-black tracking-widest text-orange-600">
+                                  {cast.attendance}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -510,17 +548,47 @@ const CastSection: React.FC<CastSectionProps> = ({
                               </span>
                             </div>
 
-                            {/* セクシー度 */}
-                            <div className="flex items-center justify-between">
-                              <div className="flex items-center gap-1.5">
-                                <span className="text-[11px] font-black uppercase tracking-tighter text-rose-400">
-                                  セクシー度:
+                            {/* エロス係数 */}
+                            <div className="mb-4 flex flex-col gap-1.5">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">
+                                  エロス係数
                                 </span>
-                                <div className="flex gap-0.5">
-                                  <span className="text-xs">
-                                    {cast.sexinessStrawberry || '🍓🍓🍓'}
-                                  </span>
+                                <span className="text-[11px] font-bold text-rose-600">
+                                  {cast.sexinessLevel ?? 100}%
+                                </span>
+                              </div>
+                              <div className="flex flex-col gap-[2px]">
+                                <div className="flex items-end gap-[1px] h-4">
+                                  {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((bar) => {
+                                    const level = Math.ceil((cast.sexinessLevel ?? 100) / 10);
+                                    const isActive = bar <= level;
+                                    const getColor = () => {
+                                      if (bar <= 4) return 'bg-emerald-400';
+                                      if (bar <= 7) return 'bg-lime-400';
+                                      if (bar <= 10) return 'bg-yellow-400';
+                                      if (bar <= 13) return 'bg-orange-400';
+                                      return 'bg-rose-500';
+                                    };
+                                    return (
+                                      <div
+                                        key={bar}
+                                        className={`w-full rounded-sm transition-all duration-500 ${isActive ? getColor() : 'bg-neutral-100'}`}
+                                        style={{ height: `${Math.min(100, (bar / 15) * 100 + 10)}%` }}
+                                      />
+                                    );
+                                  })}
                                 </div>
+                              </div>
+                            </div>
+
+                            {/* 出勤時間 */}
+                            <div className="mt-auto border-t border-rose-50 pt-3">
+                              <div className="flex items-center justify-center gap-2 rounded-xl bg-orange-50/70 py-2.5">
+                                <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
+                                <span className="text-xs font-black tracking-widest text-orange-600">
+                                  {cast.attendance}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -548,6 +616,19 @@ const CastSection: React.FC<CastSectionProps> = ({
             >
               条件をリセットする
             </button>
+          </div>
+        )}
+ 
+        {/* もっと見るボタン */}
+        {!isLoading && filteredCasts.length > 0 && (
+          <div className="mt-16 flex justify-center">
+            <Link
+              href={`/store/${storeSlug}/cast`}
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-rose-500 px-10 py-4 font-black transition-all hover:bg-rose-600 active:scale-95"
+            >
+              <span className="relative z-10 text-sm tracking-[0.2em] text-white">もっと見る</span>
+              <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 group-hover:translate-y-0" />
+            </Link>
           </div>
         )}
       </div>
