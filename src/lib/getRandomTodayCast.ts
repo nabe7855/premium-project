@@ -8,6 +8,7 @@ export interface RandomCast {
   main_image_url?: string | null;
   mbti_name?: string | null;
   face_name?: string | null;
+  is_ichioshi?: boolean;
   start_datetime: string;
   end_datetime: string;
 }
@@ -47,6 +48,7 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
         catch_copy,
         main_image_url,
         is_active,
+        is_ichioshi,
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name )
       )
@@ -60,9 +62,9 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
     return [];
   }
 
-  // 3. is_active のキャストをマッピング
+  // 3. is_active 且つ is_ichioshi のキャストをマッピング
   const result: RandomCast[] = data
-    .filter((d: any) => d.casts?.is_active)
+    .filter((d: any) => d.casts?.is_active && d.casts?.is_ichioshi)
     .map((d: any) => {
       const cast = d.casts;
       let mbti: string | null = null;
@@ -86,6 +88,7 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
         main_image_url: cast.main_image_url,
         mbti_name: mbti,
         face_name: face,
+        is_ichioshi: cast.is_ichioshi,
         start_datetime: d.start_datetime,
         end_datetime: d.end_datetime,
       };

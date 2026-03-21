@@ -98,6 +98,7 @@ export interface Cast {
   sexinessStrawberry?: string; // 🍓表現
   isReception?: boolean;
   isActive: boolean;
+  isIchioshi?: boolean;
   isOnline?: boolean;
   statuses?: CastStatus[];
   voiceUrl?: string;

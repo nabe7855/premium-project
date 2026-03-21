@@ -15,6 +15,7 @@ interface Cast {
   name: string;
   manager_comment?: string;
   is_active: boolean;
+  is_ichioshi: boolean;
   catch_copy?: string;
   ai_summary?: string;
   stores: Store[];
@@ -33,6 +34,7 @@ export default function CastManagement() {
           name,
           manager_comment,
           is_active,
+          is_ichioshi,
           catch_copy,
           ai_summary,
           cast_store_memberships ( stores ( id, name ) )
@@ -48,6 +50,7 @@ export default function CastManagement() {
           name: c.name,
           manager_comment: c.manager_comment,
           is_active: c.is_active,
+          is_ichioshi: c.is_ichioshi,
           catch_copy: c.catch_copy,
           ai_summary: c.ai_summary,
           stores: c.cast_store_memberships?.map((cs: any) => cs.stores) || [],
@@ -67,6 +70,7 @@ export default function CastManagement() {
         .update({
           manager_comment: cast.manager_comment,
           is_active: cast.is_active,
+          is_ichioshi: cast.is_ichioshi,
           catch_copy: cast.catch_copy,
           ai_summary: cast.ai_summary,
         })
@@ -194,6 +198,26 @@ export default function CastManagement() {
                   className="h-4 w-4 accent-cyan-500"
                 />
                 <span>{cast.is_active ? '在籍中（公開）' : '非公開'}</span>
+              </div>
+            </div>
+
+            {/* イチ押し設定 */}
+            <div>
+              <label className="mb-1 block font-medium">✨ イチ押し設定</label>
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={cast.is_ichioshi}
+                  onChange={(e) =>
+                    setCasts((prev) =>
+                      prev.map((c) =>
+                        c.id === cast.id ? { ...c, is_ichioshi: e.target.checked } : c,
+                      ),
+                    )
+                  }
+                  className="h-4 w-4 accent-pink-500"
+                />
+                <span className="text-pink-300">店舗トップの「イチ押しセラピスト」に掲載する</span>
               </div>
             </div>
 
