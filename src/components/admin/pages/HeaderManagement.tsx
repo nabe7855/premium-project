@@ -475,12 +475,16 @@ export default function HeaderManagement() {
         <div
           className={`flex flex-col gap-4 overflow-y-auto lg:h-full lg:w-80 lg:flex-shrink-0 lg:rounded-2xl lg:border lg:border-gray-700/50 lg:bg-brand-secondary lg:p-4 ${activeView === 'settings' ? 'flex flex-grow' : 'hidden lg:flex'}`}
         >
-          <div className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3">
-            <span className="text-sm font-medium text-gray-200">ヘッダーを表示する</span>
+          <div className="flex items-center justify-between rounded-lg border border-gray-700/50 bg-brand-primary/30 px-4 py-3">
+            <div className="flex flex-col">
+              <span className="text-sm font-bold text-gray-200">ヘッダー表示状態</span>
+              <span className={`text-xs mt-0.5 ${config.header.isVisible !== false ? 'text-brand-accent font-bold' : 'text-gray-500'}`}>
+                {config.header.isVisible !== false ? '表示中' : '非表示'}
+              </span>
+            </div>
             <Switch
               checked={config.header.isVisible}
               onCheckedChange={(checked) => handleUpdate('header', 'isVisible', checked)}
-              className="scale-75"
             />
           </div>
 
@@ -601,10 +605,15 @@ export default function HeaderManagement() {
                 特別バナー1 (左)
               </h2>
               <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold uppercase text-gray-500">
-                    表示する
-                  </label>
+                <div className="flex items-center justify-between rounded-lg bg-black/30 px-4 py-3 border border-gray-700/50">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-gray-300">
+                      表示状態
+                    </label>
+                    <span className={`text-[10px] mt-0.5 ${config.header.specialBanner?.isVisible !== false ? 'text-brand-accent font-bold' : 'text-gray-500'}`}>
+                      {config.header.specialBanner?.isVisible !== false ? '表示中' : '非表示'}
+                    </span>
+                  </div>
                   <Switch
                     checked={config.header.specialBanner?.isVisible ?? true}
                     onCheckedChange={(checked) => {
@@ -619,7 +628,6 @@ export default function HeaderManagement() {
                       };
                       handleUpdate('header', 'specialBanner', newBanner);
                     }}
-                    className="scale-75"
                   />
                 </div>
                 <div className="space-y-2">
@@ -689,10 +697,15 @@ export default function HeaderManagement() {
                 特別バナー2 (中央)
               </h2>
               <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold uppercase text-gray-500">
-                    表示する
-                  </label>
+                <div className="flex items-center justify-between rounded-lg bg-black/30 px-4 py-3 border border-gray-700/50">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-gray-300">
+                      表示状態
+                    </label>
+                    <span className={`text-[10px] mt-0.5 ${config.header.specialBanner2?.isVisible !== false ? 'text-brand-accent font-bold' : 'text-gray-500'}`}>
+                      {config.header.specialBanner2?.isVisible !== false ? '表示中' : '非表示'}
+                    </span>
+                  </div>
                   <Switch
                     checked={config.header.specialBanner2?.isVisible ?? true}
                     onCheckedChange={(checked) => {
@@ -707,7 +720,6 @@ export default function HeaderManagement() {
                       };
                       handleUpdate('header', 'specialBanner2', newBanner);
                     }}
-                    className="scale-75"
                   />
                 </div>
                 <div className="space-y-2">
@@ -777,10 +789,15 @@ export default function HeaderManagement() {
                 特別バナー3 (右)
               </h2>
               <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
-                <div className="flex items-center justify-between">
-                  <label className="text-[10px] font-bold uppercase text-gray-500">
-                    表示する
-                  </label>
+                <div className="flex items-center justify-between rounded-lg bg-black/30 px-4 py-3 border border-gray-700/50">
+                  <div className="flex flex-col">
+                    <label className="text-xs font-bold text-gray-300">
+                      表示状態
+                    </label>
+                    <span className={`text-[10px] mt-0.5 ${config.header.specialBanner3?.isVisible !== false ? 'text-brand-accent font-bold' : 'text-gray-500'}`}>
+                      {config.header.specialBanner3?.isVisible !== false ? '表示中' : '非表示'}
+                    </span>
+                  </div>
                   <Switch
                     checked={config.header.specialBanner3?.isVisible ?? true}
                     onCheckedChange={(checked) => {
@@ -795,7 +812,6 @@ export default function HeaderManagement() {
                       };
                       handleUpdate('header', 'specialBanner3', newBanner);
                     }}
-                    className="scale-75"
                   />
                 </div>
                 <div className="space-y-2">
@@ -865,10 +881,15 @@ export default function HeaderManagement() {
               ハンバーガーメニュー最下部バナー
             </h2>
             <div className="space-y-3 rounded-xl border border-gray-700/30 bg-brand-primary/20 p-3">
-              <div className="flex items-center justify-between">
-                <label className="text-[10px] font-bold uppercase text-gray-500">
-                  バナーを表示する
-                </label>
+              <div className="flex items-center justify-between rounded-lg bg-black/30 px-4 py-3 border border-gray-700/50">
+                <div className="flex flex-col">
+                  <label className="text-xs font-bold text-gray-300">
+                    表示状態
+                  </label>
+                  <span className={`text-[10px] mt-0.5 ${config.header.menuBottomBanner?.isVisible !== false ? 'text-brand-accent font-bold' : 'text-gray-500'}`}>
+                    {config.header.menuBottomBanner?.isVisible !== false ? '表示中' : '非表示'}
+                  </span>
+                </div>
                 <Switch
                   checked={config.header.menuBottomBanner?.isVisible ?? true}
                   onCheckedChange={(checked) => {
@@ -883,7 +904,6 @@ export default function HeaderManagement() {
                     };
                     handleUpdate('header', 'menuBottomBanner', newBanner);
                   }}
-                  className="scale-75"
                 />
               </div>
               <div className="space-y-2">
