@@ -34,6 +34,7 @@ const DiagnosisSection: React.FC = () => {
   const [selectedAnimal, setSelectedAnimal] = useState('');
   const [selectedLoveStyle, setSelectedLoveStyle] = useState('');
   const [selectedFaceType, setSelectedFaceType] = useState('');
+  const [isFaceModalOpen, setIsFaceModalOpen] = useState(false);
 
   // アニメーション・結果用ステート
   const [scene, setScene] = useState<Scene>('idle');
@@ -130,6 +131,58 @@ const DiagnosisSection: React.FC = () => {
           </>,
           document.body,
         )}
+
+      {/* 顔タイプ選択モーダル */}
+      {mounted && isFaceModalOpen &&
+        createPortal(
+          <div className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm transition-opacity" onClick={() => setIsFaceModalOpen(false)}>
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col shadow-2xl"
+            >
+               <div className="p-4 border-b border-neutral-100 flex justify-between items-center bg-white sticky top-0 z-10">
+                  <h3 className="text-lg font-bold text-neutral-800">直感で選ぶ！好みのタイプ</h3>
+                  <button onClick={() => setIsFaceModalOpen(false)} className="w-8 h-8 flex items-center justify-center rounded-full bg-neutral-100 text-neutral-500 hover:bg-neutral-200 transition-colors" aria-label="閉じる">
+                     <span className="text-xl leading-none">&times;</span>
+                  </button>
+               </div>
+               
+               <div className="p-4 overflow-y-auto custom-scrollbar">
+                  <p className="text-sm text-neutral-600 mb-5 text-center leading-relaxed">
+                    いちごに例えた8種類のイケメンから、<br className="sm:hidden" />
+                    あなたの直感でピンときた顔を選んでください💕
+                  </p>
+                  
+                  <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
+                     {FACE_TYPES.map((type) => (
+                        <button
+                          key={type.id}
+                          onClick={() => {
+                             setSelectedFaceType(type.id);
+                             setIsFaceModalOpen(false);
+                          }}
+                          className={`group flex flex-col items-center rounded-xl border-2 transition-all overflow-hidden text-left ${selectedFaceType === type.id ? 'border-primary ring-2 ring-primary/20 bg-primary/5' : 'border-neutral-100 hover:border-primary/50 hover:bg-neutral-50 shadow-sm'}`}
+                        >
+                           <div className="w-full aspect-square relative overflow-hidden bg-neutral-100">
+                              <img src={type.imageUrl} alt={type.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                           </div>
+                           <div className="p-3 w-full flex flex-col items-center bg-white group-hover:bg-neutral-50 transition-colors">
+                              <span className={`text-[13px] sm:text-sm font-bold mb-1 w-full text-center truncate ${selectedFaceType === type.id ? 'text-primary' : 'text-neutral-800'}`}>{type.name}</span>
+                              <span className="text-[10px] text-neutral-500 leading-tight text-center w-full line-clamp-2">
+                                {type.description?.split('\n')[0] || type.description}
+                              </span>
+                           </div>
+                        </button>
+                     ))}
+                  </div>
+               </div>
+            </motion.div>
+          </div>,
+          document.body,
+        )
+      }
 
       <div className="mb-6 text-center">
         <div className="mb-3 flex items-center justify-center">
@@ -244,7 +297,7 @@ const DiagnosisSection: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3 }}
-          className="rounded-xl bg-white/90 p-5 shadow-sm backdrop-blur-sm transition-all hover:shadow-md"
+          className="rounded-xl bg-white/90 p-5 shadow-sm backdrop-blur-sm transition-all hover:shadow-md h-full flex flex-col"
         >
           <div className="mb-3 flex flex-col items-center">
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
@@ -252,22 +305,44 @@ const DiagnosisSection: React.FC = () => {
             </div>
             <h4 className="text-sm font-bold text-neutral-800">好みのいちご系タイプ（顔の印象）</h4>
           </div>
-          <div className="relative">
-            <select
-              value={selectedFaceType}
-              onChange={(e) => setSelectedFaceType(e.target.value)}
-              className="w-full appearance-none rounded-lg border border-neutral-200 bg-white px-3 py-2 text-xs text-neutral-600 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-            >
-              <option value="">お好みを選択</option>
-              {FACE_TYPES.map((type) => (
-                <option key={type.name} value={type.name}>
-                  {type.name}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-neutral-400">
-              <span className="text-[10px]">▼</span>
-            </div>
+          
+          <div className="mt-auto relative">
+            {!selectedFaceType ? (
+              <button
+                 type="button"
+                 onClick={() => setIsFaceModalOpen(true)}
+                 className="w-full rounded-lg border-2 border-dashed border-primary/30 bg-primary/5 px-3 py-4 text-sm font-bold text-primary hover:border-primary/50 hover:bg-primary/10 transition-all flex flex-col items-center justify-center gap-2"
+              >
+                 <span className="text-2xl">🖼️</span>
+                 <span>イラストから直感で選ぶ</span>
+              </button>
+            ) : (
+              <div 
+                className="relative rounded-lg border border-primary/30 bg-white shadow-sm overflow-hidden group cursor-pointer hover:border-primary/50 transition-colors" 
+                onClick={() => setIsFaceModalOpen(true)}
+              >
+                {(() => {
+                  const face = FACE_TYPES.find(f => f.id === selectedFaceType);
+                  return face ? (
+                    <div className="flex flex-col items-center p-3 relative">
+                       <div className="relative w-16 h-16 mb-2 rounded-full overflow-hidden shadow-inner bg-neutral-100 shrink-0">
+                          <img src={face.imageUrl} alt={face.name} className="w-full h-full object-cover" />
+                       </div>
+                       <span className="text-sm font-bold text-primary mb-1">{face.name}</span>
+                       <p className="text-[10px] text-neutral-600 text-center whitespace-pre-line leading-relaxed">
+                          {face.description}
+                       </p>
+                       
+                       <div className="absolute inset-0 bg-black/5 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-lg">
+                          <span className="bg-white/95 text-primary text-[11px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+                            変更する
+                          </span>
+                       </div>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+            )}
           </div>
         </motion.div>
       </div>
