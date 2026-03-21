@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, X } from 'lucide-react';
+import { compressAndConvertToWebP } from '@/lib/utils/image-processing';
 
 interface ImageUploadProps {
   images: string[];
@@ -11,27 +12,36 @@ export default function ImageUpload({ images, onImagesChange, maxImages = 3 }: I
   const [dragOver, setDragOver] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileSelect = (files: FileList | null) => {
+  const handleFileSelect = async (files: FileList | null) => {
     if (!files) return;
 
-    const newImages: string[] = [];
     const remainingSlots = maxImages - images.length;
     const filesToProcess = Math.min(files.length, remainingSlots);
+    const newImages: string[] = [];
 
     for (let i = 0; i < filesToProcess; i++) {
       const file = files[i];
       if (file.type.startsWith('image/')) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          if (e.target?.result) {
-            newImages.push(e.target.result as string);
-            if (newImages.length === filesToProcess) {
-              onImagesChange([...images, ...newImages]);
-            }
-          }
-        };
-        reader.readAsDataURL(file);
+        try {
+          // 画像の圧縮・WebP変換
+          const webpBlob = await compressAndConvertToWebP(file, 0.8, 1000); // 日記用は少し小さめの1000px
+          
+          const reader = new FileReader();
+          const promise = new Promise<string>((resolve) => {
+            reader.onload = (e) => resolve(e.target?.result as string);
+            reader.readAsDataURL(webpBlob);
+          });
+          
+          const dataUrl = await promise;
+          newImages.push(dataUrl);
+        } catch (err) {
+          console.error('Image optimization failed:', err);
+        }
       }
+    }
+
+    if (newImages.length > 0) {
+      onImagesChange([...images, ...newImages]);
     }
   };
 

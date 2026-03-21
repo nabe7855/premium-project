@@ -6,12 +6,14 @@ import { compressAndConvertToWebP } from '../utils/image-processing';
  * @param storeSlug 店舗のslug
  * @param section セクション名 (hero, concept, campaign など)
  * @param file アップロードするファイル
+ * @param options 圧縮オプション
  * @returns 公開URL
  */
 export async function uploadStoreTopImage(
   storeSlug: string,
   section: string,
   file: File,
+  options: { maxWidth?: number; quality?: number } = {},
 ): Promise<string | null> {
   // WebP 圧縮・変換処理を試行
   let uploadData: Blob | File = file;
@@ -20,8 +22,12 @@ export async function uploadStoreTopImage(
   try {
     // クライアントサイドでのみ実行（SSR対策）
     if (typeof window !== 'undefined') {
-      console.log('⚡ [uploadStoreTopImage] Compressing and converting to WebP...');
-      const webpBlob = await compressAndConvertToWebP(file);
+      console.log('⚡ [uploadStoreTopImage] Compressing and converting to WebP...', options);
+      const webpBlob = await compressAndConvertToWebP(
+        file,
+        options.quality || 0.8,
+        options.maxWidth || 1200,
+      );
       uploadData = webpBlob;
       fileExt = 'webp';
       console.log('✨ [uploadStoreTopImage] WebP conversion success');

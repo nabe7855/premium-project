@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/lib/utils';
+import { compressAndConvertToWebP } from '@/lib/utils/image-processing';
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import React, { useRef } from 'react';
@@ -39,11 +40,23 @@ export const EditableImage: React.FC<EditableImageProps> = ({
     }
   };
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
+    if (file && onUpload) {
       console.log('🎨 EditableImage: File selected', file.name);
-      if (onUpload) onUpload(file);
+      
+      try {
+        // 画像の圧縮・WebP変換処理
+        const webpBlob = await compressAndConvertToWebP(file, 0.8, 1200);
+        const optimizedFile = new File([webpBlob], `optimized_${Date.now()}.webp`, {
+          type: 'image/webp',
+        });
+        console.log('✨ EditableImage: Image optimized to WebP');
+        onUpload(optimizedFile);
+      } catch (err) {
+        console.warn('⚠️ EditableImage: Image optimization failed, using original file:', err);
+        onUpload(file);
+      }
     }
   };
 

@@ -1,5 +1,6 @@
 import { stores } from '@/data/stores';
 import { uploadNewsImage } from '@/lib/actions/news-pages';
+import { compressAndConvertToWebP } from '@/lib/utils/image-processing';
 import React from 'react';
 import { toast } from 'sonner';
 import { PageData, SectionData } from './types';
@@ -29,22 +30,27 @@ const Inspector: React.FC<InspectorProps> = ({
     const file = e.target.files?.[0];
     if (!file || !page) return;
 
+    const toastId = toast.loading('画像を最適化中...');
     try {
+      // クライアントサイドでの画像圧縮・WebP変換
+      let uploadFile: Blob | File = file;
+      try {
+        const webpBlob = await compressAndConvertToWebP(file, 0.8, 1200);
+        uploadFile = new File([webpBlob], `image_${Date.now()}.webp`, { type: 'image/webp' });
+        toast.loading('アップロード中...', { id: toastId });
+      } catch (err) {
+        console.warn('Image optimization failed, using original file:', err);
+        toast.loading('アップロード中...', { id: toastId });
+      }
+
       const formData = new FormData();
-      formData.append('file', file);
+      formData.append('file', uploadFile);
       formData.append('pageId', page.id);
 
-      const promise = uploadNewsImage(formData);
-
-      toast.promise(promise, {
-        loading: '画像をアップロード中...',
-        success: 'アップロード完了',
-        error: 'アップロード失敗',
-      });
-
-      const publicUrl = await promise;
+      const publicUrl = await uploadNewsImage(formData);
 
       if (publicUrl) {
+        toast.success('アップロード完了', { id: toastId });
         if (target === 'section' && section) {
           onUpdateSection({
             ...section,
@@ -53,10 +59,12 @@ const Inspector: React.FC<InspectorProps> = ({
         } else if (target === 'page') {
           onUpdatePage({ [field]: publicUrl });
         }
+      } else {
+        toast.error('アップロードに失敗しました', { id: toastId });
       }
     } catch (error) {
       console.error('Upload failed:', error);
-      toast.error('画像のアップロードに失敗しました');
+      toast.error('エラーが発生しました', { id: toastId });
     }
   };
 

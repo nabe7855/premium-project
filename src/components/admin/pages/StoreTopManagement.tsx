@@ -255,8 +255,19 @@ export default function StoreTopManagement() {
     if (!selectedStore) return;
 
     const toastId = toast.loading('画像をアップロード中...');
+    
+    // セクションや用途に応じた圧縮設定
+    let options: { maxWidth?: number; quality?: number } = { maxWidth: 1200, quality: 0.8 };
+    if (key === 'headingImageUrl' || key === 'iconUrl') {
+      options = { maxWidth: 600, quality: 0.8 }; // タイトルやアイコンは小さめに
+    } else if (section === 'hero') {
+      options = { maxWidth: 1600, quality: 0.85 }; // ヒーロー画像は高画質に
+    } else if (section === 'sidebar' || section === 'footer') {
+      options = { maxWidth: 800, quality: 0.8 };
+    }
+
     try {
-      const publicUrl = await uploadStoreTopImage(selectedStore, section, file);
+      const publicUrl = await uploadStoreTopImage(selectedStore, section, file, options);
 
       if (!publicUrl) {
         toast.error('画像のアップロードに失敗しました', { id: toastId });
@@ -304,7 +315,7 @@ export default function StoreTopManagement() {
 
       setConfig(newConfig);
       await safeSaveConfig(newConfig);
-      toast.success('画像をアップロードしました', { id: toastId });
+      toast.success('画像を最適化してアップロードしました', { id: toastId });
     } catch (error) {
       console.error('Image upload failed:', error);
       toast.error('画像のアップロードに失敗しました', { id: toastId });
