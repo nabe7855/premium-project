@@ -31,7 +31,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       created_at
     `,
     )
-    .eq('slug', slug)
+    .or(`slug.eq.${slug},id.eq.${slug}`)
     .maybeSingle();
 
   console.log('📦 cast data:', cast);
