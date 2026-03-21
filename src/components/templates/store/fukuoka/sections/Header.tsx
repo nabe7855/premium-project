@@ -188,9 +188,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   item.name
                 )}
               </span>
-              <div className="mt-1 flex h-2 w-2 rounded-full bg-pink-400" />
             </div>
-            <ChevronDown size={24} className="-rotate-90 text-pink-200" />
           </Link>
         </div>
       );
