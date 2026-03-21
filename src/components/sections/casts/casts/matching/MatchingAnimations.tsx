@@ -4,7 +4,7 @@ import React, { useMemo } from 'react';
 
 /* Strawberry Overlay */
 export const StrawberryOverlay: React.FC<{ fadingOut: boolean }> = ({ fadingOut }) => {
-  const strawberryCount = 450;
+  const strawberryCount = 225;
   const strawberries = useMemo(() => {
     return Array.from({ length: strawberryCount }).map((_, i) => ({
       id: i,
@@ -13,7 +13,7 @@ export const StrawberryOverlay: React.FC<{ fadingOut: boolean }> = ({ fadingOut 
         top: `${Math.random() * 120 - 10}vh`,
         animationDuration: `3s`,
         animationDelay: `${Math.random() * 2}s`,
-        fontSize: `${Math.random() * 150 + 40}px`,
+        fontSize: `${Math.random() * 300 + 80}px`,
         filter: 'drop-shadow(3px 3px 5px rgba(0,0,0,0.3))',
       },
     }));
