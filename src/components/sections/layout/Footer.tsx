@@ -23,6 +23,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
   });
   const [navItems, setNavItems] = useState<any[]>([]);
   const [isNavVisible, setIsNavVisible] = useState(true);
+  const [isNavLoaded, setIsNavLoaded] = useState(false);
 
   // 初めての方へページかどうかを判定
   const isFirstTimePage = pathname?.includes('/first-time');
@@ -77,6 +78,8 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
         }
       } catch (err) {
         console.error('Failed to fetch footer config:', err);
+      } finally {
+        setIsNavLoaded(true);
       }
     };
 
@@ -108,7 +111,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
   if (!isMounted) return null;
 
-  if (!isMounted || !isNavVisible) return null;
+  if (!isMounted || !isNavVisible || !isNavLoaded) return null;
 
   const items = navItems.length > 0 ? navItems : [
     { id: 'home', label: 'ホーム', icon: Home, href: `/store/${slug}` },
