@@ -151,13 +151,16 @@ export default function ReservationPageClient({
     });
   };
 
+  const configLineId = storeConfig?.lineId || store.line_id;
+  const configLineUrl = storeConfig?.snsProfile?.followLink || store.line_url;
+
   const lineHref =
-    store.line_url ||
-    (store.line_id ? `https://line.me/R/ti/p/${store.line_id.replace('@', '')}` : '#');
-  const lineLabel = store.line_id
-    ? store.line_id.startsWith('@')
-      ? store.line_id
-      : `@${store.line_id}`
+    configLineUrl ||
+    (configLineId ? `https://line.me/R/ti/p/${configLineId.replace('@', '')}` : '#');
+  const lineLabel = configLineId
+    ? configLineId.startsWith('@')
+      ? configLineId
+      : `@${configLineId}`
     : '@example';
   const phoneHref = store.phone ? `tel:${store.phone}` : '#';
   const phoneLabel = store.phone || '03-XXXX-XXXX';

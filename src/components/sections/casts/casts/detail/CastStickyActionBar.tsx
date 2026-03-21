@@ -33,11 +33,7 @@ const CastStickyActionBar: React.FC<CastStickyActionBarProps> = ({
 }) => {
   return (
     <div
-      className={`transition-all duration-300 ${
-        isSticky
-          ? 'fixed left-0 right-0 top-[102px] z-40 border-b border-neutral-200 bg-white shadow-md md:top-[119px]'
-          : 'relative'
-      }`}
+      className="sticky top-[98px] md:top-[109px] z-30 border-b border-neutral-200 bg-white shadow-sm transition-all duration-300"
     >
       <div className="mx-auto max-w-7xl bg-white px-4 py-3">
         {/* アクションボタン */}

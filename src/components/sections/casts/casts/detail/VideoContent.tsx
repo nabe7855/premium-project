@@ -28,67 +28,7 @@ const VideoContent: React.FC<VideoContentProps> = ({ cast }) => {
   const [favorites, setFavorites] = useState<string[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  // モックデータ - 実際の実装では外部APIから取得
-  const mockVideos: VideoItem[] = [
-    {
-      id: '1',
-      title: '【自己紹介】はじめまして！田中太郎です',
-      description: '初めての動画投稿です。普段の僕の様子や趣味について話しています。',
-      thumbnail: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=800',
-      duration: '3:24',
-      viewCount: '1.2K',
-      uploadDate: '2024-12-01',
-      platform: 'youtube',
-      url: 'https://youtube.com/watch?v=example1',
-      isNew: true
-    },
-    {
-      id: '2',
-      title: '今日のコーディネート紹介',
-      description: 'お客様とのデートにおすすめのコーディネートをご紹介',
-      thumbnail: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&w=800',
-      duration: '2:15',
-      viewCount: '856',
-      uploadDate: '2024-11-28',
-      platform: 'instagram',
-      url: 'https://instagram.com/p/example2',
-      isPopular: true
-    },
-    {
-      id: '3',
-      title: '癒しの時間の過ごし方',
-      description: 'リラックスできる時間の作り方について',
-      thumbnail: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&w=800',
-      duration: '5:42',
-      viewCount: '2.1K',
-      uploadDate: '2024-11-25',
-      platform: 'youtube',
-      url: 'https://youtube.com/watch?v=example3',
-      isPopular: true
-    },
-    {
-      id: '4',
-      title: '質問コーナー！皆さんからの質問にお答え',
-      description: 'フォロワーの皆さんからいただいた質問にお答えしています',
-      thumbnail: 'https://images.pexels.com/photos/1319460/pexels-photo-1319460.jpeg?auto=compress&cs=tinysrgb&w=800',
-      duration: '8:17',
-      viewCount: '3.4K',
-      uploadDate: '2024-11-20',
-      platform: 'youtube',
-      url: 'https://youtube.com/watch?v=example4'
-    },
-    {
-      id: '5',
-      title: '今日の一日',
-      description: '普段の一日の過ごし方をお見せします',
-      thumbnail: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=800',
-      duration: '1:30',
-      viewCount: '1.8K',
-      uploadDate: '2024-11-18',
-      platform: 'tiktok',
-      url: 'https://tiktok.com/@example/video/5'
-    }
-  ]
+  const mockVideos: VideoItem[] = []
 
   useEffect(() => {
     // 動画データの読み込みをシミュレート

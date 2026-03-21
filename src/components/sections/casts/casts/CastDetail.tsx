@@ -118,7 +118,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
       </div>
 
       {/* タブコンテンツ */}
-      <div className={`px-4 py-6 ${isSticky ? 'mt-[150px] sm:mt-40' : ''}`}>
+      <div className="px-4 py-6">
         {activeTab === 'basic' && <CastTabBasicInformation cast={cast} />}
         {activeTab === 'story' && <CastTabStory cast={cast} />}
         {activeTab === 'schedule' && (
