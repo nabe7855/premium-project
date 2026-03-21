@@ -30,7 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   return {
     title: `${cast.name} - ${cast.catchCopy ?? ''} | ${params.slug} | Strawberry Boys`,
-    description: `${cast.name} (${cast.age ?? '??'}歳) - ${cast.catchCopy ?? ''}。セクシー度 ${cast.sexinessLevel ?? 0}。`,
+    description: `${cast.name} (${cast.age ?? '??'}歳) - ${cast.catchCopy ?? ''}。エロス係数 ${cast.sexinessLevel ?? 100}%。`,
     openGraph: {
       title: `${cast.name} - ${cast.catchCopy ?? ''}`,
       description: cast.catchCopy ?? '',

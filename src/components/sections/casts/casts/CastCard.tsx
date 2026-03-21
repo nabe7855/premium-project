@@ -235,33 +235,33 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {scoreSection}
-        {/* 変態ゲージ (Redesigned Style) */}
+        {/* エロス係数 (Redesigned Style) */}
         <div className="mb-2 flex items-center gap-3">
           <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">
-            変態ゲージ
+            エロス係数 <span className="ml-1 text-[11px] font-bold text-rose-600">{cast.sexinessLevel ?? 100}%</span>
           </span>
           <div className="flex flex-col gap-[1px]">
-            <div className="flex items-end gap-[2px] h-6">
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((bar) => {
-                const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-100 -> 1-10
+            <div className="flex items-end gap-[1px] h-6">
+              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((bar) => {
+                const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-150 -> 1-15
                 const isActive = bar <= level;
                 
                 const getColor = () => {
-                  if (bar <= 3) return 'bg-emerald-400';
-                  if (bar <= 5) return 'bg-lime-400';
-                  if (bar <= 7) return 'bg-yellow-400';
-                  if (bar <= 9) return 'bg-orange-400';
+                  if (bar <= 4) return 'bg-emerald-400';
+                  if (bar <= 7) return 'bg-lime-400';
+                  if (bar <= 10) return 'bg-yellow-400';
+                  if (bar <= 13) return 'bg-orange-400';
                   return 'bg-rose-500';
                 };
                 
                 return (
                   <div
                     key={bar}
-                    className={`w-[6px] rounded-sm transition-all duration-500 ${
+                    className={`w-[4px] rounded-sm transition-all duration-500 ${
                       isActive ? getColor() : 'bg-neutral-100'
                     }`}
                     style={{
-                      height: `${(bar) * 10}%`, // Tallest on the right (ascending)
+                      height: `${Math.min(100, (bar / 15) * 100 + 10)}%`, // Ascending height capped at 100%
                     }}
                   />
                 );
@@ -271,13 +271,13 @@ const CastCard: React.FC<CastCardProps> = ({
             <div className="h-[2px] w-full rounded-full bg-neutral-200 overflow-hidden">
                <div 
                  className={`h-full transition-all duration-700 ${
-                   (cast.sexinessLevel ?? 0) > 90 ? 'bg-rose-500' :
-                   (cast.sexinessLevel ?? 0) > 70 ? 'bg-orange-400' :
-                   (cast.sexinessLevel ?? 0) > 50 ? 'bg-yellow-400' :
-                   (cast.sexinessLevel ?? 0) > 30 ? 'bg-lime-400' :
+                   (cast.sexinessLevel ?? 0) > 130 ? 'bg-rose-500' :
+                   (cast.sexinessLevel ?? 0) > 100 ? 'bg-orange-400' :
+                   (cast.sexinessLevel ?? 0) > 70 ? 'bg-yellow-400' :
+                   (cast.sexinessLevel ?? 0) > 40 ? 'bg-lime-400' :
                    'bg-emerald-400'
                  }`}
-                 style={{ width: `${cast.sexinessLevel ?? 0}%` }}
+                 style={{ width: `${Math.min(100, ((cast.sexinessLevel ?? 100) / 150) * 100)}%` }}
                />
             </div>
           </div>
