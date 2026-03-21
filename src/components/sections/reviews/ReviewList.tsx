@@ -65,11 +65,12 @@ const ReviewList: React.FC<ReviewListProps> = ({ storeSlug }) => {
         castId: selectedCastId !== 'all' ? selectedCastId : undefined,
       }),
     initialPageParam: 0,
-    // ✅ 総件数を見て次があるか判定
+    // ✅ 次のページ取得判定: DBへのリクエストでずらす件数（ページ数 × limit）
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage) return undefined;
-      const loaded = allPages.reduce((sum, p) => sum + p.reviews.length, 0);
-      return loaded < lastPage.totalCount ? loaded : undefined;
+      const nextOffset = allPages.length * 20; // 1回の取得件数(limit)を20としているので
+      // lastPage.totalCount はDB上の総件数なので、nextOffsetがそれより小さければ次がある
+      return nextOffset < lastPage.totalCount ? nextOffset : undefined;
     },
   });
 
