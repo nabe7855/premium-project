@@ -233,7 +233,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
         setCurrentStep('photos');
         break;
       case 'photos':
-        addModelMessage('ありがとうございます。最後に、当店を【どちらで知りましたか？】');
+        addModelMessage('ありがとうございます。最後に当店を【どちらで知りましたか？】');
         setCurrentStep('source');
         break;
       case 'source':
@@ -389,7 +389,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
   const currentOptions = STEP_OPTIONS[currentStep];
 
   return (
-    <div className="fixed inset-0 z-[100] flex w-full max-w-full flex-col overflow-x-hidden bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in">
+    <div className="fixed inset-0 z-[100] flex w-full max-w-full flex-col overflow-x-hidden bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
       <div className="flex items-center justify-between border-b border-slate-800 bg-slate-900/50 p-4">
         <div className="flex items-center gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-amber-600 font-bold text-white">
@@ -504,7 +504,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
         )}
       </div>
 
-      <div className="border-t border-slate-800 bg-slate-900 p-4">
+      <div className="border-t border-slate-800 bg-slate-900 p-4" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
         {photos.length > 0 && (
           <div className="mb-3 flex gap-2 overflow-x-auto pb-2">
             {photos.map((p, i) => (

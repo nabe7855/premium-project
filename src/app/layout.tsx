@@ -4,7 +4,7 @@ import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP, Noto_Serif_JP, Lora, Poppins } from 'next/font/google';
 import { Toaster } from 'sonner';
 import './globals.css';
@@ -62,6 +62,12 @@ export const metadata: Metadata = {
   verification: {
     google: 'c7c614cd66f2c9b7',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
