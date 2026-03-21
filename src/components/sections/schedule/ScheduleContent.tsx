@@ -42,7 +42,7 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
             start_datetime,
             end_datetime,
             status,
-            casts (
+            casts!inner (
               id,
               name,
               age,
@@ -59,12 +59,16 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
                   label_color,
                   text_color
                 )
+              ),
+              cast_store_memberships!inner (
+                stores!inner ( slug )
               )
             )
           `,
         )
         .gte('work_date', dateRange[0].date)
-        .lte('work_date', dateRange[dateRange.length - 1].date);
+        .lte('work_date', dateRange[dateRange.length - 1].date)
+        .eq('casts.cast_store_memberships.stores.slug', storeSlug);
 
       if (error) {
         console.error('❌ Supabase取得エラー:', error.message);
