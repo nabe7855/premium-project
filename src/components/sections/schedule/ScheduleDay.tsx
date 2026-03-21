@@ -1,12 +1,12 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
-import { ScheduleDay as ScheduleDayType } from '@/types/schedule';
+import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
 import CastCard from './CastCard';
 import EmptyState from './EmptyState';
 
 interface ScheduleDayProps {
   day: ScheduleDayType;
-  onBooking: (castId: string) => void;
+  onBooking: (cast: Cast) => void;
   isToday?: boolean;
   storeSlug: string;   // ✅ 追加
 }

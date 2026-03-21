@@ -4,6 +4,7 @@ import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
 import React, { useEffect, useState } from 'react';
+import BookingModal from '../casts/modals/BookingModal';
 
 interface ScheduleContentProps {
   storeSlug: string;
@@ -12,9 +13,13 @@ interface ScheduleContentProps {
 const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
   const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
   const [activeDate, setActiveDate] = useState<string>('');
+  const [storeId, setStoreId] = useState<string>('');
+  const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+  const [selectedCast, setSelectedCast] = useState<{ id: string; name: string } | null>(null);
 
-  const handleBooking = (castId: string) => {
-    console.log(`🛎️ 予約処理: castId=${castId}, store=${storeSlug}`);
+  const handleBooking = (cast: Cast) => {
+    setSelectedCast({ id: cast.id, name: cast.name });
+    setIsBookingModalOpen(true);
   };
 
   const generateDateRange = (): { date: string; dayOfWeek: string }[] => {
@@ -35,37 +40,19 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
       const dateRange = generateDateRange();
       const { data: schedules, error } = await supabase
         .from('schedules')
-        .select(
-          `
-            id,
-            work_date,
-            start_datetime,
-            end_datetime,
-            status,
-            casts!inner (
-              id,
-              name,
-              age,
-              slug,
-              main_image_url,
-              catch_copy,
-              cast_statuses (
-                id,
-                status_id,
-                is_active,
-                status_master (
-                  id,
-                  name,
-                  label_color,
-                  text_color
-                )
-              ),
-              cast_store_memberships!inner (
-                stores!inner ( slug )
-              )
+        .select(`
+          *,
+          casts!inner (
+            *,
+            cast_statuses (
+              *,
+              status_master (*)
+            ),
+            cast_store_memberships!inner (
+              stores!inner ( id, slug )
             )
-          `,
-        )
+          )
+        `)
         .gte('work_date', dateRange[0].date)
         .lte('work_date', dateRange[dateRange.length - 1].date)
         .eq('casts.cast_store_memberships.stores.slug', storeSlug);
@@ -73,6 +60,16 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
       if (error) {
         console.error('❌ Supabase取得エラー:', error.message);
         return;
+      }
+
+      // storeIdを取得
+      if (schedules && schedules.length > 0) {
+        const firstSchedule = schedules[0];
+        const memberships = firstSchedule.casts.cast_store_memberships;
+        const store = Array.isArray(memberships) ? memberships[0]?.stores : memberships?.stores;
+        if (store && (store as any).id) {
+          setStoreId((store as any).id);
+        }
       }
 
       const scheduleData: ScheduleDayType[] = dateRange.map((day) => {
@@ -146,6 +143,16 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
           </div>
         </div>
       </div>
+
+      {isBookingModalOpen && selectedCast && (
+        <BookingModal
+          isOpen={isBookingModalOpen}
+          castName={selectedCast.name}
+          castId={selectedCast.id}
+          storeId={storeId}
+          onClose={() => setIsBookingModalOpen(false)}
+        />
+      )}
     </main>
   );
 };

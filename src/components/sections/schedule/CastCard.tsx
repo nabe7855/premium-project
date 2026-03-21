@@ -15,7 +15,7 @@ const STATUS_CLASS: Record<string, string> = {
 interface CastCardProps {
   cast: Cast;
   storeSlug: string;
-  onBooking: (castId: string) => void;
+  onBooking: (cast: Cast) => void;
 }
 
 const CastCard: React.FC<CastCardProps> = ({ cast, storeSlug, onBooking }) => {
@@ -92,7 +92,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, storeSlug, onBooking }) => {
             {/* ボタン群 */}
             <div className="flex space-x-2">
               <button
-                onClick={() => onBooking(cast.id)}
+                onClick={() => onBooking(cast)}
                 className="rounded-full px-4 py-2 text-sm font-medium transition-colors bg-pink-500 hover:bg-pink-600 text-white"
               >
                 今すぐ予約
