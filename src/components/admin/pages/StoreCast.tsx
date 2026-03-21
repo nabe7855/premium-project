@@ -440,7 +440,7 @@ export default function StoreCast() {
             `
             priority,
             cast:casts (
-              id, name, main_image_url, catch_copy, is_active
+              id, name, main_image_url, catch_copy, is_active, is_ichioshi
             )
           `,
           )
@@ -507,6 +507,7 @@ export default function StoreCast() {
               photoUrl: c.main_image_url || '',
               managerComment: '',
               catchphrase: c.catch_copy || '',
+              isIchioshi: c.is_ichioshi || false,
               stats: {
                 designations: 0,
                 repeatRate: 0,
