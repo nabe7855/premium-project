@@ -128,7 +128,12 @@ export default function FukuokaPage({
         />
       )}
       {(!safeConfig || safeConfig.price.isVisible || isEditing) && (
-        <PriceSection config={safeConfig?.price} isEditing={isEditing} onUpdate={onUpdate} />
+        <PriceSection
+          config={safeConfig?.price}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
       )}
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
         <FlowSection
@@ -140,7 +145,12 @@ export default function FukuokaPage({
       )}
       <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
-        <FAQSection config={safeConfig?.faq} isEditing={isEditing} onUpdate={onUpdate} />
+        <FAQSection
+          config={safeConfig?.faq}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
       )}
       <SNSProfile
         config={safeConfig?.snsProfile}

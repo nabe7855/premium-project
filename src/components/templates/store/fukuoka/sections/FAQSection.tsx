@@ -7,9 +7,10 @@ interface FAQSectionProps {
   config?: FAQConfig;
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) => {
+const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
   const [openIds, setOpenIds] = useState<string[]>([]);
 
   if (!config || (!config.isVisible && !isEditing)) return null;
@@ -56,9 +57,20 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate }) 
           <SectionTitle
             en={config.subHeading || 'Common Questions'}
             ja={config.heading || 'よくあるご質問'}
+            imageUrl={config.headingImageUrl}
             isEditing={isEditing}
             onUpdateEn={(val) => onUpdate?.('faq', 'subHeading', val)}
             onUpdateJa={(val) => onUpdate?.('faq', 'heading', val)}
+            onImageUpload={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (file && onImageUpload) onImageUpload('faq', file, 0, 'headingImageUrl');
+              };
+              input.click();
+            }}
           />
         </div>
 

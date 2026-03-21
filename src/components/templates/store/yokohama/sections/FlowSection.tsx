@@ -74,8 +74,22 @@ const FlowSection: React.FC<FlowSectionProps> = ({
       <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(#fce7f3_0.8px,transparent_0.8px)] opacity-30 [background-size:24px_24px]"></div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
         <SectionTitle
-          ja={config?.heading || 'ご利用の流れ'}
-          en={config?.subHeading || 'Service Flow'}
+          en={config?.subHeading || 'Guide'}
+          ja={config?.heading || 'ご利用までのステップ'}
+          imageUrl={config?.headingImageUrl}
+          isEditing={isEditing}
+          onUpdateEn={(val) => onUpdate?.('flow', 'subHeading', val)}
+          onUpdateJa={(val) => onUpdate?.('flow', 'heading', val)}
+          onImageUpload={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (file && onImageUpload) onImageUpload('flow', file, 0, 'headingImageUrl');
+            };
+            input.click();
+          }}
         />
         <div className="mx-auto max-w-4xl">
           <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-2">

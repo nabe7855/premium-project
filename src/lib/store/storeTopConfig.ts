@@ -69,6 +69,7 @@ export interface ConceptItem {
 export interface ConceptConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   badge: string;
   items: ConceptItem[];
   footerText: string;
@@ -88,6 +89,7 @@ export interface CampaignItem {
 export interface CampaignConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   items: CampaignItem[];
   orderedNewsPageIds?: string[];
   isVisible: boolean;
@@ -114,6 +116,7 @@ export interface CastItem {
 export interface CastConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   items: CastItem[];
   isVisible: boolean;
 }
@@ -129,6 +132,7 @@ export interface PriceItem {
 export interface PriceConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   items: PriceItem[];
   itemsByTab?: PriceItem[][];
   tabLabels?: string[];
@@ -148,6 +152,7 @@ export interface FlowStep {
 export interface FlowConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   steps: FlowStep[];
   isVisible: boolean;
 }
@@ -163,6 +168,7 @@ export interface DiaryItem {
 export interface DiaryConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   items: DiaryItem[];
   isVisible: boolean;
 }
@@ -179,6 +185,7 @@ export interface NewcomerItem {
 export interface NewcomerConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   courseText: string;
   items: NewcomerItem[];
   isVisible: boolean;
@@ -193,6 +200,7 @@ export interface FAQItem {
 export interface FAQConfig {
   heading: string;
   subHeading: string;
+  headingImageUrl?: string;
   items: FAQItem[];
   isVisible: boolean;
 }

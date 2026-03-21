@@ -191,9 +191,20 @@ const CastSection: React.FC<CastSectionProps> = ({
         <SectionTitle
           en={config?.subHeading || 'Strawberry Selection'}
           ja={config?.heading || '本日出勤のセラピスト'}
+          imageUrl={config?.headingImageUrl}
           isEditing={isEditing}
           onUpdateEn={(val) => onUpdate?.('cast', 'subHeading', val)}
           onUpdateJa={(val) => onUpdate?.('cast', 'heading', val)}
+          onImageUpload={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (file && _onImageUpload) _onImageUpload('cast', file, 0, 'headingImageUrl');
+            };
+            input.click();
+          }}
         />
 
         {isEditing && (

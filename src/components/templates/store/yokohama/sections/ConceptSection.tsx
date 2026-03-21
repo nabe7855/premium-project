@@ -1,5 +1,6 @@
 'use client';
 import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import NextImage from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
@@ -136,14 +137,70 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             >
               {config?.badge || subHeading}
             </span>
-            <h2
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => handleTextUpdate('heading', e)}
-              className={`mb-8 mt-4 font-serif text-3xl font-bold leading-tight text-slate-800 md:text-5xl ${isEditing ? 'rounded px-1 hover:bg-white/10' : ''}`}
-            >
-              {config?.heading || heading}
-            </h2>
+            <div className={`group/heading relative mb-8 mt-4 ${isEditing ? 'rounded px-1 hover:bg-white/10' : ''}`}>
+              {config?.headingImageUrl ? (
+                <div className="relative mx-auto flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+                  <div className="relative h-20 w-full md:h-28">
+                    <NextImage
+                      src={config.headingImageUrl}
+                      alt={config.heading || 'Concept'}
+                      fill
+                      className="object-contain"
+                      sizes="(max-width: 768px) 300px, 400px"
+                    />
+                  </div>
+                  {isEditing && (
+                    <button
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file && onImageUpload) {
+                            onImageUpload('concept', file, 0, 'headingImageUrl');
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                    >
+                      <Camera size={16} />
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <>
+                  <h2
+                    contentEditable={isEditing}
+                    suppressContentEditableWarning={isEditing}
+                    onBlur={(e) => handleTextUpdate('heading', e)}
+                    className="font-serif text-3xl font-bold leading-tight text-slate-800 outline-none md:text-5xl"
+                  >
+                    {config?.heading || heading}
+                  </h2>
+                  {isEditing && (
+                    <button
+                      onClick={() => {
+                        const input = document.createElement('input');
+                        input.type = 'file';
+                        input.accept = 'image/*';
+                        input.onchange = (e) => {
+                          const file = (e.target as HTMLInputElement).files?.[0];
+                          if (file && onImageUpload) {
+                            onImageUpload('concept', file, 0, 'headingImageUrl');
+                          }
+                        };
+                        input.click();
+                      }}
+                      className="mt-2 text-[10px] text-slate-400 opacity-0 group-hover/heading:opacity-100 hover:text-slate-600"
+                    >
+                      画像をタイトルとして設定
+                    </button>
+                  )}
+                </>
+              )}
+            </div>
 
             <div className="space-y-4">
               {items.map((concept, idx) => (

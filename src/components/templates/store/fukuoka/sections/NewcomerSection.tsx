@@ -1,3 +1,4 @@
+import { Camera } from 'lucide-react';
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -15,7 +16,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
   config,
   isEditing,
   onUpdate,
-  onImageUpload: _onImageUpload,
+  onImageUpload, // Changed from onImageUpload: _onImageUpload
   storeSlug = 'fukuoka',
 }) => {
   if (!config || (!config.isVisible && !isEditing)) return null;
@@ -30,22 +31,76 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         {/* Image-matching Header */}
         <div className="mb-12 overflow-hidden rounded-xl bg-gradient-to-r from-[#9C7E4F] via-[#C4A97A] to-[#9C7E4F] py-6 text-center text-white shadow-lg md:py-8">
-          <h2
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => onUpdate?.('newcomer', 'heading', e.currentTarget.innerText)}
-            className={`mb-2 font-serif text-xl font-bold tracking-[0.2em] outline-none md:text-3xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
-          >
-            {config.heading}
-          </h2>
-          <p
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => onUpdate?.('newcomer', 'courseText', e.currentTarget.innerText)}
-            className={`text-sm font-medium tracking-widest outline-none md:text-xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
-          >
-            {config.courseText}
-          </p>
+          {config.headingImageUrl ? (
+            <div className="relative mx-auto flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+              <div className="relative h-20 w-full md:h-28">
+                <NextImage
+                  src={config.headingImageUrl}
+                  alt={config.heading || 'Newcomer'}
+                  fill
+                  className="object-contain"
+                  sizes="(max-width: 768px) 300px, 400px"
+                />
+              </div>
+              {isEditing && (
+                <button
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0];
+                      if (file && onImageUpload) {
+                        onImageUpload('newcomer', file, 0, 'headingImageUrl');
+                      }
+                    };
+                    input.click();
+                  }}
+                  className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                >
+                  <Camera size={16} />
+                </button>
+              )}
+            </div>
+          ) : (
+            <div className="group/heading relative">
+              <h2
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => onUpdate?.('newcomer', 'heading', e.currentTarget.innerText)}
+                className={`mb-2 font-serif text-xl font-bold tracking-[0.2em] outline-none md:text-3xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
+              >
+                {config.heading}
+              </h2>
+              <p
+                contentEditable={isEditing}
+                suppressContentEditableWarning={isEditing}
+                onBlur={(e) => onUpdate?.('newcomer', 'courseText', e.currentTarget.innerText)}
+                className={`text-sm font-medium tracking-widest outline-none md:text-xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
+              >
+                {config.courseText}
+              </p>
+              {isEditing && (
+                <button
+                  onClick={() => {
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.onchange = (e) => {
+                      const file = (e.target as HTMLInputElement).files?.[0];
+                      if (file && onImageUpload) {
+                        onImageUpload('newcomer', file, 0, 'headingImageUrl');
+                      }
+                    };
+                    input.click();
+                  }}
+                  className="mt-2 text-[10px] text-white/50 opacity-0 transition-opacity group-hover/heading:opacity-100 hover:text-white"
+                >
+                  画像をタイトルとして設定
+                </button>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Horizontal Slider / Grid */}

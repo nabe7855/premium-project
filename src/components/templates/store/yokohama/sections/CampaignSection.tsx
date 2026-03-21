@@ -76,11 +76,22 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
       <div className="mx-auto max-w-4xl px-4">
         <div className="relative">
           <SectionTitle
-            en={config?.subHeading || subHeading}
-            ja={config?.heading || heading}
+            en={config?.subHeading || 'Strawberry Highlights'}
+            ja={config?.heading || '最新キャンペーン'}
+            imageUrl={config?.headingImageUrl}
             isEditing={isEditing}
             onUpdateEn={(val) => onUpdate?.('campaign', 'subHeading', val)}
             onUpdateJa={(val) => onUpdate?.('campaign', 'heading', val)}
+            onImageUpload={() => {
+              const input = document.createElement('input');
+              input.type = 'file';
+              input.accept = 'image/*';
+              input.onchange = (e) => {
+                const file = (e.target as HTMLInputElement).files?.[0];
+                if (file && onImageUpload) onImageUpload('campaign', file, 0, 'headingImageUrl');
+              };
+              input.click();
+            }}
           />
           {isEditing && (
             <div className="absolute right-0 top-0 flex gap-2">

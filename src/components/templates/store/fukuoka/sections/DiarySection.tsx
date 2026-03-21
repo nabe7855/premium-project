@@ -100,9 +100,20 @@ const DiarySection: React.FC<DiarySectionProps> = ({
         <SectionTitle
           en={config.subHeading || 'Cast Diary'}
           ja={config.heading || 'セラピスト日記'}
+          imageUrl={config.headingImageUrl}
           isEditing={isEditing}
           onUpdateEn={(val) => onUpdate?.('diary', 'subHeading', val)}
           onUpdateJa={(val) => onUpdate?.('diary', 'heading', val)}
+          onImageUpload={() => {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = (e) => {
+              const file = (e.target as HTMLInputElement).files?.[0];
+              if (file && onImageUpload) onImageUpload('diary', file, 0, 'headingImageUrl');
+            };
+            input.click();
+          }}
         />
         {isEditing && (
           <div className="border-primary-200 bg-primary-50 text-primary-600 mb-4 rounded border p-2 text-center text-xs">

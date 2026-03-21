@@ -136,12 +136,68 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             {config?.badge || 'Our Concept'}
           </span>
           <h2
-            contentEditable={isEditing}
-            suppressContentEditableWarning={isEditing}
-            onBlur={(e) => handleTextUpdate('heading', e)}
-            className={`mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+            className={`mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl ${isEditing ? 'group/heading relative rounded px-1 hover:bg-slate-50' : ''}`}
           >
-            {config?.heading || '安心と癒やしを、\nすべての女性の日常に。'}
+            {config?.headingImageUrl ? (
+              <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+                <div className="relative h-20 w-full md:h-28">
+                  <NextImage
+                    src={config.headingImageUrl}
+                    alt={config.heading || 'Concept'}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 300px, 400px"
+                  />
+                </div>
+                {isEditing && (
+                  <button
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file && onImageUpload)
+                          onImageUpload('concept', file, 0, 'headingImageUrl');
+                      };
+                      input.click();
+                    }}
+                    className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                  >
+                    <Camera size={16} />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                <span
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => handleTextUpdate('heading', e)}
+                  className="outline-none"
+                >
+                  {config?.heading || '安心と癒やしを、\nすべての女性の日常に。'}
+                </span>
+                {isEditing && (
+                  <button
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file && onImageUpload)
+                          onImageUpload('concept', file, 0, 'headingImageUrl');
+                      };
+                      input.click();
+                    }}
+                    className="mt-2 block w-full text-center text-[10px] text-rose-300 opacity-0 group-hover/heading:opacity-100 hover:text-rose-500"
+                  >
+                    画像をタイトルとして設定
+                  </button>
+                )}
+              </>
+            )}
           </h2>
 
           <div className="mb-8 space-y-4 text-left">
