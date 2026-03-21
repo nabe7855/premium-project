@@ -832,7 +832,6 @@ export default function AllCast() {
             email,
             login_password,
             ai_summary,
-            is_ichioshi,
             cast_store_memberships (
               store_id,
               priority,
