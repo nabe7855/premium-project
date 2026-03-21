@@ -416,13 +416,39 @@ const Inspector: React.FC<InspectorProps> = ({
         )}
         {section.type !== 'gallery' && (
           <div>
-            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
-              説明文 / ボディコピー
-            </label>
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-900">
+                説明文 / ボディコピー
+              </label>
+              <button
+                onClick={() => {
+                  const textarea = document.getElementById(`desc-${section.id}`) as HTMLTextAreaElement;
+                  if (!textarea) return;
+                  const start = textarea.selectionStart;
+                  const end = textarea.selectionEnd;
+                  const currentText = section.content.description || '';
+                  const selectedText = currentText.substring(start, end) || 'テキスト';
+                  const url = window.prompt('リンク先のURLを入力してください (例: https://...)', 'https://');
+                  if (url) {
+                    const newText = currentText.substring(0, start) + `[${selectedText}](${url})` + currentText.substring(end);
+                    handleFieldChange('description', newText);
+                  }
+                }}
+                className="group flex items-center gap-1.5 rounded-lg bg-rose-50 px-2 py-1 text-[9px] font-black text-rose-500 transition-all hover:bg-rose-500 hover:text-white"
+                title="リンクを挿入 [テキスト](URL)"
+              >
+                <svg className="h-3 w-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.828a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+                </svg>
+                リンク挿入
+              </button>
+            </div>
             <textarea
+              id={`desc-${section.id}`}
               value={section.content.description || ''}
               onChange={(e) => handleFieldChange('description', e.target.value)}
               className="h-40 w-full rounded-xl border border-slate-200 p-4 text-xs font-bold leading-relaxed text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:ring-2 focus:ring-rose-100"
+              placeholder="[テキスト](URL) の形式でリンクを張ることもできます。"
             />
           </div>
         )}
@@ -572,19 +598,48 @@ const Inspector: React.FC<InspectorProps> = ({
                     )}
 
                     {['ranking', 'price'].includes(section.type) && (
-                      <textarea
-                        value={item.text || item.description || ''}
-                        onChange={(e) => {
-                          const newItems = [...(section.content.items || [])];
-                          newItems[index] = {
-                            ...item,
-                            [section.type === 'price' ? 'description' : 'text']: e.target.value,
-                          };
-                          handleFieldChange('items', newItems);
-                        }}
-                        className="w-full rounded-lg border border-slate-200 p-2 text-[11px] font-medium text-slate-900 outline-none"
-                        placeholder="説明文"
-                      />
+                      <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                          <label className="text-[9px] font-black uppercase text-slate-400">説明文</label>
+                          <button
+                            onClick={() => {
+                              const textarea = document.getElementById(`item-desc-${section.id}-${index}`) as HTMLTextAreaElement;
+                              if (!textarea) return;
+                              const start = textarea.selectionStart;
+                              const end = textarea.selectionEnd;
+                              const currentText = (section.type === 'price' ? item.description : item.text) || '';
+                              const selectedText = currentText.substring(start, end) || 'テキスト';
+                              const url = window.prompt('リンク先のURLを入力してください', 'https://');
+                              if (url) {
+                                const newText = currentText.substring(0, start) + `[${selectedText}](${url})` + currentText.substring(end);
+                                const newItems = [...(section.content.items || [])];
+                                newItems[index] = {
+                                  ...item,
+                                  [section.type === 'price' ? 'description' : 'text']: newText,
+                                };
+                                handleFieldChange('items', newItems);
+                              }
+                            }}
+                            className="text-[9px] font-bold text-rose-500 hover:underline"
+                          >
+                            リンク挿入
+                          </button>
+                        </div>
+                        <textarea
+                          id={`item-desc-${section.id}-${index}`}
+                          value={item.text || item.description || ''}
+                          onChange={(e) => {
+                            const newItems = [...(section.content.items || [])];
+                            newItems[index] = {
+                              ...item,
+                              [section.type === 'price' ? 'description' : 'text']: e.target.value,
+                            };
+                            handleFieldChange('items', newItems);
+                          }}
+                          className="w-full rounded-lg border border-slate-200 p-2 text-[11px] font-medium text-slate-900 outline-none"
+                          placeholder="[テキスト](URL) 形式で入力"
+                        />
+                      </div>
                     )}
                   </div>
                 </div>

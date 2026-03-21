@@ -1,4 +1,5 @@
 import { PageData, SectionData } from '@/components/admin/news/types';
+import { RichTextContent } from '@/lib/utils/news-renderer';
 import React from 'react';
 
 interface NewsPageRendererProps {
@@ -73,7 +74,10 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
         <div className="mb-12">
           {content.imageUrl && <img src={content.imageUrl} alt="" className={imgClass} />}
           {content.description && (
-            <p className={`${pClass} text-lg font-medium italic`}>{content.description}</p>
+            <RichTextContent
+              content={content.description}
+              className={`${pClass} text-lg font-medium italic`}
+            />
           )}
           {content.title && <h2 className={h2Class}>{content.title}</h2>}
         </div>
@@ -86,7 +90,7 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
             {content.subtitle || 'Information'}
           </p>
           <h3 className="mb-6 text-2xl font-black text-slate-900">{content.title}</h3>
-          <p className={pClass}>{content.description}</p>
+          <RichTextContent content={content.description || ''} className={pClass} />
           {content.imageUrl && <img src={content.imageUrl} className={imgClass} alt="" />}
           {content.buttonText && (
             <button className="mt-4 rounded-full bg-slate-900 px-10 py-4 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95">
@@ -100,7 +104,7 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
       return (
         <div className="mb-8">
           {content.title && <h2 className={h2Class}>{content.title}</h2>}
-          <div className={pClass}>{content.description}</div>
+          <RichTextContent content={content.description || ''} className={pClass} />
         </div>
       );
 

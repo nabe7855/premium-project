@@ -1,5 +1,6 @@
 import React from 'react';
 import { SectionData } from './types';
+import { RichTextContent } from '@/lib/utils/news-renderer';
 
 interface SectionComponentProps {
   data: SectionData;
@@ -68,9 +69,10 @@ export const CampaignSection: React.FC<SectionComponentProps> = ({ data, active,
             </h2>
           )}
           {description && (
-            <p className="mb-12 whitespace-pre-wrap text-xl font-medium leading-loose text-slate-500">
-              {description}
-            </p>
+            <RichTextContent
+              content={description}
+              className="mb-12 text-xl font-medium leading-loose text-slate-500"
+            />
           )}
           {buttonText && (
             <button className="rounded-[1.5rem] bg-slate-900 px-12 py-5 font-black text-white shadow-[0_30px_60px_-15px_rgba(0,0,0,0.3)] transition-all hover:bg-rose-600">
@@ -122,9 +124,10 @@ export const CastSection: React.FC<SectionComponentProps> = ({ data, active, inn
               <span className="absolute -left-12 -top-16 select-none font-serif text-9xl text-rose-100 opacity-30">
                 “
               </span>
-              <p className="relative z-10 text-2xl font-medium italic leading-relaxed text-slate-500">
-                {description}
-              </p>
+              <RichTextContent
+                content={description}
+                className="relative z-10 text-2xl font-medium italic leading-relaxed text-slate-500"
+              />
             </div>
           )}
           {buttonText && (
@@ -172,9 +175,10 @@ export const RankingSection: React.FC<SectionComponentProps> = ({ data, active, 
               <h3 className="mb-4 text-2xl font-black tracking-tight text-slate-900 transition-colors group-hover:text-rose-600">
                 {item.name}
               </h3>
-              <p className="px-6 text-center text-base font-medium leading-loose text-slate-400">
-                {item.text}
-              </p>
+              <RichTextContent
+                content={item.text || ''}
+                className="px-6 text-center text-base font-medium leading-loose text-slate-400"
+              />
             </div>
           ))}
         </div>
@@ -232,9 +236,10 @@ export const TextSection: React.FC<SectionComponentProps> = ({ data, active, inn
             <div className="h-2 w-24 rounded-full bg-rose-500" />
           </div>
         )}
-        <div className="whitespace-pre-wrap text-2xl font-light italic leading-[2] tracking-wide text-slate-500">
-          {description}
-        </div>
+        <RichTextContent
+          content={description || ''}
+          className="text-2xl font-light italic leading-[2] tracking-wide text-slate-500"
+        />
       </div>
     </div>
   );
@@ -437,9 +442,10 @@ export const PriceSection: React.FC<SectionComponentProps> = ({ data, active, in
                     <span className="mr-0.5 text-base md:text-lg">¥</span>
                     {item.price}
                   </div>
-                  <p className="min-h-[2.5rem] text-center text-[10px] font-medium leading-relaxed text-slate-400 md:text-xs">
-                    {item.description}
-                  </p>
+                  <RichTextContent
+                    content={item.description || ''}
+                    className="min-h-[2.5rem] text-center text-[10px] font-medium leading-relaxed text-slate-400 md:text-xs"
+                  />
                 </div>
               );
             })}
