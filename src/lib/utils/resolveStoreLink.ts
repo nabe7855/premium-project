@@ -22,13 +22,16 @@ export function resolveStoreLink(
     resolved = resolved.replace(/(?:\{line\}|\{line_url\}|%7Bline%7D|%7Bline_url%7D)/g, lineUrl);
   }
 
-  // LINE ID (@から始まる場合) を友だち追加リンクに変換
+  // LINE ID (@、または誤って /@ から始まる場合) を友だち追加リンクに変換
   if (resolved.startsWith('@')) {
     return `https://line.me/R/ti/p/${resolved}`;
   }
+  if (resolved.startsWith('/@')) {
+    return `https://line.me/R/ti/p/${resolved.substring(1)}`;
+  }
 
   // 絶対パスやURL、ページ内リンクはそのまませず、
-  // 相対パスの補完が必要な場合に備える (Header.tsx の getAbsoluteHref 相当의 処理)
+  // 相対パスの補完が必要な場合に備える (Header.tsx の getAbsoluteHref 相当の 処理)
   if (
     resolved.startsWith('http') ||
     resolved.startsWith('//') ||
@@ -37,6 +40,10 @@ export function resolveStoreLink(
     resolved.startsWith('tel:') ||
     resolved.startsWith('mailto:')
   ) {
+    // 誤って /https://... のようになっている場合は先頭のスラッシュを削除
+    if (resolved.startsWith('/http')) {
+      return resolved.substring(1);
+    }
     return resolved;
   }
 
