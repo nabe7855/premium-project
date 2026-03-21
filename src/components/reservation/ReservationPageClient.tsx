@@ -27,7 +27,7 @@ import {
   User,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import React, { Suspense, use, useState } from 'react';
+import React, { Suspense, use, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 interface ReservationPageClientProps {
@@ -130,7 +130,6 @@ export default function ReservationPageClient({
 
       if (result.success) {
         setIsSuccess(true);
-        window.scrollTo({ top: 0, behavior: 'smooth' });
       } else {
         toast.error('エラーが発生しました。お電話またはLINEにてお問い合わせください。');
       }
@@ -150,6 +149,13 @@ export default function ReservationPageClient({
       [e.target.name]: e.target.value,
     });
   };
+
+  // サンクス画面が表示されたらトップへスクロール（レンダリング完了後に実行）
+  useEffect(() => {
+    if (isSuccess) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [isSuccess]);
 
   const configLineId = store.line_id || storeConfig?.lineId;
   const rawLineUrl = store.line_url || storeConfig?.snsProfile?.followLink || 'https://line.me';
