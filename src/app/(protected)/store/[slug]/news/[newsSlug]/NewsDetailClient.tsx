@@ -62,13 +62,18 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
   };
 
   const renderMobileStickyButton = () => {
+    const bottomNav = config.footer?.bottomNav;
+    const isVisible = config.footer?.isBottomNavVisible;
+
     switch (template) {
       case 'fukuoka':
-        return <MobileStickyButton />;
+        return <MobileStickyButton config={bottomNav} isVisible={isVisible} />;
       case 'yokohama':
-        return <YokohamaMobileStickyButton />;
+        return (
+          <YokohamaMobileStickyButton config={bottomNav} isVisible={isVisible} />
+        );
       default:
-        return <MobileStickyButton />;
+        return <MobileStickyButton config={bottomNav} isVisible={isVisible} />;
     }
   };
 

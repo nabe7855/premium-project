@@ -885,7 +885,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       { label: '写メ日記', icon: 'Camera', href: '/store/{slug}/diary', color: 'text-blue-500', isVisible: true },
       { label: '口コミ', icon: 'Star', href: '/store/{slug}/reviews', color: 'text-green-500', isVisible: true },
       { label: '予約', icon: 'CalendarCheck', href: '/store/{slug}/reservation', color: 'text-rose-500', isVisible: true },
-      { label: 'LINE', icon: 'MessageCircle', href: 'https://line.me', color: 'text-emerald-500', isVisible: true },
+      { label: 'LINE', icon: 'MessageCircle', href: '{line_url}', color: 'text-emerald-500', isVisible: true },
       { label: '推し活', icon: 'Heart', href: '/store/{slug}/favorite', color: 'text-violet-500', isVisible: true },
     ],
   },

@@ -1,7 +1,12 @@
 /**
  * リンク内の {slug} プレースホルダーを実際の店舗スラグに置換します
  */
-export function resolveStoreLink(href: string, slug: string, phoneNumber?: string): string {
+export function resolveStoreLink(
+  href: string,
+  slug: string,
+  phoneNumber?: string,
+  lineUrl?: string,
+): string {
   if (!href) return '#';
 
   // {slug} や [slug] を置換 (URLエンコードされた文字にも対応)
@@ -10,6 +15,11 @@ export function resolveStoreLink(href: string, slug: string, phoneNumber?: strin
   // {phone} を置換
   if (phoneNumber) {
     resolved = resolved.replace(/(?:\{phone\}|%7Bphone%7D)/g, phoneNumber);
+  }
+
+  // {line} または {line_url} を置換
+  if (lineUrl) {
+    resolved = resolved.replace(/(?:\{line\}|\{line_url\}|%7Bline%7D|%7Bline_url%7D)/g, lineUrl);
   }
 
   // LINE ID (@から始まる場合) を友だち追加リンクに変換

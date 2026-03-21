@@ -7,6 +7,7 @@ import React, { useRef, useEffect, useState } from 'react';
 import { BottomNavItemConfig, DEFAULT_BOTTOM_NAV } from '@/lib/store/storeTopConfig';
 import { getIconByName } from '@/lib/utils/icons';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
+import { useStore } from '@/contexts/StoreContext';
 
 interface MobileStickyButtonProps {
   config?: BottomNavItemConfig[];
@@ -14,6 +15,7 @@ interface MobileStickyButtonProps {
 }
 
 const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ config, isVisible = true }) => {
+  const { store } = useStore();
   if (!isVisible) return null;
   const pathname = usePathname();
   const match = pathname.match(/^\/store\/([^/]+)/);
@@ -60,7 +62,12 @@ const MobileStickyButton: React.FC<MobileStickyButtonProps> = ({ config, isVisib
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {items.map((item, idx) => {
-            const resolvedHref = resolveStoreLink(item.href, storeSlug);
+            const resolvedHref = resolveStoreLink(
+              item.href,
+              storeSlug,
+              store.contact?.phone,
+              store.contact?.line,
+            );
             const isActive = pathname === resolvedHref;
             const IconComponent = getIconByName(item.icon);
             
