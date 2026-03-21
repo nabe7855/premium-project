@@ -117,32 +117,86 @@ const Inspector: React.FC<InspectorProps> = ({
             </p>
           </div>
 
-          <div>
-            <label className="mb-4 block text-[10px] font-black uppercase tracking-widest text-slate-900">
-              配信対象店舗
+          <div className="space-y-4">
+            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-900">
+              配信対象店舗ごとの設定
             </label>
-            <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-3">
               {Object.values(stores).map((store) => {
                 const isSelected = page.targetStoreSlugs?.includes(store.id);
+                // storeSettings から対象店舗の設定を取得（無ければ初期値）
+                const storeSetting = page.storeSettings?.[store.id] || { status: 'private', publishedAt: null };
+                const isPublished = storeSetting.status === 'published';
+
                 return (
-                  <button
-                    key={store.id}
-                    onClick={() => {
-                      const current = page.targetStoreSlugs || [];
-                      const next = isSelected
-                        ? current.filter((s) => s !== store.id)
-                        : [...current, store.id];
-                      onUpdatePage({ targetStoreSlugs: next });
-                    }}
-                    className={`flex items-center gap-2 rounded-xl border p-2 text-[10px] font-bold transition-all ${
-                      isSelected
-                        ? 'border-rose-200 bg-rose-50 text-rose-700'
-                        : 'border-slate-100 bg-white text-slate-500 hover:border-slate-200 hover:bg-slate-50'
-                    }`}
-                  >
-                    <span>{store.emoji}</span>
-                    <span className="truncate">{store.displayName}</span>
-                  </button>
+                  <div key={store.id} className={`rounded-2xl border p-4 transition-all shadow-sm ${isSelected ? 'border-rose-200 bg-rose-50/50' : 'border-slate-100 bg-white hover:border-slate-200'}`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={(e) => {
+                            const current = page.targetStoreSlugs || [];
+                            const next = e.target.checked
+                              ? [...current, store.id]
+                              : current.filter((s) => s !== store.id);
+                            onUpdatePage({ targetStoreSlugs: next });
+                          }}
+                          className="h-4 w-4 rounded border-slate-300 text-rose-500 focus:ring-rose-500 cursor-pointer"
+                        />
+                        <span className="text-xs font-bold text-slate-700">{store.emoji} {store.displayName}</span>
+                      </label>
+                      {isSelected && (
+                        <select
+                          value={storeSetting.status}
+                          onChange={(e) => {
+                            const newStatus = e.target.value as 'published' | 'private';
+                            const newSettings = { ...(page.storeSettings || {}) };
+                            if (!newSettings[store.id]) {
+                              newSettings[store.id] = { status: newStatus, publishedAt: newStatus === 'published' ? new Date().toISOString() : null };
+                            } else {
+                              newSettings[store.id] = {
+                                ...newSettings[store.id],
+                                status: newStatus,
+                                // 初めて公開にする時は現在時刻をセット、それ以外は元の時間を維持
+                                publishedAt: newStatus === 'published' && !newSettings[store.id].publishedAt ? new Date().toISOString() : newSettings[store.id].publishedAt
+                              };
+                            }
+                            onUpdatePage({ storeSettings: newSettings });
+                          }}
+                          className={`rounded-xl border px-3 py-1.5 text-[10px] font-bold outline-none cursor-pointer ${
+                            isPublished ? 'border-green-300 bg-green-50 text-green-700' : 'border-slate-200 bg-slate-50 text-slate-500'
+                          }`}
+                        >
+                          <option value="private">非公開</option>
+                          <option value="published">公開中</option>
+                        </select>
+                      )}
+                    </div>
+                    {isSelected && (
+                      <div className="pl-7 mt-3 border-t border-rose-100 pt-3">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-slate-500 mb-1.5 block">公開日時</label>
+                        <input
+                          type="datetime-local"
+                          value={storeSetting.publishedAt ? new Date(new Date(storeSetting.publishedAt).getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 16) : ''}
+                          onChange={(e) => {
+                            const newDateISO = e.target.value ? new Date(e.target.value).toISOString() : null;
+                            const newSettings = { ...(page.storeSettings || {}) };
+                            if (!newSettings[store.id]) {
+                              newSettings[store.id] = { status: 'private', publishedAt: newDateISO };
+                            } else {
+                              newSettings[store.id] = { ...newSettings[store.id], publishedAt: newDateISO };
+                            }
+                            onUpdatePage({ storeSettings: newSettings });
+                          }}
+                          className="w-full rounded-xl border border-slate-200 bg-white p-2.5 text-xs font-bold text-slate-700 outline-none transition-colors focus:border-rose-400 disabled:opacity-50 disabled:bg-slate-50"
+                        />
+                        <p className="mt-1.5 text-[9px] text-slate-400">
+                          {isPublished ? 'この日時が新しいほど一覧の上に表示されます。' : '状態を「公開中」にすると日付セット・表示が有効になります。'}
+                        </p>
+                      </div>
+                    )}
+                  </div>
                 );
               })}
             </div>

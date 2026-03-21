@@ -233,7 +233,7 @@ export default function NewsListClient({
                 </p>
                 <div className="mt-auto flex flex-col justify-between gap-y-3 sm:flex-row sm:items-center">
                   <time className="text-[9px] font-bold tracking-[0.2em] text-slate-400 sm:text-[10px]">
-                    {new Date(item.updatedAt)
+                    {new Date(item.storeSettings?.[storeSlug]?.publishedAt || item.updatedAt)
                       .toLocaleDateString('ja-JP', {
                         year: 'numeric',
                         month: '2-digit',

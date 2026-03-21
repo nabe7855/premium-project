@@ -3,9 +3,10 @@ import React from 'react';
 
 interface NewsPageRendererProps {
   page: PageData;
+  storeSlug?: string;
 }
 
-const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page }) => {
+const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) => {
   // Separate sections into Content and CTA
   const contentSections = page.sections.filter((s) => s.type !== 'cta');
   const ctaSections = page.sections.filter((s) => s.type === 'cta');
@@ -24,8 +25,8 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page }) => {
             {page.title}
           </h1>
           <div className="flex items-center gap-4 text-sm font-medium text-slate-400">
-            <time dateTime={new Date(page.updatedAt).toISOString()}>
-              {new Date(page.updatedAt).toLocaleDateString('ja-JP', {
+            <time dateTime={new Date(storeSlug && page.storeSettings?.[storeSlug]?.publishedAt ? page.storeSettings[storeSlug].publishedAt : page.updatedAt).toISOString()}>
+              {new Date(storeSlug && page.storeSettings?.[storeSlug]?.publishedAt ? page.storeSettings[storeSlug].publishedAt : page.updatedAt).toLocaleDateString('ja-JP', {
                 year: 'numeric',
                 month: 'long',
                 day: 'numeric',

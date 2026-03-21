@@ -21,6 +21,7 @@ const mapPrismaToPageData = (record: any): PageData => {
     tags: misc.tags || [],
     showInSlider: misc.showInSlider,
     targetStoreSlugs: record.targetStoreSlugs || [],
+    storeSettings: misc.storeSettings || {},
   };
 };
 
@@ -39,20 +40,36 @@ export async function getAllPages(): Promise<PageData[]> {
 export async function getPublishedPagesByStore(storeSlug: string): Promise<PageData[]> {
   noStore();
   try {
-    const allPublished = await prisma.pageRequest.findMany({
-      where: {
-        status: 'published',
-      },
+    const allPages = await prisma.pageRequest.findMany({
       orderBy: { updatedAt: 'desc' },
     });
 
-    // 手動フィルタリング
-    const records = allPublished.filter((record: any) => {
+    const records = allPages.filter((record: any) => {
       const slugs = record.targetStoreSlugs as string[];
-      return Array.isArray(slugs) && slugs.includes(storeSlug);
+      if (!Array.isArray(slugs) || !slugs.includes(storeSlug)) return false;
+
+      const misc = (record.referenceUrls as any) || {};
+      const settings = misc.storeSettings?.[storeSlug];
+      
+      if (settings && settings.status) {
+        return settings.status === 'published';
+      }
+      return record.status === 'published';
     });
 
-    return records.map(mapPrismaToPageData);
+    const pageDataRecords = records.map(mapPrismaToPageData);
+
+    pageDataRecords.sort((a, b) => {
+      const aSettings = a.storeSettings?.[storeSlug];
+      const bSettings = b.storeSettings?.[storeSlug];
+
+      const aTime = aSettings?.publishedAt ? new Date(aSettings.publishedAt).getTime() : a.updatedAt;
+      const bTime = bSettings?.publishedAt ? new Date(bSettings.publishedAt).getTime() : b.updatedAt;
+
+      return bTime - aTime;
+    });
+
+    return pageDataRecords;
   } catch (error) {
     console.error('Failed to fetch published pages by store:', error);
     return [];
@@ -85,9 +102,10 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
       category,
       tags,
       showInSlider,
+      storeSettings,
     } = data;
 
-    const miscData = { shortDescription, category, tags, showInSlider };
+    const miscData: any = { shortDescription, category, tags, showInSlider, storeSettings };
 
     const record = await prisma.pageRequest.create({
       data: {
@@ -123,11 +141,12 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       category,
       tags,
       showInSlider,
+      storeSettings,
     } = data;
 
     const existingRecord = await prisma.pageRequest.findUnique({
       where: { id },
-      select: { referenceUrls: true },
+      select: { referenceUrls: true, status: true },
     });
     const currentMisc = (existingRecord?.referenceUrls as any) || {};
 
@@ -144,6 +163,12 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
     if (category !== undefined) newMisc.category = category;
     if (tags !== undefined) newMisc.tags = tags;
     if (showInSlider !== undefined) newMisc.showInSlider = showInSlider;
+    
+    // storeSettingsが指定されていればマージ（または上書き）
+    if (storeSettings !== undefined) {
+      newMisc.storeSettings = { ...currentMisc.storeSettings, ...storeSettings };
+    }
+    
     updateData.referenceUrls = newMisc;
 
     const record = await prisma.pageRequest.update({

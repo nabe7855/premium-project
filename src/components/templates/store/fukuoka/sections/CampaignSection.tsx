@@ -68,13 +68,21 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
       pages.sort((a, b) => {
         const indexA = orderedIds.indexOf(a.id);
         const indexB = orderedIds.indexOf(b.id);
-        if (indexA === -1 && indexB === -1) return b.updatedAt - a.updatedAt;
+        if (indexA === -1 && indexB === -1) {
+          const aTime = a.storeSettings?.[storeSlug]?.publishedAt ? new Date(a.storeSettings[storeSlug].publishedAt).getTime() : a.updatedAt;
+          const bTime = b.storeSettings?.[storeSlug]?.publishedAt ? new Date(b.storeSettings[storeSlug].publishedAt).getTime() : b.updatedAt;
+          return bTime - aTime;
+        }
         if (indexA === -1) return 1;
         if (indexB === -1) return -1;
         return indexA - indexB;
       });
     } else {
-      pages.sort((a, b) => b.updatedAt - a.updatedAt);
+      pages.sort((a, b) => {
+        const aTime = a.storeSettings?.[storeSlug]?.publishedAt ? new Date(a.storeSettings[storeSlug].publishedAt).getTime() : a.updatedAt;
+        const bTime = b.storeSettings?.[storeSlug]?.publishedAt ? new Date(b.storeSettings[storeSlug].publishedAt).getTime() : b.updatedAt;
+        return bTime - aTime;
+      });
     }
     return pages;
   }, [newsPages, config?.orderedNewsPageIds]);
@@ -175,7 +183,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center gap-3">
                       <time className="text-xs text-slate-700">
-                        {new Date(page.updatedAt).toLocaleDateString('ja-JP', {
+                        {new Date(page.storeSettings?.[storeSlug]?.publishedAt || page.updatedAt).toLocaleDateString('ja-JP', {
                           year: 'numeric',
                           month: '2-digit',
                           day: '2-digit',

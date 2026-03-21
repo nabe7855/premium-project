@@ -40,6 +40,11 @@ export interface SectionData {
   content: SectionContent;
 }
 
+export interface StoreSetting {
+  status: 'published' | 'private';
+  publishedAt: string | null;
+}
+
 export interface PageData {
   id: string;
   slug: string;
@@ -53,4 +58,5 @@ export interface PageData {
   category?: string;
   tags?: string[];
   showInSlider?: boolean;
+  storeSettings?: Record<string, StoreSetting>; // 各店舗ごとの公開設定
 }

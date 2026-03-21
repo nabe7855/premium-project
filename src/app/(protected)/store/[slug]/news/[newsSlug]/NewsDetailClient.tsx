@@ -80,7 +80,7 @@ const NewsDetailClient: React.FC<NewsDetailClientProps> = ({
       <div className="h-[70px] md:h-[81px]" />
 
       <main className="min-h-screen">
-        <NewsPageRenderer page={page} />
+        <NewsPageRenderer page={page} storeSlug={storeSlug} />
         <NewsNavigation
           currentPage={page}
           prevPage={prevPage}

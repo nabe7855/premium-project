@@ -161,7 +161,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
 
           <div className="flex flex-wrap gap-3">
             {pages
-              .filter((p) => p.status === 'published')
+              .filter((p) => p.storeSettings?.[selectedStore]?.status === 'published' || p.status === 'published')
               .map((page) => {
                 const isSelected = recommendedIds.includes(page.id);
                 return (
@@ -241,11 +241,20 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     </div>
                   )}
                   <div className="absolute right-6 top-6 flex flex-col items-end gap-2">
-                    <span
-                      className={`rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-widest shadow-xl backdrop-blur-md ${page.status === 'published' ? 'bg-green-500/90 text-white' : 'bg-slate-700/80 text-white'}`}
-                    >
-                      {page.status === 'published' ? '公開中' : '非公開'}
-                    </span>
+                    <div className="flex flex-col gap-1 items-end">
+                      {page.targetStoreSlugs?.map(slug => {
+                        const storeName = stores.find(s => s.slug === slug)?.city || slug;
+                        const isPub = page.storeSettings?.[slug]?.status === 'published';
+                        return (
+                          <span key={slug} className={`rounded-full px-3 py-1 text-[9px] font-black uppercase shadow-sm backdrop-blur-md ${isPub ? 'bg-green-500/90 text-white' : 'bg-slate-700/80 text-white'}`}>
+                            {storeName}: {isPub ? '公開中' : '非公開'}
+                          </span>
+                        );
+                      })}
+                      {(!page.targetStoreSlugs || page.targetStoreSlugs.length === 0) && (
+                         <span className="rounded-full bg-slate-400 px-3 py-1 text-[9px] font-black uppercase text-white shadow-sm">店舗未設定</span>
+                      )}
+                    </div>
                     {page.category && (
                       <span className="rounded-full bg-rose-500/90 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md">
                         {CATEGORIES.find((c) => c.id === page.category)?.label || page.category}
@@ -338,52 +347,9 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                   </div>
 
                   <div className="mt-auto flex items-center justify-between border-t border-slate-50 pt-8">
-                    <button
-                      onClick={() => onToggleStatus(page.id)}
-                      className="flex items-center gap-2 text-xs font-bold text-slate-400 transition-colors hover:text-rose-500"
-                    >
-                      {page.status === 'published' ? (
-                        <>
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2.5}
-                              d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"
-                            />
-                          </svg>
-                          非公開にする
-                        </>
-                      ) : (
-                        <>
-                          <svg
-                            className="h-4 w-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2.5}
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                            />
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2.5}
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                            />
-                          </svg>
-                          公開する
-                        </>
-                      )}
-                    </button>
+                    <span className="text-[10px] font-bold text-slate-400">
+                      ※公開設定は「エディタを開く」から店舗ごとに変更できます
+                    </span>
                     <button
                       onClick={() => {
                         if (confirm('本当に削除しますか？')) onDeletePage(page.id);
