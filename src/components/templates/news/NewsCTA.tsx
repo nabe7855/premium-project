@@ -6,11 +6,17 @@ import React from 'react';
 
 interface NewsCTAProps {
   storeSlug: string;
+  lineUrl?: string; // ✅ 追加
 }
 
-const NewsCTA: React.FC<NewsCTAProps> = ({ storeSlug }) => {
+const NewsCTA: React.FC<NewsCTAProps> = ({ storeSlug, lineUrl: propLineUrl }) => {
   const { store } = useStore();
-  const lineUrl = store.contact?.line || 'https://line.me';
+  
+  // ✅ Normalizing Line URL (Support for both ID and Full URL)
+  const rawLineUrl = propLineUrl || store.contact?.line || 'https://line.me';
+  const lineUrl = (rawLineUrl.startsWith('http') || rawLineUrl.startsWith('/') || rawLineUrl.includes(':'))
+    ? rawLineUrl
+    : `https://line.me/R/ti/p/${rawLineUrl.startsWith('@') ? rawLineUrl : '@' + rawLineUrl}`;
 
   return (
     <section className="mx-auto max-w-2xl px-6 py-12">

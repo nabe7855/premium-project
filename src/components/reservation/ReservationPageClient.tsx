@@ -151,17 +151,18 @@ export default function ReservationPageClient({
     });
   };
 
-  const configLineId = storeConfig?.lineId || store.line_id;
-  const configLineUrl = storeConfig?.snsProfile?.followLink || store.line_url;
+  const configLineId = store.line_id || storeConfig?.lineId;
+  const rawLineUrl = store.line_url || storeConfig?.snsProfile?.followLink || 'https://line.me';
+  
+  const lineHref = (rawLineUrl.startsWith('http') || rawLineUrl.startsWith('/') || rawLineUrl.includes(':'))
+    ? rawLineUrl
+    : `https://line.me/R/ti/p/${rawLineUrl.startsWith('@') ? rawLineUrl : '@' + rawLineUrl}`;
 
-  const lineHref =
-    configLineUrl ||
-    (configLineId ? `https://line.me/R/ti/p/${configLineId.replace('@', '')}` : '#');
   const lineLabel = configLineId
     ? configLineId.startsWith('@')
       ? configLineId
       : `@${configLineId}`
-    : '@example';
+    : (rawLineUrl.includes('@') ? '@' + rawLineUrl.split('@').pop() : '@example');
   const phoneHref = store.phone ? `tel:${store.phone}` : '#';
   const phoneLabel = store.phone || '03-XXXX-XXXX';
   const emailLabel = store.notification_email || 'contact@example.com';
