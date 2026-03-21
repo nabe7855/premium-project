@@ -314,8 +314,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
         </div>
 
         {/* Bottom Copyright */}
-        <div className="mt-12 border-t border-slate-100 pt-6 text-center">
-          <p className="text-[10px] tracking-widest text-[#666]">
+        <div className="mt-12 border-t border-slate-100 pt-6 pb-28 md:pb-12 text-center">
+          <p className="flex flex-col items-center justify-center gap-2 text-[10px] tracking-widest text-[#666] md:flex-row md:gap-4">
             <span
               contentEditable={isEditing}
               suppressContentEditableWarning={isEditing}
@@ -324,6 +324,11 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
             >
               {config.copyright}
             </span>
+            {!isEditing && (
+              <a href={`/store/${store.slug}/links`} className="underline decoration-slate-400/30 hover:text-slate-900 transition-colors">
+                相互リンク
+              </a>
+            )}
           </p>
         </div>
       </div>

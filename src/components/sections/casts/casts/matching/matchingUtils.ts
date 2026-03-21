@@ -23,9 +23,34 @@ export function calculateMatchScores(
         score += commonChars * 2;
       }
 
-      // 顔タイプが一致する場合の加算 (1枚目の理論に基づくマッチング)
-      if (inputs.faceType && cast.faceType?.includes(inputs.faceType)) {
-        score += 12; // 顔の好みは重要度が高いため少し高めに設定
+      // 顔タイプが一致または相性が良い場合の加算 (1枚目の理論に基づくマッチング)
+      if (inputs.faceType && cast.faceType && cast.faceType.length > 0) {
+        const castType = cast.faceType[0];
+        const userType = inputs.faceType;
+
+        if (castType === userType) {
+          score += 15; // 完全一致
+        } else {
+          // 軸ベースの補完計算 (子供/大人, 直線/曲線)
+          const FACE_AXES: Record<string, { age: 'child' | 'adult'; shape: 'linear' | 'curved' }> = {
+            フレッシュハード: { age: 'child', shape: 'linear' },
+            フレッシュソフト: { age: 'child', shape: 'linear' },
+            チャーミングハード: { age: 'child', shape: 'curved' },
+            チャーミングソフト: { age: 'child', shape: 'curved' },
+            クールハード: { age: 'adult', shape: 'linear' },
+            クールソフト: { age: 'adult', shape: 'linear' },
+            エレガントハード: { age: 'adult', shape: 'curved' },
+            エレガントソフト: { age: 'adult', shape: 'curved' },
+          };
+
+          const cA = FACE_AXES[castType];
+          const uA = FACE_AXES[userType];
+
+          if (cA && uA) {
+            if (cA.age === uA.age) score += 5;
+            if (cA.shape === uA.shape) score += 5;
+          }
+        }
       }
 
       // 99%を超えないように調整

@@ -18,6 +18,7 @@ export const COMPATIBILITY_WEIGHTS = {
   animalCompatible: 15,
   ratingBonus: 5,
   reviewCountBonus: 10,
+  faceTypeMatch: 20,
 } as const;
 
 export const RECOMMENDED_CAST_COUNT = 3;
@@ -27,6 +28,38 @@ export const COMPATIBILITY_RANKS = {
   2: '相性○',
   3: 'おすすめ',
 } as const;
+
+// =============================================================================
+// 顔タイプ相性表 (子供/大人 x 直線/曲線)
+// =============================================================================
+
+export const FACE_TYPE_AXES: Record<string, { age: 'child' | 'adult'; shape: 'linear' | 'curved' }> = {
+  フレッシュハード: { age: 'child', shape: 'linear' },
+  フレッシュソフト: { age: 'child', shape: 'linear' },
+  チャーミングハード: { age: 'child', shape: 'curved' },
+  チャーミングソフト: { age: 'child', shape: 'curved' },
+  クールハード: { age: 'adult', shape: 'linear' },
+  クールソフト: { age: 'adult', shape: 'linear' },
+  エレガントハード: { age: 'adult', shape: 'curved' },
+  エレガントソフト: { age: 'adult', shape: 'curved' },
+};
+
+export function calculateFaceTypeScore(castFaceType: string, userFaceType: string): number {
+  if (!castFaceType || !userFaceType) return 0;
+  if (castFaceType === userFaceType) return COMPATIBILITY_WEIGHTS.faceTypeMatch;
+
+  const castAxis = FACE_TYPE_AXES[castFaceType];
+  const userAxis = FACE_TYPE_AXES[userFaceType];
+
+  if (!castAxis || !userAxis) return 0;
+
+  // 同じ要素を持っている場合はボーナス
+  let score = 0;
+  if (castAxis.age === userAxis.age) score += 5;
+  if (castAxis.shape === userAxis.shape) score += 5;
+
+  return score;
+}
 
 // =============================================================================
 // MBTI相性表
@@ -94,6 +127,7 @@ export function calculateCompatibilityScore(
   userMBTI: string,
   userAnimal: string,
   userLoveStyle: string,
+  userFaceType?: string,
 ): number {
   let score = 0;
 
@@ -101,6 +135,11 @@ export function calculateCompatibilityScore(
   score += calculateLoveStyleScore(cast.tags ?? [], userLoveStyle);
   score += calculateAnimalScore(userAnimal);
   score += calculateRatingBonus(cast.rating ?? 0, cast.reviewCount ?? 0);
+  
+  // 🆕 顔タイプ診断のスコアを加算
+  if (userFaceType && cast.faceType && cast.faceType.length > 0) {
+    score += calculateFaceTypeScore(cast.faceType[0], userFaceType);
+  }
 
   return Math.round(score);
 }
@@ -143,10 +182,11 @@ export function getRecommendedCasts(
   userMBTI: string,
   userAnimal: string,
   userLoveStyle: string,
+  userFaceType?: string,
 ): ScoredCast[] {
   const castsWithScore: ScoredCast[] = allCasts.map((cast) => ({
     ...cast,
-    compatibilityScore: calculateCompatibilityScore(cast, userMBTI, userAnimal, userLoveStyle),
+    compatibilityScore: calculateCompatibilityScore(cast, userMBTI, userAnimal, userLoveStyle, userFaceType),
   }));
 
   return castsWithScore
@@ -167,12 +207,16 @@ export function getScoreBreakdown(
   userMBTI: string,
   userAnimal: string,
   userLoveStyle: string,
+  userFaceType?: string,
 ) {
   return {
     mbtiScore: calculateMBTIScore(cast.mbtiType ?? '', userMBTI),
     loveStyleScore: calculateLoveStyleScore(cast.tags ?? [], userLoveStyle),
     animalScore: calculateAnimalScore(userAnimal),
     ratingBonus: calculateRatingBonus(cast.rating ?? 0, cast.reviewCount ?? 0),
-    totalScore: calculateCompatibilityScore(cast, userMBTI, userAnimal, userLoveStyle),
+    faceTypeScore: userFaceType && cast.faceType && cast.faceType.length > 0 
+      ? calculateFaceTypeScore(cast.faceType[0], userFaceType) 
+      : 0,
+    totalScore: calculateCompatibilityScore(cast, userMBTI, userAnimal, userLoveStyle, userFaceType),
   };
 }
