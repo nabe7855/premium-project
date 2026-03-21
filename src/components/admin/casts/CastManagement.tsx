@@ -15,9 +15,9 @@ interface Cast {
   name: string;
   manager_comment?: string;
   is_active: boolean;
-  is_ichioshi: boolean;
-  catch_copy?: string;
   ai_summary?: string;
+  catch_copy?: string;
+  storeIchioshi: Record<string, boolean>;
   stores: Store[];
 }
 
@@ -34,10 +34,9 @@ export default function CastManagement() {
           name,
           manager_comment,
           is_active,
-          is_ichioshi,
           catch_copy,
           ai_summary,
-          cast_store_memberships ( stores ( id, name ) )
+          cast_store_memberships ( is_ichioshi, store_id, stores ( id, name ) )
         `);
 
       const { data: storeData } = await supabase.from('stores').select('id, name');
@@ -50,9 +49,12 @@ export default function CastManagement() {
           name: c.name,
           manager_comment: c.manager_comment,
           is_active: c.is_active,
-          is_ichioshi: c.is_ichioshi,
           catch_copy: c.catch_copy,
           ai_summary: c.ai_summary,
+          storeIchioshi: (c.cast_store_memberships || []).reduce((acc: any, m: any) => {
+            acc[m.store_id] = m.is_ichioshi || false;
+            return acc;
+          }, {}),
           stores: c.cast_store_memberships?.map((cs: any) => cs.stores) || [],
         })) ?? [];
 
@@ -70,7 +72,6 @@ export default function CastManagement() {
         .update({
           manager_comment: cast.manager_comment,
           is_active: cast.is_active,
-          is_ichioshi: cast.is_ichioshi,
           catch_copy: cast.catch_copy,
           ai_summary: cast.ai_summary,
         })
@@ -82,6 +83,7 @@ export default function CastManagement() {
         const inserts = cast.stores.map((s) => ({
           cast_id: cast.id,
           store_id: s.id,
+          is_ichioshi: cast.storeIchioshi[s.id] || false,
           start_date: new Date().toISOString().split('T')[0],
           end_date: '2099-12-31',
         }));
@@ -201,23 +203,41 @@ export default function CastManagement() {
               </div>
             </div>
 
-            {/* イチ押し設定 */}
+            {/* イチ押し設定（店舗ごと） */}
             <div>
-              <label className="mb-1 block font-medium">✨ イチ押し設定</label>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={cast.is_ichioshi}
-                  onChange={(e) =>
-                    setCasts((prev) =>
-                      prev.map((c) =>
-                        c.id === cast.id ? { ...c, is_ichioshi: e.target.checked } : c,
-                      ),
-                    )
-                  }
-                  className="h-4 w-4 accent-pink-500"
-                />
-                <span className="text-pink-300">店舗トップの「イチ押しセラピスト」に掲載する</span>
+              <label className="mb-1 block font-medium text-cyan-300">✨ 店舗ごとのイチ押し設定</label>
+              <div className="mt-1 space-y-2 rounded-lg border border-cyan-800/30 bg-gray-950/50 p-3">
+                {cast.stores.length === 0 ? (
+                  <p className="text-[10px] text-gray-500 italic">所属店舗を選択してください</p>
+                ) : (
+                  cast.stores.map((store) => (
+                    <label key={store.id} className="flex cursor-pointer items-center justify-between gap-2 rounded bg-gray-900/50 p-2 hover:bg-gray-800">
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="checkbox"
+                          checked={cast.storeIchioshi[store.id] || false}
+                          onChange={(e) =>
+                            setCasts((prev) =>
+                              prev.map((c) =>
+                                c.id === cast.id
+                                  ? {
+                                      ...c,
+                                      storeIchioshi: { ...c.storeIchioshi, [store.id]: e.target.checked },
+                                    }
+                                  : c,
+                              ),
+                            )
+                          }
+                          className="h-4 w-4 rounded border-gray-700 bg-gray-800 accent-pink-500"
+                        />
+                        <span className="text-xs">{store.name}</span>
+                      </div>
+                      <span className={`text-[10px] font-bold ${cast.storeIchioshi[store.id] ? 'text-pink-400' : 'text-gray-600'}`}>
+                        {cast.storeIchioshi[store.id] ? '🌟 イチ押し ON' : 'OFF'}
+                      </span>
+                    </label>
+                  ))
+                )}
               </div>
             </div>
 
