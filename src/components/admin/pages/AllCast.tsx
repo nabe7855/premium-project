@@ -15,7 +15,10 @@ import {
   FileText,
   Filter,
   MessageSquare,
+  RotateCcw,
+  Search,
   ShieldCheck,
+  Star,
   User,
 } from 'lucide-react';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -60,11 +63,19 @@ const CastCard: React.FC<{ cast: Cast; stores: Store[]; onSelect: (cast: Cast) =
           <p className="truncate text-[11px] text-brand-text-secondary">
             {castStores.map((s) => s.name).join(', ')}
           </p>
-          <span
-            className={`mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${cast.status === '在籍中' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
-          >
-            {cast.status}
-          </span>
+          <div className="mt-1 flex items-center gap-2">
+            <span
+              className={`inline-block rounded-full px-2 py-0.5 text-[10px] font-semibold ${cast.status === '在籍中' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}
+            >
+              {cast.status}
+            </span>
+            {cast.isIchioshi && (
+              <span className="flex items-center gap-0.5 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-bold text-yellow-500">
+                <Star className="h-2.5 w-2.5 fill-current" />
+                イチ押し
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
@@ -529,6 +540,18 @@ const CastDetailModal: React.FC<{
                     <option>離籍</option>
                   </select>
                 </div>
+                <div className="flex items-center space-x-2 rounded-md border border-brand-accent/30 bg-brand-accent/10 p-3">
+                  <input
+                    type="checkbox"
+                    id="isIchioshi"
+                    checked={cast.isIchioshi}
+                    onChange={(e) => setCast({ ...cast, isIchioshi: e.target.checked })}
+                    className="h-5 w-5 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
+                  />
+                  <label htmlFor="isIchioshi" className="cursor-pointer text-sm font-bold text-white">
+                    🌟 このキャストを「イチ押し」に設定する
+                  </label>
+                </div>
                 <div>
                   <label className="text-sm text-brand-text-secondary">
                     所属店舗と表示順位（1〜）
@@ -793,6 +816,7 @@ export default function AllCast() {
             email,
             login_password,
             ai_summary,
+            is_ichioshi,
             cast_store_memberships (
               store_id,
               priority
@@ -824,6 +848,7 @@ export default function AllCast() {
             photoUrl: c.main_image_url || '',
             managerComment: c.manager_comment || '',
             catchphrase: c.catch_copy || '',
+            isIchioshi: c.is_ichioshi || false,
             aiSummary: c.ai_summary || '',
             email: c.email || '',
             password: c.login_password || '',
@@ -889,6 +914,7 @@ export default function AllCast() {
           catch_copy: updatedCast.catchphrase,
           manager_comment: updatedCast.managerComment,
           ai_summary: updatedCast.aiSummary,
+          is_ichioshi: updatedCast.isIchioshi,
           is_active: updatedCast.status === '在籍中',
         })
         .eq('id', updatedCast.id);
