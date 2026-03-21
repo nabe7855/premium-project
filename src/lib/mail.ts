@@ -199,6 +199,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
     const data = await resendInstance.emails.send({
       from: fromEmail,
       to: finalTo,
+      replyTo: email || undefined,
       subject: subject,
       html: html,
     });
@@ -245,6 +246,7 @@ export async function sendInterviewReservationNotification(application: any) {
     const data = await resendInstance.emails.send({
       from: fromEmail,
       to: finalTo,
+      replyTo: application.email || undefined,
       subject: subject,
       html: html,
     });
@@ -332,6 +334,12 @@ export async function sendStaffNotification({
     ? 'Strawberry Recruit <apply@sutoroberrys.jp>' 
     : 'Strawberry Info <info@sutoroberrys.jp>';
 
+  // data の中からお客様のメールアドレスを自動検索して Reply-To に設定
+  const customerEmail = Object.entries(data).find(([key]) =>
+    ['メールアドレス', 'email', 'Email', 'EMAIL', 'メール'].includes(key)
+  )?.[1];
+  const replyTo = typeof customerEmail === 'string' && customerEmail.includes('@') ? customerEmail : undefined;
+
   const html = `
     <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 8px; overflow: hidden;">
       <div style="background: #fdf2f8; padding: 20px; border-bottom: 2px solid #f9a8d4; text-align: center;">
@@ -348,6 +356,7 @@ export async function sendStaffNotification({
           `).join('')}
         </table>
       </div>
+      ${replyTo ? `<div style="background: #f0fdf4; padding: 14px 24px; border-top: 1px solid #bbf7d0; font-size: 13px; color: #166534;">💬 このメールに返信すると <strong>${replyTo}</strong> 宛に届きます</div>` : ''}
     </div>
   `;
 
@@ -358,6 +367,7 @@ export async function sendStaffNotification({
     const result = await resendInstance.emails.send({
       from: fromEmail,
       to: targetEmails,
+      replyTo: replyTo,
       subject: `【${subject}】${matchedStore}`,
       html: html,
     });
