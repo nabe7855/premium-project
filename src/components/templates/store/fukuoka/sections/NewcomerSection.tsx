@@ -161,6 +161,21 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
             </button>
           ) */}
         </div>
+
+        {/* もっと見るボタン */}
+        {!isEditing && items.length > 0 && (
+          <div className="mt-8 flex justify-center">
+            <Link
+              href={`/store/${storeSlug}/cast-list?sort=newcomerOnly`}
+              className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-[#9C7E4F] px-10 py-4 font-black transition-all hover:bg-[#C4A97A] active:scale-95"
+            >
+              <span className="relative z-10 text-sm tracking-[0.2em] text-white">
+                もっと新人を見る
+              </span>
+              <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 group-hover:translate-y-0" />
+            </Link>
+          </div>
+        )}
       </div>
     </section>
   );

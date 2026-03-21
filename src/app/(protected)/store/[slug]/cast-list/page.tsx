@@ -13,6 +13,7 @@ import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { notFound } from 'next/navigation';
+import { Suspense } from 'react';
 
 interface Props {
   params: { slug: string };
@@ -76,7 +77,9 @@ export default async function CastListPage({ params }: Props) {
 
       {/* ✅ 店舗のキャスト一覧 */}
       <div id="casts">
-        <CastList storeSlug={params.slug} />
+        <Suspense fallback={<div className="py-16 text-center">読み込み中...</div>}>
+          <CastList storeSlug={params.slug} />
+        </Suspense>
       </div>
 
       {/* フッター */}

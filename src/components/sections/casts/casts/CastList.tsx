@@ -3,6 +3,7 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
 import CastCard from './CastCard';
 import SearchFilters from './SearchFilters';
 import SortOptions from './SortOptions';
@@ -18,10 +19,15 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
 
   // 🎯 状態管理（useCastSearchを置き換え）
+  const searchParams = useSearchParams();
+  const initialSort = (searchParams.get('sort') as any) || 'default';
+  
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
-  const [sortBy, setSortBy] = useState<'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'>('default');
+  const [sortBy, setSortBy] = useState<'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'>(
+    ['default', 'reviewCount', 'newcomerOnly', 'todayAvailable'].includes(initialSort) ? initialSort : 'default'
+  );
   const [selectedMBTI, setSelectedMBTI] = useState<string | null>(null);
   const [selectedFaceTypes, setSelectedFaceTypes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
