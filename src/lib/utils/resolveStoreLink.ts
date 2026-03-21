@@ -12,10 +12,11 @@ export function resolveStoreLink(
   // {slug} や [slug] を置換 (URLエンコードされた文字にも対応)
   let resolved = href.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/g, slug);
 
-  // {phone} を置換
-  if (phoneNumber) {
-    resolved = resolved.replace(/(?:\{phone\}|%7Bphone%7D)/g, phoneNumber);
-  }
+  // {phone} を置換 (値が空でも置換を試みる)
+  resolved = resolved.replace(
+    /(?:\{phone\}|%7Bphone%7D)/g,
+    phoneNumber || '',
+  );
 
   // {line} または {line_url} を置換 (値が空でも置換を試みる)
   resolved = resolved.replace(
