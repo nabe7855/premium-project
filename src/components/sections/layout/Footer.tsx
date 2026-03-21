@@ -172,7 +172,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
               originalHref = `tel:${storeContact.phone}`;
             }
 
-            const resolvedHref = resolveStoreLink(originalHref, slug as string, storeContact.phone);
+            const resolvedHref = resolveStoreLink(originalHref, slug as string, storeContact.phone, storeContact.lineUrl);
             
             return (
               <li key={item.id || idx} className="footer-nav__item">

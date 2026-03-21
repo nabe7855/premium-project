@@ -17,10 +17,11 @@ export function resolveStoreLink(
     resolved = resolved.replace(/(?:\{phone\}|%7Bphone%7D)/g, phoneNumber);
   }
 
-  // {line} または {line_url} を置換
-  if (lineUrl) {
-    resolved = resolved.replace(/(?:\{line\}|\{line_url\}|%7Bline%7D|%7Bline_url%7D)/g, lineUrl);
-  }
+  // {line} または {line_url} を置換 (値が空でも置換を試みる)
+  resolved = resolved.replace(
+    /(?:\{line\}|\{line_url\}|%7Bline%7D|%7Bline_url%7D)/g,
+    lineUrl || '',
+  );
 
   // LINE ID (@、または誤って /@ から始まる場合) を友だち追加リンクに変換
   if (resolved.startsWith('@')) {

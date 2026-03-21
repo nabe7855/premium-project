@@ -20,7 +20,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
   if (!config) return null;
 
   const getAbsoluteHref = (href: any) => {
-    return resolveStoreLink(href as string, store.slug);
+    return resolveStoreLink(href as string, store.slug, store.contact?.phone, store.contact?.line);
   };
 
   const handleShopInfoUpdate = (key: string, value: string) => {

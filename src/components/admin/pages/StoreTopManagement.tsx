@@ -391,6 +391,11 @@ export default function StoreTopManagement() {
     contact: {
       ...(baseStaticStore.contact || {}),
       phone: currentStoreData.phone || baseStaticStore.contact?.phone || '',
+      line:
+        currentStoreData.line_url ||
+        ((currentStoreData as any).line_id
+          ? `https://line.me/R/ti/p/${(currentStoreData as any).line_id.startsWith('@') ? (currentStoreData as any).line_id : '@' + (currentStoreData as any).line_id}`
+          : baseStaticStore.contact?.line || ''),
       email: currentStoreData.notification_email || baseStaticStore.contact?.email || '',
     }
   } : baseStaticStore;

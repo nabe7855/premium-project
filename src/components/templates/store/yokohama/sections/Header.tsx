@@ -108,7 +108,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   };
 
   const getAbsoluteHref = (href: string) => {
-    return resolveStoreLink(href, currentStoreId);
+    return resolveStoreLink(href, store.slug, store.contact?.phone, store.contact?.line);
   };
 
   const BackgroundDecoration = () => (
