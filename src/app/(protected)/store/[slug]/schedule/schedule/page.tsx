@@ -19,6 +19,9 @@ export default async function SchedulePage({ params }: { params: { slug: string 
       {slug === 'yokohama' && topConfig?.header && <YokohamaHeader config={topConfig.header} />}
       {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
+      {/* Header Spacer */}
+      <div className="h-[54px] md:h-[65px]" />
+
       <div className="flex-grow">
         <Suspense
           fallback={

@@ -12,8 +12,13 @@ export function resolveStoreLink(href: string, slug: string, phoneNumber?: strin
     resolved = resolved.replace(/(?:\{phone\}|%7Bphone%7D)/g, phoneNumber);
   }
 
+  // LINE ID (@から始まる場合) を友だち追加リンクに変換
+  if (resolved.startsWith('@')) {
+    return `https://line.me/R/ti/p/${resolved}`;
+  }
+
   // 絶対パスやURL、ページ内リンクはそのまませず、
-  // 相対パスの補完が必要な場合に備える (Header.tsx の getAbsoluteHref 相当の処理)
+  // 相対パスの補完が必要な場合に備える (Header.tsx の getAbsoluteHref 相当의 処理)
   if (
     resolved.startsWith('http') ||
     resolved.startsWith('//') ||

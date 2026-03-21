@@ -15,7 +15,14 @@ const DateNavigation: React.FC<DateNavigationProps> = ({ schedule, activeDate, o
   const scrollToDate = (date: string) => {
     const element = document.getElementById(`date-${date}`);
     if (element) {
-      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const headerOffset = 80;
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth',
+      });
     }
     onDateChange(date);
   };

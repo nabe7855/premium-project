@@ -47,8 +47,11 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
   const slug = (params?.slug as string) || '';
 
   // {slug} や [slug] を置換 (URLエンコードされた文字にも対応)
-  const resolveLink = (href: string) =>
-    href.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
+  const resolveLink = (href: string) => {
+    const resolved = href.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
+    if (resolved.startsWith('@')) return `https://line.me/R/ti/p/${resolved}`;
+    return resolved;
+  };
 
   if (!config) return null;
 
