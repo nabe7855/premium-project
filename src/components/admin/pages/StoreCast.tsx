@@ -439,8 +439,9 @@ export default function StoreCast() {
           .select(
             `
             priority,
+            is_ichioshi,
             cast:casts (
-              id, name, main_image_url, catch_copy, is_active, is_ichioshi
+              id, name, main_image_url, catch_copy, is_active
             )
           `,
           )
@@ -481,6 +482,7 @@ export default function StoreCast() {
           .map((item: any) => ({
             ...item.cast,
             priority: item.priority,
+            is_ichioshi: item.is_ichioshi,
           }))
           .filter((c: any) => c && c.is_active)
           .map((c: any) => {
@@ -507,7 +509,7 @@ export default function StoreCast() {
               photoUrl: c.main_image_url || '',
               managerComment: '',
               catchphrase: c.catch_copy || '',
-              isIchioshi: c.is_ichioshi || false,
+              storeIchioshi: { [selectedStore]: c.is_ichioshi || false },
               stats: {
                 designations: 0,
                 repeatRate: 0,

@@ -20,14 +20,14 @@ export interface Cast {
   id: string;
   name: string;
   storeIds: string[];
-  storePriorities: Record<string, number>; // Added to track rank per store
+  storePriorities: Record<string, number>;
+  storeIchioshi: Record<string, boolean>;
   status: '在籍中' | '離籍';
   storeStatuses: string[];
   tags: string[];
   photoUrl: string;
   managerComment: string;
   catchphrase: string;
-  isIchioshi: boolean;
   aiSummary?: string;
   email?: string;
   password?: string;

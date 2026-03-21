@@ -69,7 +69,7 @@ const CastCard: React.FC<{ cast: Cast; stores: Store[]; onSelect: (cast: Cast) =
             >
               {cast.status}
             </span>
-            {cast.isIchioshi && (
+            {Object.values(cast.storeIchioshi).some((v) => v) && (
               <span className="flex items-center gap-0.5 rounded-full bg-yellow-500/20 px-2 py-0.5 text-[10px] font-bold text-yellow-500">
                 <Star className="h-2.5 w-2.5 fill-current" />
                 イチ押し
@@ -198,6 +198,15 @@ const CastDetailModal: React.FC<{
       },
     });
   };
+  const handleIchioshiChange = (storeId: string, checked: boolean) => {
+    setCast({
+      ...cast,
+      storeIchioshi: {
+        ...cast.storeIchioshi,
+        [storeId]: checked,
+      },
+    });
+  };
 
   const handleStoreChange = (storeId: string, checked: boolean) => {
     const currentStoreIds = cast.storeIds;
@@ -224,7 +233,15 @@ const CastDetailModal: React.FC<{
         return;
       }
     }
-    setCast({ ...cast, storeIds: newStoreIds, storePriorities: newStorePriorities });
+    setCast({
+      ...cast,
+      storeIds: newStoreIds,
+      storePriorities: newStorePriorities,
+      storeIchioshi: {
+        ...cast.storeIchioshi,
+        [storeId]: checked ? false : cast.storeIchioshi[storeId],
+      },
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -540,18 +557,6 @@ const CastDetailModal: React.FC<{
                     <option>離籍</option>
                   </select>
                 </div>
-                <div className="flex items-center space-x-2 rounded-md border border-brand-accent/30 bg-brand-accent/10 p-3">
-                  <input
-                    type="checkbox"
-                    id="isIchioshi"
-                    checked={cast.isIchioshi}
-                    onChange={(e) => setCast({ ...cast, isIchioshi: e.target.checked })}
-                    className="h-5 w-5 rounded border-gray-600 bg-gray-700 text-brand-accent focus:ring-2 focus:ring-brand-accent"
-                  />
-                  <label htmlFor="isIchioshi" className="cursor-pointer text-sm font-bold text-white">
-                    🌟 このキャストを「イチ押し」に設定する
-                  </label>
-                </div>
                 <div>
                   <label className="text-sm text-brand-text-secondary">
                     所属店舗と表示順位（1〜）
@@ -574,21 +579,32 @@ const CastDetailModal: React.FC<{
                               </span>
                             </label>
                             {isChecked && (
-                              <div className="flex items-center space-x-2">
-                                <span className="mt-1 text-xs text-brand-text-secondary">
-                                  表示順:
-                                </span>
-                                <input
-                                  type="number"
-                                  min="1"
-                                  value={cast.storePriorities[store.id] || ''}
-                                  onChange={(e) =>
-                                    handlePriorityChange(store.id, parseInt(e.target.value) || 0)
-                                  }
-                                  className={`w-16 rounded border ${
-                                    errors[store.id] ? 'border-red-500' : 'border-gray-700'
-                                  } bg-brand-secondary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
-                                />
+                              <div className="flex items-center space-x-4">
+                                <label className="flex cursor-pointer items-center space-x-1.5 text-[10px] font-bold text-yellow-500">
+                                  <input
+                                    type="checkbox"
+                                    checked={cast.storeIchioshi[store.id] || false}
+                                    onChange={(e) => handleIchioshiChange(store.id, e.target.checked)}
+                                    className="h-3.5 w-3.5 rounded border-gray-600 bg-gray-700 text-yellow-500 focus:ring-1 focus:ring-yellow-500"
+                                  />
+                                  <span>🌟 イチ押し</span>
+                                </label>
+                                <div className="flex items-center space-x-2">
+                                  <span className="mt-1 text-xs text-brand-text-secondary">
+                                    表示順:
+                                  </span>
+                                  <input
+                                    type="number"
+                                    min="1"
+                                    value={cast.storePriorities[store.id] || ''}
+                                    onChange={(e) =>
+                                      handlePriorityChange(store.id, parseInt(e.target.value) || 0)
+                                    }
+                                    className={`w-16 rounded border ${
+                                      errors[store.id] ? 'border-red-500' : 'border-gray-700'
+                                    } bg-brand-secondary p-1 text-center text-sm text-white focus:ring-1 focus:ring-brand-accent`}
+                                  />
+                                </div>
                               </div>
                             )}
                           </div>
@@ -819,7 +835,8 @@ export default function AllCast() {
             is_ichioshi,
             cast_store_memberships (
               store_id,
-              priority
+              priority,
+              is_ichioshi
             ),
             cast_statuses (
               status_master (
@@ -842,13 +859,16 @@ export default function AllCast() {
               acc[m.store_id] = m.priority || 0;
               return acc;
             }, {}),
+            storeIchioshi: (c.cast_store_memberships || []).reduce((acc: any, m: any) => {
+              acc[m.store_id] = m.is_ichioshi || false;
+              return acc;
+            }, {}),
             status: c.is_active ? '在籍中' : '離籍',
             storeStatuses: storeStatuses,
             tags: [], // Tags can be added if needed
             photoUrl: c.main_image_url || '',
             managerComment: c.manager_comment || '',
             catchphrase: c.catch_copy || '',
-            isIchioshi: c.is_ichioshi || false,
             aiSummary: c.ai_summary || '',
             email: c.email || '',
             password: c.login_password || '',
@@ -914,7 +934,6 @@ export default function AllCast() {
           catch_copy: updatedCast.catchphrase,
           manager_comment: updatedCast.managerComment,
           ai_summary: updatedCast.aiSummary,
-          is_ichioshi: updatedCast.isIchioshi,
           is_active: updatedCast.status === '在籍中',
         })
         .eq('id', updatedCast.id);
@@ -952,6 +971,7 @@ export default function AllCast() {
           cast_id: updatedCast.id,
           store_id: storeId,
           priority: updatedCast.storePriorities[storeId] ?? 0,
+          is_ichioshi: updatedCast.storeIchioshi[storeId] ?? false,
         }));
 
         const { error: insertError } = await supabase

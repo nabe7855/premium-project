@@ -48,7 +48,10 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
         catch_copy,
         main_image_url,
         is_active,
-        is_ichioshi,
+        cast_store_memberships (
+          is_ichioshi,
+          store_id
+        ),
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name )
       )
@@ -62,9 +65,16 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
     return [];
   }
 
-  // 3. is_active 且つ is_ichioshi のキャストをマッピング
+  // 3. is_active 且つ 当該店舗で is_ichioshi のキャストをマッピング
   const result: RandomCast[] = data
-    .filter((d: any) => d.casts?.is_active && d.casts?.is_ichioshi)
+    .filter((d: any) => {
+      const cast = d.casts;
+      if (!cast?.is_active) return false;
+      // 当該店舗のイチ押し設定を確認
+      return cast.cast_store_memberships?.some(
+        (m: any) => m.store_id === store.id && m.is_ichioshi,
+      );
+    })
     .map((d: any) => {
       const cast = d.casts;
       let mbti: string | null = null;
@@ -88,7 +98,7 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
         main_image_url: cast.main_image_url,
         mbti_name: mbti,
         face_name: face,
-        is_ichioshi: cast.is_ichioshi,
+        is_ichioshi: true, // フィルタを通ったので常にtrue
         start_datetime: d.start_datetime,
         end_datetime: d.end_datetime,
       };

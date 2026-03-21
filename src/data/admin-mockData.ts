@@ -216,7 +216,6 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-1',
     name: '星野 あかり',
-    slug: 'hoshino-akari',
     storeIds: ['store-1', 'store-2'],
     storePriorities: {},
     status: '在籍中',
@@ -226,7 +225,7 @@ export const mockCasts: Cast[] = [
     managerComment:
       '当店のエース。彼女の笑顔は百万ドルの価値があります。お客様一人ひとりに寄り添う丁寧な接客が魅力です。',
     catchphrase: 'あなたの心を照らす一番星になりたいな',
-    isIchioshi: true,
+    storeIchioshi: { 'store-1': true },
     stats: {
       designations: 120,
       repeatRate: 85,
@@ -239,7 +238,6 @@ export const mockCasts: Cast[] = [
   {
     id: 'cast-2',
     name: '月影 凛',
-    slug: 'tsukikage-rin',
     storeIds: ['store-3'],
     storePriorities: {},
     status: '在籍中',
@@ -249,7 +247,7 @@ export const mockCasts: Cast[] = [
     managerComment:
       'クールな見た目とは裏腹に、話すととても気さく。知的な会話で、お客様を魅了します。ワインの知識は当店一。',
     catchphrase: '月の光のように、静かにあなたを包み込みたい',
-    isIchioshi: false,
+    storeIchioshi: {},
     stats: {
       designations: 95,
       repeatRate: 78,
@@ -272,7 +270,7 @@ export const mockCasts: Cast[] = [
     managerComment:
       '期待の新人！持ち前の明るさと元気で、場の雰囲気を一気に盛り上げます。今後の成長が楽しみな逸材です。',
     catchphrase: 'お兄ちゃんのこと、ゆうなが応援しちゃう！',
-    isIchioshi: false,
+    storeIchioshi: {},
     stats: {
       designations: 40,
       repeatRate: 60,
@@ -295,7 +293,7 @@ export const mockCasts: Cast[] = [
     managerComment:
       '全てを包み込むような優しさを持つキャスト。疲れた心を癒やされたいお客様からの絶大な支持を得ています。',
     catchphrase: '頑張りすぎなあなたへ、癒やしの時間をプレゼント',
-    isIchioshi: false,
+    storeIchioshi: {},
     stats: {
       designations: 110,
       repeatRate: 82,
@@ -318,7 +316,7 @@ export const mockCasts: Cast[] = [
     managerComment:
       'お客様を翻弄する小悪魔的な魅力で人気を博しましたが、本人の都合により離籍となりました。',
     catchphrase: '退屈な夜は、私が終わらせてあげる',
-    isIchioshi: false,
+    storeIchioshi: {},
     stats: {
       designations: 88,
       repeatRate: 75,
@@ -340,7 +338,7 @@ export const mockCasts: Cast[] = [
     photoUrl: `https://i.pravatar.cc/100?u=cast${i + 6}`,
     managerComment: 'これはサンプルキャストのコメントです。',
     catchphrase: `サンプルキャスト${i + 6}のキャッチコピーです。`,
-    isIchioshi: false,
+    storeIchioshi: {},
     stats: {
       designations: Math.floor(Math.random() * 100),
       repeatRate: Math.floor(Math.random() * 50) + 40,
