@@ -19,6 +19,7 @@ export interface TodayCast {
   tags?: string[];
   start_datetime: string;
   end_datetime: string;
+  isIchioshi: boolean;
 }
 
 // ✅ JSTの日付文字列 (YYYY-MM-DD) を取得
@@ -92,6 +93,7 @@ export async function getTodayCastsByStore(
           )
         ),
         cast_store_memberships!inner (
+          is_ichioshi,
           stores!inner ( slug )
         )
       )
@@ -138,6 +140,9 @@ export async function getTodayCastsByStore(
       face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
       start_datetime: item.start_datetime,
       end_datetime: item.end_datetime,
+      isIchioshi: Array.isArray(cast.cast_store_memberships) 
+        ? cast.cast_store_memberships.some((m: any) => m.stores.slug === storeSlug && m.is_ichioshi)
+        : (cast.cast_store_memberships?.is_ichioshi || false),
     };
 
     // 重複除去ロジック:

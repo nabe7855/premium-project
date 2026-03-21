@@ -1,0 +1,13 @@
+﻿[dotenv@17.2.3] injecting env (5) from .env.local -- tip: 笞呻ｸ・ enable debug logging with { debug: true }
+Store: { id: 'c5e519eb-ace2-4609-adb0-f3023021a143', name: '讓ｪ豬・ }
+Casts & Memberships:
+- 繧ｫ繧､繝・(ID: b0761447-1519-48e4-8efc-6f63bc064b47, Active: true)
+  - StoreID: 16bc0774-059a-4f4c-b09c-63bc26b430bf, Ichioshi: false
+  - StoreID: c5e519eb-ace2-4609-adb0-f3023021a143, Ichioshi: true (YOKOHAMA!)
+- 繧ｻ繝・(ID: 349bcf4a-513f-49bd-a8d3-9a45c1b18dc8, Active: true)
+  - StoreID: c5e519eb-ace2-4609-adb0-f3023021a143, Ichioshi: true (YOKOHAMA!)
+- 繝､繝槭ヨ (ID: 847600d4-bed4-4c04-8d2b-34567dadb470, Active: true)
+  - StoreID: c5e519eb-ace2-4609-adb0-f3023021a143, Ichioshi: true (YOKOHAMA!)
+
+Schedules for 2026-03-21:
+- 繝､繝槭ヨ: StoreID c5e519eb-ace2-4609-adb0-f3023021a143 (YOKOHAMA)

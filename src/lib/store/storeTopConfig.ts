@@ -113,6 +113,7 @@ export interface CastItem {
   imageUrl: string;
   schedule?: string[]; // YYYY-MM-DD 形式
   attendance?: string; // 例: "12:00〜21:00"
+  isIchioshi: boolean;
 }
 
 export interface CastConfig {
@@ -498,6 +499,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         tags: ['聞き上手', '高身長'],
         imageUrl: 'https://picsum.photos/seed/cast1/300/400',
         schedule: ['2026-01-21', '2026-01-22', '2026-01-24', '2026-01-26'],
+        isIchioshi: false,
       },
       {
         id: '2',
@@ -509,6 +511,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         tags: ['爽やか', 'マッサージ◎'],
         imageUrl: 'https://picsum.photos/seed/cast2/300/400',
         schedule: ['2026-01-21', '2026-01-23', '2026-01-25'],
+        isIchioshi: false,
       },
       {
         id: '3',
@@ -520,6 +523,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         tags: ['落ち着き', '色気'],
         imageUrl: 'https://picsum.photos/seed/cast3/300/400',
         schedule: ['2026-01-22', '2026-01-24', '2026-01-27'],
+        isIchioshi: false,
       },
       {
         id: '4',
@@ -531,6 +535,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         tags: ['癒し系', '甘え上手'],
         imageUrl: 'https://picsum.photos/seed/cast4/300/400',
         schedule: ['2026-01-21', '2026-01-22', '2026-01-23', '2026-01-25'],
+        isIchioshi: false,
       },
     ],
     isVisible: true,

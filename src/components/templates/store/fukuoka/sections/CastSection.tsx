@@ -52,7 +52,8 @@ const CastSection: React.FC<CastSectionProps> = ({
       attendance: c.start_datetime && c.end_datetime 
         ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
         : 'お問い合わせください',
-      schedule: [], // 後で補完される
+      schedule: [], 
+      isIchioshi: c.isIchioshi,
     }));
   }, [todayCasts]);
 
@@ -128,6 +129,7 @@ const CastSection: React.FC<CastSectionProps> = ({
             ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
             : 'お問い合わせください',
           schedule: [selectedDate],
+          isIchioshi: c.isIchioshi,
         }));
         setFetchedCasts(mappedCasts);
       } catch (e) {
@@ -349,7 +351,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                               <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
                                 本日出勤
                               </span>
-                              {cast.name.length % 3 === 0 && (
+                              {cast.isIchioshi && (
                                 <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
                                   <Star className="h-2.5 w-2.5 fill-current" /> 店長一押し
                                 </span>
@@ -488,7 +490,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                               <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
                                 本日出勤
                               </span>
-                              {cast.name.length % 3 === 0 && (
+                              {cast.isIchioshi && (
                                 <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
                                   <Star className="h-2.5 w-2.5 fill-current" /> 店長一押し
                                 </span>

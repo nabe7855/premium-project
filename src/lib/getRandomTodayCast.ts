@@ -9,8 +9,8 @@ export interface RandomCast {
   mbti_name?: string | null;
   face_name?: string | null;
   is_ichioshi?: boolean;
-  start_datetime: string;
-  end_datetime: string;
+  start_datetime?: string;
+  end_datetime?: string;
 }
 
 // ✅ JSTの日付を取得 (YYYY-MM-DD)
@@ -35,46 +35,32 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
     return [];
   }
 
-  // 2. 今日出勤予定キャストを取得
+  // 2. 店舗のイチ押しキャストを取得（出勤日は問わない）
   const { data, error } = await supabase
-    .from('schedules')
-    .select(
-      `
-      start_datetime,
-      end_datetime,
+    .from('cast_store_memberships')
+    .select(`
+      is_ichioshi,
       casts (
         id,
         name,
         catch_copy,
         main_image_url,
         is_active,
-        cast_store_memberships (
-          is_ichioshi,
-          store_id
-        ),
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name )
       )
-    `,
-    )
+    `)
     .eq('store_id', store.id)
-    .eq('work_date', today);
+    .eq('is_ichioshi', true);
 
   if (error || !data) {
-    console.error('❌ getTodayCasts error:', error?.message);
+    console.error('❌ getFeaturedCasts error:', error?.message);
     return [];
   }
 
-  // 3. is_active 且つ 当該店舗で is_ichioshi のキャストをマッピング
+  // 3. is_active なキャストをマッピング
   const result: RandomCast[] = data
-    .filter((d: any) => {
-      const cast = d.casts;
-      if (!cast?.is_active) return false;
-      // 当該店舗のイチ押し設定を確認
-      return cast.cast_store_memberships?.some(
-        (m: any) => m.store_id === store.id && m.is_ichioshi,
-      );
-    })
+    .filter((d: any) => d.casts?.is_active)
     .map((d: any) => {
       const cast = d.casts;
       let mbti: string | null = null;
@@ -99,8 +85,8 @@ export async function getTodayCasts(storeSlug: string): Promise<RandomCast[]> {
         mbti_name: mbti,
         face_name: face,
         is_ichioshi: true, // フィルタを通ったので常にtrue
-        start_datetime: d.start_datetime,
-        end_datetime: d.end_datetime,
+        start_datetime: d.start_datetime || '',
+        end_datetime: d.end_datetime || '',
       };
     });
 
