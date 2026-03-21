@@ -251,7 +251,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
       case 'freeText':
         updateFormData('freeText', userInput);
         addModelMessage(
-          'ありがとうございます。最後に【顔写真】を最大4枚送ってください。\n※帽子・マスク・過度な加工はNGです。',
+          'ありがとうございます。【顔写真】を最大4枚送ってください。\n※帽子・マスク・過度な加工はNGです。',
         );
         setCurrentStep('photos');
         break;
