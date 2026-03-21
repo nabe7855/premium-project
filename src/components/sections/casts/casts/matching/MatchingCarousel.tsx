@@ -2,6 +2,7 @@
 
 import { ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
 import { MatchingResult } from './matchingUtils';
 
 interface MatchingCarouselProps {
@@ -41,6 +42,9 @@ const FloatingParticles = () => {
 
 export default function MatchingCarousel({ results, onRestart }: MatchingCarouselProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const router = useRouter();
+  const params = useParams();
+  const storeSlug = params.slug as string;
 
   const nextCard = () => {
     setActiveIndex((prev) => (prev + 1) % results.length);
@@ -103,11 +107,16 @@ export default function MatchingCarousel({ results, onRestart }: MatchingCarouse
           return (
             <div
               key={cast.id}
-              className="absolute w-64 [transform-style:preserve-3d] md:w-80"
+              className={`absolute w-64 [transform-style:preserve-3d] md:w-80 ${isActive ? 'cursor-pointer' : ''}`}
               style={getCardStyle(index)}
+              onClick={() => {
+                if (isActive) {
+                  router.push(`/store/${storeSlug}/${cast.slug}`);
+                }
+              }}
             >
               <div
-                className={`relative flex h-full w-full transform-gpu flex-col items-center rounded-2xl border-4 border-white bg-white p-4 text-center transition-all duration-300 ${isActive ? 'animate-card-glow' : 'shadow-xl'}`}
+                className={`relative flex h-full w-full transform-gpu flex-col items-center rounded-2xl border-4 border-white bg-white p-4 text-center transition-all duration-300 ${isActive ? 'animate-card-glow hover:scale-[1.02]' : 'shadow-xl'}`}
               >
                 <img
                   src={castImageUrl}
@@ -152,7 +161,7 @@ export default function MatchingCarousel({ results, onRestart }: MatchingCarouse
           className="animate-button-pulse group flex transform items-center gap-2 rounded-full bg-pink-500 px-8 py-3 font-bold text-white shadow-lg transition-all duration-300 hover:bg-pink-600 focus:outline-none active:scale-95"
         >
           <RotateCcw className="h-5 w-5" />
-          もう一度相性診断をする
+          診断ページに戻る
         </button>
       </div>
     </div>

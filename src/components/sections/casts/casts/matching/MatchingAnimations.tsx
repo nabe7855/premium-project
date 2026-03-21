@@ -4,17 +4,17 @@ import React, { useMemo } from 'react';
 
 /* Strawberry Overlay */
 export const StrawberryOverlay: React.FC<{ fadingOut: boolean }> = ({ fadingOut }) => {
-  const strawberryCount = 300;
+  const strawberryCount = 450;
   const strawberries = useMemo(() => {
     return Array.from({ length: strawberryCount }).map((_, i) => ({
       id: i,
       style: {
-        left: `${Math.random() * 100}vw`,
-        top: `${Math.random() * 100}vh`,
-        animationDuration: `2.5s`,
-        animationDelay: `${Math.random() * 1.5}s`,
-        fontSize: `${Math.random() * 120 + 30}px`,
-        filter: 'drop-shadow(2px 2px 2px rgba(0,0,0,0.2))',
+        left: `${Math.random() * 125 - 15}vw`,
+        top: `${Math.random() * 120 - 10}vh`,
+        animationDuration: `3s`,
+        animationDelay: `${Math.random() * 2}s`,
+        fontSize: `${Math.random() * 150 + 40}px`,
+        filter: 'drop-shadow(3px 3px 5px rgba(0,0,0,0.3))',
       },
     }));
   }, []);
