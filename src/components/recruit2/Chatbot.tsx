@@ -40,7 +40,7 @@ const AGE_OPTIONS = Array.from({ length: 46 }, (_, i) => `${i + 20}`); // 20 to 
 // Height options
 const HEIGHT_OPTIONS = Array.from({ length: 71 }, (_, i) => `${i + 140}`); // 140cm to 210cm
 
-const STEP_OPTIONS: Partial<Record<Step, string[]>> = {
+const STEP_OPTIONS_FUKUOKA: Partial<Record<Step, string[]>> = {
   weight: ['60kg以下', '61-70kg', '71-80kg', '81kg以上'],
   job: ['会社員', '自営業', '学生', 'フリーター', 'その他'],
   homeArea: [
@@ -57,6 +57,29 @@ const STEP_OPTIONS: Partial<Record<Step, string[]>> = {
   source: ['Instagram / X', 'ネット検索', '求人サイト', '知人の紹介', 'その他'],
   datingApp: ['あり', '無し'],
   tattoo: ['あり', '無し'],
+};
+
+const STEP_OPTIONS_YOKOHAMA: Partial<Record<Step, string[]>> = {
+  weight: ['60kg以下', '61-70kg', '71-80kg', '81kg以上'],
+  job: ['会社員', '自営業', '学生', 'フリーター', 'その他'],
+  homeArea: [
+    '横浜市中区・西区',
+    '横浜市青葉区・都筑区',
+    '川崎市',
+    '東京都内',
+    '神奈川県その他',
+    'その他',
+  ],
+  workArea: ['横浜・関内', '横浜・みなとみらい', '神奈川県内他', '特にこだわらない'],
+  motivation: ['高収入を得たい', '自分を変えたい', '副業として働きたい', '自由な時間が欲しい'],
+  source: ['Instagram / X', 'ネット検索', '求人サイト', '知人の紹介', 'その他'],
+  datingApp: ['あり', '無し'],
+  tattoo: ['あり', '無し'],
+};
+
+const getStepOptions = (storeName?: string): Partial<Record<Step, string[]>> => {
+  if (storeName && storeName.includes('横浜')) return STEP_OPTIONS_YOKOHAMA;
+  return STEP_OPTIONS_FUKUOKA;
 };
 
 const STEP_LABELS: Record<string, string> = {
@@ -386,7 +409,8 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
 
   if (!isOpen) return null;
 
-  const currentOptions = STEP_OPTIONS[currentStep];
+  const stepOptions = getStepOptions(storeName);
+  const currentOptions = stepOptions[currentStep];
 
   return (
     <div className="fixed inset-0 z-[100] flex w-full max-w-full flex-col overflow-x-hidden bg-slate-950/80 backdrop-blur-xl duration-300 animate-in fade-in" style={{ paddingTop: 'env(safe-area-inset-top)', paddingBottom: 'env(safe-area-inset-bottom)', paddingLeft: 'env(safe-area-inset-left)', paddingRight: 'env(safe-area-inset-right)' }}>
