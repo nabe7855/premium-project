@@ -77,7 +77,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
 
           {/* 顔タイプ選択 */}
           <div>
-            <label className="mb-3 block text-sm font-medium text-neutral-700">顔タイプ</label>
+            <label className="mb-3 block text-sm font-medium text-neutral-700">いちご系タイプ（顔の系統）</label>
             <div className="flex flex-wrap gap-2">
               {FACE_TYPES.map((faceType) => (
                 <button

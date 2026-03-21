@@ -34,14 +34,14 @@ export const COMPATIBILITY_RANKS = {
 // =============================================================================
 
 export const FACE_TYPE_AXES: Record<string, { age: 'child' | 'adult'; shape: 'linear' | 'curved' }> = {
-  フレッシュハード: { age: 'child', shape: 'linear' },
-  フレッシュソフト: { age: 'child', shape: 'linear' },
-  チャーミングハード: { age: 'child', shape: 'curved' },
-  チャーミングソフト: { age: 'child', shape: 'curved' },
-  クールハード: { age: 'adult', shape: 'linear' },
-  クールソフト: { age: 'adult', shape: 'linear' },
-  エレガントハード: { age: 'adult', shape: 'curved' },
-  エレガントソフト: { age: 'adult', shape: 'curved' },
+  さがほのか: { age: 'child', shape: 'linear' },
+  パールホワイト: { age: 'child', shape: 'linear' },
+  とちおとめ: { age: 'child', shape: 'curved' },
+  '章姫（あきひめ）': { age: 'child', shape: 'curved' },
+  スカイベリー: { age: 'adult', shape: 'linear' },
+  ゆめのか: { age: 'adult', shape: 'linear' },
+  あまおう: { age: 'adult', shape: 'curved' },
+  '淡雪（あわゆき）': { age: 'adult', shape: 'curved' },
 };
 
 export function calculateFaceTypeScore(castFaceType: string, userFaceType: string): number {

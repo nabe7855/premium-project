@@ -250,7 +250,7 @@ const DiagnosisSection: React.FC = () => {
             <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-primary/10">
               <UserCircle className="h-6 w-6 text-primary" />
             </div>
-            <h4 className="text-sm font-bold text-neutral-800">好みの顔タイプ（印象）</h4>
+            <h4 className="text-sm font-bold text-neutral-800">好みのいちご系タイプ（顔の印象）</h4>
           </div>
           <div className="relative">
             <select
