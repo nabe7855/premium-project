@@ -1,0 +1,266 @@
+﻿node.exe :  笞 Linting is dis
+abled.
+発生場所 行:1 文字:1
++ & "C:\Program Files\nodejs/
+node.exe" "C:\Program Files\n
+odejs/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: ( 笞 Lin  
+  ting is disabled.:String   
+ ) [], RemoteException
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+  笆ｲ Next.js 14.2.35
+  - Environments: .env.local, .env.production, .env
+
+   Creating an optimized production build ...
+Browserslist: caniuse-lite is
+ outdated. Please run:
+  npx update-browserslist-db@
+latest
+  Why you should do it regula
+rly: https://github.com/brows
+erslist/update-db#readme
+Browserslist: browsers data (
+caniuse-lite) is 9 months old
+. Please run:
+  npx update-browserslist-db@
+latest
+  Why you should do it regula
+rly: https://github.com/brows
+erslist/update-db#readme
+
+[1m[33mwarn[39m[22m - The
+ class `duration-[1200ms]` is
+ ambiguous and matches multip
+le utilities.
+[1m[33mwarn[39m[22m - If 
+this is content and not a cla
+ss, replace it with `duration
+-&lsqb;1200ms&rsqb;` to silen
+ce this warning.
+
+[1m[33mwarn[39m[22m - The
+ class `duration-[1500ms]` is
+ ambiguous and matches multip
+le utilities.
+[1m[33mwarn[39m[22m - If 
+this is content and not a cla
+ss, replace it with `duration
+-&lsqb;1500ms&rsqb;` to silen
+ce this warning.
+
+[1m[33mwarn[39m[22m - The
+ class `duration-[20s]` is am
+biguous and matches multiple 
+utilities.
+[1m[33mwarn[39m[22m - If 
+this is content and not a cla
+ss, replace it with `duration
+-&lsqb;20s&rsqb;` to silence 
+this warning.
+
+[1m[33mwarn[39m[22m - The
+ class `duration-[2s]` is amb
+iguous and matches multiple u
+tilities.
+[1m[33mwarn[39m[22m - If 
+this is content and not a cla
+ss, replace it with `duration
+-&lsqb;2s&rsqb;` to silence t
+his warning.
+
+[1m[33mwarn[39m[22m - The
+ class `duration-[3s]` is amb
+iguous and matches multiple u
+tilities.
+[1m[33mwarn[39m[22m - If 
+this is content and not a cla
+ss, replace it with `duration
+-&lsqb;3s&rsqb;` to silence t
+his warning.
+ 笨・Compiled successfully
+   Checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/76) ...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+   Generating static pages (19/76) 
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+   Generating static pages (38/76) 
+耳 EditableImage: Rendering [蛻昴ａ縺ｦ縺ｮ譁ｹ髯仙ｮ夂音蜈ｸ 迚ｹ蛻･蜑ｲ蠑輔く繝｣繝ｳ繝壹・繝ｳ] src="/蛻昴ａ縺ｦ縺ｮ縺雁ｮ｢讒倥∈繝舌リ繝ｼ.png" isEditing=false
+[AdminLayout] Rendering loading screen. Reason: Loading...
+   Generating static pages (57/76) 
+耳 EditableImage: Rendering [蛻昴ａ縺ｦ縺ｮ譁ｹ髯仙ｮ夂音蜈ｸ 迚ｹ蛻･蜑ｲ蠑輔く繝｣繝ｳ繝壹・繝ｳ] src="/蛻昴ａ縺ｦ縺ｮ縺雁ｮ｢讒倥∈繝舌リ繝ｼ.png" isEditing=false
+[AdminLayout] Rendering loading screen. Reason: Loading...
+剥 StorePage params: { slug: 'fukuoka' }
+剥 StorePage params: { slug: 'fukuoka' }
+剥 StorePage params: { slug: 'yokohama' }
+剥 StorePage params: { slug: 'yokohama' }
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+[AdminLayout] Rendering loading screen. Reason: Loading...
+ 笨・Generating static pages (76/76)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                                         Size     First Load JS
+笏・笳・/                                               491 B           173 kB
+笏・笳・/_not-found                                     165 B          88.3 kB
+笏・笳・/admin                                          273 B           209 kB
+笏・笳・/admin/advertising                              2.17 kB         213 kB
+笏・笳・/admin/advertising/list                         7.39 kB        95.5 kB
+笏・笳・/admin/ai/copywriter                            5.69 kB        93.8 kB
+笏・笳・/admin/ai/generate-intro                        7.84 kB          96 kB
+笏・笳・/admin/all-cast                                 12.1 kB         243 kB
+笏・笳・/admin/analytics                                3.13 kB         199 kB
+笏・笳・/admin/auto-post                                10.6 kB        98.7 kB
+笏・笳・/admin/banners                                  7.58 kB         136 kB
+笏・笳・/admin/bottom-nav-management                    11.7 kB         188 kB
+笏・笳・/admin/dashboard                                268 B           209 kB
+笏・笳・/admin/first-time-management                    4.07 kB         180 kB
+笏・笳・/admin/header-management                        14.6 kB         193 kB
+笏・笳・/admin/hotels                                   4.79 kB         154 kB
+笏・ﾆ・/admin/hotels/[id]                              154 B           148 kB
+笏・笳・/admin/hotels/masters                           3.95 kB         145 kB
+笏・笳・/admin/hotels/new                               154 B           148 kB
+笏・笳・/admin/interview-reservations                   9.14 kB         144 kB
+笏・笳・/admin/intro-list                               8.25 kB        96.4 kB
+笏・笳・/admin/links-management                         7.2 kB          135 kB
+笏・笳・/admin/login                                    4.04 kB         132 kB
+笏・笳・/admin/media-management                         3.52 kB         100 kB
+笏・ﾆ・/admin/media-management/[id]                    151 B           143 kB
+笏・笳・/admin/media-management/new                     152 B           143 kB
+笏・笳・/admin/news-management                          20.2 kB         118 kB
+笏・笳・/admin/page-request                             258 kB          346 kB
+笏・ﾆ・/admin/price-management                         17.3 kB         145 kB
+笏・笳・/admin/recruit-management                       6.15 kB         262 kB
+笏・笳・/admin/reservations                             7.86 kB         111 kB
+笏・笳・/admin/store-top-management                     5.65 kB         286 kB
+笏・笳・/admin/stores                                   9.01 kB         144 kB
+笏・笳・/admin/stores/casts                             13.8 kB         172 kB
+笏・笳・/admin/stores/links                             6.93 kB         155 kB
+笏・笳・/age-check                                      13.4 kB         184 kB
+笏・ﾆ・/amolab                                         5.61 kB         155 kB
+笏・ﾆ・/amolab/[slug]                                  212 B           102 kB
+笏・笳・/amolab/jiten                                   1.93 kB         104 kB
+笏・ﾆ・/amolab/jiten/[slug]                            212 B           102 kB
+笏・ﾆ・/amolab/jiten/words/[slug]                      212 B           102 kB
+笏・ﾆ・/api/admin/debug-faq-update                     0 B                0 B
+笏・ﾆ・/api/admin/debug-footer-update                  0 B                0 B
+笏・ﾆ・/api/ai/generate-post                           0 B                0 B
+笏・ﾆ・/api/ai/get-posts                               0 B                0 B
+笏・笳・/api/ai/get-status                              0 B                0 B
+笏・ﾆ・/api/ai/save-post                               0 B                0 B
+笏・ﾆ・/api/cast/analyze-face                          0 B                0 B
+笏・ﾆ・/api/debug-db                                   0 B                0 B
+笏・笳・/api/debug/check-price                          0 B                0 B
+笏・ﾆ・/api/hotels/count                               0 B                0 B
+笏・笳・/api/set-age-cookie                             0 B                0 B
+笏・ﾆ・/api/upload                                     0 B                0 B
+笏・笳・/cast-list                                      1.28 kB         103 kB
+笏・笳・/cast/cast-dashboard                            45.2 kB         311 kB
+笏・笳・/cast/signup                                    2.99 kB         131 kB
+笏・ﾆ・/consent/[reservationId]                        5.68 kB         103 kB
+笏・ﾆ・/counseling/[reservationId]                     1.42 kB        95.3 kB
+笏・ﾆ・/ikeo                                           2.85 kB         113 kB
+笏・ﾆ・/ikeo/[slug]                                    212 B           102 kB
+笏・笳・/ikeo/diagnostic                                3.22 kB         100 kB
+笏・笳・/ikeo/recruit                                   212 B           102 kB
+笏・笳・/links                                          212 B           102 kB
+笏・笳・/login                                          3 kB            131 kB
+笏・ﾆ・/reflection/[reservationId]                     7.79 kB         149 kB
+笏・ﾆ・/review/[reservationId]                         4.56 kB         102 kB
+笏・笳・/robots.txt                                     0 B                0 B
+笏・ﾆ・/sitemap.xml                                    0 B                0 B
+笏・笳・/store/[slug]                                   13.3 kB         259 kB
+笏・  笏・/store/fukuoka
+笏・  笏・/store/yokohama
+笏・ﾆ・/store/[slug]/[cast]                            11.3 kB         161 kB
+笏・ﾆ・/store/[slug]/aaaa                              490 B           173 kB
+笏・ﾆ・/store/[slug]/Announcement-information/policy   7.17 kB        95.3 kB
+笏・ﾆ・/store/[slug]/Announcement-information/recruit  22.6 kB         111 kB
+笏・ﾆ・/store/[slug]/cast                              13.6 kB         150 kB
+笏・ﾆ・/store/[slug]/cast-list                         4.03 kB         213 kB
+笏・ﾆ・/store/[slug]/cast-list/search                  725 B           192 kB
+笏・ﾆ・/store/[slug]/cast/[cast]                       13 kB           226 kB
+笏・ﾆ・/store/[slug]/contact                           5.83 kB          94 kB
+笏・ﾆ・/store/[slug]/diary/cast/[castName]             6.29 kB         215 kB
+笏・ﾆ・/store/[slug]/diary/diary-list                  8.28 kB         172 kB
+笏・ﾆ・/store/[slug]/diary/post/[postId]               9.93 kB         229 kB
+笏・ﾆ・/store/[slug]/first-time                        608 B           143 kB
+笏・ﾆ・/store/[slug]/guide/guide                       9.73 kB         107 kB
+笏・ﾆ・/store/[slug]/hotel                             12.3 kB         135 kB
+笏・ﾆ・/store/[slug]/hotel/[area]                      1.24 kB         116 kB
+笏・ﾆ・/store/[slug]/hotel/[area]/[hotelId]            12.9 kB         168 kB
+笏・ﾆ・/store/[slug]/hotel/features                    5.17 kB         102 kB
+笏・ﾆ・/store/[slug]/hotel/features/[articleId]        5.68 kB         103 kB
+笏・ﾆ・/store/[slug]/hotel/search                      6.32 kB         121 kB
+笏・ﾆ・/store/[slug]/links                             184 B           105 kB
+笏・ﾆ・/store/[slug]/matching                          11.9 kB         208 kB
+笏・ﾆ・/store/[slug]/news                              4.54 kB         139 kB
+笏・ﾆ・/store/[slug]/news/[newsSlug]                   4.95 kB         142 kB
+笏・笳・/store/[slug]/price                             9.81 kB         138 kB
+笏・  笏・/store/fukuoka/price
+笏・  笏・/store/yokohama/price
+笏・ﾆ・/store/[slug]/recruit                           2.13 kB         194 kB
+笏・ﾆ・/store/[slug]/reservation                       9.32 kB         181 kB
+笏・ﾆ・/store/[slug]/reviews/reviews                   11.1 kB         185 kB
+笏・ﾆ・/store/[slug]/schedule/schedule                 5.47 kB         229 kB
+笏・ﾆ・/store/[slug]/videos/videos                     9.68 kB        97.8 kB
+笏・ﾆ・/survey/[reservationId]                         8.42 kB         149 kB
+笏・笳・/sweetstay                                      6.58 kB         232 kB
+笏・ﾆ・/sweetstay/area/[prefecture]                    1.52 kB        98.4 kB
+笏・ﾆ・/sweetstay/area/[prefecture]/[city]             1.52 kB        98.4 kB
+笏・ﾆ・/sweetstay/articles/[slug]                      211 B           102 kB
+笏・ﾆ・/sweetstay/hotel/[id]                           3.48 kB         144 kB
+笏・笳・/sweetstay/search                               1.67 kB         183 kB
+笏・笳・/test                                           3.64 kB        91.8 kB
+笏・笳・/test/reservation                               7.29 kB         105 kB
+笏・笳・/test10                                         2.62 kB         126 kB
+笏・笳・/test11                                         5.14 kB         152 kB
+笏・笳・/test12                                         3.38 kB         172 kB
+笏・ﾆ・/test13                                         16.7 kB         155 kB
+笏・笳・/test2                                          5.87 kB          94 kB
+笏・笳・/test3                                          6.36 kB        94.5 kB
+笏・笳・/test4                                          4.85 kB          93 kB
+笏・笳・/test5                                          10 kB           104 kB
+笏・笳・/test6                                          4.06 kB        92.2 kB
+笏・笳・/test7                                          165 B          88.3 kB
+笏・笳・/test8                                          2.23 kB         186 kB
+笏・笳・/test9                                          9.07 kB         136 kB
++ First Load JS shared by all                       88.1 kB
+  笏・chunks/2117-83851e1f32408126.js                 31.9 kB
+  笏・chunks/fd9d1056-5e1a0b60777ed652.js             53.6 kB
+  笏・other shared chunks (total)                     2.58 kB
+
+
+笳・ (Static)   prerendered as static content
+笳・ (SSG)      prerendered as static HTML (uses getStaticProps)
+ﾆ・ (Dynamic)  server-rendered on demand
+

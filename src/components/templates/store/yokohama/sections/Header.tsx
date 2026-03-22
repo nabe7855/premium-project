@@ -483,7 +483,10 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                   {/* Phone Section */}
                   <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
                     <div className="flex flex-col items-center">
-                      <div className="mb-4 flex items-center justify-center gap-2 text-[#D43D6F] sm:gap-4">
+                      <a
+                        href={`tel:${(store.contact?.phone || config.phoneNumber || '03-6356-3860').replace(/[^0-9]/g, '')}`}
+                        className="mb-4 flex items-center justify-center gap-2 text-[#D43D6F] transition-opacity hover:opacity-70 sm:gap-4"
+                      >
                         <div className="shrink-0 rounded-full bg-pink-50 p-2.5 ring-8 ring-pink-50/30 sm:p-3">
                           <svg
                             width="20"
@@ -502,7 +505,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                         <span className="whitespace-nowrap text-2xl font-black tabular-nums tracking-tighter sm:text-4xl">
                           {store.contact?.phone || config.phoneNumber || '03-6356-3860'}
                         </span>
-                      </div>
+                      </a>
                       <p className="text-sm font-bold text-gray-400">
                         受付時間: {config.receptionHours || '12:00〜23:00'}
                       </p>
