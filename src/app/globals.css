@@ -506,21 +506,24 @@ body {
 
 @keyframes strawberry-fill-screen {
   0% {
-    transform: translateY(100vh) rotate(-90deg);
+    transform: translate(-50%, -50%) translateY(100vh) rotate(-90deg);
     opacity: 0;
   }
   20% {
     opacity: 1;
   }
   100% {
-    transform: translateY(0) rotate(360deg);
+    transform: translate(-50%, -50%) translateY(0) rotate(360deg);
     opacity: 1;
   }
 }
 
 @keyframes strawberry-exit-up {
+  from {
+    transform: translate(-50%, -50%) translateY(0) rotate(360deg);
+  }
   to {
-    transform: translateY(-110vh) rotate(360deg);
+    transform: translate(-50%, -50%) translateY(-110vh) rotate(360deg);
     opacity: 0;
   }
 }
