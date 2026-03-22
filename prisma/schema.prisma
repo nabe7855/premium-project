@@ -217,6 +217,7 @@ model CastStoreMembership {
   store_id   String
   is_main    Boolean   @default(false)
   is_ichioshi Boolean   @default(false)
+  is_shop_account Boolean @default(false)
   priority   Int?
   start_date DateTime  @db.Date
   end_date   DateTime? @db.Date

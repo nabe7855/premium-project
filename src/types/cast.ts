@@ -159,6 +159,9 @@ export interface Cast {
   // ✅ 新人フラグ（status_master の「新人」で判定）
   isNewcomer?: boolean;
 
+  // ✅ 店舗アカウントフラグ
+  isShopAccount?: boolean;
+
   // ✅ 所属店舗（JOIN用）
   stores?: Store[];
 

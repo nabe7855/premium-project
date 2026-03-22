@@ -19,8 +19,10 @@ export type Page =
 export interface Cast {
   id: string;
   name: string;
+  slug?: string;
   storeIds: string[];
   storePriorities: Record<string, number>;
+  storeIsShopAccount?: Record<string, boolean>;
   storeIchioshi: Record<string, boolean>;
   status: '在籍中' | '離籍';
   storeStatuses: string[];

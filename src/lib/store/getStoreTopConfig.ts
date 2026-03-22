@@ -22,7 +22,6 @@ export async function getStoreTopConfig(storeSlug: string, options: { skipCasts?
     });
 
     if (!config) {
-      // 設定が見つからない場合はデフォルト値を返す(ディープコピー)
       return { success: true, config: JSON.parse(JSON.stringify(DEFAULT_STORE_TOP_CONFIG)) };
     }
 

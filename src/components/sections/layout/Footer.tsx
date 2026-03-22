@@ -4,12 +4,15 @@ import { getStoreContactData } from '@/actions/store-contact';
 import { Calendar, CreditCard, Heart, MessageCircle, Phone, Users, Home, Camera, Star } from 'lucide-react';
 import { useParams, usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+import { getIconByName } from '@/lib/utils/icons';
+import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
 
 interface FooterProps {
   className?: string;
+  hideBottomNav?: boolean;
 }
 
-const Footer: React.FC<FooterProps> = ({ className = '' }) => {
+const Footer: React.FC<FooterProps> = ({ className = '', hideBottomNav = false }) => {
   const params = useParams();
   const pathname = usePathname();
   const slug = params?.slug ?? '';
@@ -111,7 +114,7 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
 
   if (!isMounted) return null;
 
-  if (!isMounted || !isNavVisible || !isNavLoaded) return null;
+  if (!isMounted || !isNavVisible || !isNavLoaded || hideBottomNav) return null;
 
   const items = navItems.length > 0 ? navItems : [
     { id: 'home', label: 'ホーム', icon: Home, href: `/store/${slug}` },
@@ -162,8 +165,6 @@ const Footer: React.FC<FooterProps> = ({ className = '' }) => {
       <nav className="footer-nav__container">
         <ul ref={scrollRef} className="footer-nav__list scrollbar-hide">
           {items.map((item, idx) => {
-            const { getIconByName } = require('@/lib/utils/icons');
-            const { resolveStoreLink } = require('@/lib/utils/resolveStoreLink');
             const Icon = typeof item.icon === 'string' ? getIconByName(item.icon) : item.icon;
             
             // 電話アイコンの場合の自動補完

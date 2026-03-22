@@ -56,9 +56,19 @@ const StoreCastCard: React.FC<{
   currentStoreId: string;
   onAddTag: (castId: string, tag: UnifiedTag) => void;
   onRemoveTag: (castId: string, tag: UnifiedTag) => void;
-  onPriorityChange: (castId: string, priority: number) => void;
+  onPriorityChange: (cast_id: string, priority: number) => void;
+  onIsShopAccountChange: (cast_id: string, isShopAccount: boolean) => void;
   error?: string;
-}> = ({ cast, availableTags, currentStoreId, onAddTag, onRemoveTag, onPriorityChange, error }) => {
+}> = ({
+  cast,
+  availableTags,
+  currentStoreId,
+  onAddTag,
+  onRemoveTag,
+  onPriorityChange,
+  onIsShopAccountChange,
+  error,
+}) => {
   const currentTagNames = [...(cast.tags || []), ...(cast.storeStatuses || [])];
 
   const statusTags = availableTags.filter((t) => t.type === 'status');
@@ -85,22 +95,40 @@ const StoreCastCard: React.FC<{
           <p className="truncate text-[10px] italic text-brand-text-secondary opacity-70">
             {cast.catchphrase}
           </p>
-          <div className="mt-2 flex items-center space-x-2">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
-              表示順:
-            </span>
-            <input
-              type="number"
-              min="1"
-              value={cast.storePriorities?.[currentStoreId] || ''}
-              onChange={(e) => onPriorityChange(cast.id, parseInt(e.target.value) || 0)}
-              className={`w-14 rounded border ${
-                error ? 'border-red-500' : 'border-gray-700'
-              } bg-brand-primary p-1 text-center text-sm font-bold text-brand-accent transition-all focus:ring-1 focus:ring-brand-accent`}
-            />
+            <div className="mt-2 flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
+                  表示順:
+                </span>
+                <input
+                  type="number"
+                  min="1"
+                  value={cast.storePriorities?.[currentStoreId] || ''}
+                  onChange={(e) => onPriorityChange(cast.id, parseInt(e.target.value) || 0)}
+                  className={`w-14 rounded border ${
+                    error ? 'border-red-500' : 'border-gray-700'
+                  } bg-brand-primary p-1 text-center text-sm font-bold text-brand-accent transition-all focus:ring-1 focus:ring-brand-accent`}
+                />
+              </div>
+              <div className="flex items-center space-x-1.5">
+                <Checkbox
+                  id={`shop-account-${cast.id}`}
+                  checked={cast.storeIsShopAccount?.[currentStoreId] || false}
+                  onCheckedChange={(checked) =>
+                    onIsShopAccountChange(cast.id, checked === true)
+                  }
+                  className="h-3.5 w-3.5 border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
+                />
+                <Label
+                  htmlFor={`shop-account-${cast.id}`}
+                  className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary"
+                >
+                  店舗アカウント
+                </Label>
+              </div>
+            </div>
+            {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
           </div>
-          {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
-        </div>
       </div>
 
       <div className="mb-4 flex min-h-[40px] flex-wrap items-center gap-1.5 rounded-lg border border-white/5 bg-black/20 p-2">
@@ -369,6 +397,34 @@ export default function StoreCast() {
     }
   };
 
+  const handleIsShopAccountChange = async (castId: string, value: boolean) => {
+    // Update local state
+    setCasts((prev) =>
+      prev.map((c) =>
+        c.id === castId
+          ? {
+              ...c,
+              storeIsShopAccount: { ...c.storeIsShopAccount, [selectedStore]: value },
+            }
+          : c,
+      ),
+    );
+
+    try {
+      const { error } = await supabase
+        .from('cast_store_memberships')
+        .update({ is_shop_account: value })
+        .eq('cast_id', castId)
+        .eq('store_id', selectedStore);
+
+      if (error) {
+        console.error('Update is_shop_account error:', error);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   // Initial Load: Stores and Masters
   useEffect(() => {
     const loadInitialData = async () => {
@@ -440,6 +496,7 @@ export default function StoreCast() {
             `
             priority,
             is_ichioshi,
+            is_shop_account,
             cast:casts (
               id, name, main_image_url, catch_copy, is_active
             )
@@ -483,6 +540,7 @@ export default function StoreCast() {
             ...item.cast,
             priority: item.priority,
             is_ichioshi: item.is_ichioshi,
+            is_shop_account: item.is_shop_account,
           }))
           .filter((c: any) => c && c.is_active)
           .map((c: any) => {
@@ -510,6 +568,7 @@ export default function StoreCast() {
               managerComment: '',
               catchphrase: c.catch_copy || '',
               storeIchioshi: { [selectedStore]: c.is_ichioshi || false },
+              storeIsShopAccount: { [selectedStore]: c.is_shop_account || false },
               stats: {
                 designations: 0,
                 repeatRate: 0,
@@ -680,6 +739,7 @@ export default function StoreCast() {
               onAddTag={handleAddTagToCast}
               onRemoveTag={handleRemoveTagFromCast}
               onPriorityChange={handlePriorityChange}
+              onIsShopAccountChange={handleIsShopAccountChange}
               error={priorityErrors[cast.id]}
             />
           ))

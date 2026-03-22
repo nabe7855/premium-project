@@ -39,6 +39,7 @@ export const IconMap: Record<string, any> = {
   Calendar,
   MessageCircle,
   PhoneCall,
+  Phone: PhoneCall,
   CreditCard,
   Users,
   Heart,

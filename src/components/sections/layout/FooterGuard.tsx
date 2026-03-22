@@ -30,10 +30,14 @@ export default function FooterGuard({ children }: { children: React.ReactNode })
     hideFooterPrefixes.some((prefix) => pathname.startsWith(prefix)) ||
     isRecruitPage;
 
+  // 店舗ページ (/store/[slug]/...) では個別のテンプレートが固定ナビを出すため、
+  // グローバルフッターの固定ナビは非表示にする
+  const isStorePage = /^\/store\/[^/]+/.test(pathname);
+
   return (
     <>
       {children}
-      {!isHidden && <Footer />}
+      {!isHidden && <Footer hideBottomNav={isStorePage} />}
     </>
   );
 }

@@ -20,6 +20,7 @@ export interface TodayCast {
   start_datetime: string;
   end_datetime: string;
   isIchioshi: boolean;
+  isShopAccount: boolean;
 }
 
 // ✅ JSTの日付文字列 (YYYY-MM-DD) を取得
@@ -94,6 +95,7 @@ export async function getTodayCastsByStore(
         ),
         cast_store_memberships!inner (
           is_ichioshi,
+          is_shop_account,
           stores!inner ( slug )
         )
       )
@@ -143,6 +145,9 @@ export async function getTodayCastsByStore(
       isIchioshi: Array.isArray(cast.cast_store_memberships) 
         ? cast.cast_store_memberships.some((m: any) => m.stores.slug === storeSlug && m.is_ichioshi)
         : (cast.cast_store_memberships?.is_ichioshi || false),
+      isShopAccount: Array.isArray(cast.cast_store_memberships)
+        ? cast.cast_store_memberships.some((m: any) => m.stores.slug === storeSlug && m.is_shop_account)
+        : (cast.cast_store_memberships?.is_shop_account || false),
     };
 
     // 重複除去ロジック:
@@ -166,5 +171,10 @@ export async function getTodayCastsByStore(
     }
   });
 
-  return Array.from(castMap.values());
+  return Array.from(castMap.values()).sort((a, b) => {
+    // 1. 店舗アカウントを一番下に
+    if (a.isShopAccount && !b.isShopAccount) return 1;
+    if (!a.isShopAccount && b.isShopAccount) return -1;
+    return 0; // 他の順序は維持
+  });
 }

@@ -184,10 +184,18 @@ export function getRecommendedCasts(
   userLoveStyle: string,
   userFaceType?: string,
 ): ScoredCast[] {
-  const castsWithScore: ScoredCast[] = allCasts.map((cast) => ({
-    ...cast,
-    compatibilityScore: calculateCompatibilityScore(cast, userMBTI, userAnimal, userLoveStyle, userFaceType),
-  }));
+  const castsWithScore: ScoredCast[] = allCasts
+    .filter((cast) => !cast.isShopAccount)
+    .map((cast) => ({
+      ...cast,
+      compatibilityScore: calculateCompatibilityScore(
+        cast,
+        userMBTI,
+        userAnimal,
+        userLoveStyle,
+        userFaceType,
+      ),
+    }));
 
   return castsWithScore
     .sort((a, b) => b.compatibilityScore - a.compatibilityScore)

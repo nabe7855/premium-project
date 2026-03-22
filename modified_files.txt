@@ -1,0 +1,15 @@
+﻿build_output.txt
+prisma/schema.prisma
+src/components/admin/casts/CastManagement.tsx
+src/components/admin/pages/StoreCast.tsx
+src/components/sections/layout/Footer.tsx
+src/components/sections/layout/FooterGuard.tsx
+src/lib/getCastsByStore.ts
+src/lib/getTodayCastsByStore.ts
+src/lib/store/getStoreTopConfig.ts
+src/lib/store/storeTopConfig.ts
+src/lib/utils/icons.ts
+src/types/cast.ts
+src/types/dashboard.ts
+src/utils/compatibilityCalculator.ts
+tsc_errors.txt

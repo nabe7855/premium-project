@@ -7,6 +7,7 @@ export interface CastListMini {
   name: string;
   age?: number;
   isNewcomer: boolean;
+  isShopAccount: boolean;
   priority: number;
 }
 
@@ -18,6 +19,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     .select(
       `
       priority,
+      is_shop_account,
       stores!inner ( slug ),
       casts (
         id,
@@ -153,13 +155,22 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         latestTweet: tweetsMap[cast.id] ?? null,
         priority: item.priority ?? 0,
         isNewcomer,
+        isShopAccount: item.is_shop_account || false,
         rating, // ⭐ 平均評価
         reviewCount, // 💬 口コミ件数
       };
 
       return mapped;
     })
-    .filter((c: Cast | null): c is Cast => c !== null);
+    .filter((c: Cast | null): c is Cast => c !== null)
+    .sort((a, b) => {
+      // 1. 店舗アカウントを一番下に
+      if (a.isShopAccount && !b.isShopAccount) return 1;
+      if (!a.isShopAccount && b.isShopAccount) return -1;
+
+      // 2. それ以外は優先度（降順）
+      return (b.priority ?? 0) - (a.priority ?? 0);
+    });
 }
 
 // 🆕 予約フォーム専用の軽量版キャスト取得
@@ -169,6 +180,7 @@ export async function getCastListMini(storeSlug: string): Promise<CastListMini[]
     .select(
       `
       priority,
+      is_shop_account,
       stores!inner ( slug ),
       casts (
         id,
@@ -206,9 +218,17 @@ export async function getCastListMini(storeSlug: string): Promise<CastListMini[]
         name: cast.name,
         age: cast.age || undefined,
         isNewcomer,
+        isShopAccount: item.is_shop_account || false,
         priority: item.priority ?? 0,
       } as CastListMini;
     })
     .filter((c): c is CastListMini => c !== null)
-    .sort((a, b) => b.priority - a.priority);
+    .sort((a, b) => {
+      // 1. 店舗アカウントを一番下に
+      if ((a as any).isShopAccount && !(b as any).isShopAccount) return 1;
+      if (!(a as any).isShopAccount && (b as any).isShopAccount) return -1;
+
+      // 2. それ以外は優先度（降順）
+      return (b.priority ?? 0) - (a.priority ?? 0);
+    });
 }

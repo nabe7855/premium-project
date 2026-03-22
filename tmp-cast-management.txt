@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { deleteCastProfile } from '@/actions/cast-auth';
 import { supabase } from '@/lib/supabaseClient';
@@ -188,7 +188,7 @@ export default function CastManagement() {
         </button>
 
         {openCastId === cast.id && (
-          <div className="space-y-4 border-t border-gray-700 bg-gray-950/50 px-4 pb-4 pt-4 text-sm">
+          <div className="space-y-4 border-t border-gray-700 bg-gray-950/50 px-4 pb-4 text-sm">
             {/* 在籍ステータス */}
             <div>
               <label className="mb-1 block font-medium">在籍ステータス</label>
@@ -205,19 +205,7 @@ export default function CastManagement() {
                   }
                   className="h-4 w-4 accent-cyan-500"
                 />
-                <span>{cast.is_active ? '在籍中' : '離籍中'}</span>
-              </div>
-            </div>
-
-            {/* 店舗別設定 */}
-            <div>
-              <label className="mb-2 block font-medium text-cyan-200">店舗別設定</label>
-              <div className="space-y-2">
-                {cast.stores.length === 0 ? (
-                  <p className="text-[10px] text-gray-500 italic">所属店舗が設定されていません</p>
-                ) : (
-                  cast.stores.map((store) => (
-                    <div key={store.id} className="flex flex-col gap-2 rounded bg-gray-900/50 p-2 hover:bg-gray-800 transition-colors">
+                <span>{cast.is_active ? '在�                    <div key={store.id} className="flex flex-col gap-2 rounded bg-gray-900/50 p-2 hover:bg-gray-800">
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-2">
                           <input
@@ -265,24 +253,34 @@ export default function CastManagement() {
                         <span className="text-[10px] text-gray-400">店舗用アカウントとして運用（マッチング除外・一覧末尾）</span>
                       </label>
                     </div>
+          )
+                          }
+                          className="h-4 w-4 rounded border-gray-700 bg-gray-800 accent-pink-500"
+                        />
+                        <span className="text-xs">{store.name}</span>
+                      </div>
+                      <span className={`text-[10px] font-bold ${cast.storeIchioshi[store.id] ? 'text-pink-400' : 'text-gray-600'}`}>
+                        {cast.storeIchioshi[store.id] ? '🌟 イチ押し ON' : 'OFF'}
+                      </span>
+                    </label>
                   ))
                 )}
               </div>
             </div>
 
-            {/* 所属店舗変更 */}
+            {/* 所属店舗 */}
             <div>
-              <label className="mb-1 block font-medium">所属店舗の変更</label>
+              <label className="mb-1 block font-medium">所属店舗</label>
               <div className="flex flex-wrap gap-2">
                 {stores.map((store) => {
                   const checked = cast.stores.some((s) => s.id === store.id);
                   return (
                     <label
                       key={store.id}
-                      className={`cursor-pointer rounded border px-2 py-1 text-[10px] font-bold transition ${
+                      className={`cursor-pointer rounded border px-2 py-1 text-sm ${
                         checked
-                          ? 'border-cyan-400 bg-cyan-600/30 text-white shadow-[0_0_10px_rgba(34,211,238,0.2)]'
-                          : 'border-gray-700 bg-gray-800 text-gray-400 hover:bg-gray-700'
+                          ? 'border-cyan-400 bg-cyan-600 text-white'
+                          : 'border-gray-600 bg-gray-700 text-gray-300 hover:bg-gray-600'
                       }`}
                     >
                       <input
@@ -383,8 +381,13 @@ export default function CastManagement() {
                       })
                       .join('\n---\n');
 
-                    const prompt = `以下のキャスト「${cast.name}」に対するお客様の口コミデータを元に、この方の魅力や人気の理由を2〜3文で親しみやすく要約してください。\nユーザーページに「AIによる口コミ要約」として掲載します。\n\n口コミデータ:\n${reviewTexts}\n`;
-                    
+                    const prompt = `以下のキャスト「${cast.name}」に対するお客様の口コミデータを元に、この方の魅力や人気の理由を2〜3文で親しみやすく要約してください。
+ユーザーページに「AIによる口コミ要約」として掲載します。
+
+口コミデータ:
+${reviewTexts}
+`;
+                    // クリップボードにコピー
                     try {
                       await navigator.clipboard.writeText(prompt);
                       alert(
@@ -392,7 +395,8 @@ export default function CastManagement() {
                       );
                     } catch (err) {
                       console.error(err);
-                      alert('コピーに失敗しました。');
+                      console.log('Prompt:', prompt);
+                      alert('コピーに失敗しました。コンソールからプロンプトを確認してください。');
                     }
                   }}
                   className="rounded bg-purple-600 px-3 py-1 text-xs font-bold text-white hover:bg-purple-500"
