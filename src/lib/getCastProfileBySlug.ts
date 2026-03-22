@@ -8,11 +8,11 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   const decodedSlug = decodeURIComponent(slug);
   console.log('🔍 getCastProfileBySlug called with slug:', decodedSlug);
 
-  // 1. キャスト本体
-  const { data: cast, error: castError } = await supabase
-    .from('casts')
-    .select(
-      `
+  // UUID チェック
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
+
+  // UUID かどうかでクエリを分岐（UUIDじゃない文字列を id.eq に渡すとエラーになるため）
+  let query = supabase.from('casts').select(`
       id,
       name,
       slug,
@@ -30,10 +30,15 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       manager_comment,
       ai_summary,
       created_at
-    `,
-    )
-    .or(`slug.eq."${decodedSlug}",id.eq."${decodedSlug}"`)
-    .maybeSingle();
+    `);
+
+  if (isUUID) {
+    query = query.or(`slug.eq."${decodedSlug}",id.eq."${decodedSlug}"`);
+  } else {
+    query = query.eq('slug', decodedSlug);
+  }
+
+  const { data: cast, error: castError } = await query.maybeSingle();
 
   console.log('📦 cast data:', cast);
   console.log('❌ cast error:', castError);
