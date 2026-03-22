@@ -439,12 +439,18 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
         {store.template === 'fukuoka' ? (
           <>
             <FukuokaFooter config={config?.footer} />
-            <FukuokaMobileStickyButton />
+            <FukuokaMobileStickyButton 
+              config={config?.footer?.bottomNav} 
+              isVisible={config?.footer?.isBottomNavVisible} 
+            />
           </>
         ) : store.template === 'yokohama' ? (
           <>
             <YokohamaFooter config={config?.footer} />
-            <YokohamaMobileStickyButton />
+            <YokohamaMobileStickyButton 
+              config={config?.footer?.bottomNav} 
+              isVisible={config?.footer?.isBottomNavVisible} 
+            />
           </>
         ) : null}
       </div>

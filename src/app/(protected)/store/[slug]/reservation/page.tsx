@@ -3,6 +3,8 @@ import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer'
 import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
+import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sections/MobileStickyButton';
+import YokohamaMobileStickyButton from '@/components/templates/store/yokohama/sections/MobileStickyButton';
 import { getCastListMini } from '@/lib/getCastsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
@@ -50,6 +52,19 @@ export default async function ReservationPage({ params }: { params: { slug: stri
 
       {slug === 'yokohama' && <YokohamaFooter config={storeConfig?.footer} />}
       {slug === 'fukuoka' && <FukuokaFooter config={storeConfig?.footer} />}
+
+      {slug === 'fukuoka' && (
+        <FukuokaMobileStickyButton
+          config={storeConfig?.footer?.bottomNav}
+          isVisible={storeConfig?.footer?.isBottomNavVisible}
+        />
+      )}
+      {slug === 'yokohama' && (
+        <YokohamaMobileStickyButton
+          config={storeConfig?.footer?.bottomNav}
+          isVisible={storeConfig?.footer?.isBottomNavVisible}
+        />
+      )}
     </div>
   );
 }

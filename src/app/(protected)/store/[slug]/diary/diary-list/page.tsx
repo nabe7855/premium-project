@@ -2,6 +2,8 @@ import DiaryListContent from '@/components/sections/diary/DiaryListContent';
 import Header from '@/components/templates/store/fukuoka/sections/Header';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
+import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sections/MobileStickyButton';
+import YokohamaMobileStickyButton from '@/components/templates/store/yokohama/sections/MobileStickyButton';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 
@@ -32,6 +34,19 @@ export default async function DiaryListPage({ params }: { params: { slug: string
       {/* Footer */}
       {slug === 'yokohama' && topConfig?.footer && <YokohamaFooter config={topConfig.footer} />}
       {slug === 'fukuoka' && topConfig?.footer && <FukuokaFooter config={topConfig.footer} />}
+
+      {slug === 'fukuoka' && (
+        <FukuokaMobileStickyButton
+          config={topConfig?.footer?.bottomNav}
+          isVisible={topConfig?.footer?.isBottomNavVisible}
+        />
+      )}
+      {slug === 'yokohama' && (
+        <YokohamaMobileStickyButton
+          config={topConfig?.footer?.bottomNav}
+          isVisible={topConfig?.footer?.isBottomNavVisible}
+        />
+      )}
     </div>
   );
 }
