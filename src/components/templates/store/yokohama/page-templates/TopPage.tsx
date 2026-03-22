@@ -12,7 +12,6 @@ import SNSProfile from '@/components/templates/news/SNSProfile';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
-import MobileStickyButton from '../sections/MobileStickyButton';
 import NewcomerSection from '../sections/NewcomerSection';
 import PriceSection from '../sections/PriceSection';
 import QuickAccessMenu from '../sections/QuickAccessMenu';
@@ -131,10 +130,6 @@ export default function YokohamaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
-      />
-      <MobileStickyButton
-        config={config?.footer?.bottomNav}
-        isVisible={config?.footer?.isBottomNavVisible}
       />
     </div>
   );

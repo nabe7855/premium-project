@@ -3,6 +3,7 @@ import { prisma } from '@/lib/prisma';
 import { getStoreData } from '@/lib/store/store-data';
 import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
+import MobileStickyButton from '@/components/templates/store/common/MobileStickyButton';
 
 interface StoreLayoutProps {
   children: ReactNode;
@@ -62,5 +63,13 @@ export default async function StoreLayout({ children, params }: StoreLayoutProps
     notFound();
   }
 
-  return <StoreProvider store={store as any}>{children}</StoreProvider>;
+  return (
+    <StoreProvider store={store as any}>
+      {children}
+      <MobileStickyButton
+        config={topConfig?.footer?.bottomNav}
+        isVisible={topConfig?.footer?.isBottomNavVisible}
+      />
+    </StoreProvider>
+  );
 }

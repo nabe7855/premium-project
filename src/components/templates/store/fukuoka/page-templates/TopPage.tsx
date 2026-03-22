@@ -16,7 +16,6 @@ const ReviewSection = dynamic(() => import('@/components/sections/store/ReviewSe
 const FAQSection = dynamic(() => import('../sections/FAQSection'));
 const SNSProfile = dynamic(() => import('@/components/templates/news/SNSProfile'));
 const Footer = dynamic(() => import('../sections/Footer'));
-const MobileStickyButton = dynamic(() => import('../sections/MobileStickyButton'));
 
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
@@ -163,10 +162,6 @@ export default function FukuokaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
-      />
-      <MobileStickyButton
-        config={safeConfig?.footer?.bottomNav}
-        isVisible={safeConfig?.footer?.isBottomNavVisible}
       />
     </div>
   );
