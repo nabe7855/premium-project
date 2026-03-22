@@ -5,7 +5,8 @@ import { normalizeCast } from './normalizeCast';
 import { supabase } from './supabaseClient';
 
 export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
-  console.log('🔍 getCastProfileBySlug called with slug:', slug);
+  const decodedSlug = decodeURIComponent(slug);
+  console.log('🔍 getCastProfileBySlug called with slug:', decodedSlug);
 
   // 1. キャスト本体
   const { data: cast, error: castError } = await supabase
@@ -31,7 +32,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       created_at
     `,
     )
-    .or(`slug.eq.${slug},id.eq.${slug}`)
+    .or(`slug.eq."${decodedSlug}",id.eq."${decodedSlug}"`)
     .maybeSingle();
 
   console.log('📦 cast data:', cast);

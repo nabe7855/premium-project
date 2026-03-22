@@ -3,12 +3,14 @@ import { flavorTags, mockCasts, mockReviews } from '@/data/castdata';
 import { Cast } from '@/types/casts';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Clock, Filter, Heart, MessageCircle, Search, Star, User } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import BookingModal from './BookingModal';
 
 const CastList: React.FC = () => {
   const router = useRouter();
+  const params = useParams();
+  const storeSlug = params.slug as string;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
@@ -43,7 +45,7 @@ const CastList: React.FC = () => {
   };
 
   const handleCastSelect = (cast: Cast) => {
-    router.push(`/cast/${cast.id}`);
+    router.push(`/store/${storeSlug}/cast/${cast.id}`);
   };
 
   const handleBookingClick = (cast: Cast, e: React.MouseEvent) => {

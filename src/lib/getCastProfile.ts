@@ -37,7 +37,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       slug
     `,
     )
-    .or(`id.eq.${userId},user_id.eq.${userId}`)
+    .or(`id.eq."${userId}",user_id.eq."${userId}"`)
     .maybeSingle();
 
   if (castError || !cast) {

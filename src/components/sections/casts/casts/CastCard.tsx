@@ -73,11 +73,16 @@ const CastCard: React.FC<CastCardProps> = ({
 
   // ✅ 詳細ページへ遷移
   const handleNavigate = () => {
-    if (!storeSlug || !cast.slug) {
-      console.error('❌ storeSlug または slug が不足:', cast);
+    if (!storeSlug) {
+      console.error('❌ storeSlug が不足:', cast);
       return;
     }
-    router.push(`/store/${storeSlug}/cast/${cast.slug}`);
+    const identifier = cast.slug || cast.id;
+    if (!identifier) {
+      console.error('❌ slug または id が不足:', cast);
+      return;
+    }
+    router.push(`/store/${storeSlug}/cast/${identifier}`);
   };
 
   // 評価セクション
