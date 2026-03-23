@@ -2,7 +2,7 @@
 import { flavorTags, mockCasts, mockReviews } from '@/data/castdata';
 import { Cast } from '@/types/casts';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Clock, Filter, Heart, MessageCircle, Search, Star, User } from 'lucide-react';
+import { Clock, Filter, Heart, MessageCircle, Search, Star, User, ChevronLeft } from 'lucide-react';
 import { useParams, useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import BookingModal from './BookingModal';
@@ -13,14 +13,26 @@ const CastList: React.FC = () => {
   const storeSlug = params.slug as string;
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
+  const [selectedMbtis, setSelectedMbtis] = useState<string[]>([]);
+  const [selectedStrawberryTypes, setSelectedStrawberryTypes] = useState<string[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
   const [showFilters, setShowFilters] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [sortKey, setSortKey] = useState<'recommended' | 'reviews' | 'new' | 'age-asc' | 'age-desc'>('recommended');
   const [favorites, setFavorites] = useState<string[]>([]);
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedCastForBooking, setSelectedCastForBooking] = useState<Cast | null>(null);
 
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
+
   const filteredCasts = useMemo(() => {
-    return mockCasts.filter((cast) => {
+    const result = mockCasts.filter((cast) => {
       const matchesSearch =
         cast.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         cast.catchphrase.toLowerCase().includes(searchTerm.toLowerCase());
@@ -28,9 +40,29 @@ const CastList: React.FC = () => {
         selectedTags.length === 0 || selectedTags.some((tag) => cast.tags.includes(tag));
       const matchesAge = cast.age >= ageRange[0] && cast.age <= ageRange[1];
 
-      return matchesSearch && matchesTags && matchesAge;
+      // MBTI / Strawberry フィルターがあれば追加（mockデータにある場合に有効）
+      const matchesMbti = selectedMbtis.length === 0 || (cast as any).mbti && selectedMbtis.includes((cast as any).mbti);
+      const matchesStrawberry = selectedStrawberryTypes.length === 0 || (cast as any).strawberryType && selectedStrawberryTypes.includes((cast as any).strawberryType);
+
+      return matchesSearch && matchesTags && matchesAge && matchesMbti && matchesStrawberry;
     });
-  }, [searchTerm, selectedTags, ageRange]);
+
+    // ソート適用
+    return [...result].sort((a, b) => {
+      switch (sortKey) {
+        case 'reviews':
+          return (b.reviewCount || 0) - (a.reviewCount || 0);
+        case 'new':
+          return b.id.localeCompare(a.id);
+        case 'age-asc':
+          return a.age - b.age;
+        case 'age-desc':
+          return b.age - a.age;
+        default:
+          return 0; // おすすめ（モックデータの順序）
+      }
+    });
+  }, [searchTerm, selectedTags, selectedMbtis, selectedStrawberryTypes, ageRange, sortKey]);
 
   const toggleFavorite = (castId: string) => {
     setFavorites((prev) =>
@@ -67,92 +99,205 @@ const CastList: React.FC = () => {
           </p>
         </div>
 
-        {/* Search and Filter */}
-        <div className="mb-8">
-          <div className="mb-6 flex flex-col gap-4 lg:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-neutral-400" />
-              <input
-                type="text"
-                placeholder="キャスト名やキャッチフレーズで検索..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                aria-label="キャスト検索"
-              />
-            </div>
+        {/* Search and Filter Section (Redesigned) */}
+        <div className="mb-12 space-y-6">
+          {/* 1. Search Bar */}
+          <div className="relative group">
+            <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 transform text-neutral-400 transition-colors group-focus-within:text-primary" />
+            <input
+              type="text"
+              placeholder="キャスト名やキャッチフレーズで検索..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-full border border-neutral-200 bg-white py-4 pl-12 pr-6 text-sm font-bold shadow-sm transition-all focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10"
+              aria-label="キャスト検索"
+            />
+          </div>
 
+          {/* 2. Sort Tabs */}
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="mr-2 text-xs font-bold text-neutral-400">並び替え：</span>
+            {[
+              { id: 'recommended', label: 'おすすめ順', icon: Star },
+              { id: 'reviews', label: '口コミ数順', icon: MessageCircle },
+              { id: 'new', label: '新人順', icon: Clock },
+            ].map(item => (
+              <button
+                key={item.id}
+                onClick={() => setSortKey(item.id as any)}
+                className={`flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-all ${
+                  sortKey === item.id
+                    ? 'bg-rose-500 text-white shadow-md'
+                    : 'bg-white text-neutral-600 border border-neutral-200 hover:bg-neutral-50'
+                }`}
+              >
+                <item.icon className={`h-3 w-3 ${sortKey === item.id && item.id === 'recommended' ? 'fill-current' : ''}`} />
+                {item.label}
+              </button>
+            ))}
+          </div>
+
+          {/* 3. Filter Toggle Button */}
+          <div className="pt-2">
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 transition-all duration-200 hover:bg-neutral-50"
+              className={`flex w-full items-center justify-center gap-3 rounded-xl border-2 py-4 text-sm font-black transition-all duration-300 ${
+                showFilters
+                  ? 'border-rose-500 bg-rose-500 text-white shadow-lg'
+                  : 'border-rose-100 bg-white text-slate-700 shadow-sm hover:border-rose-300 hover:shadow-md'
+              }`}
               aria-expanded={showFilters}
-              aria-controls="filter-panel"
             >
-              <Filter className="mr-2 h-5 w-5" />
-              <span>▼ こだわり検索で探す</span>
+              <div className="flex items-center gap-2">
+                 <Filter className="h-4 w-4" />
+                 {showFilters ? 'こだわり検索をしまう' : 'こだわり検索で探す'}
+              </div>
             </button>
           </div>
 
-          {/* Filter Panel */}
+          {/* 4. Filter Panel (Accordion Categories) */}
           <AnimatePresence mode="wait">
             {showFilters && (
               <motion.div
                 id="filter-panel"
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.3 }}
-                className="rounded-2xl border border-neutral-200 bg-white p-6 shadow-soft"
+                className="overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-xl"
               >
-                <div className="space-y-6">
-                  {/* Age Range */}
-                  <div>
-                    <label className="mb-3 block text-sm font-medium text-neutral-700">
-                      年齢範囲: {ageRange[0]}歳 - {ageRange[1]}歳
-                    </label>
-                    <div className="flex items-center space-x-4">
-                      <input
-                        type="range"
-                        min="20"
-                        max="50"
-                        value={ageRange[0]}
-                        onChange={(e) => setAgeRange([parseInt(e.target.value), ageRange[1]])}
-                        className="flex-1"
-                      />
-                      <input
-                        type="range"
-                        min="20"
-                        max="50"
-                        value={ageRange[1]}
-                        onChange={(e) => setAgeRange([ageRange[0], parseInt(e.target.value)])}
-                        className="flex-1"
-                      />
-                    </div>
+                <div className="divide-y divide-neutral-100">
+                  {/* Category: Age Range */}
+                  <div className="p-4">
+                    <button 
+                      onClick={() => toggleCategory('age')}
+                      className="flex w-full items-center justify-between"
+                    >
+                      <span className="text-sm font-black text-neutral-700">年齢範囲</span>
+                      <span className="text-xs text-primary font-bold">{ageRange[0]}歳 - {ageRange[1]}歳</span>
+                    </button>
+                    {expandedCategories.includes('age') && (
+                      <div className="mt-4 px-2 animate-in fade-in slide-in-from-top-1">
+                        <div className="flex items-center space-x-4">
+                          <input
+                            type="range"
+                            min="20"
+                            max="50"
+                            value={ageRange[0]}
+                            onChange={(e) => setAgeRange([parseInt(e.target.value), ageRange[1]])}
+                            className="flex-1 accent-primary"
+                          />
+                          <input
+                            type="range"
+                            min="20"
+                            max="50"
+                            value={ageRange[1]}
+                            onChange={(e) => setAgeRange([ageRange[0], parseInt(e.target.value)])}
+                            className="flex-1 accent-primary"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
 
-                  {/* Flavor Tags */}
-                  <div>
-                    <label className="mb-3 block text-sm font-medium text-neutral-700">
-                      フレーバータグ
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {flavorTags.map((tag) => (
-                        <button
-                          key={tag}
-                          onClick={() => toggleTag(tag)}
-                          className={`rounded-full px-4 py-2 text-sm font-medium transition-all duration-200 ${
-                            selectedTags.includes(tag)
-                              ? 'bg-primary text-white shadow-md'
-                              : 'bg-neutral-100 text-neutral-700 hover:bg-neutral-200'
-                          }`}
-                          role="button"
-                          aria-pressed={selectedTags.includes(tag)}
-                        >
-                          #{tag}
-                        </button>
-                      ))}
-                    </div>
+                  {/* Category: MBTI */}
+                  <div className="p-4">
+                    <button 
+                      onClick={() => toggleCategory('mbti')}
+                      className="flex w-full items-center justify-between"
+                    >
+                      <span className="text-sm font-black text-neutral-700">MBTI診断結果</span>
+                      <ChevronLeft className={`h-4 w-4 transition-transform ${expandedCategories.includes('mbti') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('mbti') && (
+                      <div className="mt-4 grid grid-cols-4 gap-2 animate-in fade-in slide-in-from-top-1">
+                        {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedMbtis(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type])}
+                            className={`rounded-lg border py-2 text-[10px] font-bold transition-all ${
+                              selectedMbtis.includes(type)
+                                ? 'bg-primary text-white border-primary shadow-sm'
+                                : 'bg-neutral-50 text-neutral-500 border-neutral-100 hover:bg-neutral-100'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </div>
+
+                  {/* Category: Strawberry Type */}
+                  <div className="p-4">
+                    <button 
+                      onClick={() => toggleCategory('strawberry')}
+                      className="flex w-full items-center justify-between"
+                    >
+                      <span className="text-sm font-black text-neutral-700">イチゴ系タイプ</span>
+                      <ChevronLeft className={`h-4 w-4 transition-transform ${expandedCategories.includes('strawberry') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('strawberry') && (
+                      <div className="mt-4 flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-1">
+                        {['フレッシュ', 'スイート', 'ワイルド', 'ビター'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedStrawberryTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type])}
+                            className={`rounded-full border px-4 py-2 text-xs font-bold transition-all ${
+                              selectedStrawberryTypes.includes(type)
+                                ? 'bg-primary text-white border-primary shadow-sm'
+                                : 'bg-neutral-50 text-neutral-500 border-neutral-100 hover:bg-neutral-100'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Category: Flavor Tags */}
+                  <div className="p-4">
+                    <button 
+                      onClick={() => toggleCategory('tags')}
+                      className="flex w-full items-center justify-between"
+                    >
+                      <span className="text-sm font-black text-neutral-700">フレーバータグ</span>
+                      <ChevronLeft className={`h-4 w-4 transition-transform ${expandedCategories.includes('tags') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('tags') && (
+                      <div className="mt-4 flex flex-wrap gap-2 animate-in fade-in slide-in-from-top-1">
+                        {flavorTags.map((tag) => (
+                          <button
+                            key={tag}
+                            onClick={() => toggleTag(tag)}
+                            className={`rounded-full border px-4 py-2 text-[11px] font-bold transition-all ${
+                              selectedTags.includes(tag)
+                                ? 'bg-primary text-white border-primary shadow-sm'
+                                : 'bg-neutral-50 text-neutral-500 border-neutral-100 hover:bg-neutral-100'
+                            }`}
+                          >
+                            #{tag}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                <div className="bg-neutral-50 p-4 flex justify-between items-center text-xs">
+                  <span className="font-bold text-neutral-400">こだわり検索：全項目から絞り込みます</span>
+                  <button 
+                    onClick={() => {
+                        setSelectedTags([]);
+                        setSelectedMbtis([]);
+                        setSelectedStrawberryTypes([]);
+                        setAgeRange([20, 50]);
+                    }}
+                    className="flex items-center gap-1 text-primary font-black hover:underline"
+                  >
+                    <Star className="h-3 w-3" /> 各項目をリセット
+                  </button>
                 </div>
               </motion.div>
             )}
@@ -201,6 +346,8 @@ const CastList: React.FC = () => {
               onClick={() => {
                 setSearchTerm('');
                 setSelectedTags([]);
+                setSelectedMbtis([]);
+                setSelectedStrawberryTypes([]);
                 setAgeRange([20, 50]);
               }}
               className="rounded-full bg-primary px-6 py-2 text-white transition-colors duration-200 hover:bg-primary/90"
