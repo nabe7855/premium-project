@@ -1,10 +1,10 @@
 'use client'
 
 import React from 'react'
-import { ArrowUpDown, Star, Clock, TrendingUp } from 'lucide-react'
+import { ArrowUpDown, Star, Clock, TrendingUp, MessageSquare, BookOpen } from 'lucide-react'
 
 // ✅ 型を統一
-export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'
+export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable' | 'tweetOrder' | 'diaryOrder'
 
 interface SortOptionsProps {
   sortBy: SortOption
@@ -15,6 +15,8 @@ const SortOptions: React.FC<SortOptionsProps> = ({ sortBy, onSortChange }) => {
   // ✅ value の型を SortOption にする
   const sortOptions: { value: SortOption; label: string; icon: React.FC<any> }[] = [
     { value: 'default', label: 'おすすめ順', icon: Star },
+    { value: 'tweetOrder', label: 'つぶやき順', icon: MessageSquare },
+    { value: 'diaryOrder', label: '日記最新順', icon: BookOpen },
     { value: 'reviewCount', label: '口コミ数順', icon: TrendingUp },
     { value: 'newcomerOnly', label: '新人のみ', icon: Clock },
     { value: 'todayAvailable', label: '本日出勤', icon: Clock },

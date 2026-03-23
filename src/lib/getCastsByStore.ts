@@ -69,7 +69,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     .filter((id: string | undefined): id is string => !!id);
 
   // 🆕 各キャストの最新つぶやきを取得
-  let tweetsMap: Record<string, string> = {};
+  let tweetsMap: Record<string, { content: string; createdAt: string }> = {};
   if (castIds.length > 0) {
     const { data: tweets, error: tweetError } = await supabase
       .from('cast_tweets')
@@ -83,7 +83,28 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     } else if (tweets) {
       for (const t of tweets) {
         if (!tweetsMap[t.cast_id]) {
-          tweetsMap[t.cast_id] = t.content;
+          tweetsMap[t.cast_id] = { content: t.content, createdAt: t.created_at };
+        }
+      }
+    }
+  }
+
+  // 🆕 各キャストの最新日記投稿時間を取得
+  let diariesMap: Record<string, string> = {};
+  if (castIds.length > 0) {
+    const { data: diaries, error: diaryError } = await supabase
+      .from('cast_diaries')
+      .select('cast_id, published_at')
+      .in('cast_id', castIds)
+      .eq('status', 'published')
+      .order('published_at', { ascending: false });
+
+    if (diaryError) {
+      console.error('❌ 日記取得エラー:', diaryError.message);
+    } else if (diaries) {
+      for (const d of diaries) {
+        if (!diariesMap[d.cast_id]) {
+          diariesMap[d.cast_id] = d.published_at;
         }
       }
     }
@@ -152,7 +173,9 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         sexinessLevel: (cast.sexiness_level ?? 3) * 20,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
         voiceUrl: urlData?.publicUrl ?? undefined,
-        latestTweet: tweetsMap[cast.id] ?? null,
+        latestTweet: tweetsMap[cast.id]?.content ?? null,
+        latestTweetAt: tweetsMap[cast.id]?.createdAt ?? null,
+        latestDiaryAt: diariesMap[cast.id] ?? null,
         priority: item.priority ?? 0,
         isNewcomer,
         isShopAccount: item.is_shop_account || false,

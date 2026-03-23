@@ -25,9 +25,15 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [ageRange, setAgeRange] = useState<[number, number]>([20, 50]);
-  const [sortBy, setSortBy] = useState<'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable'>(
-    ['default', 'reviewCount', 'newcomerOnly', 'todayAvailable'].includes(initialSort) ? initialSort : 'default'
-  );
+  const [sortBy, setSortBy] = useState<
+    | 'default'
+    | 'reviewCount'
+    | 'newcomerOnly'
+    | 'todayAvailable'
+    | 'tweetOrder'
+    | 'diaryOrder'
+  >(['default', 'reviewCount', 'newcomerOnly', 'todayAvailable', 'tweetOrder', 'diaryOrder'].includes(initialSort) ? initialSort : 'default');
+
   const [selectedMBTI, setSelectedMBTI] = useState<string | null>(null);
   const [selectedFaceTypes, setSelectedFaceTypes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
@@ -107,6 +113,23 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
       case 'default': // おすすめ順 (priority大きい順)
         result = [...result].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
         break;
+
+      case 'tweetOrder': // つぶやき最新順
+        result = [...result].sort((a, b) => {
+          const timeA = a.latestTweetAt ? new Date(a.latestTweetAt).getTime() : 0;
+          const timeB = b.latestTweetAt ? new Date(b.latestTweetAt).getTime() : 0;
+          return timeB - timeA;
+        });
+        break;
+
+      case 'diaryOrder': // 日記最新順
+        result = [...result].sort((a, b) => {
+          const timeA = a.latestDiaryAt ? new Date(a.latestDiaryAt).getTime() : 0;
+          const timeB = b.latestDiaryAt ? new Date(b.latestDiaryAt).getTime() : 0;
+          return timeB - timeA;
+        });
+        break;
+
 
       case 'reviewCount': // 口コミ数順
         result = [...result].sort((a, b) => (b.reviewCount ?? 0) - (a.reviewCount ?? 0));

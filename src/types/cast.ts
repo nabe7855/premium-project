@@ -61,7 +61,14 @@ export interface CastStatus {
 // ==============================
 export type ServiceLevel = 'NG' | '要相談' | '普通' | '得意';
 
-export type SortOption = 'default' | 'reviewCount' | 'newcomerOnly' | 'todayAvailable';
+export type SortOption =
+  | 'default'
+  | 'reviewCount'
+  | 'newcomerOnly'
+  | 'todayAvailable'
+  | 'tweetOrder'
+  | 'diaryOrder';
+
 
 export interface Cast {
   id: string; // uuid
@@ -169,6 +176,8 @@ export interface Cast {
   latestTweet?: string | null;
 
   // 🆕 Q&A一覧
+  latestTweetAt?: string | null;
+  latestDiaryAt?: string | null;
   castQuestions?: CastQuestion[];
 }
 
