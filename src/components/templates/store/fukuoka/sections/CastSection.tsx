@@ -269,10 +269,15 @@ const CastSection: React.FC<CastSectionProps> = ({
                 {ichioshiCasts.map((cast) => (
                   <div key={`ichioshi-${cast.id}`} className="relative min-w-[240px] flex-[0_0_240px] md:min-w-[300px] md:flex-[0_0_300px]">
                     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft transition-all duration-500 hover:shadow-luxury">
+                      {/* カード全体を覆うリンク */}
                       <Link
                         href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`}
-                        className="block h-full w-full"
-                      >
+                        className="absolute inset-0 z-10"
+                        aria-label={`${cast.name}の詳細を見る`}
+                      />
+                      
+                      {/* 表示用コンテンツ */}
+                      <div className="relative h-full w-full">
                         {/* 画像エリア - 既存デザイン流用 */}
                         <div className="relative aspect-[3/4] overflow-hidden">
                           <NextImage
@@ -315,7 +320,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                             </div>
                           </div>
                         </div>
-                      </Link>
+                      </div>
                     </div>
                   </div>
                 ))}
