@@ -22,6 +22,8 @@ export interface TodayCast {
   end_datetime: string;
   isIchioshi: boolean;
   isShopAccount: boolean;
+  ichioshiPoint?: string;
+  ichioshiRank?: number;
 }
 
 // ✅ JSTの日付文字列 (YYYY-MM-DD) を取得
@@ -97,7 +99,7 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
         cast_store_memberships!inner (
           is_ichioshi,
           is_shop_account,
-          stores!inner ( slug )
+          stores!inner ( slug, id )
         )
       )
     `,
@@ -110,6 +112,24 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
     return [];
   }
 
+  // 🆕 店舗IDの取得（1件目から抽出）
+  const storeId = (data?.[0]?.casts as any)?.cast_store_memberships?.find((m: any) => m.stores.slug === storeSlug)?.stores.id;
+  
+  // 🆕 店舗設定からイチ押し情報を取得
+  let ichioshiMap: Record<string, { point: string; rank: number }> = {};
+  if (storeId) {
+     const { data: configRes } = await supabase
+       .from('store_top_configs')
+       .select('config')
+       .eq('store_id', storeId)
+       .single();
+     
+     const items = (configRes?.config as any)?.cast?.items || [];
+     items.forEach((item: any) => {
+       if (item.id) ichioshiMap[item.id] = { point: item.ichioshiPoint || '', rank: item.ichioshiRank || 1 };
+     });
+  }
+
   const castMap = new Map<string, TodayCast>();
 
   (data || []).forEach((item: any) => {
@@ -117,10 +137,7 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
     if (!cast || !cast.is_active) return;
     
     const castId = cast.id;
-    const nameKey = cast.name; // 名前での重複もチェック対象とする
-
-    const mainImg = getSupabasePublicUrl(cast.main_image_url);
-    const fallbackImg = getSupabasePublicUrl(cast.image_url);
+    const ichioshiInfo = ichioshiMap[castId];
 
     const mapped: TodayCast = {
       id: castId,
@@ -129,8 +146,8 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
       age: cast.age,
       height: cast.height,
       catch_copy: cast.catch_copy,
-      main_image_url: mainImg,
-      image_url: fallbackImg,
+      main_image_url: getSupabasePublicUrl(cast.main_image_url),
+      image_url: getSupabasePublicUrl(cast.image_url),
       tags: (cast.cast_statuses || [])
         .filter((cs: any) => cs.is_active)
         .map((cs: any) => cs.status_master?.name)
@@ -149,26 +166,21 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
       isShopAccount: Array.isArray(cast.cast_store_memberships)
         ? cast.cast_store_memberships.some((m: any) => m.stores.slug === storeSlug && m.is_shop_account)
         : (cast.cast_store_memberships?.is_shop_account || false),
+      ichioshiPoint: ichioshiInfo?.point,
+      ichioshiRank: ichioshiInfo?.rank,
     };
 
-    // 重複除去ロジック:
-    // 1. 同一 ID の場合は先に出現したものを優先
-    // 2. 同名の場合は、データが充実している方（画像がある、年齢がある等）を優先して残す
+    // 重複除去ロジック...
     const existing = Array.from(castMap.values()).find(c => c.name === mapped.name);
-    
     if (existing) {
-      // 既存の方がデータが薄く、新規の方が画像があるなら差し替える
       const existingScore = (existing.main_image_url ? 2 : 0) + (existing.age ? 1 : 0);
       const newScore = (mapped.main_image_url ? 2 : 0) + (mapped.age ? 1 : 0);
-      
       if (newScore > existingScore) {
         castMap.delete(existing.id);
         castMap.set(mapped.id, mapped);
       }
-    } else {
-      if (!castMap.has(mapped.id)) {
-        castMap.set(mapped.id, mapped);
-      }
+    } else if (!castMap.has(mapped.id)) {
+      castMap.set(mapped.id, mapped);
     }
   });
 
@@ -176,6 +188,15 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
     // 1. 店舗アカウントを一番下に
     if (a.isShopAccount && !b.isShopAccount) return 1;
     if (!a.isShopAccount && b.isShopAccount) return -1;
-    return 0; // 他の順序は維持
+    
+    // 🆕 2. イチ押しを優先（ランク順かつランダム性を考慮した順）
+    // とりあえずランク降順
+    if (a.isIchioshi && !b.isIchioshi) return -1;
+    if (!a.isIchioshi && b.isIchioshi) return 1;
+    if (a.isIchioshi && b.isIchioshi) {
+       return (b.ichioshiRank || 0) - (a.ichioshiRank || 0);
+    }
+    
+    return 0;
   });
 });

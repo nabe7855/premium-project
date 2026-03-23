@@ -488,8 +488,8 @@ export default function StoreCast() {
           ? {
               ...c,
               storeIchioshi: { ...c.storeIchioshi, [selectedStore]: value },
-              storeIchioshiPoint: { ...c.storeIchioshiPoint, [selectedStore]: point || '' },
-              storeIchioshiRank: { ...c.storeIchioshiRank, [selectedStore]: rank || 1 },
+              storeIchioshiPoint: { ...c.storeIchioshiPoint, [selectedStore]: point ?? c.storeIchioshiPoint?.[selectedStore] ?? '' },
+              storeIchioshiRank: { ...c.storeIchioshiRank, [selectedStore]: rank ?? c.storeIchioshiRank?.[selectedStore] ?? 1 },
             }
           : c,
       ),
@@ -504,29 +504,43 @@ export default function StoreCast() {
         .eq('store_id', selectedStore);
 
       // 3. Update StoreTopConfig (JSON for point/rank details)
-      // fetch current config
       const { data: configData } = await supabase
         .from('store_top_configs')
         .select('config')
         .eq('store_id', selectedStore)
         .single();
 
-      if (configData) {
-        const config = configData.config as any;
-        if (config.cast?.items) {
-          const castIdx = config.cast.items.findIndex((item: any) => item.id === castId);
-          if (castIdx !== -1) {
-            config.cast.items[castIdx].isIchioshi = value;
-            config.cast.items[castIdx].ichioshiPoint = point;
-            config.cast.items[castIdx].ichioshiRank = rank;
-            
-            await supabase
-              .from('store_top_configs')
-              .update({ config })
-              .eq('store_id', selectedStore);
-          }
-        }
+      let config = (configData?.config as any) || { cast: { items: [] } };
+      if (!config.cast) config.cast = { items: [] };
+      if (!config.cast.items) config.cast.items = [];
+
+      const castIdx = config.cast.items.findIndex((item: any) => item.id === castId);
+      
+      const foundCast = casts.find(c => c.id === castId);
+      const newPoint = point ?? foundCast?.storeIchioshiPoint?.[selectedStore] ?? '';
+      const newRank = rank ?? foundCast?.storeIchioshiRank?.[selectedStore] ?? 1;
+
+      if (castIdx !== -1) {
+        // Update existing entry
+        config.cast.items[castIdx].isIchioshi = value;
+        config.cast.items[castIdx].ichioshiPoint = newPoint;
+        config.cast.items[castIdx].ichioshiRank = newRank;
+      } else {
+        // Add new entry
+        config.cast.items.push({
+          id: castId,
+          isIchioshi: value,
+          ichioshiPoint: newPoint,
+          ichioshiRank: newRank
+        });
       }
+      
+      const { error: updateError } = await supabase
+        .from('store_top_configs')
+        .update({ config })
+        .eq('store_id', selectedStore);
+
+      if (updateError) throw updateError;
     } catch (err) {
       console.error('Update ichioshi error:', err);
     }
