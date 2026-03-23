@@ -73,6 +73,14 @@ export default function FukuokaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
+        sectionName="beginnerGuide"
+      />
+      <BeginnerGuideBanner
+        config={safeConfig?.beginnerGuide2}
+        isEditing={isEditing}
+        onUpdate={onUpdate}
+        onImageUpload={onImageUpload}
+        sectionName="beginnerGuide2"
       />
       {(!safeConfig || safeConfig.quickAccess.isVisible || isEditing) && (
         <QuickAccessMenu

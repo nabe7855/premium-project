@@ -11,6 +11,7 @@ interface BeginnerGuideBannerProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  sectionName?: string;
 }
 
 const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
@@ -18,6 +19,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
   isEditing,
   onUpdate,
   onImageUpload,
+  sectionName = 'beginnerGuide',
 }) => {
   const params = useParams();
   const slug = params?.slug as string;
@@ -28,7 +30,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
   const finalLink = config.link.replace('{slug}', slug || '');
 
   return (
-    <section id="beginnerGuide" className="relative z-30 w-full bg-white px-2 py-3">
+    <section id={sectionName} className="relative z-30 w-full bg-white px-2 py-3">
       <div className="group/section relative mx-auto max-w-7xl">
         <Link
           href={isEditing ? '#' : finalLink}
@@ -67,7 +69,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
                   input.onchange = (e) => {
                     const file = (e.target as HTMLInputElement).files?.[0];
                     if (file && onImageUpload) {
-                      onImageUpload('beginnerGuide', file, undefined, 'imageUrl');
+                      onImageUpload(sectionName, file, undefined, 'imageUrl');
                     }
                   };
                   input.click();
@@ -86,7 +88,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
             <input
               type="text"
               value={config.link}
-              onChange={(e) => onUpdate?.('beginnerGuide', 'link', e.target.value)}
+              onChange={(e) => onUpdate?.(sectionName, 'link', e.target.value)}
               className="w-48 rounded bg-white/10 px-2 py-1 text-xs text-white"
               placeholder="/store/{slug}/first-time"
             />

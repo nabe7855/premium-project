@@ -283,6 +283,7 @@ export interface StoreTopPageConfig {
   faq: FAQConfig;
   quickAccess: QuickAccessConfig;
   beginnerGuide: BeginnerGuideConfig;
+  beginnerGuide2?: BeginnerGuideConfig;
   footer: FooterConfig;
   snsProfile?: SNSProfileConfig;
   recommendedNewsIds?: string[];
@@ -903,6 +904,11 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     imageUrl: '/女性用風俗初体験の方はこちら.png',
     link: '/store/{slug}/first-time',
     isVisible: true,
+  },
+  beginnerGuide2: {
+    imageUrl: '/初めてのお客様へバナー.png',
+    link: '/store/{slug}/first-time',
+    isVisible: false,
   },
   recommendedNewsIds: [],
 };
