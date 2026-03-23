@@ -28,8 +28,8 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
   const pathname = usePathname();
   const router = useRouter();
 
-  const match = pathname.match(/^\/store\/([^/]+)/);
-  const currentStoreId = (match?.[1] ?? '') as string;
+  // URLパースより確実なContext内のstore情報を使用
+  const currentStoreId = store.slug || 'fukuoka';
 
   useEffect(() => {
     const handleScroll = () => setScrollY(window.scrollY);

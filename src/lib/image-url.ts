@@ -8,8 +8,23 @@ export function getSupabasePublicUrl(path: string | null | undefined, slug?: str
     processedPath = processedPath.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
   }
 
-  if (processedPath.startsWith('http')) return processedPath;
-  if (processedPath.startsWith('/')) return processedPath;
+  if (processedPath.startsWith('http')) {
+    return processedPath;
+  }
+
+  // '/images/' で始まる、または特定の静的ファイル名の場合はローカル資産とみなす
+  // それ以外で、バケット名が含まれているか、拡張子のみの場合は Supabase とみなす
+  const isLocalStatic = processedPath.startsWith('/') && (
+    processedPath.startsWith('/images/') || 
+    processedPath.startsWith('/animations/') ||
+    processedPath.startsWith('/loading/') ||
+    processedPath.startsWith('/maps/') ||
+    !processedPath.includes('gallery/') // gallery バケットを含まないスラッシュ開始パスはローカルとみなす
+  );
+
+  if (isLocalStatic) {
+    return processedPath;
+  }
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!supabaseUrl) {
@@ -57,6 +72,12 @@ export function getTransformedImageUrl(
   if (!originalUrl) return undefined;
   if (!originalUrl.includes('/storage/v1/object/public/')) return originalUrl;
 
+  // 日本語を含むパスの場合、SupabaseのTransformation API（render/image）で画像が壊れる可能性があるため
+  // マルチバイト文字が含まれる場合は加工せず、オリジナルURLをそのまま返すフォールバックを追加
+  if (/[^\x00-\x7F]/.test(path || '')) {
+    return originalUrl;
+  }
+
   const {
     width,
     height,
@@ -78,9 +99,8 @@ export function getTransformedImageUrl(
 
   const finalUrl = `${transformUrl}?${params.toString()}`;
 
-  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
-    console.log(`[ImageTransform] ${width}x${height} (${format}): ${finalUrl}`);
-  }
+  // 常にログを出力してデバッグしやすくする
+  console.log(`[ImageTransform] In: "${path}" | Slug: "${options.slug}" | Out: "${finalUrl}"`);
 
   return finalUrl;
 }
