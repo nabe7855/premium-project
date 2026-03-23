@@ -65,8 +65,22 @@ const CastSection: React.FC<CastSectionProps> = ({
   const [fetchedCasts, setFetchedCasts] = useState<CastItem[]>(initialCasts);
   const [isLoading, setIsLoading] = useState(!todayCasts);
   const [sortKey, setSortKey] = useState<
-    'default' | 'age-asc' | 'age-desc' | 'height-asc' | 'height-desc' | 'new'
+    'default' | 'age-asc' | 'age-desc' | 'height-asc' | 'height-desc' | 'new' | 'review-count'
   >('default');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState<string[]>([]);
+  const [selectedMbtis, setSelectedMbtis] = useState<string[]>([]);
+  const [selectedStrawberryTypes, setSelectedStrawberryTypes] = useState<string[]>([]);
+  const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+  // アコーディオンのトグル
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => 
+      prev.includes(category) 
+        ? prev.filter(c => c !== category) 
+        : [...prev, category]
+    );
+  };
 
   // 今日から10日分の日付を生成
   const dates = useMemo(() => {
@@ -164,7 +178,25 @@ const CastSection: React.FC<CastSectionProps> = ({
 
     // 名前検索
     if (searchTerm) {
-      result = result.filter((cast) => cast.name.toLowerCase().includes(searchTerm.toLowerCase()));
+      result = result.filter((cast) => 
+        cast.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        cast.comment.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+
+    // MBTIフィルター
+    if (selectedMbtis.length > 0) {
+      result = result.filter(cast => cast.mbtiType && selectedMbtis.includes(cast.mbtiType));
+    }
+
+    // イチゴ系タイプフィルター
+    if (selectedStrawberryTypes.length > 0) {
+      result = result.filter(cast => cast.sexinessStrawberry && selectedStrawberryTypes.includes(cast.sexinessStrawberry));
+    }
+
+    // タグフィルター
+    if (selectedTags.length > 0) {
+      result = result.filter(cast => cast.tags.some(tag => selectedTags.includes(tag)));
     }
 
     // ソート
@@ -182,15 +214,23 @@ const CastSection: React.FC<CastSectionProps> = ({
         result.sort((a, b) => b.height - a.height);
         break;
       case 'new':
-        // UUIDの場合は作成日時などでソートすべきだが、ここでは文字列比較または元の順序を維持
         result.sort((a, b) => b.id.localeCompare(a.id));
         break;
+      case 'review-count':
+        result.sort((a, b) => (b.reviewCount || 0) - (a.reviewCount || 0));
+        break;
       default:
+        // おすすめ順（デフォルト）: イチ押しを優先しつつ元の順序
+        result.sort((a, b) => {
+           if (a.isIchioshi && !b.isIchioshi) return -1;
+           if (!a.isIchioshi && b.isIchioshi) return 1;
+           return 0;
+        });
         break;
     }
 
     return result;
-  }, [displayCasts, searchTerm, sortKey]);
+  }, [displayCasts, searchTerm, sortKey, selectedMbtis, selectedStrawberryTypes, selectedTags]);
 
   // 「イチ押し」セラピストの抽出 ＆ ランクに基づいた重み付けランダムソート
   const ichioshiCasts = useMemo(() => {
@@ -219,6 +259,9 @@ const CastSection: React.FC<CastSectionProps> = ({
     setSearchTerm('');
     if (dates.length > 0) setSelectedDate(dates[0].date);
     setSortKey('default');
+    setSelectedMbtis([]);
+    setSelectedStrawberryTypes([]);
+    setSelectedTags([]);
   };
 
   return (
@@ -347,93 +390,184 @@ const CastSection: React.FC<CastSectionProps> = ({
           </div>
         )}
 
-        {/* 検索・フィルターエリア */}
-        <div className="mb-12 space-y-8">
-          {/* 1. 日付検索 */}
-          <div className="rounded-[2.5rem] border border-rose-50/50 bg-white p-2 shadow-sm">
-            <div className="flex gap-2 overflow-x-auto p-1 scrollbar-hide" role="tablist" aria-label="出勤日を選択">
-              {dates.map((d) => (
+        {/* 検索・フィルターエリア (リファクタリング版) */}
+        <div className="mb-12 space-y-6">
+          {/* 1. 名前検索 */}
+          <div className="relative group">
+            <input
+              type="text"
+              placeholder="キャスト名やキャッチフレーズで検索..."
+              value={searchTerm}
+              aria-label="検索"
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-full border-2 border-rose-50 bg-white py-4 pl-14 pr-6 text-sm font-bold text-slate-700 shadow-sm outline-none transition-all placeholder:text-slate-300 focus:border-rose-200 focus:ring-4 focus:ring-rose-100/20"
+            />
+            <div className="absolute left-5 top-1/2 -translate-y-1/2">
+              <Search className="h-5 w-5 text-rose-300 transition-colors group-focus-within:text-rose-500" />
+            </div>
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-300 hover:text-rose-400"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+
+          {/* 2. 並び替え (タブ風UI) */}
+          <div className="flex flex-wrap items-center gap-3">
+            <span className="text-xs font-bold text-slate-400 mr-2 flex items-center gap-1">
+              <ArrowUpDown className="h-3 w-3" /> 並び替え:
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { id: 'default', label: 'おすすめ順', icon: Star },
+                { id: 'review-count', label: '口コミ数順', icon: ArrowUpDown },
+                { id: 'new', label: '新着順', icon: ArrowUpDown },
+              ].map((item) => (
                 <button
-                  key={d.date}
-                  role="tab"
-                  aria-selected={selectedDate === d.date}
-                  aria-label={`${d.isToday ? '本日' : d.day} ${d.display}の出勤キャスト`}
-                  onClick={() => setSelectedDate(d.date)}
-                  className={`relative flex min-w-[70px] flex-col items-center justify-center rounded-[2rem] py-3 transition-all duration-300 ${
-                    selectedDate === d.date
-                      ? 'bg-rose-500 text-white shadow-lg shadow-rose-200'
-                      : 'bg-transparent text-slate-500 hover:bg-rose-50'
+                  key={item.id}
+                  onClick={() => setSortKey(item.id as any)}
+                  className={`flex items-center gap-1.5 rounded-full px-5 py-2.5 text-xs font-black transition-all duration-300 ${
+                    sortKey === item.id
+                      ? 'bg-rose-500 text-white shadow-md shadow-rose-200'
+                      : 'bg-white text-slate-500 border border-rose-50 hover:bg-rose-50'
                   }`}
                 >
-                  <span className="text-[10px] font-bold uppercase tracking-tighter">
-                    {d.isToday ? 'Today' : d.day}
-                  </span>
-                  <span className="text-lg font-black tracking-tight">{d.display}</span>
-                  {selectedDate === d.date && (
-                    <div
-                      className="absolute -bottom-1 h-1 w-4 rounded-full bg-white opacity-50"
-                    />
-                  )}
+                  {item.id === 'default' && <item.icon className={`h-3 w-3 ${sortKey === item.id ? 'fill-current' : ''}`} />}
+                  {item.label}
                 </button>
               ))}
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 lg:grid-cols-12">
-            {/* 2. 名前検索 */}
-            <div className="relative lg:col-span-7">
-              <input
-                type="text"
-                placeholder="キャストの名前で検索..."
-                value={searchTerm}
-                aria-label="キャスト名で検索"
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-[2rem] border-2 border-rose-50 bg-white py-4 pl-14 pr-6 text-sm font-bold text-slate-600 shadow-sm outline-none transition-all placeholder:text-slate-300 focus:border-rose-200 focus:ring-4 focus:ring-rose-100/20"
-              />
-              <div className="absolute left-5 top-1/2 -translate-y-1/2">
-                <Search className="h-5 w-5 text-rose-300" />
-              </div>
-              {searchTerm && (
-                <button
-                  onClick={() => setSearchTerm('')}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 rounded-full p-1 text-slate-300 hover:text-rose-400"
-                  aria-label="検索キーワードをクリア"
-                >
-                  <RotateCcw className="h-4 w-4" />
-                </button>
-              )}
-            </div>
-
-            {/* 3. 並び替え & リセット */}
-            <div className="flex gap-2 lg:col-span-5">
-              <div className="relative flex-1">
-                <label htmlFor="cast-sort" className="sr-only">並び替え条件</label>
-                <select
-                  id="cast-sort"
-                  value={sortKey}
-                  onChange={(e) => setSortKey(e.target.value as any)}
-                  className="w-full appearance-none rounded-[2rem] border-2 border-rose-50 bg-white py-4 pl-6 pr-12 text-sm font-bold text-slate-600 shadow-sm outline-none transition-all focus:border-rose-200"
-                >
-                  <option value="default">並び替え：指定なし</option>
-                  <option value="new">新着順</option>
-                  <option value="age-asc">年齢が低い順</option>
-                  <option value="age-desc">年齢が高い順</option>
-                  <option value="height-desc">身長が高い順</option>
-                  <option value="height-asc">身長が低い順</option>
-                </select>
-                <div className="pointer-events-none absolute right-5 top-1/2 -translate-y-1/2">
-                  <ArrowUpDown className="h-4 w-4 text-rose-300" />
-                </div>
-              </div>
-              <button
-                onClick={resetFilters}
-                className="flex items-center justify-center rounded-[2rem] border-2 border-rose-50 bg-white px-6 text-rose-300 transition-all hover:bg-rose-50 hover:text-rose-500 active:scale-95 md:px-8"
-                aria-label="検索・並べ替えの条件をリセットする"
-              >
-                <RotateCcw className="h-5 w-5" />
-              </button>
-            </div>
+          {/* 3. こだわり検索ボタン */}
+          <div className="pt-2">
+            <button
+              onClick={() => setIsFilterOpen(!isFilterOpen)}
+              className={`flex w-full items-center justify-center gap-3 rounded-full border-2 py-4 text-sm font-black transition-all duration-500 ${
+                isFilterOpen
+                  ? 'border-rose-500 bg-rose-500 text-white shadow-lg'
+                  : 'border-rose-100 bg-white text-slate-700 shadow-sm hover:border-rose-300 hover:shadow-md'
+              }`}
+            >
+               <span className="flex items-center gap-2">
+                 <div className="flex flex-col gap-0.5">
+                   <div className={`h-0.5 w-4 bg-current transition-all ${isFilterOpen ? 'rotate-45 translate-y-1' : ''}`} />
+                   <div className={`h-0.5 w-4 bg-current transition-all ${isFilterOpen ? 'opacity-0' : ''}`} />
+                   <div className={`h-0.5 w-4 bg-current transition-all ${isFilterOpen ? '-rotate-45 -translate-y-1' : ''}`} />
+                 </div>
+                 {isFilterOpen ? 'こだわり検索をしまう' : 'こだわり検索で探す'}
+               </span>
+            </button>
           </div>
+
+          {/* 4. こだわり検索一覧 (アコーディオン) */}
+          {isFilterOpen && (
+            <div className="mt-4 rounded-[2rem] border border-rose-100 bg-white p-6 shadow-xl animate-in fade-in slide-in-from-top-4 duration-500">
+               <div className="flex items-center justify-between mb-6">
+                 <h4 className="flex items-center gap-2 font-black text-slate-800">
+                   <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
+                   こだわり検索
+                 </h4>
+                 <button 
+                  onClick={resetFilters}
+                  className="text-xs font-bold text-slate-400 hover:text-rose-500 flex items-center gap-1 transition-colors"
+                 >
+                   <RotateCcw className="h-3 w-3" /> 条件をリセット
+                 </button>
+               </div>
+
+               <div className="space-y-4">
+                 {/* MBTI カテゴリ */}
+                 <div className="overflow-hidden rounded-2xl border border-rose-50">
+                    <button 
+                      onClick={() => toggleCategory('mbti')}
+                      className="flex w-full items-center justify-between bg-rose-50/30 px-5 py-4 transition-colors hover:bg-rose-50"
+                    >
+                      <span className="text-sm font-black text-slate-700">MBTI診断結果</span>
+                      <ChevronLeft className={`h-4 w-4 text-rose-400 transition-transform duration-300 ${expandedCategories.includes('mbti') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('mbti') && (
+                      <div className="grid grid-cols-2 gap-2 p-4 animate-in fade-in zoom-in-95 md:grid-cols-4">
+                        {['INTJ', 'INTP', 'ENTJ', 'ENTP', 'INFJ', 'INFP', 'ENFJ', 'ENFP', 'ISTJ', 'ISFJ', 'ESTJ', 'ESFJ', 'ISTP', 'ISFP', 'ESTP', 'ESFP'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedMbtis(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type])}
+                            className={`rounded-xl border py-2 text-[10px] font-bold transition-all ${
+                              selectedMbtis.includes(type)
+                                ? 'border-rose-500 bg-rose-500 text-white shadow-sm'
+                                : 'border-rose-100 bg-white text-slate-500 hover:border-rose-300'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                 </div>
+
+                 {/* イチゴ系タイプ カテゴリ */}
+                 <div className="overflow-hidden rounded-2xl border border-rose-50">
+                    <button 
+                      onClick={() => toggleCategory('strawberry')}
+                      className="flex w-full items-center justify-between bg-rose-50/30 px-5 py-4 transition-colors hover:bg-rose-50"
+                    >
+                      <span className="text-sm font-black text-slate-700">イチゴ系タイプ</span>
+                      <ChevronLeft className={`h-4 w-4 text-rose-400 transition-transform duration-300 ${expandedCategories.includes('strawberry') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('strawberry') && (
+                      <div className="flex flex-wrap gap-2 p-4 animate-in fade-in zoom-in-95">
+                        {['フレッシュ', 'スイート', 'ワイルド', 'ビター'].map(type => (
+                          <button
+                            key={type}
+                            onClick={() => setSelectedStrawberryTypes(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type])}
+                            className={`rounded-full border px-4 py-2 text-xs font-bold transition-all ${
+                              selectedStrawberryTypes.includes(type)
+                                ? 'border-rose-500 bg-rose-500 text-white shadow-sm'
+                                : 'border-rose-100 bg-white text-slate-500 hover:border-rose-300'
+                            }`}
+                          >
+                            {type}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                 </div>
+
+                 {/* 人気のタグ カテゴリ */}
+                 <div className="overflow-hidden rounded-2xl border border-rose-50">
+                    <button 
+                      onClick={() => toggleCategory('tags')}
+                      className="flex w-full items-center justify-between bg-rose-50/30 px-5 py-4 transition-colors hover:bg-rose-50"
+                    >
+                      <span className="text-sm font-black text-slate-700">フレーバータグ</span>
+                      <ChevronLeft className={`h-4 w-4 text-rose-400 transition-transform duration-300 ${expandedCategories.includes('tags') ? '-rotate-90' : ''}`} />
+                    </button>
+                    {expandedCategories.includes('tags') && (
+                      <div className="p-4 animate-in fade-in zoom-in-95">
+                        <div className="flex flex-wrap gap-2">
+                          {Array.from(new Set(displayCasts.flatMap(c => c.tags))).slice(0, 15).map(tag => (
+                            <button
+                              key={tag}
+                              onClick={() => setSelectedTags(prev => prev.includes(tag) ? prev.filter(t => t !== tag) : [...prev, tag])}
+                              className={`rounded-full border px-4 py-2 text-[10px] font-bold transition-all ${
+                                selectedTags.includes(tag)
+                                  ? 'border-rose-500 bg-rose-500 text-white shadow-sm'
+                                  : 'border-rose-100 bg-white text-slate-500 hover:border-rose-300'
+                              }`}
+                            >
+                              #{tag}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                 </div>
+               </div>
+            </div>
+          )}
         </div>
 
         {/* キャストカード一覧 */}
