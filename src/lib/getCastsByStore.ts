@@ -112,7 +112,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
   let diariesMap: Record<string, string> = {};
   if (castIds.length > 0) {
     const { data: diaries, error: diaryError } = await supabase
-      .from('cast_diaries')
+      .from('blogs')
       .select('cast_id, published_at')
       .in('cast_id', castIds)
       .eq('status', 'published')

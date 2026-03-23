@@ -110,7 +110,7 @@ const CastCard: React.FC<CastCardProps> = ({
       onClick={handleNavigate}
     >
       <div className="relative aspect-[3/4]">
-        <div className="h-full w-full overflow-hidden rounded-t-xl">
+        <div className="relative h-full w-full overflow-hidden rounded-t-xl">
           <NextImage
             src={cast.mainImageUrl ?? cast.imageUrl ?? cast.avatar ?? '/no-image.png'}
             alt={`${cast.name}のプロフィール写真`}

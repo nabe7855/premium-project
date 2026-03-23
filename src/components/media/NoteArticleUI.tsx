@@ -1,3 +1,5 @@
+'use client';
+
 import {
   BookmarkIcon,
   ChevronLeftIcon,
@@ -148,11 +150,74 @@ export default function NoteArticleUI({
         )}
 
         {/* 本文 */}
+        <style jsx global>{`
+          .prose .sep {
+            text-align: center;
+            margin: 44px 0;
+            color: #D4B5A8;
+            font-size: 20px;
+            letter-spacing: 0.5em;
+          }
+          .prose .personal-note {
+            background: #FDF8F5;
+            border: 1px solid #EDD9CE;
+            border-radius: 12px;
+            padding: 22px 24px;
+            margin: 32px 0;
+            font-size: 15px;
+            color: #5A3E36;
+            line-height: 2;
+          }
+          .prose .personal-note .note-header {
+            font-size: 12px;
+            color: #C4856A;
+            margin-bottom: 10px;
+            font-weight: 500;
+            letter-spacing: 0.06em;
+          }
+          .prose .step-list { list-style: none; margin: 8px 0 24px; padding: 0; }
+          .prose .step-list li {
+            padding: 16px 0;
+            border-bottom: 1px dashed #E8E4DF;
+            display: flex;
+            gap: 14px;
+            align-items: flex-start;
+          }
+          .prose .step-list li:last-child { border-bottom: none; }
+          .prose .step-num {
+            font-family: 'Noto Serif JP', serif;
+            font-size: 20px;
+            color: #E0A090;
+            line-height: 1.4;
+            flex-shrink: 0;
+            width: 24px;
+          }
+          .prose .step-body { flex: 1; }
+          .prose .step-title {
+            font-weight: 500 !important;
+            font-size: 15px !important;
+            color: #2E2020 !important;
+            margin-bottom: 4px !important;
+            margin-top: 0 !important;
+          }
+          .prose .step-desc { font-size: 14px; color: #6E5A55; line-height: 1.85; }
+          .prose blockquote {
+            background: #FFF6F2 !important;
+            border-left: 3px solid #E8B9A8 !important;
+            color: #6B4E44 !important;
+          }
+          .prose blockquote cite {
+            display: block;
+            margin-top: 10px;
+            font-size: 12px;
+            color: #B08070;
+            font-style: normal;
+          }
+        `}</style>
         <div
-          className={`prose prose-lg ${theme.prose} max-w-none leading-[1.85] tracking-[0.02em] text-[#333] prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-[#222] prose-h2:mb-8 prose-h2:mt-16 prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-4 prose-h2:text-[24px] prose-h3:mb-6 prose-h3:mt-12 prose-h3:text-[20px] prose-p:mb-8 prose-p:mt-0 prose-blockquote:my-10 prose-blockquote:border-l-4 prose-blockquote:border-gray-200 prose-blockquote:bg-gray-50/50 prose-blockquote:px-6 prose-blockquote:py-1 prose-blockquote:not-italic prose-blockquote:text-gray-500 prose-img:my-10 prose-img:rounded-xl prose-a:text-${theme.primary}-500 prose-a:underline prose-a:underline-offset-4 prose-li:my-2`}
-        >
-          <ReactMarkdown>{article.content}</ReactMarkdown>
-        </div>
+          className={`prose prose-lg ${theme.prose} max-w-none leading-[1.85] tracking-[0.02em] text-[#333] prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-[#222] prose-h2:mb-8 prose-h2:mt-16 prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-4 prose-h2:text-[24px] prose-h3:mb-6 prose-h3:mt-12 prose-h3:text-[20px] prose-p:mb-8 prose-p:mt-0 prose-blockquote:my-10 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:not-italic prose-img:my-10 prose-img:rounded-xl prose-a:text-${theme.primary}-500 prose-a:underline prose-a:underline-offset-4 prose-li:my-2`}
+          dangerouslySetInnerHTML={{ __html: article.content }}
+        />
 
         {/* タグ */}
         <div className="mt-16 flex flex-wrap gap-2">

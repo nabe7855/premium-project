@@ -207,89 +207,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
           </div>
         </div>
 
-        {/* 🆕 イチ押しセラピストセクション (カルーセル) */}
-        {!loading && ichioshiCasts.length > 0 && (
-          <div className="mb-16">
-            <div className="mb-6 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-4 w-1 rounded-full bg-rose-500" />
-                <h3 className="text-lg font-black tracking-widest text-slate-800">SPECIAL PICK UP</h3>
-              </div>
-              <div className="flex gap-2">
-                <button
-                  onClick={scrollPrev}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-sm transition-all hover:bg-rose-500 hover:text-white"
-                >
-                  <ChevronLeft size={20} />
-                </button>
-                <button
-                  onClick={scrollNext}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-sm transition-all hover:bg-rose-500 hover:text-white"
-                >
-                  <ChevronRight size={20} />
-                </button>
-              </div>
-            </div>
-
-            <div className="overflow-hidden" ref={emblaRef}>
-              <div className="flex gap-4 md:gap-6">
-                {ichioshiCasts.map((cast) => (
-                  <div key={`ichioshi-${cast.id}`} className="relative min-w-[180px] flex-[0_0_180px] md:min-w-[240px] md:flex-[0_0_240px]">
-                    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-sm transition-all duration-500 hover:shadow-luxury">
-                      {/* カード全体を覆うリンク */}
-                      <Link
-                        href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`}
-                        className="absolute inset-0 z-10"
-                        aria-label={`${cast.name}の詳細を見る`}
-                      />
-                      
-                      {/* 表示用コンテンツ */}
-                      <div className="relative h-full w-full">
-                        {/* 画像エリア */}
-                        <div className="relative aspect-[3/4] overflow-hidden">
-                          <NextImage
-                            src={cast.mainImageUrl || cast.imageUrl || '/images/placeholder.png'}
-                            alt={cast.name}
-                            fill
-                            className="object-cover transition-transform duration-700 group-hover:scale-105"
-                            sizes="(max-width: 640px) 180px, 240px"
-                            unoptimized
-                          />
-                          <div className="pointer-events-none absolute left-2 top-2">
-                            <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[8px] font-black text-white shadow-md">
-                              <Star className="h-2 w-2 fill-current" /> イチ押し
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* コンテンツエリア */}
-                        <div className="flex flex-col p-3 text-left">
-                          <div className="mb-1 flex items-end justify-between">
-                            <h3 className="truncate text-sm font-black text-slate-800">
-                              {cast.name}
-                            </h3>
-                            <span className="ml-2 flex-shrink-0 text-[10px] font-bold text-slate-500">
-                              {cast.age}歳
-                            </span>
-                          </div>
-                          {cast.ichioshiPoint && (
-                            <div className="mt-2 border-t border-rose-50 pt-2">
-                              <p className="line-clamp-2 px-1 text-center text-[9px] font-bold italic leading-relaxed text-rose-400">
-                                &ldquo; {cast.ichioshiPoint} &rdquo;
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* 2段目: 並び替えタブ ＆ フィルター */}
+        {/* 1段目: 検索バー */}
         <div className="mb-8 space-y-4">
           <SortOptions sortBy={sortBy} onSortChange={setSortBy} />
 
@@ -306,6 +224,11 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
           >
             <Filter className={`h-4 w-4 ${showFilters ? 'text-white' : 'text-rose-400'}`} />
             <span>{showFilters ? 'こだわり検索をしまう' : '▼ こだわり検索で探す'}</span>
+            <span className={`ml-2 rounded-full px-2 py-0.5 text-[10px] font-bold ${
+              showFilters ? 'bg-white/20 text-white' : 'bg-rose-100 text-rose-500'
+            }`}>
+              {filteredAndSortedCasts.length}名ヒット中
+            </span>
           </button>
 
           {/* 4段目: フィルターパネル（アコーディオン内蔵） */}
@@ -338,6 +261,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
               setSelectedMBTI(null);
               setSelectedFaceTypes([]);
             }}
+            hitCount={filteredAndSortedCasts.length}
           />
         </div>
 

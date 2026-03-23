@@ -16,6 +16,7 @@ interface SearchFiltersProps {
   onAgeRangeChange: (range: [number, number]) => void;
   onTagToggle: (tag: string) => void;
   onReset: () => void;
+  hitCount: number; // 🆕 ヒット件数を追加
 }
 
 const SearchFilters: React.FC<SearchFiltersProps> = ({
@@ -29,6 +30,7 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
   onAgeRangeChange,
   onTagToggle,
   onReset,
+  hitCount,
 }) => {
   const [expandedSections, setExpandedSections] = useState<string[]>(['tags']); // 最初はタグだけ開いておく等の調整可
 
@@ -69,6 +71,9 @@ const SearchFilters: React.FC<SearchFiltersProps> = ({
             <h3 className="flex items-center gap-2 font-black text-slate-800">
               <div className="h-2 w-2 rounded-full bg-rose-500 animate-pulse" />
               こだわり検索
+              <span className="ml-2 text-xs font-bold text-rose-500 bg-rose-50 px-2 py-0.5 rounded-full border border-rose-100">
+                該当: {hitCount}名
+              </span>
             </h3>
             <button
               onClick={onReset}
