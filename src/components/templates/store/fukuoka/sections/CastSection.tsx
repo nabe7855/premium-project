@@ -57,8 +57,8 @@ const CastSection: React.FC<CastSectionProps> = ({
         : 'お問い合わせください',
       schedule: [], 
       isIchioshi: c.isIchioshi,
-      ichioshiPoint: config?.items?.find(item => item.id === c.id)?.ichioshiPoint,
-      ichioshiRank: config?.items?.find(item => item.id === c.id)?.ichioshiRank || 1,
+      ichioshiPoint: c.ichioshiPoint || config?.items?.find(item => item.id === c.id)?.ichioshiPoint,
+      ichioshiRank: c.ichioshiRank || config?.items?.find(item => item.id === c.id)?.ichioshiRank || 1,
     }));
   }, [todayCasts, config]);
 

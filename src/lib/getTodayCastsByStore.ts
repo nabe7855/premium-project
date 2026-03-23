@@ -113,7 +113,11 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
   }
 
   // 🆕 店舗IDの取得（1件目から抽出）
-  const storeId = (data?.[0]?.casts as any)?.cast_store_memberships?.find((m: any) => m.stores.slug === storeSlug)?.stores.id;
+  const firstItemCasts = Array.isArray(data?.[0]?.casts) ? data[0].casts[0] : (data?.[0]?.casts as any);
+  const firstMemberships = Array.isArray(firstItemCasts?.cast_store_memberships) 
+    ? firstItemCasts.cast_store_memberships 
+    : (firstItemCasts?.cast_store_memberships ? [firstItemCasts.cast_store_memberships] : []);
+  const storeId = firstMemberships.find((m: any) => m.stores?.slug === storeSlug)?.stores?.id;
   
   // 🆕 店舗設定からイチ押し情報を取得
   let ichioshiMap: Record<string, { point: string; rank: number }> = {};
