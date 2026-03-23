@@ -34,14 +34,14 @@ export default async function MatchingPage({ params }: Props) {
     : DEFAULT_STORE_TOP_CONFIG;
 
   return (
-    <div className="min-h-screen bg-neutral-50 px-4 md:px-0">
+    <div className="min-h-screen bg-neutral-50">
       {store.template === 'fukuoka' ? (
         <FukuokaHeader config={topConfig.header} />
       ) : store.template === 'yokohama' ? (
         <YokohamaHeader config={topConfig.header} />
       ) : null}
 
-      <main className="mx-auto max-w-4xl py-12 pt-24 md:pt-32">
+      <main className="mx-auto max-w-4xl px-4 py-12 pt-24 md:px-0 md:pt-32">
         <DiagnosisSection />
       </main>
 
