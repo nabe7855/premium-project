@@ -1,20 +1,28 @@
 
-export function getSupabasePublicUrl(path: string | null | undefined): string | undefined {
+export function getSupabasePublicUrl(path: string | null | undefined, slug?: string): string | undefined {
   if (!path || path.trim() === '') return undefined;
-  if (path.startsWith('http')) return path;
+  
+  // プレースホルダーの置換 ({slug} 等)
+  let processedPath = path;
+  if (slug) {
+    processedPath = processedPath.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
+  }
+
+  if (processedPath.startsWith('http')) return processedPath;
+  if (processedPath.startsWith('/')) return processedPath;
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   if (!supabaseUrl) {
     if (typeof window !== 'undefined') {
       console.warn('⚠️ getSupabasePublicUrl: NEXT_PUBLIC_SUPABASE_URL is not defined!');
     }
-    return path;
+    return processedPath;
   }
 
   const baseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
   
   // 先頭のスラッシュを削除
-  const cleanPath = path.startsWith('/') ? path.slice(1) : path;
+  const cleanPath = processedPath.startsWith('/') ? processedPath.slice(1) : processedPath;
   
   // 'gallery/' で始まっていない場合は補完する
   // (supabase の public URL は バケット名/パス の形式になるため)
@@ -43,9 +51,9 @@ export interface ImageTransformOptions {
  */
 export function getTransformedImageUrl(
   path: string | null | undefined, 
-  options: ImageTransformOptions = {}
+  options: ImageTransformOptions & { slug?: string } = {}
 ): string | undefined {
-  const originalUrl = getSupabasePublicUrl(path);
+  const originalUrl = getSupabasePublicUrl(path, options.slug);
   if (!originalUrl) return undefined;
   if (!originalUrl.includes('/storage/v1/object/public/')) return originalUrl;
 
