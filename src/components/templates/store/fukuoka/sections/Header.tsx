@@ -3,6 +3,7 @@
 import { useStore } from '@/contexts/StoreContext';
 import { HeaderConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import { Camera, ChevronDown, Link2, Menu, Users, X } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -331,7 +332,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         >
           <div className="relative h-full w-full">
             <NextImage
-              src={getAbsoluteHref(banner.imageUrl || '/福岡募集バナー.png')}
+              src={getTransformedImageUrl(banner.imageUrl || '/福岡募集バナー.png', { width: 300, quality: 80, format: 'webp' }) || (banner.imageUrl || '/福岡募集バナー.png')}
               alt={banner.mainHeading || 'Banner'}
               fill
               sizes="(max-width: 768px) 33vw, 20vw"
@@ -376,7 +377,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {config?.logoUrl ? (
               <div className="relative h-7 w-full md:h-10 md:w-24">
                 <NextImage
-                  src={getAbsoluteHref(config.logoUrl)}
+                  src={getTransformedImageUrl(config.logoUrl, { width: 200, quality: 90, format: 'webp' }) || config.logoUrl}
                   alt="Logo"
                   fill
                   priority

@@ -2,7 +2,7 @@
 import dynamic from 'next/dynamic';
 import Header from '../sections/Header';
 import HeroSection from '../sections/HeroSection';
-const BeginnerGuideBanner = dynamic(() => import('../sections/BeginnerGuideBanner'));
+import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 
 const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
 const ConceptSection = dynamic(() => import('../sections/ConceptSection'));

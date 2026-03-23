@@ -1,3 +1,4 @@
+import { cache } from 'react';
 import { getSupabasePublicUrl } from './image-url';
 import { supabase } from './supabaseClient';
 
@@ -52,7 +53,7 @@ const getBaseUrl = () => {
   return url.endsWith('/') ? url.slice(0, -1) : url;
 };
 
-export async function getTodayCastsByStore(
+export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
   storeSlug: string,
   targetDate?: string,
 ): Promise<TodayCast[]> {
@@ -177,4 +178,4 @@ export async function getTodayCastsByStore(
     if (!a.isShopAccount && b.isShopAccount) return -1;
     return 0; // 他の順序は維持
   });
-}
+});

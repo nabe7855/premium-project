@@ -1,5 +1,6 @@
 'use client';
 import { BeginnerGuideConfig } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -37,15 +38,15 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
           aria-label="初めてのお客様ガイドページへ"
         >
-          <div className="relative aspect-[25/4] w-full">
+          <div className="relative aspect-[25/4] w-full overflow-hidden rounded-2xl bg-gray-100">
             <NextImage
-              src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace(
-                '{slug}',
-                slug || '',
-              )}
+              src={getTransformedImageUrl(
+                (config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || ''),
+                { width: 1200, quality: 80, format: 'webp' }
+              ) || (config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || '')}
               alt="女性用風俗初体験の方はこちら"
               fill
-              className="object-contain"
+              className="object-cover"
               priority={true}
               fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 1200px"

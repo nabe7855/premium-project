@@ -3,6 +3,7 @@ import NextImage from 'next/image';
 import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl } from '@/lib/image-url';
 
 const defaultHeroImages = [
   'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1920',
@@ -145,21 +146,21 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               >
                 {isFirst ? (
                   <NextImage
-                    src={img}
+                    src={getTransformedImageUrl(img, { quality: 90, format: 'webp', resize: 'cover' }) || img}
                     alt="店舗メインビジュアル"
                     fill
                     priority={true}
                     fetchPriority="high"
                     sizes="100vw"
-                    className="h-full w-full object-contain object-center"
+                    className="h-full w-full object-cover object-center"
                   />
                 ) : (
                   <NextImage
-                    src={img}
+                    src={getTransformedImageUrl(img, { width: 1200, quality: 80, format: 'webp', resize: 'cover' }) || img}
                     alt={`Hero Image ${index + 1}`}
                     fill
                     sizes="100vw"
-                    className="h-full w-full object-contain object-center"
+                    className="h-full w-full object-cover object-center"
                     loading="lazy"
                   />
                 )}

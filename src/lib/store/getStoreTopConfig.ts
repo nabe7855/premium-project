@@ -1,9 +1,10 @@
 'use server';
 
+import { cache } from 'react';
 import { prisma } from '@/lib/prisma';
 import { DEFAULT_STORE_TOP_CONFIG } from './storeTopConfig';
 
-export async function getStoreTopConfig(storeSlug: string, options: { skipCasts?: boolean } = {}) {
+export const getStoreTopConfig = cache(async function getStoreTopConfig(storeSlug: string, options: { skipCasts?: boolean } = {}) {
   try {
     const { skipCasts = false } = options;
     // まず店舗を取得
@@ -79,4 +80,4 @@ export async function getStoreTopConfig(storeSlug: string, options: { skipCasts?
     console.error(`[getStoreTopConfig] FATAL ERROR for ${storeSlug}:`, error);
     return { success: false, error: 'Unexpected error occurred: ' + error.message };
   }
-}
+});

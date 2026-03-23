@@ -28,3 +28,51 @@ export function getSupabasePublicUrl(path: string | null | undefined): string | 
 
   return finalUrl;
 }
+
+export interface ImageTransformOptions {
+  width?: number;
+  height?: number;
+  quality?: number;
+  format?: 'webp' | 'avif' | 'origin';
+  resize?: 'cover' | 'contain' | 'fill';
+}
+
+/**
+ * Supabase Image Transformations を適用したURLを取得
+ * ※有料プランまたはセルフホスティングで有効な機能です
+ */
+export function getTransformedImageUrl(
+  path: string | null | undefined, 
+  options: ImageTransformOptions = {}
+): string | undefined {
+  const originalUrl = getSupabasePublicUrl(path);
+  if (!originalUrl) return undefined;
+  if (!originalUrl.includes('/storage/v1/object/public/')) return originalUrl;
+
+  const {
+    width,
+    height,
+    quality = 80,
+    format = 'webp',
+    resize = 'cover'
+  } = options;
+
+  // Supabase Transformation URL format:
+  // storage/v1/render/image/public/[bucket]/[path]?width=...
+  const transformUrl = originalUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/');
+  
+  const params = new URLSearchParams();
+  if (width) params.set('width', width.toString());
+  if (height) params.set('height', height.toString());
+  params.set('quality', quality.toString());
+  if (format !== 'origin') params.set('format', format);
+  params.set('resize', resize);
+
+  const finalUrl = `${transformUrl}?${params.toString()}`;
+
+  if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+    console.log(`[ImageTransform] ${width}x${height} (${format}): ${finalUrl}`);
+  }
+
+  return finalUrl;
+}

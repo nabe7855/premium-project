@@ -1,4 +1,5 @@
 import { DiaryConfig } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -129,9 +130,9 @@ const DiarySection: React.FC<DiarySectionProps> = ({
                 href={`/store/${storeSlug}/diary/post/${item.id}`}
                 className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
               >
-                <div className="relative aspect-square overflow-hidden">
+                <div className="relative aspect-square overflow-hidden bg-neutral-100">
                   <NextImage
-                    src={item.image}
+                    src={getTransformedImageUrl(item.image, { width: 400, quality: 80, format: 'webp' }) || item.image}
                     alt={item.title}
                     fill
                     className="object-cover transition-transform duration-700 group-hover:scale-110"

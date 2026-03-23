@@ -1,6 +1,7 @@
 import { fetchDailyCasts } from '@/actions/cast';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import { ArrowUpDown, RotateCcw, Search, Star } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link'; // ✅ 追加
