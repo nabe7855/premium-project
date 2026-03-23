@@ -114,6 +114,8 @@ export interface CastItem {
   schedule?: string[]; // YYYY-MM-DD 形式
   attendance?: string; // 例: "12:00〜21:00"
   isIchioshi: boolean;
+  ichioshiPoint?: string;
+  ichioshiRank?: number; // 1-5 などのランク。高いほど優先
 }
 
 export interface CastConfig {

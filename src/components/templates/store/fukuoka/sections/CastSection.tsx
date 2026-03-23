@@ -57,8 +57,10 @@ const CastSection: React.FC<CastSectionProps> = ({
         : 'お問い合わせください',
       schedule: [], 
       isIchioshi: c.isIchioshi,
+      ichioshiPoint: config?.items?.find(item => item.id === c.id)?.ichioshiPoint,
+      ichioshiRank: config?.items?.find(item => item.id === c.id)?.ichioshiRank || 1,
     }));
-  }, [todayCasts]);
+  }, [todayCasts, config]);
 
   const [fetchedCasts, setFetchedCasts] = useState<CastItem[]>(initialCasts);
   const [isLoading, setIsLoading] = useState(!todayCasts);
@@ -133,6 +135,8 @@ const CastSection: React.FC<CastSectionProps> = ({
             : 'お問い合わせください',
           schedule: [selectedDate],
           isIchioshi: c.isIchioshi,
+          ichioshiPoint: config?.items?.find(item => item.id === c.id)?.ichioshiPoint,
+          ichioshiRank: config?.items?.find(item => item.id === c.id)?.ichioshiRank || 1,
         }));
         setFetchedCasts(mappedCasts);
       } catch (e) {
@@ -188,9 +192,18 @@ const CastSection: React.FC<CastSectionProps> = ({
     return result;
   }, [displayCasts, searchTerm, sortKey]);
 
-  // 「イチ押し」セラピストの抽出
+  // 「イチ押し」セラピストの抽出 ＆ ランクに基づいた重み付けランダムソート
   const ichioshiCasts = useMemo(() => {
-    return displayCasts.filter(c => c.isIchioshi);
+    // 1. イチ押しのみ抽出
+    const basicList = displayCasts.filter(c => c.isIchioshi);
+    
+    // 2. 重み付けランダムソート
+    // ランク(1-5) を重みとして使用。未設定は ランク1
+    return [...basicList].sort((a, b) => {
+      const weightA = (a.ichioshiRank || 1) * Math.random();
+      const weightB = (b.ichioshiRank || 1) * Math.random();
+      return weightB - weightA; // 高い（重い）方が前
+    });
   }, [displayCasts]);
 
   // Embla Carousel 設定
@@ -318,6 +331,11 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 {cast.attendance}
                               </span>
                             </div>
+                            {cast.ichioshiPoint && (
+                              <p className="mt-3 line-clamp-2 px-1 text-center text-[10px] font-bold italic leading-relaxed text-rose-400">
+                                &ldquo; {cast.ichioshiPoint} &rdquo;
+                              </p>
+                            )}
                           </div>
                         </div>
                       </div>

@@ -24,6 +24,8 @@ export interface Cast {
   storePriorities: Record<string, number>;
   storeIsShopAccount?: Record<string, boolean>;
   storeIchioshi: Record<string, boolean>;
+  storeIchioshiPoint?: Record<string, string>;
+  storeIchioshiRank?: Record<string, number>;
   status: '在籍中' | '離籍';
   storeStatuses: string[];
   tags: string[];

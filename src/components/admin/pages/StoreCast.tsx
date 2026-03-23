@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
-import { Tag as TagIcon, Trash2 } from 'lucide-react';
+import { Tag as TagIcon, Trash2, Star } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { PlusIcon } from '../admin-assets/Icons';
 
@@ -58,6 +58,7 @@ const StoreCastCard: React.FC<{
   onRemoveTag: (castId: string, tag: UnifiedTag) => void;
   onPriorityChange: (cast_id: string, priority: number) => void;
   onIsShopAccountChange: (cast_id: string, isShopAccount: boolean) => void;
+  onIchioshiChange: (cast_id: string, value: boolean, point?: string, rank?: number) => void;
   error?: string;
 }> = ({
   cast,
@@ -67,6 +68,7 @@ const StoreCastCard: React.FC<{
   onRemoveTag,
   onPriorityChange,
   onIsShopAccountChange,
+  onIchioshiChange,
   error,
 }) => {
   const currentTagNames = [...(cast.tags || []), ...(cast.storeStatuses || [])];
@@ -127,6 +129,59 @@ const StoreCastCard: React.FC<{
                 </Label>
               </div>
             </div>
+
+            {/* イチ押し設定 */}
+            <div className="mt-4 rounded-lg bg-black/30 p-3 border border-brand-accent/20">
+              <div className="flex items-center space-x-2 mb-3">
+                <Checkbox
+                  id={`ichioshi-${cast.id}`}
+                  checked={cast.storeIchioshi?.[currentStoreId] || false}
+                  onCheckedChange={(checked) =>
+                    onIchioshiChange(cast.id, checked === true, cast.storeIchioshiPoint?.[currentStoreId], cast.storeIchioshiRank?.[currentStoreId])
+                  }
+                  className="h-4 w-4 border-amber-400 data-[state=checked]:bg-amber-400"
+                />
+                <Label
+                   htmlFor={`ichioshi-${cast.id}`}
+                   className="flex items-center gap-1 cursor-pointer text-xs font-black text-amber-400"
+                >
+                  <Star className="h-3 w-3 fill-current" /> 店長一押しに設定
+                </Label>
+              </div>
+
+              {cast.storeIchioshi?.[currentStoreId] && (
+                <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
+                   {/* ランク設定 */}
+                   <div className="flex items-center gap-2">
+                     <span className="text-[10px] text-brand-text-secondary font-bold">ランク:</span>
+                     <select 
+                        value={cast.storeIchioshiRank?.[currentStoreId] || 1}
+                        onChange={(e) => onIchioshiChange(cast.id, true, cast.storeIchioshiPoint?.[currentStoreId], parseInt(e.target.value))}
+                        className="bg-brand-primary border border-gray-700 rounded px-2 py-1 text-xs text-amber-400 font-bold outline-none"
+                     >
+                       <option value={1}>Rank 1 (通常)</option>
+                       <option value={2}>Rank 2</option>
+                       <option value={3}>Rank 3 (重要)</option>
+                       <option value={4}>Rank 4</option>
+                       <option value={5}>Rank 5 (最高)</option>
+                     </select>
+                     <span className="text-[9px] text-gray-500 italic">※高いほど優先表示</span>
+                   </div>
+
+                   {/* イチ押しコメント */}
+                   <div className="flex flex-col gap-1.5">
+                     <span className="text-[10px] text-brand-text-secondary font-bold">イチ押しポイント:</span>
+                     <textarea
+                        value={cast.storeIchioshiPoint?.[currentStoreId] || ''}
+                        onChange={(e) => onIchioshiChange(cast.id, true, e.target.value, cast.storeIchioshiRank?.[currentStoreId])}
+                        placeholder="例：新人さんですが圧倒的な技術力です！"
+                        className="w-full h-16 bg-brand-primary border border-gray-700 rounded p-2 text-xs text-white placeholder:text-gray-600 focus:border-amber-400/50 outline-none resize-none transition-all"
+                     />
+                   </div>
+                </div>
+              )}
+            </div>
+
             {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
           </div>
       </div>
@@ -425,6 +480,58 @@ export default function StoreCast() {
     }
   };
 
+  const handleIchioshiChange = async (castId: string, value: boolean, point?: string, rank?: number) => {
+    // 1. Update local state
+    setCasts((prev) =>
+      prev.map((c) =>
+        c.id === castId
+          ? {
+              ...c,
+              storeIchioshi: { ...c.storeIchioshi, [selectedStore]: value },
+              storeIchioshiPoint: { ...c.storeIchioshiPoint, [selectedStore]: point || '' },
+              storeIchioshiRank: { ...c.storeIchioshiRank, [selectedStore]: rank || 1 },
+            }
+          : c,
+      ),
+    );
+
+    try {
+      // 2. Update DB (Membership table for flag)
+      await supabase
+        .from('cast_store_memberships')
+        .update({ is_ichioshi: value })
+        .eq('cast_id', castId)
+        .eq('store_id', selectedStore);
+
+      // 3. Update StoreTopConfig (JSON for point/rank details)
+      // fetch current config
+      const { data: configData } = await supabase
+        .from('store_top_configs')
+        .select('config')
+        .eq('store_id', selectedStore)
+        .single();
+
+      if (configData) {
+        const config = configData.config as any;
+        if (config.cast?.items) {
+          const castIdx = config.cast.items.findIndex((item: any) => item.id === castId);
+          if (castIdx !== -1) {
+            config.cast.items[castIdx].isIchioshi = value;
+            config.cast.items[castIdx].ichioshiPoint = point;
+            config.cast.items[castIdx].ichioshiRank = rank;
+            
+            await supabase
+              .from('store_top_configs')
+              .update({ config })
+              .eq('store_id', selectedStore);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Update ichioshi error:', err);
+    }
+  };
+
   // Initial Load: Stores and Masters
   useEffect(() => {
     const loadInitialData = async () => {
@@ -534,7 +641,16 @@ export default function StoreCast() {
             .in('cast_id', castIds),
         ]);
 
-        // 3. Map and Merge
+        // 3. Fetch StoreTopConfig to get ichioshi point/rank
+        const { data: configData } = await supabase
+          .from('store_top_configs')
+          .select('config')
+          .eq('store_id', selectedStore)
+          .single();
+        
+        const topConfig = (configData?.config as any)?.cast?.items || [];
+
+        // 4. Map and Merge
         const mappedCasts: Cast[] = memberData
           .map((item: any) => ({
             ...item.cast,
@@ -548,6 +664,8 @@ export default function StoreCast() {
             const cStatuses = statusRes.data?.filter((s) => s.cast_id === c.id) || [];
             // Find features for this cast
             const cFeatures = featureRes.data?.filter((f) => f.cast_id === c.id) || [];
+            // Find config details
+            const configItem = topConfig.find((item: any) => item.id === c.id);
 
             return {
               id: c.id,
@@ -568,6 +686,8 @@ export default function StoreCast() {
               managerComment: '',
               catchphrase: c.catch_copy || '',
               storeIchioshi: { [selectedStore]: c.is_ichioshi || false },
+              storeIchioshiPoint: { [selectedStore]: configItem?.ichioshiPoint || '' },
+              storeIchioshiRank: { [selectedStore]: configItem?.ichioshiRank || 1 },
               storeIsShopAccount: { [selectedStore]: c.is_shop_account || false },
               stats: {
                 designations: 0,
@@ -740,6 +860,7 @@ export default function StoreCast() {
               onRemoveTag={handleRemoveTagFromCast}
               onPriorityChange={handlePriorityChange}
               onIsShopAccountChange={handleIsShopAccountChange}
+              onIchioshiChange={handleIchioshiChange}
               error={priorityErrors[cast.id]}
             />
           ))
