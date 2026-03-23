@@ -146,31 +146,38 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
 
         {/* 検索・フィルタ */}
-        <div className="mb-8">
-          <div className="mb-6 flex flex-col gap-4 lg:flex-row">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-neutral-400" />
-              <input
-                type="text"
-                placeholder="キャスト名やキャッチフレーズで検索..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
-            </div>
-            <button
-              onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center justify-center rounded-full border border-neutral-200 bg-white px-6 py-3 transition-all duration-200 hover:bg-neutral-50"
-              aria-expanded={showFilters}
-              aria-controls="filter-panel"
-            >
-              <Filter className="mr-2 h-5 w-5" />
-              <span>▼ こだわり検索で探す</span>
-            </button>
+        <div className="mb-8 space-y-4">
+          {/* 1段目: 検索バー */}
+          <div className="relative group">
+            <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 transform text-neutral-400 group-focus-within:text-primary transition-colors" />
+            <input
+              type="text"
+              placeholder="キャスト名やキャッチフレーズで検索..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full rounded-full border border-neutral-200 py-3 pl-10 pr-4 transition-all duration-200 focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/10 font-bold"
+            />
           </div>
 
+          {/* 2段目: 並び替えタブ */}
           <SortOptions sortBy={sortBy} onSortChange={setSortBy} />
 
+          {/* 3段目: こだわり検索ボタン */}
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex w-full items-center justify-center rounded-xl border-2 py-4 shadow-sm transition-all duration-300 font-black text-sm gap-2 ${
+              showFilters
+                ? 'bg-rose-500 border-rose-500 text-white shadow-lg'
+                : 'bg-white border-rose-100 text-neutral-700 hover:border-rose-300'
+            }`}
+            aria-expanded={showFilters}
+            aria-controls="filter-panel"
+          >
+            <Filter className={`h-4 w-4 ${showFilters ? 'text-white' : 'text-rose-400'}`} />
+            <span>{showFilters ? 'こだわり検索をしまう' : '▼ こだわり検索で探す'}</span>
+          </button>
+
+          {/* 4段目: フィルターパネル（アコーディオン内蔵） */}
           <SearchFilters
             showFilters={showFilters}
             selectedMBTI={selectedMBTI}
