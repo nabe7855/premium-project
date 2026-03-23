@@ -147,7 +147,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
                 <NextImage
-                  src={getTransformedImageUrl(item.imageUrl, { width: 200, quality: 80, format: 'webp', slug: currentStoreId }) || getAbsoluteHref(item.imageUrl)}
+                  src={getAbsoluteHref(item.imageUrl)}
                   alt={item.name}
                   fill
                   className="object-contain"
@@ -332,7 +332,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         >
           <div className="relative h-full w-full">
             <NextImage
-              src={getTransformedImageUrl(banner.imageUrl || '/福岡募集バナー.png', { width: 300, quality: 80, format: 'webp', slug: currentStoreId }) || (banner.imageUrl || '/福岡募集バナー.png')}
+              src={getAbsoluteHref(banner.imageUrl || '/福岡募集バナー.png')}
               alt={banner.mainHeading || 'Banner'}
               fill
               sizes="(max-width: 768px) 33vw, 20vw"
@@ -377,7 +377,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {config?.logoUrl ? (
               <div className="relative h-7 w-full md:h-10 md:w-24">
                 <NextImage
-                  src={getTransformedImageUrl(config.logoUrl, { width: 200, quality: 90, format: 'webp', slug: currentStoreId }) || config.logoUrl}
+                  src={getAbsoluteHref(config.logoUrl)}
                   alt="Logo"
                   fill
                   priority
@@ -543,7 +543,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
                         )}
                         {config?.menuBottomBanner?.imageUrl ? (
                           <NextImage
-                            src={getTransformedImageUrl(config.menuBottomBanner.imageUrl, { width: 600, quality: 80, format: 'webp', slug: currentStoreId }) || getAbsoluteHref(config.menuBottomBanner.imageUrl)}
+                            src={getAbsoluteHref(config.menuBottomBanner.imageUrl)}
                             alt="Special Banner"
                             fill
                             className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"

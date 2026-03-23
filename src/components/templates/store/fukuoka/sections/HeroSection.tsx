@@ -146,22 +146,24 @@ const HeroSection: React.FC<HeroSectionProps> = ({
               >
                 {isFirst ? (
                   <NextImage
-                    src={getTransformedImageUrl(img, { quality: 90, format: 'webp', resize: 'cover', slug: slug }) || img}
+                    src={img}
                     alt="店舗メインビジュアル"
                     fill
                     priority={true}
                     fetchPriority="high"
                     sizes="100vw"
                     className="h-full w-full object-cover object-center"
+                    unoptimized
                   />
                 ) : (
                   <NextImage
-                    src={getTransformedImageUrl(img, { width: 1200, quality: 80, format: 'webp', resize: 'cover', slug: slug }) || img}
+                    src={img}
                     alt={`Hero Image ${index + 1}`}
                     fill
                     sizes="100vw"
                     className="h-full w-full object-cover object-center"
                     loading="lazy"
+                    unoptimized
                   />
                 )}
 

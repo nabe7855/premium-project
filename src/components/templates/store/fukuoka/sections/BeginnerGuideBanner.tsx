@@ -40,16 +40,14 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
         >
           <div className="relative aspect-[25/4] w-full overflow-hidden rounded-2xl bg-gray-100">
             <NextImage
-              src={getTransformedImageUrl(
-                config.imageUrl || '/女性用風俗初体験の方はこちら.png',
-                { width: 1200, quality: 80, format: 'webp', slug }
-              ) || (config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || '')}
+              src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || '')}
               alt="女性用風俗初体験の方はこちら"
               fill
               className="object-cover"
               priority={true}
               fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 1200px"
+              unoptimized
             />
           </div>
           {/* Shine effect */}
