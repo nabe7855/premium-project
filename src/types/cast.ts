@@ -106,6 +106,8 @@ export interface Cast {
   isReception?: boolean;
   isActive: boolean;
   isIchioshi?: boolean;
+  ichioshiPoint?: string;
+  ichioshiRank?: number;
   isOnline?: boolean;
   statuses?: CastStatus[];
   voiceUrl?: string;

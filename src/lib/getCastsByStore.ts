@@ -20,7 +20,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       `
       priority,
       is_shop_account,
-      stores!inner ( slug ),
+      is_ichioshi,
+      stores!inner ( slug, id ),
       casts (
         id,
         slug,
@@ -56,6 +57,24 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
   if (error) {
     console.error('❌ キャスト取得エラー:', error.message);
     return [];
+  }
+
+  // 🆕 店舗IDの取得
+  const storeId = (data?.[0]?.stores as any)?.id;
+  
+  // 🆕 店舗設定からイチ押し情報を取得
+  let ichioshiMap: Record<string, { point: string; rank: number }> = {};
+  if (storeId) {
+     const { data: configRes } = await supabase
+       .from('store_top_configs')
+       .select('config')
+       .eq('store_id', storeId)
+       .single();
+     
+     const items = (configRes?.config as any)?.cast?.items || [];
+     items.forEach((item: any) => {
+       if (item.id) ichioshiMap[item.id] = { point: item.ichioshiPoint || '', rank: item.ichioshiRank || 1 };
+     });
   }
 
   // 全キャストIDを抽出（つぶやき取得用）
@@ -179,6 +198,9 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         priority: item.priority ?? 0,
         isNewcomer,
         isShopAccount: item.is_shop_account || false,
+        isIchioshi: item.is_ichioshi || false,
+        ichioshiPoint: ichioshiMap[cast.id]?.point,
+        ichioshiRank: ichioshiMap[cast.id]?.rank,
         rating, // ⭐ 平均評価
         reviewCount, // 💬 口コミ件数
       };
@@ -191,7 +213,14 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       if (a.isShopAccount && !b.isShopAccount) return 1;
       if (!a.isShopAccount && b.isShopAccount) return -1;
 
-      // 2. それ以外は優先度（降順）
+      // 🆕 2. イチ押しを最優先（ランク順）
+      if (a.isIchioshi && !b.isIchioshi) return -1;
+      if (!a.isIchioshi && b.isIchioshi) return 1;
+      if (a.isIchioshi && b.isIchioshi) {
+        return (b.ichioshiRank || 0) - (a.ichioshiRank || 0);
+      }
+
+      // 3. それ以外は優先度（降順）
       return (b.priority ?? 0) - (a.priority ?? 0);
     });
 }
