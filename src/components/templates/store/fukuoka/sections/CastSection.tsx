@@ -2,11 +2,13 @@ import { fetchDailyCasts } from '@/actions/cast';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { getTransformedImageUrl } from '@/lib/image-url';
-import { ArrowUpDown, RotateCcw, Search, Star } from 'lucide-react';
+import { ArrowUpDown, RotateCcw, Search, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import NextImage from 'next/image';
-import Link from 'next/link'; // ✅ 追加
-import React, { useEffect, useMemo, useState } from 'react';
+import Link from 'next/link';
+import React, { useEffect, useMemo, useState, useCallback } from 'react';
 import SectionTitle from '../components/SectionTitle';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 interface CastSectionProps {
   config?: CastConfig;
@@ -186,6 +188,20 @@ const CastSection: React.FC<CastSectionProps> = ({
     return result;
   }, [displayCasts, searchTerm, sortKey]);
 
+  // 「イチ押し」セラピストの抽出
+  const ichioshiCasts = useMemo(() => {
+    return displayCasts.filter(c => c.isIchioshi);
+  }, [displayCasts]);
+
+  // Embla Carousel 設定
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { loop: true, align: 'start', skipSnaps: false },
+    [Autoplay({ delay: 4000, stopOnInteraction: false })]
+  );
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
   const resetFilters = () => {
     setSearchTerm('');
     if (dates.length > 0) setSelectedDate(dates[0].date);
@@ -221,6 +237,90 @@ const CastSection: React.FC<CastSectionProps> = ({
         {isEditing && (
           <div className="mb-8 rounded-3xl border border-rose-100 bg-rose-50/50 p-4 text-center text-[10px] font-bold text-rose-400 backdrop-blur-sm">
             ※ キャスト情報の管理はダッシュボードから行えます
+          </div>
+        )}
+
+        {/* 🆕 イチ押しセラピスト・ループセクション */}
+        {!isLoading && ichioshiCasts.length > 0 && (
+          <div className="mb-16">
+            <div className="mb-6 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-4 w-1 rounded-full bg-rose-500" />
+                <h3 className="text-lg font-black tracking-widest text-slate-800">SPECIAL PICK UP</h3>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={scrollPrev}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-sm transition-all hover:bg-rose-500 hover:text-white"
+                >
+                  <ChevronLeft size={20} />
+                </button>
+                <button
+                  onClick={scrollNext}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-rose-100 bg-white text-rose-400 shadow-sm transition-all hover:bg-rose-500 hover:text-white"
+                >
+                  <ChevronRight size={20} />
+                </button>
+              </div>
+            </div>
+
+            <div className="overflow-hidden" ref={emblaRef}>
+              <div className="flex gap-4 md:gap-6">
+                {ichioshiCasts.map((cast) => (
+                  <div key={`ichioshi-${cast.id}`} className="relative min-w-[240px] flex-[0_0_240px] md:min-w-[300px] md:flex-[0_0_300px]">
+                    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft transition-all duration-500 hover:shadow-luxury">
+                      <Link
+                        href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`}
+                        className="block h-full w-full"
+                      >
+                        {/* 画像エリア - 既存デザイン流用 */}
+                        <div className="relative aspect-[3/4] overflow-hidden">
+                          <NextImage
+                            src={cast.imageUrl}
+                            alt={cast.name}
+                            fill
+                            className="object-cover transition-transform duration-700 group-hover:scale-105"
+                            sizes="(max-width: 640px) 240px, 300px"
+                            unoptimized
+                          />
+                          <div className="pointer-events-none absolute left-2 top-2">
+                            <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
+                              <Star className="h-2.5 w-2.5 fill-current" /> 店長一押し
+                            </span>
+                          </div>
+                   
+                          <div className="absolute bottom-3 right-3 rounded-full bg-white/90 p-2 shadow-lg backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                            <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 border-rose-400">
+                              <div className="ml-0.5 h-0 w-0 border-b-[5px] border-l-[8px] border-t-[5px] border-b-transparent border-l-rose-400 border-t-transparent" />
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* コンテンツエリア - 既存デザイン流用 */}
+                        <div className="flex flex-col p-4 text-left">
+                          <div className="mb-2 flex items-end justify-between">
+                            <h3 className="truncate text-base font-black text-slate-800">
+                              {cast.name}
+                            </h3>
+                            <span className="ml-2 flex-shrink-0 text-sm font-bold text-slate-500">
+                              {cast.age}歳
+                            </span>
+                          </div>
+                          <div className="mt-2 border-t border-rose-50 pt-3">
+                            <div className="flex items-center justify-center gap-2 rounded-xl bg-orange-50/70 py-2.5">
+                              <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
+                              <span className="text-[10px] font-black tracking-widest text-orange-600">
+                                {cast.attendance}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         )}
 
