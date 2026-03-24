@@ -810,7 +810,7 @@ export default function HubPageClient({
       {/* ─── 3.5 オウンドメディア連携 (各セクション化) ─── */}
       {[
         {
-          title: 'イケジョラボ',
+          title: 'アモラボ',
           sub: "Women's Wellness",
           illustration: '/ハブページメディアイラスト/イケジョ.png',
           color: 'rose',
@@ -933,7 +933,7 @@ export default function HubPageClient({
                       className={`absolute inset-0 -z-10 rounded-full opacity-30 blur-[60px] md:blur-[120px] ${
                         media.title === 'イケオラボ'
                           ? 'bg-blue-400'
-                          : media.title === 'イケジョラボ'
+                          : media.title === 'アモラボ'
                             ? 'bg-rose-400'
                             : 'bg-amber-400'
                       }`}
@@ -948,7 +948,7 @@ export default function HubPageClient({
               className={`-mx-6 border-b-2 border-t-2 border-solid px-6 py-10 ${
                 media.title === 'イケオラボ'
                   ? 'border-blue-500/40'
-                  : media.title === 'イケジョラボ'
+                  : media.title === 'アモラボ'
                     ? 'border-rose-200/60'
                     : 'border-sky-200/60'
               }`}

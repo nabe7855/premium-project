@@ -30,9 +30,10 @@ async function getLatestDiaries() {
   const { data, error } = await supabase
     .from('blogs')
     .select(
-      'id, title, content, cast_id, created_at, casts(name, image_url, main_image_url), images:blog_images(image_url)',
+      'id, title, content, cast_id, created_at, casts!inner(id, name, image_url, main_image_url, is_active), images:blog_images(image_url)',
     )
     .eq('status', 'published')
+    .eq('casts.is_active', true)
     .order('created_at', { ascending: false })
     .limit(10);
   if (error) {
@@ -43,10 +44,10 @@ async function getLatestDiaries() {
 }
 
 async function getOwnedMediaArticles() {
-  // user = イケジョラボ + スイートステイ, recruit = イケオラボ
+  // user = アモラボ + スイートステイ, recruit = イケオラボ
   const [userRes, recruitRes] = await Promise.allSettled([
-    getMediaArticles('user'),
-    getMediaArticles('recruit'),
+    getMediaArticles(undefined, 'user'),
+    getMediaArticles(undefined, 'recruit'),
   ]);
 
   const userArticles =
