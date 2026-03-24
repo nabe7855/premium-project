@@ -79,6 +79,16 @@ const CastTabBasicInformation: React.FC<CastTabBasicInformationProps> = ({ cast 
         {cast.height ? `${cast.height}cm` : '秘密❤'}
       </span>
     </div>
+
+    {/* 体重 */}
+    <div className="flex justify-between items-center">
+      <span className="text-sm sm:text-base text-neutral-500">体重</span>
+      <span
+        className="px-3 py-1 rounded-full text-sm font-semibold bg-green-50 text-green-600 shadow-sm"
+      >
+        {cast.weight ? `${cast.weight}kg` : '秘密❤'}
+      </span>
+    </div>
   </div>
 </div>
 

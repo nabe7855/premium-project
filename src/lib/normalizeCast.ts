@@ -74,6 +74,7 @@ export function normalizeCast(
     name: cast.name,
     age: cast.age ?? undefined,
     height: cast.height ?? undefined,
+    weight: cast.weight ?? undefined,
 
     // プロフィール系
     catchCopy: cast.catch_copy ?? undefined,

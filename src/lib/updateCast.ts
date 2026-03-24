@@ -9,6 +9,7 @@ export async function updateCast(cast: CastProfile) {
       name: cast.name,
       age: cast.age,
       height: cast.height,
+      weight: cast.weight,
       profile: cast.profile,
       image_url: cast.imageUrl,
       voice_url: cast.voiceUrl ?? null,

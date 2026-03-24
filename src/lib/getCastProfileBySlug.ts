@@ -18,6 +18,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       slug,
       age,
       height,
+      weight,
       profile,
       voice_url,
       is_active,

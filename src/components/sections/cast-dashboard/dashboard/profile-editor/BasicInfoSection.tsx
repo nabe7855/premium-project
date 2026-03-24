@@ -39,6 +39,16 @@ export default function BasicInfoSection({ form, onChange }: Props) {
             className="mt-1 w-full rounded border px-3 py-2"
           />
         </div>
+
+        <div>
+          <label className="block text-sm font-medium">体重 (kg)</label>
+          <input
+            type="number"
+            value={form.weight ?? ''}
+            onChange={(e) => onChange('weight', Number(e.target.value))}
+            className="mt-1 w-full rounded border px-3 py-2"
+          />
+        </div>
       </div>
 
       <div>

@@ -8,28 +8,36 @@ datasource db {
 }
 
 model Cast {
-  id             String                @id @default(uuid())
-  name           String
-  age            Int
-  profile        String?
-  image_url      String
-  email          String?
-  login_password String?
-  manager_comment  String?
-  catch_copy       String?
-  is_active        Boolean               @default(true)
-  is_ichioshi      Boolean               @default(false)
-  ai_summary       String?
-  created_at       DateTime              @default(now())
-  blogs          Blog[]
-  badges         CastBadge[]
-  features       CastFeatures?
-  profiles       CastProfile[]
-  memberships    CastStoreMembership[]
-  gallery_items  GalleryItem[]
-  reviews        Review[]
-  schedules      Schedule[]
-  video_casts    VideoCast[]
+  id              String                @id @default(uuid())
+  name            String
+  age             Int?
+  height          Int?
+  weight          Int?
+  blood_type      String?
+  profile         String?
+  image_url       String?
+  voice_url       String?
+  email           String?
+  login_password  String?
+  manager_comment String?
+  catch_copy      String?
+  is_active       Boolean               @default(true)
+  is_ichioshi     Boolean               @default(false)
+  ai_summary      String?
+  sexiness_level  Int?
+  mbti_id         String?
+  animal_id       String?
+  face_id         String?
+  created_at      DateTime              @default(now())
+  blogs           Blog[]
+  badges          CastBadge[]
+  features        CastFeatures?
+  profiles        CastProfile[]
+  memberships     CastStoreMembership[]
+  gallery_items   GalleryItem[]
+  reviews         Review[]
+  schedules       Schedule[]
+  video_casts     VideoCast[]
 
   @@map("casts")
 }

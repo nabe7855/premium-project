@@ -80,6 +80,7 @@ export interface Cast {
 
   age?: number;
   height?: number;
+  weight?: number; // ✅ 追加
 
   // プロフィール系
   catchCopy?: string;
@@ -198,6 +199,7 @@ export interface CastSummary {
   name: string;
   age?: number;
   height?: number;
+  weight?: number; // ✅ 追加
   catchCopy?: string;
   imageUrl?: string;
   galleryItems?: GalleryItem[];
@@ -241,6 +243,7 @@ export interface CastProfile {
   name: string;
   age?: number;
   height?: number;
+  weight?: number; // ✅ 追加
   profile?: string;
   imageUrl?: string;
   voiceUrl?: string | null;
@@ -281,6 +284,7 @@ export interface StrapiCastItem {
   name: string;
   age?: number;
   height?: number;
+  weight?: number; // ✅ 追加
   catchCopy?: string;
   imageUrl?: string;
   sexinessLevel?: number;
@@ -369,6 +373,7 @@ export interface CastProfilePublic extends CastProfileBase {
   slug: string; // 👈 追加（必須）
   age?: number;
   height?: number;
+  weight?: number; // ✅ 追加
   profile?: string;
   voiceUrl?: string | null; // 👈 null許容に修正
   mbtiId?: string;
