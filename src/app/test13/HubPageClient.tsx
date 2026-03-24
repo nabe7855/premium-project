@@ -93,8 +93,9 @@ interface HubPageClientProps {
   videos: any[];
   diaries: any[];
   mediaArticles: {
-    userArticles: any[]; // アモラボ + スイートステイ
-    recruitArticles: any[]; // イケオラボ
+    amolabArticles: any[];
+    sweetStayArticles: any[];
+    ikeoArticles: any[];
   };
 }
 
@@ -664,7 +665,11 @@ export default function HubPageClient({
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
               >
-                {[...mediaArticles.userArticles, ...mediaArticles.recruitArticles]
+                {[
+                  ...mediaArticles.amolabArticles,
+                  ...mediaArticles.sweetStayArticles,
+                  ...mediaArticles.ikeoArticles,
+                ]
                   .slice(0, 9)
                   .map((article: any) => (
                     <motion.div
@@ -820,7 +825,7 @@ export default function HubPageClient({
           href: '/ikejo',
           icon: '💗',
           desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常의整えまで、現代女性に寄り添うヒントを届けます。',
-          articles: mediaArticles.userArticles.slice(0, 4),
+          articles: mediaArticles.amolabArticles,
         },
         {
           title: 'イケオラボ',
@@ -833,7 +838,7 @@ export default function HubPageClient({
           href: '/ikeo',
           icon: '⚡',
           desc: 'メンズウェルネス。選ばれる男へのナビゲート。心身のコンディショニングを通じた新しいライフスタイルを提案。',
-          articles: mediaArticles.recruitArticles.slice(0, 4),
+          articles: mediaArticles.ikeoArticles,
         },
         {
           title: 'スイートステイ',
@@ -846,7 +851,7 @@ export default function HubPageClient({
           href: '/sweetstay',
           icon: '🏨',
           desc: '大人の隠れ家ホテルガイド。AIが導く一軒。特別な夜を彩る、あなただけに最適な空間をナビゲートします。',
-          articles: mediaArticles.userArticles.slice(0, 4), // 本来はフィルタリングした方が良いが一旦流用
+          articles: mediaArticles.sweetStayArticles,
         },
       ].map((media, idx) => (
         <section

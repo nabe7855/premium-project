@@ -44,23 +44,27 @@ async function getLatestDiaries() {
 }
 
 async function getOwnedMediaArticles() {
-  // user = アモラボ + スイートステイ, recruit = イケオラボ
   const [userRes, recruitRes] = await Promise.allSettled([
     getMediaArticles(undefined, 'user'),
     getMediaArticles(undefined, 'recruit'),
   ]);
 
-  const userArticles =
+  const rawUserArticles =
     userRes.status === 'fulfilled' && userRes.value.success
-      ? (userRes.value.articles?.filter((a: any) => a.status === 'published') ?? []).slice(0, 4)
+      ? (userRes.value.articles?.filter((a: any) => a.status === 'published') ?? [])
       : [];
 
-  const recruitArticles =
+  const rawRecruitArticles =
     recruitRes.status === 'fulfilled' && recruitRes.value.success
-      ? (recruitRes.value.articles?.filter((a: any) => a.status === 'published') ?? []).slice(0, 2)
+      ? (recruitRes.value.articles?.filter((a: any) => a.status === 'published') ?? [])
       : [];
 
-  return { userArticles, recruitArticles };
+  // カテゴリごとに抽出
+  const amolabArticles = rawUserArticles.filter((a: any) => a.category === 'amolab').slice(0, 4);
+  const sweetStayArticles = rawUserArticles.filter((a: any) => a.category === 'sweetstay').slice(0, 4);
+  const ikeoArticles = rawRecruitArticles.filter((a: any) => a.category === 'ikeo').slice(0, 4);
+
+  return { amolabArticles, sweetStayArticles, ikeoArticles };
 }
 
 export const dynamic = 'force-dynamic';
@@ -82,8 +86,8 @@ export default async function Test13Page() {
       diaries={diaries.status === 'fulfilled' ? diaries.value : []}
       mediaArticles={
         mediaArticles.status === 'fulfilled'
-          ? mediaArticles.value
-          : { userArticles: [], recruitArticles: [] }
+          ? (mediaArticles.value as any)
+          : { amolabArticles: [], sweetStayArticles: [], ikeoArticles: [] }
       }
     />
   );
