@@ -336,7 +336,7 @@ export default function MediaEditor({ initialData, articleId }: MediaEditorProps
                 <option value="amolab">アモラボ</option>
                 <option value="ikeo">イケオ・ラボ</option>
                 <option value="sweetstay">Sweet Stay (ホテルメディア)</option>
-                <option value="amolab-jiten">アモラボ辞典</option>
+                <option value="amolab-jiten">女風辞典</option>
               </select>
               <p className="mt-1 text-[11px] text-gray-500">掲載先のメディア媒体を選択します。</p>
             </div>

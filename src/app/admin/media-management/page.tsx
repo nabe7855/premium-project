@@ -61,7 +61,7 @@ export default function MediaManagementPage() {
             <option value="amolab">アモラボ</option>
             <option value="ikeo">イケオ</option>
             <option value="sweetstay">Sweet Stay</option>
-            <option value="amolab-jiten">アモラボ辞典</option>
+            <option value="amolab-jiten">女風辞典</option>
           </select>
           <select
             value={filterStatus}
@@ -156,14 +156,18 @@ export default function MediaManagementPage() {
                               ? 'bg-rose-100 text-rose-800'
                               : article.category === 'ikeo'
                                 ? 'bg-blue-100 text-blue-800'
-                                : 'bg-pink-100 text-pink-800'
+                                : article.category === 'amolab-jiten'
+                                  ? 'bg-indigo-100 text-indigo-800'
+                                  : 'bg-pink-100 text-pink-800'
                           }`}
                         >
                           {article.category === 'sweetstay'
                             ? 'Sweet Stay'
                             : article.category === 'ikeo'
                               ? 'イケオ'
-                              : 'アモラボ'}
+                              : article.category === 'amolab-jiten'
+                                ? '女風辞典'
+                                : 'アモラボ'}
                         </span>
                       </td>
                       <td className="whitespace-nowrap px-6 py-4">

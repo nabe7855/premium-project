@@ -75,7 +75,7 @@ export default function NoteArticleUI({
       bg: 'bg-slate-50',
       text: 'text-slate-600',
       accent: 'slate-200',
-      authorLabel: '辞典',
+      authorLabel: '女風辞典',
       authorColor: 'text-slate-500',
       prose: 'prose-slate',
     },

@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'アモラボ辞典 (Jiten) | 女性用風俗の不安を安心に変える初心者ガイド',
+  title: '女風辞典 (Jiten) | 女性用風俗の不安を安心に変える初心者ガイド',
   description:
     '女性用風俗（女風）の用語、利用の流れ、マナー、料金などを分かりやすく解説。怖さや不安をあおらず、あなたが主体的に判断できるようになるための専門辞典です。',
 };
@@ -51,7 +51,7 @@ export default async function DictionaryTopPage() {
             初心者向け解説メディア
           </div>
           <h1 className="mb-8 text-[32px] font-black leading-tight text-gray-900 md:text-[48px]">
-            アモラボ辞典 <span className="text-pink-500">Jiten</span>
+            女風辞典 <span className="text-pink-500">Jiten</span>
           </h1>
           <p className="mx-auto mb-12 max-w-2xl text-base leading-relaxed text-gray-500 md:text-lg">
             怖さや恥ずかしさをあおらず、分からない言葉や流れをやさしく整理し、
@@ -155,7 +155,7 @@ export default async function DictionaryTopPage() {
       {/* 編集方針 */}
       <section className="border-t border-gray-100 bg-white py-20">
         <div className="container mx-auto max-w-2xl px-6 text-center">
-          <h2 className="mb-8 text-xl font-bold text-gray-800">アモラボ辞典の編集方針</h2>
+          <h2 className="mb-8 text-xl font-bold text-gray-800">女風辞典の編集方針</h2>
           <p className="mb-10 text-sm leading-relaxed text-gray-500">
             当辞典は、業界の専門用語を分かりやすく解説し、利用者が自分自身の意志で
             納得して判断できることを目的としています。誇張した表現や不安を煽る記載は行いません。
