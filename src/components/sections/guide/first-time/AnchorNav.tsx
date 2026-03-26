@@ -16,10 +16,10 @@ const AnchorNav: React.FC<AnchorNavProps> = ({ slug, config, isEditing }) => {
   const navItems = [
     { label: 'ストロベリー\nボーイズとは', href: '#welcome' },
     { label: 'セラピスト\n一覧', href: '#cast-list' },
-    { label: '出勤スケ\nジュール', href: '#cast-list' },
     { label: '施術の\n流れ', href: '#flow' },
     { label: 'ご利用\n料金', href: '#pricing' },
     { label: '禁止事項', href: '#forbidden' },
+    { label: 'よくある\nご質問', href: '#faq' },
   ];
 
   return (
