@@ -250,7 +250,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
                     handleUpdateCourse(currentCourses.indexOf(course), 'description', e)
                   }
                   suppressContentEditableWarning
-                  className="text-center text-sm text-gray-500"
+                  className="text-center text-sm text-gray-500 whitespace-pre-wrap outline-none"
                 >
                   {course.description}
                 </p>

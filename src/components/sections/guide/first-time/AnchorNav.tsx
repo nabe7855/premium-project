@@ -2,12 +2,17 @@
 
 import Link from 'next/link';
 import React from 'react';
+import { AnchorNavSectionConfig } from '@/lib/store/firstTimeConfig';
 
 interface AnchorNavProps {
   slug: string;
+  config?: AnchorNavSectionConfig;
+  isEditing?: boolean;
 }
 
-const AnchorNav: React.FC<AnchorNavProps> = ({ slug }) => {
+const AnchorNav: React.FC<AnchorNavProps> = ({ slug, config, isEditing }) => {
+  if (config?.isVisible === false && !isEditing) return null;
+
   const navItems = [
     { label: 'ストロベリー\nボーイズとは', href: '#welcome' },
     { label: 'セラピスト\n一覧', href: '#cast-list' },
@@ -18,7 +23,10 @@ const AnchorNav: React.FC<AnchorNavProps> = ({ slug }) => {
   ];
 
   return (
-    <nav className="bg-white py-8 md:py-16">
+    <nav
+      id="anchorNav"
+      className={`bg-white py-8 md:py-16 ${config?.isVisible === false ? 'opacity-50 grayscale' : ''}`}
+    >
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap items-center justify-center gap-4 md:gap-8">
           {navItems.map((item, index) => (

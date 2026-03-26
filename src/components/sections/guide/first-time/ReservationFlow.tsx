@@ -144,19 +144,22 @@ export const ReservationFlow: React.FC<ReservationFlowProps> = ({
                 <div
                   className={`relative rounded-3xl border border-gray-100 bg-gray-50 p-6 md:p-8 ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}`}
                 >
-                  <h3
-                    contentEditable={isEditing}
-                    onBlur={(e) => handleStepUpdate(i, 'title', e.currentTarget.innerText)}
-                    suppressContentEditableWarning
-                    className="mb-3 text-xl font-bold text-[#FF4B5C]"
-                  >
-                    ステップ {i + 1}: {s.title}
+                  <h3 className="mb-3 text-xl font-bold text-[#FF4B5C] outline-none">
+                    ステップ {i + 1}:{' '}
+                    <span
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleStepUpdate(i, 'title', e.currentTarget.innerText)}
+                      suppressContentEditableWarning
+                      className="outline-none"
+                    >
+                      {s.title}
+                    </span>
                   </h3>
                   <p
                     contentEditable={isEditing}
                     onBlur={(e) => handleStepUpdate(i, 'desc', e.currentTarget.innerText)}
                     suppressContentEditableWarning
-                    className="mb-4 text-sm leading-relaxed text-gray-600 md:text-base"
+                    className="whitespace-pre-wrap mb-4 text-sm leading-relaxed text-gray-600 md:text-base outline-none"
                   >
                     {s.desc}
                   </p>

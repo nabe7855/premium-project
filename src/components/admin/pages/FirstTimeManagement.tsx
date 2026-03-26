@@ -39,11 +39,13 @@ const SECTION_LABELS: Record<string, string> = {
   forbidden: '禁止事項',
   faq: 'よくあるご質問',
   cta: 'フッター問い合わせ内容',
+  anchorNav: 'セクション移動ボタン',
 };
 
 const SECTION_ORDER = [
   'banner',
   'hero',
+  'anchorNav',
   'welcome',
   'threePoints',
   'casts',

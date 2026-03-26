@@ -18,6 +18,8 @@ export interface WelcomeConfig {
   subHeading: string;
   imageUrl?: string;
   content: string[];
+  signaturePrefix?: string;
+  signature?: string;
   isVisible: boolean;
 }
 
@@ -116,6 +118,10 @@ export interface CTAConfig {
   isVisible: boolean;
 }
 
+export interface AnchorNavSectionConfig {
+  isVisible: boolean;
+}
+
 // 初めての方へページ全体の構成
 export interface FirstTimeConfig {
   banner: {
@@ -133,6 +139,7 @@ export interface FirstTimeConfig {
   faq: FAQConfig;
   pricing: PricingConfig;
   cta: CTAConfig;
+  anchorNav: AnchorNavSectionConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -164,6 +171,8 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
       'たまには自分を甘やかして、心も身体もとろけるような最高の癒やしを体験してみませんか？',
       'ストロベリーボーイズは、そんな貴女のために誕生した、福岡随一のプレミアム・メンズエステです。',
     ],
+    signaturePrefix: '貴女に寄り添うパートナーとして',
+    signature: 'ストロベリーボーイズ 一同',
     isVisible: true,
   },
   forbidden: {
@@ -363,6 +372,9 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   },
   cta: {
     imageUrl: '',
+    isVisible: true,
+  },
+  anchorNav: {
     isVisible: true,
   },
 };

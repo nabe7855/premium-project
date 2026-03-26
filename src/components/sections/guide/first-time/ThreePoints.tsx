@@ -156,27 +156,24 @@ export const ThreePoints: React.FC<ThreePointsProps> = ({
               >
                 {p.step}
               </div>
-              <h3
-                className="mb-6 flex items-center gap-2 text-xl font-bold leading-tight text-gray-800 outline-none"
-                contentEditable={isEditing}
-                suppressContentEditableWarning={isEditing}
-                onBlur={(e) => {
-                  if (!onUpdate) return;
-                  const newItems = [...points];
-                  newItems[idx] = { ...newItems[idx], title: e.currentTarget.innerText };
-                  onUpdate('threePoints', 'items', newItems);
-                }}
-              >
+              <h3 className="mb-6 flex items-center gap-2 text-xl font-bold leading-tight text-gray-800 outline-none">
+                <span className="text-2xl">{p.icon}</span>
                 <span
-                  className="text-2xl"
-                  contentEditable={false} // Prevent icon from being edited as text
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => {
+                    if (!onUpdate) return;
+                    const newItems = [...points];
+                    newItems[idx] = { ...newItems[idx], title: e.currentTarget.innerText };
+                    onUpdate('threePoints', 'items', newItems);
+                  }}
+                  className="outline-none"
                 >
-                  {p.icon}
+                  {p.title}
                 </span>
-                {p.title}
               </h3>
               <p
-                className="text-sm leading-relaxed text-gray-600 outline-none md:text-base"
+                className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600 outline-none md:text-base"
                 contentEditable={isEditing}
                 suppressContentEditableWarning={isEditing}
                 onBlur={(e) => {

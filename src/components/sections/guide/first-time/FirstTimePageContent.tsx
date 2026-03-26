@@ -108,7 +108,7 @@ export default function FirstTimePageContent({
         onImageUpload={onImageUpload}
       />
       <Hero storeName={storeName} config={config.hero} isEditing={isEditing} onUpdate={onUpdate} />
-      <AnchorNav slug={slug} />
+      <AnchorNav slug={slug} config={config.anchorNav} isEditing={isEditing} />
 
       <div id="welcome">
         <Welcome

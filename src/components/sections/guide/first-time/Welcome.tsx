@@ -26,6 +26,8 @@ export const Welcome: React.FC<WelcomeProps> = ({
       'たまには自分を甘やかして、心も身体もとろけるような最高の癒やしを体験してみませんか？',
       'ストロベリーボーイズは、そんな貴女のために誕生した、福岡随一のプレミアム・メンズエステです。',
     ],
+    signaturePrefix: '貴女に寄り添うパートナーとして',
+    signature: `${storeName} 一同`,
     isVisible: true,
   };
 
@@ -151,6 +153,7 @@ export const Welcome: React.FC<WelcomeProps> = ({
                       }
                     }}
                     suppressContentEditableWarning
+                    className="whitespace-pre-wrap"
                   >
                     {para}
                   </p>
@@ -159,10 +162,22 @@ export const Welcome: React.FC<WelcomeProps> = ({
 
               <div className="flex flex-col items-end pt-12">
                 <div className="text-right">
-                  <p className="mb-2 text-sm text-gray-400">貴女に寄り添うパートナーとして</p>
+                  <p
+                    contentEditable={isEditing}
+                    onBlur={(e) => handleTextUpdate('signaturePrefix', e)}
+                    suppressContentEditableWarning
+                    className="mb-2 text-sm text-gray-400"
+                  >
+                    {data.signaturePrefix || '貴女に寄り添うパートナーとして'}
+                  </p>
                   <div className="flex items-center gap-3">
-                    <span className="text-xl font-bold text-gray-800 md:text-2xl">
-                      {storeName} 一同
+                    <span
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleTextUpdate('signature', e)}
+                      suppressContentEditableWarning
+                      className="text-xl font-bold text-gray-800 md:text-2xl"
+                    >
+                      {data.signature || `${storeName} 一同`}
                     </span>
                     <div className="flex h-12 w-12 rotate-12 transform items-center justify-center rounded-full border-2 border-white bg-[#FF4B5C] text-white shadow-lg">
                       <span className="text-2xl">🍓</span>

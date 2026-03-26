@@ -158,7 +158,7 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
                   contentEditable={isEditing}
                   onBlur={(e) => handleTextUpdate(i, 'desc', e)}
                   suppressContentEditableWarning
-                  className="text-sm leading-relaxed text-gray-600"
+                  className="text-sm leading-relaxed text-gray-600 whitespace-pre-wrap outline-none"
                 >
                   {r.desc}
                 </p>

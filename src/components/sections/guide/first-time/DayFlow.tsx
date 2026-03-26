@@ -156,7 +156,7 @@ export const DayFlow: React.FC<DayFlowProps> = ({ config, isEditing, onUpdate, o
                   contentEditable={isEditing}
                   onBlur={(e) => handleStepUpdate(i, 'desc', e)}
                   suppressContentEditableWarning
-                  className="text-left text-xs leading-relaxed text-gray-500"
+                  className="text-left text-xs leading-relaxed text-gray-500 whitespace-pre-wrap outline-none"
                 >
                   {s.desc}
                 </p>

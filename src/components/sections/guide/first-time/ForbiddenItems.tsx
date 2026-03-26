@@ -194,7 +194,7 @@ export const ForbiddenItems: React.FC<ForbiddenItemsProps> = ({
                       handleItemUpdate(index, 'description', e.currentTarget.innerText)
                     }
                     suppressContentEditableWarning
-                    className="leading-relaxed text-gray-600"
+                    className="leading-relaxed text-gray-600 whitespace-pre-wrap outline-none"
                   >
                     {item.description}
                   </p>
