@@ -2,6 +2,7 @@
 
 import { submitRecruitApplication } from '@/actions/recruit';
 import { resizeImage } from '@/lib/image-utils';
+import { getAttributionData } from '@/lib/attribution';
 import React, { useEffect, useRef, useState } from 'react';
 
 interface Message {
@@ -267,6 +268,12 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
               dataToSubmit.append('address', formData.homeArea || '');
               dataToSubmit.append('employment', formData.job || '');
               dataToSubmit.append('source', formData.source || '');
+
+              // アトリビューションデータの付与 (Stealth)
+              const attribution = getAttributionData();
+              if (attribution) {
+                dataToSubmit.append('attribution', JSON.stringify(attribution));
+              }
               
               const messageParts = [];
               if (formData.motivation) messageParts.push(`【応募動機】\n${formData.motivation}`);

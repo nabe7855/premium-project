@@ -1,6 +1,7 @@
 'use client';
 
 import { submitRecruitApplication } from '@/actions/recruit';
+import { getAttributionData } from '@/lib/attribution';
 import { useNavigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
@@ -23,6 +24,12 @@ const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
       formData.append('type', 'quick');
       if (storeName) {
         formData.append('store', storeName);
+      }
+
+      // アトリビューションデータの付与 (Stealth)
+      const attribution = getAttributionData();
+      if (attribution) {
+        formData.append('attribution', JSON.stringify(attribution));
       }
 
       const result = await submitRecruitApplication(formData);

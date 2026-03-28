@@ -460,6 +460,76 @@ export default function InterviewReservationsPage() {
                                       </section>
                                     )}
 
+                                    {/* System Attribution (New) */}
+                                    {(selectedApp.details as any)?.attribution && (
+                                      <section>
+                                        <h3 className="mb-4 flex items-center gap-2 font-bold text-slate-800">
+                                          <span className="h-4 w-1 bg-indigo-500"></span>
+                                          システム検出の流入情報
+                                        </h3>
+                                        <div className="rounded-xl border border-indigo-100 bg-indigo-50/30 p-4">
+                                          <dl className="grid grid-cols-2 gap-4">
+                                            <div className="col-span-2">
+                                              <dt className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                                                リファラー (遷移元)
+                                              </dt>
+                                              <dd className="mt-0.5 break-all text-xs font-medium text-slate-600">
+                                                {(selectedApp.details as any).attribution.referrer ||
+                                                  '直接入力 / 不明'}
+                                              </dd>
+                                            </div>
+                                            <div>
+                                              <dt className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                                                広告元 (UTM Source)
+                                              </dt>
+                                              <dd className="mt-0.5 text-sm font-semibold text-slate-700">
+                                                {(selectedApp.details as any).attribution
+                                                  .utm_source || '-'}
+                                              </dd>
+                                            </div>
+                                            <div>
+                                              <dt className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                                                キャンペーン
+                                              </dt>
+                                              <dd className="mt-0.5 text-sm font-semibold text-slate-700">
+                                                {(selectedApp.details as any).attribution
+                                                  .utm_campaign || '-'}
+                                              </dd>
+                                            </div>
+                                            <div>
+                                              <dt className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                                                デバイス / 初回訪問
+                                              </dt>
+                                              <dd className="mt-0.5 text-xs text-slate-600">
+                                                <span className="font-bold">
+                                                  {(selectedApp.details as any).attribution.device ===
+                                                  'mobile'
+                                                    ? '📱 モバイル'
+                                                    : '💻 PC'}
+                                                </span>
+                                                <br />
+                                                {new Date(
+                                                  (selectedApp.details as any).attribution
+                                                    .first_visit_at,
+                                                ).toLocaleString('ja-JP')}
+                                              </dd>
+                                            </div>
+                                            {/* Google Click ID (GCLID) がある場合 */}
+                                            {(selectedApp.details as any).attribution.gclid && (
+                                              <div>
+                                                <dt className="text-[10px] font-bold uppercase tracking-wider text-indigo-400">
+                                                  Google広告ID
+                                                </dt>
+                                                <dd className="mt-0.5 truncate text-[10px] text-slate-500">
+                                                  {(selectedApp.details as any).attribution.gclid}
+                                                </dd>
+                                              </div>
+                                            )}
+                                          </dl>
+                                        </div>
+                                      </section>
+                                    )}
+
                                     {/* Simulation Result */}
                                     {selectedApp.simulationResult && (
                                       <section>

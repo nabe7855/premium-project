@@ -5,6 +5,7 @@ import ApplicationModal from '@/components/recruit2/ApplicationModal';
 import Chatbot from '@/components/recruit2/Chatbot';
 import DiagnosticModal from '@/components/recruit2/DiagnosticModal';
 import FloatingCTA from '@/components/recruit2/FloatingCTA';
+import AttributionTracker from '@/components/recruit2/AttributionTracker';
 import Footer from '@/components/recruit2/Footer';
 import FullForm from '@/components/recruit2/FullForm';
 import Header from '@/components/recruit2/Header';
@@ -97,6 +98,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     <div
       className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen || isDiagnosticOpen ? 'overflow-hidden' : ''}`}
     >
+      <AttributionTracker />
       {fullMergedConfig.header?.isVisible !== false && (
         <Header
           onOpenForm={openForm}

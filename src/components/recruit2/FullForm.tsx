@@ -2,6 +2,7 @@
 
 import { submitRecruitApplication } from '@/actions/recruit';
 import { resizeImage } from '@/lib/image-utils';
+import { getAttributionData } from '@/lib/attribution';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -38,6 +39,12 @@ const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
     formData.append('type', 'full');
     if (storeName) {
       formData.append('store', storeName);
+    }
+
+    // アトリビューションデータの付与 (Stealth)
+    const attribution = getAttributionData();
+    if (attribution) {
+      formData.append('attribution', JSON.stringify(attribution));
     }
 
     // 画像の圧縮処理

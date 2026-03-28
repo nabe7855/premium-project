@@ -23,6 +23,10 @@ export async function submitRecruitApplication(formData: FormData) {
     const simulationResultStr = formData.get('simulationResult') as string;
     const simulationResult = simulationResultStr ? JSON.parse(simulationResultStr) : null;
 
+    // アトリビューションデータの取得
+    const attributionStr = formData.get('attribution') as string;
+    const attribution = attributionStr ? JSON.parse(attributionStr) : null;
+
     // その他の項目を details JSON にまとめる
     const details = {
       employment: formData.get('employment') as string,
@@ -36,6 +40,7 @@ export async function submitRecruitApplication(formData: FormData) {
       dating_app_exp: formData.get('dating_app_exp') as string,
       tattoo: formData.get('tattoo') as string,
       appearance_concerns: formData.get('appearance_concerns') as string,
+      attribution: attribution,
     };
 
     // 1. 応募者基本情報をデータベースに保存
