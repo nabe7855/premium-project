@@ -1,6 +1,7 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import { FAQConfig } from '@/lib/store/firstTimeConfig';
-import React from 'react';
+import React, { useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 
 // Remove hardcoded faqData
 
@@ -32,6 +33,15 @@ export const FAQ: React.FC<FAQProps> = ({ config, isEditing, onUpdate, onImageUp
   const handleRemoveItem = (index: number) => {
     const newItems = (data.items || []).filter((_, i) => i !== index);
     onUpdate?.('faq', 'items', newItems);
+  };
+
+  const [openIndices, setOpenIndices] = useState<number[]>([]);
+
+  const toggleItem = (index: number) => {
+    if (isEditing) return;
+    setOpenIndices((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index]
+    );
   };
 
   const jsonLd = {
@@ -126,60 +136,89 @@ export const FAQ: React.FC<FAQProps> = ({ config, isEditing, onUpdate, onImageUp
         </div>
 
         <div className="space-y-6">
-          {(data.items || []).map((item, index) => (
-            <div
-              key={index}
-              className="group relative rounded-3xl border border-stone-100 bg-stone-50 p-6 transition-all hover:shadow-md md:p-8"
-            >
-              {isEditing && (
-                <button
-                  onClick={() => handleRemoveItem(index)}
-                  className="absolute right-4 top-4 rounded-full bg-red-100 p-1.5 text-red-500 opacity-0 transition-opacity hover:bg-red-200 group-hover:opacity-100"
-                  title="項目を削除"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-4 w-4"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
+          {(data.items || []).map((item, index) => {
+            const isOpen = openIndices.includes(index);
+            const showAnswer = isOpen || isEditing;
+
+            return (
+              <div
+                key={index}
+                className={`group relative rounded-3xl border border-stone-100 bg-stone-50 p-6 transition-all md:p-8 ${
+                  !isEditing ? 'cursor-pointer hover:shadow-md' : ''
+                }`}
+                onClick={() => toggleItem(index)}
+              >
+                {isEditing && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRemoveItem(index);
+                    }}
+                    className="absolute right-4 top-4 rounded-full bg-red-100 p-1.5 text-red-500 opacity-0 transition-opacity hover:bg-red-200 group-hover:opacity-100"
+                    title="項目を削除"
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
-                      clipRule="evenodd"
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                )}
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex gap-4">
+                    <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white">
+                      Q
+                    </span>
+                    <h3
+                      className={`pt-0.5 text-lg font-bold text-gray-800 outline-none focus:ring-2 focus:ring-rose-200 ${
+                        isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
+                      }`}
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleItemUpdate(index, 'question', e.currentTarget.innerText)}
+                      onClick={(e) => isEditing && e.stopPropagation()}
+                      suppressContentEditableWarning
+                    >
+                      {item.question}
+                    </h3>
+                  </div>
+                  {!isEditing && (
+                    <ChevronDown
+                      className={`h-5 w-5 flex-shrink-0 text-gray-400 transition-transform duration-300 ${
+                        isOpen ? 'rotate-180' : ''
+                      }`}
                     />
-                  </svg>
-                </button>
-              )}
-              <div className="mb-4 flex gap-4">
-                <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white">
-                  Q
-                </span>
-                <h3
-                  className={`pt-0.5 text-lg font-bold text-gray-800 outline-none focus:ring-2 focus:ring-rose-200 ${
-                    isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
+                  )}
+                </div>
+                
+                <div
+                  className={`overflow-hidden transition-all duration-300 ${
+                    showAnswer ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
                   }`}
-                  contentEditable={isEditing}
-                  onBlur={(e) => handleItemUpdate(index, 'question', e.currentTarget.innerText)}
-                  suppressContentEditableWarning
                 >
-                  {item.question}
-                </h3>
+                  <div className="flex gap-4 pt-4 ps-12">
+                    <p
+                      className={`leading-relaxed text-gray-600 outline-none focus:ring-2 focus:ring-rose-200 ${
+                        isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
+                      }`}
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleItemUpdate(index, 'answer', e.currentTarget.innerText)}
+                      onClick={(e) => isEditing && e.stopPropagation()}
+                      suppressContentEditableWarning
+                    >
+                      {item.answer}
+                    </p>
+                  </div>
+                </div>
               </div>
-              <div className="flex gap-4 ps-12">
-                <p
-                  className={`leading-relaxed text-gray-600 outline-none focus:ring-2 focus:ring-rose-200 ${
-                    isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
-                  }`}
-                  contentEditable={isEditing}
-                  onBlur={(e) => handleItemUpdate(index, 'answer', e.currentTarget.innerText)}
-                  suppressContentEditableWarning
-                >
-                  {item.answer}
-                </p>
-              </div>
-            </div>
-          ))}
+            );
+          })}
 
           {isEditing && (
             <button
