@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowDown, ArrowUp, ChevronLeft, Eye, Layout, Menu, Save } from 'lucide-react';
+import { ChevronLeft, Eye, GripVertical, Layout, Menu, Save } from 'lucide-react';
+import { Reorder } from 'framer-motion';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -189,17 +190,8 @@ export default function FirstTimeManagement() {
     }));
   };
 
-  // セクションの並べ替え
-  const moveSection = (index: number, direction: 'up' | 'down') => {
-    const newOrder = [...(config.sectionOrder || [])];
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
 
-    if (targetIndex < 0 || targetIndex >= newOrder.length) return;
-
-    const temp = newOrder[index];
-    newOrder[index] = newOrder[targetIndex];
-    newOrder[targetIndex] = temp;
-
+  const setSectionOrder = (newOrder: string[]) => {
     setConfig((prev) => ({
       ...prev,
       sectionOrder: newOrder,
@@ -221,20 +213,29 @@ export default function FirstTimeManagement() {
         表示セクション
       </h2>
 
-      <div className="space-y-2">
-        {(config.sectionOrder || SECTION_ORDER).map((sectionId, index) => {
+      <Reorder.Group
+        axis="y"
+        values={config.sectionOrder || SECTION_ORDER}
+        onReorder={setSectionOrder}
+        className="space-y-2"
+      >
+        {(config.sectionOrder || SECTION_ORDER).map((sectionId) => {
           const label = SECTION_LABELS[sectionId] || sectionId;
           const sectionData = (config as any)[sectionId];
 
           return (
-            <div
+            <Reorder.Item
               key={sectionId}
-              className="group flex flex-col rounded-lg border border-gray-700/30 bg-brand-primary/30 p-2"
+              value={sectionId}
+              className="group flex flex-col rounded-xl border border-gray-700/30 bg-brand-primary/40 p-2 shadow-sm transition-all active:scale-[0.98] active:shadow-lg active:ring-1 active:ring-pink-500/50"
             >
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="cursor-grab text-gray-500 hover:text-gray-300 active:cursor-grabbing">
+                  <GripVertical className="h-4 w-4" />
+                </div>
                 <button
                   onClick={() => scrollToSection(sectionId)}
-                  className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
+                  className="flex-grow text-left text-[13px] font-bold text-gray-200 transition-colors hover:text-brand-accent"
                 >
                   {label}
                 </button>
@@ -243,35 +244,15 @@ export default function FirstTimeManagement() {
                     <Switch
                       checked={sectionData.isVisible}
                       onCheckedChange={() => toggleVisibility(sectionId as any)}
-                      className="origin-right scale-75"
+                      className="origin-right scale-[0.7]"
                     />
                   )}
                 </div>
               </div>
-              <div className="mt-2 flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-gray-500 hover:text-white"
-                  onClick={() => moveSection(index, 'up')}
-                  disabled={index === 0}
-                >
-                  <ArrowUp className="h-3 w-3" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-gray-500 hover:text-white"
-                  onClick={() => moveSection(index, 'down')}
-                  disabled={index === (config.sectionOrder || SECTION_ORDER).length - 1}
-                >
-                  <ArrowDown className="h-3 w-3" />
-                </Button>
-              </div>
-            </div>
+            </Reorder.Item>
           );
         })}
-      </div>
+      </Reorder.Group>
 
       <div className="rounded-xl border border-blue-500/20 bg-blue-500/5 p-4">
         <p className="text-[10px] leading-relaxed text-blue-300">
