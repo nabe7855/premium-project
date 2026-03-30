@@ -124,6 +124,17 @@ export interface CTAConfig {
   isVisible: boolean;
 }
 
+export interface OptionsConfig {
+  heading: string;
+  basicTitle: string;
+  basicItems: string[];
+  paidTitle: string;
+  paidItems: { title: string; desc: string; price: string; isNegative?: boolean }[];
+  areasTitle: string;
+  areas: { name: string; price: string }[];
+  isVisible: boolean;
+}
+
 export interface AnchorNavSectionConfig {
   isVisible: boolean;
 }
@@ -146,6 +157,7 @@ export interface FirstTimeConfig {
   pricing: PricingConfig;
   cta: CTAConfig;
   anchorNav: AnchorNavSectionConfig;
+  options: OptionsConfig;
   // 他のセクションも必要に応じて追加
 }
 
@@ -403,6 +415,47 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     isVisible: true,
   },
   anchorNav: {
+    isVisible: true,
+  },
+  options: {
+    heading: 'サービス・オプション詳細',
+    basicTitle: '基本サービス・無料オプション',
+    basicItems: [
+      'カウンセリング',
+      '指圧マッサージ',
+      'パウダー性感',
+      'オイルマッサージ',
+      'ポルチオ・クンニ',
+      '乳首舐め',
+      'Gスポット・ボルチオ',
+      'キス・ハグ・愛撫',
+      'フェラ・手コキ',
+      'ローター・バイブ等',
+    ],
+    paidTitle: '有料オプション',
+    paidItems: [
+      {
+        title: 'ソフトM性感オプション',
+        desc: '目隠し、手枷などを使用し、ソフトに責める体験。',
+        price: '+¥2,000',
+      },
+      {
+        title: '洗体オプション',
+        desc: 'お風呂で丁寧に、いやらしく体を洗うサービス。',
+        price: '+¥2,000',
+      },
+      {
+        title: 'アイラインタッチ無し',
+        desc: '粘膜接触なし、服を脱がない等、不安な方向け。',
+        price: '-¥1,000',
+        isNegative: true,
+      },
+    ],
+    areasTitle: '出張費・ホテル代目安',
+    areas: [
+      { name: '新宿・渋谷・池袋・上野・錦糸町', price: '4,000円〜' },
+      { name: '鶯谷', price: '3,000円〜' },
+    ],
     isVisible: true,
   },
 };

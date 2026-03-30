@@ -163,24 +163,9 @@ export default function FirstTimePageContent({
           onImageUpload={onImageUpload}
         />
         <Options
-          areas={
-            slug === 'osaka'
-              ? [
-                  { name: '梅田・難波・心斎橋', price: '4,000円〜' },
-                  { name: 'その他大阪市内', price: '3,000円〜' },
-                ]
-              : slug === 'nagoya'
-                ? [
-                    { name: '栄・名古屋駅周辺', price: '4,000円〜' },
-                    { name: 'その他名古屋市内', price: '3,000円〜' },
-                  ]
-                : slug === 'fukuoka'
-                  ? [
-                      { name: '中洲・天神・博多駅周辺', price: '4,000円〜' },
-                      { name: 'その他福岡市内', price: '3,000円〜' },
-                    ]
-                  : undefined
-          }
+          config={config.options}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
         />
       </div>
       <ForbiddenItems
