@@ -284,12 +284,14 @@ export default function StoreTopManagement() {
         newConfig.header = { ...config.header, navLinks: newNavLinks };
       } else if (section === 'hero' && typeof index === 'number') {
         const newImages = [...config.hero.images];
+        const newLinks = config.hero.imageLinks ? [...config.hero.imageLinks] : [];
         if (index === newImages.length) {
           newImages.push(publicUrl);
+          newLinks.push('');
         } else {
           newImages[index] = publicUrl;
         }
-        newConfig.hero = { ...config.hero, images: newImages };
+        newConfig.hero = { ...config.hero, images: newImages, imageLinks: newLinks };
       } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
         const newItems = [...config.concept.items];
         newItems[index] = { ...newItems[index], imageUrl: publicUrl };

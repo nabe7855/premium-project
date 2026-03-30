@@ -48,6 +48,7 @@ export interface HeaderConfig {
 
 export interface HeroConfig {
   images: string[];
+  imageLinks?: string[];
   badge: string;
   badgeText: string;
   mainHeading: string;

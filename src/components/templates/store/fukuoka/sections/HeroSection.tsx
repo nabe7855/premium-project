@@ -93,6 +93,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
       const newImages = [...images];
       newImages.splice(index, 1);
       onUpdate('hero', 'images', newImages);
+
+      if (config.imageLinks) {
+        const newLinks = [...config.imageLinks];
+        newLinks.splice(index, 1);
+        onUpdate('hero', 'imageLinks', newLinks);
+      }
+
       if (currentHeroSlide >= newImages.length) {
         setCurrentHeroSlide(Math.max(0, newImages.length - 1));
       }
@@ -107,6 +114,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
     [newImages[index], newImages[newIndex]] = [newImages[newIndex], newImages[index]];
     onUpdate('hero', 'images', newImages);
+
+    if (config.imageLinks) {
+      const newLinks = [...config.imageLinks];
+      // Ensure the array is long enough to cover both indices
+      const maxIdx = Math.max(index, newIndex);
+      while (newLinks.length <= maxIdx) {
+        newLinks.push('');
+      }
+      [newLinks[index], newLinks[newIndex]] = [newLinks[newIndex], newLinks[index]];
+      onUpdate('hero', 'imageLinks', newLinks);
+    }
+
     setCurrentHeroSlide(newIndex);
   };
 
@@ -115,6 +134,18 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     if (file && onImageUpload) {
       onImageUpload('hero', file, images.length);
       setCurrentHeroSlide(images.length);
+    }
+  };
+
+  const handleLinkUpdate = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
+    if (onUpdate && config) {
+      const newLinks = [...(config.imageLinks || [])];
+      // Ensure the array is long enough
+      while (newLinks.length <= index) {
+        newLinks.push('');
+      }
+      newLinks[index] = e.target.value;
+      onUpdate('hero', 'imageLinks', newLinks);
     }
   };
 
@@ -144,28 +175,45 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 }`}
                 style={{ zIndex: isActive ? 10 : 0 }}
               >
-                {isFirst ? (
-                  <NextImage
-                    src={img}
-                    alt="店舗メインビジュアル"
-                    fill
-                    priority={true}
-                    fetchPriority="high"
-                    sizes="100vw"
-                    className="h-full w-full object-cover object-center"
-                    unoptimized
-                  />
-                ) : (
-                  <NextImage
-                    src={img}
-                    alt={`Hero Image ${index + 1}`}
-                    fill
-                    sizes="100vw"
-                    className="h-full w-full object-cover object-center"
-                    loading="lazy"
-                    unoptimized
-                  />
-                )}
+                {(() => {
+                  const imageContent = isFirst ? (
+                    <NextImage
+                      src={img}
+                      alt="店舗メインビジュアル"
+                      fill
+                      priority={true}
+                      fetchPriority="high"
+                      sizes="100vw"
+                      className="h-full w-full object-cover object-center"
+                      unoptimized
+                    />
+                  ) : (
+                    <NextImage
+                      src={img}
+                      alt={`Hero Image ${index + 1}`}
+                      fill
+                      sizes="100vw"
+                      className="h-full w-full object-cover object-center"
+                      loading="lazy"
+                      unoptimized
+                    />
+                  );
+
+                  const link = config?.imageLinks?.[index];
+                  if (link && !isEditing) {
+                    return (
+                      <a
+                        href={link}
+                        className="block h-full w-full cursor-pointer"
+                        target={link.startsWith('http') ? '_blank' : undefined}
+                        rel={link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                      >
+                        {imageContent}
+                      </a>
+                    );
+                  }
+                  return imageContent;
+                })()}
 
               {isEditing && index === currentHeroSlide && (
                 <div className="absolute right-4 top-20 z-50 flex flex-col gap-2 md:right-10 md:top-10">
@@ -248,6 +296,19 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                         />
                       </svg>
                     </button>
+                  </div>
+
+                  <div className="mt-2 w-full rounded-lg bg-black/50 p-3 backdrop-blur-md border border-white/10">
+                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-white/60">
+                      画像クリック時のリンクURL
+                    </label>
+                    <input
+                      type="text"
+                      value={config?.imageLinks?.[index] || ''}
+                      onChange={(e) => handleLinkUpdate(index, e)}
+                      placeholder="https://..."
+                      className="w-full rounded border border-white/20 bg-white/10 px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-rose-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+                    />
                   </div>
                 </div>
               )}
