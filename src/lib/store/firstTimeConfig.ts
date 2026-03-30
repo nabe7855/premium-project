@@ -158,6 +158,7 @@ export interface FirstTimeConfig {
   cta: CTAConfig;
   anchorNav: AnchorNavSectionConfig;
   options: OptionsConfig;
+  sectionOrder: string[];
   // 他のセクションも必要に応じて追加
 }
 
@@ -458,6 +459,21 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     ],
     isVisible: true,
   },
+  sectionOrder: [
+    'banner',
+    'hero',
+    'anchorNav',
+    'welcome',
+    'threePoints',
+    'casts',
+    'sevenReasons',
+    'reservationFlow',
+    'dayFlow',
+    'pricing',
+    'forbidden',
+    'faq',
+    'cta',
+  ],
 };
 
 /**
@@ -470,6 +486,10 @@ export const mergeConfig = (partialConfig: any): FirstTimeConfig => {
 
   Object.keys(DEFAULT_FIRST_TIME_CONFIG).forEach((key) => {
     const sectionKey = key as keyof FirstTimeConfig;
+    if (key === 'sectionOrder') {
+      merged.sectionOrder = partialConfig.sectionOrder || DEFAULT_FIRST_TIME_CONFIG.sectionOrder;
+      return;
+    }
     if (partialConfig[sectionKey]) {
       merged[sectionKey] = {
         ...(DEFAULT_FIRST_TIME_CONFIG[sectionKey] as any),

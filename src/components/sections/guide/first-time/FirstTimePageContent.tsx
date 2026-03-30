@@ -101,91 +101,160 @@ export default function FirstTimePageContent({
         }}
       />
 
-      <FirstTimeBanner
-        config={config.banner}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <Hero storeName={storeName} config={config.hero} isEditing={isEditing} onUpdate={onUpdate} />
-      <AnchorNav slug={slug} config={config.anchorNav} isEditing={isEditing} />
-
-      <div id="welcome">
-        <Welcome
-          storeName={storeName}
-          config={config.welcome}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-      </div>
-      <div id="cast-list">
-        <CastSampler
-          storeSlug={slug}
-          config={config.casts}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-      </div>
-      <ThreePoints
-        config={config.threePoints}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <SevenReasons
-        groupName="SBグループ"
-        config={config.sevenReasons}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <div id="flow">
-        <ReservationFlow
-          config={config.reservationFlow}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-        <DayFlow
-          config={config.dayFlow}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-      </div>
-      <div id="pricing">
-        <Pricing
-          config={config.pricing}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-        <Options
-          config={config.options}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-        />
-      </div>
-      <ForbiddenItems
-        config={config.forbidden}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <FAQ
-        config={config.faq}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <CTA
-        config={config.cta}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
+      {(config.sectionOrder || []).map((sectionId) => {
+        switch (sectionId) {
+          case 'banner':
+            return (
+              <FirstTimeBanner
+                key="banner"
+                config={config.banner}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+                onImageUpload={onImageUpload}
+              />
+            );
+          case 'hero':
+            return (
+              <Hero
+                key="hero"
+                storeName={storeName}
+                config={config.hero}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+              />
+            );
+          case 'anchorNav':
+            return (
+              <AnchorNav
+                key="anchorNav"
+                slug={slug}
+                config={config.anchorNav}
+                isEditing={isEditing}
+              />
+            );
+          case 'welcome':
+            return (
+              <div id="welcome" key="welcome">
+                <Welcome
+                  storeName={storeName}
+                  config={config.welcome}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'casts':
+            return (
+              <div id="cast-list" key="casts">
+                <CastSampler
+                  storeSlug={slug}
+                  config={config.casts}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'threePoints':
+            return (
+              <ThreePoints
+                key="threePoints"
+                config={config.threePoints}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+                onImageUpload={onImageUpload}
+              />
+            );
+          case 'sevenReasons':
+            return (
+              <SevenReasons
+                key="sevenReasons"
+                groupName="SBグループ"
+                config={config.sevenReasons}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+                onImageUpload={onImageUpload}
+              />
+            );
+          case 'reservationFlow':
+            return (
+              <div id="flow-wrap" key="reservationFlow">
+                <ReservationFlow
+                  config={config.reservationFlow}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'dayFlow':
+            return (
+              <div id="flow" key="dayFlow">
+                <DayFlow
+                  config={config.dayFlow}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'pricing':
+            return (
+              <div id="pricing" key="pricing">
+                <Pricing
+                  config={config.pricing}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'options':
+            return (
+              <Options
+                key="options"
+                config={config.options}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+              />
+            );
+          case 'forbidden':
+            return (
+              <div id="forbidden" key="forbidden">
+                <ForbiddenItems
+                  config={config.forbidden}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'faq':
+            return (
+              <div id="faq" key="faq">
+                <FAQ
+                  config={config.faq}
+                  isEditing={isEditing}
+                  onUpdate={onUpdate}
+                  onImageUpload={onImageUpload}
+                />
+              </div>
+            );
+          case 'cta':
+            return (
+              <CTA
+                key="cta"
+                config={config.cta}
+                isEditing={isEditing}
+                onUpdate={onUpdate}
+                onImageUpload={onImageUpload}
+              />
+            );
+          default:
+            return null;
+        }
+      })}
     </div>
   );
 }

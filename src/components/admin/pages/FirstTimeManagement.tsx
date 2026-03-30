@@ -1,6 +1,6 @@
 'use client';
 
-import { ChevronLeft, Eye, Layout, Menu, Save } from 'lucide-react';
+import { ArrowDown, ArrowUp, ChevronLeft, Eye, Layout, Menu, Save } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -40,6 +40,7 @@ const SECTION_LABELS: Record<string, string> = {
   faq: 'よくあるご質問',
   cta: 'フッター問い合わせ内容',
   anchorNav: 'セクション移動ボタン',
+  options: 'サービス・オプション詳細',
 };
 
 const SECTION_ORDER = [
@@ -188,6 +189,23 @@ export default function FirstTimeManagement() {
     }));
   };
 
+  // セクションの並べ替え
+  const moveSection = (index: number, direction: 'up' | 'down') => {
+    const newOrder = [...(config.sectionOrder || [])];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    if (targetIndex < 0 || targetIndex >= newOrder.length) return;
+
+    const temp = newOrder[index];
+    newOrder[index] = newOrder[targetIndex];
+    newOrder[targetIndex] = temp;
+
+    setConfig((prev) => ({
+      ...prev,
+      sectionOrder: newOrder,
+    }));
+  };
+
   // セクションへスクロール
   const scrollToSection = (sectionId: string) => {
     const target = document.getElementById(sectionId);
@@ -204,28 +222,52 @@ export default function FirstTimeManagement() {
       </h2>
 
       <div className="space-y-2">
-        {SECTION_ORDER.map((sectionId) => {
+        {(config.sectionOrder || SECTION_ORDER).map((sectionId, index) => {
           const label = SECTION_LABELS[sectionId] || sectionId;
           const sectionData = (config as any)[sectionId];
-
-          if (!sectionData || typeof sectionData.isVisible !== 'boolean') return null;
 
           return (
             <div
               key={sectionId}
-              className="flex items-center justify-between rounded-lg border border-gray-700/30 bg-brand-primary/30 p-3"
+              className="group flex flex-col rounded-lg border border-gray-700/30 bg-brand-primary/30 p-2"
             >
-              <button
-                onClick={() => scrollToSection(sectionId)}
-                className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
-              >
-                {label}
-              </button>
-              <Switch
-                checked={sectionData.isVisible}
-                onCheckedChange={() => toggleVisibility(sectionId as any)}
-                className="scale-75"
-              />
+              <div className="flex items-center justify-between">
+                <button
+                  onClick={() => scrollToSection(sectionId)}
+                  className="flex-grow text-left text-sm font-medium text-gray-200 transition-colors hover:text-brand-accent"
+                >
+                  {label}
+                </button>
+                <div className="flex items-center gap-1">
+                  {sectionData && typeof sectionData.isVisible === 'boolean' && (
+                    <Switch
+                      checked={sectionData.isVisible}
+                      onCheckedChange={() => toggleVisibility(sectionId as any)}
+                      className="origin-right scale-75"
+                    />
+                  )}
+                </div>
+              </div>
+              <div className="mt-2 flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-gray-500 hover:text-white"
+                  onClick={() => moveSection(index, 'up')}
+                  disabled={index === 0}
+                >
+                  <ArrowUp className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-gray-500 hover:text-white"
+                  onClick={() => moveSection(index, 'down')}
+                  disabled={index === (config.sectionOrder || SECTION_ORDER).length - 1}
+                >
+                  <ArrowDown className="h-3 w-3" />
+                </Button>
+              </div>
             </div>
           );
         })}
