@@ -2,28 +2,7 @@ import { EditableImage } from '@/components/admin/EditableImage';
 import { FAQConfig } from '@/lib/store/firstTimeConfig';
 import React from 'react';
 
-const faqData = [
-  {
-    question: '初めてなので、何をどうすればいいか分かりません。',
-    answer:
-      'ご安心ください。まずはLINEで「初めてです」とスタンプ一つ送っていただければ、専任の女性コンシェルジュが丁寧に手順をご案内いたします。無理な勧誘は一切ございません。',
-  },
-  {
-    question: '年齢や容姿に自信がないのですが、利用しても大丈夫ですか？',
-    answer:
-      'もちろんです。当店の女性のお客様は20代から70代まで幅広く、皆様それぞれの目的で癒やしを求められています。セラピストは貴女という一人の女性を大切におもてなしするプロですので、安心してお任せください。',
-  },
-  {
-    question: 'ホテル代などの追加料金はかかりますか？',
-    answer:
-      '表示価格の他に、出張費（23区内は一律）と、ご自身で手配いただく場合はホテル代の実費のみとなります。指名料は何度でも一律1,000円です。詳細は「ご利用料金」セクションをご確認ください。',
-  },
-  {
-    question: '場所はどこでも指定できますか？',
-    answer:
-      '新宿・渋谷・池袋をはじめとする東京都内、および近郊のホテルやご自宅へお伺いいたします。具体的なエリアについてはお気軽にお問い合わせください。',
-  },
-];
+// Remove hardcoded faqData
 
 interface FAQProps {
   config?: FAQConfig;
@@ -35,13 +14,30 @@ interface FAQProps {
 export const FAQ: React.FC<FAQProps> = ({ config, isEditing, onUpdate, onImageUpload }) => {
   const data = config || {
     imageUrl: '',
+    items: [],
     isVisible: true,
+  };
+
+  const handleItemUpdate = (index: number, field: 'question' | 'answer', value: string) => {
+    const newItems = [...(data.items || [])];
+    newItems[index] = { ...newItems[index], [field]: value };
+    onUpdate?.('faq', 'items', newItems);
+  };
+
+  const handleAddItem = () => {
+    const newItems = [...(data.items || []), { question: '新しい質問', answer: '新しい回答' }];
+    onUpdate?.('faq', 'items', newItems);
+  };
+
+  const handleRemoveItem = (index: number) => {
+    const newItems = (data.items || []).filter((_, i) => i !== index);
+    onUpdate?.('faq', 'items', newItems);
   };
 
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
-    mainEntity: faqData.map((item) => ({
+    mainEntity: (data.items || []).map((item) => ({
       '@type': 'Question',
       name: item.question,
       acceptedAnswer: {
@@ -130,22 +126,81 @@ export const FAQ: React.FC<FAQProps> = ({ config, isEditing, onUpdate, onImageUp
         </div>
 
         <div className="space-y-6">
-          {faqData.map((item, index) => (
+          {(data.items || []).map((item, index) => (
             <div
               key={index}
-              className="rounded-3xl border border-stone-100 bg-stone-50 p-6 transition-all hover:shadow-md md:p-8"
+              className="group relative rounded-3xl border border-stone-100 bg-stone-50 p-6 transition-all hover:shadow-md md:p-8"
             >
+              {isEditing && (
+                <button
+                  onClick={() => handleRemoveItem(index)}
+                  className="absolute right-4 top-4 rounded-full bg-red-100 p-1.5 text-red-500 opacity-0 transition-opacity hover:bg-red-200 group-hover:opacity-100"
+                  title="項目を削除"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-4 w-4"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                </button>
+              )}
               <div className="mb-4 flex gap-4">
                 <span className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white">
                   Q
                 </span>
-                <h3 className="pt-0.5 text-lg font-bold text-gray-800">{item.question}</h3>
+                <h3
+                  className={`pt-0.5 text-lg font-bold text-gray-800 outline-none focus:ring-2 focus:ring-rose-200 ${
+                    isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
+                  }`}
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleItemUpdate(index, 'question', e.currentTarget.innerText)}
+                  suppressContentEditableWarning
+                >
+                  {item.question}
+                </h3>
               </div>
               <div className="flex gap-4 ps-12">
-                <p className="leading-relaxed text-gray-600">{item.answer}</p>
+                <p
+                  className={`leading-relaxed text-gray-600 outline-none focus:ring-2 focus:ring-rose-200 ${
+                    isEditing ? 'cursor-text rounded bg-white/50 px-1' : ''
+                  }`}
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleItemUpdate(index, 'answer', e.currentTarget.innerText)}
+                  suppressContentEditableWarning
+                >
+                  {item.answer}
+                </p>
               </div>
             </div>
           ))}
+
+          {isEditing && (
+            <button
+              onClick={handleAddItem}
+              className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-stone-200 py-6 text-sm font-bold text-stone-400 transition-colors hover:border-stone-300 hover:bg-stone-50 hover:text-stone-500"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              QA項目を追加する
+            </button>
+          )}
         </div>
       </div>
     </section>

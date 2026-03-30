@@ -92,8 +92,14 @@ export interface ReservationFlowConfig {
   isVisible: boolean;
 }
 
+export interface FAQItem {
+  question: string;
+  answer: string;
+}
+
 export interface FAQConfig {
   imageUrl?: string;
+  items: FAQItem[];
   isVisible: boolean;
 }
 
@@ -338,6 +344,28 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   },
   faq: {
     imageUrl: '',
+    items: [
+      {
+        question: '初めてなので、何をどうすればいいか分かりません。',
+        answer:
+          'ご安心ください。まずはLINEで「初めてです」とスタンプ一つ送っていただければ、専任の女性コンシェルジュが丁寧に手順をご案内いたします。無理な勧誘は一切ございません。',
+      },
+      {
+        question: '年齢や容姿に自信がないのですが、利用しても大丈夫ですか？',
+        answer:
+          'もちろんです。当店の女性のお客様は20代から70代まで幅広く、皆様それぞれの目的で癒やしを求められています。セラピストは貴女という一人の女性を大切におおもてなしするプロですので、安心してお任せください。',
+      },
+      {
+        question: 'ホテル代などの追加料金はかかりますか？',
+        answer:
+          '表示価格の他に、出張費（23区内は一律）と、ご自身で手配いただく場合はホテル代の実費のみとなります。指名料は何度でも一律1,000円です。詳細は「ご利用料金」セクションをご確認ください。',
+      },
+      {
+        question: '場所はどこでも指定できますか？',
+        answer:
+          '新宿・渋谷・池袋をはじめとする東京都内、および近郊のホテルやご自宅へお伺いいたします。具体的なエリアについてはお気軽にお問い合わせください。',
+      },
+    ],
     isVisible: true,
   },
   pricing: {
