@@ -1,22 +1,20 @@
-import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
 
+import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  const slug = 'fukuoka';
-  const store = await prisma.store.findUnique({ where: { slug } });
-  if (!store) {
-    console.log('Store not found');
-    return;
-  }
-  const config = await prisma.storeTopConfig.findUnique({ where: { store_id: store.id } });
-  if (config) {
-    fs.writeFileSync('fukuoka_config.json', JSON.stringify(config.config, null, 2));
-    console.log('Saved config to fukuoka_config.json');
-  } else {
-    console.log('No config found');
-  }
+  const casts = await prisma.cast.findMany({
+    select: {
+      sexiness_level: true
+    },
+    where: {
+      sexiness_level: {
+        not: null
+      }
+    },
+    take: 10
+  });
+  console.log('Existing sexiness levels:', casts.map(c => c.sexiness_level));
 }
 
 main()

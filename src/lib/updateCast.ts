@@ -18,7 +18,7 @@ export async function updateCast(cast: CastProfile) {
       animal_id: cast.animalId ?? null,
       face_id: cast.faceId ?? null,
       catch_copy: cast.catchCopy ?? null,
-      sexiness_level: cast.sexinessLevel !== undefined ? Math.max(0, Math.min(100, Math.round(cast.sexinessLevel))) : null,
+      sexiness_level: cast.sexinessLevel !== undefined ? Math.max(1, Math.min(5, Math.round(cast.sexinessLevel / 20))) : null,
       blood_type: cast.bloodType ?? null,
       manager_comment: cast.managerComment ?? null,
     })
