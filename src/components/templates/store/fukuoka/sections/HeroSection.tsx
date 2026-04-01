@@ -335,7 +335,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           )}
         </div>
 
-        <div className="relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
+        <div className="pointer-events-none relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
           {/* Text and buttons removed as per user request */}
         </div>
 

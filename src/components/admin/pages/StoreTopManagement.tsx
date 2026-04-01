@@ -290,6 +290,10 @@ export default function StoreTopManagement() {
           newLinks.push('');
         } else {
           newImages[index] = publicUrl;
+          // 配列が短い場合は補完する
+          while (newLinks.length <= index) {
+            newLinks.push('');
+          }
         }
         newConfig.hero = { ...config.hero, images: newImages, imageLinks: newLinks };
       } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
