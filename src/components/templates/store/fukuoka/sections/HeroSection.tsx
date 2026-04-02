@@ -176,28 +176,36 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                 }`}
                 style={{ zIndex: isActive ? 10 : 0 }}
               >
+                {/* 背景のぼかし画像 (モバイルでの見切れ対策) */}
+                <div className="absolute inset-0 block md:hidden">
+                  <NextImage
+                    src={img}
+                    alt=""
+                    fill
+                    className="scale-110 object-cover blur-xl opacity-30"
+                    unoptimized
+                  />
+                </div>
+
                 {(() => {
-                  const imageContent = isFirst ? (
-                    <NextImage
-                      src={img}
-                      alt="店舗メインビジュアル"
-                      fill
-                      priority={true}
-                      fetchPriority="high"
-                      sizes="100vw"
-                      className="h-full w-full object-cover object-center"
-                      unoptimized
-                    />
-                  ) : (
-                    <NextImage
-                      src={img}
-                      alt={`Hero Image ${index + 1}`}
-                      fill
-                      sizes="100vw"
-                      className="h-full w-full object-cover object-center"
-                      loading="lazy"
-                      unoptimized
-                    />
+                  const imageContent = (
+                    <div className="relative h-full w-full">
+                      <NextImage
+                        src={img}
+                        alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                        fill
+                        priority={isFirst}
+                        fetchPriority={isFirst ? "high" : undefined}
+                        sizes="100vw"
+                        className="h-full w-full object-cover object-center md:object-cover sm:object-contain"
+                        unoptimized
+                        style={{
+                          objectFit: typeof window !== 'undefined' && window.innerWidth < 768 ? 'contain' : 'cover'
+                        }}
+                        // Note: Tailwind classes like 'object-contain' are used, 
+                        // but specifically for mobile we force contain to show full image.
+                      />
+                    </div>
                   );
 
                   const link = config?.imageLinks?.[index];
