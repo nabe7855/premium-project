@@ -493,18 +493,21 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
  * データベースに古い形式のデータがある場合でも、新しいフィールドがデフォルト値で補完されるようにする
  */
 export const mergeConfig = (partialConfig: any): FirstTimeConfig => {
-  const merged = { ...DEFAULT_FIRST_TIME_CONFIG };
+  // 参照の共有を防ぐため、デフォルト設定をディープコピーする
+  const merged = JSON.parse(JSON.stringify(DEFAULT_FIRST_TIME_CONFIG));
   if (!partialConfig) return merged;
 
   Object.keys(DEFAULT_FIRST_TIME_CONFIG).forEach((key) => {
     const sectionKey = key as keyof FirstTimeConfig;
     if (key === 'sectionOrder') {
-      merged.sectionOrder = partialConfig.sectionOrder || DEFAULT_FIRST_TIME_CONFIG.sectionOrder;
+      merged.sectionOrder = partialConfig.sectionOrder || [...DEFAULT_FIRST_TIME_CONFIG.sectionOrder];
       return;
     }
+
     if (partialConfig[sectionKey]) {
+      // セクションごとにマージ。ここでもネストしたオブジェクトへの対応のためマージを念入りに行う
       merged[sectionKey] = {
-        ...(DEFAULT_FIRST_TIME_CONFIG[sectionKey] as any),
+        ...merged[sectionKey],
         ...partialConfig[sectionKey],
       };
     }

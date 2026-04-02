@@ -71,16 +71,21 @@ export default function FirstTimeManagement() {
   useEffect(() => {
     const fetchConfig = async () => {
       setIsLoading(true);
+      // 前のステートを一度プレースホルダー的にデフォルトに戻すか
+      // あるいは完全にロードが終わるまで触らせないようにする
       try {
         const result = await getFirstTimeConfig(selectedStore);
         if (result.success && result.config) {
           setConfig(mergeConfig(result.config));
         } else {
-          setConfig(DEFAULT_FIRST_TIME_CONFIG);
+          // エラーまたはデータなし
+          console.warn(`[FirstTimeManagement] Using default config for ${selectedStore}`);
+          setConfig(mergeConfig(null)); // デフォルトをクローンして適用
         }
       } catch (error) {
         console.error('Error fetching config:', error);
         toast.error('設定の取得に失敗しました');
+        setConfig(mergeConfig(null));
       } finally {
         setIsLoading(false);
       }
@@ -355,7 +360,7 @@ export default function FirstTimeManagement() {
 
             <Button
               onClick={handleSave}
-              disabled={isSaving}
+              disabled={isSaving || isLoading}
               size="sm"
               className="h-8 bg-brand-accent px-3 font-bold hover:bg-brand-accent/90 sm:h-9 sm:px-4"
             >
@@ -375,21 +380,26 @@ export default function FirstTimeManagement() {
         {/* Preview Area */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white">
           <div className="absolute inset-0 overflow-y-auto">
-            <StoreProvider store={(stores[selectedStore] || stores['fukuoka']) as any}>
-              <div className="pointer-events-auto">
-                {/* 
-                  Passing props to the page component. 
-                  Note: We might need to refactor FirstTimePage to accept these props.
-                */}
-                <FirstTimePageContent
-                  slug={selectedStore}
-                  isEditing={!isPreviewMode}
-                  config={config}
-                  onUpdate={handleUpdate}
-                  onImageUpload={handleImageUpload}
-                />
+            {isLoading ? (
+              <div className="flex h-full w-full items-center justify-center bg-white/80 backdrop-blur-sm">
+                <div className="flex flex-col items-center gap-3">
+                  <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-pink-500"></div>
+                  <p className="text-sm font-medium text-gray-500">店舗データを読み込み中...</p>
+                </div>
               </div>
-            </StoreProvider>
+            ) : (
+              <StoreProvider store={(stores[selectedStore] || stores['fukuoka']) as any}>
+                <div className="pointer-events-auto">
+                  <FirstTimePageContent
+                    slug={selectedStore}
+                    isEditing={!isPreviewMode}
+                    config={config}
+                    onUpdate={handleUpdate}
+                    onImageUpload={handleImageUpload}
+                  />
+                </div>
+              </StoreProvider>
+            )}
           </div>
         </div>
       </div>
