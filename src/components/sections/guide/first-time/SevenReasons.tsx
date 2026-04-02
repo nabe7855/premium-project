@@ -1,6 +1,8 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import { SevenReasonsConfig } from '@/lib/store/firstTimeConfig';
-import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
+import React, { useState } from 'react';
 
 interface SevenReasonsProps {
   groupName?: string;
@@ -17,6 +19,8 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
   onUpdate,
   onImageUpload,
 }) => {
+  const [openIndexes, setOpenIndexes] = useState<number[]>([]);
+
   const defaultData: SevenReasonsConfig = {
     imageUrl: '',
     reasons: [
@@ -53,8 +57,14 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
   };
 
   const data = config ? { ...defaultData, ...config } : defaultData;
-
   const currentReasons = data.reasons || [];
+
+  const toggleAccordion = (index: number) => {
+    if (isEditing) return; // 編集モード時は常に展開
+    setOpenIndexes((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
 
   const handleTextUpdate = (index: number, key: string, e: React.FocusEvent<HTMLElement>) => {
     if (onUpdate) {
@@ -139,34 +149,74 @@ export const SevenReasons: React.FC<SevenReasonsProps> = ({
         </div>
 
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {currentReasons.map((r, i) => (
-            <div
-              key={i}
-              className="flex gap-4 rounded-2xl border border-gray-100 bg-white p-6 shadow-sm transition-colors hover:border-[#FF4B5C]/30"
-            >
-              <div className="flex-shrink-0 text-xl">✅</div>
-              <div>
-                <h3
-                  contentEditable={isEditing}
-                  onBlur={(e) => handleTextUpdate(i, 'title', e)}
-                  suppressContentEditableWarning
-                  className="mb-2 font-bold leading-tight text-gray-800"
+          {currentReasons.map((r, i) => {
+            const isOpen = isEditing || openIndexes.includes(i);
+            return (
+              <div
+                key={i}
+                className="flex flex-col rounded-2xl border border-gray-100 bg-white shadow-sm transition-all hover:border-[#FF4B5C]/30 hover:shadow-md"
+              >
+                <button
+                  onClick={() => toggleAccordion(i)}
+                  disabled={isEditing}
+                  className={`flex w-full items-start gap-4 p-6 text-left outline-none ${
+                    !isEditing ? 'cursor-pointer' : 'cursor-default'
+                  }`}
                 >
-                  {r.title}
-                </h3>
-                <p
-                  contentEditable={isEditing}
-                  onBlur={(e) => handleTextUpdate(i, 'desc', e)}
-                  suppressContentEditableWarning
-                  className="text-sm leading-relaxed text-gray-600 whitespace-pre-wrap outline-none"
-                >
-                  {r.desc}
-                </p>
+                  <div className="flex-shrink-0 text-xl">✅</div>
+                  <div className="flex-grow">
+                    <h3
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleTextUpdate(i, 'title', e)}
+                      onFocus={(e) => e.stopPropagation()}
+                      onClick={(e) => isEditing && e.stopPropagation()}
+                      suppressContentEditableWarning
+                      className="mr-6 font-bold leading-tight text-gray-800"
+                    >
+                      {r.title}
+                    </h3>
+                  </div>
+                  {!isEditing && (
+                    <div className="flex-shrink-0 pt-1">
+                      <ChevronDown
+                        className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                          isOpen ? 'rotate-180 text-[#FF4B5C]' : ''
+                        }`}
+                      />
+                    </div>
+                  )}
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: 'easeInOut' }}
+                      className="overflow-hidden"
+                    >
+                      <div className="px-6 pb-6 pt-0 ml-11">
+                        <p
+                          contentEditable={isEditing}
+                          onBlur={(e) => handleTextUpdate(i, 'desc', e)}
+                          onFocus={(e) => e.stopPropagation()}
+                          onClick={(e) => isEditing && e.stopPropagation()}
+                          suppressContentEditableWarning
+                          className="text-sm leading-relaxed text-gray-600 whitespace-pre-wrap outline-none"
+                        >
+                          {r.desc}
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
   );
 };
+
