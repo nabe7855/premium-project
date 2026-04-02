@@ -155,14 +155,15 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         id="hero"
         className="relative w-full overflow-hidden"
         style={{
-          height: 'calc(100svh - 80px)', // フッター(80px)を引く
-          minHeight: '500px', // 最小高さを確保
+          // Header(64px) と Footer(約82px) を考慮して計算
+          height: 'calc(100svh - 146px)', 
+          minHeight: '420px', 
         }}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
-        <div className="absolute bottom-10 left-0 right-0 top-0 bg-neutral-100">
+        <div className="absolute bottom-12 left-0 right-0 top-0 bg-neutral-100">
           {images.map((img, index) => {
             const isFirst = index === 0;
             const isActive = index === currentHeroSlide;

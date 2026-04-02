@@ -55,8 +55,8 @@ export default function FukuokaPage({
             onUpdate={onUpdate}
             onImageUpload={onImageUpload}
           />
-          {/* Header Spacer */}
-          <div className="h-[54px] md:h-[65px]" />
+          {/* Header Spacer - Match the actual header height (48px + py-2*2 = 64px) */}
+          <div className="h-[64px] md:h-[65px]" />
         </>
       )}
       {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (

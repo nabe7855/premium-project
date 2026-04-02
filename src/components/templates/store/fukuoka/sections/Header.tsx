@@ -372,7 +372,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             href={getAbsoluteHref(
               config?.logoLink === '/' || !config?.logoLink ? '/store/{slug}' : config.logoLink,
             )}
-            className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50"
+            className="group relative flex flex-[0.7] min-w-0 max-w-[70px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50"
           >
             {config?.logoUrl ? (
               <div className="relative h-7 w-full md:h-10 md:w-24">
@@ -403,7 +403,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </Link>
 
           {/* Banners Section */}
-          <div className="flex flex-[3] items-stretch overflow-hidden min-w-0">
+          <div className="flex flex-[3.8] items-stretch overflow-hidden min-w-0 border-x border-slate-100">
             {renderHeaderBanner(config?.specialBanner, 'specialBanner')}
             {renderHeaderBanner(config?.specialBanner2, 'specialBanner2')}
             {renderHeaderBanner(config?.specialBanner3, 'specialBanner3')}
@@ -414,7 +414,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             {/* MENU Button */}
             <button
               onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
-              className={`flex flex-1 min-w-0 flex-col items-center justify-center px-1 transition-all active:bg-slate-300 ${
+              className={`flex flex-1 min-w-0 flex-col items-center justify-center px-0.5 transition-all active:bg-slate-300 ${
                 isMenuOpen
                   ? 'bg-pink-100 text-pink-600'
                   : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
