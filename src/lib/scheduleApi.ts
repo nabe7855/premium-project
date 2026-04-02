@@ -41,3 +41,16 @@ export async function fetchSchedules(castId: string, storeId: string): Promise<C
 
   return data as CastSchedule[];
 }
+
+// スケジュール削除
+export async function deleteSchedule(id: string): Promise<void> {
+  const { error } = await supabase
+    .from('schedules')
+    .delete()
+    .eq('id', id);
+
+  if (error) {
+    console.error('❌ Supabase 削除エラー:', error);
+    throw error;
+  }
+}

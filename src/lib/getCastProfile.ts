@@ -35,7 +35,9 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       sexiness_level,
       blood_type,
       manager_comment,
-      slug
+      slug,
+      user_id,
+      sns_url
     `,
     )
     .or(`id.eq."${userId}",user_id.eq."${userId}"`)
@@ -142,6 +144,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     imageUrl: cast.image_url ?? undefined,
     voiceUrl: cast.voice_url ?? undefined,
     isActive: cast.is_active,
+    userId: cast.user_id,
     mbtiId: cast.mbti_id ?? undefined,
     animalId: cast.animal_id ?? undefined,
     faceId: cast.face_id ?? undefined,
@@ -150,6 +153,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     bloodType: cast.blood_type ?? undefined,
     managerComment: cast.manager_comment ?? undefined,
     slug: cast.slug,
+    snsUrl: cast.sns_url ?? undefined,
     personalityIds,
     appearanceIds,
     services,

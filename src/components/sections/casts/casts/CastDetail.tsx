@@ -113,7 +113,13 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
           onTabChange={setActiveTab}
           onBookingOpen={handleBookingModalOpen}
           onDiaryClick={() => alert('写メ日記ページに遷移します')}
-          onSNSClick={() => alert('SNSページに遷移します')}
+          onSNSClick={() => {
+            if (cast.snsUrl) {
+              window.open(cast.snsUrl, '_blank', 'noopener,noreferrer');
+            } else {
+              alert('SNSリンクが登録されていません');
+            }
+          }}
         />
       </div>
 

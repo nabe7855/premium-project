@@ -16,6 +16,7 @@ export async function getCastList(): Promise<{
       manager_comment,
       is_active,
       catch_copy,
+      sns_url,
       cast_store_memberships (
         stores (
           id,
@@ -52,6 +53,7 @@ export async function getCastList(): Promise<{
       manager_comment: c.manager_comment,
       isActive: c.is_active, // ✅ キャメルケースに変換
       catch_copy: c.catch_copy,
+      snsUrl: c.sns_url,
       stores: c.cast_store_memberships?.map((cs: any) => cs.stores) || [],
       statuses: c.cast_statuses?.map((cs: any) => cs.status_master) || [],
     })) ?? [];

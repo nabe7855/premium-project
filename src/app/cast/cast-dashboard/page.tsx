@@ -19,10 +19,16 @@ export default function CastDashboardPage() {
     }
   }, [user, authLoading, router]);
 
-  // 2. プロフィール取得
+  // 2. プロフィール取得（userオブジェクトそのものへの依存を減らし、ID変更時のみフルロードする）
   useEffect(() => {
     const fetchProfile = async () => {
       if (user && user.isAuthenticated && user.role === 'cast') {
+        // すでにプロフィールがあり、かつユーザーIDも一致している場合はLoading画面を出さない
+        if (castProfile && castProfile.userId === user.id) {
+          console.log('[CastDashboardPage] Profile already loaded, skipping full loading screen');
+          return;
+        }
+
         setProfileLoading(true);
         try {
           const { getCastProfile } = await import('@/lib/getCastProfile');
@@ -42,7 +48,8 @@ export default function CastDashboardPage() {
     };
 
     fetchProfile();
-  }, [user, router]);
+  }, [user?.id, user?.isAuthenticated, user?.role, router, castProfile]);
+
 
   if (authLoading || profileLoading) {
     return (

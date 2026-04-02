@@ -30,6 +30,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       blood_type,
       manager_comment,
       ai_summary,
+      sns_url,
       created_at
     `);
 

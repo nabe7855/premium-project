@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, Check, Plus, Camera } from 'lucide-react';
 import { CastSchedule } from '@/types/cast-dashboard';
 import { CastDiary } from '@/types/cast';
 import ScheduleModal from './ScheduleModal';
-import { saveSchedule } from '@/lib/scheduleApi';
+import { saveSchedule, deleteSchedule } from '@/lib/scheduleApi';
 
 interface CalendarEditorProps {
   schedules: CastSchedule[];
@@ -122,6 +122,20 @@ const handleScheduleSave = async (scheduleData: { startTime: string; endTime: st
   setIsModalOpen(false);
   setSelectedDate(null);
 };
+
+const handleScheduleDelete = async (id: string) => {
+  try {
+    await deleteSchedule(id);
+    const updated = schedules.filter((s) => s.id !== id);
+    onScheduleUpdate(updated);
+    setIsModalOpen(false);
+    setSelectedDate(null);
+  } catch (err) {
+    console.error('❌ スケジュール削除エラー:', err);
+    alert('削除に失敗しました');
+  }
+};
+
 
 
   // ✅ 表示用フォーマッター（28時 → そのまま28:00表記）
@@ -259,6 +273,7 @@ const handleScheduleSave = async (scheduleData: { startTime: string; endTime: st
           setSelectedDate(null);
         }}
         onSave={handleScheduleSave}
+        onDelete={handleScheduleDelete}
         selectedDate={selectedDate}
         existingSchedule={selectedDate ? getScheduleForDate(selectedDate) : undefined}
       />

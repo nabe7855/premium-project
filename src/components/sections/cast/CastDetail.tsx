@@ -121,8 +121,11 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
   };
 
   const handleSNSClick = (platform: string) => {
-    // SNSページへの遷移処理
-    alert(`${platform}ページに移動します`);
+    if (cast.snsUrl) {
+      window.open(cast.snsUrl, '_blank', 'noopener,noreferrer');
+    } else {
+      alert(`${platform}リンクが登録されていません`);
+    }
   };
 
   return (

@@ -90,6 +90,7 @@ export function normalizeCast(
 
     // ステータス
     isActive: cast.is_active ?? false,
+    snsUrl: cast.sns_url ?? undefined,
     sexinessLevel: cast.sexiness_level ? cast.sexiness_level * 20 : 60,
     statuses: castStatuses,
 

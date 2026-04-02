@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock, Save } from 'lucide-react';
+import { X, Clock, Save, Trash2 } from 'lucide-react';
 import { CastSchedule } from '@/types/cast-dashboard';
 
 interface ScheduleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSave: (scheduleData: { startTime: string; endTime: string; status: string }) => void; // 👈 status付き
+  onSave: (scheduleData: { startTime: string; endTime: string; status: string }) => void;
+  onDelete?: (id: string) => void;
   selectedDate: string | null;
   existingSchedule?: CastSchedule;
 }
@@ -17,6 +18,7 @@ export default function ScheduleModal({
   isOpen,
   onClose,
   onSave,
+  onDelete,
   selectedDate,
   existingSchedule,
 }: ScheduleModalProps) {
@@ -63,7 +65,15 @@ export default function ScheduleModal({
       setError('開始時間と終了時間を入力してください');
       return;
     }
-    onSave({ startTime, endTime, status }); // ✅ status を親に渡す
+    onSave({ startTime, endTime, status });
+  };
+
+  const handleDelete = () => {
+    if (existingSchedule && onDelete) {
+      if (confirm('この日のスケジュールを削除しますか？')) {
+        onDelete(existingSchedule.id);
+      }
+    }
   };
 
   if (!isOpen) return null;
@@ -146,20 +156,32 @@ export default function ScheduleModal({
           )}
 
           {/* アクション */}
-          <div className="mt-6 flex flex-col space-y-3 sm:flex-row sm:space-x-3 sm:space-y-0">
-            <button
-              onClick={onClose}
-              className="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-200"
-            >
-              キャンセル
-            </button>
-            <button
-              onClick={handleSave}
-              className="flex flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-3 text-sm font-medium text-white hover:from-pink-600 hover:to-rose-600"
-            >
-              <Save className="mr-2 h-4 w-4" />
-              保存
-            </button>
+          <div className="mt-6 flex flex-col space-y-3">
+            <div className="flex gap-3">
+              <button
+                onClick={onClose}
+                className="flex-1 rounded-xl bg-gray-100 px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-200"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleSave}
+                className="flex flex-[2] items-center justify-center rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 px-4 py-3 text-sm font-medium text-white hover:from-pink-600 hover:to-rose-600 shadow-md shadow-pink-100"
+              >
+                <Save className="mr-2 h-4 w-4" />
+                保存
+              </button>
+            </div>
+
+            {existingSchedule && onDelete && (
+              <button
+                onClick={handleDelete}
+                className="flex w-full items-center justify-center rounded-xl bg-rose-50 px-4 py-3 text-sm font-medium text-rose-600 transition-all hover:bg-rose-100 active:scale-[0.98]"
+              >
+                <Trash2 className="mr-2 h-4 w-4" />
+                この日のスケジュールを削除
+              </button>
+            )}
           </div>
         </div>
       </div>

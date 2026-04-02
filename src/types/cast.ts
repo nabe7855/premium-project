@@ -100,6 +100,7 @@ export interface Cast {
   // SNS
   sns?: CastSNS;
   snsLink?: string;
+  snsUrl?: string;
 
   // ステータス系
   sexinessLevel?: number;
@@ -248,6 +249,7 @@ export interface CastProfile {
   imageUrl?: string;
   voiceUrl?: string | null;
   isActive: boolean;
+  userId?: string;
 
   mbtiId?: string;
   animalId?: string;

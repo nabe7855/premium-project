@@ -24,6 +24,7 @@ export interface Cast {
     value: number;
     emoji: string;
   }[];
+  snsUrl?: string; // ✅ 追加
 }
 
 export interface Review {
