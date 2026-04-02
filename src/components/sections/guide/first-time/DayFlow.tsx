@@ -137,32 +137,37 @@ export const DayFlow: React.FC<DayFlowProps> = ({ config, isEditing, onUpdate, o
         <div className="grid grid-cols-1 gap-4 md:grid-cols-5">
           {currentSteps.map((s, i) => (
             <div key={i} className="flex flex-col items-center">
-              <div className="flex h-full w-full flex-col items-center rounded-2xl border border-white bg-white p-6 text-center shadow-md transition-all hover:border-[#FF4B5C]/20">
-                <div className="mb-6 flex h-12 w-12 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white shadow-lg">
-                  {i + 1}
+              <div className="flex h-full w-full flex-col items-start rounded-2xl border border-white bg-white p-5 text-left shadow-md transition-all hover:border-[#FF4B5C]/20 md:items-center md:p-6 md:text-center">
+                <div className="mb-4 flex w-full items-center gap-4 md:mb-6 md:flex-col md:gap-0">
+                  <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-[#FF4B5C] font-bold text-white shadow-lg md:h-12 md:w-12">
+                    {i + 1}
+                  </div>
+                  <h3 className="text-base font-bold leading-tight text-gray-800 md:mb-4">
+                    <span className="text-[10px] uppercase tracking-widest text-[#FF4B5C]/70 md:block md:text-xs">
+                      Step {i + 1}
+                    </span>
+                    <br className="hidden md:block" />
+                    <span
+                      contentEditable={isEditing}
+                      onBlur={(e) => handleStepUpdate(i, 'title', e)}
+                      suppressContentEditableWarning
+                      className="mt-0.5 block outline-none md:mt-2"
+                    >
+                      {s.title}
+                    </span>
+                  </h3>
                 </div>
-                <h3 className="mb-4 text-base font-bold leading-tight text-gray-800">
-                  ステップ {i + 1}
-                  <br />
-                  <span
-                    contentEditable={isEditing}
-                    onBlur={(e) => handleStepUpdate(i, 'title', e)}
-                    suppressContentEditableWarning
-                  >
-                    {s.title}
-                  </span>
-                </h3>
                 <p
                   contentEditable={isEditing}
                   onBlur={(e) => handleStepUpdate(i, 'desc', e)}
                   suppressContentEditableWarning
-                  className="text-left text-xs leading-relaxed text-gray-500 whitespace-pre-wrap outline-none"
+                  className="text-xs leading-relaxed text-gray-500 whitespace-pre-wrap outline-none"
                 >
                   {s.desc}
                 </p>
               </div>
               {i < currentSteps.length - 1 && (
-                <div className="py-4 text-2xl font-bold text-[#FF4B5C] md:hidden">↓</div>
+                <div className="py-2 text-xl font-bold text-[#FF4B5C]/30 md:hidden">↓</div>
               )}
             </div>
           ))}
