@@ -17,6 +17,7 @@ interface OpenCastRecruitmentProps {
   entryDeadlineText?: string;
   selectionTargetText?: string;
   slotsLimitText?: string;
+  countDownTargetText?: string;
   benefits?: { title: string; desc: string }[];
   benefitsSectionTitle?: string;
 }
@@ -33,6 +34,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
   entryDeadlineText = '23:59までにエントリーされた方のみ',
   selectionTargetText = 'オープンキャスト枠として選考対象となります',
   slotsLimitText = '育成体制の都合上、今回の採用は10名様までとさせていただいております',
+  countDownTargetText = 'グランドオープン',
   benefits = [
     {
       title: '業界最高水準のバック率',
@@ -205,7 +207,19 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
                     </p>
                   )}
                   <p className="text-xl font-black tracking-tight text-white sm:text-3xl md:text-4xl">
-                    <span className="text-amber-300">グランドオープン</span>まで
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => onUpdate?.('countDownTargetText', e.currentTarget.innerText)}
+                        className="text-amber-300 cursor-text rounded outline-none hover:bg-white/10"
+                      >
+                        {countDownTargetText}
+                      </span>
+                    ) : (
+                      <span className="text-amber-300">{countDownTargetText}</span>
+                    )}
+                    まで
                   </p>
                 </div>
                 <div className="mx-auto h-0.5 w-32 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent"></div>

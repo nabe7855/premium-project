@@ -33,6 +33,7 @@ export const STOCK_RECRUIT_CONFIG = {
     entryDeadlineText: '23:59までにエントリーされた方のみ',
     selectionTargetText: 'オープンキャスト枠として選考対象となります',
     slotsLimitText: '育成体制の都合上、今回の採用は10名様までとさせていただいております',
+    countDownTargetText: 'グランドオープン',
     benefits: [
       {
         title: '専属プロデューサー制度',

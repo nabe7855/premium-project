@@ -45,6 +45,7 @@ export interface LandingPageConfig {
     entryDeadlineText?: string;
     selectionTargetText?: string;
     slotsLimitText?: string;
+    countDownTargetText?: string;
     benefits?: { title: string; desc: string }[];
     benefitsSectionTitle?: string;
   };
@@ -306,6 +307,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
             entryDeadlineText={config.openCast?.entryDeadlineText}
             selectionTargetText={config.openCast?.selectionTargetText}
             slotsLimitText={config.openCast?.slotsLimitText}
+            countDownTargetText={config.openCast?.countDownTargetText}
             benefits={config.openCast?.benefits}
             benefitsSectionTitle={config.openCast?.benefitsSectionTitle}
           />
