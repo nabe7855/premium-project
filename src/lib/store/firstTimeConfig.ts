@@ -116,6 +116,12 @@ export interface PricingConfig {
   imageUrl?: string;
   subHeading: string;
   courses: PricingCourse[];
+  nominationFeeTitle: string;
+  nominationFeeSubtitle: string;
+  nominationFeeAmount: string;
+  extensionFeeTitle: string;
+  extensionFeeAmount: string;
+  notes: string;
   isVisible: boolean;
 }
 
@@ -381,7 +387,7 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     ],
     isVisible: true,
   },
-  pricing: {
+    pricing: {
     imageUrl: '',
     subHeading: '当店一番人気の初回120分コースを推奨しております♪',
     courses: [
@@ -409,6 +415,12 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
         description: '総額7,000円お得な180分コース。究極の癒しに。',
       },
     ],
+    nominationFeeTitle: '指名料',
+    nominationFeeSubtitle: '何度指名しても同額です',
+    nominationFeeAmount: '1,000円',
+    extensionFeeTitle: '延長30分',
+    extensionFeeAmount: '6,000円',
+    notes: '【料金構成】①初回コース料金 + ②出張費(23区以内、その他相談) + ③指名料(指名なし無料)\n※初回特典は全セラピストに適用可能です。\n※前日までのご予約で優先案内いたします。お早めにご相談ください。\n上記①②③合計の金額を担当セラピストに現金でお渡しください。',
     isVisible: true,
   },
   cta: {

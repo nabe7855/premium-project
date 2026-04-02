@@ -38,6 +38,12 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
         description: '総額7,000円お得な180分コース。究極の癒しに包装紙。',
       },
     ],
+    nominationFeeTitle: '指名料',
+    nominationFeeSubtitle: '何度指名しても同額です',
+    nominationFeeAmount: '1,000円',
+    extensionFeeTitle: '延長30分',
+    extensionFeeAmount: '6,000円',
+    notes: '【料金構成】①初回コース料金 + ②出張費(23区以内、その他相談) + ③指名料(指名なし無料)\n※初回特典は全セラピストに適用可能です。\n※前日までのご予約で優先案内いたします。お早めにご相談ください。\n上記①②③合計の金額を担当セラピストに現金でお渡しください。',
     isVisible: true,
   };
 
@@ -264,26 +270,60 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
           <div className="space-y-6">
             <div className="flex flex-col justify-between gap-2 border-b border-gray-200 pb-4 md:flex-row md:items-center">
               <div>
-                <span className="text-lg font-bold text-gray-800">指名料</span>
-                <p className="text-xs text-gray-400">何度指名しても同額です</p>
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleUpdateField('nominationFeeTitle', e)}
+                  suppressContentEditableWarning
+                  className="text-lg font-bold text-gray-800 outline-none"
+                >
+                  {data.nominationFeeTitle}
+                </span>
+                <p
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleUpdateField('nominationFeeSubtitle', e)}
+                  suppressContentEditableWarning
+                  className="text-xs text-gray-400 outline-none"
+                >
+                  {data.nominationFeeSubtitle}
+                </p>
               </div>
-              <span className="text-2xl font-black tracking-tighter text-[#FF4B5C]">1,000円</span>
+              <span
+                contentEditable={isEditing}
+                onBlur={(e) => handleUpdateField('nominationFeeAmount', e)}
+                suppressContentEditableWarning
+                className="text-2xl font-black tracking-tighter text-[#FF4B5C] outline-none"
+              >
+                {data.nominationFeeAmount}
+              </span>
             </div>
             <div className="flex flex-col justify-between gap-2 border-b border-gray-200 pb-4 md:flex-row md:items-center">
               <div>
-                <span className="text-lg font-bold text-gray-800">延長30分</span>
+                <span
+                  contentEditable={isEditing}
+                  onBlur={(e) => handleUpdateField('extensionFeeTitle', e)}
+                  suppressContentEditableWarning
+                  className="text-lg font-bold text-gray-800 outline-none"
+                >
+                  {data.extensionFeeTitle}
+                </span>
               </div>
-              <span className="text-2xl font-black tracking-tighter text-[#FF4B5C]">6,000円</span>
+              <span
+                contentEditable={isEditing}
+                onBlur={(e) => handleUpdateField('extensionFeeAmount', e)}
+                suppressContentEditableWarning
+                className="text-2xl font-black tracking-tighter text-[#FF4B5C] outline-none"
+              >
+                {data.extensionFeeAmount}
+              </span>
             </div>
           </div>
-          <p className="mt-6 text-[10px] leading-relaxed text-gray-400">
-            【料金構成】①初回コース料金 + ②出張費(23区以内、その他相談) + ③指名料(指名なし無料)
-            <br />
-            ※初回特典は全セラピストに適用可能です。
-            <br />
-            ※前日までのご予約で優先案内いたします。お早めにご相談ください。
-            <br />
-            上記①②③合計の金額を担当セラピストに現金でお渡しください。
+          <p
+            contentEditable={isEditing}
+            onBlur={(e) => handleUpdateField('notes', e)}
+            suppressContentEditableWarning
+            className="mt-6 text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap outline-none"
+          >
+            {data.notes}
           </p>
         </div>
       </div>
