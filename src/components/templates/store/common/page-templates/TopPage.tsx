@@ -19,6 +19,7 @@ import { TestimonialSection } from '@/components/sections/TestimonialSection';
 import { Store } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import Footer from '../../fukuoka/sections/Footer';
+import MapSection from '@/components/templates/store/common/sections/MapSection';
 
 interface CommonStorePageProps {
   store: Store;
@@ -78,6 +79,10 @@ export default function CommonStorePage({
         <AIMatchingSection />
         <FAQSection config={safeConfig.faq} />
         <ClosingCTA />
+        <MapSection
+          address={topConfig?.footer?.shopInfo?.address || store.address || ''}
+          shopName={topConfig?.footer?.shopInfo?.name || store.name || ''}
+        />
       </main>
       <Footer config={topConfig?.footer} />
     </div>

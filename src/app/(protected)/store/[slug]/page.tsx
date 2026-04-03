@@ -38,9 +38,10 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const description = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
   const ogImage = config?.hero?.images?.[0] || store.seo.ogImage;
 
+  // MEO最適化タイトル: 「店名 地域店 | 地域名 業態キャッチコピー」の形式に
   const title = config?.hero?.mainHeading
-    ? `${shopName} | ${mainHeading}${subHeading}`
-    : `${shopName} | 女性専用リラクゼーション`;
+    ? `${shopName} ${store.city}店 | ${store.city}の${mainHeading}${subHeading}`
+    : `${shopName} ${store.city}店 | ${store.city}の女性専用リラクゼーション・女性用風俗`;
 
   return {
     title,
@@ -155,8 +156,10 @@ export default async function StorePage({ params }: StorePageProps) {
     description: topConfig?.hero?.description?.replace(/\n/g, ' ') || store.seo.description,
     address: {
       '@type': 'PostalAddress',
-      addressLocality: store.city,
-      addressCountry: 'JP',
+      'streetAddress': topConfig?.footer?.shopInfo?.address || store.address,
+      'addressLocality': store.city,
+      'addressRegion': store.city === '福岡' ? '福岡県' : store.city === '横浜' ? '神奈川県' : '',
+      'addressCountry': 'JP',
     },
     telephone: topConfig?.footer?.shopInfo?.phone || store.contact.phone,
     url: `https://www.sutoroberrys.jp/store/${params.slug}`,

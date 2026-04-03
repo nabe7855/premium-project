@@ -142,25 +142,34 @@ export const Welcome: React.FC<WelcomeProps> = ({
             <div className="relative z-10 space-y-8 text-base md:text-lg">
               <div className="space-y-6 text-gray-600">
                 {data.content.map((para, idx) => (
-                  <p
-                    key={idx}
-                    contentEditable={isEditing}
-                    onBlur={(e) => {
-                      if (onUpdate) {
-                        const newContent = [...data.content];
-                        newContent[idx] = e.currentTarget.innerText;
-                        onUpdate('welcome', 'content', newContent);
-                      }
-                    }}
-                    suppressContentEditableWarning
-                    className="whitespace-pre-wrap"
-                  >
-                    {para}
-                  </p>
+                  // 編集モードでない場合は、空の段落を表示しない（領域を詰めさせる）
+                  (para.trim() || isEditing) ? (
+                    <p
+                      key={idx}
+                      contentEditable={isEditing}
+                      onBlur={(e) => {
+                        if (onUpdate) {
+                          const newContent = [...data.content];
+                          newContent[idx] = e.currentTarget.innerText;
+                          
+                          // 末尾の連続する空行を削除して余分な余白を防ぐ
+                          while (newContent.length > 1 && !newContent[newContent.length - 1].trim()) {
+                            newContent.pop();
+                          }
+                          
+                          onUpdate('welcome', 'content', newContent);
+                        }
+                      }}
+                      suppressContentEditableWarning
+                      className={`whitespace-pre-wrap ${!para.trim() && isEditing ? 'min-h-[1.5em] bg-blue-50/30' : ''}`}
+                    >
+                      {para}
+                    </p>
+                  ) : null
                 ))}
               </div>
 
-              <div className="flex flex-col items-end pt-12">
+              <div className="flex flex-col items-end pt-6">
                 <div className="text-right">
                   <p
                     contentEditable={isEditing}
