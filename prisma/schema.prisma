@@ -28,6 +28,9 @@ model Cast {
   mbti_id         String?
   animal_id       String?
   face_id         String?
+  slug            String?               @unique
+  user_id         String?               @db.Uuid
+  sns_url         String?
   created_at      DateTime              @default(now())
   blogs           Blog[]
   badges          CastBadge[]
