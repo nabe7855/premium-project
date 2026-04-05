@@ -62,8 +62,22 @@ export const CTA: React.FC<CTAProps> = ({
             </div>
           ) : (
             <div className="relative">
-              <span className="inline-block animate-bounce text-6xl">🍓</span>
-              <div className="absolute -right-4 -top-4 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
+              <style dangerouslySetInnerHTML={{ __html: `
+                @keyframes float-cta {
+                  0% { transform: translateY(0px); }
+                  50% { transform: translateY(-15px); }
+                  100% { transform: translateY(0px); }
+                }
+                .animate-float-cta {
+                  animation: float-cta 3s ease-in-out infinite;
+                }
+              `}} />
+              <img 
+                src="/img/guide/strawberry-chan.png" 
+                alt="Strawberry-chan" 
+                className="mx-auto h-24 w-auto animate-float-cta"
+              />
+              <div className="absolute -right-4 -top-2 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
                 ご相談ください!
               </div>
               {isEditing && (
