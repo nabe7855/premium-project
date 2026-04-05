@@ -1,15 +1,17 @@
-
 'use client';
 
 import {
   ChevronLeft,
   Eye,
+  History,
   Layout,
   Save,
   ExternalLink,
+  Download,
+  Upload,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -26,9 +28,14 @@ import LinksPage from '@/components/templates/store/fukuoka/page-templates/Links
 import { getAllStoresFromDb } from '@/lib/actions/store-actions';
 import { getActivePartnerLinks } from '@/lib/actions/partnerLinks';
 import { getStoreLinksConfig } from '@/lib/store/getStoreLinksConfig';
-import { saveStoreLinksConfig } from '@/lib/store/saveStoreLinksConfig';
+import { 
+  saveStoreLinksConfig,
+  getHeaderHistory,
+  deleteHeaderHistory
+} from '@/lib/store/saveStoreLinksConfig';
 import { DEFAULT_STORE_LINKS_CONFIG, StoreLinksConfig } from '@/lib/store/storeLinksConfig';
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
+import HistoryManager from '@/components/admin/HistoryManager';
 
 export default function StoreLinksManagement() {
   const router = useRouter();
@@ -40,36 +47,56 @@ export default function StoreLinksManagement() {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [dbStores, setDbStores] = useState<any[]>([]);
   const [currentStoreData, setCurrentStoreData] = useState<any>(null);
+  const [history, setHistory] = useState<any[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
 
-  // Fetch Config and Links
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      try {
-        const storesResult = await getAllStoresFromDb();
-        if (storesResult.success) {
-          setDbStores(storesResult.stores || []);
-          const current = storesResult.stores?.find((s: any) => s.slug === selectedStore);
-          setCurrentStoreData(current || null);
-        }
-
-        const configResult = await getStoreLinksConfig(selectedStore);
-        if (configResult.success && configResult.config) {
-          setConfig(configResult.config as StoreLinksConfig);
-        } else {
-          setConfig(DEFAULT_STORE_LINKS_CONFIG);
-        }
-
-        const linksResult = await getActivePartnerLinks(selectedStore);
-        setLinks(linksResult.links || []);
-      } catch (error) {
-        console.error('Error fetching links management data:', error);
-        toast.error('データの取得に失敗しました');
-      } finally {
-        setIsLoading(false);
+  // 履歴一覧の取得
+  const fetchHistory = useCallback(async () => {
+    setIsHistoryLoading(true);
+    try {
+      const result = await getHeaderHistory(selectedStore);
+      if (result.success && result.history) {
+        setHistory(result.history);
       }
-    };
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  }, [selectedStore]);
 
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const storesResult = await getAllStoresFromDb();
+      if (storesResult.success) {
+        setDbStores(storesResult.stores || []);
+        const current = storesResult.stores?.find((s: any) => s.slug === selectedStore);
+        setCurrentStoreData(current || null);
+      }
+
+      const configResult = await getStoreLinksConfig(selectedStore);
+      if (configResult.success && configResult.config) {
+        setConfig(configResult.config as StoreLinksConfig);
+      } else {
+        setConfig(DEFAULT_STORE_LINKS_CONFIG);
+      }
+
+      const linksResult = await getActivePartnerLinks(selectedStore);
+      setLinks(linksResult.links || []);
+    } catch (error) {
+      console.error('Error fetching links management data:', error);
+      toast.error('データの取得に失敗しました');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, [selectedStore]);
 
@@ -79,6 +106,7 @@ export default function StoreLinksManagement() {
       const result = await saveStoreLinksConfig(selectedStore, config);
       if (result.success) {
         toast.success('設定を保存しました');
+        fetchHistory(); // 履歴更新
       } else {
         toast.error('保存に失敗しました');
       }
@@ -90,14 +118,56 @@ export default function StoreLinksManagement() {
     }
   };
 
+  const handleApplyHistory = (historyConfig: any) => {
+    const merged = { ...DEFAULT_STORE_LINKS_CONFIG, ...historyConfig };
+    setConfig(merged);
+  };
+
+  const handleExport = () => {
+    try {
+      const dataStr = JSON.stringify(config, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `links_config_${selectedStore}_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('設定ファイルをダウンロードしました');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('書き出しに失敗しました');
+    }
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const importedConfig = JSON.parse(content);
+        const merged = { ...DEFAULT_STORE_LINKS_CONFIG, ...importedConfig };
+        setConfig(merged);
+        toast.success('設定ファイルを読み込みました。「公開」ボタンを押すと本番に反映されます。');
+      } catch (error) {
+        console.error('Import failed:', error);
+        toast.error('ファイルの読み込みに失敗しました。正しいJSON形式か確認してください。');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   const handleUpdate = (section: string, key: string, value: any) => {
     if (section === 'hero') {
       setConfig((prev) => ({
         ...prev,
-        hero: {
-          ...prev.hero,
-          [key]: value,
-        },
+        hero: { ...prev.hero, [key]: value },
       }));
     } else if (section === 'categories') {
       setConfig((prev) => ({
@@ -108,7 +178,21 @@ export default function StoreLinksManagement() {
   };
 
   const handleImageUpload = async (section: string, file: File, index?: number, key?: string) => {
-    // Basic image upload handling if needed for hero or categories
+    const toastId = toast.loading('画像をアップロード中...');
+    try {
+      const publicUrl = await uploadStoreTopImage(selectedStore, section, file, { maxWidth: 1200, quality: 0.8 });
+      if (!publicUrl) {
+         toast.error('アップロードに失敗しました', { id: toastId });
+         return;
+      }
+      if (section === 'hero' && key === 'imageUrl') {
+        handleUpdate('hero', 'imageUrl', publicUrl);
+      }
+      toast.success('アップロードしました', { id: toastId });
+      fetchHistory(); // 履歴更新
+    } catch (err) {
+      toast.error('エラーが発生しました', { id: toastId });
+    }
   };
 
   if (isLoading) {
@@ -121,7 +205,6 @@ export default function StoreLinksManagement() {
 
   return (
     <div className="flex h-[calc(100vh-120px)] flex-col gap-4 overflow-hidden">
-      {/* Header */}
       <div className="flex flex-shrink-0 flex-col items-stretch justify-between gap-2 rounded-2xl border border-gray-700/50 bg-brand-secondary px-4 py-3 sm:flex-row sm:items-center">
         <div className="flex items-center gap-4">
           <Button
@@ -138,7 +221,46 @@ export default function StoreLinksManagement() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <HistoryManager
+            title="リンク集"
+            history={history}
+            isLoading={isHistoryLoading}
+            onApply={handleApplyHistory}
+            onDelete={deleteHeaderHistory}
+            onRefresh={fetchHistory}
+          />
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            title="バックアップをダウンロード"
+            className="h-9 border-gray-700 px-3 text-gray-300"
+          >
+            <Download className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline text-xs">書き出し</span>
+          </Button>
+
+          <div className="relative">
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImport}
+              className="absolute inset-0 cursor-pointer opacity-0"
+              style={{ fontSize: '1px' }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              title="バックアップから復元"
+              className="h-9 border-gray-700 px-3 text-gray-300"
+            >
+              <Upload className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline text-xs">読み込み</span>
+            </Button>
+          </div>
+
           <Select value={selectedStore} onValueChange={setSelectedStore}>
             <SelectTrigger className="h-9 min-w-[200px] border-pink-500/50 bg-pink-500/10 text-sm font-bold text-pink-500">
               <SelectValue placeholder="店舗を選択" />
@@ -164,10 +286,10 @@ export default function StoreLinksManagement() {
             variant={isPreviewMode ? 'secondary' : 'outline'}
             size="sm"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className={isPreviewMode ? 'bg-white/10' : 'border-gray-700 text-gray-300'}
+            className={isPreviewMode ? 'bg-white/10 hidden sm:flex' : 'border-gray-700 text-gray-300 hidden sm:flex'}
           >
             <Eye className="mr-2 h-4 w-4" />
-            {isPreviewMode ? '編集モードに戻る' : 'プレビュー'}
+            {isPreviewMode ? '編集モードへ' : 'プレビュー'}
           </Button>
 
           <Button
@@ -183,7 +305,6 @@ export default function StoreLinksManagement() {
       </div>
 
       <div className="flex flex-grow gap-4 overflow-hidden">
-        {/* Sidebar */}
         <div className="hidden w-64 flex-shrink-0 space-y-4 overflow-y-auto rounded-2xl border border-gray-700/50 bg-brand-secondary p-4 lg:block">
           <h2 className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-400">
             <Layout className="h-3 w-3" />
@@ -225,7 +346,6 @@ export default function StoreLinksManagement() {
           </Button>
         </div>
 
-        {/* Editor Preview */}
         <div className="relative flex-grow overflow-hidden rounded-2xl border border-gray-700/50 bg-white shadow-inner">
           <div className="absolute inset-0 overflow-y-auto">
             <LinksPage

@@ -5,15 +5,18 @@ import {
   ChevronLeft,
   ExternalLink,
   Eye,
+  History,
   Layout,
   Menu,
   Save,
   Settings,
   Plus,
   Trash2,
+  Download,
+  Upload,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -35,10 +38,15 @@ import { StoreProvider } from '@/contexts/StoreContext';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getAllStoresFromDb } from '@/lib/actions/store-actions';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
-import { saveStoreTopConfig } from '@/lib/store/saveStoreTopConfig';
+import { 
+  saveStoreTopConfig,
+  getHomePageHistory,
+  deleteHomePageHistory
+} from '@/lib/store/saveStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { uploadStoreTopImage } from '@/lib/store/uploadStoreTopImage';
+import HistoryManager from '@/components/admin/HistoryManager';
 
 const SECTION_LABELS: Record<string, string> = {
   hero: 'メインビジュアル',
@@ -50,7 +58,7 @@ const SECTION_LABELS: Record<string, string> = {
   diary: '写メ日記',
   newcomer: '新人セラピスト',
   faq: 'よくあるご質問',
-  quickAccess: 'クイックアクセス',
+  quickAccess: 'クインスアクセス',
   beginnerGuide: '初体験バナー 1',
   beginnerGuide2: '初体験バナー 2',
   footer: 'フッター',
@@ -87,13 +95,33 @@ export default function StoreTopManagement() {
   const [dbStores, setDbStores] = useState<any[]>([]);
   const [currentStoreData, setCurrentStoreData] = useState<any>(null);
   const [showBottomNavEditor, setShowBottomNavEditor] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+
+  // 履歴一覧の取得
+  const fetchHistory = useCallback(async () => {
+    setIsHistoryLoading(true);
+    try {
+      const result = await getHomePageHistory(selectedStore);
+      if (result.success && result.history) {
+        setHistory(result.history);
+      }
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  }, [selectedStore]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   // 設定の取得
   useEffect(() => {
     const fetchConfig = async () => {
       setIsLoading(true);
       try {
-        // 店舗リストを取得
         const storesResult = await getAllStoresFromDb();
         if (storesResult.success) {
           setDbStores(storesResult.stores || []);
@@ -130,19 +158,18 @@ export default function StoreTopManagement() {
     fetchNews();
   }, [selectedStore]);
 
-  // 保存処理用ヘルパー
   const safeSaveConfig = async (currentConfig: StoreTopPageConfig) => {
     const serializableConfig = JSON.parse(JSON.stringify(currentConfig));
     return await saveStoreTopConfig(selectedStore, serializableConfig);
   };
 
-  // 保存処理
   const handleSave = async () => {
     setIsSaving(true);
     try {
       const result = await safeSaveConfig(config);
       if (result.success) {
         toast.success('設定を保存しました');
+        fetchHistory(); // 履歴更新
       } else {
         toast.error(`保存に失敗しました: ${result.error}`);
       }
@@ -154,7 +181,51 @@ export default function StoreTopManagement() {
     }
   };
 
-  // インライン更新処理
+  const handleApplyHistory = (historyConfig: any) => {
+    const merged = { ...DEFAULT_STORE_TOP_CONFIG, ...historyConfig };
+    setConfig(merged);
+  };
+
+  const handleExport = () => {
+    try {
+      const dataStr = JSON.stringify(config, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `top_config_${selectedStore}_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('設定ファイルをダウンロードしました');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('書き出しに失敗しました');
+    }
+  };
+
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const importedConfig = JSON.parse(content);
+        const merged = { ...DEFAULT_STORE_TOP_CONFIG, ...importedConfig };
+        setConfig(merged);
+        toast.success('設定ファイルを読み込みました。「公開」ボタンを押すと本番に反映されます。');
+      } catch (error) {
+        console.error('Import failed:', error);
+        toast.error('ファイルの読み込みに失敗しました。正しいJSON形式か確認してください。');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   const handleUpdate = (section: string, key: string, value: any) => {
     setConfig((prev) => ({
       ...prev,
@@ -223,7 +294,6 @@ export default function StoreTopManagement() {
     });
   };
 
-  // 表示切り替えトグル用
   const toggleVisibility = (section: keyof StoreTopPageConfig) => {
     if ((section as string) === 'bottomNav') {
       setConfig((prev) => ({
@@ -244,7 +314,6 @@ export default function StoreTopManagement() {
     }));
   };
 
-  // セクションへスクロール
   const scrollToSection = (sectionId: string) => {
     const target = document.getElementById(sectionId);
     if (target) {
@@ -252,18 +321,16 @@ export default function StoreTopManagement() {
     }
   };
 
-  // 画像アップロード処理
   const handleImageUpload = async (section: string, file: File, index?: number, key?: string) => {
     if (!selectedStore) return;
 
     const toastId = toast.loading('画像をアップロード中...');
     
-    // セクションや用途に応じた圧縮設定
     let options: { maxWidth?: number; quality?: number } = { maxWidth: 1200, quality: 0.8 };
     if (key === 'headingImageUrl' || key === 'iconUrl') {
-      options = { maxWidth: 600, quality: 0.8 }; // タイトルやアイコンは小さめに
+      options = { maxWidth: 600, quality: 0.8 };
     } else if (section === 'hero') {
-      options = { maxWidth: 1600, quality: 0.85 }; // ヒーロー画像は高画質に
+      options = { maxWidth: 1600, quality: 0.85 };
     } else if (section === 'sidebar' || section === 'footer') {
       options = { maxWidth: 800, quality: 0.8 };
     }
@@ -290,7 +357,6 @@ export default function StoreTopManagement() {
           newLinks.push('');
         } else {
           newImages[index] = publicUrl;
-          // 配列が短い場合は補完する
           while (newLinks.length <= index) {
             newLinks.push('');
           }
@@ -324,6 +390,7 @@ export default function StoreTopManagement() {
       setConfig(newConfig);
       await safeSaveConfig(newConfig);
       toast.success('画像を最適化してアップロードしました', { id: toastId });
+      fetchHistory(); // 履歴更新
     } catch (error) {
       console.error('Image upload failed:', error);
       toast.error('画像のアップロードに失敗しました', { id: toastId });
@@ -422,9 +489,48 @@ export default function StoreTopManagement() {
           <h1 className="text-lg font-bold text-white">店舗トップ管理</h1>
         </div>
 
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <HistoryManager
+            title="トップページ"
+            history={history}
+            isLoading={isHistoryLoading}
+            onApply={handleApplyHistory}
+            onDelete={deleteHomePageHistory}
+            onRefresh={fetchHistory}
+          />
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleExport}
+            title="バックアップをダウンロード"
+            className="h-9 border-gray-700 px-3 text-gray-300"
+          >
+            <Download className="h-4 w-4 sm:mr-2" />
+            <span className="hidden sm:inline text-xs">書き出し</span>
+          </Button>
+
+          <div className="relative">
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImport}
+              className="absolute inset-0 cursor-pointer opacity-0"
+              style={{ fontSize: '1px' }}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              title="バックアップから復元"
+              className="h-9 border-gray-700 px-3 text-gray-300"
+            >
+              <Upload className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline text-xs">読み込み</span>
+            </Button>
+          </div>
+
           <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="h-9 min-w-[200px] border-pink-500/50 bg-pink-500/10 text-sm font-bold text-pink-500">
+            <SelectTrigger className="h-9 min-w-[150px] sm:min-w-[200px] border-pink-500/50 bg-pink-500/10 text-xs sm:text-sm font-bold text-pink-500">
               <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
@@ -440,7 +546,7 @@ export default function StoreTopManagement() {
             variant={isPreviewMode ? 'secondary' : 'outline'}
             size="sm"
             onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="border-gray-700 text-gray-300"
+            className="border-gray-700 text-gray-300 hidden sm:flex"
           >
             <Eye className="mr-2 h-4 w-4" />
             {isPreviewMode ? '編集モードへ' : 'プレビュー'}
@@ -487,7 +593,6 @@ export default function StoreTopManagement() {
         </div>
       </div>
 
-      {/* Bottom Nav Editor Sheet */}
       <Sheet open={showBottomNavEditor} onOpenChange={setShowBottomNavEditor}>
         <SheetContent side="right" className="w-full sm:max-w-md border-gray-700 bg-brand-secondary p-0">
           <SheetHeader className="p-6 border-b border-gray-700">

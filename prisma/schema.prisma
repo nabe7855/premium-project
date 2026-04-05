@@ -131,6 +131,42 @@ model FirstTimeConfig {
   @@map("first_time_configs")
 }
 
+model FirstTimeConfigHistory {
+  id         String   @id @default(uuid())
+  store_id   String
+  config     Json
+  created_at DateTime @default(now())
+
+  @@map("first_time_config_histories")
+}
+
+model HomePageConfigHistory {
+  id         String   @id @default(uuid())
+  store_id   String
+  config     Json
+  created_at DateTime @default(now())
+
+  @@map("home_page_config_histories")
+}
+
+model HeaderConfigHistory {
+  id         String   @id @default(uuid())
+  store_id   String
+  config     Json
+  created_at DateTime @default(now())
+
+  @@map("header_config_histories")
+}
+
+model RecruitPageHistory {
+  id         String   @id @default(uuid())
+  store_id   String
+  config     Json
+  created_at DateTime @default(now())
+
+  @@map("recruit_page_histories")
+}
+
 model StoreLinksConfig {
   id         String   @id @default(uuid())
   store_id   String   @unique

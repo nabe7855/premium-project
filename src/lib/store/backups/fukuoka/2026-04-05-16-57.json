@@ -1,0 +1,315 @@
+{
+  "banner": {
+    "imageUrl": "/img/guide/fukuoka/banner.jpg",
+    "isVisible": true
+  },
+  "hero": {
+    "badge": "FOR FIRST TIME VISITORS",
+    "mainHeading": "頑張るあなたの心に、",
+    "subHeading": "一粒のご褒美を。",
+    "subHeadingAccent": "一粒のご褒美を。",
+    "priceBadgeTitle": "＼ 初回限定特典 ／",
+    "priceBadgeCourse": "120分コース",
+    "priceBadgeOldPrice": "¥20,000",
+    "priceBadgeNewPrice": "¥16,000",
+    "priceBadgeDescription": "一番人気の満足プラン。\n技術もマインドも超一流な\nセラピストにお任せください。",
+    "isVisible": false
+  },
+  "welcome": {
+    "heading": "ストロベリーボーイズへ、ようこそ。",
+    "subHeading": "ABOUT STRAWBERRY BOYS",
+    "imageUrl": "",
+    "content": [
+      "日々、忙しく働く女性の皆様。",
+      "たまには自分を甘やかして、心も身体もとろけるような最高の癒やしを体験してみませんか？",
+      "ストロベリーボーイズは、そんな貴女のために誕生した、福岡随一のプレミアム・メンズエステです。"
+    ],
+    "signaturePrefix": "貴女に寄り添うパートナーとして",
+    "signature": "ストロベリーボーイズ 一同",
+    "isVisible": true
+  },
+  "forbidden": {
+    "heading": "安心・安全のために",
+    "subHeading": "FORBIDDEN ITEMS",
+    "imageUrl": "",
+    "items": [
+      {
+        "id": "1",
+        "icon": "Ban",
+        "title": "性的サービスの要求",
+        "description": "当店は健全なリラクゼーション・マッサージを提供する店舗です。それ以外の目的でのご利用は固くお断りしております。"
+      },
+      {
+        "id": "2",
+        "icon": "AlertCircle",
+        "title": "セラピストへの嫌がらせ",
+        "description": "言葉や行動によるセクシャルハラスメント、暴力、暴言などは絶対におやめください。"
+      },
+      {
+        "id": "3",
+        "icon": "UserMinus",
+        "title": "店外での接触要求",
+        "description": "セラピストとの店外での接触、個人的な連絡先の交換、SNS等での執拗なコンタクトは禁止しております。"
+      },
+      {
+        "id": "4",
+        "icon": "Beer",
+        "title": "過度の飲酒状態でのご利用",
+        "description": "安全のため、泥酔状態でのご利用はお断りさせていただく場合がございます。"
+      },
+      {
+        "id": "5",
+        "icon": "ShieldAlert",
+        "title": "違法行為・公序良俗に反する行為",
+        "description": "その他、法律に抵触する恐れのある行為や、運営が不適切と判断した場合は即刻中断させていただきます。"
+      }
+    ],
+    "isVisible": true
+  },
+  "casts": {
+    "imageUrl": "",
+    "isVisible": false
+  },
+  "threePoints": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/threePoints/1772763057075.jpg",
+    "heading": "ストロベリーボーイズが選ばれる",
+    "subHeading": "3つの安心ポイント",
+    "items": [
+      {
+        "desc": "本物のサービスをご体験頂けるよう、トップセラピストを含む全セラピストが対象の特別な価格にて初回コースをご案内致します！追加料金なしの明朗会計です。",
+        "icon": "🍓",
+        "step": "point 1",
+        "title": "初めての方限定！120分16,000円！"
+      },
+      {
+        "desc": "事前カウンセリングで不安を解消！お店に何度でも無料相談可能です。セラピストとの事前連絡・カウンセリングで当日の不安を解消し、安心して素敵な体験をお楽しみください。",
+        "icon": "✨",
+        "step": "point 2",
+        "title": "女風デビューを失敗させません！"
+      },
+      {
+        "desc": "対面カウンセリング＆シャワー後にコーススタート！入室後のカウンセリングとシャワーを浴び終えた後からお時間のカウントを開始。無料時間の長さに驚きと喜びの声を多数頂いております！",
+        "icon": "⏰",
+        "step": "point 3",
+        "title": "ゆったり過ごせるボリュームの120分！"
+      }
+    ],
+    "isVisible": true
+  },
+  "sevenReasons": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/sevenReasons/1772763066782.jpg",
+    "reasons": [
+      {
+        "desc": "透明性を重視し、お店の雰囲気を感じてもらうためHP内に受付口コミ欄をご用意。皆様の声が300件以上投稿されており、利用の参考にしていただけます。",
+        "title": "業界初！300件以上の受付口コミ！"
+      },
+      {
+        "desc": "予約だけでなく、悩み事やご相談など、ご予約に関係のないお問い合わせでも構いません。ハートフルで丁寧な対応をスタッフ一同一人一人に提供します。",
+        "title": "業界一の受付対応を目指しています！"
+      },
+      {
+        "desc": "各ジャンルの元プロダクション出身者や、社会経験が豊富な男性を厳選採用。教育においてもお客様の満足度を第一に考え、業界最高レベルの人選を徹底しています。",
+        "title": "大手プロ出身セラピスト多数在籍！"
+      },
+      {
+        "desc": "風俗業界で10年以上の経験豊富な専属講師がマンツーマンで指導。一般的な素人男性のレベルを超えた、プロならではの高品質なサービスをお約束します。",
+        "title": "業界熟練の講師による確かな人材育成！"
+      },
+      {
+        "desc": "フランチャイズとは違い、全国展開している店舗は全て営業歴6年以上の東京本店にて直接運営に携わったスタッフが管理。どの地域でも安定のおもてなしを提供します。",
+        "title": "安心と安定、直営店での全国展開！"
+      },
+      {
+        "desc": "「さくら検査研究所」様とのパートナーシップ契約を結んでおり、全てのセラピストに定期的な性病検査を徹底しています。心ゆくまで安心してお楽しみください！",
+        "title": "定期的な性病検査の義務付け！"
+      },
+      {
+        "desc": "急速に成長する業界で、1年未満で姿を消す店舗も珍しくありません。当店は皆様の支持を受け、8年以上にわたり大勢の皆様の女風デビューをサポートし続けています。",
+        "title": "8年以上の運営実績は信頼の証！"
+      }
+    ],
+    "isVisible": true
+  },
+  "dayFlow": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/dayFlow/1772763317956.jpg",
+    "steps": [
+      {
+        "desc": "駅改札前やUNIQLO前など、事前に伝えた貴女の服装を元にセラピストからお声がけします。スムーズに合流できない場合はお店が仲介するのでご安心を！",
+        "title": "セラピストと合流"
+      },
+      {
+        "desc": "セラピストがいくつかピックアップしてご提案。デート気分でエスコートされます。入室後、ご利用料金を現金でセラピストにお渡しください。",
+        "title": "ホテルへ移動"
+      },
+      {
+        "desc": "10〜15分程度。カウンセリングシートを使い、要望や重点的にしてほしい項目、NG項目を確認します。「寄り添う事」がテーマの特別な時間です。",
+        "title": "カウンセリング"
+      },
+      {
+        "desc": "リラックスしていただくためにお客様から先にシャワー。洗体オプション（+2,000円）で一緒に入浴して、お身体を丁寧に洗うプランも人気です♡",
+        "title": "シャワー"
+      },
+      {
+        "desc": "お客様がシャワーを出たタイミングでコース時間スタート！ここまでの時間は完全無料です。心地よい非日常のひとときを存分にお楽しみください。",
+        "title": "カウント開始"
+      }
+    ],
+    "footerNote": "※シャワー後のカウント開始までのお時間は全て【無料】です",
+    "isVisible": true
+  },
+  "reservationFlow": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/reservationFlow/1772763209783.jpg",
+    "steps": [
+      {
+        "desc": "まずはセラピスト一覧から.写メ日記や口コミを参考に.ご指名がある場合はその方を,決まっていない場合はお店にご相談ください.貴女に合った方をスタッフが選定します.",
+        "title": "まずはご相談ください"
+      },
+      {
+        "desc": "電話・メール・LINE・X(旧Twitter)のDMから.お急ぎの場合は電話かLINEがスムーズです.",
+        "title": "お店に問い合わせ・申し込み",
+        "details": [
+          "【日時】第三希望まであるとスムーズです",
+          "【待ち合わせ場所】新宿、渋谷、池袋、鶯谷などが推奨ですが、ご自宅も可能です",
+          "【コース内容】初回の方は120分16,000円コースが推奨です",
+          "【指名の有無】ご希望がある場合はお伝えください"
+        ]
+      },
+      {
+        "desc": "ご指名がある場合はお店が確認後、ご報告。指名がない場合はお客様の要望（年齢、性格など）に合ったセラピストを厳選してご報告いたします。",
+        "title": "担当セラピストの決定"
+      },
+      {
+        "desc": "最終確認を行い受付完了。変更点があればお気軽にお申し付けください。当店ではセラピストとの事前のメッセージ交換を推奨しており、当日を安心して迎えられます。",
+        "title": "ご予約確定"
+      }
+    ],
+    "isVisible": true
+  },
+  "faq": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/faq/1772763411362.jpg",
+    "items": [
+      {
+        "answer": "ご安心ください。まずはLINEで「初めてです」とスタンプ一つ送っていただければ、専任の女性コンシェルジュが丁寧に手順をご案内いたします。無理な勧誘は一切ございません。",
+        "question": "初めてなので、何をどうすればいいか分かりません。"
+      },
+      {
+        "answer": "もちろんです。当店の女性のお客様は20代から70代まで幅広く、皆様それぞれの目的で癒やしを求められています。セラピストは貴女という一人の女性を大切におおもてなしするプロですので、安心してお任せください。",
+        "question": "年齢や容姿に自信がないのですが、利用しても大丈夫ですか？"
+      },
+      {
+        "answer": "ホテルご利用の場合は別途ホテル代金が必要となります。 ご利用コース料金の他に、出張費と、ご指名有りの場合は指名料を加算されます。指名料は何度でもどなたでも一律1,000円です。詳細は「ご利用料金ページ」をご確認ください。",
+        "question": "ホテル代などの追加料金はかかりますか？"
+      },
+      {
+        "answer": "福岡エリアをはじめとする博多市内、および近郊のホテルやご自宅へお伺いいたします。福岡県外でも出張は可能となりますので、具体的なエリアについてはお気軽にお問い合わせください。",
+        "question": "場所はどこでも指定できますか？"
+      }
+    ],
+    "isVisible": true
+  },
+  "pricing": {
+    "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/stores/yokohama/first-time/pricing/1772763484238.jpg",
+    "subHeading": "当店一番人気の初回120分コースを推奨しております♪",
+    "courses": [
+      {
+        "title": "初回120分",
+        "isMain": true,
+        "newPrice": "16,000円",
+        "oldPrice": "20,000円",
+        "courseName": "金額",
+        "description": "初めてご利用のお客様から、多くのご指示を頂いている当店一番人気コースです♡\n2時間をかけてメインの施術行程を存分にご堪能いただけます。指圧、パウダー、オイル、性感マッサージの全てを網羅したトータルリラクゼーションに最適です！"
+      },
+      {
+        "title": "初回150分コース",
+        "newPrice": "22,000円",
+        "oldPrice": "24,000円",
+        "courseName": "150分コース",
+        "description": "もう少しお時間に余裕を持ちたい時の150分コースです♡"
+      },
+      {
+        "title": "初回180分コース",
+        "newPrice": "27,000円",
+        "oldPrice": "29,000円",
+        "courseName": "180分コース",
+        "description": "総額7,000円お得な180分コース。究極の癒しに。"
+      }
+    ],
+    "nominationFeeTitle": "指名料",
+    "nominationFeeSubtitle": "何度指名しても同額です",
+    "nominationFeeAmount": "1,000円",
+    "extensionFeeTitle": "延長30分",
+    "extensionFeeAmount": "6,000円",
+    "notes": "【料金構成】①初回コース料金 + ②出張費(23区以内、その他相談) + ③指名料(指名なし無料)\n※初回特典は全セラピストに適用可能です。\n※前日までのご予約で優先案内いたします。お早めにご相談ください。\n上記①②③合計の金額を担当セラピストに現金でお渡しください。",
+    "isVisible": true
+  },
+  "cta": {
+    "heading": "まずは相談だけ、という方もお気軽に.\n私たちが貴女のデビューを\n大切にサポートします。",
+    "imageUrl": "",
+    "isVisible": true
+  },
+  "anchorNav": {
+    "isVisible": true
+  },
+  "options": {
+    "heading": "サービス・オプション詳細",
+    "basicTitle": "基本サービス・無料オプション",
+    "basicItems": [
+      "カウンセリング",
+      "指圧マッサージ",
+      "パウダー性感",
+      "オイルマッサージ",
+      "ポルチオ・クンニ",
+      "乳首舐め",
+      "Gスポット・ボルチオ",
+      "キス・ハグ・愛撫",
+      "フェラ・手コキ",
+      "ローター・バイブ等"
+    ],
+    "paidTitle": "有料オプション",
+    "paidItems": [
+      {
+        "desc": "目隠し、手枷などを使用し、ソフトに責める体験。",
+        "price": "+¥2,000",
+        "title": "ソフトM性感オプション"
+      },
+      {
+        "desc": "お風呂で丁寧に、いやらしく体を洗うサービス。",
+        "price": "+¥2,000",
+        "title": "洗体オプション"
+      },
+      {
+        "desc": "粘膜接触なし、服を脱がない等、不安な方向け。",
+        "price": "-¥1,000",
+        "title": "アイラインタッチ無し",
+        "isNegative": true
+      }
+    ],
+    "areasTitle": "出張費・ホテル代目安",
+    "areas": [
+      {
+        "name": "新宿・渋谷・池袋・上野・錦糸町",
+        "price": "4,000円〜"
+      },
+      {
+        "name": "鶯谷",
+        "price": "3,000円〜"
+      }
+    ],
+    "isVisible": true
+  },
+  "sectionOrder": [
+    "banner",
+    "welcome",
+    "hero",
+    "anchorNav",
+    "threePoints",
+    "sevenReasons",
+    "reservationFlow",
+    "dayFlow",
+    "casts",
+    "pricing",
+    "faq",
+    "forbidden",
+    "cta"
+  ]
+}

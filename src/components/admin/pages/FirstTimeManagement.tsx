@@ -1,8 +1,8 @@
 'use client';
 
-import { ChevronLeft, Eye, GripVertical, Layout, Menu, Save } from 'lucide-react';
+import { ChevronLeft, Download, Eye, GripVertical, History, Layout, Menu, Save, Upload } from 'lucide-react';
 import { Reorder } from 'framer-motion';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -19,13 +19,19 @@ import { Switch } from '@/components/ui/switch';
 import FirstTimePageContent from '@/components/sections/guide/first-time/FirstTimePageContent';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { stores } from '@/data/stores';
-import { getFirstTimeConfig, saveFirstTimeConfig } from '@/lib/store/firstTimeActions';
+import { 
+  getFirstTimeConfig, 
+  saveFirstTimeConfig,
+  getFirstTimeHistory,
+  deleteFirstTimeHistory
+} from '@/lib/store/firstTimeActions';
 import {
   DEFAULT_FIRST_TIME_CONFIG,
   FirstTimeConfig,
   mergeConfig,
 } from '@/lib/store/firstTimeConfig';
 import { getAllStores } from '@/lib/store/store-data';
+import HistoryManager from '@/components/admin/HistoryManager';
 
 const SECTION_LABELS: Record<string, string> = {
   banner: 'バナー',
@@ -66,21 +72,38 @@ export default function FirstTimeManagement() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isPreviewMode, setIsPreviewMode] = useState(false);
+  const [history, setHistory] = useState<any[]>([]);
+  const [isHistoryLoading, setIsHistoryLoading] = useState(false);
+
+  // 履歴一覧の取得
+  const fetchHistory = useCallback(async () => {
+    setIsHistoryLoading(true);
+    try {
+      const result = await getFirstTimeHistory(selectedStore);
+      if (result.success && result.history) {
+        setHistory(result.history);
+      }
+    } catch (error) {
+      console.error('Failed to fetch history:', error);
+    } finally {
+      setIsHistoryLoading(false);
+    }
+  }, [selectedStore]);
+
+  useEffect(() => {
+    fetchHistory();
+  }, [fetchHistory]);
 
   // 設定の取得
   useEffect(() => {
     const fetchConfig = async () => {
       setIsLoading(true);
-      // 前のステートを一度プレースホルダー的にデフォルトに戻すか
-      // あるいは完全にロードが終わるまで触らせないようにする
       try {
         const result = await getFirstTimeConfig(selectedStore);
         if (result.success && result.config) {
           setConfig(mergeConfig(result.config));
         } else {
-          // エラーまたはデータなし
-          console.warn(`[FirstTimeManagement] Using default config for ${selectedStore}`);
-          setConfig(mergeConfig(null)); // デフォルトをクローンして適用
+          setConfig(mergeConfig(null));
         }
       } catch (error) {
         console.error('Error fetching config:', error);
@@ -101,6 +124,7 @@ export default function FirstTimeManagement() {
       const result = await saveFirstTimeConfig(selectedStore, config);
       if (result.success) {
         toast.success('設定を保存しました');
+        fetchHistory(); // 履歴を更新
       } else {
         toast.error(`保存に失敗しました: ${result.error}`);
       }
@@ -110,6 +134,53 @@ export default function FirstTimeManagement() {
     } finally {
       setIsSaving(false);
     }
+  };
+
+  // 履歴からの復元処理
+  const handleApplyHistory = (historyConfig: any) => {
+    const merged = mergeConfig(historyConfig);
+    setConfig(merged);
+  };
+
+  // エクスポート処理（JSONダウンロード）
+  const handleExport = () => {
+    try {
+      const dataStr = JSON.stringify(config, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `first_time_config_${selectedStore}_${new Date().toISOString().split('T')[0]}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+      toast.success('設定ファイルをダウンロードしました');
+    } catch (error) {
+      console.error('Export failed:', error);
+      toast.error('書き出しに失敗しました');
+    }
+  };
+
+  // インポート処理（JSON読み込み）
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const content = event.target?.result as string;
+        const importedConfig = JSON.parse(content);
+        setConfig(mergeConfig(importedConfig));
+        toast.success('設定ファイルを読み込みました。「公開」ボタンを押すと本番に反映されます。');
+      } catch (error) {
+        console.error('Import failed:', error);
+        toast.error('ファイルの読み込みに失敗しました。正しいJSON形式か確認してください。');
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
   };
 
   const handleImageUpload = async (section: string, file: File) => {
@@ -133,11 +204,9 @@ export default function FirstTimeManagement() {
       const data = await response.json();
       const imageUrl = data.url;
 
-      // 古い画像を削除（オプション。もしあれば）
       const oldImageUrl = (config[section as keyof FirstTimeConfig] as any)?.imageUrl;
       if (oldImageUrl && typeof oldImageUrl === 'string' && oldImageUrl.startsWith('http')) {
         try {
-          // server actionを介して削除
           const { deleteStorageFile } = await import('@/actions/storage');
           await deleteStorageFile(oldImageUrl);
         } catch (e) {
@@ -147,7 +216,6 @@ export default function FirstTimeManagement() {
 
       handleUpdate(section, 'imageUrl', imageUrl);
 
-      // 設定を自動保存（永続化を確実にするため）
       const newConfig = {
         ...config,
         [section]: {
@@ -160,6 +228,7 @@ export default function FirstTimeManagement() {
         const saveResult = await saveFirstTimeConfig(selectedStore, newConfig);
         if (saveResult.success) {
           toast.success('画像を保存しました');
+          fetchHistory(); // 履歴更新
         } else {
           console.error('Auto-save failed:', saveResult.error);
           toast.error('DBへの保存に失敗しました。公開ボタンを押してください。');
@@ -173,7 +242,6 @@ export default function FirstTimeManagement() {
     }
   };
 
-  // インライン更新処理
   const handleUpdate = (section: string, key: string, value: any) => {
     setConfig((prev) => ({
       ...prev,
@@ -184,7 +252,6 @@ export default function FirstTimeManagement() {
     }));
   };
 
-  // 表示切り替えトグル用
   const toggleVisibility = (section: keyof FirstTimeConfig) => {
     setConfig((prev) => ({
       ...prev,
@@ -195,7 +262,6 @@ export default function FirstTimeManagement() {
     }));
   };
 
-
   const setSectionOrder = (newOrder: string[]) => {
     setConfig((prev) => ({
       ...prev,
@@ -203,7 +269,6 @@ export default function FirstTimeManagement() {
     }));
   };
 
-  // セクションへスクロール
   const scrollToSection = (sectionId: string) => {
     const target = document.getElementById(sectionId);
     if (target) {
@@ -342,19 +407,58 @@ export default function FirstTimeManagement() {
           <div className="hidden h-6 w-px bg-gray-700 sm:block"></div>
 
           <div className="flex items-center gap-2">
+            <HistoryManager
+              title="初めての方へ"
+              history={history}
+              isLoading={isHistoryLoading}
+              onApply={handleApplyHistory}
+              onDelete={deleteFirstTimeHistory}
+              onRefresh={fetchHistory}
+            />
+
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExport}
+              title="バックアップをダウンロード"
+              className="h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-3"
+            >
+              <Download className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline text-[11px]">書き出し</span>
+            </Button>
+
+            <div className="relative">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="absolute inset-0 cursor-pointer opacity-0"
+                style={{ fontSize: '1px' }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                title="バックアップから復元"
+                className="h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-3"
+              >
+                <Upload className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline text-[11px]">読み込み</span>
+              </Button>
+            </div>
+
             <Button
               variant={isPreviewMode ? 'secondary' : 'outline'}
               size="sm"
               onClick={() => setIsPreviewMode(!isPreviewMode)}
               className={
                 isPreviewMode
-                  ? 'h-8 bg-white/10 px-2 sm:h-9 sm:px-4'
-                  : 'h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-4'
+                  ? 'h-8 bg-white/10 px-2 sm:h-9 sm:px-3'
+                  : 'h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-3'
               }
             >
               <Eye className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">
-                {isPreviewMode ? '編集モードに戻る' : 'プレビュー'}
+              <span className="hidden sm:inline text-[11px]">
+                {isPreviewMode ? '編集モード' : 'プレビュー'}
               </span>
             </Button>
 
