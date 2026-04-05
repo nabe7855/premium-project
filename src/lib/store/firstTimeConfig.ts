@@ -126,6 +126,7 @@ export interface PricingConfig {
 }
 
 export interface CTAConfig {
+  heading: string;
   imageUrl?: string;
   isVisible: boolean;
 }
@@ -424,6 +425,7 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
     isVisible: true,
   },
   cta: {
+    heading: 'まずは相談だけ、という方もお気軽に.\n私たちが貴女のデビューを\n大切にサポートします。',
     imageUrl: '',
     isVisible: true,
   },

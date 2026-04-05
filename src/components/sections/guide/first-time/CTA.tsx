@@ -18,6 +18,7 @@ export const CTA: React.FC<CTAProps> = ({
   onImageUpload,
 }) => {
   const data = config || {
+    heading: 'まずは相談だけ、という方もお気軽に.\n私たちが貴女のデビューを\n大切にサポートします。',
     imageUrl: '',
     isVisible: true,
   };
@@ -97,12 +98,13 @@ export const CTA: React.FC<CTAProps> = ({
           )}
         </div>
 
-        <h2 className="mb-6 text-2xl font-black leading-tight md:text-4xl">
-          まずは相談だけ、という方もお気軽に.
-          <br />
-          私たちが貴女のデビューを
-          <br className="md:hidden" />
-          大切にサポートします。
+        <h2 
+          contentEditable={isEditing}
+          onBlur={(e) => onUpdate?.('cta', 'heading', e.currentTarget.innerText)}
+          suppressContentEditableWarning
+          className="mb-6 text-2xl font-black leading-tight md:text-4xl whitespace-pre-wrap outline-none focus:ring-2 focus:ring-pink-200 rounded px-1"
+        >
+          {data.heading}
         </h2>
 
         <div className="flex flex-col items-center gap-6">
