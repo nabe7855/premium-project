@@ -91,14 +91,10 @@ export const ForbiddenItems: React.FC<ForbiddenItemsProps> = ({
 }) => {
   const [activeIconSelector, setActiveIconSelector] = useState<number | null>(null);
 
-  const data = config || {
-    heading: '安心・安全のために',
-    subHeading: 'FORBIDDEN ITEMS',
-    items: [
-      { id: '1', title: '性的サービスの要求', description: '当店は健全なリラクゼーション・マッサージを提供する店舗です。', icon: 'Ban' },
-    ],
-    isVisible: true,
-  };
+  // config が undefined の場合でも mergeConfig によってデフォルトが渡されるため、
+  // ここでの個別の Fallback は不要です。
+  const data = config;
+  if (!data) return null;
 
   const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
     if (onUpdate) {

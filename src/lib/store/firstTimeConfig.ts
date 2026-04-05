@@ -495,7 +495,6 @@ export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
  * データベースに古い形式のデータがある場合でも、新しいフィールドがデフォルト値で補完されるようにする
  */
 export const mergeConfig = (partialConfig: any): FirstTimeConfig => {
-  // 参照の共有を防ぐため、デフォルト設定をディープコピーする
   const merged = JSON.parse(JSON.stringify(DEFAULT_FIRST_TIME_CONFIG));
   if (!partialConfig) return merged;
 
@@ -507,7 +506,7 @@ export const mergeConfig = (partialConfig: any): FirstTimeConfig => {
     }
 
     if (partialConfig[sectionKey]) {
-      // セクションごとにマージ。ここでもネストしたオブジェクトへの対応のためマージを念入りに行う
+      // 古いデータに新しいフィールド（heading等）がなくても、既存の値を優先してマージする
       merged[sectionKey] = {
         ...merged[sectionKey],
         ...partialConfig[sectionKey],
