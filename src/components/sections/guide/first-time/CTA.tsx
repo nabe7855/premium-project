@@ -75,7 +75,7 @@ export const CTA: React.FC<CTAProps> = ({
               <img 
                 src="/img/guide/strawberry-chan.png" 
                 alt="Strawberry-chan" 
-                className="mx-auto h-24 w-auto animate-float-cta"
+                className="mx-auto h-48 w-auto animate-float-cta"
               />
               <div className="absolute -right-4 -top-2 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
                 ご相談ください!
