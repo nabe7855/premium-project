@@ -102,7 +102,7 @@ export const CTA: React.FC<CTAProps> = ({
           contentEditable={isEditing}
           onBlur={(e) => onUpdate?.('cta', 'heading', e.currentTarget.innerText)}
           suppressContentEditableWarning
-          className="mb-6 text-2xl font-black leading-tight md:text-4xl whitespace-pre-wrap outline-none focus:ring-2 focus:ring-pink-200 rounded px-1"
+          className="mb-6 text-2xl font-black leading-tight md:text-4xl whitespace-pre-wrap outline-none focus:ring-2 focus:ring-pink-200 rounded px-1 text-gray-900"
         >
           {data.heading}
         </h2>
