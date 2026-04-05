@@ -27,7 +27,7 @@ export const CTA: React.FC<CTAProps> = ({
 
   return (
     <section
-      className={`relative overflow-hidden bg-white py-24 ${!data.isVisible ? 'opacity-50' : ''}`}
+      className={`relative overflow-hidden bg-white pt-8 pb-24 ${!data.isVisible ? 'opacity-50' : ''}`}
     >
       <div className="container relative z-10 mx-auto max-w-4xl px-4 text-center">
         <div className="mb-8 flex justify-center">
@@ -77,9 +77,6 @@ export const CTA: React.FC<CTAProps> = ({
                 alt="Strawberry-chan" 
                 className="mx-auto h-48 w-auto animate-float-cta"
               />
-              <div className="absolute -right-4 -top-2 rounded-lg border bg-white px-2 py-1 text-[10px] font-bold shadow-sm">
-                ご相談ください!
-              </div>
               {isEditing && (
                 <div className="mt-4">
                   <label className="inline-flex cursor-pointer items-center gap-2 rounded-md bg-stone-100 px-3 py-1.5 text-xs font-bold text-gray-500 transition-colors hover:bg-stone-200">
