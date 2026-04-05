@@ -15,8 +15,6 @@ import HeroSection from '../sections/HeroSection';
 import NewcomerSection from '../sections/NewcomerSection';
 import PriceSection from '../sections/PriceSection';
 import QuickAccessMenu from '../sections/QuickAccessMenu';
-import MapSection from '@/components/templates/store/common/sections/MapSection';
-
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -112,10 +110,6 @@ export default function YokohamaPage({
         isEditing={isEditing}
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
-      />
-      <MapSection
-        address={config?.footer?.shopInfo?.address || ''}
-        shopName={config?.footer?.shopInfo?.name || ''}
       />
       <ReviewSection />
       <FAQSection

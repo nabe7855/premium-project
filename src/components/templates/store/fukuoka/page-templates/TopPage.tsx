@@ -16,8 +16,6 @@ const ReviewSection = dynamic(() => import('@/components/sections/store/ReviewSe
 const FAQSection = dynamic(() => import('../sections/FAQSection'));
 const SNSProfile = dynamic(() => import('@/components/templates/news/SNSProfile'));
 const Footer = dynamic(() => import('../sections/Footer'));
-import MapSection from '@/components/templates/store/common/sections/MapSection';
-
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -151,10 +149,6 @@ export default function FukuokaPage({
           onImageUpload={onImageUpload}
         />
       )}
-      <MapSection
-        address={safeConfig?.footer?.shopInfo?.address || ''}
-        shopName={safeConfig?.footer?.shopInfo?.name || ''}
-      />
       <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <FAQSection
