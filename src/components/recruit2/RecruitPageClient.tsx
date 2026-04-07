@@ -117,11 +117,11 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
           />
           <Route
             path="/form-quick"
-            element={<QuickForm storeName={fullMergedConfig.general?.storeName} />}
+            element={<QuickForm storeName={fullMergedConfig.general?.storeName} storeSlug={slug} />}
           />
           <Route
             path="/form-full"
-            element={<FullForm storeName={fullMergedConfig.general?.storeName} />}
+            element={<FullForm storeName={fullMergedConfig.general?.storeName} storeSlug={slug} />}
           />
           <Route path="/thanks" element={<ThanksPage />} />
         </Routes>
@@ -154,11 +154,13 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
         isOpen={isChatOpen}
         onClose={closeChat}
         storeName={fullMergedConfig.general?.storeName}
+        storeSlug={slug}
       />
       <ApplicationModal
         isOpen={isFormOpen}
         onClose={closeForm}
         storeName={fullMergedConfig.general?.storeName}
+        storeSlug={slug}
       />
       <IncomeSimulation isOpen={isSimulationOpen} onClose={closeSimulation} />
       <DiagnosticModal isOpen={isDiagnosticOpen} onClose={closeDiagnostic} onOpenChat={openChat} />

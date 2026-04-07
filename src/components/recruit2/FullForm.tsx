@@ -8,9 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 interface FullFormProps {
   storeName?: string;
+  storeSlug?: string;
 }
 
-const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
+const FullForm: React.FC<FullFormProps> = ({ storeName, storeSlug }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -37,9 +38,7 @@ const FullForm: React.FC<FullFormProps> = ({ storeName }) => {
 
     const formData = new FormData(e.currentTarget);
     formData.append('type', 'full');
-    if (storeName) {
-      formData.append('store', storeName);
-    }
+    formData.append('store', storeSlug || storeName || '不明');
 
     // アトリビューションデータの付与 (Stealth)
     const attribution = getAttributionData();

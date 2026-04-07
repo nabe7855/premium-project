@@ -9,7 +9,7 @@ const getResend = () => {
 
 // カテゴリ別のデフォルト通知先
 const DEFAULT_EMAIL_MAP = {
-  recruit: ['sutoroberrysrecruit@gmail.com', 'sutoroberrys@yahoo.co.jp'],
+  recruit: ['sutoroberrysrecruit@gmail.com', 'sutoroberrys@yahoo.co.jp', 'recruit@sutoroberrys.com'],
   reservation: ['contactsutoroberrys@gmail.com', 'contactsutoroberrys@ymail.ne.jp'],
   inquiry: ['contactsutoroberrys@gmail.com', 'contactsutoroberrys@ymail.ne.jp'],
 } as const;
@@ -29,10 +29,10 @@ async function getTargetEmails(storeInfo: string | null, type: NotificationType 
     const store = await prisma.store.findFirst({
       where: {
         OR: [
-          { name: searchName },
-          { name: searchNameAlternative },
-          { slug: searchName },
-          { slug: searchName.toLowerCase() }
+          { name: { contains: searchName } },
+          { name: { contains: searchNameAlternative } },
+          { slug: { equals: searchName, mode: 'insensitive' } },
+          { slug: { equals: searchNameAlternative, mode: 'insensitive' } }
         ],
       },
       select: {

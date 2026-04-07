@@ -15,6 +15,7 @@ interface ChatbotProps {
   isOpen: boolean;
   onClose: () => void;
   storeName?: string;
+  storeSlug?: string;
 }
 
 type Step =
@@ -85,7 +86,7 @@ const STEP_LABELS: Record<string, string> = {
   appearance: '容姿の懸念点',
 };
 
-const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
+const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName, storeSlug }) => {
   const [currentStep, setCurrentStep] = useState<Step>('name');
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<Record<string, string>>({});
@@ -287,7 +288,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ isOpen, onClose, storeName }) => {
               dataToSubmit.append('tattoo', formData.tattoo || '');
               dataToSubmit.append('appearance_concerns', formData.appearance || '');
               dataToSubmit.append('message', messageParts.join('\n\n'));
-              dataToSubmit.append('store', storeName || '福岡店');
+              dataToSubmit.append('store', storeSlug || storeName || '不明');
 
               for (let i = 0; i < userPhotos.length; i++) {
                 try {

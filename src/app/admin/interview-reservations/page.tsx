@@ -130,10 +130,12 @@ export default function InterviewReservationsPage() {
 
   const filteredApplications = applications.filter((app) => {
     const matchesStatus = statusFilter === 'all' || app.status === statusFilter;
+    const storeLower = (app.store || '').toLowerCase();
     const matchesStore =
       storeFilter === 'all' ||
-      (storeFilter === 'fukuoka' && app.store === '福岡店') ||
-      (storeFilter === 'tokyo' && app.store === '東京店');
+      (storeFilter === 'fukuoka' && (storeLower === 'fukuoka' || app.store === '福岡店')) ||
+      (storeFilter === 'yokohama' && (storeLower === 'yokohama' || app.store === '横浜店')) ||
+      (storeFilter === 'tokyo' && (storeLower === 'tokyo' || app.store === '東京店'));
     const matchesName = app.name.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesStatus && matchesStore && matchesName;
   });
@@ -164,6 +166,7 @@ export default function InterviewReservationsPage() {
             <SelectContent className="bg-white shadow-xl">
               <SelectItem value="all">全店舗</SelectItem>
               <SelectItem value="fukuoka">福岡店</SelectItem>
+              <SelectItem value="yokohama">横浜店</SelectItem>
               <SelectItem value="tokyo">東京店</SelectItem>
             </SelectContent>
           </Select>

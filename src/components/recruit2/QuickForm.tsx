@@ -7,9 +7,10 @@ import React, { useState } from 'react';
 
 interface QuickFormProps {
   storeName?: string;
+  storeSlug?: string;
 }
 
-const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
+const QuickForm: React.FC<QuickFormProps> = ({ storeName, storeSlug }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -23,7 +24,7 @@ const QuickForm: React.FC<QuickFormProps> = ({ storeName }) => {
       const formData = new FormData(e.currentTarget);
       formData.append('type', 'quick');
       if (storeName) {
-        formData.append('store', storeName);
+        formData.append('store', storeSlug || storeName || '不明');
       }
 
       // アトリビューションデータの付与 (Stealth)

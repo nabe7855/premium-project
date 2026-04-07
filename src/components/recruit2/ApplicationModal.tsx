@@ -9,9 +9,15 @@ interface ApplicationModalProps {
   isOpen: boolean;
   onClose: () => void;
   storeName?: string;
+  storeSlug?: string;
 }
 
-const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, storeName }) => {
+const ApplicationModal: React.FC<ApplicationModalProps> = ({
+  isOpen,
+  onClose,
+  storeName,
+  storeSlug,
+}) => {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -57,7 +63,7 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({ isOpen, onClose, st
       const dataToSend = new FormData(form);
       dataToSend.append('type', 'fullmodal');
       if (storeName) {
-        dataToSend.append('store', storeName);
+        dataToSend.append('store', storeSlug || storeName || '不明');
       }
 
       // 1. Resizing Images
