@@ -1,7 +1,7 @@
 'use client';
 
 import { supabase } from '@/lib/supabaseClient';
-import { Info } from 'lucide-react';
+import { Info, Camera, X, Check, Trash2, Heart } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 interface GalleryItem {
@@ -19,7 +19,6 @@ interface GalleryEditorProps {
 
 // ✅ ファイル名を完全に英数字に変換（日本語・スペース対策）
 function sanitizeFileName(fileName: string): string {
-  // 拡張子を取り除いて .webp に統一
   const nameWithoutExt = fileName.includes('.') ? fileName.split('.').slice(0, -1).join('.') : fileName;
   const random = Math.random().toString(36).substring(2, 8);
   return `${Date.now()}_${random}.webp`;
@@ -61,6 +60,7 @@ async function convertToWebP(file: File): Promise<Blob> {
 export default function GalleryEditor({ castId }: GalleryEditorProps) {
   const [items, setItems] = useState<GalleryItem[]>([]);
   const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null); // ✅ プレビュー用
   const [caption, setCaption] = useState('');
   const [uploading, setUploading] = useState(false);
   const [mainImageUrl, setMainImageUrl] = useState<string | null>(null);
@@ -80,7 +80,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
       }
       setItems(data ?? []);
 
-      // casts から main_image_url を取得
       const { data: cast, error: castError } = await supabase
         .from('casts')
         .select('main_image_url')
@@ -95,17 +94,26 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     loadGallery();
   }, [castId]);
 
+  // ✅ ファイル選択時のプレビュー生成
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0] ?? null;
+    setFile(selectedFile);
+    if (selectedFile) {
+      const url = URL.createObjectURL(selectedFile);
+      setPreviewUrl(url);
+    } else {
+      setPreviewUrl(null);
+    }
+  };
+
   // ✅ アップロード
   const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
 
     try {
-      // 1. WebP に変換
       const webpBlob = await convertToWebP(file);
       const webpFile = new File([webpBlob], sanitizeFileName(file.name), { type: 'image/webp' });
-
-      // ファイル名を安全化
       const filePath = `${castId}/${webpFile.name}`;
 
       const { error: storageError } = await supabase.storage
@@ -118,7 +126,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
       if (storageError) throw storageError;
 
       const { data: publicData } = supabase.storage.from('gallery').getPublicUrl(filePath);
-
       const publicUrl = publicData.publicUrl;
       if (!publicUrl) throw new Error('公開URLの取得に失敗しました');
 
@@ -139,7 +146,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       const newItem = inserted as GalleryItem;
 
-      // ✅ もし最初の画像なら、casts の main_image_url をこれに設定する
       if (items.length === 0) {
         await supabase
           .from('casts')
@@ -150,16 +156,17 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       setItems([newItem, ...items]);
       setFile(null);
+      setPreviewUrl(null);
       setCaption('');
+      alert('写真をアップロードしました！');
     } catch (err) {
       console.error('❌ 画像アップロード失敗:', err);
-      alert('画像アップロードできなかった！');
+      alert('アップロードに失敗しました');
     } finally {
       setUploading(false);
     }
   };
 
-  // ✅ 削除
   const handleDelete = async (id: string) => {
     if (!confirm('この画像を削除しますか？')) return;
 
@@ -189,7 +196,6 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     }
   };
 
-  // ✅ メイン画像に設定
   const handleSetMain = async (imageUrl: string) => {
     try {
       const { error } = await supabase
@@ -200,7 +206,7 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
       if (error) throw error;
 
       setMainImageUrl(imageUrl);
-      alert('一覧ページ用のメイン画像を設定しました！');
+      alert('メイン画像に設定しました！');
     } catch (err) {
       console.error('❌ メイン画像設定エラー:', err);
       alert('メイン画像の設定に失敗しました');
@@ -208,106 +214,156 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <h3 className="text-lg font-semibold text-gray-800">ギャラリー管理</h3>
+    <div className="space-y-8">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-bold text-gray-800">ギャラリー・写真管理</h3>
+        <span className="rounded-full bg-pink-100 px-3 py-1 text-xs font-bold text-pink-600">
+          合計 {items.length} 枚
+        </span>
+      </div>
 
-      {/* アップロードフォーム */}
-      <div className="flex flex-col items-center gap-4 rounded-xl border border-pink-100 bg-pink-50/50 p-5 sm:flex-row">
-        <div className="relative w-full sm:flex-1">
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-            className="w-full cursor-pointer text-sm text-gray-500 file:mr-4 file:rounded-lg file:border-0 file:bg-pink-100 file:px-4 file:py-2.5 file:text-sm file:font-semibold file:text-pink-700 hover:file:bg-pink-200"
-          />
+      {/* ✅ モバイル最適化されたアップロードエリア */}
+      <div className="relative overflow-hidden rounded-3xl border-2 border-dashed border-pink-200 bg-white p-6 shadow-sm transition-all hover:border-pink-300">
+        <div className="flex flex-col gap-6 lg:flex-row">
+          {/* 左側: 写真選択/プレビュー */}
+          <div className="relative mx-auto h-48 w-48 shrink-0 lg:mx-0">
+            {previewUrl ? (
+              <div className="group relative h-full w-full">
+                <img
+                  src={previewUrl}
+                  className="h-full w-full rounded-2xl object-cover shadow-lg"
+                  alt="プレビュー"
+                />
+                <button
+                  onClick={() => { setFile(null); setPreviewUrl(null); }}
+                  className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1.5 text-white shadow-lg transition hover:scale-110"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+            ) : (
+              <label className="flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-2xl bg-pink-50 text-pink-400 transition-colors hover:bg-pink-100/50">
+                <Camera size={48} strokeWidth={1.5} className="mb-2" />
+                <span className="text-xs font-bold">写真をえらぶ</span>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  className="hidden"
+                />
+              </label>
+            )}
+          </div>
+
+          {/* 右側: 入力とボタン */}
+          <div className="flex flex-1 flex-col justify-center gap-4">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-gray-400">キャプション (任意)</label>
+              <input
+                type="text"
+                placeholder="例: お気に入りの私服です✨"
+                value={caption}
+                onChange={(e) => setCaption(e.target.value)}
+                className="w-full rounded-xl border-gray-200 bg-gray-50 px-4 py-3 text-sm transition focus:border-pink-400 focus:bg-white focus:ring-0"
+              />
+            </div>
+            <button
+              onClick={handleUpload}
+              disabled={!file || uploading}
+              className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-pink-500 to-rose-400 py-3.5 font-bold text-white shadow-lg shadow-pink-100 transition active:scale-95 disabled:opacity-50"
+            >
+              {uploading ? (
+                <>
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  <span>送信中...</span>
+                </>
+              ) : (
+                <>
+                  <Check size={20} />
+                  <span>この写真をアップロードする</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
-        <input
-          type="text"
-          placeholder="キャプション (任意)"
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          className="w-full rounded-lg border-gray-300 px-4 py-2.5 text-sm transition focus:border-transparent focus:ring-2 focus:ring-pink-400 sm:flex-1"
-        />
-        <button
-          onClick={handleUpload}
-          disabled={!file || uploading}
-          className="w-full shrink-0 rounded-lg bg-gradient-to-r from-pink-500 to-rose-400 px-6 py-2.5 font-medium text-white shadow-sm transition hover:from-pink-600 hover:to-rose-500 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
-        >
-          {uploading ? 'アップロード中…' : 'アップロード'}
-        </button>
+      </div>
+
+      {/* ✅ ギャラリー一覧（スマホでもボタンを見やすく） */}
+      <div className="space-y-4">
+        <h4 className="flex items-center gap-2 text-sm font-bold text-gray-700">
+          <span>📸</span> 登録済みの写真
+        </h4>
+
+        {items.length > 0 ? (
+          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            {items.map((item) => {
+              const isMain = mainImageUrl === item.image_url;
+              return (
+                <div key={item.id} className="group relative flex flex-col overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm ring-pink-500 transition-all hover:shadow-md">
+                  <div className="relative aspect-[3/4] overflow-hidden bg-gray-50 text-[0] leading-[0]">
+                    <img
+                      src={item.image_url}
+                      alt={item.caption ?? ''}
+                      className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                    
+                    {/* ステータスバッジ */}
+                    {isMain && (
+                      <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-full bg-pink-500 px-2.5 py-1 text-[10px] font-extrabold text-white shadow-sm">
+                        <Heart size={10} fill="currentColor" />
+                        <span>メイン</span>
+                      </div>
+                    )}
+
+                    {/* モバイルで常に見えるようにボタン配置を工夫 */}
+                    <div className="absolute inset-x-0 bottom-0 z-20 flex bg-gradient-to-t from-black/80 via-black/40 to-transparent p-2 text-white">
+                      <div className="flex w-full gap-1.5 pt-4">
+                        {!isMain && (
+                          <button
+                            onClick={() => handleSetMain(item.image_url)}
+                            className="flex flex-1 items-center justify-center rounded-lg bg-white/20 px-2 py-2 text-[10px] font-bold backdrop-blur-md transition hover:bg-white/40"
+                            title="メインに設定"
+                          >
+                            メイン
+                          </button>
+                        )}
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="flex h-8 w-8 items-center justify-center rounded-lg bg-rose-500/80 text-white backdrop-blur-md transition hover:bg-rose-600"
+                          title="削除"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  {item.caption && (
+                    <div className="p-2 text-center text-[10px] font-medium text-gray-600 truncate border-t border-gray-50">
+                      {item.caption}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center rounded-3xl border-2 border-dashed border-gray-100 bg-gray-50/50 py-16 text-center">
+            <div className="mb-4 rounded-full bg-white p-4 text-gray-300 shadow-sm">
+              <Camera size={32} />
+            </div>
+            <p className="text-sm font-bold text-gray-400">
+              まだ写真がありません
+            </p>
+          </div>
+        )}
       </div>
 
       {/* インストラクション */}
       {items.length > 0 && (
-        <div className="flex items-start gap-3 rounded-xl border border-blue-100 bg-blue-50 p-4 text-sm text-blue-800 shadow-sm animate-in fade-in slide-in-from-top-2 duration-500">
-          <div className="mt-0.5 shrink-0 rounded-full bg-blue-100 p-1 text-blue-600">
-            <Info size={16} strokeWidth={2.5} />
-          </div>
-          <div>
-            <p className="font-bold">メイン画像の設定（重要）</p>
-            <p className="mt-0.5 opacity-90 leading-relaxed">
-              画像をタップして表示される「<span className="font-bold underline">メインに設定</span>」ボタンを押すと、店舗一覧ページなどで貴女の顔（メイン画像）として表示されます。
-            </p>
-          </div>
-        </div>
-      )}
-
-      {/* ギャラリー一覧 */}
-      {items.length > 0 ? (
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
-            >
-              <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
-                <img
-                  src={item.image_url}
-                  alt={item.caption ?? 'ギャラリー画像'}
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
-              </div>
-
-              {item.caption && (
-                <div className="border-t border-gray-100 p-3">
-                  <p className="truncate text-sm text-gray-700" title={item.caption}>
-                    {item.caption}
-                  </p>
-                </div>
-              )}
-
-              {/* メイン表示ラベル */}
-              {mainImageUrl === item.image_url && (
-                <span className="absolute left-2 top-2 z-10 rounded bg-pink-500 px-2.5 py-1 text-xs font-bold text-white shadow-md">
-                  メイン画像
-                </span>
-              )}
-
-              {/* ホバーアクション */}
-              <div className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 opacity-0 transition duration-300 group-hover:opacity-100">
-                <button
-                  onClick={() => handleSetMain(item.image_url)}
-                  className="pointer-events-auto rounded-full bg-white/90 px-4 py-1.5 text-xs font-bold text-pink-600 shadow-lg transition hover:scale-105 hover:bg-pink-50"
-                >
-                  メインに設定
-                </button>
-                <button
-                  onClick={() => handleDelete(item.id)}
-                  className="pointer-events-auto rounded-full bg-black/70 px-4 py-1.5 text-xs font-bold text-white shadow-lg transition hover:scale-105 hover:bg-black/90"
-                >
-                  削除
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 py-12 text-center">
-          <p className="text-sm text-gray-400">
-            画像がまだありません。
-            <br />
-            素敵な写真をアップロードしましょう！
+        <div className="flex gap-3 rounded-2xl bg-blue-50/50 p-4 text-xs leading-relaxed text-blue-700">
+          <Info size={16} className="shrink-0" />
+          <p>
+            登録した写真の下にある「メイン」ボタンを押すと、お店の一覧ページであなたの顔として表示される画像が決まります。一番自信のある写真を選んでくださいね！
           </p>
         </div>
       )}
