@@ -104,7 +104,10 @@ export async function submitRecruitApplication(formData: FormData) {
       if (emailResult && !emailResult.success) {
         console.error('❌ Email notification returned failure:', emailResult.error);
       } else {
-        console.log('✅ Recruitment notification email sent successfully');
+        console.log('✅ Recruitment notification email sent successfully:', {
+          recipients: emailResult?.recipients,
+          matchedStore: emailResult?.matchedStore
+        });
       }
 
       // 4. 応募者への自動返信メール

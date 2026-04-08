@@ -60,6 +60,8 @@ export default function HotelForm({ id }: HotelFormProps) {
     stay_price_max_weekend: '',
     description: '',
     ai_description: '',
+    ai_summary: '',
+    ai_pros_cons: '',
     distance_from_station: '',
     room_count: '',
     place_id: '',
@@ -164,6 +166,8 @@ export default function HotelForm({ id }: HotelFormProps) {
         stay_price_max_weekend: hotel.stay_price_max_weekend || '',
         description: hotel.description || '',
         ai_description: hotel.ai_description || '',
+        ai_summary: hotel.ai_summary || '',
+        ai_pros_cons: hotel.ai_pros_cons ? JSON.stringify(hotel.ai_pros_cons, null, 2) : '',
         distance_from_station: hotel.distance_from_station || '',
         room_count: hotel.room_count || '',
         place_id: hotel.place_id || '',
@@ -278,6 +282,18 @@ export default function HotelForm({ id }: HotelFormProps) {
       }
 
       const submitData = { ...formData };
+      
+      try {
+        if (submitData.ai_pros_cons && typeof submitData.ai_pros_cons === 'string') {
+          submitData.ai_pros_cons = JSON.parse(submitData.ai_pros_cons);
+        } else if (!submitData.ai_pros_cons) {
+          submitData.ai_pros_cons = null;
+        }
+      } catch (e) {
+        toast.error('AIプロスコンスは正しいJSON形式で入力してください');
+        setLoading(false);
+        return;
+      }
 
       // Legacy price support: populate from Weekday Min
       if (submitData.rest_price_min_weekday) {
@@ -955,6 +971,30 @@ export default function HotelForm({ id }: HotelFormProps) {
             value={formData.ai_description}
             onChange={(e) => setFormData({ ...formData, ai_description: e.target.value })}
             placeholder="Gemini等で生成した高品質な紹介文がここに入ります。空の場合は自動生成の対象になります。"
+          />
+        </div>
+        <div className="mt-4">
+          <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
+            AIサマリー (自動生成 40文字コピー)
+          </label>
+          <input
+            type="text"
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent"
+            value={formData.ai_summary}
+            onChange={(e) => setFormData({ ...formData, ai_summary: e.target.value })}
+            placeholder="短いキャッチコピー"
+          />
+        </div>
+        <div className="mt-4">
+          <label className="mb-2 block text-sm font-medium text-brand-text-secondary">
+            AIメリット・デメリット (JSON形式)
+          </label>
+          <textarea
+            rows={6}
+            className="w-full rounded-lg border border-white/10 bg-brand-primary px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-accent font-mono text-xs"
+            value={formData.ai_pros_cons}
+            onChange={(e) => setFormData({ ...formData, ai_pros_cons: e.target.value })}
+            placeholder={`{\n  "pros": ["メリット1", "メリット2"],\n  "cons": ["デメリット1"]\n}`}
           />
         </div>
       </div>

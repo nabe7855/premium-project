@@ -17,10 +17,14 @@ const DEFAULT_EMAIL_MAP = {
 type NotificationType = keyof typeof DEFAULT_EMAIL_MAP;
 
 async function getTargetEmails(storeInfo: string | null, type: NotificationType = 'recruit') {
+  console.log(`[getTargetEmails] Starting for storeInfo: "${storeInfo}", type: "${type}"`);
   const emails: string[] = [...DEFAULT_EMAIL_MAP[type]];
   let matchedStore = 'fallback (default emails)';
 
-  if (!storeInfo) return { emails, matchedStore };
+  if (!storeInfo) {
+    console.log(`[getTargetEmails] No storeInfo provided. Using defaults: ${emails.join(', ')}`);
+    return { emails, matchedStore };
+  }
 
   try {
     const searchName = storeInfo.trim();
@@ -48,6 +52,8 @@ async function getTargetEmails(storeInfo: string | null, type: NotificationType 
         },
       },
     });
+
+    console.log(`[getTargetEmails] Prisma search result for "${searchName}": ${store ? `Found "${store.name}"` : 'Not found'}`);
 
     if (store) {
       const s = store as any;
@@ -99,10 +105,12 @@ async function getTargetEmails(storeInfo: string | null, type: NotificationType 
     console.error(`[getTargetEmails] Error for type ${type}:`, error);
   }
 
+  console.log(`[getTargetEmails] Final recipients: ${emails.join(', ')} (matchedStore: ${matchedStore})`);
   return { emails, matchedStore };
 }
 
 export async function sendRecruitNotification(application: any, photos: { url: string }[]) {
+  console.log(`[sendRecruitNotification] Starting for store: "${application.store}", name: "${application.name}"`);
   const { emails: targetEmails, matchedStore } = await getTargetEmails(application.store);
 
   const { type, name, phone, email, age, height, weight, address, message, store, details } = application;
@@ -190,6 +198,7 @@ export async function sendRecruitNotification(application: any, photos: { url: s
   if (!resendInstance) return { success: false, error: 'Resend not initialized' };
 
   const finalTo = [...targetEmails];
+  console.log(`[sendRecruitNotification] Final target emails: ${finalTo.join(', ')}`);
   // 管理者のみに送信するように変更（応募者へは別メールで送信）
 
   // 認証済みドメイン sutoroberrys.jp を使用（サブドメイン send. が原因でエラーになるため）
@@ -203,12 +212,10 @@ export async function sendRecruitNotification(application: any, photos: { url: s
       subject: subject,
       html: html,
     });
-    if (data.error) {
-       console.error('❌ Resend API Error:', data.error);
-       return { success: false, error: data.error.message, matchedStore, recipients: finalTo, attemptedFrom: fromEmail };
-    }
+    console.log(`[sendRecruitNotification] Success! ID: ${data.data?.id}`);
     return { success: true, data, matchedStore, recipients: finalTo };
   } catch (error: any) {
+    console.error(`[sendRecruitNotification] Exception:`, error);
     return { success: false, error: error.message, matchedStore };
   }
 }

@@ -555,6 +555,8 @@ export const mapDbHotelToHotel = (dbHotel: any): Hotel => {
     roomCount: dbHotel.room_count || 0,
     description: dbHotel.description || '',
     aiDescription: dbHotel.ai_description || '',
+    aiSummary: dbHotel.ai_summary || '',
+    aiProsCons: dbHotel.ai_pros_cons || null,
     priceDetails: normalizePriceDetails(dbHotel.price_details),
     status: dbHotel.status || 'draft',
   };

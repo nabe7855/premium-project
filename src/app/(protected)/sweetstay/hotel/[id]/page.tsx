@@ -164,6 +164,11 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
             <h1 className="text-4xl font-black tracking-tighter text-white md:text-7xl">
               {hotel.name}
             </h1>
+            {hotel.aiSummary && (
+              <p className="mt-6 max-w-3xl text-lg font-bold leading-relaxed text-gray-300 md:text-xl">
+                {hotel.aiSummary}
+              </p>
+            )}
           </div>
         </div>
       </section>
@@ -179,12 +184,49 @@ export default async function SweetStayHotelDetailPage({ params }: Props) {
                   About This Hotel
                 </h2>
                 <div className="prose prose-rose max-w-none">
-                  <p className="text-lg font-medium leading-[2] text-gray-500">
+                  <p className="text-lg font-medium leading-[2] text-gray-600">
                     {hotel.aiDescription ||
                       hotel.description ||
                       'このホテルについての詳細な紹介文を、現在プロの目利きたちが執筆中です。現時点では、以下の充実したアメニティとサービス、そしてその立地の良さから多くの方に選ばれています。'}
                   </p>
                 </div>
+                
+                {hotel.aiProsCons && (hotel.aiProsCons.pros?.length > 0 || hotel.aiProsCons.cons?.length > 0) && (
+                  <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-2">
+                    {hotel.aiProsCons.pros?.length > 0 && (
+                      <div className="rounded-3xl border border-emerald-100 bg-emerald-50/50 p-8 shadow-sm">
+                        <h3 className="mb-6 flex items-center gap-3 text-sm font-black uppercase tracking-widest text-emerald-600">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-lg">👍</span> 
+                          Pros
+                        </h3>
+                        <ul className="space-y-4">
+                          {hotel.aiProsCons.pros.map((pro: string, i: number) => (
+                            <li key={i} className="flex items-start gap-3 text-sm font-bold leading-relaxed text-emerald-900">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-200 text-[10px] text-emerald-700">✔</span>
+                              <span>{pro}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {hotel.aiProsCons.cons?.length > 0 && (
+                      <div className="rounded-3xl border border-gray-200 bg-gray-50 p-8 shadow-sm">
+                        <h3 className="mb-6 flex items-center gap-3 text-sm font-black uppercase tracking-widest text-gray-500">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-lg">🤔</span> 
+                          Good to know
+                        </h3>
+                        <ul className="space-y-4">
+                          {hotel.aiProsCons.cons.map((con: string, i: number) => (
+                            <li key={i} className="flex items-start gap-3 text-sm font-bold leading-relaxed text-gray-700">
+                              <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gray-200 text-[10px] text-gray-500">・</span>
+                              <span>{con}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* Detailed Price Table Section */}

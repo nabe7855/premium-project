@@ -41,6 +41,8 @@ export interface Hotel {
   roomCount: number;
   description?: string;
   aiDescription?: string;
+  aiSummary?: string;
+  aiProsCons?: any;
   priceDetails?: any;
   status?: 'published' | 'unpublished' | 'draft';
 }
