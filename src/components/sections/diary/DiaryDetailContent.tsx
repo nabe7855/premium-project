@@ -6,10 +6,11 @@ import { mockDiaryPosts } from '@/data/diarydata';
 import { getSupabasePublicUrl } from '@/lib/image-url';
 import { getStoreBySlug } from '@/lib/actions/reservation';
 import { supabase } from '@/lib/supabaseClient';
-import type { PostType } from '@/types/diary';
+import { PostType } from '@/types/diary';
 import { Share2 } from 'lucide-react';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { DiaryDetailSkeleton } from './DiaryDetailSkeleton';
 
 interface DiaryDetailContentProps {
   postId: string;
@@ -20,33 +21,38 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
   const [post, setPost] = useState<PostType | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const [dbStoreId, setDbStoreId] = useState<string | undefined>(undefined);
   const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
 
   useEffect(() => {
     const fetchPost = async () => {
+      // ローディング開始
       setIsLoading(true);
+      
       try {
-        const { data, error } = await supabase
-          .from('blogs')
-          .select(
-            `
-            id,
-            title,
-            content,
-            created_at,
-            published_at,
-            updated_at,
-            casts ( id, name, image_url, main_image_url, slug ),
-            blog_images ( image_url ),
-            blog_tags ( blog_tag_master ( name ) ),
-            is_comment_enabled,
-            blog_comments ( count )
-          `,
-          )
-          .eq('id', postId)
-          .eq('status', 'published')
-          .single();
+        // 並列でリクエストを投げる
+        const [postResult, storeResult] = await Promise.all([
+          supabase
+            .from('blogs')
+            .select(`
+              id, title, content, created_at, published_at, updated_at,
+              casts ( id, name, image_url, main_image_url, slug ),
+              blog_images ( image_url ),
+              blog_tags ( blog_tag_master ( name ) ),
+              is_comment_enabled,
+              blog_comments ( count )
+            `)
+            .eq('id', postId)
+            .eq('status', 'published')
+            .single(),
+          getStoreBySlug(slug)
+        ]);
+
+        const { data, error } = postResult;
+        const dbStore = storeResult;
+
+        if (dbStore) setDbStoreId(dbStore.id);
 
         if (error || !data) {
           const foundMock = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
@@ -76,15 +82,13 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
           };
           setPost(formatted);
         }
-        const dbStore = await getStoreBySlug(slug);
-        if (dbStore) setDbStoreId(dbStore.id);
 
-        // ✅ 閲覧数を加算（バックグラウンドで実行）
+        // 閲覧数を非同期で更新（レンダリングをブロックしない）
         supabase.rpc('increment_view_count', { post_id: postId }).then(({ error }) => {
           if (error) console.error('❌ Failed to increment view count:', error);
         });
       } catch (err) {
-        console.error('❌ Error fetching post:', err);
+        console.error('❌ Error in data fetching:', err);
       } finally {
         setIsLoading(false);
       }
@@ -139,11 +143,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-[400px] items-center justify-center">
-        <div className="h-12 w-12 animate-spin rounded-full border-4 border-pink-500 border-t-transparent"></div>
-      </div>
-    );
+    return <DiaryDetailSkeleton />;
   }
 
   if (!post) {
@@ -191,10 +191,16 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <article className="mb-8 overflow-hidden rounded-2xl border border-pink-100 bg-white">
-            <div className="flex justify-center bg-gray-50/50">
+            <div className={`relative flex justify-center bg-gray-50/50 min-h-[300px] transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+              {!imageLoaded && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-pink-200 border-t-pink-500"></div>
+                </div>
+              )}
               <img
                 src={post.image}
                 alt={post.title}
+                onLoad={() => setImageLoaded(true)}
                 className="h-auto max-h-[70vh] w-auto object-contain"
               />
             </div>
