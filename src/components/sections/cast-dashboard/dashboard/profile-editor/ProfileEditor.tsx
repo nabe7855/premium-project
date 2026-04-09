@@ -57,7 +57,7 @@ export default function ProfileEditor({
     { id: 'basic', name: '基本情報' },
     { id: 'story', name: 'ストーリー' },
     { id: 'sns', name: 'SNS' },
-    { id: 'gallery', name: 'ギャラリー' },
+    { id: 'gallery', name: '宣材写真' },
   ];
 
   return (

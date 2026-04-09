@@ -225,7 +225,7 @@ export default function Dashboard({ cast }: DashboardProps) {
     { id: 'schedule', name: 'スケジュール', icon: Calendar },
     { id: 'diary', name: '写メ日記', icon: Camera },
     { id: 'profile', name: 'マイプロフィール', icon: User },
-    { id: 'gallery', name: 'ギャラリー', icon: Image },
+    { id: 'gallery', name: '宣材写真', icon: Image },
     { id: 'voice', name: '音声データ', icon: Mic },
     { id: 'reservation', name: '予約', icon: ClipboardList },
   ];

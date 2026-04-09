@@ -264,7 +264,7 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-gray-800">ギャラリー・写真管理</h3>
+        <h3 className="text-lg font-bold text-gray-800">宣材写真・管理</h3>
         <span className="rounded-full bg-pink-100 px-3 py-1 text-xs font-bold text-pink-600">
           合計 {items.length} 枚
         </span>
