@@ -112,7 +112,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
           activeTab={activeTab}
           onTabChange={setActiveTab}
           onBookingOpen={handleBookingModalOpen}
-          onDiaryClick={() => alert('写メ日記ページに遷移します')}
+          onDiaryClick={() => router.push(`/store/${storeSlug}/diary/cast/${encodeURIComponent(cast.name)}`)}
           onSNSClick={() => {
             if (cast.snsUrl) {
               window.open(cast.snsUrl, '_blank', 'noopener,noreferrer');
