@@ -230,12 +230,24 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {/* MBTI & 顔型 - 常に表示して高さを固定 */}
-        <div className="mb-2 flex flex-wrap gap-2">
+        <div className="mb-1 flex flex-wrap gap-2">
           <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] text-blue-700 sm:text-xs">
             MBTI: {cast.mbtiType || 'ヒミツ🍓'}
           </span>
           <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] text-purple-700 sm:text-xs">
             顔タイプ: {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
+          </span>
+        </div>
+
+        {/* 身長 & 体重 - 横並び表示 */}
+        <div className="mb-2 flex items-center gap-3 text-[10px] text-neutral-600 sm:text-xs">
+          <span className="flex items-center gap-1">
+            <span className="font-bold text-neutral-400">身長:</span>
+            <span>{cast.height ? `${cast.height}cm` : 'ヒミツ🍓'}</span>
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="font-bold text-neutral-400">体重:</span>
+            <span>{cast.weight ? `${cast.weight}kg` : 'ヒミツ🍓'}</span>
           </span>
         </div>
 

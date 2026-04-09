@@ -102,6 +102,7 @@ export interface CastItem {
   slug?: string | null;
   age: number;
   height: number;
+  weight: number;
   comment: string;
   status: string;
   mbtiType?: string | null;
@@ -431,7 +432,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       },
       {
         title: '女性目線の安心感',
-        desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全のセキュリティ体制で、初めての方でも安心してご利用いただけます。',
+        desc: '女性スタッフによる運営・管理を徹底。女性ならではের細やかな配慮と、万全のセキュリティ体制で、初めての方でも安心してご利用いただけます。',
         imageUrl:
           'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1000',
       },
@@ -498,6 +499,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         name: '蓮 (レン)',
         age: 26,
         height: 178,
+        weight: 65,
         comment: '優しく包み込みます',
         status: '本日出勤',
         tags: ['聞き上手', '高身長'],
@@ -510,6 +512,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         name: 'ハルト',
         age: 24,
         height: 175,
+        weight: 62,
         comment: '笑顔で癒やします',
         status: '本日出勤',
         tags: ['爽やか', 'マッサージ◎'],
@@ -522,6 +525,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         name: 'ユウキ',
         age: 28,
         height: 182,
+        weight: 70,
         comment: '大人の癒しを',
         status: '',
         tags: ['落ち着き', '色気'],
@@ -534,6 +538,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
         name: 'ソラ',
         age: 22,
         height: 174,
+        weight: 60,
         comment: '弟キャラです',
         status: '残りわずか',
         tags: ['癒し系', '甘え上手'],

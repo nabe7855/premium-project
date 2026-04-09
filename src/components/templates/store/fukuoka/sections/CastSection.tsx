@@ -39,6 +39,7 @@ const CastSection: React.FC<CastSectionProps> = ({
       slug: c.slug,
       age: c.age || 0,
       height: c.height || 0,
+      weight: c.weight || 0,
       comment: c.catch_copy || '',
       status: '本日出勤',
       tags: c.tags || [],
@@ -131,6 +132,7 @@ const CastSection: React.FC<CastSectionProps> = ({
           slug: c.slug,
           age: c.age || 0,
           height: c.height || 0,
+          weight: c.weight || 0,
           comment: c.catch_copy || '',
           status: '本日出勤',
           tags: c.tags || [],
@@ -636,7 +638,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                             </div>
 
                             {/* MBTI & 顔型 */}
-                            <div className="mb-3 flex flex-wrap gap-1.5">
+                            <div className="mb-2 flex flex-wrap gap-1.5">
                               {cast.mbtiType && (
                                 <span className="rounded-full border border-blue-100/50 bg-blue-50 px-2.5 py-0.5 text-[10px] font-bold text-blue-600">
                                   MBTI: {cast.mbtiType}
@@ -647,15 +649,18 @@ const CastSection: React.FC<CastSectionProps> = ({
                                   顔型: {cast.faceType.join(', ')}
                                 </span>
                               )}
-                              {(!cast.mbtiType || !cast.faceType) &&
-                                cast.tags?.slice(0, 1).map((tag) => (
-                                  <span
-                                    key={tag}
-                                    className="rounded-full border border-rose-100/50 bg-rose-50 px-2.5 py-0.5 text-[10px] font-bold text-rose-500"
-                                  >
-                                    #{tag}
-                                  </span>
-                                ))}
+                            </div>
+
+                            {/* 身長 & 体重 - 横並び表示 */}
+                            <div className="mb-3 flex items-center gap-3 text-[10px] text-slate-500 font-bold">
+                              <span className="flex items-center gap-1">
+                                <span className="opacity-60">身長:</span>
+                                <span>{cast.height ? `${cast.height}cm` : 'ヒミツ🍓'}</span>
+                              </span>
+                              <span className="flex items-center gap-1">
+                                <span className="opacity-60">体重:</span>
+                                <span>{cast.weight ? `${cast.weight}kg` : 'ヒミツ🍓'}</span>
+                              </span>
                             </div>
 
                             {/* 評価セクション */}

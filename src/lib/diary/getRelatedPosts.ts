@@ -1,3 +1,4 @@
+import { getSupabasePublicUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
 import { PostType } from '@/types/diary';
 
@@ -110,14 +111,14 @@ function formatPost(data: any, storeSlug: string): PostType {
     content: data.content || '',
     excerpt: data.content ? data.content.slice(0, 50) : '',
     date: new Date(data.published_at || data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
-    updatedDate: data.updated_at,
+    updatedDate: data.updated_at ? new Date(data.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.') : undefined,
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug,
     castName: castData?.name || 'キャスト',
     castId: castData?.id || '',
     castSlug: castData?.slug || '',
-    image: data.blog_images?.[0]?.image_url || 'https://via.placeholder.com/200x150?text=No+Image',
-    castAvatar: castData?.main_image_url || castData?.image_url || 'https://via.placeholder.com/100?text=Avatar',
+    image: getSupabasePublicUrl(data.blog_images?.[0]?.image_url) || 'https://via.placeholder.com/200x150?text=No+Image',
+    castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) || 'https://via.placeholder.com/100?text=Avatar',
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
     reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
     commentCount: data.blog_comments?.[0]?.count || 0,

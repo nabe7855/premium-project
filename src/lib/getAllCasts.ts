@@ -13,6 +13,7 @@ export const getAllCasts = async (): Promise<Cast[]> => {
       name,
       age,
       height,
+      weight,
       catch_copy,
       profile,
       image_url,

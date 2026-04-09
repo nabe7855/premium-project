@@ -3,6 +3,7 @@ import CastCard from '@/components/sections/diary/CastCard';
 import MessageSection from '@/components/sections/diary/MessageSection';
 import RelatedPosts from '@/components/sections/diary/RelatedPosts';
 import { mockDiaryPosts } from '@/data/diarydata';
+import { getSupabasePublicUrl } from '@/lib/image-url';
 import { getStoreBySlug } from '@/lib/actions/reservation';
 import { supabase } from '@/lib/supabaseClient';
 import type { PostType } from '@/types/diary';
@@ -64,12 +65,9 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             castName: castData?.name || '不明なキャスト',
             castId: castData?.id || '',
             castSlug: castData?.slug || '',
-            image:
-              data.blog_images?.[0]?.image_url ||
+            image: getSupabasePublicUrl(data.blog_images?.[0]?.image_url) ||
               'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
-            castAvatar:
-              castData?.main_image_url ||
-              castData?.image_url ||
+            castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) ||
               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
             commentCount: data.blog_comments?.[0]?.count || 0,

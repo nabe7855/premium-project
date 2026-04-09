@@ -1,3 +1,4 @@
+import { getSupabasePublicUrl } from '../image-url';
 import { PostType } from '@/types/diary';
 import { supabase } from '../supabaseClient';
 
@@ -54,16 +55,15 @@ export async function getDiaryPostsByCastId(
         date: new Date(post.published_at || post.created_at)
           .toLocaleDateString('ja-JP')
           .replace(/\//g, '.'),
-        updatedDate: post.updated_at,
+        updatedDate: post.updated_at ? new Date(post.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.') : undefined,
         tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
         storeSlug,
         castName: castData?.name ?? '不明なキャスト',
         castId: castData?.id || '',
         castSlug: castData?.slug || '',
-        image:
-          post.blog_images?.[0]?.image_url || 'https://via.placeholder.com/800x600?text=No+Image',
-        image_url: post.blog_images?.[0]?.image_url,
-        castAvatar: castData?.main_image_url || castData?.image_url || '/images/avatar-placeholder.png',
+        image: getSupabasePublicUrl(post.blog_images?.[0]?.image_url) || 'https://via.placeholder.com/800x600?text=No+Image',
+        image_url: getSupabasePublicUrl(post.blog_images?.[0]?.image_url),
+        castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) || '/images/avatar-placeholder.png',
         readTime: Math.max(Math.ceil((post.content?.length || 0) / 400), 1),
         commentCount: post.blog_comments?.[0]?.count || 0,
         isCommentEnabled: post.is_comment_enabled ?? true,

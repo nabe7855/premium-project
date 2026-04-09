@@ -3,6 +3,7 @@ import CastSearchDropdown from '@/components/sections/diary/CastSearchDropdown';
 import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
 import { useStore } from '@/contexts/StoreContext';
+import { getSupabasePublicUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
 import { Filter, Flame, Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
@@ -101,8 +102,8 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               isCommentEnabled: post.is_comment_enabled ?? true,
               storeSlug,
               castName: castObj?.name ?? '不明なキャスト',
-              castAvatar: castObj?.main_image_url || castObj?.image_url,
-              image_url: post.blog_images?.[0]?.image_url,
+              castAvatar: getSupabasePublicUrl(castObj?.main_image_url || castObj?.image_url),
+              image_url: getSupabasePublicUrl(post.blog_images?.[0]?.image_url),
             };
           }) ?? [];
 

@@ -8,6 +8,7 @@ export interface TodayCast {
   slug: string | null;
   age?: number;
   height?: number;
+  weight?: number;
   catch_copy?: string;
   main_image_url?: string;
   image_url?: string;
@@ -77,6 +78,7 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
         name,
         age,
         height,
+        weight,
         slug,
         catch_copy,
         main_image_url,
@@ -149,6 +151,7 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
       slug: cast.slug,
       age: cast.age,
       height: cast.height,
+      weight: cast.weight,
       catch_copy: cast.catch_copy,
       main_image_url: getSupabasePublicUrl(cast.main_image_url),
       image_url: getSupabasePublicUrl(cast.image_url),
