@@ -4,7 +4,7 @@ import DiaryCard from '@/components/sections/diary/DiaryCard';
 import FilterPanel from '@/components/sections/diary/FilterPanel';
 import { useStore } from '@/contexts/StoreContext';
 import { supabase } from '@/lib/supabaseClient';
-import { Filter, Flame, Grid, List, Sparkles } from 'lucide-react';
+import { Filter, Flame, Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 
 interface DiaryPost {
@@ -28,7 +28,6 @@ interface DiaryListContentProps {
 
 const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
   const { store } = useStore();
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
   const [allPosts, setAllPosts] = useState<DiaryPost[]>([]);
@@ -174,20 +173,6 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
                 </span>
               )}
             </button>
-            <div className="flex items-center overflow-hidden rounded-lg border border-pink-200 bg-white">
-              <button
-                onClick={() => setViewMode('grid')}
-                className={`p-2 ${viewMode === 'grid' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'}`}
-              >
-                <Grid size={16} />
-              </button>
-              <button
-                onClick={() => setViewMode('list')}
-                className={`p-2 ${viewMode === 'list' ? 'bg-pink-100 text-pink-600' : 'text-gray-600'}`}
-              >
-                <List size={16} />
-              </button>
-            </div>
           </div>
         </div>
         {showFilters && (
@@ -224,11 +209,9 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
         </div>
       </div>
 
-      <div
-        className={`grid gap-4 sm:gap-6 ${viewMode === 'grid' ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1'}`}
-      >
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {filteredAndSortedPosts.map((post) => (
-          <DiaryCard key={post.id} post={post} listView={viewMode === 'list'} />
+          <DiaryCard key={post.id} post={post} />
         ))}
       </div>
     </main>
