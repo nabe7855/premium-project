@@ -13,6 +13,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
   const [recordingTime, setRecordingTime] = useState(0);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [tone, setTone] = useState<'standard' | 'cute' | 'professional' | 'casual'>('standard');
   const [error, setError] = useState<string | null>(null);
   const [playbackState, setPlaybackState] = useState<'idle' | 'playing' | 'paused'>('idle');
   
@@ -110,7 +111,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
       const generateRes = await fetch('/api/ai/diary-from-transcript', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: text }),
+        body: JSON.stringify({ transcript: text, tone }),
       });
 
       if (!generateRes.ok) throw new Error('日記の生成に失敗しました');
@@ -198,7 +199,33 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
             className="hidden" 
           />
 
-          <div className="space-y-4">
+          <div className="space-y-6">
+            <div className="space-y-3">
+              <p className="text-[10px] font-black uppercase tracking-widest text-gray-400">文章のトーン（雰囲気）を選択</p>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {[
+                  { id: 'standard', label: '標準', icon: '✨' },
+                  { id: 'cute', label: '可愛い', icon: '🌸' },
+                  { id: 'professional', label: 'プロ', icon: '🌟' },
+                  { id: 'casual', label: 'ラフ', icon: '🍺' },
+                ].map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => setTone(t.id as any)}
+                    className={`flex flex-col items-center gap-1 rounded-xl border py-2 transition-all ${
+                      tone === t.id 
+                        ? 'border-pink-500 bg-pink-500 text-white shadow-md' 
+                        : 'border-pink-100 bg-white text-gray-600 hover:border-pink-300'
+                    }`}
+                  >
+                    <span className="text-sm">{t.icon}</span>
+                    <span className="text-[10px] font-bold">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={generateDiary}
@@ -207,7 +234,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
               <Wand2 size={20} />
               AIで文章を生成する
             </button>
-            <p className="text-[10px] font-bold text-gray-400">※音声の内容からAIが最適な日記を構成します</p>
+            <p className="text-[10px] font-bold text-gray-400">※選択した雰囲気でAIが日記を構成します</p>
           </div>
         </div>
       )}
