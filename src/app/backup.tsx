@@ -87,7 +87,7 @@ export default function StoreSelectPage() {
             slug: s.slug,
             link: `/store/${s.slug}`,
             description: s.catch_copy || '',
-            bannerImage: s.image_url || '/no-image.png',
+            bannerImage: s.image_url || '/cast-default.jpg',
             hashtags: s.tags || [],
             // ✅ theme.primaryDark を利用
             gradient: `linear-gradient(135deg, ${s.theme_color || '#ec4899'}, ${theme.primaryDark})`,

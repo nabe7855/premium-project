@@ -21,7 +21,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ items, className }) => {
     return (
       <div className={clsx("relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100/50", className)}>
         <Image
-          src="/no-image.png"
+          src="/cast-default.jpg"
           alt="No image available"
           fill
           sizes="(max-width: 768px) 100vw, 33vw"
@@ -45,7 +45,7 @@ const ImageCarousel: React.FC<ImageCarouselProps> = ({ items, className }) => {
             <CarouselItem key={`gallery-${item.id || index}`} className="pl-0">
               <div className="relative aspect-[4/5] w-full overflow-hidden rounded-xl bg-pink-100/10 backdrop-blur-[2px]">
                 <Image
-                  src={item.imageUrl || '/no-image.png'}
+                  src={item.imageUrl || '/cast-default.jpg'}
                   alt={`ギャラリー画像 ${index + 1}`}
                   fill
                   sizes="(max-width: 768px) 100vw, 50vw"

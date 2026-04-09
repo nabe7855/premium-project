@@ -66,7 +66,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
   const allImages: string[] =
     cast.galleryItems && cast.galleryItems.length > 0
       ? cast.galleryItems.map((g) => g.imageUrl)
-      : [cast.mainImageUrl ?? cast.imageUrl ?? '/no-image.png'];
+      : [cast.mainImageUrl ?? cast.imageUrl ?? '/cast-default.jpg'];
 
   return (
     <div className="min-h-screen bg-neutral-50">

@@ -77,7 +77,7 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
                 {/* Image Area */}
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <img
-                    src={currentCast.main_image_url || currentCast.image_url || '/no-image.png'}
+                    src={currentCast.main_image_url || currentCast.image_url || '/cast-default.jpg'}
                     alt={currentCast.name}
                     className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                   />

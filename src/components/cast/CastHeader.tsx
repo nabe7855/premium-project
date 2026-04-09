@@ -36,7 +36,7 @@ const CastHeader: React.FC<CastHeaderProps> = ({
       ) : (
         <div className="relative mx-auto w-full max-w-md overflow-hidden rounded-2xl bg-gray-50 aspect-[4/5] shadow-inner">
           <Image
-            src="/no-image.png"
+            src="/cast-default.jpg"
             alt="画像がありません"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"

@@ -112,7 +112,7 @@ const CastCard: React.FC<CastCardProps> = ({
       <div className="relative aspect-[3/4]">
         <div className="relative h-full w-full overflow-hidden rounded-t-xl">
           <NextImage
-            src={cast.mainImageUrl ?? cast.imageUrl ?? cast.avatar ?? '/no-image.png'}
+            src={cast.mainImageUrl ?? cast.imageUrl ?? cast.avatar ?? '/cast-default.jpg'}
             alt={`${cast.name}のプロフィール写真`}
             fill
             className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"

@@ -57,7 +57,7 @@ const PageContent = async ({ store }: { store: string }) => {
             catchCopy={cast.catchCopy}
             age={cast.age}
             height={cast.height}
-            imageUrl={cast.imageUrl ?? '/no-image.png'}
+            imageUrl={cast.imageUrl ?? '/cast-default.jpg'}
             isReception={cast.isReception ?? false}
           />
         ))}
