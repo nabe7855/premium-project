@@ -78,6 +78,11 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
         }
         const dbStore = await getStoreBySlug(slug);
         if (dbStore) setDbStoreId(dbStore.id);
+
+        // ✅ 閲覧数を加算（バックグラウンドで実行）
+        supabase.rpc('increment_view_count', { post_id: postId }).then(({ error }) => {
+          if (error) console.error('❌ Failed to increment view count:', error);
+        });
       } catch (err) {
         console.error('❌ Error fetching post:', err);
       } finally {

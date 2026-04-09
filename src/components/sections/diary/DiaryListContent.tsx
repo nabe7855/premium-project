@@ -5,23 +5,9 @@ import FilterPanel from '@/components/sections/diary/FilterPanel';
 import { useStore } from '@/contexts/StoreContext';
 import { getSupabasePublicUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
+import { PostType, DiaryPost } from '@/types/diary';
 import { Filter, Flame, Sparkles } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-
-interface DiaryPost {
-  id: string;
-  title: string;
-  content: string;
-  excerpt: string;
-  date: string;
-  tags: string[];
-  reactions: { total: number };
-  commentCount: number;
-  storeSlug: string;
-  castName: string;
-  image_url?: string;
-  castAvatar?: string;
-}
 
 interface DiaryListContentProps {
   storeSlug: string;
@@ -65,7 +51,8 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
             blog_tag_master ( name )
           ),
           is_comment_enabled,
-          blog_comments ( count )
+          blog_comments ( count ),
+          view_count
         `,
         )
         .in('status', ['published', 'scheduled'])
@@ -101,8 +88,11 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               reactions: { total: 0 },
               commentCount: post.blog_comments?.[0]?.count || 0,
               isCommentEnabled: post.is_comment_enabled ?? true,
+              viewCount: post.view_count ?? 0,
               storeSlug,
               castName: castObj?.name ?? '不明なキャスト',
+              castId: castObj?.id || '',
+              castSlug: castObj?.slug || '',
               castAvatar: getSupabasePublicUrl(castObj?.main_image_url || castObj?.image_url),
               image_url: getSupabasePublicUrl(post.blog_images?.[0]?.image_url),
             };
@@ -132,7 +122,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
         filtered = filtered.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
         break;
       case 'popular':
-        filtered = filtered.sort((a, b) => b.reactions.total - a.reactions.total);
+        filtered = filtered.sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0));
         break;
       case 'comments':
         filtered = filtered.sort((a, b) => b.commentCount - a.commentCount);
@@ -146,8 +136,15 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
     setSelectedHashtags(hashtags);
   };
 
-  const trendingPosts = filteredAndSortedPosts.slice(0, 3);
-  const recommendedPosts = filteredAndSortedPosts.slice(3, 6);
+  // ✅ 「話題の日記」は閲覧数上位3件を表示
+  const trendingPosts = [...allPosts]
+    .sort((a, b) => (b.viewCount || 0) - (a.viewCount || 0))
+    .slice(0, 3);
+  
+  // ✅ 「For You」は新着（またはランダム等）の上位を表示
+  const recommendedPosts = [...allPosts]
+    .filter(p => !trendingPosts.map(tp => tp.id).includes(p.id))
+    .slice(0, 3);
 
   return (
     <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:py-8">

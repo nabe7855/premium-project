@@ -13,6 +13,7 @@ export async function getCastDiaries(castId: string): Promise<CastDiary[]> {
       status,
       published_at,
       created_at,
+      view_count,
       blog_tags (
         blog_tag_master ( name )
       ),
@@ -39,5 +40,6 @@ export async function getCastDiaries(castId: string): Promise<CastDiary[]> {
     status: blog.status,
     publishedAt: blog.published_at,
     createdAt: blog.created_at,
+    viewCount: blog.view_count ?? 0,
   }));
 }

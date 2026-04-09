@@ -12,6 +12,9 @@ export interface DiaryBase {
   castId: string;
   castSlug: string;
   isCommentEnabled?: boolean;
+  viewCount?: number;
+  castAvatar?: string;
+  image_url?: string;
 }
 
 // 店舗用（日記一覧用）

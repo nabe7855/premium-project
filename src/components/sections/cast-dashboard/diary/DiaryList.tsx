@@ -141,6 +141,10 @@ export default function DiaryList({ diaries, onEdit, onDelete, onCreate }: Diary
                   <span>{formatDate(diary.publishedAt || diary.createdAt)}</span>
                 </div>
                 <span>作成: {formatCreatedAt(diary.createdAt)}</span>
+                <div className="flex items-center gap-1.5 font-bold text-pink-600">
+                  <Eye className="h-3.5 w-3.5" />
+                  <span>{diary.viewCount?.toLocaleString() ?? 0} views</span>
+                </div>
                 {diary.status === 'scheduled' && (
                   <span className="font-medium text-blue-600">
                     公開予定: {formatCreatedAt(diary.publishedAt!)}

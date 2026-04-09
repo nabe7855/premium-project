@@ -329,6 +329,7 @@ export interface CastDiary {
   isCommentEnabled?: boolean;
   publishedAt?: string;
   createdAt: string;
+  viewCount?: number;
 }
 
 // ==============================
