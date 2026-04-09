@@ -85,6 +85,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
             const slugs = Array.isArray(memberships)
               ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
               : [];
+            
             return slugs.includes(storeSlug);
           })
           .map((post: any) => {
