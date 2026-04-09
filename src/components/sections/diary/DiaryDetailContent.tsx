@@ -34,6 +34,8 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             title,
             content,
             created_at,
+            published_at,
+            updated_at,
             casts ( id, name, image_url, main_image_url, slug ),
             blog_images ( image_url ),
             blog_tags ( blog_tag_master ( name ) ),
@@ -55,7 +57,8 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             title: data.title,
             content: data.content || '',
             excerpt: data.content ? data.content.slice(0, 100) : '',
-            date: new Date(data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+            date: new Date(data.published_at || data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+            updatedDate: data.updated_at ? new Date(data.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.') : undefined,
             tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
             storeSlug: slug,
             castName: castData?.name || '不明なキャスト',
@@ -200,7 +203,12 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               >
                 <img src={post.castAvatar} className="h-8 w-8 rounded-full object-cover" alt="" />
                 <span className="font-medium">
-                  {post.castName} • {post.date}
+                  {post.castName} • 公開: {post.date}
+                  {post.updatedDate && post.updatedDate !== post.date && (
+                    <span className="ml-2 text-xs opacity-80 text-gray-400">
+                      (最終更新: {post.updatedDate})
+                    </span>
+                  )}
                 </span>
               </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>

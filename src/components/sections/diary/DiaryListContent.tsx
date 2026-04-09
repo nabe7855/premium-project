@@ -46,6 +46,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           content,
           created_at,
           published_at,
+          updated_at,
           status,
           casts (
             id,
@@ -93,6 +94,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               content: post.content ?? '',
               excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
               date: post.published_at || post.created_at,
+              updatedDate: post.updated_at,
               tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
               reactions: { total: 0 },
               commentCount: post.blog_comments?.[0]?.count || 0,

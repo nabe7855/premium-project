@@ -15,10 +15,12 @@ export async function getDiaryPostsByCastId(
       status,
       published_at,
       created_at,
+      updated_at,
       casts (
         id,
         name,
         image_url,
+        main_image_url,
         slug
       ),
       blog_images (
@@ -52,6 +54,7 @@ export async function getDiaryPostsByCastId(
         date: new Date(post.published_at || post.created_at)
           .toLocaleDateString('ja-JP')
           .replace(/\//g, '.'),
+        updatedDate: post.updated_at,
         tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
         storeSlug,
         castName: castData?.name ?? '不明なキャスト',
@@ -60,7 +63,7 @@ export async function getDiaryPostsByCastId(
         image:
           post.blog_images?.[0]?.image_url || 'https://via.placeholder.com/800x600?text=No+Image',
         image_url: post.blog_images?.[0]?.image_url,
-        castAvatar: castData?.image_url || '/images/avatar-placeholder.png',
+        castAvatar: castData?.main_image_url || castData?.image_url || '/images/avatar-placeholder.png',
         readTime: Math.max(Math.ceil((post.content?.length || 0) / 400), 1),
         commentCount: post.blog_comments?.[0]?.count || 0,
         isCommentEnabled: post.is_comment_enabled ?? true,

@@ -18,6 +18,7 @@ interface DiaryCardProps {
     title: string;
     excerpt: string;
     date: string;
+    updatedDate?: string;
     tags: string[];
     image_url?: string;
     castName?: string;
@@ -81,6 +82,20 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
       });
     } catch {
       return post.date;
+    }
+  })();
+  const formattedUpdatedDate = (() => {
+    if (!post.updatedDate) return undefined;
+    try {
+      const d = new Date(post.updatedDate);
+      if (isNaN(d.getTime())) return undefined;
+      const pubD = new Date(post.date);
+      // 日付部分のみ比較
+      if (d.toDateString() === pubD.toDateString()) return undefined;
+
+      return d.toLocaleDateString('ja-JP').replace(/\//g, '.');
+    } catch {
+      return undefined;
     }
   })();
 
@@ -161,7 +176,12 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
                   />
                   <span>{castName}</span>
                 </div>
-                <span>{formattedDate}</span>
+                  <span>{formattedDate}</span>
+                  {formattedUpdatedDate && (
+                    <span className="text-[10px] sm:text-xs opacity-70">
+                      (更: {formattedUpdatedDate})
+                    </span>
+                  )}
                 <span className="flex items-center gap-1">
                   <Clock size={12} className="sm:h-3.5 sm:w-3.5" />
                   {readTime}分
@@ -217,7 +237,12 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
               />
               <div>
                 <p className="text-xs font-medium text-gray-800 sm:text-sm">{castName}</p>
-                <p className="text-xs text-gray-500">{formattedDate}</p>
+                <p className="text-xs text-gray-500">
+                  {formattedDate}
+                  {formattedUpdatedDate && (
+                    <span className="ml-1 text-[10px] opacity-70">(更: {formattedUpdatedDate})</span>
+                  )}
+                </p>
               </div>
             </div>
 

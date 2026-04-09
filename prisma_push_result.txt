@@ -1,0 +1,34 @@
+﻿Environment variables loaded from .env
+Prisma schema loaded from prisma\schema.prisma
+Datasource "db": PostgreSQL database "postgres", schema "public" at "aws-1-ap-northeast-1.pooler.supabase.com:6543"
+
+node.exe : Error: P10
+01: Can't reach datab
+ase server at `aws-1-
+ap-northeast-1.pooler
+.supabase.com:6543`
+発生場所 行:1 文字:1
++ & "C:\Program Files
+\nodejs/node.exe" "C:
+\Program Files\nodejs
+/node_mo ...
++ ~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~
+    + CategoryInfo   
+           : NotSpeci
+fied:     (Error: P10
+01: C...a    base.com
+:6543`:Strin    g) []
+, RemoteExcepti    on
+    + FullyQualifiedE
+rro    rId : NativeCo
+mmandE    rror
+ 
+
+Please make sure your
+ database server is r
+unning at `aws-1-ap-n
+ortheast-1.pooler.sup
+abase.com:6543`.

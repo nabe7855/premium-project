@@ -5,6 +5,7 @@ export interface DiaryBase {
   excerpt: string;
   content?: string; // 本文は optional
   date: string;
+  updatedDate?: string;
   tags: string[];
   storeSlug: string;
   castName: string;

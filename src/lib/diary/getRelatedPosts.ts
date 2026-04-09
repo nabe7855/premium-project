@@ -32,7 +32,7 @@ export async function getRelatedPosts({
         .from('blogs')
         .select(
           `
-          id, title, content, created_at,
+          id, title, content, created_at, published_at, updated_at,
           casts ( id, name, image_url, main_image_url, slug ),
           blog_images ( image_url ),
           blog_tags ( blog_tag_master ( name ) ),
@@ -62,7 +62,7 @@ export async function getRelatedPosts({
         .from('blogs')
         .select(
           `
-          id, title, content, created_at,
+          id, title, content, created_at, published_at, updated_at,
           casts ( 
             id, name, image_url, main_image_url, slug,
             cast_store_memberships ( stores ( slug ) )
@@ -109,7 +109,8 @@ function formatPost(data: any, storeSlug: string): PostType {
     title: data.title,
     content: data.content || '',
     excerpt: data.content ? data.content.slice(0, 50) : '',
-    date: new Date(data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+    date: new Date(data.published_at || data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+    updatedDate: data.updated_at,
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug,
     castName: castData?.name || 'キャスト',

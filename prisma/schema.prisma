@@ -298,6 +298,7 @@ model Blog {
   status       String      @default("published") // "published", "draft", "scheduled"
   published_at DateTime    @default(now())
   created_at   DateTime    @default(now())
+  updated_at   DateTime    @updatedAt @map("updated_at") @default(now())
   cast         Cast        @relation(fields: [cast_id], references: [id])
   images       BlogImage[]
   tags         BlogTag[]   @relation("BlogToBlogTag")
