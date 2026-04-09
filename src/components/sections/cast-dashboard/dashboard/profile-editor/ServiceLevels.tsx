@@ -32,11 +32,11 @@ export default function ServiceLevels({ form, onChange }: Props) {
   return (
     <div>
       <label className="block text-sm font-medium mb-2">施術内容（4段階）</label>
-      <div className="space-y-3">
+      <div className="space-y-4">
         {serviceOptions.map((service) => (
-          <div key={service} className="flex items-center gap-3">
-            <span className="w-48 text-sm">{service}</span>
-            <div className="flex gap-2">
+          <div key={service} className="flex flex-col sm:flex-row sm:items-center justify-between border-b border-gray-50 pb-3 last:border-0">
+            <span className="text-sm font-medium text-gray-700 mb-2 sm:mb-0 sm:w-48 shrink-0">{service}</span>
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {serviceLevels.map((level) => {
                 const isSelected = services[service] === level;
                 return (
@@ -44,10 +44,10 @@ export default function ServiceLevels({ form, onChange }: Props) {
                     key={level}
                     type="button"
                     onClick={() => handleChange(service, level)}
-                    className={`px-3 py-1 rounded-full border text-xs transition ${
+                    className={`px-3 py-1.5 rounded-full border text-[11px] font-bold transition-all active:scale-95 ${
                       isSelected
-                        ? 'bg-purple-500 text-white border-purple-500'
-                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                        ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white border-transparent shadow-sm'
+                        : 'bg-white text-gray-500 border-gray-200 hover:border-purple-300'
                     }`}
                   >
                     {level}
