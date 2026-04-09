@@ -199,7 +199,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               )}
               <img
                 src={post.image}
-                alt={post.title}
+                alt={`${post.title} - ${post.castName}の日記`}
                 onLoad={() => setImageLoaded(true)}
                 className="h-auto max-h-[70vh] w-auto object-contain"
               />
@@ -210,7 +210,11 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
                 href={`/store/${slug}/cast/${post.castSlug}`}
                 className="mb-6 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-pink-600"
               >
-                <img src={post.castAvatar} className="h-8 w-8 rounded-full object-cover" alt="" />
+                <img 
+                  src={post.castAvatar} 
+                  className="h-8 w-8 rounded-full object-cover" 
+                  alt={`${post.castName} - プロフィール写真`}
+                />
                 <span className="font-medium">
                   {post.castName} • 公開: {post.date}
                   {post.updatedDate && post.updatedDate !== post.date && (

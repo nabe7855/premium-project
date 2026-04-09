@@ -23,8 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  const title = `${post.title} | ${post.castName}のみんなの写メ日記`;
-  const description = post.excerpt || `${post.castName}さんが更新した最新の日記記事です。`;
+  const title = `${post.title} | ${post.castName} | Strawberry Boys`;
+  const description = post.excerpt || `${post.castName}さんが更新した最新の写メ日記です。${(post.content || '').slice(0, 50)}...`;
+  const siteUrl = 'https://www.sutoroberrys.jp';
+  const pageUrl = `${siteUrl}/store/${params.slug}/diary/post/${params.postId}`;
 
   return {
     title,
@@ -32,11 +34,22 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      images: post.image ? [{ url: post.image }] : [],
+      url: pageUrl,
+      siteName: 'Strawberry Boys',
+      images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : [],
       type: 'article',
+      publishedTime: post.date,
+      authors: [post.castName],
+      tags: post.tags,
+    } as any,
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+      images: post.image ? [post.image] : [],
     },
     alternates: {
-      canonical: `https://www.sutoroberrys.jp/store/${params.slug}/diary/post/${params.postId}`,
+      canonical: pageUrl,
     },
   };
 }
@@ -53,8 +66,10 @@ export default async function DiaryDetailPage({ params }: Props) {
         '@context': 'https://schema.org',
         '@type': 'BlogPosting',
         headline: post.title,
+        description: post.excerpt || (post.content || '').slice(0, 150),
         image: [post.image],
-        datePublished: post.date,
+        datePublished: new Date(post.date).toISOString(),
+        dateModified: post.updatedDate ? new Date(post.updatedDate).toISOString() : new Date(post.date).toISOString(),
         author: [
           {
             '@type': 'Person',
@@ -62,6 +77,18 @@ export default async function DiaryDetailPage({ params }: Props) {
             url: `https://www.sutoroberrys.jp/store/${slug}/cast/${post.castSlug || post.castId}`,
           },
         ],
+        publisher: {
+          '@type': 'Organization',
+          name: 'Strawberry Boys',
+          logo: {
+            '@type': 'ImageObject',
+            url: 'https://www.sutoroberrys.jp/logo.png', // 正しいパスに要確認
+          },
+        },
+        mainEntityOfPage: {
+          '@type': 'WebPage',
+          '@id': `https://www.sutoroberrys.jp/store/${slug}/diary/post/${postId}`,
+        },
       }
     : null;
 
