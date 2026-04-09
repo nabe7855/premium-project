@@ -477,19 +477,20 @@ export default function StoreTopManagement() {
 
   return (
     <div className="flex h-[calc(100vh-120px)] flex-col gap-4 overflow-hidden">
-      <div className="flex flex-shrink-0 flex-col items-stretch justify-between gap-2 rounded-2xl border border-gray-700/50 bg-brand-secondary px-4 py-3 sm:flex-row sm:items-center">
-        <div className="flex items-center gap-4">
+      <div className="flex flex-shrink-0 flex-col items-stretch justify-between gap-4 rounded-2xl border border-gray-700/50 bg-brand-secondary px-4 py-4 sm:flex-row sm:items-center">
+        <div className="flex flex-shrink-0 items-center gap-4">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => window.history.back()}
+            className="h-8 w-8 p-0"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 text-gray-400" />
           </Button>
-          <h1 className="text-lg font-bold text-white">店舗トップ管理</h1>
+          <h1 className="text-base font-bold text-white sm:text-lg whitespace-nowrap">店舗トップ管理</h1>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center justify-start gap-2 sm:justify-end">
           <HistoryManager
             title="トップページ"
             history={history}
@@ -499,38 +500,40 @@ export default function StoreTopManagement() {
             onRefresh={fetchHistory}
           />
 
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleExport}
-            title="バックアップをダウンロード"
-            className="h-9 border-gray-700 px-3 text-gray-300"
-          >
-            <Download className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline text-xs">書き出し</span>
-          </Button>
-
-          <div className="relative">
-            <input
-              type="file"
-              accept=".json"
-              onChange={handleImport}
-              className="absolute inset-0 cursor-pointer opacity-0"
-              style={{ fontSize: '1px' }}
-            />
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
-              title="バックアップから復元"
+              onClick={handleExport}
+              title="バックアップをダウンロード"
               className="h-9 border-gray-700 px-3 text-gray-300"
             >
-              <Upload className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline text-xs">読み込み</span>
+              <Download className="h-4 w-4 sm:mr-2" />
+              <span className="hidden sm:inline text-xs">書き出し</span>
             </Button>
+
+            <div className="relative">
+              <input
+                type="file"
+                accept=".json"
+                onChange={handleImport}
+                className="absolute inset-0 cursor-pointer opacity-0"
+                style={{ fontSize: '1px' }}
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                title="バックアップから復元"
+                className="h-9 border-gray-700 px-3 text-gray-300"
+              >
+                <Upload className="h-4 w-4 sm:mr-2" />
+                <span className="hidden sm:inline text-xs">読み込み</span>
+              </Button>
+            </div>
           </div>
 
           <Select value={selectedStore} onValueChange={setSelectedStore}>
-            <SelectTrigger className="h-9 min-w-[150px] sm:min-w-[200px] border-pink-500/50 bg-pink-500/10 text-xs sm:text-sm font-bold text-pink-500">
+            <SelectTrigger className="h-9 min-w-[130px] flex-grow sm:flex-initial sm:min-w-[180px] border-pink-500/50 bg-pink-500/10 text-xs sm:text-sm font-bold text-pink-500">
               <SelectValue placeholder="店舗を選択" />
             </SelectTrigger>
             <SelectContent className="border-gray-200 bg-white text-black shadow-xl">
@@ -542,20 +545,22 @@ export default function StoreTopManagement() {
             </SelectContent>
           </Select>
 
-          <Button
-            variant={isPreviewMode ? 'secondary' : 'outline'}
-            size="sm"
-            onClick={() => setIsPreviewMode(!isPreviewMode)}
-            className="border-gray-700 text-gray-300 hidden sm:flex"
-          >
-            <Eye className="mr-2 h-4 w-4" />
-            {isPreviewMode ? '編集モードへ' : 'プレビュー'}
-          </Button>
+          <div className="flex items-center gap-2 ml-auto sm:ml-0">
+            <Button
+              variant={isPreviewMode ? 'secondary' : 'outline'}
+              size="sm"
+              onClick={() => setIsPreviewMode(!isPreviewMode)}
+              className="border-gray-700 text-gray-300 hidden sm:flex"
+            >
+              <Eye className="mr-2 h-4 w-4" />
+              {isPreviewMode ? '編集モードへ' : 'プレビュー'}
+            </Button>
 
-          <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-brand-accent font-bold">
-            <Save className="mr-2 h-4 w-4" />
-            公開
-          </Button>
+            <Button onClick={handleSave} disabled={isSaving} size="sm" className="bg-brand-accent font-bold px-6">
+              <Save className="mr-2 h-4 w-4" />
+              公開
+            </Button>
+          </div>
         </div>
       </div>
 
