@@ -56,8 +56,9 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   // 2. ギャラリー画像
   const { data: gallery, error: galleryError } = await supabase
     .from('gallery_items')
-    .select(`id, image_url, caption, is_main, created_at`)
+    .select(`id, image_url, caption, is_main, created_at, sort_order`)
     .eq('cast_id', cast.id)
+    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
 
   console.log('🖼️ gallery data:', gallery);

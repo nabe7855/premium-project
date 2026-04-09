@@ -86,8 +86,10 @@ export const getAllCasts = async (): Promise<Cast[]> => {
   // 5. ギャラリーを一括取得
   const { data: galleryData, error: galleryError } = await supabase
     .from('gallery_items')
-    .select('id, cast_id, image_url, caption, is_main, created_at, updated_at')
-    .in('cast_id', castIds);
+    .select('id, cast_id, image_url, caption, is_main, sort_order, created_at, updated_at')
+    .in('cast_id', castIds)
+    .order('sort_order', { ascending: true })
+    .order('created_at', { ascending: false });
 
   if (galleryError) {
     console.error('❌ gallery取得エラー:', galleryError.message);

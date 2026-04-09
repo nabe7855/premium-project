@@ -215,6 +215,7 @@ model GalleryItem {
   cast_id    String
   image_url  String
   caption    String?
+  sort_order Int      @default(0)
   created_at DateTime @default(now())
   cast       Cast     @relation(fields: [cast_id], references: [id])
 }
