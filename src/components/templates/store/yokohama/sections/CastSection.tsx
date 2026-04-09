@@ -559,7 +559,7 @@ const CastSection: React.FC<CastSectionProps> = ({
         {!isLoading && filteredCasts.length > 0 && (
           <div className="mt-16 flex justify-center">
             <Link
-              href={`/store/${storeSlug}/cast`}
+              href={`/store/${storeSlug}/cast-list`}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-rose-500 px-10 py-4 font-black transition-all hover:bg-rose-600 active:scale-95"
             >
               <span className="relative z-10 text-sm tracking-[0.2em] text-white">もっと見る</span>
