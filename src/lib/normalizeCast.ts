@@ -19,17 +19,29 @@ export function normalizeCast(
   const appearanceNames = appearanceFeatures.map((f) => f.feature_master?.name ?? '');
 
   // ✅ mbti / animal / face
-  const mbtiType =
+  // cast_featuresテーブルから取得を試み、なければcasts直接のFK JOINをフォールバック
+  const mbtiFromFeatures =
     features.find((f) => f.feature_master?.category === 'mbti')?.feature_master?.name ?? undefined;
+  const mbtiFromFK = Array.isArray(cast.mbti)
+    ? cast.mbti[0]?.name
+    : cast.mbti?.name;
+  const mbtiType = mbtiFromFeatures || mbtiFromFK || undefined;
 
-  const animalName =
-    features.find((f) => f.feature_master?.category === 'animal')?.feature_master?.name ??
-    undefined;
+  const animalFromFeatures =
+    features.find((f) => f.feature_master?.category === 'animal')?.feature_master?.name ?? undefined;
+  const animalFromFK = Array.isArray(cast.animal)
+    ? cast.animal[0]?.name
+    : cast.animal?.name;
+  const animalName = animalFromFeatures || animalFromFK || undefined;
 
-  const faceType = features
+  const faceFromFeatures = features
     .filter((f) => f.feature_master?.category === 'face')
     .map((f) => f.feature_master?.name ?? '')
     .filter((name) => name !== '');
+  const faceFromFK = Array.isArray(cast.face)
+    ? cast.face.map((f: any) => f.name).filter(Boolean)
+    : cast.face?.name ? [cast.face.name] : [];
+  const faceType = faceFromFeatures.length > 0 ? faceFromFeatures : faceFromFK;
 
   // ✅ service → { name, level }[] に変換
   const services: { name: string; level: ServiceLevel }[] = [];

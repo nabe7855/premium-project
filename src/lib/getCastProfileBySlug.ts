@@ -31,7 +31,10 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       manager_comment,
       ai_summary,
       sns_url,
-      created_at
+      created_at,
+      mbti:feature_master!casts_mbti_id_fkey ( name ),
+      animal:feature_master!casts_animal_id_fkey ( name ),
+      face:feature_master!casts_face_id_fkey ( name )
     `);
 
   if (isUUID) {
