@@ -32,6 +32,27 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   const [isCommentEnabled, setIsCommentEnabled] = useState(true);
   const [uploading, setUploading] = useState(false);
 
+  // ✅ SEOアシスト用の状態
+  const [charCount, setCharCount] = useState(0);
+  const [seoScore, setSeoScore] = useState(0);
+  const [seoTips, setSeoTips] = useState<{ text: string; met: boolean }[]>([]);
+
+  useEffect(() => {
+    const count = content.length;
+    setCharCount(count);
+
+    const tips = [
+      { text: 'タイトルを10文字以上にする', met: title.length >= 10 },
+      { text: '本文を300文字以上書く（現在: ' + count + '文字）', met: count >= 300 },
+      { text: '画像を2枚以上アップロードする', met: (files.length + existingImages.length) >= 2 },
+      { text: 'タグを3つ以上設定する', met: tags.length >= 3 },
+    ];
+    setSeoTips(tips);
+
+    const score = Math.round((tips.filter(t => t.met).length / tips.length) * 100);
+    setSeoScore(score);
+  }, [title, content, files, existingImages, tags]);
+
   // ✅ 初期データセット
   useEffect(() => {
     if (initialData) {
@@ -222,23 +243,61 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative space-y-4 pb-8">
-      {/* タイトル */}
-      <input
-        type="text"
-        placeholder="タイトル"
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="w-full rounded border p-2"
-      />
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      {/* メインフォーム */}
+      <form onSubmit={handleSubmit} className="relative flex-1 space-y-4 pb-8">
+        <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-xl">
+          <h2 className="mb-6 text-lg font-bold text-gray-800">日記を書く</h2>
+      <div className="space-y-6">
+        {/* テンプレート選択 */}
+        <div className="flex flex-wrap gap-2">
+          <p className="w-full text-[10px] font-black uppercase tracking-widest text-gray-400">Templates</p>
+          {[
+            { label: '日常・つぶやき', icon: '🌸', text: '今日は〇〇に行ってきました！\n\n[ここにエピソードを詳しく書く]\n\nまた明日もお会いできるのを楽しみにしています✨' },
+            { label: 'お礼と感想', icon: '🙏', text: '先日お越しいただいたお客様、ありがとうございました！\n\n[施術の感想や嬉しかったことを書く]\n\n皆様の癒やしになれるよう、これからも頑張ります🌟' },
+            { label: '自己紹介', icon: '🎀', text: '改めて自己紹介をさせていただきます！\n\n[趣味や得意なこと、性格などを紹介]\n\nぜひ会いに来てくださいね❤️' },
+          ].map((template, idx) => (
+            <button
+              key={idx}
+              type="button"
+              onClick={() => {
+                if (content && !confirm('本文を上書きします。よろしいですか？')) return;
+                setContent(template.text);
+              }}
+              className="group flex items-center gap-2 rounded-xl border border-pink-100 bg-pink-50/50 px-4 py-2 text-xs font-bold text-pink-700 transition-all hover:bg-pink-100"
+            >
+              <span>{template.icon}</span>
+              <span>{template.label}</span>
+            </button>
+          ))}
+        </div>
 
-      {/* 本文 */}
-      <textarea
-        placeholder="本文"
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="min-h-[120px] w-full rounded border p-2"
-      />
+        <div>
+          <label className="mb-2 block text-xs font-black uppercase tracking-widest text-gray-400">Title</label>
+          <input
+            type="text"
+            placeholder="読者の目を引くタイトルを入力..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="w-full rounded-xl border-gray-100 bg-gray-50/50 p-4 text-lg font-bold text-gray-800 transition-all focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-50"
+          />
+        </div>
+
+        <div>
+          <label className="mb-2 flex justify-between text-xs font-black uppercase tracking-widest text-gray-400">
+            <span>Content</span>
+            <span className={charCount >= 300 ? 'text-green-500' : 'text-gray-400'}>
+              {charCount} characters
+            </span>
+          </label>
+          <textarea
+            placeholder="ここに日記の本文を入力してください..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="min-h-[300px] w-full rounded-xl border-gray-100 bg-gray-50/50 p-4 text-base leading-relaxed text-gray-700 transition-all focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-50"
+          />
+        </div>
+      </div>
 
       {/* 投稿ステータス設定 */}
       <div className="rounded-lg bg-gray-50 p-4">
@@ -309,133 +368,210 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
         </label>
       </div>
 
-      {/* 既存画像プレビュー */}
-      {existingImages.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+      {/* 画像セクション */}
+      <div className="rounded-2xl border border-pink-50 bg-white p-6">
+        <label className="mb-4 block text-xs font-black uppercase tracking-widest text-gray-400">Photos</label>
+        
+        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {/* 既存画像 */}
           {existingImages.map((img, index) => (
-            <div key={index} className="relative">
-              <div className="h-24 w-full overflow-hidden rounded bg-gray-100">
-                <img
-                  src={img.url}
-                  alt={`existing-${index}`}
-                  className="h-full w-full object-contain"
-                />
-              </div>
+            <div key={index} className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm transition-all hover:ring-4 hover:ring-pink-100">
+              <img src={img.url} alt={`existing-${index}`} className="h-full w-full object-cover" />
               <button
                 type="button"
                 onClick={() => removeExistingImage(img.filePath)}
-                className="absolute right-1 top-1 rounded bg-red-500 px-1 text-xs text-white"
+                className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white backdrop-blur-md transition-all hover:bg-rose-500"
               >
-                ✕
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           ))}
-        </div>
-      )}
-
-      {/* 新規ファイル選択 */}
-      <label className="block w-full cursor-pointer rounded-lg border-2 border-dashed p-4 text-center hover:bg-pink-50">
-        <span className="text-gray-600">📸 写真を追加</span>
-        <input
-          type="file"
-          multiple
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-      </label>
-
-      {/* 新規プレビュー */}
-      {files.length > 0 && (
-        <div className="grid grid-cols-3 gap-2">
+          
+          {/* 新規画像プレビュー */}
           {files.map((file, index) => (
-            <div key={index} className="relative">
-              <div className="h-24 w-full overflow-hidden rounded bg-gray-100">
-                <img
-                  src={URL.createObjectURL(file)}
-                  alt={`preview-${index}`}
-                  className="h-full w-full object-contain"
-                />
-              </div>
+            <div key={`new-${index}`} className="group relative aspect-square overflow-hidden rounded-2xl bg-gray-100 shadow-sm transition-all hover:ring-4 hover:ring-pink-100">
+              <img src={URL.createObjectURL(file)} alt={`preview-${index}`} className="h-full w-full object-cover" />
               <button
                 type="button"
                 onClick={() => handleRemoveFile(index)}
-                className="absolute right-1 top-1 rounded bg-red-500 px-1 text-xs text-white"
+                className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5 text-white backdrop-blur-md transition-all hover:bg-rose-500"
               >
-                ✕
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </div>
           ))}
-        </div>
-      )}
 
-      {/* タグ入力 */}
-      <div>
+          {/* アップロードボタン */}
+          {(files.length + existingImages.length) < 9 && (
+            <label className="flex aspect-square cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-pink-100 bg-pink-50/30 transition-all hover:border-pink-300 hover:bg-pink-50">
+              <div className="mb-2 flex h-10 w-10 items-center justify-center rounded-full bg-pink-100 text-pink-600">
+                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                </svg>
+              </div>
+              <span className="text-[10px] font-bold text-pink-700">Add Photo</span>
+              <input type="file" multiple accept="image/*" onChange={handleFileChange} className="hidden" />
+            </label>
+          )}
+        </div>
+      </div>
+
+      {/* タグセクション */}
+      <div className="rounded-2xl border border-pink-50 bg-white p-6">
+        <label className="mb-4 block text-xs font-black uppercase tracking-widest text-gray-400">Hashtags</label>
+        
         <div className="flex gap-2">
           <input
             type="text"
             value={tagInput}
             onChange={(e) => setTagInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), addTag())}
-            placeholder="タグを入力してEnter"
-            className="flex-1 rounded border px-2 py-1"
+            placeholder="タグを追加..."
+            className="flex-1 rounded-xl border-gray-100 bg-gray-50/50 px-4 py-2 text-sm focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-50"
           />
           <button
             type="button"
             onClick={() => addTag()}
-            className="rounded bg-pink-500 px-3 text-white"
+            className="rounded-xl bg-pink-500 px-6 font-bold text-white transition-all hover:bg-pink-600 active:scale-95"
           >
-            追加
+            Add
           </button>
         </div>
 
         {/* プリセットタグ */}
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {presetTags.map((preset) => (
             <button
               key={preset.id}
               type="button"
               onClick={() => addTag(preset.name)}
-              className="rounded-full bg-gray-100 px-3 py-1 text-sm text-gray-600 hover:bg-pink-100 hover:text-pink-600"
+              className="rounded-lg bg-gray-50 px-3 py-1.5 text-[11px] font-bold text-gray-500 transition-all hover:bg-pink-50 hover:text-pink-600"
             >
-              #{preset.name}
+              + {preset.name}
             </button>
           ))}
         </div>
 
         {/* 選択済みタグ */}
-        <div className="mt-2 flex flex-wrap gap-2">
+        <div className="mt-4 flex flex-wrap gap-2">
           {tags.map((tag) => (
             <span
               key={tag}
-              className="flex items-center gap-1 rounded-full bg-pink-100 px-2 py-1 text-sm text-pink-700"
+              className="flex items-center gap-1 rounded-lg bg-gradient-to-r from-pink-500 to-rose-400 px-3 py-1.5 text-[11px] font-black tracking-wider text-white shadow-sm"
             >
               #{tag}
-              <button type="button" onClick={() => removeTag(tag)} className="text-pink-500">
-                ×
+              <button 
+                type="button" 
+                onClick={() => removeTag(tag)} 
+                className="ml-1 rounded-full bg-white/20 p-0.5 hover:bg-white/40"
+              >
+                <svg className="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </button>
             </span>
           ))}
         </div>
       </div>
 
-      {/* 保存・キャンセルボタン */}
-      <div className="mt-6 flex gap-4 pt-6">
+      {/* アクションボタン */}
+      <div className="flex gap-4 pt-4">
         <button
           type="submit"
           disabled={uploading}
-          className="flex-1 rounded-lg bg-blue-500 py-3 text-lg font-bold text-white shadow-md transition-all hover:bg-blue-600 active:scale-[0.98]"
+          className="group flex flex-1 items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 py-4 text-lg font-black tracking-widest text-white shadow-xl shadow-pink-200 transition-all hover:scale-[1.02] hover:shadow-2xl active:scale-[0.98] disabled:opacity-50"
         >
-          {uploading ? '保存中...' : initialData ? '更新' : '保存'}
+          {uploading ? (
+            <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white"></span>
+          ) : (
+            <>
+              <span>{initialData ? 'UPDATE' : 'PUBLISH'}</span>
+              <svg className="h-5 w-5 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+              </svg>
+            </>
+          )}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 rounded-lg bg-[#D9E1E8] py-3 text-lg font-bold text-gray-800 shadow-md transition-all hover:bg-gray-300 active:scale-[0.98]"
+          className="rounded-2xl bg-gray-100 px-8 py-4 text-lg font-black tracking-widest text-gray-400 transition-all hover:bg-gray-200 hover:text-gray-600 active:scale-[0.98]"
         >
-          キャンセル
+          CANCEL
         </button>
       </div>
-    </form>
+        </div>
+      </form>
+
+      {/* 執筆アシスタントパネル */}
+      <div className="w-full lg:sticky lg:top-24 lg:w-80">
+        <div className="rounded-2xl border border-pink-100 bg-white p-6 shadow-xl">
+          <div className="mb-4 flex items-center justify-between">
+            <h3 className="font-black text-gray-800 tracking-tighter">SEO ASSISTANT</h3>
+            <div className={`flex h-10 w-10 items-center justify-center rounded-full text-xs font-bold ring-4 ${
+              seoScore >= 75 ? 'bg-green-500 text-white ring-green-100' :
+              seoScore >= 50 ? 'bg-yellow-400 text-white ring-yellow-100' :
+              'bg-gray-200 text-gray-600 ring-gray-50'
+            }`}>
+              {seoScore}%
+            </div>
+          </div>
+
+          <div className="mb-6">
+            <div className="mb-2 flex justify-between text-xs font-bold">
+              <span className="text-gray-500 uppercase tracking-wider">Quality Score</span>
+              <span className={seoScore >= 75 ? 'text-green-600' : 'text-yellow-600'}>
+                {seoScore >= 75 ? 'Excellent! ✨' : 'Keep writing! 💪'}
+              </span>
+            </div>
+            <div className="h-2 w-full overflow-hidden rounded-full bg-gray-100">
+              <div 
+                className={`h-full transition-all duration-1000 ${
+                  seoScore >= 75 ? 'bg-green-500' : 'bg-yellow-400'
+                }`}
+                style={{ width: `${seoScore}%` }}
+              ></div>
+            </div>
+          </div>
+
+          <div className="space-y-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Checkpoints</p>
+            {seoTips.map((tip, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className={`mt-1 flex h-4 w-4 shrink-0 items-center justify-center rounded-full ${
+                  tip.met ? 'bg-green-100 text-green-600' : 'bg-rose-50 text-rose-300'
+                }`}>
+                  {tip.met ? (
+                    <svg className="h-2.5 w-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={4} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : (
+                    <div className="h-1 w-1 rounded-full bg-current"></div>
+                  )}
+                </div>
+                <p className={`text-xs font-bold leading-tight ${tip.met ? 'text-gray-700' : 'text-gray-400'}`}>
+                  {tip.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 rounded-xl bg-pink-50 p-4">
+            <h4 className="mb-2 flex items-center gap-2 text-xs font-bold text-pink-700">
+              <span className="text-sm">💡</span>
+              Pro Tip
+            </h4>
+            <p className="text-[11px] leading-relaxed text-pink-600/80">
+              日記を定期的に更新すると、Googleの検索結果であなたのプロフィールが上位に表示されやすくなります。
+              飾らない言葉で、今の気持ちを書いてみましょう！
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
