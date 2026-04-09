@@ -34,7 +34,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
             title,
             content,
             created_at,
-            casts ( id, name, image_url, slug ),
+            casts ( id, name, image_url, main_image_url, slug ),
             blog_images ( image_url ),
             blog_tags ( blog_tag_master ( name ) ),
             is_comment_enabled,
@@ -65,6 +65,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               data.blog_images?.[0]?.image_url ||
               'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
             castAvatar:
+              castData?.main_image_url ||
               castData?.image_url ||
               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),

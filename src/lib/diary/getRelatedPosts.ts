@@ -33,7 +33,7 @@ export async function getRelatedPosts({
         .select(
           `
           id, title, content, created_at,
-          casts ( id, name, image_url, slug ),
+          casts ( id, name, image_url, main_image_url, slug ),
           blog_images ( image_url ),
           blog_tags ( blog_tag_master ( name ) ),
           is_comment_enabled,
@@ -64,7 +64,7 @@ export async function getRelatedPosts({
           `
           id, title, content, created_at,
           casts ( 
-            id, name, image_url, slug,
+            id, name, image_url, main_image_url, slug,
             cast_store_memberships ( stores ( slug ) )
           ),
           blog_images ( image_url ),
@@ -116,7 +116,7 @@ function formatPost(data: any, storeSlug: string): PostType {
     castId: castData?.id || '',
     castSlug: castData?.slug || '',
     image: data.blog_images?.[0]?.image_url || 'https://via.placeholder.com/200x150?text=No+Image',
-    castAvatar: castData?.image_url || 'https://via.placeholder.com/100?text=Avatar',
+    castAvatar: castData?.main_image_url || castData?.image_url || 'https://via.placeholder.com/100?text=Avatar',
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
     reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
     commentCount: data.blog_comments?.[0]?.count || 0,
