@@ -1,9 +1,12 @@
 'use client';
 
+import { getSupabasePublicUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
 import { compressImage } from '@/lib/utils/imageCompressor';
 import { CastDiary } from '@/types/cast';
+import { ImagePlus, X, Info, CheckCircle2, Mic, FileText } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import AudioRecorder from './AudioRecorder';
 import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
@@ -31,6 +34,7 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
   const [publishedAt, setPublishedAt] = useState('');
   const [isCommentEnabled, setIsCommentEnabled] = useState(true);
   const [uploading, setUploading] = useState(false);
+  const [activeTab, setActiveTab] = useState<'standard' | 'voice'>('standard');
 
   // ✅ SEOアシスト用の状態
   const [charCount, setCharCount] = useState(0);
@@ -351,19 +355,64 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
           />
         </div>
 
-        <div>
-          <label className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
-            <span>本文（お客様へのメッセージ）</span>
-            <span className={charCount >= 300 ? 'text-green-500' : 'text-gray-400'}>
-              {charCount} 文字
-            </span>
-          </label>
-          <textarea
-            placeholder="ここに日記の本文を入力してください..."
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            className="min-h-[300px] w-full rounded-xl border-gray-100 bg-gray-50/50 p-4 text-base leading-relaxed text-gray-700 transition-all focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-50"
-          />
+        {/* コンテンツ入力セクション（タブ切り替え） */}
+        <div className="space-y-4">
+          <div className="flex gap-1 rounded-xl bg-gray-100 p-1">
+            <button
+              type="button"
+              onClick={() => setActiveTab('standard')}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-bold transition-all ${
+                activeTab === 'standard' ? 'bg-white text-pink-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              <FileText size={16} />
+              通常入力
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveTab('voice')}
+              className={`flex flex-1 items-center justify-center gap-2 rounded-lg py-2 text-xs font-bold transition-all ${
+                activeTab === 'voice' ? 'bg-white text-pink-600 shadow-sm' : 'text-gray-400 hover:text-gray-600'
+              }`}
+            >
+              <Mic size={16} />
+              音声アシスト
+            </button>
+          </div>
+
+          {activeTab === 'voice' ? (
+            <div className="space-y-4">
+              <AudioRecorder 
+                onGenerated={(newContent) => {
+                  setContent(newContent);
+                  setActiveTab('standard');
+                }}
+                onCancel={() => setActiveTab('standard')}
+              />
+              <div className="rounded-xl border border-pink-100 bg-pink-50/30 p-4">
+                <p className="text-[10px] font-bold leading-relaxed text-pink-700/80">
+                  <span className="mr-1">💡</span>
+                  喋り終わった後、AIが自動で300〜500文字程度の日記を作成します。
+                  作成された文章は、後から「通常入力」タブで自由に修正できます。
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div>
+              <label className="mb-2 flex justify-between text-[10px] font-black uppercase tracking-widest text-gray-400">
+                <span>本文（お客様へのメッセージ）</span>
+                <span className={charCount >= 300 ? 'text-green-500' : 'text-gray-400'}>
+                  {charCount} 文字
+                </span>
+              </label>
+              <textarea
+                placeholder="ここに日記の本文を入力してください..."
+                value={content}
+                onChange={(e) => setContent(e.target.value)}
+                className="min-h-[300px] w-full rounded-xl border-gray-100 bg-gray-50/50 p-4 text-base leading-relaxed text-gray-700 transition-all focus:border-pink-300 focus:bg-white focus:outline-none focus:ring-4 focus:ring-pink-50"
+              />
+            </div>
+          )}
         </div>
       </div>
 
