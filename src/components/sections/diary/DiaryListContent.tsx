@@ -52,6 +52,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
             id,
             name,
             image_url,
+            main_image_url,
             cast_store_memberships (
               stores ( slug )
             )
@@ -99,7 +100,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               isCommentEnabled: post.is_comment_enabled ?? true,
               storeSlug,
               castName: castObj?.name ?? '不明なキャスト',
-              castAvatar: castObj?.image_url,
+              castAvatar: castObj?.main_image_url || castObj?.image_url,
               image_url: post.blog_images?.[0]?.image_url,
             };
           }) ?? [];

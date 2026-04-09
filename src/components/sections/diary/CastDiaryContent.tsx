@@ -33,7 +33,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
         const dbStore = await getStoreBySlug(slug);
         const { data: castData, error: castError } = await supabase
           .from('casts')
-          .select('id, name, slug, image_url')
+          .select('id, name, slug, image_url, main_image_url')
           .eq('name', decodedCastName)
           .maybeSingle();
 
@@ -48,7 +48,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
           storeSlug: slug,
           storeId: dbStore?.id,
           name: castData.name,
-          avatar: castData.image_url || '/images/avatar-placeholder.png',
+          avatar: castData.main_image_url || castData.image_url || '/images/avatar-placeholder.png',
           status: 'available',
           postsThisMonth: 0,
           totalLikes: 0,
