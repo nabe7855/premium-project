@@ -37,6 +37,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
 
   useEffect(() => {
     const fetchPosts = async () => {
+      const now = new Date().toISOString();
       const { data, error } = await supabase
         .from('blogs')
         .select(
@@ -45,6 +46,8 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           title,
           content,
           created_at,
+          published_at,
+          status,
           casts (
             id,
             name,
@@ -63,8 +66,9 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
           blog_comments ( count )
         `,
         )
-        .eq('status', 'published')
-        .order('created_at', { ascending: false });
+        .in('status', ['published', 'scheduled'])
+        .lte('published_at', now)
+        .order('published_at', { ascending: false });
 
       if (error) {
         console.error('❌ fetchPosts error:', error.message);
@@ -88,7 +92,7 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
               title: post.title,
               content: post.content ?? '',
               excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
-              date: post.created_at,
+              date: post.published_at || post.created_at,
               tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
               reactions: { total: 0 },
               commentCount: post.blog_comments?.[0]?.count || 0,

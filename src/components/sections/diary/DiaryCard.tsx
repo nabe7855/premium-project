@@ -66,6 +66,24 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
   // ✅ 読了時間はダミーで3分固定（将来的に content.length から算出可能）
   const readTime = post.readTime ?? 3;
 
+  // ✅ 日付を日本時間でフォーマット
+  const formattedDate = (() => {
+    try {
+      const d = new Date(post.date);
+      if (isNaN(d.getTime())) return post.date;
+      return d.toLocaleString('ja-JP', {
+        timeZone: 'Asia/Tokyo',
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+      });
+    } catch {
+      return post.date;
+    }
+  })();
+
   // ✅ 新着フラグは1週間以内投稿ならtrueにする
   const isNew =
     post.isNew ?? new Date().getTime() - new Date(post.date).getTime() < 7 * 24 * 60 * 60 * 1000;
@@ -143,7 +161,7 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
                   />
                   <span>{castName}</span>
                 </div>
-                <span>{post.date}</span>
+                <span>{formattedDate}</span>
                 <span className="flex items-center gap-1">
                   <Clock size={12} className="sm:h-3.5 sm:w-3.5" />
                   {readTime}分
@@ -199,7 +217,7 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
               />
               <div>
                 <p className="text-xs font-medium text-gray-800 sm:text-sm">{castName}</p>
-                <p className="text-xs text-gray-500">{post.date}</p>
+                <p className="text-xs text-gray-500">{formattedDate}</p>
               </div>
             </div>
 

@@ -32,7 +32,7 @@ export async function getDiaryPostsByCastId(
     `,
     )
     .eq('cast_id', castId)
-    .neq('status', 'draft') // 下書きは除外
+    .in('status', ['published', 'scheduled']) // 下書きは除外
     .lte('published_at', new Date().toISOString()) // 未来の投稿は除外
     .order('published_at', { ascending: false }); // 公開日時順に並べる
 

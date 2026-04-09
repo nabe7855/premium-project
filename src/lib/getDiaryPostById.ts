@@ -20,7 +20,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
     `,
     )
     .eq('id', postId)
-    .neq('status', 'draft')
+    .in('status', ['published', 'scheduled'])
     .lte('published_at', new Date().toISOString())
     .maybeSingle(); // 406 error might occur with .single() if no row matches filter, .maybeSingle() is safer.
 
