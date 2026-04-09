@@ -370,7 +370,7 @@ export default function StoreTopManagement() {
         const newItems = [...config.campaign.items];
         newItems[index] = { ...newItems[index], imageUrl: publicUrl };
         newConfig.campaign = { ...config.campaign, items: newItems };
-      } else if (section === 'flow' && typeof index === 'number') {
+      } else if (section === 'flow' && typeof index === 'number' && key !== 'headingImageUrl') {
         const newSteps = [...config.flow.steps];
         newSteps[index] = { ...newSteps[index], image: publicUrl };
         newConfig.flow = { ...config.flow, steps: newSteps };

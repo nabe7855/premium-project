@@ -62,7 +62,7 @@ export async function getCastsByStore(storeSlug: string, limit: number = 3) {
       
       // If none, fallback to no-image
       if (!imageUrl) {
-        imageUrl = '/no-image.png';
+        imageUrl = '/cast-default.jpg';
       } else if (!imageUrl.startsWith('http')) {
         // Construct Supabase public URL if it's just a path/filename
         const bucket = 'gallery';

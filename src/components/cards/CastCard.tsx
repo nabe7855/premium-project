@@ -40,7 +40,7 @@ const CastCard: React.FC<CastCardProps> = ({
       {/* 画像エリア */}
       <div className="relative aspect-[3/4] w-full bg-gray-100">
         <Image
-          src={imageUrl || '/no-image.png'}
+          src={imageUrl || '/cast-default.jpg'}
           alt={name}
           fill
           sizes="(max-width: 768px) 100vw, 33vw"

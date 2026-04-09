@@ -86,7 +86,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({
             input.accept = 'image/*';
             input.onchange = (e) => {
               const file = (e.target as HTMLInputElement).files?.[0];
-              if (file && onImageUpload) onImageUpload('flow', file, 0, 'headingImageUrl');
+              if (file && onImageUpload) onImageUpload('flow', file, undefined, 'headingImageUrl');
             };
             input.click();
           }}
