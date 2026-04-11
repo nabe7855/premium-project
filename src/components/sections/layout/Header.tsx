@@ -366,7 +366,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             className="group relative flex flex-[0.8] min-w-0 max-w-[80px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50 md:px-4"
           >
             {config.logoUrl ? (
-              <div className="relative h-7 w-full md:h-10 md:w-24">
+              <div className="relative h-8 w-full md:h-12 md:w-28">
                 <NextImage
                   src={config.logoUrl}
                   alt={`${currentStore?.name || '店舗'}ロゴ`}
@@ -472,7 +472,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
                 <div className="flex items-center gap-2">
                   {config.logoUrl ? (
-                    <div className="relative h-8 w-24">
+                    <div className="relative h-10 w-28">
                       <NextImage 
                         src={config.logoUrl} 
                         alt="Logo" 
