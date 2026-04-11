@@ -1,5 +1,6 @@
 // lib/getCastsByStore.ts
 import { Cast, CastStatus } from '@/types/cast';
+import { getSupabasePublicUrl } from './image-url';
 import { supabase } from './supabaseClient';
 
 export interface CastListMini {
@@ -183,8 +184,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         weight: cast.weight ?? undefined,
         bloodType: cast.blood_type ?? undefined,
         catchCopy: cast.catch_copy ?? undefined,
-        mainImageUrl: cast.main_image_url ?? undefined,
-        imageUrl: cast.image_url ?? undefined,
+        mainImageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
+        imageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
         isActive: cast.is_active,
         mbtiType: Array.isArray(cast.mbti)
           ? (cast.mbti[0]?.name ?? undefined)

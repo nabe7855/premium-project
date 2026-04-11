@@ -77,7 +77,7 @@ export function normalizeCast(
       isMain: g.is_main ?? false,
       createdAt: g.created_at,
       updatedAt: g.updated_at ?? undefined,
-    })) ?? [];
+    })).filter(item => item.imageUrl !== '') ?? [];
 
   // ✅ return Cast
   return {

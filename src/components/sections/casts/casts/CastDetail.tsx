@@ -64,9 +64,9 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId }) => 
 
   // ✅ ギャラリー用画像配列
   const allImages: string[] =
-    cast.galleryItems && cast.galleryItems.length > 0
-      ? cast.galleryItems.map((g) => g.imageUrl)
-      : [cast.mainImageUrl ?? cast.imageUrl ?? '/cast-default.jpg'];
+    cast.galleryItems && cast.galleryItems.some(g => g.imageUrl)
+      ? cast.galleryItems.filter(g => g.imageUrl).map((g) => g.imageUrl)
+      : [cast.mainImageUrl || cast.imageUrl || '/cast-default.jpg'];
 
   return (
     <div className="min-h-screen bg-neutral-50">
