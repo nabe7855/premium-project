@@ -536,7 +536,7 @@ export default function PortraitEditorModal({
                 </div>
                 <div>
                   <h2 className="text-base font-black tracking-tight text-white uppercase italic">Portrait Master</h2>
-                  <p className="text-[9px] font-bold text-gray-500 tracking-widest uppercase">AI-Powered Restoration & Privacy</p>
+                  <p className="text-[9px] font-bold text-gray-500 tracking-widest uppercase">AI写真加工・修正ツール</p>
                 </div>
               </div>
               <button 
@@ -573,7 +573,7 @@ export default function PortraitEditorModal({
                           <Sparkles className="text-blue-400 animate-pulse" size={24} />
                         </div>
                       </div>
-                      <p className="text-xs font-black tracking-[0.2em] text-blue-400 animate-pulse uppercase">AI Analyzing Anatomy...</p>
+                      <p className="text-xs font-black tracking-[0.2em] text-blue-400 animate-pulse uppercase">AIが人物を解析中...</p>
                     </div>
                   )}
                   
@@ -581,7 +581,7 @@ export default function PortraitEditorModal({
                   <div className="absolute bottom-4 left-4 z-20 flex items-center gap-2 rounded-full bg-black/60 px-3 py-1.5 backdrop-blur-md border border-white/5 pointer-events-none">
                     <MousePointer2 size={12} className="text-blue-400" />
                     <span className="text-[10px] font-black text-gray-300 uppercase tracking-widest">
-                      {selectedLayerId ? 'Object Selected' : `Tool: ${mosMode}`}
+                      {selectedLayerId ? 'アイテム選択中' : `ツール: ${mosMode}`}
                     </span>
                   </div>
                 </div>
@@ -594,10 +594,10 @@ export default function PortraitEditorModal({
                 <section className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <ImageIcon size={14} className="text-blue-400" /> Scenarios
+                      <ImageIcon size={14} className="text-blue-400" /> 背景処理
                     </h3>
                     {bgMode !== 'none' && (
-                      <span className="text-[10px] font-bold text-blue-400 animate-pulse">Background Enhanced</span>
+                      <span className="text-[10px] font-bold text-blue-400 animate-pulse">補正適用中</span>
                     )}
                   </div>
                   <div className="grid grid-cols-5 gap-1.5">
@@ -615,7 +615,7 @@ export default function PortraitEditorModal({
                           mode === 'none' ? 'bg-gray-600' : mode === 'blur' ? 'bg-blue-400' : mode === 'studio' ? 'bg-purple-400' : mode === 'white' ? 'bg-white' : 'bg-gray-400'
                         }`} />
                         <span className={`text-[9px] font-black uppercase tracking-tighter ${bgMode === mode ? 'text-blue-400' : 'text-gray-500'}`}>
-                          {mode === 'none' ? 'Origin' : mode === 'blur' ? 'Bokeh' : mode === 'studio' ? 'Studio' : mode === 'white' ? 'Plain' : 'Wall'}
+                          {mode === 'none' ? 'なし' : mode === 'blur' ? 'ボケ' : mode === 'studio' ? 'スタジオ' : mode === 'white' ? '白背景' : 'グレー'}
                         </span>
                       </button>
                     ))}
@@ -624,7 +624,7 @@ export default function PortraitEditorModal({
                     <div className="rounded-2xl bg-[#0b0c0e] p-4 space-y-4 border border-[#1e2129]">
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Depth Factor</label>
+                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">ボケ強度</label>
                           <span className="text-[10px] font-mono text-blue-400">{blurAmt}px</span>
                         </div>
                         <input 
@@ -635,7 +635,7 @@ export default function PortraitEditorModal({
                       </div>
                       <div className="space-y-3">
                         <div className="flex items-center justify-between">
-                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Contour Soft</label>
+                          <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">輪郭の柔らかさ</label>
                           <span className="text-[10px] font-mono text-blue-400">{edgeSoft}px</span>
                         </div>
                         <input 
@@ -654,7 +654,7 @@ export default function PortraitEditorModal({
                 <section className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-500">
-                      <Sparkles size={14} className="text-purple-400" /> Privacy Cloak
+                      <Sparkles size={14} className="text-purple-400" /> モザイク加工
                     </h3>
                   </div>
                   
@@ -667,7 +667,7 @@ export default function PortraitEditorModal({
                         className="group relative rounded-xl bg-purple-500/10 border border-purple-500/20 py-2.5 transition active:scale-95 flex flex-col items-center gap-1 hover:bg-purple-500/20 hover:border-purple-500/40"
                       >
                         <span className={`text-[9px] font-black uppercase tracking-tighter text-purple-300`}>
-                          {type === 'face' ? 'Whole' : type === 'mouth' ? 'Lip' : type === 'eye' ? 'Eyes' : 'Figure'}
+                          {type === 'face' ? '顔全体' : type === 'mouth' ? '口元' : type === 'eye' ? '目元' : '全身'}
                         </span>
                       </button>
                     ))}
@@ -686,7 +686,7 @@ export default function PortraitEditorModal({
                         } border`}
                       >
                         <span className={`text-[10px] font-black uppercase tracking-tight ${mosMode === mode && !selectedLayerId ? 'text-purple-400' : 'text-gray-500'}`}>
-                          {mode === 'brush' ? 'Free' : mode === 'circle' ? 'Disc' : 'Box'}
+                          {mode === 'brush' ? 'ブラシ' : mode === 'circle' ? '円形' : '矩形'}
                         </span>
                       </button>
                     ))}
@@ -696,7 +696,7 @@ export default function PortraitEditorModal({
                   <div className="rounded-2xl bg-[#0b0c0e] p-4 space-y-4 border border-[#1e2129]">
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Dimension</label>
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">サイズ</label>
                         <span className="text-[10px] font-mono text-purple-400">{mosSize}px</span>
                       </div>
                       <input 
@@ -707,7 +707,7 @@ export default function PortraitEditorModal({
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Cloak Opacity</label>
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">不透明度</label>
                         <span className="text-[10px] font-mono text-purple-400">{mosOpacity}%</span>
                       </div>
                       <input 
@@ -718,7 +718,7 @@ export default function PortraitEditorModal({
                     </div>
                     <div className="space-y-3">
                       <div className="flex items-center justify-between">
-                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Cloak Glow</label>
+                        <label className="text-[10px] font-black text-gray-500 uppercase tracking-widest">発光（白）</label>
                         <span className="text-[10px] font-mono text-purple-400">{mosGlow}pt</span>
                       </div>
                       <input 
@@ -744,20 +744,20 @@ export default function PortraitEditorModal({
                       }}
                       className="flex items-center justify-center gap-2 rounded-xl bg-[#1e2129] border border-[#2a2f3a] py-3 text-[10px] font-black text-gray-400 transition hover:bg-rose-500/10 hover:text-rose-400 uppercase tracking-tighter"
                     >
-                      <RotateCcw size={12} /> {selectedLayerId ? 'Delete Layer' : 'Rollback'}
+                      <RotateCcw size={12} /> {selectedLayerId ? 'レイヤーを削除' : 'ひとつ戻す'}
                     </button>
                     <button 
                       onClick={() => { setMosLayers([]); setSelectedLayerId(null); }}
                       className="flex items-center justify-center gap-2 rounded-xl bg-[#1e2129] border border-[#2a2f3a] py-3 text-[10px] font-black text-gray-400 transition hover:bg-rose-500/20 hover:text-rose-400 uppercase tracking-tighter"
                     >
-                      <Trash2 size={12} /> Clean All
+                      <Trash2 size={12} /> すべて消す
                     </button>
                   </div>
                   <button 
                     onClick={handleApply}
                     className="flex w-full items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-pink-600 to-rose-500 py-4 text-xs font-black text-white shadow-xl shadow-pink-500/20 transition active:scale-[0.98] hover:shadow-pink-500/30 uppercase tracking-[0.2em] italic"
                   >
-                    <Check size={18} strokeWidth={3} /> Synchronize & Save
+                    <Check size={18} strokeWidth={3} /> 加工を完了して保存
                   </button>
                 </div>
               </div>
