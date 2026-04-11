@@ -27,7 +27,7 @@ export const FirstTimeBanner: React.FC<FirstTimeBannerProps> = ({
   return (
     <section className={`w-full ${!data.isVisible ? 'opacity-50' : ''}`}>
       <div className="container mx-auto px-0 md:px-4">
-        <div className="relative w-full overflow-hidden aspect-[16/7] md:aspect-[21/9] bg-stone-100 md:rounded-2xl">
+        <div className="relative w-full overflow-hidden aspect-[16/10] md:aspect-[21/11] bg-stone-100 md:rounded-2xl">
           <EditableImage
             isEditing={isEditing}
             src={data.imageUrl}
