@@ -18,6 +18,7 @@ interface EditableImageProps {
   alt?: string;
   className?: string;
   priority?: boolean;
+  fill?: boolean;
 }
 
 export const EditableImage: React.FC<EditableImageProps> = ({
@@ -28,6 +29,7 @@ export const EditableImage: React.FC<EditableImageProps> = ({
   alt,
   src,
   priority = false,
+  fill = true,
 }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -62,15 +64,16 @@ export const EditableImage: React.FC<EditableImageProps> = ({
 
   console.log(`🎨 EditableImage: Rendering [${alt || 'Image'}] src="${src}" isEditing=${isEditing}`);
 
-  // 画像要素本体 (Next.js Imageを使用)
   const imageElement = (
     <NextImage
       src={src}
       alt={alt || ''}
-      fill
+      fill={fill}
+      width={!fill ? 1200 : undefined}
+      height={!fill ? 800 : undefined}
       priority={priority}
-      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
-      className={cn('object-cover transition-all', className)}
+      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 1200px"
+      className={cn(fill ? 'object-cover' : 'h-auto w-full object-contain', 'transition-all', className)}
       unoptimized
       onError={(e) => {
         console.error(`❌ EditableImage: Error loading image [${alt || 'Image'}] with src="${src}"`, e);
