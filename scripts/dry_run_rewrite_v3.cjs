@@ -16,8 +16,9 @@
 
 const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
+require('dotenv').config();
 
-const API_KEY = 'AIzaSyD8SQX7MNLFjm5esIO4SBSeEnAf-l6e00E';
+const API_KEY = process.env.GEMINI_API_KEY;
 const JSON_PATH = 'data/processed_hotel_data/hotels_processed_data.json';
 const BATCH_SIZE = 5;
 const DELAY_MS = 4000; // 4s between calls

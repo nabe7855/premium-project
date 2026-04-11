@@ -1,8 +1,9 @@
+require('dotenv').config();
 const fs = require('fs');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 // Using GEMINI_API_KEY_2 from .env (Alternate key)
-const API_KEY = 'AIzaSyD1WKfwCbvtztk6EgUhVHUnMbjCKCVzGXE';
+const API_KEY = process.env.GEMINI_API_KEY;
 const JSON_PATH = 'data/processed_hotel_data/hotels_processed_data.json';
 
 const genAI = new GoogleGenerativeAI(API_KEY);
