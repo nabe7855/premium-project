@@ -112,25 +112,16 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
       const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
       const formData = new FormData();
       formData.append('audio', audioBlob, 'record.wav');
+      formData.append('tone', tone);
 
-      // Step 1: Transcribe
-      const transcribeRes = await fetch('/api/ai/transcribe', {
+      // Gemini 統合APIに送信
+      const response = await fetch('/api/ai/voice-assist', {
         method: 'POST',
         body: formData,
       });
 
-      if (!transcribeRes.ok) throw new Error('文字起こしに失敗しました');
-      const { text } = await transcribeRes.json();
-
-      // Step 2: Generate Diary
-      const generateRes = await fetch('/api/ai/diary-from-transcript', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ transcript: text, tone }),
-      });
-
-      if (!generateRes.ok) throw new Error('日記の生成に失敗しました');
-      const { content } = await generateRes.json();
+      if (!response.ok) throw new Error('日記の生成に失敗しました');
+      const { content } = await response.json();
 
       onGenerated(content);
     } catch (err: any) {
