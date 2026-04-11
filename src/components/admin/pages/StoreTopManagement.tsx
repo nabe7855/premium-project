@@ -325,17 +325,15 @@ export default function StoreTopManagement() {
     if (!selectedStore) return;
 
     const toastId = toast.loading('画像をアップロード中...');
-    
-    let options: { maxWidth?: number; quality?: number } = { maxWidth: 1200, quality: 0.8 };
-    if (key === 'headingImageUrl' || key === 'iconUrl') {
-      options = { maxWidth: 600, quality: 0.8 };
-    } else if (section === 'hero') {
-      options = { maxWidth: 1600, quality: 0.85 };
-    } else if (section === 'sidebar' || section === 'footer') {
-      options = { maxWidth: 800, quality: 0.8 };
-    }
-
     try {
+      // セクションに応じた圧縮オプションの設定
+      let options: { maxWidth?: number; quality?: number } = { maxWidth: 1200, quality: 0.8 };
+      if (section === 'header' && key === 'logoUrl') {
+        options = { maxWidth: 600, quality: 0.9 };
+      } else if (section === 'hero') {
+        options = { maxWidth: 1600, quality: 0.85 };
+      }
+
       const publicUrl = await uploadStoreTopImage(selectedStore, section, file, options);
 
       if (!publicUrl) {
@@ -343,54 +341,67 @@ export default function StoreTopManagement() {
         return;
       }
 
-      let newConfig = { ...config };
+      // Functional update to avoid stale state issues and ensure latest state is used
+      let configToSave: StoreTopPageConfig | null = null;
+      
+      setConfig((prev) => {
+        if (!prev) return prev;
+        const newConfig = { ...prev };
 
-      if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
-        const newNavLinks = [...config.header.navLinks];
-        newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
-        newConfig.header = { ...config.header, navLinks: newNavLinks };
-      } else if (section === 'hero' && typeof index === 'number') {
-        const newImages = [...config.hero.images];
-        const newLinks = config.hero.imageLinks ? [...config.hero.imageLinks] : [];
-        if (index === newImages.length) {
-          newImages.push(publicUrl);
-          newLinks.push('');
-        } else {
-          newImages[index] = publicUrl;
-          while (newLinks.length <= index) {
+        if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
+          const newNavLinks = [...prev.header.navLinks];
+          newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
+          newConfig.header = { ...prev.header, navLinks: newNavLinks };
+        } else if (section === 'hero' && typeof index === 'number') {
+          let newImages = [...prev.hero.images];
+          while (newImages.length < index) {
+            newImages.push('');
+          }
+          if (index === newImages.length) {
+            newImages.push(publicUrl);
+          } else {
+            newImages[index] = publicUrl;
+          }
+          const newLinks = [...(prev.hero.imageLinks || [])];
+          while (newLinks.length < newImages.length) {
             newLinks.push('');
           }
+          newConfig.hero = { ...prev.hero, images: newImages, imageLinks: newLinks };
+        } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
+          const newItems = [...prev.concept.items];
+          newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+          newConfig.concept = { ...prev.concept, items: newItems };
+        } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
+          const newItems = [...prev.campaign.items];
+          newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+          newConfig.campaign = { ...prev.campaign, items: newItems };
+        } else if (section === 'flow' && typeof index === 'number' && key !== 'headingImageUrl') {
+          const newSteps = [...prev.flow.steps];
+          newSteps[index] = { ...newSteps[index], image: publicUrl };
+          newConfig.flow = { ...prev.flow, steps: newSteps };
+        } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
+          const newBanners = [...prev.footer.banners];
+          newBanners[index] = { ...newBanners[index], imageUrl: publicUrl };
+          newConfig.footer = { ...prev.footer, banners: newBanners };
+        } else {
+          const sectionName = section as keyof StoreTopPageConfig;
+          const sectionKey = key || 'imageUrl';
+          newConfig[sectionName] = { 
+            ...(prev[sectionName] as any), 
+            [sectionKey]: publicUrl 
+          };
         }
-        newConfig.hero = { ...config.hero, images: newImages, imageLinks: newLinks };
-      } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
-        const newItems = [...config.concept.items];
-        newItems[index] = { ...newItems[index], imageUrl: publicUrl };
-        newConfig.concept = { ...config.concept, items: newItems };
-      } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
-        const newItems = [...config.campaign.items];
-        newItems[index] = { ...newItems[index], imageUrl: publicUrl };
-        newConfig.campaign = { ...config.campaign, items: newItems };
-      } else if (section === 'flow' && typeof index === 'number' && key !== 'headingImageUrl') {
-        const newSteps = [...config.flow.steps];
-        newSteps[index] = { ...newSteps[index], image: publicUrl };
-        newConfig.flow = { ...config.flow, steps: newSteps };
-      } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
-        const newBanners = [...config.footer.banners];
-        newBanners[index] = { ...newBanners[index], imageUrl: publicUrl };
-        newConfig.footer = { ...config.footer, banners: newBanners };
-      } else {
-        const sectionName = section as keyof StoreTopPageConfig;
-        const sectionKey = key || 'imageUrl';
-        newConfig = {
-          ...config,
-          [sectionName]: { ...(config[sectionName] as any), [sectionKey]: publicUrl }
-        };
-      }
+        
+        configToSave = newConfig;
+        return newConfig;
+      });
 
-      setConfig(newConfig);
-      await safeSaveConfig(newConfig);
-      toast.success('画像を最適化してアップロードしました', { id: toastId });
-      fetchHistory(); // 履歴更新
+      // DBに保存
+      if (configToSave) {
+        await safeSaveConfig(configToSave);
+        toast.success('画像を最適化してアップロードしました', { id: toastId });
+        fetchHistory(); // 履歴更新
+      }
     } catch (error) {
       console.error('Image upload failed:', error);
       toast.error('画像のアップロードに失敗しました', { id: toastId });

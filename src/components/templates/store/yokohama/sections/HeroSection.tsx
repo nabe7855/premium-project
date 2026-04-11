@@ -47,6 +47,13 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     return () => clearInterval(timer);
   }, [images.length]);
 
+  // Ensure current slide is within bounds when images change
+  useEffect(() => {
+    if (currentHeroSlide >= images.length) {
+      setCurrentHeroSlide(Math.max(0, images.length - 1));
+    }
+  }, [images.length]);
+
   const handleTouchStart = (e: React.TouchEvent) => {
     setTouchStart(e.targetTouches[0].clientX);
   };
