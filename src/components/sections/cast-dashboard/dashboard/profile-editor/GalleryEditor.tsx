@@ -1,8 +1,9 @@
 'use client';
 
 import { supabase } from '@/lib/supabaseClient';
-import { Info, Camera, X, Check, Trash2, Heart, ChevronUp, ChevronDown, GripVertical } from 'lucide-react';
+import { Info, Camera, X, Check, Trash2, Heart, ChevronUp, ChevronDown, GripVertical, Sparkles } from 'lucide-react';
 import { useEffect, useState, useCallback } from 'react';
+import PortraitEditorModal from './PortraitEditorModal';
 
 interface GalleryItem {
   id: string;
@@ -67,6 +68,10 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
   const [isReordering, setIsReordering] = useState(false);
   const [savingOrder, setSavingOrder] = useState(false);
 
+  // ✅ Editor State
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [editedBlob, setEditedBlob] = useState<Blob | null>(null);
+
   // ✅ ギャラリー & メイン画像取得
   useEffect(() => {
     const loadGallery = async () => {
@@ -101,6 +106,7 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0] ?? null;
     setFile(selectedFile);
+    setEditedBlob(null); // Reset edited blob on new file select
     if (selectedFile) {
       const url = URL.createObjectURL(selectedFile);
       setPreviewUrl(url);
@@ -109,14 +115,31 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
     }
   };
 
+  // ✅ エディタ完了時の処理
+  const handleApplyEdition = (blob: Blob) => {
+    setEditedBlob(blob);
+    const url = URL.createObjectURL(blob);
+    setPreviewUrl(url);
+    setIsEditorOpen(false);
+  };
+
   // ✅ アップロード
   const handleUpload = async () => {
-    if (!file) return;
+    if (!file && !editedBlob) return;
     setUploading(true);
 
     try {
-      const webpBlob = await convertToWebP(file);
-      const webpFile = new File([webpBlob], sanitizeFileName(file.name), { type: 'image/webp' });
+      let webpFile: File;
+
+      if (editedBlob) {
+        // 加工済みデータがある場合
+        webpFile = new File([editedBlob], sanitizeFileName(file?.name || 'edited.webp'), { type: 'image/webp' });
+      } else {
+        // 加工なしの場合、WebP変換（既存ロジック）
+        const webpBlob = await convertToWebP(file!);
+        webpFile = new File([webpBlob], sanitizeFileName(file!.name), { type: 'image/webp' });
+      }
+
       const filePath = `${castId}/${webpFile.name}`;
 
       const { error: storageError } = await supabase.storage
@@ -163,6 +186,7 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
 
       setItems([...items, newItem]);
       setFile(null);
+      setEditedBlob(null);
       setPreviewUrl(null);
       setCaption('');
       alert('写真をアップロードしました！');
@@ -282,12 +306,24 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
                   className="h-full w-full rounded-2xl object-cover shadow-lg"
                   alt="プレビュー"
                 />
+                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 rounded-2xl pointer-events-none">
+                   <Sparkles className="text-white drop-shadow-md" size={32} />
+                </div>
                 <button
-                  onClick={() => { setFile(null); setPreviewUrl(null); }}
+                  onClick={() => { setFile(null); setPreviewUrl(null); setEditedBlob(null); }}
                   className="absolute -right-2 -top-2 rounded-full bg-rose-500 p-1.5 text-white shadow-lg transition hover:scale-110"
                 >
                   <X size={18} />
                 </button>
+                <div className="absolute -bottom-2 inset-x-0 flex justify-center">
+                  <button
+                    onClick={() => setIsEditorOpen(true)}
+                    className="flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-[10px] font-black text-pink-500 shadow-xl ring-1 ring-pink-100 transition hover:bg-pink-50 hover:scale-105 active:scale-95"
+                  >
+                    <Sparkles size={12} className="text-amber-400" />
+                    <span>写真を加工する</span>
+                  </button>
+                </div>
               </div>
             ) : (
               <label className="flex h-full w-full cursor-pointer flex-col items-center justify-center rounded-2xl bg-pink-50 text-pink-400 transition-colors hover:bg-pink-100/50">
@@ -522,6 +558,16 @@ export default function GalleryEditor({ castId }: GalleryEditorProps) {
             登録した写真の下にある「メイン」ボタンを押すと、お店の一覧ページであなたの顔として表示される画像が決まります。一番自信のある写真を選んでくださいね！「並べ替え」ボタンで写真の表示順を変更できます。
           </p>
         </div>
+      )}
+
+      {/* ✅ 加工エディタモーダル */}
+      {isEditorOpen && file && (
+        <PortraitEditorModal
+          isOpen={isEditorOpen}
+          initialImage={file}
+          onClose={() => setIsEditorOpen(false)}
+          onApply={handleApplyEdition}
+        />
       )}
     </div>
   );
