@@ -4,6 +4,8 @@ import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
 import { getTransformedImageUrl } from '@/lib/image-url';
+import useEmblaCarousel from 'embla-carousel-react';
+import Autoplay from 'embla-carousel-autoplay';
 
 const defaultHeroImages = [
   'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1920',
@@ -37,49 +39,58 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   );
   if (images.length === 0) images.push(defaultHeroImages[0]);
 
+  const [emblaRef, emblaApi] = useEmblaCarousel(
+    { 
+      loop: true, 
+      align: 'center', 
+      skipSnaps: false,
+      duration: 30,
+    },
+    [Autoplay({ delay: 6000, stopOnInteraction: false })]
+  );
+
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    
+    const onSelect = () => {
+      setSelectedIndex(emblaApi.selectedScrollSnap());
+      setCurrentHeroSlide(emblaApi.selectedScrollSnap());
+    };
+
+    emblaApi.on('select', onSelect);
+    emblaApi.on('reInit', onSelect);
+
+    return () => {
+      emblaApi.off('select', onSelect);
+      emblaApi.off('reInit', onSelect);
+    };
+  }, [emblaApi]);
+
+  // Sync external slide changes to Embla
+  useEffect(() => {
+    if (emblaApi && currentHeroSlide !== selectedIndex) {
+      emblaApi.scrollTo(currentHeroSlide);
+    }
+  }, [currentHeroSlide, emblaApi, selectedIndex]);
+
   const nextSlide = () => {
-    setCurrentHeroSlide((prev) => (prev + 1) % images.length);
+    if (emblaApi) emblaApi.scrollNext();
   };
 
   const prevSlide = () => {
-    setCurrentHeroSlide((prev) => (prev - 1 + images.length) % images.length);
+    if (emblaApi) emblaApi.scrollPrev();
   };
-
-  useEffect(() => {
-    const timer = setInterval(nextSlide, 6000);
-    return () => clearInterval(timer);
-  }, [images.length]);
 
   // Ensure current slide is within bounds when images change
   useEffect(() => {
     if (currentHeroSlide >= images.length) {
-      setCurrentHeroSlide(Math.max(0, images.length - 1));
+      const newIdx = Math.max(0, images.length - 1);
+      setCurrentHeroSlide(newIdx);
+      if (emblaApi) emblaApi.scrollTo(newIdx);
     }
-  }, [images.length]);
-
-  const handleTouchStart = (e: React.TouchEvent) => {
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const handleTouchEnd = () => {
-    if (!touchStart || !touchEnd) return;
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > 50;
-    const isRightSwipe = distance < -50;
-
-    if (isLeftSwipe) {
-      nextSlide();
-    }
-    if (isRightSwipe) {
-      prevSlide();
-    }
-    setTouchStart(0);
-    setTouchEnd(0);
-  };
+  }, [images.length, emblaApi, currentHeroSlide]);
 
   const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
     if (onUpdate) {
@@ -147,7 +158,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
   const handleLinkUpdate = (index: number, e: React.ChangeEvent<HTMLInputElement>) => {
     if (onUpdate && config) {
       const newLinks = [...(config.imageLinks || [])];
-      // Ensure the array is long enough
       while (newLinks.length <= index) {
         newLinks.push('');
       }
@@ -166,207 +176,163 @@ const HeroSection: React.FC<HeroSectionProps> = ({
           height: 'calc(100svh - 146px)', 
           minHeight: '420px', 
         }}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
       >
-        <div className="absolute bottom-12 left-0 right-0 top-0 bg-neutral-100">
-          {images.map((img, index) => {
-            const isFirst = index === 0;
-            const isActive = index === currentHeroSlide;
-            
-            return (
-              <div
-                key={index}
-                className={`duration-1500 absolute inset-0 transition-opacity ease-in-out ${
-                  isActive ? 'opacity-100' : 'opacity-0'
-                }`}
-                style={{ zIndex: isActive ? 10 : 0 }}
-              >
-                {/* 背景のぼかし画像 (モバイルでの見切れ対策) */}
-                <div className="absolute inset-0 block md:hidden">
-                  <NextImage
-                    src={img}
-                    alt=""
-                    fill
-                    className="scale-110 object-cover blur-xl opacity-30"
-                    unoptimized
-                  />
-                </div>
-
-                {(() => {
-                  const imageContent = (
-                    <div className="relative h-full w-full">
+        <div className="absolute inset-0 overflow-hidden" ref={emblaRef}>
+          <div className="flex h-full">
+            {images.map((img, index) => {
+              const isActive = index === selectedIndex;
+              const isFirst = index === 0;
+              
+              return (
+                <div
+                  key={index}
+                  className="relative h-full flex-[0_0_100%] md:flex-[0_0_80%] px-0 md:px-4"
+                >
+                  <div 
+                    className={`relative h-full w-full transition-all duration-700 ease-out overflow-hidden rounded-xl md:rounded-2xl ${
+                      isActive ? 'scale-100 opacity-100 shadow-xl' : 'scale-[0.85] opacity-40 blur-[1px]'
+                    }`}
+                  >
+                    {/* 背景のぼかし画像 (見切れ対策/プレミアム感) */}
+                    <div className="absolute inset-0">
                       <NextImage
                         src={img}
-                        alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                        alt=""
                         fill
-                        priority={isFirst}
-                        fetchPriority={isFirst ? "high" : undefined}
-                        sizes="100vw"
-                        className="h-full w-full object-cover object-center md:object-cover sm:object-contain"
+                        className="scale-110 object-cover blur-2xl opacity-40"
                         unoptimized
-                        style={{
-                          objectFit: typeof window !== 'undefined' && window.innerWidth < 768 ? 'contain' : 'cover'
-                        }}
-                        // Note: Tailwind classes like 'object-contain' are used, 
-                        // but specifically for mobile we force contain to show full image.
                       />
                     </div>
-                  );
+                    
+                    {(() => {
+                      const imageContent = (
+                        <div className="relative h-full w-full">
+                          <NextImage
+                            src={img}
+                            alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                            fill
+                            priority={isFirst}
+                            fetchPriority={isFirst ? "high" : undefined}
+                            sizes="(max-width: 768px) 100vw, 80vw"
+                            className="h-full w-full object-contain"
+                            unoptimized
+                          />
+                        </div>
+                      );
 
-                  const link = config?.imageLinks?.[index];
-                  if (link && !isEditing) {
-                    return (
-                      <a
-                        href={link}
-                        className="block h-full w-full cursor-pointer"
-                        target={link.startsWith('http') ? '_blank' : undefined}
-                        rel={link.startsWith('http') ? 'noopener noreferrer' : undefined}
-                      >
-                        {imageContent}
-                      </a>
-                    );
-                  }
-                  return imageContent;
-                })()}
+                      const link = config?.imageLinks?.[index];
+                      if (link && !isEditing) {
+                        return (
+                          <a
+                            href={link}
+                            className="block h-full w-full cursor-pointer"
+                            target={link.startsWith('http') ? '_blank' : undefined}
+                            rel={link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                          >
+                            {imageContent}
+                          </a>
+                        );
+                      }
+                      return imageContent;
+                    })()}
 
-              {isEditing && index === currentHeroSlide && (
-                <div className="absolute right-4 top-20 z-50 flex flex-col gap-2 md:right-10 md:top-10">
-                  <div className="flex items-center gap-2">
-                    {/* Move Left */}
-                    <button
-                      onClick={() => handleMoveImage(index, 'left')}
-                      disabled={index === 0}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
-                      title="左へ移動"
-                      aria-label="前の画像を表示"
-                    >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 19l-7-7 7-7"
-                        />
-                      </svg>
-                    </button>
+                    {/* モバイル用グラデーションオーバーレイ（オプション） */}
+                    <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent md:hidden" />
+                    
+                    {/* 編集モード用のコントロール */}
+                    {isEditing && isActive && (
+                      <div className="absolute right-4 top-4 z-50 flex flex-col gap-2 md:right-10 md:top-10">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveImage(index, 'left'); }}
+                            disabled={index === 0}
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                            </svg>
+                          </button>
 
-                    {/* Change Image */}
-                    <label className="flex cursor-pointer items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-white transition-all hover:bg-black/70">
-                      <Camera size={18} />
-                      <span className="text-xs font-bold">差し替え</span>
-                      <input
-                        type="file"
-                        className="hidden"
-                        accept="image/*"
-                        onChange={(e) => handleImageChange(e, index)}
-                      />
-                    </label>
+                          <label className="flex cursor-pointer items-center gap-2 rounded-full bg-black/50 px-4 py-2 text-white transition-all hover:bg-black/70">
+                            <Camera size={18} />
+                            <span className="text-xs font-bold">差し替え</span>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => handleImageChange(e, index)}
+                            />
+                          </label>
 
-                    {/* Move Right */}
-                    <button
-                      onClick={() => handleMoveImage(index, 'right')}
-                      disabled={index === images.length - 1}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
-                      title="右へ移動"
-                      aria-label="次の画像を表示"
-                    >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M9 5l7 7-7 7"
-                        />
-                      </svg>
-                    </button>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleMoveImage(index, 'right'); }}
+                            disabled={index === images.length - 1}
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </button>
 
-                    {/* Delete Image */}
-                    <button
-                      onClick={() => handleRemoveImage(index)}
-                      className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/80 text-white transition-all hover:bg-rose-600"
-                      title="削除"
-                    >
-                      <svg
-                        className="h-5 w-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                        />
-                      </svg>
-                    </button>
-                  </div>
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleRemoveImage(index); }}
+                            className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/80 text-white transition-all hover:bg-rose-600"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                            </svg>
+                          </button>
+                        </div>
 
-                  <div className="mt-2 w-full rounded-lg bg-black/50 p-3 backdrop-blur-md border border-white/10">
-                    <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-white/60">
-                      画像クリック時のリンクURL
-                    </label>
-                    <input
-                      type="text"
-                      value={config?.imageLinks?.[index] || ''}
-                      onChange={(e) => handleLinkUpdate(index, e)}
-                      placeholder="https://..."
-                      className="w-full rounded border border-white/20 bg-white/10 px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-rose-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/50"
-                    />
+                        <div className="mt-2 w-72 rounded-lg bg-black/50 p-3 backdrop-blur-md border border-white/10">
+                          <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-white/60 text-left">
+                            画像クリック時のリンクURL
+                          </label>
+                          <input
+                            type="text"
+                            value={config?.imageLinks?.[index] || ''}
+                            onChange={(e) => handleLinkUpdate(index, e)}
+                            placeholder="https://..."
+                            className="w-full rounded border border-white/20 bg-white/10 px-3 py-1.5 text-xs text-white placeholder:text-white/30 focus:border-rose-500/50 focus:outline-none focus:ring-1 focus:ring-rose-500/50"
+                          />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
-              )}
-              </div>
-            );
-          })}
-
-          {/* Add Image Button - Always visible in editing mode */}
-          {isEditing && (
-            <div className="absolute bottom-20 left-1/2 z-50 -translate-x-1/2">
-              <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-emerald-500/80 px-6 py-3 text-white shadow-lg transition-all hover:bg-emerald-600">
-                <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 4v16m8-8H4"
-                  />
-                </svg>
-                <span className="text-sm font-bold">新しい画像を追加</span>
-                <input type="file" className="hidden" accept="image/*" onChange={handleAddImage} />
-              </label>
-            </div>
-          )}
+              );
+            })}
+          </div>
         </div>
 
-        <div className="pointer-events-none relative z-20 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-6 pt-16 text-center md:items-start md:text-left">
-          {/* Text and buttons removed as per user request */}
-        </div>
+        {/* 新しい画像を追加ボタン */}
+        {isEditing && (
+          <div className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2">
+            <label className="flex cursor-pointer items-center justify-center gap-2 rounded-full bg-emerald-500/80 px-6 py-3 text-white shadow-lg transition-all hover:bg-emerald-600">
+              <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              <span className="text-sm font-bold">画像を追加</span>
+              <input type="file" className="hidden" accept="image/*" onChange={handleAddImage} />
+            </label>
+          </div>
+        )}
 
-        {/* Slider Indicators - Moved inside hero section and styled as circles */}
-        <div className="absolute bottom-2 left-1/2 z-30 flex -translate-x-1/2 justify-center space-x-6">
+        {/* インジケーター */}
+        <div className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 justify-center space-x-4">
           {images.map((_, index) => (
             <button
               key={index}
-              onClick={() => setCurrentHeroSlide(index)}
-              className={`border-transparent h-4 w-4 rounded-full border transition-all duration-300 ${
-                index === currentHeroSlide
-                  ? 'scale-110 bg-rose-500 shadow-md'
-                  : 'bg-gray-400 hover:bg-gray-500'
+              onClick={() => {
+                setCurrentHeroSlide(index);
+                if (emblaApi) emblaApi.scrollTo(index);
+              }}
+              className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                index === selectedIndex
+                  ? 'scale-125 bg-rose-500 w-6'
+                  : 'bg-white/50 hover:bg-white/80'
               }`}
-              aria-label={`スライド ${index + 1} を表示`}
+              aria-label={`スライド ${index + 1}`}
             />
           ))}
         </div>
