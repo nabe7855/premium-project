@@ -50,6 +50,11 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
         stream.getTracks().forEach(track => track.stop());
+        setIsRecording(false);
+        if (timerRef.current) {
+          clearInterval(timerRef.current);
+          timerRef.current = null;
+        }
       };
 
       mediaRecorder.start();
@@ -73,10 +78,20 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
   };
 
   const stopRecording = () => {
-    if (mediaRecorderRef.current && isRecording) {
+    if (mediaRecorderRef.current && mediaRecorderRef.current.state !== 'inactive') {
       mediaRecorderRef.current.stop();
       setIsRecording(false);
-      if (timerRef.current) clearInterval(timerRef.current);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
+    } else if (isRecording) {
+      // フォールバック: レコーダーがなくても状態が記録中の場合は戻す
+      setIsRecording(false);
+      if (timerRef.current) {
+        clearInterval(timerRef.current);
+        timerRef.current = null;
+      }
     }
   };
 
@@ -160,11 +175,18 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
       {isRecording && (
         <div className="space-y-6">
           <div className="relative mx-auto flex h-24 w-24 items-center justify-center">
-            <div className="absolute inset-0 animate-ping rounded-full bg-pink-400/20" />
-            <div className="absolute inset-2 animate-pulse rounded-full bg-pink-400/40" />
-            <div className="flex h-16 w-16 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg cursor-pointer" onClick={stopRecording}>
+            <div className="absolute inset-0 animate-ping rounded-full bg-pink-400/20 pointer-events-none" />
+            <div className="absolute inset-2 animate-pulse rounded-full bg-pink-400/40 pointer-events-none" />
+            <button 
+              type="button"
+              className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg cursor-pointer hover:bg-rose-600 active:scale-90 transition-all border-none" 
+              onClick={(e) => {
+                e.stopPropagation();
+                stopRecording();
+              }}
+            >
               <Square size={24} />
-            </div>
+            </button>
           </div>
           <div className="space-y-1">
             <p className="text-2xl font-black tabular-nums text-rose-500">{formatTime(recordingTime)}</p>
