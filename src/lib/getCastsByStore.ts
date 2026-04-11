@@ -184,8 +184,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         weight: cast.weight ?? undefined,
         bloodType: cast.blood_type ?? undefined,
         catchCopy: cast.catch_copy ?? undefined,
-        mainImageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
-        imageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url),
+        mainImageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url) || '/cast-default.jpg',
+        imageUrl: getSupabasePublicUrl(cast.main_image_url || cast.image_url) || '/cast-default.jpg',
         isActive: cast.is_active,
         mbtiType: Array.isArray(cast.mbti)
           ? (cast.mbti[0]?.name ?? undefined)

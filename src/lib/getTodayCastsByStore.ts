@@ -153,8 +153,8 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
       height: cast.height,
       weight: cast.weight,
       catch_copy: cast.catch_copy,
-      main_image_url: getSupabasePublicUrl(cast.main_image_url),
-      image_url: getSupabasePublicUrl(cast.image_url),
+      main_image_url: getSupabasePublicUrl(cast.main_image_url) || '/cast-default.jpg',
+      image_url: getSupabasePublicUrl(cast.image_url) || '/cast-default.jpg',
       tags: (cast.cast_statuses || [])
         .filter((cs: any) => cs.is_active)
         .map((cs: any) => cs.status_master?.name)

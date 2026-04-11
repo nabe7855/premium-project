@@ -64,7 +64,7 @@ export const getStoreTopConfig = cache(async function getStoreTopConfig(storeSlu
             slug: c.slug,
             age: c.age ? `${Math.floor(c.age / 10) * 10}代` : '20代',
             height: c.height?.toString() || '170',
-            imageUrl: c.mainImageUrl || c.imageUrl || '',
+            imageUrl: c.mainImageUrl || c.imageUrl || '/cast-default.jpg',
           }));
 
           // 見出しの人数も動的に更新

@@ -46,7 +46,7 @@ const CastSection: React.FC<CastSectionProps> = ({
       imageUrl:
         c.main_image_url ||
         c.image_url ||
-        'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
+        '/cast-default.jpg',
       mbtiType: c.mbti_name,
       faceType: c.face_name ? [c.face_name] : [],
       rating: c.rating,
@@ -139,7 +139,7 @@ const CastSection: React.FC<CastSectionProps> = ({
           imageUrl:
             c.main_image_url ||
             c.image_url ||
-            'https://placehold.jp/24/cccccc/ffffff/300x400.png?text=No%20Image',
+            '/cast-default.jpg',
           mbtiType: c.mbti_name,
           faceType: c.face_name ? [c.face_name] : [],
           rating: c.rating,
