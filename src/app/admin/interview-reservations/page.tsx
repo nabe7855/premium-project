@@ -6,7 +6,7 @@ import {
   updateApplicationStatus,
   updateRecruitAdminData,
 } from '@/actions/recruit';
-import { Save } from 'lucide-react';
+import { Save, ListFilter, BarChart3 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import RecruitAnalytics from '@/components/admin/recruit/RecruitAnalytics';
 
 import {
   AlertDialog,
@@ -141,44 +143,60 @@ export default function InterviewReservationsPage() {
   });
 
   return (
-    <div className="space-y-6 p-6">
-      <div className="flex flex-wrap items-center justify-between gap-4">
-        <h1 className="text-2xl font-bold text-white">面接予約・応募者管理</h1>
-        <div className="flex flex-wrap gap-2">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px] bg-white text-slate-900">
-              <SelectValue placeholder="状況フィルタ" />
-            </SelectTrigger>
-            <SelectContent className="bg-white shadow-xl">
-              <SelectItem value="all">全ステータス</SelectItem>
-              <SelectItem value="pending">未対応</SelectItem>
-              <SelectItem value="contacted">連絡済み</SelectItem>
-              <SelectItem value="interviewed">面接済み</SelectItem>
-              <SelectItem value="hired">採用</SelectItem>
-              <SelectItem value="rejected">不採用</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Select value={storeFilter} onValueChange={setStoreFilter}>
-            <SelectTrigger className="w-[150px] bg-white text-slate-900">
-              <SelectValue placeholder="店舗フィルタ" />
-            </SelectTrigger>
-            <SelectContent className="bg-white shadow-xl">
-              <SelectItem value="all">全店舗</SelectItem>
-              <SelectItem value="fukuoka">福岡店</SelectItem>
-              <SelectItem value="yokohama">横浜店</SelectItem>
-              <SelectItem value="tokyo">東京店</SelectItem>
-            </SelectContent>
-          </Select>
-
-          <Input
-            placeholder="名前で検索..."
-            className="w-[200px] bg-white text-slate-900 placeholder:text-slate-400"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
+    <div className="space-y-6 p-6 min-h-screen bg-[#050608]">
+      <Tabs defaultValue="list" className="w-full">
+        <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-white tracking-tight">求人・面接管理</h1>
+            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mt-1">Applicant Pipeline & Intelligence</p>
+          </div>
+          <TabsList className="bg-slate-900 border border-slate-800 p-1">
+            <TabsTrigger value="list" className="gap-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white">
+              <ListFilter size={16} /> 応募者一覧
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="gap-2 data-[state=active]:bg-indigo-600 data-[state=active]:text-white">
+              <BarChart3 size={16} /> 募集分析レポート
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </div>
+
+        <TabsContent value="list" className="space-y-6 outline-none">
+          <div className="flex flex-wrap items-center justify-end gap-4">
+            <div className="flex flex-wrap gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[150px] bg-slate-900 border-slate-800 text-slate-300">
+                  <SelectValue placeholder="状況フィルタ" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 text-white border-slate-800 shadow-xl">
+                  <SelectItem value="all">全ステータス</SelectItem>
+                  <SelectItem value="pending">未対応</SelectItem>
+                  <SelectItem value="contacted">連絡済み</SelectItem>
+                  <SelectItem value="interviewed">面接済み</SelectItem>
+                  <SelectItem value="hired">採用</SelectItem>
+                  <SelectItem value="rejected">不採用</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Select value={storeFilter} onValueChange={setStoreFilter}>
+                <SelectTrigger className="w-[150px] bg-slate-900 border-slate-800 text-slate-300">
+                  <SelectValue placeholder="店舗フィルタ" />
+                </SelectTrigger>
+                <SelectContent className="bg-slate-900 text-white border-slate-800 shadow-xl">
+                  <SelectItem value="all">全店舗</SelectItem>
+                  <SelectItem value="fukuoka">福岡店</SelectItem>
+                  <SelectItem value="yokohama">横浜店</SelectItem>
+                  <SelectItem value="tokyo">東京店</SelectItem>
+                </SelectContent>
+              </Select>
+
+              <Input
+                placeholder="名前で検索..."
+                className="w-[200px] bg-slate-900 border-slate-800 text-white placeholder:text-slate-600"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+          </div>
 
       <Card className="border-slate-800 bg-slate-900/50">
         <CardContent className="p-0">
@@ -717,7 +735,19 @@ export default function InterviewReservationsPage() {
             </TableBody>
           </Table>
         </CardContent>
-      </Card>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="analytics" className="outline-none">
+          {loading ? (
+            <div className="h-64 flex items-center justify-center text-slate-400">
+              分析データを読み込み中...
+            </div>
+          ) : (
+            <RecruitAnalytics applications={applications} />
+          )}
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
