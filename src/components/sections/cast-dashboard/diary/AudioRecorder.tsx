@@ -35,7 +35,13 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
     setError(null);
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      
+      // ブラウザがサポートする形式を確認
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
+        ? 'audio/webm' 
+        : 'audio/ogg';
+        
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -46,7 +52,7 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
         stream.getTracks().forEach(track => track.stop());
@@ -109,9 +115,10 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
     setError(null);
 
     try {
-      const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/wav' });
+      const mimeType = audioChunksRef.current[0]?.type || 'audio/webm';
+      const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
       const formData = new FormData();
-      formData.append('audio', audioBlob, 'record.wav');
+      formData.append('audio', audioBlob, `record.${mimeType.split('/')[1]}`);
       formData.append('tone', tone);
 
       // Gemini 統合APIに送信
@@ -120,7 +127,10 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
         body: formData,
       });
 
-      if (!response.ok) throw new Error('日記の生成に失敗しました');
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.serverError || errorData.error || '日記の生成に失敗しました');
+      }
       const { content } = await response.json();
 
       onGenerated(content);

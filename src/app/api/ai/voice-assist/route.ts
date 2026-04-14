@@ -11,12 +11,38 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '音声データがありません' }, { status: 400 });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+    // Vercelの制限（約4.5MB）を考慮したサイズチェック
+    if (audioBlob.size > 4 * 1024 * 1024) {
+      console.error('❌ Audio data too large:', audioBlob.size);
+      return NextResponse.json({ 
+        error: '音声データが大きすぎます。2分以内の短い録音にしてください。' 
+      }, { status: 413 });
+    }
+
+    const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+    if (!GEMINI_API_KEY) {
+      console.error('❌ Missing GEMINI_API_KEY in environment variables');
+      return NextResponse.json({ 
+        error: 'システム設定エラー: APIキーが設定されていません。Vercelの環境変数を確認してください。' 
+      }, { status: 500 });
+    }
+
+    const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
     const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
     // BlobをArrayBufferに変換
     const arrayBuffer = await audioBlob.arrayBuffer();
     const base64Audio = Buffer.from(arrayBuffer).toString('base64');
+
+    // MIMEタイプのクリーニング (audio/webm;codecs=opus -> audio/webm)
+    // Geminiは正しいMIMEタイプを要求するため、ブラウザが付与するパラメータを除去
+    const cleanMimeType = audioBlob.type.split(';')[0];
+    console.log('🎙️ Voice Assist Processing:', { 
+      originalMime: audioBlob.type, 
+      cleanMime: cleanMimeType, 
+      size: audioBlob.size,
+      tone 
+    });
 
     const systemPrompts: Record<string, string> = {
       standard: `
@@ -54,7 +80,7 @@ export async function POST(req: Request) {
     const result = await model.generateContent([
       {
         inlineData: {
-          mimeType: audioBlob.type,
+          mimeType: cleanMimeType,
           data: base64Audio
         }
       },
@@ -66,7 +92,16 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ content });
   } catch (error: any) {
-    console.error('Gemini Voice Assist Error:', error);
-    return NextResponse.json({ error: 'AIによる日記生成に失敗しました。' }, { status: 500 });
+    console.error('Gemini Voice Assist Error Details:', {
+      message: error.message,
+      stack: error.stack,
+      status: error.status,
+    });
+    
+    return NextResponse.json({ 
+      error: 'AIによる日記生成に失敗しました。',
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined,
+      serverError: error.message 
+    }, { status: 500 });
   }
 }
