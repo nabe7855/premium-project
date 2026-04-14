@@ -28,8 +28,14 @@ export function captureAttribution() {
   if (sessionStorage.getItem(STORAGE_KEY)) return;
 
   const urlParams = new URLSearchParams(window.location.search);
+  const referrer = document.referrer;
+  
+  // 自サイト内からの遷移は除外する（外部サイトからの流入のみを対象にする）
+  const isInternal = referrer && referrer.includes(window.location.hostname);
+  const effectiveReferrer = isInternal ? undefined : (referrer || undefined);
+
   const data: AttributionData = {
-    referrer: document.referrer || undefined,
+    referrer: effectiveReferrer,
     utm_source: urlParams.get('utm_source') || undefined,
     utm_medium: urlParams.get('utm_medium') || undefined,
     utm_campaign: urlParams.get('utm_campaign') || undefined,

@@ -98,7 +98,6 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     <div
       className={`flex min-h-screen flex-col ${isChatOpen || isFormOpen || isSimulationOpen || isDiagnosticOpen ? 'overflow-hidden' : ''}`}
     >
-      <AttributionTracker />
       {fullMergedConfig.header?.isVisible !== false && (
         <Header
           onOpenForm={openForm}

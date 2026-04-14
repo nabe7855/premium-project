@@ -7,6 +7,7 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP, Noto_Serif_JP, Lora, Poppins } from 'next/font/google';
 import { Toaster } from 'sonner';
+import AttributionTracker from '@/components/recruit2/AttributionTracker';
 import './globals.css';
 import Providers from './providers';
 
@@ -83,6 +84,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <GoogleTagManager gtmId="GTM-xxxxx" />
       <body>
         <Providers>
+          <AttributionTracker />
           {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
           <AgeVerificationGuard>
             <HeaderGuard>
