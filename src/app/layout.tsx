@@ -81,10 +81,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <link rel="preconnect" href="https://vkrztvkpjcpejccyiviw.supabase.co" crossOrigin="anonymous" />
       </head>
-      <GoogleAnalytics gaId="G-2TCLB5C447" />
+      <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || ""} />
       <body>
         <Providers>
-          {/* ⚠️ CRITICAL: DO NOT REMOVE OR MODIFY. Handles landing source attribution & Analytics. */}
+          {/* ⚠️ AI & HUMAN GUARD: DO NOT REMOVE OR MODIFY. Handles landing source attribution & Analytics. */}
           <AttributionTracker />
           {/* HeaderGuard と FooterGuard でヘッダー・フッターの表示/非表示を制御 */}
           <AgeVerificationGuard>
