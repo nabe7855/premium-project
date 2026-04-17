@@ -15,6 +15,7 @@ export interface DiaryBase {
   viewCount?: number;
   castAvatar?: string;
   image_url?: string;
+  images?: string[];
 }
 
 // 店舗用（日記一覧用）

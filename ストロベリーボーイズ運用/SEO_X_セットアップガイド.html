@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO・X分析ツール セットアップガイド | ストロベリーボーイズ</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Segoe UI', 'Hiragino Sans', sans-serif; background: #f5f7fa; color: #333; line-height: 1.7; }
+.header { background: linear-gradient(135deg, #2B5797, #1a3a6b); color: #fff; padding: 32px 24px; text-align: center; }
+.header h1 { font-size: 24px; margin-bottom: 8px; }
+.header p { font-size: 14px; opacity: 0.85; }
+.tabs { display: flex; background: #fff; border-bottom: 2px solid #e0e0e0; overflow-x: auto; position: sticky; top: 0; z-index: 10; }
+.tab { padding: 14px 20px; cursor: pointer; font-size: 14px; font-weight: 600; border-bottom: 3px solid transparent; white-space: nowrap; transition: all 0.2s; }
+.tab:hover { background: #f0f4ff; }
+.tab.active { color: #2B5797; border-bottom-color: #2B5797; }
+.content { max-width: 900px; margin: 0 auto; padding: 24px; }
+.section { display: none; }
+.section.active { display: block; }
+.card { background: #fff; border-radius: 12px; padding: 24px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+.card h2 { font-size: 18px; color: #2B5797; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 2px solid #e8f0fe; }
+.card h3 { font-size: 15px; color: #555; margin: 16px 0 8px; }
+.step { display: flex; gap: 16px; margin-bottom: 16px; padding: 16px; background: #fafbfc; border-radius: 8px; border-left: 4px solid #2B5797; }
+.step-num { background: #2B5797; color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; flex-shrink: 0; }
+.step-content { flex: 1; }
+.step-content h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.step-content p { font-size: 13px; color: #555; }
+.step-content a { color: #2B5797; text-decoration: underline; }
+.code-block { background: #1e1e1e; color: #d4d4d4; border-radius: 8px; padding: 16px; margin: 12px 0; overflow-x: auto; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.6; position: relative; }
+.code-block .comment { color: #6a9955; }
+.code-block .keyword { color: #569cd6; }
+.code-block .string { color: #ce9178; }
+.code-block .func { color: #dcdcaa; }
+.copy-btn { position: absolute; top: 8px; right: 8px; background: #444; color: #fff; border: none; padding: 4px 12px; border-radius: 4px; cursor: pointer; font-size: 11px; }
+.copy-btn:hover { background: #666; }
+.status-badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; }
+.badge-free { background: #e8f5e9; color: #2e7d32; }
+.badge-paid { background: #fff3e0; color: #e65100; }
+.badge-required { background: #fce4ec; color: #c62828; }
+.badge-optional { background: #e3f2fd; color: #1565c0; }
+.checklist { list-style: none; }
+.checklist li { padding: 8px 0; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.checklist input[type="checkbox"] { width: 18px; height: 18px; accent-color: #2B5797; }
+.priority-table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+.priority-table th { background: #2B5797; color: #fff; padding: 10px 12px; text-align: left; }
+.priority-table td { padding: 10px 12px; border-bottom: 1px solid #e0e0e0; }
+.priority-table tr:nth-child(even) { background: #f8f9fa; }
+.tip-box { background: #e8f0fe; border-left: 4px solid #2B5797; padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 13px; }
+.tip-box strong { color: #2B5797; }
+.warn-box { background: #fff3e0; border-left: 4px solid #ff9800; padding: 16px; border-radius: 0 8px 8px 0; margin: 16px 0; font-size: 13px; }
+.warn-box strong { color: #e65100; }
+.progress-bar { background: #e0e0e0; border-radius: 8px; height: 8px; margin: 8px 0; overflow: hidden; }
+.progress-fill { background: linear-gradient(90deg, #2B5797, #4a90d9); height: 100%; border-radius: 8px; transition: width 0.5s; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>SEO・X分析ツール セットアップガイド</h1>
+  <p>ストロベリーボーイズ 外部ツール連携マニュアル</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('overview')">全体像</div>
+  <div class="tab" onclick="showTab('gsc')">Search Console</div>
+  <div class="tab" onclick="showTab('ga4')">GA4</div>
+  <div class="tab" onclick="showTab('vercel')">Vercel</div>
+  <div class="tab" onclick="showTab('x-api')">X (Twitter) API</div>
+  <div class="tab" onclick="showTab('checklist')">チェックリスト</div>
+</div>
+
+<div class="content">
+
+<!-- ===== OVERVIEW ===== -->
+<div id="overview" class="section active">
+  <div class="card">
+    <h2>セットアップ全体像</h2>
+    <p>もりさんの環境（Search Console + GA4 + Vercel SEO + X未運用 + 独自開発サイト）に最適化した設定手順です。</p>
+
+    <table class="priority-table" style="margin-top:16px">
+      <tr>
+        <th>優先度</th>
+        <th>ツール</th>
+        <th>目的</th>
+        <th>コスト</th>
+        <th>所要時間</th>
+      </tr>
+      <tr>
+        <td><strong>P1</strong></td>
+        <td>Google Search Console API → GAS</td>
+        <td>検索順位・クリック数の自動取得</td>
+        <td><span class="status-badge badge-free">無料</span></td>
+        <td>30分</td>
+      </tr>
+      <tr>
+        <td><strong>P1</strong></td>
+        <td>GA4 Data API → GAS</td>
+        <td>PV・ユーザー数・流入元の自動取得</td>
+        <td><span class="status-badge badge-free">無料</span></td>
+        <td>30分</td>
+      </tr>
+      <tr>
+        <td><strong>P2</strong></td>
+        <td>X (Twitter) API</td>
+        <td>フォロワー数・投稿分析の自動取得</td>
+        <td><span class="status-badge badge-free">無料(Basic)</span> / <span class="status-badge badge-paid">$100/月(Basic+)</span></td>
+        <td>1時間</td>
+      </tr>
+      <tr>
+        <td><strong>P2</strong></td>
+        <td>Vercel Analytics API</td>
+        <td>Web Vitals・リアルタイムアクセス</td>
+        <td><span class="status-badge badge-free">無料(Hobby)</span></td>
+        <td>15分</td>
+      </tr>
+      <tr>
+        <td><strong>P3</strong></td>
+        <td>Ahrefs MCP連携</td>
+        <td>被リンク・KW難易度・競合の詳細分析</td>
+        <td><span class="status-badge badge-paid">$29+/月</span></td>
+        <td>10分</td>
+      </tr>
+    </table>
+
+    <div class="tip-box">
+      <strong>おすすめ順序:</strong> まずP1の2つ（Search Console + GA4のGAS）を設定すれば、毎朝自動でSEOデータがスプレッドシートに蓄積されます。これだけで運用タスク管理表のKW順位トラッキングが自動化できます。
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>データフローの全体像</h2>
+    <div style="background:#f8f9fa; padding:20px; border-radius:8px; font-family:monospace; font-size:13px; line-height:2;">
+      <div style="text-align:center;">
+        <strong style="color:#2B5797">【データ収集層】</strong><br>
+        Search Console API → <span style="background:#e8f0fe;padding:2px 8px;border-radius:4px;">GAS</span> → Google Sheets<br>
+        GA4 Data API → <span style="background:#e8f0fe;padding:2px 8px;border-radius:4px;">GAS</span> → Google Sheets<br>
+        Vercel Analytics → <span style="background:#e8f0fe;padding:2px 8px;border-radius:4px;">API</span> → Google Sheets<br>
+        X API → <span style="background:#e8f0fe;padding:2px 8px;border-radius:4px;">GAS/Python</span> → Google Sheets<br>
+        <br>
+        ↓ 毎朝自動実行（GASトリガー）↓<br>
+        <br>
+        <strong style="color:#e65100">【分析・活用層】</strong><br>
+        Google Sheets ← <span style="background:#fff3e0;padding:2px 8px;border-radius:4px;">Coworkスケジュールタスク</span> が参照<br>
+        ↓<br>
+        毎朝の投稿案に反映 → xlsx運用タスク管理表にも転記<br>
+        ↓<br>
+        HTMLダッシュボードで可視化
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SEARCH CONSOLE ===== -->
+<div id="gsc" class="section">
+  <div class="card">
+    <h2>Google Search Console API → GAS 設定</h2>
+    <p>検索クエリ別の表示回数・クリック数・平均順位を毎日自動取得し、Google Sheetsに蓄積します。</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Search Consoleでサイトを確認</h4>
+        <p><a href="https://search.google.com/search-console" target="_blank">Search Console</a>にアクセスし、ストロベリーボーイズのサイトが「プロパティ」として登録されていることを確認してください。未登録なら「プロパティを追加」から登録します。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>Google Sheetsを新規作成</h4>
+        <p>「SEO自動レポート_ストロベリーボーイズ」という名前で新しいスプレッドシートを作成します。シート名を「SearchConsole」にリネームしてください。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>Apps Script を開く</h4>
+        <p>スプレッドシートの「拡張機能」→「Apps Script」を開きます。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>以下のコードを貼り付ける</h4>
+      </div>
+    </div>
+
+    <div class="code-block" id="gsc-code">
+      <button class="copy-btn" onclick="copyCode('gsc-code')">コピー</button>
+<span class="comment">// ===== Google Search Console 自動データ取得 =====</span>
+<span class="comment">// ストロベリーボーイズ SEO運用向け</span>
+
+<span class="keyword">const</span> SITE_URL = <span class="string">'https://your-site.com/'</span>; <span class="comment">// ← サイトURLに変更</span>
+<span class="keyword">const</span> GSC_SHEET_NAME = <span class="string">'SearchConsole'</span>;
+
+<span class="comment">// ターゲットKW（順位を特に追跡したいもの）</span>
+<span class="keyword">const</span> TARGET_KEYWORDS = [
+  <span class="string">'女性用風俗 横浜'</span>,
+  <span class="string">'女性用風俗 福岡'</span>,
+  <span class="string">'女性用風俗 神奈川'</span>,
+  <span class="string">'女性用風俗 博多'</span>,
+  <span class="string">'女性向け 風俗 横浜'</span>,
+  <span class="string">'女性向け 風俗 福岡'</span>,
+  <span class="string">'レディースコミック 横浜'</span>,
+  <span class="string">'ストロベリーボーイズ'</span>,
+];
+
+<span class="keyword">function</span> <span class="func">fetchSearchConsoleData</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(GSC_SHEET_NAME);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(GSC_SHEET_NAME);
+  }
+
+  <span class="comment">// ヘッダーが無ければ追加</span>
+  <span class="keyword">if</span> (sheet.<span class="func">getLastRow</span>() === 0) {
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'対象日'</span>, <span class="string">'クエリ'</span>,
+      <span class="string">'クリック数'</span>, <span class="string">'表示回数'</span>, <span class="string">'CTR'</span>, <span class="string">'平均順位'</span>,
+      <span class="string">'ターゲットKW'</span>
+    ]);
+    <span class="comment">// ヘッダー書式設定</span>
+    sheet.<span class="func">getRange</span>(1, 1, 1, 8).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="comment">// 過去3日分のデータを取得（当日は未確定のため除外）</span>
+  <span class="keyword">const</span> today = <span class="keyword">new</span> Date();
+  <span class="keyword">const</span> endDate = <span class="keyword">new</span> Date(today.getTime() - 1 * 86400000);
+  <span class="keyword">const</span> startDate = <span class="keyword">new</span> Date(today.getTime() - 3 * 86400000);
+
+  <span class="keyword">const</span> request = {
+    startDate: <span class="func">formatDate</span>(startDate),
+    endDate: <span class="func">formatDate</span>(endDate),
+    dimensions: [<span class="string">'query'</span>, <span class="string">'date'</span>],
+    rowLimit: 1000,
+    <span class="comment">// startRow: 0 (デフォルト)</span>
+  };
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> response = SearchConsole.Searchanalytics
+      .<span class="func">query</span>(request, SITE_URL);
+
+    <span class="keyword">if</span> (!response.rows || response.rows.length === 0) {
+      Logger.<span class="func">log</span>(<span class="string">'データなし'</span>);
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(today);
+    <span class="keyword">const</span> rows = response.rows.<span class="func">map</span>(row => {
+      <span class="keyword">const</span> query = row.keys[0];
+      <span class="keyword">const</span> date = row.keys[1];
+      <span class="keyword">const</span> isTarget = TARGET_KEYWORDS
+        .<span class="func">some</span>(kw => query.<span class="func">includes</span>(kw)) ? <span class="string">'YES'</span> : <span class="string">''</span>;
+      <span class="keyword">return</span> [
+        fetchDate, date, query,
+        row.clicks, row.impressions,
+        (row.ctr * 100).<span class="func">toFixed</span>(2) + <span class="string">'%'</span>,
+        row.position.<span class="func">toFixed</span>(1),
+        isTarget
+      ];
+    });
+
+    <span class="comment">// 一括書き込み（高速）</span>
+    <span class="keyword">const</span> lastRow = sheet.<span class="func">getLastRow</span>();
+    sheet.<span class="func">getRange</span>(lastRow + 1, 1, rows.length, 8)
+      .<span class="func">setValues</span>(rows);
+
+    Logger.<span class="func">log</span>(<span class="string">`${rows.length}行追加完了`</span>);
+  } <span class="keyword">catch</span> (e) {
+    Logger.<span class="func">log</span>(<span class="string">'エラー: '</span> + e.message);
+  }
+}
+
+<span class="keyword">function</span> <span class="func">formatDate</span>(d) {
+  <span class="keyword">return</span> Utilities.<span class="func">formatDate</span>(d, <span class="string">'Asia/Tokyo'</span>, <span class="string">'yyyy-MM-dd'</span>);
+}
+
+<span class="comment">// ===== トリガー設定用 =====</span>
+<span class="keyword">function</span> <span class="func">createDailyTrigger_GSC</span>() {
+  ScriptApp.<span class="func">newTrigger</span>(<span class="string">'fetchSearchConsoleData'</span>)
+    .<span class="func">timeBased</span>()
+    .<span class="func">atHour</span>(6) <span class="comment">// 毎朝6時に実行</span>
+    .<span class="func">everyDays</span>(1)
+    .<span class="func">create</span>();
+}
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>Search Console APIを有効化</h4>
+        <p>Apps Scriptエディタの左メニュー「サービス」→「+」→「Google Search Console API」を検索して追加します。識別子は「SearchConsole」のままにしてください。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-content">
+        <h4>SITE_URLを自分のサイトに変更</h4>
+        <p>コード1行目の <code>'https://your-site.com/'</code> をストロベリーボーイズのサイトURLに変更します。Search Consoleに登録した形式と完全一致させてください（末尾スラッシュの有無も）。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-content">
+        <h4>初回実行＆トリガー設定</h4>
+        <p>まず <code>fetchSearchConsoleData</code> を手動実行して権限承認。次に <code>createDailyTrigger_GSC</code> を実行して毎朝6時の自動実行を設定します。</p>
+      </div>
+    </div>
+
+    <div class="warn-box">
+      <strong>注意:</strong> 初回実行時にGoogleの権限承認画面が出ます。「詳細」→「（安全でない）に移動」→ 許可してください。自分のGASなので安全です。
+    </div>
+  </div>
+</div>
+
+<!-- ===== GA4 ===== -->
+<div id="ga4" class="section">
+  <div class="card">
+    <h2>GA4 Data API → GAS 設定</h2>
+    <p>日別のPV・ユーザー数・セッション数・流入元を自動取得します。</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>GA4のプロパティIDを確認</h4>
+        <p><a href="https://analytics.google.com/" target="_blank">GA4</a> → 管理 → プロパティ設定 → 「プロパティID」の数字をメモします（例: 123456789）。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>同じスプレッドシートに「GA4」シートを追加</h4>
+        <p>Search Consoleと同じスプレッドシートに、新しいシート「GA4」を追加します。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>以下のコードをApps Scriptに追加</h4>
+      </div>
+    </div>
+
+    <div class="code-block" id="ga4-code">
+      <button class="copy-btn" onclick="copyCode('ga4-code')">コピー</button>
+<span class="comment">// ===== GA4 Data API 自動データ取得 =====</span>
+
+<span class="keyword">const</span> GA4_PROPERTY_ID = <span class="string">'123456789'</span>; <span class="comment">// ← GA4プロパティIDに変更</span>
+<span class="keyword">const</span> GA4_SHEET_NAME = <span class="string">'GA4'</span>;
+
+<span class="keyword">function</span> <span class="func">fetchGA4Data</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(GA4_SHEET_NAME);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(GA4_SHEET_NAME);
+  }
+
+  <span class="keyword">if</span> (sheet.<span class="func">getLastRow</span>() === 0) {
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'対象日'</span>,
+      <span class="string">'アクティブユーザー'</span>, <span class="string">'セッション数'</span>,
+      <span class="string">'PV数'</span>, <span class="string">'平均セッション時間(秒)'</span>,
+      <span class="string">'新規ユーザー率'</span>
+    ]);
+    sheet.<span class="func">getRange</span>(1, 1, 1, 7).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="keyword">const</span> today = <span class="keyword">new</span> Date();
+  <span class="keyword">const</span> endDate = <span class="keyword">new</span> Date(today.getTime() - 86400000);
+  <span class="keyword">const</span> startDate = <span class="keyword">new</span> Date(today.getTime() - 3 * 86400000);
+
+  <span class="keyword">const</span> request = AnalyticsData.<span class="func">newRunReportRequest</span>();
+  request.dateRanges = [AnalyticsData.<span class="func">newDateRange</span>()];
+  request.dateRanges[0].startDate = <span class="func">formatDate</span>(startDate);
+  request.dateRanges[0].endDate = <span class="func">formatDate</span>(endDate);
+
+  request.dimensions = [
+    { name: <span class="string">'date'</span> },
+  ];
+
+  request.metrics = [
+    { name: <span class="string">'activeUsers'</span> },
+    { name: <span class="string">'sessions'</span> },
+    { name: <span class="string">'screenPageViews'</span> },
+    { name: <span class="string">'averageSessionDuration'</span> },
+    { name: <span class="string">'newUsers'</span> },
+  ];
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> response = AnalyticsData.Properties
+      .<span class="func">runReport</span>(request, <span class="string">`properties/${GA4_PROPERTY_ID}`</span>);
+
+    <span class="keyword">if</span> (!response.rows) {
+      Logger.<span class="func">log</span>(<span class="string">'GA4データなし'</span>);
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(today);
+    <span class="keyword">const</span> rows = response.rows.<span class="func">map</span>(row => {
+      <span class="keyword">const</span> d = row.dimensionValues[0].value;
+      <span class="keyword">const</span> dateStr = d.<span class="func">substring</span>(0,4)+<span class="string">'-'</span>+d.<span class="func">substring</span>(4,6)+<span class="string">'-'</span>+d.<span class="func">substring</span>(6,8);
+      <span class="keyword">const</span> m = row.metricValues;
+      <span class="keyword">const</span> activeUsers = parseInt(m[0].value);
+      <span class="keyword">const</span> newUsers = parseInt(m[4].value);
+      <span class="keyword">const</span> newRate = activeUsers > 0
+        ? ((newUsers / activeUsers) * 100).<span class="func">toFixed</span>(1) + <span class="string">'%'</span>
+        : <span class="string">'0%'</span>;
+      <span class="keyword">return</span> [
+        fetchDate, dateStr,
+        activeUsers,
+        parseInt(m[1].value),
+        parseInt(m[2].value),
+        parseFloat(m[3].value).<span class="func">toFixed</span>(1),
+        newRate
+      ];
+    });
+
+    <span class="keyword">const</span> lastRow = sheet.<span class="func">getLastRow</span>();
+    sheet.<span class="func">getRange</span>(lastRow + 1, 1, rows.length, 7)
+      .<span class="func">setValues</span>(rows);
+    Logger.<span class="func">log</span>(<span class="string">`GA4: ${rows.length}行追加`</span>);
+  } <span class="keyword">catch</span> (e) {
+    Logger.<span class="func">log</span>(<span class="string">'GA4エラー: '</span> + e.message);
+  }
+}
+
+<span class="comment">// ===== 流入元別レポート =====</span>
+<span class="keyword">function</span> <span class="func">fetchGA4TrafficSources</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(<span class="string">'GA4_流入元'</span>);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(<span class="string">'GA4_流入元'</span>);
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'チャネル'</span>, <span class="string">'ソース/メディア'</span>,
+      <span class="string">'セッション数'</span>, <span class="string">'ユーザー数'</span>
+    ]);
+    sheet.<span class="func">getRange</span>(1, 1, 1, 5).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="keyword">const</span> today = <span class="keyword">new</span> Date();
+  <span class="keyword">const</span> endDate = <span class="keyword">new</span> Date(today.getTime() - 86400000);
+  <span class="keyword">const</span> startDate = <span class="keyword">new</span> Date(today.getTime() - 7 * 86400000);
+
+  <span class="keyword">const</span> request = AnalyticsData.<span class="func">newRunReportRequest</span>();
+  request.dateRanges = [AnalyticsData.<span class="func">newDateRange</span>()];
+  request.dateRanges[0].startDate = <span class="func">formatDate</span>(startDate);
+  request.dateRanges[0].endDate = <span class="func">formatDate</span>(endDate);
+
+  request.dimensions = [
+    { name: <span class="string">'sessionDefaultChannelGroup'</span> },
+    { name: <span class="string">'sessionSourceMedium'</span> },
+  ];
+  request.metrics = [
+    { name: <span class="string">'sessions'</span> },
+    { name: <span class="string">'activeUsers'</span> },
+  ];
+  request.orderBys = [{
+    metric: { metricName: <span class="string">'sessions'</span> },
+    desc: <span class="keyword">true</span>
+  }];
+  request.limit = 50;
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> response = AnalyticsData.Properties
+      .<span class="func">runReport</span>(request, <span class="string">`properties/${GA4_PROPERTY_ID}`</span>);
+
+    <span class="keyword">if</span> (!response.rows) <span class="keyword">return</span>;
+
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(today);
+    <span class="keyword">const</span> rows = response.rows.<span class="func">map</span>(r => [
+      fetchDate,
+      r.dimensionValues[0].value,
+      r.dimensionValues[1].value,
+      parseInt(r.metricValues[0].value),
+      parseInt(r.metricValues[1].value),
+    ]);
+
+    <span class="keyword">const</span> lastRow = sheet.<span class="func">getLastRow</span>();
+    sheet.<span class="func">getRange</span>(lastRow + 1, 1, rows.length, 5)
+      .<span class="func">setValues</span>(rows);
+  } <span class="keyword">catch</span>(e) {
+    Logger.<span class="func">log</span>(<span class="string">'流入元エラー: '</span> + e.message);
+  }
+}
+
+<span class="comment">// ===== 全APIまとめて実行（トリガー用） =====</span>
+<span class="keyword">function</span> <span class="func">dailyDataCollection</span>() {
+  <span class="func">fetchSearchConsoleData</span>();
+  <span class="func">fetchGA4Data</span>();
+  <span class="func">fetchGA4TrafficSources</span>();
+  Logger.<span class="func">log</span>(<span class="string">'全データ取得完了: '</span> + <span class="keyword">new</span> Date());
+}
+
+<span class="comment">// これを1回実行してトリガー設定</span>
+<span class="keyword">function</span> <span class="func">createDailyTrigger_All</span>() {
+  <span class="comment">// 既存トリガーを削除</span>
+  ScriptApp.<span class="func">getProjectTriggers</span>().<span class="func">forEach</span>(t => {
+    <span class="keyword">if</span> (t.<span class="func">getHandlerFunction</span>() === <span class="string">'dailyDataCollection'</span>) {
+      ScriptApp.<span class="func">deleteTrigger</span>(t);
+    }
+  });
+  <span class="comment">// 毎朝6時に全データ取得</span>
+  ScriptApp.<span class="func">newTrigger</span>(<span class="string">'dailyDataCollection'</span>)
+    .<span class="func">timeBased</span>()
+    .<span class="func">atHour</span>(6)
+    .<span class="func">everyDays</span>(1)
+    .<span class="func">create</span>();
+  Logger.<span class="func">log</span>(<span class="string">'毎朝6時トリガー設定完了'</span>);
+}
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>GA4 Data APIを有効化</h4>
+        <p>Apps Scriptの「サービス」→「+」→「Google Analytics Data API」を追加。識別子は「AnalyticsData」にしてください。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <h4>GA4_PROPERTY_IDを変更して実行</h4>
+        <p>プロパティIDを自分のものに変更し、まず <code>dailyDataCollection</code> を手動実行。成功したら <code>createDailyTrigger_All</code> を実行してトリガー設定完了です。</p>
+      </div>
+    </div>
+
+    <div class="tip-box">
+      <strong>一括トリガー:</strong> <code>createDailyTrigger_All</code> を実行すれば、Search Console + GA4 + 流入元の3つのデータが毎朝6時にまとめて取得されます。Coworkスケジュールタスク（7時）の前に完了するので、投稿生成時にデータが参照できます。
+    </div>
+  </div>
+</div>
+
+<!-- ===== VERCEL ===== -->
+<div id="vercel" class="section">
+  <div class="card">
+    <h2>Vercel Analytics 連携</h2>
+    <p>Vercelで独自開発サイトをホスティングしている場合、Web VitalsやアクセスデータをAPI経由で取得できます。</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>Vercel APIトークンを取得</h4>
+        <p><a href="https://vercel.com/account/tokens" target="_blank">Vercel Settings → Tokens</a> で新しいトークンを生成します。名前は「SEO-Analytics」、スコープは「Read Only」で十分です。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>プロジェクトIDを確認</h4>
+        <p>Vercelダッシュボード → プロジェクト → Settings → General → 「Project ID」をメモします。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>GASにVercelデータ取得を追加</h4>
+      </div>
+    </div>
+
+    <div class="code-block" id="vercel-code">
+      <button class="copy-btn" onclick="copyCode('vercel-code')">コピー</button>
+<span class="comment">// ===== Vercel Analytics データ取得 =====</span>
+
+<span class="keyword">const</span> VERCEL_TOKEN = <span class="string">'your-vercel-token'</span>; <span class="comment">// ← トークンに変更</span>
+<span class="keyword">const</span> VERCEL_PROJECT_ID = <span class="string">'your-project-id'</span>; <span class="comment">// ← プロジェクトIDに変更</span>
+
+<span class="keyword">function</span> <span class="func">fetchVercelAnalytics</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(<span class="string">'Vercel'</span>);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(<span class="string">'Vercel'</span>);
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'PV(24h)'</span>, <span class="string">'ユニークビジター'</span>,
+      <span class="string">'トップページ'</span>, <span class="string">'トップリファラー'</span>
+    ]);
+    sheet.<span class="func">getRange</span>(1, 1, 1, 5).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="keyword">const</span> headers = {
+    <span class="string">'Authorization'</span>: <span class="string">`Bearer ${VERCEL_TOKEN}`</span>,
+  };
+
+  <span class="comment">// Web Analytics の概要データ取得</span>
+  <span class="keyword">const</span> now = Date.<span class="func">now</span>();
+  <span class="keyword">const</span> from = now - 86400000; <span class="comment">// 24時間前</span>
+  <span class="keyword">const</span> url = <span class="string">`https://vercel.com/api/web/insights/stats`</span>
+    + <span class="string">`?projectId=${VERCEL_PROJECT_ID}`</span>
+    + <span class="string">`&from=${from}&to=${now}`</span>
+    + <span class="string">`&environment=production`</span>;
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> res = UrlFetchApp.<span class="func">fetch</span>(url, {
+      headers: headers,
+      muteHttpExceptions: <span class="keyword">true</span>
+    });
+
+    <span class="keyword">if</span> (res.<span class="func">getResponseCode</span>() !== 200) {
+      Logger.<span class="func">log</span>(<span class="string">'Vercel API Error: '</span> + res.<span class="func">getContentText</span>());
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">const</span> data = JSON.<span class="func">parse</span>(res.<span class="func">getContentText</span>());
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(<span class="keyword">new</span> Date());
+
+    sheet.<span class="func">appendRow</span>([
+      fetchDate,
+      data.pageViews || 0,
+      data.visitors || 0,
+      data.topPages?.[0]?.page || <span class="string">'-'</span>,
+      data.topReferrers?.[0]?.referrer || <span class="string">'-'</span>,
+    ]);
+
+    Logger.<span class="func">log</span>(<span class="string">'Vercelデータ取得完了'</span>);
+  } <span class="keyword">catch</span>(e) {
+    Logger.<span class="func">log</span>(<span class="string">'Vercelエラー: '</span> + e.message);
+  }
+}
+    </div>
+
+    <div class="warn-box">
+      <strong>Vercel APIの注意:</strong> Web AnalyticsはVercelのProプラン以上で利用可能です。Hobbyプランの場合、Vercel Speed Insights（Web Vitals）のみ取得可能です。Analytics機能の有効状態をVercelダッシュボードで確認してください。
+    </div>
+  </div>
+</div>
+
+<!-- ===== X API ===== -->
+<div id="x-api" class="section">
+  <div class="card">
+    <h2>X (Twitter) API 設定</h2>
+    <p>フォロワー数の推移と投稿パフォーマンスを自動取得します。</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <h4>X Developer Portalに登録</h4>
+        <p><a href="https://developer.x.com/en/portal/dashboard" target="_blank">X Developer Portal</a>にアクセスし、開発者アカウントを申請します。個人利用・ビジネスプロモーション用途で申請してください。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <h4>プランを選択</h4>
+        <p><strong>Free</strong>: 月1,500ツイート書き込み、読み取り制限あり。フォロワー数取得には十分。<br>
+        <strong>Basic ($100/月)</strong>: 月10,000読み取り、投稿分析に必要。本格運用にはこちらが必要です。<br>
+        まずはFreeプランで始めて、必要に応じてアップグレードするのがおすすめです。</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <h4>APIキーを取得</h4>
+        <p>Developer Portal → Projects & Apps → Keys and Tokens で以下を取得します:</p>
+        <p>API Key, API Secret Key, Bearer Token, Access Token, Access Token Secret</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <h4>GASにX データ取得を追加</h4>
+      </div>
+    </div>
+
+    <div class="code-block" id="x-code">
+      <button class="copy-btn" onclick="copyCode('x-code')">コピー</button>
+<span class="comment">// ===== X (Twitter) API データ取得 =====</span>
+<span class="comment">// Free プランでも動くフォロワー数取得</span>
+
+<span class="keyword">const</span> X_BEARER_TOKEN = <span class="string">'your-bearer-token'</span>; <span class="comment">// ← Bearer Tokenに変更</span>
+<span class="keyword">const</span> X_USER_ID = <span class="string">'your-user-id'</span>; <span class="comment">// ← XのユーザーIDに変更</span>
+<span class="comment">// ユーザーIDの調べ方: https://tweeterid.com/ にユーザー名を入力</span>
+
+<span class="keyword">function</span> <span class="func">fetchXFollowerCount</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(<span class="string">'X_Analytics'</span>);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(<span class="string">'X_Analytics'</span>);
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'フォロワー数'</span>, <span class="string">'フォロー数'</span>,
+      <span class="string">'ツイート数'</span>, <span class="string">'前日比フォロワー'</span>
+    ]);
+    sheet.<span class="func">getRange</span>(1, 1, 1, 5).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="keyword">const</span> url = <span class="string">`https://api.x.com/2/users/${X_USER_ID}`</span>
+    + <span class="string">'?user.fields=public_metrics'</span>;
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> res = UrlFetchApp.<span class="func">fetch</span>(url, {
+      headers: { <span class="string">'Authorization'</span>: <span class="string">`Bearer ${X_BEARER_TOKEN}`</span> },
+      muteHttpExceptions: <span class="keyword">true</span>
+    });
+
+    <span class="keyword">if</span> (res.<span class="func">getResponseCode</span>() !== 200) {
+      Logger.<span class="func">log</span>(<span class="string">'X API Error: '</span> + res.<span class="func">getContentText</span>());
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">const</span> data = JSON.<span class="func">parse</span>(res.<span class="func">getContentText</span>());
+    <span class="keyword">const</span> metrics = data.data.public_metrics;
+    <span class="keyword">const</span> followers = metrics.followers_count;
+    <span class="keyword">const</span> following = metrics.following_count;
+    <span class="keyword">const</span> tweets = metrics.tweet_count;
+
+    <span class="comment">// 前日比計算</span>
+    <span class="keyword">const</span> lastRow = sheet.<span class="func">getLastRow</span>();
+    <span class="keyword">let</span> diff = <span class="string">'-'</span>;
+    <span class="keyword">if</span> (lastRow > 1) {
+      <span class="keyword">const</span> prevFollowers = sheet.<span class="func">getRange</span>(lastRow, 2).<span class="func">getValue</span>();
+      diff = followers - prevFollowers;
+      <span class="keyword">if</span> (diff > 0) diff = <span class="string">'+'</span> + diff;
+    }
+
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(<span class="keyword">new</span> Date());
+    sheet.<span class="func">appendRow</span>([fetchDate, followers, following, tweets, diff]);
+
+    Logger.<span class="func">log</span>(<span class="string">`X: フォロワー ${followers} (${diff})`</span>);
+  } <span class="keyword">catch</span>(e) {
+    Logger.<span class="func">log</span>(<span class="string">'Xエラー: '</span> + e.message);
+  }
+}
+
+<span class="comment">// ===== 投稿パフォーマンス取得（Basic プラン以上） =====</span>
+<span class="keyword">function</span> <span class="func">fetchXRecentTweets</span>() {
+  <span class="keyword">const</span> ss = SpreadsheetApp.<span class="func">getActiveSpreadsheet</span>();
+  <span class="keyword">let</span> sheet = ss.<span class="func">getSheetByName</span>(<span class="string">'X_PostLog'</span>);
+  <span class="keyword">if</span> (!sheet) {
+    sheet = ss.<span class="func">insertSheet</span>(<span class="string">'X_PostLog'</span>);
+    sheet.<span class="func">appendRow</span>([
+      <span class="string">'取得日'</span>, <span class="string">'投稿日時'</span>, <span class="string">'テキスト'</span>,
+      <span class="string">'インプレッション'</span>, <span class="string">'いいね'</span>, <span class="string">'RT'</span>,
+      <span class="string">'リプライ'</span>, <span class="string">'ER%'</span>
+    ]);
+    sheet.<span class="func">getRange</span>(1, 1, 1, 8).<span class="func">setFontWeight</span>(<span class="string">'bold'</span>)
+      .<span class="func">setBackground</span>(<span class="string">'#2B5797'</span>).<span class="func">setFontColor</span>(<span class="string">'#FFFFFF'</span>);
+  }
+
+  <span class="keyword">const</span> url = <span class="string">`https://api.x.com/2/users/${X_USER_ID}/tweets`</span>
+    + <span class="string">'?max_results=10'</span>
+    + <span class="string">'&tweet.fields=created_at,public_metrics'</span>;
+
+  <span class="keyword">try</span> {
+    <span class="keyword">const</span> res = UrlFetchApp.<span class="func">fetch</span>(url, {
+      headers: { <span class="string">'Authorization'</span>: <span class="string">`Bearer ${X_BEARER_TOKEN}`</span> },
+      muteHttpExceptions: <span class="keyword">true</span>
+    });
+
+    <span class="keyword">if</span> (res.<span class="func">getResponseCode</span>() !== 200) {
+      Logger.<span class="func">log</span>(<span class="string">'X Tweets Error: '</span> + res.<span class="func">getContentText</span>());
+      <span class="keyword">return</span>;
+    }
+
+    <span class="keyword">const</span> data = JSON.<span class="func">parse</span>(res.<span class="func">getContentText</span>());
+    <span class="keyword">if</span> (!data.data) <span class="keyword">return</span>;
+
+    <span class="keyword">const</span> fetchDate = <span class="func">formatDate</span>(<span class="keyword">new</span> Date());
+    <span class="keyword">const</span> rows = data.data.<span class="func">map</span>(tweet => {
+      <span class="keyword">const</span> m = tweet.public_metrics;
+      <span class="keyword">const</span> imp = m.impression_count || 0;
+      <span class="keyword">const</span> eng = m.like_count + m.retweet_count + m.reply_count;
+      <span class="keyword">const</span> er = imp > 0 ? ((eng / imp) * 100).<span class="func">toFixed</span>(2) + <span class="string">'%'</span> : <span class="string">'0%'</span>;
+      <span class="keyword">return</span> [
+        fetchDate,
+        tweet.created_at,
+        tweet.text.<span class="func">substring</span>(0, 100),
+        imp, m.like_count, m.retweet_count, m.reply_count,
+        er
+      ];
+    });
+
+    <span class="keyword">const</span> lastRow = sheet.<span class="func">getLastRow</span>();
+    sheet.<span class="func">getRange</span>(lastRow + 1, 1, rows.length, 8)
+      .<span class="func">setValues</span>(rows);
+    Logger.<span class="func">log</span>(<span class="string">`X投稿: ${rows.length}件取得`</span>);
+  } <span class="keyword">catch</span>(e) {
+    Logger.<span class="func">log</span>(<span class="string">'X投稿エラー: '</span> + e.message);
+  }
+}
+    </div>
+
+    <div class="tip-box">
+      <strong>Freeプランで始める場合:</strong> <code>fetchXFollowerCount</code>だけ使えばOK。毎日のフォロワー数推移が自動で記録されます。投稿パフォーマンス取得(<code>fetchXRecentTweets</code>)にはBasicプラン($100/月)が必要ですが、投稿が増えてきたら検討しましょう。
+    </div>
+
+    <div class="warn-box">
+      <strong>X APIの注意点:</strong> Bearer TokenはApps Script内にハードコードせず、プロパティサービス (<code>PropertiesService.getScriptProperties()</code>) に保存するのがセキュリティ的にベターです。ただし、個人利用のスクリプトなら上記の方法でも問題ありません。
+    </div>
+  </div>
+</div>
+
+<!-- ===== CHECKLIST ===== -->
+<div id="checklist" class="section">
+  <div class="card">
+    <h2>セットアップ チェックリスト</h2>
+    <p>上から順にチェックしていきましょう。チェック状態は自動保存されます。</p>
+
+    <div id="progress-display" style="margin:16px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:13px;">
+        <span>進捗</span>
+        <span id="progress-text">0 / 15</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+
+    <h3 style="margin-top:20px;color:#2B5797;">P1: SEOデータ自動収集（まずここから）</h3>
+    <ul class="checklist" id="checklist-items">
+      <li><input type="checkbox" data-id="c1" onchange="saveChecklist()"> Search ConsoleでサイトのURL確認・所有権確認済み</li>
+      <li><input type="checkbox" data-id="c2" onchange="saveChecklist()"> Google Sheets「SEO自動レポート」を作成</li>
+      <li><input type="checkbox" data-id="c3" onchange="saveChecklist()"> GASにSearch Consoleコードを貼り付け</li>
+      <li><input type="checkbox" data-id="c4" onchange="saveChecklist()"> Search Console APIサービスを追加</li>
+      <li><input type="checkbox" data-id="c5" onchange="saveChecklist()"> SITE_URLを自分のサイトに変更</li>
+      <li><input type="checkbox" data-id="c6" onchange="saveChecklist()"> fetchSearchConsoleData を手動実行＆権限承認</li>
+      <li><input type="checkbox" data-id="c7" onchange="saveChecklist()"> GASにGA4コードを追加</li>
+      <li><input type="checkbox" data-id="c8" onchange="saveChecklist()"> GA4 Data APIサービスを追加</li>
+      <li><input type="checkbox" data-id="c9" onchange="saveChecklist()"> GA4_PROPERTY_IDを変更</li>
+      <li><input type="checkbox" data-id="c10" onchange="saveChecklist()"> createDailyTrigger_All を実行（毎朝6時自動化）</li>
+    </ul>
+
+    <h3 style="margin-top:24px;color:#2B5797;">P2: X (Twitter) 分析</h3>
+    <ul class="checklist">
+      <li><input type="checkbox" data-id="c11" onchange="saveChecklist()"> X Developer Portalで開発者アカウント申請</li>
+      <li><input type="checkbox" data-id="c12" onchange="saveChecklist()"> APIキー・Bearer Token取得</li>
+      <li><input type="checkbox" data-id="c13" onchange="saveChecklist()"> GASにX APIコードを追加</li>
+      <li><input type="checkbox" data-id="c14" onchange="saveChecklist()"> fetchXFollowerCount を手動実行＆確認</li>
+    </ul>
+
+    <h3 style="margin-top:24px;color:#2B5797;">P3: オプション</h3>
+    <ul class="checklist">
+      <li><input type="checkbox" data-id="c15" onchange="saveChecklist()"> Vercel API Token取得＆GAS追加（Vercel Pro以上の場合）</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>全API統合トリガー（最終形）</h2>
+    <p>全てのセットアップが完了したら、dailyDataCollectionを以下のように更新します:</p>
+    <div class="code-block" id="final-code">
+      <button class="copy-btn" onclick="copyCode('final-code')">コピー</button>
+<span class="comment">// 毎朝6時に全データを一括取得</span>
+<span class="keyword">function</span> <span class="func">dailyDataCollection</span>() {
+  <span class="comment">// P1: SEOデータ</span>
+  <span class="func">fetchSearchConsoleData</span>();
+  <span class="func">fetchGA4Data</span>();
+  <span class="func">fetchGA4TrafficSources</span>();
+
+  <span class="comment">// P2: X (Twitter)</span>
+  <span class="func">fetchXFollowerCount</span>();
+  <span class="comment">// fetchXRecentTweets(); // Basic以上で有効化</span>
+
+  <span class="comment">// P3: Vercel (Pro以上で有効化)</span>
+  <span class="comment">// fetchVercelAnalytics();</span>
+
+  Logger.<span class="func">log</span>(<span class="string">'全データ取得完了: '</span> + <span class="keyword">new</span> Date());
+}
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function showTab(id) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+
+function copyCode(blockId) {
+  const block = document.getElementById(blockId);
+  const text = block.innerText.replace('コピー', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = block.querySelector('.copy-btn');
+    btn.textContent = 'コピー済み';
+    setTimeout(() => btn.textContent = 'コピー', 2000);
+  });
+}
+
+// Checklist persistence
+function saveChecklist() {
+  const checks = {};
+  document.querySelectorAll('[data-id]').forEach(cb => {
+    checks[cb.dataset.id] = cb.checked;
+  });
+  try { localStorage.setItem('sb_setup_checklist', JSON.stringify(checks)); } catch(e) {}
+  updateProgress();
+}
+
+function loadChecklist() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('sb_setup_checklist') || '{}');
+    Object.entries(saved).forEach(([id, checked]) => {
+      const cb = document.querySelector(`[data-id="${id}"]`);
+      if (cb) cb.checked = checked;
+    });
+  } catch(e) {}
+  updateProgress();
+}
+
+function updateProgress() {
+  const all = document.querySelectorAll('[data-id]');
+  const done = [...all].filter(c => c.checked).length;
+  document.getElementById('progress-text').textContent = `${done} / ${all.length}`;
+  document.getElementById('progress-fill').style.width = `${(done/all.length)*100}%`;
+}
+
+loadChecklist();
+</script>
+</body>
+</html>

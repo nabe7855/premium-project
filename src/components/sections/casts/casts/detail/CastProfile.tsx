@@ -9,6 +9,10 @@ interface CastProfileProps {
 }
 
 const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
+  const today = new Date().toISOString().split('T')[0];
+  const todaySchedules = cast.availability?.[today] ?? [];
+  const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
+
   return (
     <div className="bg-white border-b border-neutral-200">
       <div className="px-4 py-5 sm:px-6 sm:py-8">
@@ -42,7 +46,7 @@ const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
             </div>
 
             {/* 出勤 */}
-            {cast.isActive && (
+            {isAvailableToday && (
               <div className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-semibold sm:text-sm">
                 本日出勤
               </div>

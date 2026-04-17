@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ストロベリーボーイズ 運用ダッシュボード</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI','Hiragino Sans',sans-serif;background:#f8f0f4;color:#333}
+.header{background:linear-gradient(135deg,#e91e63,#ad1457);color:#fff;padding:24px 32px;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:22px;font-weight:700}
+.header .date{font-size:13px;opacity:.8}
+.tabs{display:flex;background:#fff;border-bottom:2px solid #fce4ec;padding:0 24px}
+.tab{padding:14px 24px;cursor:pointer;font-size:14px;font-weight:600;color:#888;border-bottom:3px solid transparent;transition:.2s}
+.tab.active{color:#e91e63;border-bottom-color:#e91e63}
+.tab:hover{color:#e91e63}
+.content{max-width:1200px;margin:24px auto;padding:0 24px}
+.section{display:none}.section.active{display:block}
+.grid{display:grid;gap:20px}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.card{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card h3{font-size:12px;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px}
+.card .val{font-size:28px;font-weight:700;color:#333}
+.card .sub{font-size:12px;color:#888;margin-top:4px}
+.card .change{font-size:13px;font-weight:600;margin-top:4px}
+.up{color:#4caf50}.down{color:#f44336}
+.chart-card{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px}
+.chart-card h2{font-size:16px;font-weight:700;margin-bottom:16px;color:#333}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:#fce4ec;color:#333;padding:10px 12px;text-align:left;font-weight:600}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+tr:hover{background:#fef8fa}
+.badge{display:inline-block;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600}
+.badge-s{background:#e91e63;color:#fff}.badge-a{background:#ff9800;color:#fff}.badge-b{background:#2196f3;color:#fff}
+.input-section{background:#fff;border-radius:12px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.06);margin-bottom:20px}
+.input-section h2{font-size:16px;font-weight:700;margin-bottom:16px;color:#e91e63}
+.input-row{display:grid;grid-template-columns:120px 1fr 100px 100px 100px 100px 80px;gap:8px;margin-bottom:8px;align-items:center}
+.input-row input,.input-row select{padding:6px 10px;border:1px solid #ddd;border-radius:6px;font-size:12px}
+.btn{padding:8px 20px;border:none;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px;transition:.2s}
+.btn-pink{background:#e91e63;color:#fff}.btn-pink:hover{background:#c2185b}
+.btn-outline{background:#fff;border:1px solid #e91e63;color:#e91e63}.btn-outline:hover{background:#fce4ec}
+.workflow{background:linear-gradient(135deg,#fce4ec,#fff);border-radius:12px;padding:24px;margin-bottom:20px}
+.workflow h2{color:#e91e63;font-size:16px;margin-bottom:12px}
+.step{display:flex;align-items:center;margin-bottom:12px}
+.step-num{width:32px;height:32px;background:#e91e63;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex-shrink:0}
+.step-text{margin-left:12px;font-size:13px;line-height:1.6}
+.step-tool{display:inline-block;background:#fff;border:1px solid #e91e63;color:#e91e63;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-right:4px}
+@media(max-width:768px){.grid-4,.grid-3{grid-template-columns:repeat(2,1fr)}.grid-2{grid-template-columns:1fr}.input-row{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div><h1>Strawberry Boys Dashboard</h1><div class="date" id="headerDate"></div></div>
+  <div style="display:flex;gap:12px">
+    <button class="btn btn-outline" onclick="exportData()">CSVエクスポート</button>
+    <button class="btn btn-pink" onclick="document.getElementById('importFile').click()">データ取込</button>
+    <input type="file" id="importFile" accept=".csv,.json" style="display:none" onchange="importData(this)">
+  </div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('overview')">概要</div>
+  <div class="tab" onclick="switchTab('posts')">投稿ログ</div>
+  <div class="tab" onclick="switchTab('analysis')">分析</div>
+  <div class="tab" onclick="switchTab('intelligence')">インテリジェンス</div>
+  <div class="tab" onclick="switchTab('workflow')">AI運用フロー</div>
+</div>
+
+<div class="content">
+
+<!-- ===== OVERVIEW ===== -->
+<div class="section active" id="sec-overview">
+  <div class="grid grid-4" style="margin-bottom:20px">
+    <div class="card"><h3>公式フォロワー</h3><div class="val" id="kpi-followers">—</div><div class="change up" id="kpi-followers-change">— </div></div>
+    <div class="card"><h3>直近7日 Imp合計</h3><div class="val" id="kpi-imp">—</div><div class="change" id="kpi-imp-change">—</div></div>
+    <div class="card"><h3>平均ER</h3><div class="val" id="kpi-er">—</div><div class="change" id="kpi-er-change">—</div></div>
+    <div class="card"><h3>目標達成率</h3><div class="val" id="kpi-goal">—</div><div class="sub">年末10,000フォロワー</div></div>
+  </div>
+  <div class="grid grid-2">
+    <div class="chart-card"><h2>フォロワー推移</h2><canvas id="chartFollowers"></canvas></div>
+    <div class="chart-card"><h2>日次インプレッション</h2><canvas id="chartImp"></canvas></div>
+  </div>
+  <div class="chart-card"><h2>ピラー別 平均Imp</h2><canvas id="chartPillar"></canvas></div>
+  <div class="grid grid-2">
+    <div class="chart-card"><h2>時間帯別パフォーマンス</h2><canvas id="chartTimeslot"></canvas></div>
+    <div class="chart-card"><h2>画像あり vs なし</h2><canvas id="chartImage"></canvas></div>
+  </div>
+</div>
+
+<!-- ===== POSTS LOG ===== -->
+<div class="section" id="sec-posts">
+  <div class="input-section">
+    <h2>投稿ログ入力</h2>
+    <div class="input-row" style="font-weight:600;font-size:12px;color:#888">
+      <span>日付</span><span>投稿テキスト冒頭</span><span>ピラー</span><span>Imp</span><span>Eng</span><span>いいね</span><span>RT</span>
+    </div>
+    <div id="postInputRows"></div>
+    <div style="margin-top:12px;display:flex;gap:12px">
+      <button class="btn btn-pink" onclick="savePostLog()">保存</button>
+      <button class="btn btn-outline" onclick="addPostRow()">+ 行追加</button>
+    </div>
+  </div>
+  <div class="chart-card">
+    <h2>投稿ログ一覧</h2>
+    <table><thead><tr><th>日付</th><th>時間帯</th><th>ピラー</th><th>テキスト</th><th>Imp</th><th>Eng</th><th>ER</th><th>スコア</th></tr></thead>
+    <tbody id="postLogBody"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== ANALYSIS ===== -->
+<div class="section" id="sec-analysis">
+  <div class="chart-card">
+    <h2>週次トレンド</h2>
+    <canvas id="chartWeekly"></canvas>
+  </div>
+  <div class="grid grid-2">
+    <div class="chart-card">
+      <h2>ピラー別 ER比較</h2>
+      <canvas id="chartPillarER"></canvas>
+    </div>
+    <div class="chart-card">
+      <h2>曜日別 平均Imp</h2>
+      <canvas id="chartDayOfWeek"></canvas>
+    </div>
+  </div>
+  <div class="chart-card">
+    <h2>SEO KW順位トラッキング</h2>
+    <table><thead><tr><th>KW</th><th>エリア</th><th>優先度</th><th>現順位</th><th>前月</th><th>変動</th><th>目標</th></tr></thead>
+    <tbody id="kwBody"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== INTELLIGENCE ===== -->
+<div class="section" id="sec-intelligence">
+  <div class="grid grid-2" style="margin-bottom:20px">
+    <div class="chart-card">
+      <h2>競合バズ投稿(Grok収集)</h2>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">週2回Grokに聞いてここに記録 → 投稿改善に活用</p>
+      <table><thead><tr><th>日付</th><th>アカウント</th><th>バズ要因</th><th>活用ポイント</th></tr></thead>
+      <tbody id="buzzBody"></tbody></table>
+    </div>
+    <div class="chart-card">
+      <h2>トレンド・時事(Perplexity)</h2>
+      <p style="font-size:12px;color:#888;margin-bottom:12px">週1回Perplexityで調査 → 投稿・記事ネタに</p>
+      <table><thead><tr><th>日付</th><th>カテゴリ</th><th>概要</th><th>投稿転用案</th></tr></thead>
+      <tbody id="trendBody"></tbody></table>
+    </div>
+  </div>
+  <div class="chart-card">
+    <h2>Xアルゴリズム変動ログ</h2>
+    <table><thead><tr><th>確認日</th><th>変更内容</th><th>影響度</th><th>対応アクション</th></tr></thead>
+    <tbody id="algoBody"></tbody></table>
+  </div>
+</div>
+
+<!-- ===== WORKFLOW ===== -->
+<div class="section" id="sec-workflow">
+  <div class="workflow">
+    <h2>毎日の運用フロー（自動化済み部分はグレー）</h2>
+    <div class="step"><div class="step-num">1</div><div class="step-text" style="opacity:.5"><span class="step-tool">自動</span>6:00 GASがSearch Console/GA4/Vercelからデータ取得 → スプシ書込</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text" style="opacity:.5"><span class="step-tool">自動</span>7:00 CoworkタスクがX投稿案5本を自動生成 → .mdファイル出力</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><span class="step-tool">手動5分</span>7:00-7:30 投稿案を確認。OKならコピペ → 朝投稿を実行</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><span class="step-tool">手動各1分</span>12:00/19:00/22:00/23:00 予定投稿を実行</div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-text"><span class="step-tool">手動3分</span>翌朝 Xアナリティクスから前日のImp/Eng/いいね/RTを投稿ログに転記</div></div>
+  </div>
+  <div class="workflow">
+    <h2>週次インテリジェンス収集フロー</h2>
+    <div class="step"><div class="step-num">1</div><div class="step-text"><span class="step-tool">Grok</span>スプシ「競合バズ投稿」のプロンプトをコピペ → 結果を記録(10分)</div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><span class="step-tool">Perplexity</span>スプシ「トレンド・時事」のプロンプトをコピペ → ネタDB蓄積(10分)</div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><span class="step-tool">Grok</span>月2回「Xアルゴ動向」のプロンプトで最新情報取得 → 運用ルール更新(5分)</div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><span class="step-tool">手動</span>「AI改善フィードバック」シートに気づきを記録 → Coworkタスクのプロンプトに反映</div></div>
+  </div>
+  <div class="chart-card">
+    <h2>Grok vs Perplexity 使い分けガイド</h2>
+    <table>
+      <thead><tr><th>用途</th><th>最適ツール</th><th>理由</th><th>頻度</th></tr></thead>
+      <tbody>
+        <tr><td>競合のバズ投稿分析</td><td style="color:#e91e63;font-weight:700">Grok</td><td>X内部データにアクセス可能。リアルタイムのX上データが最強</td><td>週2回</td></tr>
+        <tr><td>Xアルゴリズム最新動向</td><td style="color:#e91e63;font-weight:700">Grok</td><td>Xの中の人AI。アルゴ変更を最も早く反映</td><td>月2回</td></tr>
+        <tr><td>ターゲット層の話題・興味</td><td style="color:#e91e63;font-weight:700">Grok</td><td>X上の会話トレンドをリアルタイム分析</td><td>週1回</td></tr>
+        <tr><td>業界トレンド・市場データ</td><td style="color:#6a1b9a;font-weight:700">Perplexity</td><td>出典付きで信頼性の高い調査データを取得</td><td>週1回</td></tr>
+        <tr><td>横浜/福岡ローカル情報</td><td style="color:#6a1b9a;font-weight:700">Perplexity</td><td>地域情報の網羅性が高い。出典URLで裏取り可能</td><td>月2回</td></tr>
+        <tr><td>記事の一次情報/統計</td><td style="color:#6a1b9a;font-weight:700">Perplexity</td><td>学術・政府統計へのアクセスが強い</td><td>記事執筆時</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ===== STATE =====
+let state = JSON.parse(localStorage.getItem('sb-dashboard') || '{}');
+if(!state.posts) state.posts = [];
+if(!state.followers) state.followers = [];
+if(!state.buzz) state.buzz = [];
+if(!state.trends) state.trends = [];
+if(!state.algo) state.algo = [];
+if(!state.kw) state.kw = [
+  {kw:'女性用風俗 横浜',area:'横浜',pri:'S',cur:'',prev:'',target:1},
+  {kw:'女性用風俗 神奈川',area:'神奈川',pri:'S',cur:'',prev:'',target:1},
+  {kw:'女性用風俗 福岡',area:'福岡',pri:'S',cur:'',prev:'',target:1},
+  {kw:'女性用風俗 博多',area:'博多',pri:'S',cur:'',prev:'',target:1},
+  {kw:'女風 横浜',area:'横浜',pri:'A',cur:'',prev:'',target:3},
+  {kw:'女風 福岡',area:'福岡',pri:'A',cur:'',prev:'',target:3},
+  {kw:'女性用風俗',area:'ビッグ',pri:'A',cur:'',prev:'',target:10},
+];
+
+const save = () => { try { localStorage.setItem('sb-dashboard', JSON.stringify(state)); } catch(e){} };
+const pillars = ['共感・エンパワメント','ブランド・キャスト紹介','お役立ち・コラム','キャンペーン・イベント','インタラクション'];
+const slots = ['朝','昼','夕','夜1','夜2'];
+const pColors = ['#e91e63','#ff9800','#2196f3','#4caf50','#9c27b0'];
+const today = new Date();
+document.getElementById('headerDate').textContent = today.toLocaleDateString('ja-JP',{year:'numeric',month:'long',day:'numeric',weekday:'long'});
+
+// ===== TABS =====
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',t.textContent.includes({'overview':'概要','posts':'投稿','analysis':'分析','intelligence':'インテリジェンス','workflow':'AI運用'}[id]||'')));
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+}
+
+// ===== KPIs =====
+function updateKPIs(){
+  const last7 = state.posts.slice(-35);
+  const prev7 = state.posts.slice(-70,-35);
+  const totalImp = last7.reduce((s,p)=>s+(p.imp||0),0);
+  const totalEng = last7.reduce((s,p)=>s+(p.eng||0),0);
+  const er = totalImp>0 ? (totalEng/totalImp*100) : 0;
+  const prevImp = prev7.reduce((s,p)=>s+(p.imp||0),0);
+  const latestF = state.followers.length>0 ? state.followers[state.followers.length-1].count : 0;
+
+  document.getElementById('kpi-followers').textContent = latestF ? latestF.toLocaleString() : '—';
+  document.getElementById('kpi-imp').textContent = totalImp ? totalImp.toLocaleString() : '—';
+  document.getElementById('kpi-er').textContent = er ? er.toFixed(2)+'%' : '—';
+  document.getElementById('kpi-goal').textContent = latestF ? (latestF/10000*100).toFixed(1)+'%' : '—';
+
+  if(prevImp>0){
+    const ch = ((totalImp-prevImp)/prevImp*100).toFixed(1);
+    const el = document.getElementById('kpi-imp-change');
+    el.textContent = (ch>0?'+':'')+ch+'% vs前週';
+    el.className = 'change '+(ch>=0?'up':'down');
+  }
+}
+
+// ===== CHARTS =====
+const chartOpts = {responsive:true,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}};
+let charts = {};
+
+function renderCharts(){
+  Object.values(charts).forEach(c=>c.destroy());
+  charts = {};
+
+  // Followers
+  const fLabels = state.followers.map(f=>f.date.slice(5));
+  const fData = state.followers.map(f=>f.count);
+  charts.followers = new Chart(document.getElementById('chartFollowers'),{
+    type:'line',data:{labels:fLabels,datasets:[{data:fData,borderColor:'#e91e63',backgroundColor:'rgba(233,30,99,.1)',fill:true,tension:.3}]},
+    options:{...chartOpts,plugins:{legend:{display:false}}}
+  });
+
+  // Daily Imp
+  const days = {};
+  state.posts.forEach(p=>{if(p.imp)(days[p.date]=(days[p.date]||0)+p.imp)});
+  const dLabels = Object.keys(days).slice(-14).map(d=>d.slice(5));
+  const dData = Object.keys(days).slice(-14).map(k=>days[k]);
+  charts.imp = new Chart(document.getElementById('chartImp'),{
+    type:'bar',data:{labels:dLabels,datasets:[{data:dData,backgroundColor:'rgba(233,30,99,.6)',borderRadius:4}]},options:chartOpts
+  });
+
+  // Pillar avg imp
+  const pillarImp = pillars.map(p=>{const ps=state.posts.filter(x=>x.pillar===p&&x.imp);return ps.length?ps.reduce((s,x)=>s+x.imp,0)/ps.length:0});
+  charts.pillar = new Chart(document.getElementById('chartPillar'),{
+    type:'bar',data:{labels:pillars.map(p=>p.slice(0,6)),datasets:[{data:pillarImp,backgroundColor:pColors,borderRadius:6}]},
+    options:{...chartOpts,indexAxis:'y'}
+  });
+
+  // Timeslot
+  const slotImp = slots.map(s=>{const ps=state.posts.filter(x=>x.slot===s&&x.imp);return ps.length?ps.reduce((a,x)=>a+x.imp,0)/ps.length:0});
+  charts.slot = new Chart(document.getElementById('chartTimeslot'),{
+    type:'bar',data:{labels:slots,datasets:[{data:slotImp,backgroundColor:'#e91e63',borderRadius:6}]},options:chartOpts
+  });
+
+  // Image comparison
+  const imgY = state.posts.filter(p=>p.hasImg&&p.imp);
+  const imgN = state.posts.filter(p=>!p.hasImg&&p.imp);
+  const imgData = [imgY.length?imgY.reduce((s,p)=>s+p.imp,0)/imgY.length:0, imgN.length?imgN.reduce((s,p)=>s+p.imp,0)/imgN.length:0];
+  charts.img = new Chart(document.getElementById('chartImage'),{
+    type:'doughnut',data:{labels:['画像あり','画像なし'],datasets:[{data:imgData,backgroundColor:['#e91e63','#ccc']}]},
+    options:{responsive:true,plugins:{legend:{position:'bottom'}}}
+  });
+}
+
+// ===== POST LOG =====
+function addPostRow(){
+  const c = document.getElementById('postInputRows');
+  const d = document.createElement('div');
+  d.className = 'input-row';
+  d.innerHTML = `<input type="date" value="${today.toISOString().slice(0,10)}"><input type="text" placeholder="投稿テキスト冒頭40字"><select>${pillars.map(p=>'<option>'+p+'</option>').join('')}</select><input type="number" placeholder="Imp"><input type="number" placeholder="Eng"><input type="number" placeholder="いいね"><input type="number" placeholder="RT">`;
+  c.appendChild(d);
+}
+
+function savePostLog(){
+  const rows = document.getElementById('postInputRows').children;
+  for(const row of rows){
+    const inputs = row.querySelectorAll('input, select');
+    if(!inputs[0].value) continue;
+    state.posts.push({
+      date: inputs[0].value,
+      slot: slots[state.posts.filter(p=>p.date===inputs[0].value).length % 5],
+      pillar: inputs[2].value,
+      text: inputs[1].value,
+      imp: parseInt(inputs[3].value)||0,
+      eng: parseInt(inputs[4].value)||0,
+      likes: parseInt(inputs[5].value)||0,
+      rt: parseInt(inputs[6].value)||0,
+      hasImg: true
+    });
+  }
+  save();
+  renderAll();
+  document.getElementById('postInputRows').innerHTML = '';
+  addPostRow();
+}
+
+function renderPostLog(){
+  const body = document.getElementById('postLogBody');
+  body.innerHTML = state.posts.slice(-50).reverse().map(p=>{
+    const er = p.imp>0?(p.eng/p.imp*100).toFixed(2)+'%':'—';
+    const score = p.imp?(p.imp+p.eng*5+(p.rt||0)*10).toLocaleString():'—';
+    return `<tr><td>${p.date}</td><td>${p.slot||''}</td><td>${p.pillar||''}</td><td>${p.text||''}</td><td>${(p.imp||0).toLocaleString()}</td><td>${(p.eng||0).toLocaleString()}</td><td>${er}</td><td>${score}</td></tr>`;
+  }).join('');
+}
+
+// ===== TABLES =====
+function renderTables(){
+  document.getElementById('kwBody').innerHTML = state.kw.map(k=>{
+    const ch = k.cur&&k.prev ? k.prev-k.cur : '';
+    const badge = k.pri==='S'?'badge-s':k.pri==='A'?'badge-a':'badge-b';
+    return `<tr><td><strong>${k.kw}</strong></td><td>${k.area}</td><td><span class="badge ${badge}">${k.pri}</span></td><td>${k.cur||'—'}</td><td>${k.prev||'—'}</td><td class="${ch>0?'up':ch<0?'down':''}">${ch?((ch>0?'+':'')+ch):'—'}</td><td>${k.target}位</td></tr>`;
+  }).join('');
+
+  document.getElementById('buzzBody').innerHTML = state.buzz.slice(-10).reverse().map(b=>
+    `<tr><td>${b.date}</td><td>${b.account}</td><td>${b.reason}</td><td>${b.action}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="color:#aaa;text-align:center">Grokで収集した競合バズ投稿がここに表示されます</td></tr>';
+
+  document.getElementById('trendBody').innerHTML = state.trends.slice(-10).reverse().map(t=>
+    `<tr><td>${t.date}</td><td>${t.category}</td><td>${t.summary}</td><td>${t.postIdea}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="color:#aaa;text-align:center">Perplexityで収集したトレンド情報がここに表示されます</td></tr>';
+
+  document.getElementById('algoBody').innerHTML = state.algo.slice(-10).reverse().map(a=>
+    `<tr><td>${a.date}</td><td>${a.change}</td><td>${a.impact}</td><td>${a.action}</td></tr>`
+  ).join('') || '<tr><td colspan="4" style="color:#aaa;text-align:center">Grokで収集したアルゴリズム変動情報がここに表示されます</td></tr>';
+}
+
+// ===== IMPORT/EXPORT =====
+function exportData(){
+  const csv = 'date,slot,pillar,text,imp,eng,likes,rt\n'+state.posts.map(p=>
+    [p.date,p.slot,p.pillar,'"'+(p.text||'').replace(/"/g,'""')+'"',p.imp,p.eng,p.likes,p.rt].join(',')
+  ).join('\n');
+  const blob = new Blob(['\uFEFF'+csv],{type:'text/csv'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'strawberry_boys_posts_'+today.toISOString().slice(0,10)+'.csv';
+  a.click();
+}
+
+function importData(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if(data.posts) state.posts = data.posts;
+      if(data.followers) state.followers = data.followers;
+      save(); renderAll();
+      alert('データを取り込みました');
+    } catch(err) {
+      alert('JSONファイルを選択してください');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// Demo data for visualization
+function loadDemoData(){
+  if(state.posts.length > 0) return;
+  const demoStart = new Date(2026, 3, 15);
+  for(let d=0;d<14;d++){
+    const day = new Date(demoStart);
+    day.setDate(day.getDate()+d);
+    const ds = day.toISOString().slice(0,10);
+    slots.forEach((s,i)=>{
+      state.posts.push({
+        date:ds, slot:s, pillar:pillars[i%5],
+        text:'(サンプルデータ)', hasImg:Math.random()>.3,
+        imp:Math.floor(Math.random()*3000+500),
+        eng:Math.floor(Math.random()*200+20),
+        likes:Math.floor(Math.random()*100+10),
+        rt:Math.floor(Math.random()*30+2)
+      });
+    });
+    state.followers.push({date:ds, count:Math.floor(150+d*38+Math.random()*20)});
+  }
+  state.buzz = [
+    {date:'2026-04-17',account:'@xxx_lady',reason:'体験談の生々しさ+共感導入',action:'体験談形式を月2回導入'},
+    {date:'2026-04-15',account:'@yyy_relax',reason:'名言リライト+深夜投稿',action:'23時台に共感名言を配置'},
+  ];
+  state.trends = [
+    {date:'2026-04-17',category:'業界動向',summary:'女性向けリラクゼーション市場120%成長',postIdea:'プロの手で癒やしを系投稿'},
+    {date:'2026-04-16',category:'ターゲット層',summary:'30代女性の6割が自分時間を最重要視',postIdea:'自分だけの時間系共感投稿'},
+  ];
+  state.algo = [
+    {date:'2026-04-17',change:'リプライチェーンの重みが増加',impact:'高',action:'質問形式投稿を15%に'},
+    {date:'2026-04-15',change:'4枚カルーセルのImpが単画像の2倍',impact:'中',action:'キャスト紹介は4枚セット'},
+  ];
+  save();
+}
+
+function renderAll(){
+  updateKPIs();
+  renderCharts();
+  renderPostLog();
+  renderTables();
+}
+
+loadDemoData();
+addPostRow();
+renderAll();
+</script>
+</body>
+</html>

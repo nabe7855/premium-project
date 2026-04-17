@@ -75,6 +75,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
             castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) ||
               `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
+            images: (data.blog_images?.map((img: any) => getSupabasePublicUrl(img.image_url)).filter(Boolean) as string[]) || [],
             readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
             commentCount: data.blog_comments?.[0]?.count || 0,
             isCommentEnabled: data.is_comment_enabled ?? true,
@@ -191,19 +192,33 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
           <article className="mb-8 overflow-hidden rounded-2xl border border-pink-100 bg-white">
-            <div className={`relative flex justify-center bg-gray-50/50 min-h-[300px] transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-              {!imageLoaded && (
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="h-8 w-8 animate-spin rounded-full border-2 border-pink-200 border-t-pink-500"></div>
-                </div>
-              )}
-              <img
-                src={post.image}
-                alt={`${post.title} - ${post.castName}の日記`}
-                onLoad={() => setImageLoaded(true)}
-                className="h-auto max-h-[70vh] w-auto object-contain"
-              />
-            </div>
+            {post.images && post.images.length > 0 ? (
+              <div className="flex flex-col">
+                {post.images.map((imgSrc, idx) => (
+                  <div key={idx} className="relative flex justify-center bg-gray-50/50 min-h-[300px] border-b border-pink-50">
+                    <img
+                      src={imgSrc}
+                      alt={`${post.title} - ${post.castName}の日記 - 画像${idx + 1}`}
+                      className="h-auto max-h-[70vh] w-auto object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className={`relative flex justify-center bg-gray-50/50 min-h-[300px] transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
+                {!imageLoaded && (
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-pink-200 border-t-pink-500"></div>
+                  </div>
+                )}
+                <img
+                  src={post.image}
+                  alt={`${post.title} - ${post.castName}の日記`}
+                  onLoad={() => setImageLoaded(true)}
+                  className="h-auto max-h-[70vh] w-auto object-contain"
+                />
+              </div>
+            )}
             <div className="p-4 sm:p-8">
               <h1 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">{post.title}</h1>
               <Link
