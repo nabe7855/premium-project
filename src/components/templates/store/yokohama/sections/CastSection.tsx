@@ -389,15 +389,22 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 </div>
                               </div>
 
-                              <div className="mb-3 flex items-center gap-1">
-                                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                                <span className="text-sm font-black text-slate-700">
-                                  {(cast.rating || 5.0).toFixed(1)}
-                                </span>
-                                <span className="text-xs font-bold text-slate-400">
-                                  ({cast.reviewCount || 10})
-                                </span>
-                              </div>
+                              {/* 評価セクション */}
+                              {cast.reviewCount && cast.reviewCount > 0 ? (
+                                <div className="mb-3 flex items-center gap-1">
+                                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                                  <span className="text-sm font-black text-slate-700">
+                                    {(cast.rating || 0).toFixed(1)}
+                                  </span>
+                                  <span className="text-xs font-bold text-slate-400">
+                                    ({cast.reviewCount})
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="mb-3 flex items-center gap-1 text-slate-400 text-[10px] font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-md w-fit">
+                                  評価はまだありません
+                                </div>
+                              )}
 
                               {/* 出勤時間 */}
                               <div className="mt-auto border-t border-rose-50 pt-3">
@@ -512,15 +519,22 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 </div>
                               </div>
 
-                              <div className="mb-3 flex items-center gap-1">
-                                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                                <span className="text-sm font-black text-slate-700">
-                                  {(cast.rating || 5.0).toFixed(1)}
-                                </span>
-                                <span className="text-xs font-bold text-slate-400">
-                                  ({cast.reviewCount || 10})
-                                </span>
-                              </div>
+                              {/* 評価セクション */}
+                              {cast.reviewCount && cast.reviewCount > 0 ? (
+                                <div className="mb-3 flex items-center gap-1">
+                                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                                  <span className="text-sm font-black text-slate-700">
+                                    {(cast.rating || 0).toFixed(1)}
+                                  </span>
+                                  <span className="text-xs font-bold text-slate-400">
+                                    ({cast.reviewCount})
+                                  </span>
+                                </div>
+                              ) : (
+                                <div className="mb-3 flex items-center gap-1 text-slate-400 text-[10px] font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-md w-fit">
+                                  評価はまだありません
+                                </div>
+                              )}
 
                               {/* 出勤時間 */}
                               <div className="mt-auto border-t border-rose-50 pt-3">
