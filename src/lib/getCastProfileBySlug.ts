@@ -114,7 +114,37 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   const castQuestions = await getCastQuestions(cast.id);
   console.log('❓ castQuestions:', castQuestions);
 
-  // 6. 整形して返却
+  // 6. 出勤スケジュールと評価 (レビュー) の取得
+  const [{ data: schedules }, { data: reviewsData }] = await Promise.all([
+    supabase
+      .from('schedules')
+      .select('start_datetime, end_datetime, work_date')
+      .eq('cast_id', cast.id)
+      .gte('work_date', new Date().toISOString().split('T')[0]),
+    supabase
+      .from('reviews')
+      .select('rating')
+      .eq('cast_id', cast.id)
+  ]);
+
+  const availability: Record<string, string[]> = {};
+  if (schedules) {
+    schedules.forEach((s) => {
+      const dateStr = s.work_date;
+      if (!availability[dateStr]) availability[dateStr] = [];
+      const startTime = new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' });
+      availability[dateStr].push(startTime);
+    });
+  }
+
+  const castReviews = reviewsData || [];
+  const reviewCount = castReviews.length;
+  const rating =
+        reviewCount > 0
+          ? Number((castReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount).toFixed(1))
+          : 0;
+
+  // 7. 整形して返却
   const normalized = normalizeCast(
     {
       ...cast,
@@ -130,5 +160,8 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   return {
     ...normalized,
     castQuestions: castQuestions ?? [],
+    availability,
+    rating,
+    reviewCount,
   };
 }

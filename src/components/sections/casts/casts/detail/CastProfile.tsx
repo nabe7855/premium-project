@@ -32,13 +32,19 @@ const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
           {/* 評価・年齢・出勤 */}
           <div className="flex flex-wrap items-center gap-3 mb-6 sm:gap-4">
             {/* 評価 */}
-            <div className="flex items-center text-sm sm:text-base">
-              <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
-              <span className="font-semibold text-neutral-800">
-                {(cast.rating ?? 0).toFixed(1)}
-              </span>
-              <span className="text-neutral-600 ml-1">🍓評価</span>
-            </div>
+            {cast.reviewCount && cast.reviewCount > 0 ? (
+              <div className="flex items-center text-sm sm:text-base">
+                <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
+                <span className="font-semibold text-neutral-800">
+                  {(cast.rating ?? 0).toFixed(1)}
+                </span>
+                <span className="text-neutral-600 ml-1">🍓評価</span>
+              </div>
+            ) : (
+              <div className="flex items-center text-xs sm:text-sm text-neutral-400 bg-neutral-100 px-3 py-1 rounded-full font-semibold">
+                評価はまだありません
+              </div>
+            )}
 
             {/* 年齢 */}
             <div className="text-neutral-600 text-sm sm:text-base">

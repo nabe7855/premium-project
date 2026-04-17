@@ -18,6 +18,8 @@ export interface TodayCast {
   face_name?: string | null;
   start_datetime?: string;
   end_datetime?: string;
+  rating?: number;
+  review_count?: number;
 }
 
 interface CastSliderSectionProps {
@@ -139,11 +141,17 @@ export default function CastSliderSection({ casts, storeSlug }: CastSliderSectio
                   </div>
 
                   {/* Rating */}
-                  <div className="mb-5 flex items-center gap-1.5">
-                    <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
-                    <span className="text-lg font-black text-slate-700">5.0</span>
-                    <span className="text-sm font-bold text-slate-400">(10)</span>
-                  </div>
+                  {currentCast.review_count && currentCast.review_count > 0 ? (
+                    <div className="mb-5 flex items-center gap-1.5">
+                      <Star className="h-5 w-5 fill-amber-400 text-amber-400" />
+                      <span className="text-lg font-black text-slate-700">{(currentCast.rating || 0).toFixed(1)}</span>
+                      <span className="text-sm font-bold text-slate-400">({currentCast.review_count})</span>
+                    </div>
+                  ) : (
+                    <div className="mb-5 flex items-center gap-1.5 text-slate-400 text-sm font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-md w-fit">
+                      評価はまだありません
+                    </div>
+                  )}
 
                   {/* Sexiness */}
                   <div className="mt-auto flex items-center gap-2">

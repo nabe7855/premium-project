@@ -102,7 +102,8 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
           is_ichioshi,
           is_shop_account,
           stores!inner ( slug, id )
-        )
+        ),
+        reviews ( rating )
       )
     `,
     )
@@ -145,6 +146,12 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
     const castId = cast.id;
     const ichioshiInfo = ichioshiMap[castId];
 
+    const castReviews = Array.isArray(cast.reviews) ? cast.reviews : [];
+    const reviewCount = castReviews.length;
+    const rating = reviewCount > 0 
+      ? Number((castReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount).toFixed(1)) 
+      : 0;
+
     const mapped: TodayCast = {
       id: castId,
       name: cast.name,
@@ -159,8 +166,8 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
         .filter((cs: any) => cs.is_active)
         .map((cs: any) => cs.status_master?.name)
         .filter(Boolean),
-      rating: 5.0,
-      review_count: 10,
+      rating: rating,
+      review_count: reviewCount,
       sexiness_strawberry: '🍓'.repeat(Math.max(1, Math.min(5, cast.sexiness_level || 3))),
       sexiness_level: (cast.sexiness_level || 3) * 20,
       mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,

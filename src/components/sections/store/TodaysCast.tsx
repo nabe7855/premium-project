@@ -80,15 +80,21 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                 </div>
 
                 {/* Rating */}
-                <div className="mb-3 flex items-center gap-1">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  <span className="text-sm font-black text-slate-700">
-                    {(currentCast.rating || 5.0).toFixed(1)}
-                  </span>
-                  <span className="text-xs font-bold text-slate-400">
-                    ({currentCast.reviewCount || 10})
-                  </span>
-                </div>
+                {currentCast.reviewCount && currentCast.reviewCount > 0 ? (
+                  <div className="mb-3 flex items-center gap-1">
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                    <span className="text-sm font-black text-slate-700">
+                      {(currentCast.rating || 0).toFixed(1)}
+                    </span>
+                    <span className="text-xs font-bold text-slate-400">
+                      ({currentCast.reviewCount})
+                    </span>
+                  </div>
+                ) : (
+                  <div className="mb-3 flex items-center gap-1 text-slate-400 text-xs font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-md w-fit">
+                    評価はまだありません
+                  </div>
+                )}
 
                 {/* MBTI & Sexiness */}
                 <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
@@ -199,15 +205,21 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                   </div>
 
                   {/* Rating */}
-                  <div className="mb-4 flex items-center gap-1">
-                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                    <span className="text-sm font-black text-slate-700">
-                      {(cast.rating || 5.0).toFixed(1)}
-                    </span>
-                    <span className="text-xs font-bold text-slate-400">
-                      ({cast.reviewCount || 10})
-                    </span>
-                  </div>
+                  {cast.reviewCount && cast.reviewCount > 0 ? (
+                    <div className="mb-4 flex items-center gap-1">
+                      <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                      <span className="text-sm font-black text-slate-700">
+                        {(cast.rating || 0).toFixed(1)}
+                      </span>
+                      <span className="text-xs font-bold text-slate-400">
+                        ({cast.reviewCount})
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="mb-4 flex items-center gap-1 text-slate-400 text-[10px] font-bold border border-slate-200 bg-slate-50 px-2 py-0.5 rounded-md w-fit">
+                      評価はまだありません
+                    </div>
+                  )}
 
                   {/* Sexiness & Button */}
                   <div className="mt-auto flex items-center justify-between border-t border-slate-50 pt-4">
