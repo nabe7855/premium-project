@@ -646,9 +646,10 @@ function refreshDashboard() {
 function syncToClientSheet() {
   try {
     var clientSS = SpreadsheetApp.openById(CLIENT_SHEET_ID);
+    var srcSS = SpreadsheetApp.getActiveSpreadsheet();
 
     // --- ダッシュボードを同期 ---
-    var srcDash = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('📊 ダッシュボード');
+    var srcDash = srcSS.getSheetByName('📊 ダッシュボード');
     var dstDash = clientSS.getSheetByName('📊 ダッシュボード');
     if (srcDash && dstDash) {
       var data = srcDash.getDataRange().getValues();
@@ -656,16 +657,51 @@ function syncToClientSheet() {
       if (data.length > 0) {
         dstDash.getRange(1, 1, data.length, data[0].length).setValues(data);
       }
-      // タイトル再フォーマット
       dstDash.getRange('A1:H1').merge().setFontSize(18).setFontWeight('bold')
         .setFontColor('#FFFFFF').setBackground('#1a1a2e').setHorizontalAlignment('center');
       dstDash.getRange('A2:H2').merge().setFontSize(10).setFontColor('#666666')
         .setHorizontalAlignment('center').setBackground('#f0f0f0');
     }
 
-    Logger.log('📤 クライアントシート同期完了');
+    // --- 生データシートを同期（なければ自動作成） ---
+    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元', 'ターゲットKW順位'];
+    dataSheets.forEach(function(sheetName) {
+      var src = srcSS.getSheetByName(sheetName);
+      if (!src) {
+        Logger.log('同期スキップ（ソースなし）: ' + sheetName);
+        return;
+      }
+
+      var srcData = src.getDataRange().getValues();
+      if (srcData.length === 0) {
+        Logger.log('同期スキップ（データなし）: ' + sheetName);
+        return;
+      }
+
+      // クライアント側にシートがなければ作成
+      var dst = clientSS.getSheetByName(sheetName);
+      if (!dst) {
+        dst = clientSS.insertSheet(sheetName);
+        Logger.log('📄 クライアント側にシート作成: ' + sheetName);
+      }
+
+      // データを上書き
+      dst.clear();
+      dst.getRange(1, 1, srcData.length, srcData[0].length).setValues(srcData);
+
+      // ヘッダー行をフォーマット
+      dst.getRange(1, 1, 1, srcData[0].length)
+        .setFontWeight('bold')
+        .setBackground('#2B5797')
+        .setFontColor('#FFFFFF');
+      dst.setFrozenRows(1);
+
+      Logger.log('✅ 同期完了: ' + sheetName + '（' + srcData.length + '行）');
+    });
+
+    Logger.log('📤 クライアントシート同期完了（全シート）');
   } catch (e) {
-    Logger.log('クライアントシート同期エラー（初回は正常）: ' + e.message);
+    Logger.log('クライアントシート同期エラー: ' + e.message);
   }
 }
 

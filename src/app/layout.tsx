@@ -4,6 +4,7 @@ import FooterGuard from '@/components/sections/layout/FooterGuard';
 import HeaderGuard from '@/components/sections/layout/HeaderGuard';
 import '@/styles/Footer.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from '@vercel/analytics/react';
 import type { Metadata, Viewport } from 'next';
 import { Inter, Noto_Sans_JP, Noto_Serif_JP, Lora, Poppins } from 'next/font/google';
 import { Toaster } from 'sonner';
@@ -93,6 +94,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </HeaderGuard>
           </AgeVerificationGuard>
           <SpeedInsights />
+          <Analytics />
         </Providers>
         <Toaster
           position="top-center"
