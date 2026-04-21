@@ -318,7 +318,6 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                unoptimized
                               />
                               <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1.5">
                                 <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black text-white shadow-md">
@@ -448,7 +447,6 @@ const CastSection: React.FC<CastSectionProps> = ({
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
                                 sizes="(max-width: 768px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                                unoptimized
                               />
                               <div className="pointer-events-none absolute left-2 top-2 flex flex-col gap-1.5">
                                 <span className="flex items-center gap-1 rounded-full bg-rose-500 px-2.5 py-1 text-[9px] font-black text-white shadow-md">

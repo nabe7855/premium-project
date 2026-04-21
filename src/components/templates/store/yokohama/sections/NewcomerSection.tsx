@@ -126,7 +126,6 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
                       sizes="(max-width: 768px) 150px, 200px"
                       loading="lazy"
-                      unoptimized
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
                         if (target.src.indexOf('cast-default.jpg') === -1) {

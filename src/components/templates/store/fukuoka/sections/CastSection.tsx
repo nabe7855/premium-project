@@ -344,7 +344,6 @@ const CastSection: React.FC<CastSectionProps> = ({
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
                             sizes="(max-width: 640px) 240px, 300px"
-                            unoptimized
                           />
                           <div className="pointer-events-none absolute left-2 top-2">
                             <span className="flex items-center gap-1 rounded-full bg-amber-400 px-2.5 py-1 text-[9px] font-black text-white shadow-md">

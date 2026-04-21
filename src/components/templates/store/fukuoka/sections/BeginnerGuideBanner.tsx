@@ -49,7 +49,6 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
               priority={true}
               fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 1200px"
-              unoptimized
             />
           </div>
           {/* Shine effect */}

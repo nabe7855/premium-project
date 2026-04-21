@@ -193,16 +193,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       isActive ? 'scale-100 opacity-100 shadow-xl' : 'scale-[0.85] opacity-40 blur-[1px]'
                     }`}
                   >
-                    {/* 背景のぼかし画像 (見切れ対策/プレミアム感) */}
-                    <div className="absolute inset-0">
-                      <NextImage
-                        src={img}
-                        alt=""
-                        fill
-                        className="scale-110 object-cover blur-2xl opacity-40"
-                        unoptimized
-                      />
-                    </div>
+                    {/* 背景のぼかし (CSSのみ・画像の二重読み込みを回避) */}
+                    <div className="absolute inset-0 bg-slate-900/10" />
                     
                     {(() => {
                       const imageContent = (
@@ -215,7 +207,6 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                             fetchPriority={isFirst ? "high" : undefined}
                             sizes="(max-width: 768px) 100vw, 80vw"
                             className="h-full w-full object-contain"
-                            unoptimized
                           />
                         </div>
                       );

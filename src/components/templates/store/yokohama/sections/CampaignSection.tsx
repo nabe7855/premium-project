@@ -147,7 +147,6 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-110"
                       sizes="80px"
-                      unoptimized
                     />
                   </div>
                   <div className="min-w-0 flex-1">
