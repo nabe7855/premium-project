@@ -164,7 +164,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
         break;
 
       case 'todayAvailable': // 本日出勤
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' });
         result = result.filter(
           (c) => c.availability?.[today] && c.availability[today].length > 0
         );

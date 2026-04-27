@@ -22,23 +22,116 @@ var GA4_PROPERTY_ID = '526595944';
 // クライアント共有用スプレッドシート（ダッシュボード・KW順位を同期）
 var CLIENT_SHEET_ID = '1dwsviubjpv2gQpxLOXVJCGRYxMinOb1NOoAY54GnRH0';
 
-// ===== ターゲットキーワード =====
-var TARGET_KEYWORDS = [
-  '女性用風俗 横浜',
-  '女性用風俗 福岡',
-  '女性用風俗 神奈川',
-  '女性用風俗 博多',
-  '女性向け 風俗 横浜',
-  '女性向け 風俗 福岡',
-  '女性向け リラクゼーション 横浜',
-  '女性向け リラクゼーション 福岡',
-  'ストロベリーボーイズ',
-  'レディースコミック 横浜',
-  'レディースコミック 福岡',
-  '女風 横浜',
-  '女風 福岡',
-  '女風 博多',
+// ===== 店舗別キーワード設定 =====
+var STORES = [
+  {
+    name: 'ブランド共通',
+    keywords: [
+      'ストロベリーボーイズ',
+      '女性用風俗 流れ',
+      '女性用風俗 当日予約',
+      '女風 相場',
+      '女性用風俗 何をする',
+      '女性用風俗 初めて',
+    ]
+  },
+  {
+    name: '横浜店',
+    keywords: [
+      '女性用風俗 横浜',
+      '女性用風俗 神奈川',
+      '女性向け 風俗 横浜',
+      '女性向け リラクゼーション 横浜',
+      'レディースコミック 横浜',
+      '女風 横浜',
+      '横浜駅 女性用風俗',
+      '関内 女性用風俗',
+      '川崎 女性用風俗',
+      '横浜 女性用風俗 おすすめ',
+      '横浜 女性用風俗 口コミ',
+      '女性用風俗 料金 横浜',
+    ]
+  },
+  {
+    name: '福岡店',
+    keywords: [
+      '女性用風俗 福岡',
+      '女性用風俗 博多',
+      '女性向け 風俗 福岡',
+      '女性向け リラクゼーション 福岡',
+      'レディースコミック 福岡',
+      '女風 福岡',
+      '女風 博多',
+      '天神 女性用風俗',
+      '中洲 女性用風俗',
+      '博多駅 女性用風俗',
+      '小倉 女性用風俗',
+      '女性用風俗 九州',
+      '女性用風俗 料金 福岡',
+      '女風 相場 福岡',
+    ]
+  },
 ];
+
+// ===== オウンドメディア設定 =====
+var OWNED_MEDIA = [
+  {
+    name: 'AmoLab',
+    path: '/amolab',
+    purpose: '新規顧客獲得',
+    keywords: [
+      '女性用風俗 体験談',
+      '女性用風俗 口コミ',
+      '女性用風俗 何する',
+      '女性用風俗 選び方',
+      '女性用風俗 怖い',
+      '女性用風俗 安全',
+      '女性用風俗 初めて',
+      '女性用風俗 罪悪感',
+      '癒されたい 女性',
+      '女性 セルフケア',
+    ]
+  },
+  {
+    name: 'IkeoLab',
+    path: '/ikeo',
+    purpose: 'セラピスト採用',
+    keywords: [
+      '女性用風俗 求人',
+      '男性セラピスト 求人',
+      '清潔感 男性',
+      'モテる男 習慣',
+      '副業 男性 高収入',
+      'コミュニケーション力 鍛える',
+      'マッサージ 独学',
+      '夜職 男性 求人',
+      '未経験 高収入 男性',
+      '接客 スキル 男性',
+    ]
+  },
+  {
+    name: 'SweetStay',
+    path: '/sweetstay',
+    purpose: 'ラブホ特化メディア',
+    keywords: [
+      'ラブホ 横浜 おすすめ',
+      'ラブホ 福岡 おすすめ',
+      'ラブホ 女子会',
+      'ラブホ 一人 休憩',
+      'ラブホ 女性 安心',
+      'ラブホ 清潔',
+      'ホテル デイユース',
+      'ラブホ 初心者 女性',
+      'ラブホテル 横浜 きれい',
+      'ラブホテル 福岡 きれい',
+    ]
+  },
+];
+
+// 全キーワード統合（Search Consoleのターゲット判定用）
+var TARGET_KEYWORDS = [];
+STORES.forEach(function(s) { TARGET_KEYWORDS = TARGET_KEYWORDS.concat(s.keywords); });
+OWNED_MEDIA.forEach(function(m) { TARGET_KEYWORDS = TARGET_KEYWORDS.concat(m.keywords); });
 
 
 // ============================================================
@@ -63,6 +156,8 @@ function dailyDataCollection() {
   fetchGA4Data();
   fetchGA4TrafficSources();
   updateTargetKWRanking();
+  fetchMediaSCData();
+  updateMediaKWRanking();
   refreshDashboard();
   syncToClientSheet();
   Logger.log('=== 全データ取得完了: ' + new Date() + ' ===');
@@ -242,34 +337,24 @@ function fetchGA4TrafficSources() {
 
 
 // ============================================================
-// ターゲットKW順位サマリー（過去7日間）
+// 店舗別KW順位サマリー（過去7日間）
 // ============================================================
 function updateTargetKWRanking() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName('ターゲットKW順位');
-  if (!sheet) {
-    sheet = ss.insertSheet('ターゲットKW順位');
-    sheet.appendRow(['取得日'].concat(TARGET_KEYWORDS));
-    var headerRange = sheet.getRange(1, 1, 1, TARGET_KEYWORDS.length + 1);
-    headerRange.setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF').setWrap(true);
-    sheet.setFrozenRows(1);
-    sheet.setFrozenColumns(1);
-  }
-
   var today = new Date();
   var endDate = new Date(today.getTime() - 86400000);
   var startDate = new Date(today.getTime() - 7 * 86400000);
+  var fetchDate = formatDate(today);
 
+  // Search Console APIからデータ一括取得
   var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
     + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
-
   var payload = {
     startDate: formatDate(startDate),
     endDate: formatDate(endDate),
     dimensions: ['query'],
-    rowLimit: 500,
+    rowLimit: 1000,
   };
-
   var options = {
     method: 'post',
     contentType: 'application/json',
@@ -284,33 +369,202 @@ function updateTargetKWRanking() {
       Logger.log('KW順位APIエラー: ' + response.getContentText());
       return;
     }
-
     var data = JSON.parse(response.getContentText());
-    var rankings = {};
 
-    if (data.rows) {
-      data.rows.forEach(function(row) {
-        var query = row.keys[0];
-        TARGET_KEYWORDS.forEach(function(kw) {
-          if (query.indexOf(kw) !== -1) {
-            if (!rankings[kw] || row.position < rankings[kw]) {
-              rankings[kw] = row.position;
+    // 店舗ごとにシートを作成・更新
+    STORES.forEach(function(store) {
+      var sheetName = 'KW順位_' + store.name;
+      var sheet = ss.getSheetByName(sheetName);
+      if (!sheet) {
+        sheet = ss.insertSheet(sheetName);
+        var headers = ['取得日'].concat(store.keywords);
+        sheet.appendRow(headers);
+        sheet.getRange(1, 1, 1, headers.length)
+          .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF').setWrap(true);
+        sheet.setFrozenRows(1);
+        sheet.setFrozenColumns(1);
+      }
+
+      // このストアのKWの順位を取得
+      var rankings = {};
+      if (data.rows) {
+        data.rows.forEach(function(row) {
+          var query = row.keys[0];
+          store.keywords.forEach(function(kw) {
+            if (query.indexOf(kw) !== -1) {
+              if (!rankings[kw] || row.position < rankings[kw]) {
+                rankings[kw] = row.position;
+              }
             }
-          }
+          });
         });
-      });
-    }
+      }
 
-    var rowData = [formatDate(today)];
-    TARGET_KEYWORDS.forEach(function(kw) {
-      rowData.push(rankings[kw] ? rankings[kw].toFixed(1) : '-');
+      var rowData = [fetchDate];
+      store.keywords.forEach(function(kw) {
+        rowData.push(rankings[kw] ? rankings[kw].toFixed(1) : '-');
+      });
+      sheet.appendRow(rowData);
+      Logger.log('KW順位: ' + store.name + ' 更新完了');
     });
 
-    sheet.appendRow(rowData);
-    Logger.log('KW順位サマリー更新完了');
   } catch (e) {
     Logger.log('KW順位エラー: ' + e.message);
   }
+}
+
+
+// ============================================================
+// オウンドメディア別 Search Console データ取得
+// ============================================================
+function fetchMediaSCData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('メディア別SC');
+  if (!sheet) {
+    sheet = ss.insertSheet('メディア別SC');
+    sheet.appendRow(['取得日', '対象日', 'メディア', 'ページURL', 'クエリ', 'クリック数', '表示回数', 'CTR', '平均順位']);
+    sheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(3, 100);
+    sheet.setColumnWidth(4, 300);
+    sheet.setColumnWidth(5, 250);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 28 * 86400000);
+  var fetchDate = formatDate(today);
+
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  };
+
+  OWNED_MEDIA.forEach(function(media) {
+    var payload = {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      dimensions: ['query', 'page'],
+      dimensionFilterGroups: [{
+        filters: [{
+          dimension: 'page',
+          operator: 'contains',
+          expression: media.path
+        }]
+      }],
+      rowLimit: 500,
+    };
+    options.payload = JSON.stringify(payload);
+
+    try {
+      var response = UrlFetchApp.fetch(apiUrl, options);
+      if (response.getResponseCode() !== 200) {
+        Logger.log('メディアSC APIエラー (' + media.name + '): ' + response.getContentText());
+        return;
+      }
+      var data = JSON.parse(response.getContentText());
+      if (!data.rows || data.rows.length === 0) {
+        Logger.log('メディアSC: ' + media.name + ' データなし（記事公開後に取得開始）');
+        return;
+      }
+
+      var rows = data.rows.map(function(row) {
+        return [
+          fetchDate, formatDate(endDate), media.name,
+          row.keys[1], row.keys[0],
+          row.clicks, row.impressions,
+          (row.ctr * 100).toFixed(2) + '%',
+          row.position.toFixed(1)
+        ];
+      });
+
+      var lastRow = sheet.getLastRow();
+      sheet.getRange(lastRow + 1, 1, rows.length, 9).setValues(rows);
+      Logger.log('メディアSC: ' + media.name + ' ' + rows.length + '行追加');
+    } catch (e) {
+      Logger.log('メディアSCエラー (' + media.name + '): ' + e.message);
+    }
+  });
+}
+
+
+// ============================================================
+// オウンドメディア別 KW順位サマリー
+// ============================================================
+function updateMediaKWRanking() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 7 * 86400000);
+  var fetchDate = formatDate(today);
+
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var baseOptions = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  };
+
+  OWNED_MEDIA.forEach(function(media) {
+    var sheetName = 'KW順位_' + media.name;
+    var sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      sheet = ss.insertSheet(sheetName);
+      var headers = ['取得日'].concat(media.keywords);
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length)
+        .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF').setWrap(true);
+      sheet.setFrozenRows(1);
+      sheet.setFrozenColumns(1);
+    }
+
+    var payload = {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      dimensions: ['query'],
+      rowLimit: 500,
+    };
+    baseOptions.payload = JSON.stringify(payload);
+
+    try {
+      var response = UrlFetchApp.fetch(apiUrl, baseOptions);
+      if (response.getResponseCode() !== 200) {
+        Logger.log('メディアKW APIエラー (' + media.name + '): ' + response.getContentText());
+        return;
+      }
+      var data = JSON.parse(response.getContentText());
+      var rankings = {};
+
+      if (data.rows) {
+        data.rows.forEach(function(row) {
+          var query = row.keys[0];
+          media.keywords.forEach(function(kw) {
+            if (query.indexOf(kw) !== -1) {
+              if (!rankings[kw] || row.position < rankings[kw]) {
+                rankings[kw] = row.position;
+              }
+            }
+          });
+        });
+      }
+
+      var rowData = [fetchDate];
+      media.keywords.forEach(function(kw) {
+        rowData.push(rankings[kw] ? rankings[kw].toFixed(1) : '-');
+      });
+      sheet.appendRow(rowData);
+      Logger.log('メディアKW順位: ' + media.name + ' 更新完了');
+    } catch (e) {
+      Logger.log('メディアKWエラー (' + media.name + '): ' + e.message);
+    }
+  });
 }
 
 
@@ -605,33 +859,82 @@ function refreshDashboard() {
     sheet.getRange(row + 1, 1).setValue('💡 「📱 X投稿ログ」にデータを入力すると集計されます').setFontColor('#999999');
   }
 
-  // セクションC: KW順位
+  // セクションC: 店舗別KW順位
   row = 22;
-  sheet.getRange('A' + row + ':H' + row).merge().setValue('🎯 ターゲットキーワード順位')
-    .setFontSize(14).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#e8eaf6');
+  var kwR = row;
 
-  var kwSheet = ss.getSheetByName('ターゲットKW順位');
-  if (kwSheet && kwSheet.getLastRow() > 1) {
-    sheet.getRange(row + 1, 1, 1, 3).setValues([['キーワード', '現在の順位', 'ステータス']])
-      .setFontWeight('bold').setBackground('#c5cae9').setHorizontalAlignment('center');
-    var kwData = kwSheet.getDataRange().getValues();
-    var latestKW = kwData[kwData.length - 1];
-    var kwR = row + 2;
-    for (var m = 1; m < kwData[0].length; m++) {
-      var rank = latestKW[m];
-      var status = '圏外', bg = '#FFEBEE';
-      if (rank !== '-' && rank !== '' && rank !== null) {
-        var rn = parseFloat(rank);
-        if (rn <= 3) { status = '🥇 上位表示'; bg = '#E8F5E9'; }
-        else if (rn <= 10) { status = '✅ 1ページ目'; bg = '#FFF9C4'; }
-        else if (rn <= 20) { status = '📈 改善中'; bg = '#FFF3E0'; }
-        else { status = '⚠️ 要改善'; bg = '#FFEBEE'; }
+  STORES.forEach(function(store) {
+    sheet.getRange('A' + kwR + ':H' + kwR).merge()
+      .setValue('🎯 ' + store.name + ' キーワード順位')
+      .setFontSize(13).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#e8eaf6');
+    kwR++;
+
+    var kwSheet = ss.getSheetByName('KW順位_' + store.name);
+    if (kwSheet && kwSheet.getLastRow() > 1) {
+      sheet.getRange(kwR, 1, 1, 3).setValues([['キーワード', '現在の順位', 'ステータス']])
+        .setFontWeight('bold').setBackground('#c5cae9').setHorizontalAlignment('center');
+      kwR++;
+
+      var kwData = kwSheet.getDataRange().getValues();
+      var latestKW = kwData[kwData.length - 1];
+      for (var m = 1; m < kwData[0].length; m++) {
+        var rank = latestKW[m];
+        var status = '圏外', bg = '#FFEBEE';
+        if (rank !== '-' && rank !== '' && rank !== null) {
+          var rn = parseFloat(rank);
+          if (rn <= 3) { status = '🥇 上位表示'; bg = '#E8F5E9'; }
+          else if (rn <= 10) { status = '✅ 1ページ目'; bg = '#FFF9C4'; }
+          else if (rn <= 20) { status = '📈 改善中'; bg = '#FFF3E0'; }
+          else { status = '⚠️ 要改善'; bg = '#FFEBEE'; }
+        }
+        sheet.getRange(kwR, 1, 1, 3).setValues([[kwData[0][m], rank, status]])
+          .setHorizontalAlignment('center').setBackground(bg);
+        kwR++;
       }
-      sheet.getRange(kwR, 1, 1, 3).setValues([[kwData[0][m], rank, status]])
-        .setHorizontalAlignment('center').setBackground(bg);
+    } else {
+      sheet.getRange(kwR, 1).setValue('データなし（次回実行後に表示）').setFontColor('#999999');
       kwR++;
     }
-  }
+    kwR++; // 店舗間の空白行
+  });
+
+  // セクションD: オウンドメディア別パフォーマンス
+  row = kwR + 2;
+  sheet.getRange('A' + row + ':H' + row).merge().setValue('📰 オウンドメディア別パフォーマンス')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#E8F5E9');
+
+  row++;
+  sheet.getRange(row, 1, 1, 5)
+    .setValues([['メディア', '目的', '追跡KW数', '順位取得KW数', '平均順位']])
+    .setFontWeight('bold').setBackground('#4CAF50').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  row++;
+  OWNED_MEDIA.forEach(function(media) {
+    var kwSheetName = 'KW順位_' + media.name;
+    var kwMediaSheet = ss.getSheetByName(kwSheetName);
+    var rankedCount = 0;
+    var totalRank = 0;
+    var avgRank = '-';
+
+    if (kwMediaSheet && kwMediaSheet.getLastRow() > 1) {
+      var lastKWRow = kwMediaSheet.getLastRow();
+      var kwVals = kwMediaSheet.getRange(lastKWRow, 2, 1, media.keywords.length).getValues()[0];
+      kwVals.forEach(function(v) {
+        if (v !== '-' && v !== '' && v !== null) {
+          rankedCount++;
+          totalRank += parseFloat(v);
+        }
+      });
+      if (rankedCount > 0) avgRank = (totalRank / rankedCount).toFixed(1);
+    }
+
+    sheet.getRange(row, 1, 1, 5).setValues([[
+      media.name, media.purpose, media.keywords.length, rankedCount, avgRank
+    ]]).setHorizontalAlignment('center');
+
+    if (row % 2 === 0) sheet.getRange(row, 1, 1, 5).setBackground('#f5f5f5');
+    row++;
+  });
 
   sheet.setColumnWidth(1, 200); sheet.setColumnWidth(2, 150); sheet.setColumnWidth(3, 150);
   sheet.setColumnWidth(4, 130); sheet.setColumnWidth(5, 130); sheet.setColumnWidth(6, 100);
@@ -664,7 +967,9 @@ function syncToClientSheet() {
     }
 
     // --- 生データシートを同期（なければ自動作成） ---
-    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元', 'ターゲットKW順位'];
+    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元',
+      'KW順位_ブランド共通', 'KW順位_横浜店', 'KW順位_福岡店',
+      'メディア別SC', 'KW順位_AmoLab', 'KW順位_IkeoLab', 'KW順位_SweetStay'];
     dataSheets.forEach(function(sheetName) {
       var src = srcSS.getSheetByName(sheetName);
       if (!src) {

@@ -2,6 +2,7 @@
 import { Cast, CastStatus } from '@/types/cast';
 import { getSupabasePublicUrl } from './image-url';
 import { supabase } from './supabaseClient';
+import { convertSchedulesToAvailability } from '@/utils/scheduleUtils';
 
 export interface CastListMini {
   id: string;
@@ -133,6 +134,40 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
     }
   }
 
+  // 🆕 本日のスケジュールを取得（本日出勤フィルター用）
+  let availabilityMap: Record<string, { [key: string]: string[] }> = {};
+  if (castIds.length > 0) {
+    const todayStr = new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' });
+    const { data: schedules, error: scheduleError } = await supabase
+      .from('schedules')
+      .select('cast_id, work_date, start_datetime, end_datetime, status')
+      .in('cast_id', castIds)
+      .eq('work_date', todayStr);
+
+    if (scheduleError) {
+      console.error('❌ スケジュール取得エラー:', scheduleError.message);
+    } else if (schedules) {
+      for (const s of schedules) {
+        if (!availabilityMap[s.cast_id]) {
+          availabilityMap[s.cast_id] = {};
+        }
+        const converted = convertSchedulesToAvailability([{
+          work_date: s.work_date,
+          start_datetime: s.start_datetime,
+          end_datetime: s.end_datetime,
+          status: s.status,
+        }]);
+        // Merge into existing availability
+        for (const [date, times] of Object.entries(converted)) {
+          if (!availabilityMap[s.cast_id][date]) {
+            availabilityMap[s.cast_id][date] = [];
+          }
+          availabilityMap[s.cast_id][date].push(...times);
+        }
+      }
+    }
+  }
+
   return (data ?? [])
     .map((item: any) => {
       const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
@@ -208,6 +243,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         isIchioshi: item.is_ichioshi || false,
         ichioshiPoint: ichioshiMap[cast.id]?.point,
         ichioshiRank: ichioshiMap[cast.id]?.rank,
+        availability: availabilityMap[cast.id] || undefined, // 📅 本日出勤フィルター用
         rating, // ⭐ 平均評価
         reviewCount, // 💬 口コミ件数
       };
