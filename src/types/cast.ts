@@ -20,6 +20,7 @@ export interface CastSNS {
   line?: string;
   twitter?: string;
   instagram?: string;
+  tiktok?: string;
 }
 
 // ==============================
@@ -267,6 +268,7 @@ export interface CastProfile {
     [key: string]: 'NG' | '要相談' | '普通' | '得意';
   };
 
+  sns?: CastSNS;
   snsUrl?: string;
   slug?: string;
 

@@ -2,7 +2,7 @@
 
 import { Cast, ScoredCast } from '@/types/cast';
 import { motion } from 'framer-motion';
-import { Clock, Pause, Play, Star } from 'lucide-react';
+import { Clock, Pause, Play, Star, MessageCircle, Instagram, Music, Globe } from 'lucide-react';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -86,18 +86,19 @@ const CastCard: React.FC<CastCardProps> = ({
     router.push(`/store/${storeSlug}/cast/${identifier}`);
   };
 
-  // 評価セクション
+  // 評価セクション（視認性向上プラン）
   const scoreSection = hasCompatibilityScore ? (
     <div className="mb-2 font-bold text-pink-600">
       💘 相性スコア: {Math.round((cast as ScoredCast).compatibilityScore)}%
     </div>
   ) : (
-    <div className="mb-2 flex items-center">
-      <Star className="h-3 w-3 fill-current text-amber-400 sm:h-4 sm:w-4" />
-      <span className="ml-1 text-xs font-medium text-neutral-700 sm:text-sm">
-        {(cast.rating ?? 0).toFixed(1)}
-      </span>
-      <span className="ml-1 text-xs text-neutral-500">({cast.reviewCount ?? 0})</span>
+    <div className="mb-3 w-full">
+      <div className="flex w-full items-center justify-center gap-1.5 rounded bg-[#FF3366] py-1.5 text-white shadow-sm">
+        <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+        <span className="text-[11px] font-medium tracking-widest sm:text-xs">
+           口コミ {cast.reviewCount ?? 0}件
+        </span>
+      </div>
     </div>
   );
 
@@ -256,6 +257,39 @@ const CastCard: React.FC<CastCardProps> = ({
         </div>
 
         {scoreSection}
+
+        {/* 動的SNSアイコン表示 */}
+        {(cast.sns?.line || cast.sns?.twitter || cast.sns?.instagram || cast.sns?.tiktok || cast.snsUrl) && (
+          <div className="mb-3 flex flex-wrap gap-1.5">
+            {cast.sns?.line && (
+              <a href={cast.sns.line} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-[#06C755] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+                <span className="text-[9px] font-black tracking-tighter">LINE</span>
+              </a>
+            )}
+            {cast.sns?.instagram && (
+              <a href={cast.sns.instagram} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+                <Instagram className="h-4 w-4" />
+              </a>
+            )}
+            {cast.sns?.twitter && (
+              <a href={cast.sns.twitter} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+                <span className="font-serif text-sm font-bold">𝕏</span>
+              </a>
+            )}
+            {cast.sns?.tiktok && (
+             <a href={cast.sns.tiktok} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+                <Music className="h-4 w-4" />
+              </a>
+            )}
+             {/* フォールバック用: もし個別SNSが無く、汎用snsUrlだけある場合 */}
+             {!cast.sns?.line && !cast.sns?.instagram && !cast.sns?.twitter && !cast.sns?.tiktok && cast.snsUrl && (
+              <a href={cast.snsUrl} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-500 shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+                <Globe className="h-4 w-4" />
+              </a>
+            )}
+          </div>
+        )}
+
         {/* エロス係数 (Redesigned Style) */}
         <div className="mb-2 flex items-center gap-3">
           <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">

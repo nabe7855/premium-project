@@ -37,6 +37,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         image_url,
         is_active,
         sexiness_level,
+        sns_url,
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name ),
         cast_statuses (
@@ -244,6 +245,16 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         ichioshiPoint: ichioshiMap[cast.id]?.point,
         ichioshiRank: ichioshiMap[cast.id]?.rank,
         availability: availabilityMap[cast.id] || undefined, // 📅 本日出勤フィルター用
+        sns: (() => {
+          try {
+            const parsed = JSON.parse(cast.sns_url || '');
+            if (typeof parsed === 'object' && parsed !== null) return parsed;
+          } catch {
+            return undefined;
+          }
+          return undefined;
+        })(),
+        snsUrl: cast.sns_url ?? undefined,
         rating, // ⭐ 平均評価
         reviewCount, // 💬 口コミ件数
       };

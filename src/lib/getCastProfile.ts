@@ -154,6 +154,15 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     managerComment: cast.manager_comment ?? undefined,
     slug: cast.slug,
     snsUrl: cast.sns_url ?? undefined,
+    sns: (() => {
+      try {
+        const parsed = JSON.parse(cast.sns_url || '');
+        if (typeof parsed === 'object' && parsed !== null) return parsed;
+      } catch {
+        return undefined;
+      }
+      return undefined;
+    })(),
     personalityIds,
     appearanceIds,
     services,

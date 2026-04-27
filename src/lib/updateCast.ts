@@ -21,7 +21,7 @@ export async function updateCast(cast: CastProfile) {
       sexiness_level: cast.sexinessLevel !== undefined ? Math.max(1, Math.min(5, Math.round(cast.sexinessLevel / 20))) : null,
       blood_type: cast.bloodType ?? null,
       manager_comment: cast.managerComment ?? null,
-      sns_url: cast.snsUrl ?? null,
+      sns_url: cast.sns ? JSON.stringify(cast.sns) : (cast.snsUrl ?? null),
     })
     .eq('id', cast.id)
     .select()
