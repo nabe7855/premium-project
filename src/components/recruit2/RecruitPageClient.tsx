@@ -92,6 +92,13 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
     income: { ...localizedStock.income, ...config?.income },
     header: { ...localizedStock.header, ...config?.header },
     footer: { ...localizedStock.footer, ...config?.footer },
+    achievements: { ...localizedStock.achievements, ...config?.achievements },
+    comic: { ...localizedStock.comic, ...config?.comic },
+    comparison: { ...localizedStock.comparison, ...config?.comparison },
+    branding: { ...localizedStock.branding, ...config?.branding },
+    ideal: { ...localizedStock.ideal, ...config?.ideal },
+    checkSheet: { ...localizedStock.checkSheet, ...config?.checkSheet },
+    cta: { ...localizedStock.cta, ...config?.cta },
   };
 
   return (
