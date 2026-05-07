@@ -1,5 +1,6 @@
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import useEmblaCarousel from 'embla-carousel-react';
@@ -180,15 +181,16 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
                       const link = config?.imageLinks?.[index];
                       if (link && !isEditing) {
+                        const isExternal = link.startsWith('http') && !link.includes('sutoroberrys.jp') && !link.includes('localhost');
                         return (
-                          <a
+                          <Link
                             href={link}
                             className="block h-full w-full cursor-pointer"
-                            target={link.startsWith('http') ? '_blank' : undefined}
-                            rel={link.startsWith('http') ? 'noopener noreferrer' : undefined}
+                            target={isExternal ? '_blank' : undefined}
+                            rel={isExternal ? 'noopener noreferrer' : undefined}
                           >
                             {imageContent}
-                          </a>
+                          </Link>
                         );
                       }
                       return imageContent;
