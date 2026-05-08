@@ -16,7 +16,7 @@ const FloatingCTA: React.FC<FloatingCTAProps> = ({ onOpenChat, onOpenForm, onOpe
           className="block w-full transition-transform active:scale-[0.98]"
         >
           <img
-            src="/スピード適正診断.png"
+            src="/30秒スピード診断.jpg"
             alt="30秒スピード適正診断する"
             className="block h-auto w-full"
           />

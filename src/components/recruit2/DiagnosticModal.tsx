@@ -126,7 +126,7 @@ const DiagnosticModal: React.FC<DiagnosticModalProps> = ({ isOpen, onClose, onOp
                   >
                     <div className="mb-6">
                       <img
-                        src="/スピード適正診断.png"
+                        src="/30秒スピード診断.jpg"
                         alt="スピード適正診断"
                         className="h-20 w-auto"
                       />
