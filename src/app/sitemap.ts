@@ -79,6 +79,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
+    // インタビュー一覧ページを追加
+    storePages.push({
+      url: `${baseUrl}${storeBase}/interview`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    });
+
     // Cast pages
     try {
       const casts = await getCastsByStore(storeSlug);
@@ -126,6 +134,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 0.8,
     },
+    // インタビューセクション（新規追加・既存エントリーは変更なし）
+    {
+      url: `${baseUrl}/magazine/interview`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
   ];
 
   try {
@@ -146,6 +161,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     }
   } catch (e) {
     console.error('Sitemap: Error fetching media articles:', e);
+  }
+
+  // インタビュー記事の動的ページ（新規追加・既存処理は変更なし）
+  try {
+    const { getInterviewArticles } = await import('@/lib/actions/interview');
+    const interviewResult = await getInterviewArticles();
+    if (interviewResult.success && interviewResult.articles) {
+      for (const article of interviewResult.articles) {
+        if (article && (article as any).status === 'published') {
+          const meta = (article as any).interview_meta;
+          const area = meta?.area || 'fukuoka';
+          const castLink = meta?.cast_links?.[0];
+          const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+          
+          mediaPages.push({
+            url: `${baseUrl}/store/${area}/interview/${castSlug}/${article.slug}`,
+            lastModified: new Date((article as any).updated_at),
+            changeFrequency: 'monthly',
+            priority: 0.7,
+          });
+        }
+      }
+    }
+  } catch (e) {
+    console.error('Sitemap: Error fetching interview articles:', e);
   }
 
   return [...staticPages, ...storePages, ...mediaPages];

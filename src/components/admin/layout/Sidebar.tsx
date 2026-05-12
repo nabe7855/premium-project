@@ -195,6 +195,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
           icon: <DocumentTextIcon />,
           label: 'メディア記事管理',
         },
+        {
+          href: '/admin/interview-management',
+          icon: <DocumentTextIcon />,
+          label: 'インタビュー管理',
+        },
       ],
     },
   ];

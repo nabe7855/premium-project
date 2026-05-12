@@ -922,3 +922,49 @@ model PartnerLink {
 
   @@map("partner_links")
 }
+
+// ---------------------------------------------------------------------------
+// インタビューマガジン拡張テーブル群
+// 既存テーブルへの干渉ゼロ・追加のみ
+// ---------------------------------------------------------------------------
+
+model InterviewMeta {
+  id            String   @id @default(uuid())
+  article_id    String   @unique  // media_articles.id を参照（FK制約なし・安全優先）
+  article_type  String   @default("solo_interview")
+  // "solo_interview" | "roundtable" | "feature"
+  series_slug   String?  // シリーズ識別子 e.g. "sai-interview"
+  vol_number    Int?
+  area            String?  // e.g. "fukuoka"
+  seo_keywords    String?
+  structured_data Json?
+  writer_note     Json?
+  cta_data        Json?
+  dialogue_data   Json?    // 対話形式コンテンツ
+  profile_data  Json?    // キャストプロフィールカード（複数対応）
+  faq_data      Json?    // FAQ
+  photos        Json?    // 写真データ
+  ogp_image_url String?
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  cast_links InterviewCastLink[]
+
+  @@map("interview_meta")
+}
+
+model InterviewCastLink {
+  id                String  @id @default(uuid())
+  interview_meta_id String
+  cast_id           String? // casts.id（任意）
+  cast_name         String
+  cast_name_romaji  String?
+  role              String  @default("interviewee")
+  // "interviewee" | "participant" | "host"
+  display_order     Int     @default(0)
+  created_at        DateTime @default(now())
+
+  interview_meta InterviewMeta @relation(fields: [interview_meta_id], references: [id], onDelete: Cascade)
+
+  @@map("interview_cast_links")
+}
