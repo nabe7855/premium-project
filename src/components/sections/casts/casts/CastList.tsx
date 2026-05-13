@@ -49,7 +49,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const ichioshiCasts = useMemo(() => {
     return originalCasts
       .filter((c) => c.isIchioshi && c.isActive)
-      .sort((a, b) => (b.ichioshiRank || 0) - (a.ichioshiRank || 0));
+      .sort((a, b) => (a.ichioshiRank || 999) - (b.ichioshiRank || 999));
   }, [originalCasts]);
 
   // 🆕 カルーセル設定
@@ -134,8 +134,8 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
 
     // 🎯 ソート
     switch (sortBy) {
-      case 'default': // おすすめ順 (priority大きい順)
-        result = [...result].sort((a, b) => (b.priority ?? 0) - (a.priority ?? 0));
+      case 'default': // おすすめ順 (priority小さい順)
+        result = [...result].sort((a, b) => (a.priority ?? 999) - (b.priority ?? 999));
         break;
 
       case 'tweetOrder': // つぶやき最新順
