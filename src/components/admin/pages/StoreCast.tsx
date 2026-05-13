@@ -83,68 +83,58 @@ const StoreCastCard: React.FC<{
 
   return (
     <Card
-      title={
-        <div className="flex items-center justify-between">
-          <span>{cast.name}</span>
-          <div className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-brand-accent transition-colors">
-            <GripVertical size={18} />
-          </div>
-        </div>
-      }
-      className={`flex h-full flex-col border bg-brand-secondary/40 transition-all duration-300 ${
-        isDragging ? 'border-brand-accent shadow-2xl scale-[1.02] z-50 ring-2 ring-brand-accent/20' : 'border-gray-800 hover:border-gray-700'
+      title=""
+      className={`relative border bg-brand-secondary/40 transition-all duration-300 ${
+        isDragging ? 'border-brand-accent shadow-2xl z-50 ring-2 ring-brand-accent/20' : 'border-gray-800'
       }`}
     >
-      <div className="mb-4 flex items-center space-x-4">
-        <img
-          src={
-            cast.photoUrl ||
-            'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'
-          }
-          alt={cast.name}
-          className="h-16 w-16 rounded-full border-2 border-brand-accent/20 object-cover shadow-lg"
-        />
-        <div className="flex-1 overflow-hidden">
-          <p className="truncate text-lg font-bold text-white">{cast.name}</p>
-          <p className="truncate text-[10px] italic text-brand-text-secondary opacity-70">
-            {cast.catchphrase}
-          </p>
-            <div className="mt-2 flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary">
-                  表示順:
-                </span>
+      <div className="flex flex-col lg:flex-row items-start lg:items-center gap-6">
+        {/* 左側: ドラッグハンドル + 写真 + 基本情報 */}
+        <div className="flex items-center gap-4 min-w-[300px]">
+          <div className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-brand-accent p-2 transition-colors">
+            <GripVertical size={20} />
+          </div>
+          <img
+            src={cast.photoUrl || 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=100&q=80'}
+            alt={cast.name}
+            className="h-16 w-16 rounded-full border-2 border-brand-accent/20 object-cover shadow-lg flex-shrink-0"
+          />
+          <div className="overflow-hidden">
+            <p className="truncate text-lg font-bold text-white">{cast.name}</p>
+            <p className="truncate text-[10px] italic text-brand-text-secondary opacity-70">
+              {cast.catchphrase}
+            </p>
+            <div className="mt-1 flex items-center space-x-3">
+              <div className="flex items-center space-x-1">
+                <span className="text-[10px] font-bold uppercase text-brand-text-secondary">順位:</span>
                 <input
                   type="number"
                   min="1"
                   value={cast.storePriorities?.[currentStoreId] || ''}
                   onChange={(e) => onPriorityChange(cast.id, parseInt(e.target.value) || 0)}
-                  className={`w-14 rounded border ${
-                    error ? 'border-red-500' : 'border-gray-700'
-                  } bg-brand-primary p-1 text-center text-sm font-bold text-brand-accent transition-all focus:ring-1 focus:ring-brand-accent`}
+                  className="w-12 rounded border border-gray-700 bg-brand-primary p-0.5 text-center text-xs font-bold text-brand-accent"
                 />
               </div>
-              <div className="flex items-center space-x-1.5">
+              <div className="flex items-center space-x-1">
                 <Checkbox
                   id={`shop-account-${cast.id}`}
                   checked={cast.storeIsShopAccount?.[currentStoreId] || false}
-                  onCheckedChange={(checked) =>
-                    onIsShopAccountChange(cast.id, checked === true)
-                  }
-                  className="h-3.5 w-3.5 border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
+                  onCheckedChange={(checked) => onIsShopAccountChange(cast.id, checked === true)}
+                  className="h-3.5 w-3.5"
                 />
-                <Label
-                  htmlFor={`shop-account-${cast.id}`}
-                  className="cursor-pointer text-[10px] font-bold uppercase tracking-wider text-brand-text-secondary"
-                >
-                  店舗アカウント
+                <Label htmlFor={`shop-account-${cast.id}`} className="text-[10px] font-bold text-brand-text-secondary cursor-pointer">
+                  店舗垢
                 </Label>
               </div>
             </div>
+          </div>
+        </div>
 
-            {/* イチ押し設定 */}
-            <div className="mt-4 rounded-lg bg-black/30 p-3 border border-brand-accent/20">
-              <div className="flex items-center space-x-2 mb-3">
+        {/* 中央: イチ押し設定 */}
+        <div className="flex-1 w-full lg:w-auto">
+          <div className={`rounded-lg p-3 border transition-colors ${cast.storeIchioshi?.[currentStoreId] ? 'bg-amber-400/5 border-amber-400/30' : 'bg-black/20 border-white/5'}`}>
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="flex items-center space-x-2">
                 <Checkbox
                   id={`ichioshi-${cast.id}`}
                   checked={cast.storeIchioshi?.[currentStoreId] || false}
@@ -153,162 +143,102 @@ const StoreCastCard: React.FC<{
                   }
                   className="h-4 w-4 border-amber-400 data-[state=checked]:bg-amber-400"
                 />
-                <Label
-                   htmlFor={`ichioshi-${cast.id}`}
-                   className="flex items-center gap-1 cursor-pointer text-xs font-black text-amber-400"
-                >
-                  <Star className="h-3 w-3 fill-current" /> 店長一押しに設定
+                <Label htmlFor={`ichioshi-${cast.id}`} className="flex items-center gap-1 cursor-pointer text-xs font-black text-amber-400">
+                  <Star className="h-3 w-3 fill-current" /> 店長一押し
                 </Label>
               </div>
 
               {cast.storeIchioshi?.[currentStoreId] && (
-                <div className="space-y-3 animate-in fade-in slide-in-from-top-1">
-                   {/* ランク設定 */}
-                   <div className="flex items-center gap-2">
-                     <span className="text-[10px] text-brand-text-secondary font-bold">ランク:</span>
-                     <select 
-                        value={cast.storeIchioshiRank?.[currentStoreId] || 1}
-                        onChange={(e) => onIchioshiChange(cast.id, true, cast.storeIchioshiPoint?.[currentStoreId], parseInt(e.target.value))}
-                        className="bg-brand-primary border border-gray-700 rounded px-2 py-1 text-xs text-amber-400 font-bold outline-none"
-                     >
-                       <option value={1}>Rank 1 (通常)</option>
-                       <option value={2}>Rank 2</option>
-                       <option value={3}>Rank 3 (重要)</option>
-                       <option value={4}>Rank 4</option>
-                       <option value={5}>Rank 5 (最高)</option>
-                     </select>
-                     <span className="text-[9px] text-gray-500 italic">※高いほど優先表示</span>
-                   </div>
-
-                   {/* イチ押しコメント */}
-                   <div className="flex flex-col gap-1.5">
-                     <span className="text-[10px] text-brand-text-secondary font-bold">イチ押しポイント:</span>
-                     <textarea
-                        value={cast.storeIchioshiPoint?.[currentStoreId] || ''}
-                        onChange={(e) => onIchioshiChange(cast.id, true, e.target.value, cast.storeIchioshiRank?.[currentStoreId])}
-                        placeholder="例：新人さんですが圧倒的な技術力です！"
-                        className="w-full h-16 bg-brand-primary border border-gray-700 rounded p-2 text-xs text-white placeholder:text-gray-600 focus:border-amber-400/50 outline-none resize-none transition-all"
-                     />
-                   </div>
-                </div>
+                <>
+                  <select
+                    value={cast.storeIchioshiRank?.[currentStoreId] || 1}
+                    onChange={(e) => onIchioshiChange(cast.id, true, cast.storeIchioshiPoint?.[currentStoreId], parseInt(e.target.value))}
+                    className="bg-brand-primary border border-gray-700 rounded px-2 py-1 text-[10px] text-amber-400 font-bold outline-none"
+                  >
+                    {[1, 2, 3, 4, 5].map(r => <option key={r} value={r}>Rank {r}</option>)}
+                  </select>
+                  <input
+                    type="text"
+                    value={cast.storeIchioshiPoint?.[currentStoreId] || ''}
+                    onChange={(e) => onIchioshiChange(cast.id, true, e.target.value, cast.storeIchioshiRank?.[currentStoreId])}
+                    placeholder="イチ押しコメントを入力..."
+                    className="flex-1 min-w-[200px] bg-brand-primary border border-gray-700 rounded px-3 py-1.5 text-xs text-white placeholder:text-gray-600 focus:border-amber-400/50 outline-none transition-all"
+                  />
+                </>
               )}
             </div>
-
-            {error && <p className="mt-1 text-[10px] text-red-500">{error}</p>}
           </div>
-      </div>
+        </div>
 
-      <div className="mb-4 flex min-h-[40px] flex-wrap items-center gap-1.5 rounded-lg border border-white/5 bg-black/20 p-2">
-        {displayTags.length > 0 ? (
-          displayTags.map((tag) => (
-            <Tag key={tag.id} tag={tag} onRemove={() => onRemoveTag(cast.id, tag)} />
-          ))
-        ) : (
-          <span className="px-2 text-[10px] italic text-brand-text-secondary opacity-50">
-            タグなし
-          </span>
-        )}
-      </div>
+        {/* 右側: タグ + 編集ボタン */}
+        <div className="flex flex-col sm:flex-row items-center gap-4 w-full lg:w-auto min-w-[200px]">
+          <div className="flex flex-wrap gap-1 flex-1">
+            {displayTags.length > 0 ? (
+              displayTags.slice(0, 3).map((tag) => (
+                <span key={tag.id} className="px-2 py-0.5 rounded-full text-[9px] font-bold" style={{ backgroundColor: tag.color + '33', color: tag.color }}>
+                  {tag.name}
+                </span>
+              ))
+            ) : (
+              <span className="text-[10px] italic text-brand-text-secondary opacity-40">タグ未設定</span>
+            )}
+            {displayTags.length > 3 && <span className="text-[9px] text-brand-text-secondary">+{displayTags.length - 3}</span>}
+          </div>
 
-      <div className="mt-auto">
-        <Popover>
-          <PopoverTrigger asChild>
-            <button className="group flex w-full items-center justify-center rounded-md border border-gray-700 bg-brand-primary p-2.5 text-xs font-bold uppercase tracking-widest text-gray-300 transition-all duration-200 hover:border-brand-accent/50 hover:bg-gray-700 hover:text-white">
-              <TagIcon className="mr-2 h-3.5 w-3.5 transition-transform group-hover:scale-110" />
-              <span>タグ編集</span>
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-64 border-gray-700 bg-brand-secondary p-0 shadow-2xl"
-            align="center"
-          >
-            <div className="flex h-[350px] flex-col">
-              <div className="border-b border-gray-700 bg-brand-primary/50 p-3">
-                <h4 className="text-xs font-bold uppercase tracking-wider text-white">
-                  タグ・ステータス設定
-                </h4>
-              </div>
-
-              <ScrollArea className="flex-1">
-                <div className="space-y-6 p-3">
-                  {/* Status Section */}
-                  <div>
-                    <h5 className="mb-2.5 text-[10px] font-bold uppercase tracking-tight text-brand-accent">
-                      ステータス (複数選択可)
-                    </h5>
-                    <div className="space-y-1">
-                      {statusTags.map((tag) => {
-                        const isChecked = cast.storeStatuses?.includes(tag.name);
-                        return (
-                          <div
-                            key={tag.id}
-                            className="group flex cursor-pointer items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={`${cast.id}-${tag.id}`}
-                              checked={isChecked}
-                              onCheckedChange={(checked) => {
-                                if (checked) onAddTag(cast.id, tag);
-                                else onRemoveTag(cast.id, tag);
-                              }}
-                              className="border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
-                            />
-                            <Label
-                              htmlFor={`${cast.id}-${tag.id}`}
-                              className="flex-1 cursor-pointer py-1 text-xs text-gray-300 transition-colors group-hover:text-white"
-                            >
-                              {tag.name}
-                            </Label>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* Features Section */}
-                  <div>
-                    <h5 className="mb-2.5 text-[10px] font-bold uppercase tracking-tight text-brand-accent">
-                      特徴タグ (複数選択可)
-                    </h5>
-                    <div className="space-y-1">
-                      {featureTags.map((tag) => {
-                        const isChecked = cast.tags?.includes(tag.name);
-                        return (
-                          <div
-                            key={tag.id}
-                            className="group flex cursor-pointer items-center space-x-2"
-                          >
-                            <Checkbox
-                              id={`${cast.id}-${tag.id}`}
-                              checked={isChecked}
-                              onCheckedChange={(checked) => {
-                                if (checked) onAddTag(cast.id, tag);
-                                else onRemoveTag(cast.id, tag);
-                              }}
-                              className="border-gray-600 data-[state=checked]:border-brand-accent data-[state=checked]:bg-brand-accent"
-                            />
-                            <Label
-                              htmlFor={`${cast.id}-${tag.id}`}
-                              className="flex-1 cursor-pointer py-1 text-xs text-gray-300 transition-colors group-hover:text-white"
-                            >
-                              {tag.name}
-                            </Label>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <button className="flex items-center gap-2 rounded-md border border-gray-700 bg-brand-primary px-4 py-2 text-[10px] font-bold uppercase text-gray-300 hover:bg-gray-700 transition-all">
+                <TagIcon size={12} />
+                <span>タグ編集</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent className="w-64 border-gray-700 bg-brand-secondary p-0 shadow-2xl" align="end">
+              <div className="flex h-[350px] flex-col">
+                <div className="border-b border-gray-700 bg-brand-primary/50 p-3">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-white">タグ設定</h4>
                 </div>
-              </ScrollArea>
-
-              <div className="border-t border-gray-700 bg-brand-primary/30 p-2">
-                <p className="text-center text-[9px] text-brand-text-secondary opacity-60">
-                  ※変更は即座に反映されます
-                </p>
+                <ScrollArea className="flex-1">
+                  <div className="space-y-6 p-3">
+                    {/* Status Section */}
+                    <div>
+                      <h5 className="mb-2 text-[9px] font-bold text-brand-accent uppercase">ステータス</h5>
+                      <div className="space-y-1">
+                        {statusTags.map((tag) => (
+                          <div key={tag.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`${cast.id}-${tag.id}`}
+                              checked={cast.storeStatuses?.includes(tag.name)}
+                              onCheckedChange={(checked) => checked ? onAddTag(cast.id, tag) : onRemoveTag(cast.id, tag)}
+                              className="h-3.5 w-3.5"
+                            />
+                            <Label htmlFor={`${cast.id}-${tag.id}`} className="text-xs text-gray-300 cursor-pointer">{tag.name}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                    {/* Feature Section */}
+                    <div>
+                      <h5 className="mb-2 text-[9px] font-bold text-brand-accent uppercase">一般タグ</h5>
+                      <div className="space-y-1">
+                        {featureTags.map((tag) => (
+                          <div key={tag.id} className="flex items-center space-x-2">
+                            <Checkbox
+                              id={`${cast.id}-${tag.id}`}
+                              checked={cast.tags?.includes(tag.name)}
+                              onCheckedChange={(checked) => checked ? onAddTag(cast.id, tag) : onRemoveTag(cast.id, tag)}
+                              className="h-3.5 w-3.5"
+                            />
+                            <Label htmlFor={`${cast.id}-${tag.id}`} className="text-xs text-gray-300 cursor-pointer">{tag.name}</Label>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </ScrollArea>
               </div>
-            </div>
-          </PopoverContent>
-        </Popover>
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
     </Card>
   );
@@ -931,7 +861,7 @@ export default function StoreCast() {
         </div>
       </Card>
 
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      <div className="w-full">
         {isLoading ? (
           <div className="col-span-full flex flex-col items-center justify-center gap-4 py-20">
             <div className="h-12 w-12 animate-spin rounded-full border-4 border-brand-accent border-t-transparent"></div>
@@ -941,17 +871,18 @@ export default function StoreCast() {
           <Reorder.Group
             values={casts}
             onReorder={handleReorder}
-            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 col-span-full"
+            className="flex flex-col gap-3 col-span-full"
             axis="y"
           >
             {casts.map((cast) => (
               <Reorder.Item
                 key={cast.id}
                 value={cast}
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.15 }}
+                className="w-full"
               >
                 <StoreCastCard
                   cast={cast}
