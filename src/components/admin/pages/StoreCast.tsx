@@ -5,8 +5,9 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
-import { Tag as TagIcon, Trash2, Star } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import { Tag as TagIcon, Trash2, Star, GripVertical, Save, Loader2 } from 'lucide-react';
+import React, { useEffect, useState, useCallback } from 'react';
+import { motion, Reorder } from 'framer-motion';
 import { PlusIcon } from '../admin-assets/Icons';
 
 interface UnifiedTag {
@@ -59,6 +60,7 @@ const StoreCastCard: React.FC<{
   onPriorityChange: (cast_id: string, priority: number) => void;
   onIsShopAccountChange: (cast_id: string, isShopAccount: boolean) => void;
   onIchioshiChange: (cast_id: string, value: boolean, point?: string, rank?: number) => void;
+  isDragging?: boolean;
   error?: string;
 }> = ({
   cast,
@@ -69,6 +71,7 @@ const StoreCastCard: React.FC<{
   onPriorityChange,
   onIsShopAccountChange,
   onIchioshiChange,
+  isDragging,
   error,
 }) => {
   const currentTagNames = [...(cast.tags || []), ...(cast.storeStatuses || [])];
@@ -80,8 +83,17 @@ const StoreCastCard: React.FC<{
 
   return (
     <Card
-      title={cast.name}
-      className="flex h-full flex-col border border-gray-800 bg-brand-secondary/40 transition-all duration-300 hover:border-gray-700"
+      title={
+        <div className="flex items-center justify-between">
+          <span>{cast.name}</span>
+          <div className="cursor-grab active:cursor-grabbing text-gray-500 hover:text-brand-accent transition-colors">
+            <GripVertical size={18} />
+          </div>
+        </div>
+      }
+      className={`flex h-full flex-col border bg-brand-secondary/40 transition-all duration-300 ${
+        isDragging ? 'border-brand-accent shadow-2xl scale-[1.02] z-50 ring-2 ring-brand-accent/20' : 'border-gray-800 hover:border-gray-700'
+      }`}
     >
       <div className="mb-4 flex items-center space-x-4">
         <img
@@ -409,7 +421,45 @@ export default function StoreCast() {
   const [casts, setCasts] = useState<Cast[]>([]);
   const [availableTags, setAvailableTags] = useState<UnifiedTag[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
   const [priorityErrors, setPriorityErrors] = useState<Record<string, string>>({});
+
+  // 🆕 並び順をDBに一括保存
+  const savePriorityOrder = async (currentCasts: Cast[]) => {
+    if (!selectedStore) return;
+    setIsSaving(true);
+    try {
+      // 全キャストに対して新しいインデックスをpriorityとして保存
+      const updates = currentCasts.map((cast, index) => {
+        const priority = index + 1;
+        return supabase
+          .from('cast_store_memberships')
+          .update({ priority })
+          .eq('cast_id', cast.id)
+          .eq('store_id', selectedStore);
+      });
+
+      await Promise.all(updates);
+      console.log('✅ 並び順を保存しました');
+    } catch (err) {
+      console.error('❌ 保存エラー:', err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  // 🆕 ドラッグによる並び替え
+  const handleReorder = (newCasts: Cast[]) => {
+    // 1. ローカルステートを即座に更新
+    const updatedCasts = newCasts.map((c, index) => ({
+      ...c,
+      storePriorities: { ...c.storePriorities, [selectedStore]: index + 1 }
+    }));
+    setCasts(updatedCasts);
+    
+    // 2. DBへ一括保存
+    savePriorityOrder(updatedCasts);
+  };
 
   const handlePriorityChange = async (castId: string, value: number) => {
     // UI-side duplicate check
@@ -425,14 +475,20 @@ export default function StoreCast() {
     }
     setPriorityErrors(newErrors);
 
-    // Update local state
-    setCasts((prev) =>
-      prev.map((c) =>
+    // Update local state and sort
+    setCasts((prev) => {
+      const updated = prev.map((c) =>
         c.id === castId
           ? { ...c, storePriorities: { ...c.storePriorities, [selectedStore]: value } }
           : c,
-      ),
-    );
+      );
+      // Sort by the new priority
+      return [...updated].sort((a, b) => {
+        const pA = a.storePriorities[selectedStore] || 999;
+        const pB = b.storePriorities[selectedStore] || 999;
+        return pA - pB;
+      });
+    });
 
     // Only save to DB if it's not a duplicate (to avoid 409) or if user wants to force it
     // But usually we should try to save if the user really wants to, DB will handle constraint.
@@ -623,7 +679,8 @@ export default function StoreCast() {
             )
           `,
           )
-          .eq('store_id', selectedStore);
+          .eq('store_id', selectedStore)
+          .order('priority', { ascending: true });
 
         if (memberError) throw memberError;
         if (!memberData || memberData.length === 0) {
@@ -843,18 +900,35 @@ export default function StoreCast() {
         onDelete={handleDeleteMasterTag}
       />
 
-      <Card title="店舗を選択" className="bg-brand-secondary">
-        <select
-          value={selectedStore}
-          onChange={(e) => setSelectedStore(e.target.value)}
-          className="w-full appearance-none rounded-md border border-gray-700 bg-brand-primary bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[position:right_12px_center] bg-no-repeat p-3 text-white focus:ring-2 focus:ring-brand-accent md:w-1/3"
-        >
-          {stores.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.name}
-            </option>
-          ))}
-        </select>
+      <Card title="店舗を選択 & 操作" className="bg-brand-secondary">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <select
+            value={selectedStore}
+            onChange={(e) => setSelectedStore(e.target.value)}
+            className="w-full appearance-none rounded-md border border-gray-700 bg-brand-primary bg-[url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M5%207L10%2012L15%207%22%20stroke%3D%22%23A0AEC0%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22/%3E%3C/svg%3E')] bg-[position:right_12px_center] bg-no-repeat p-3 text-white focus:ring-2 focus:ring-brand-accent md:w-1/3"
+          >
+            {stores.map((s) => (
+              <option key={s.id} value={s.id}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => savePriorityOrder(casts)}
+              disabled={isSaving || casts.length === 0}
+              className="flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:bg-blue-500 disabled:opacity-50"
+            >
+              {isSaving ? (
+                <Loader2 size={16} className="animate-spin" />
+              ) : (
+                <Save size={16} />
+              )}
+              <span>現在の順序を保存</span>
+            </button>
+          </div>
+        </div>
       </Card>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -864,20 +938,35 @@ export default function StoreCast() {
             <p className="font-medium text-brand-text-secondary">データを読み込み中...</p>
           </div>
         ) : casts.length > 0 ? (
-          casts.map((cast) => (
-            <StoreCastCard
-              key={cast.id}
-              cast={cast}
-              availableTags={availableTags}
-              currentStoreId={selectedStore}
-              onAddTag={handleAddTagToCast}
-              onRemoveTag={handleRemoveTagFromCast}
-              onPriorityChange={handlePriorityChange}
-              onIsShopAccountChange={handleIsShopAccountChange}
-              onIchioshiChange={handleIchioshiChange}
-              error={priorityErrors[cast.id]}
-            />
-          ))
+          <Reorder.Group
+            values={casts}
+            onReorder={handleReorder}
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 col-span-full"
+            axis="y"
+          >
+            {casts.map((cast) => (
+              <Reorder.Item
+                key={cast.id}
+                value={cast}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <StoreCastCard
+                  cast={cast}
+                  availableTags={availableTags}
+                  currentStoreId={selectedStore}
+                  onAddTag={handleAddTagToCast}
+                  onRemoveTag={handleRemoveTagFromCast}
+                  onPriorityChange={handlePriorityChange}
+                  onIsShopAccountChange={handleIsShopAccountChange}
+                  onIchioshiChange={handleIchioshiChange}
+                  error={priorityErrors[cast.id]}
+                />
+              </Reorder.Item>
+            ))}
+          </Reorder.Group>
         ) : (
           <div className="col-span-full rounded-xl border border-dashed border-gray-700 bg-brand-secondary/30 py-16 text-center">
             <p className="text-brand-text-secondary">この店舗に在籍中のキャストはいません。</p>
