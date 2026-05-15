@@ -356,10 +356,12 @@ export default function StoreCast() {
 
   // 🆕 並び順をDBに一括保存
   const savePriorityOrder = async (currentCasts: Cast[]) => {
-    if (!selectedStore) return;
+    if (!selectedStore || currentCasts.length === 0) return;
     setIsSaving(true);
+    console.log('💾 並び順の保存を開始します...', currentCasts.length, '件');
     try {
       // 全キャストに対して新しいインデックスをpriorityとして保存
+      // Promise.all で並列実行するが、件数が多い場合は直列またはチャンク分けを検討
       const updates = currentCasts.map((cast, index) => {
         const priority = index + 1;
         return supabase
@@ -369,8 +371,14 @@ export default function StoreCast() {
           .eq('store_id', selectedStore);
       });
 
-      await Promise.all(updates);
-      console.log('✅ 並び順を保存しました');
+      const results = await Promise.all(updates);
+      const errors = results.filter(r => r.error);
+      
+      if (errors.length > 0) {
+        console.error('❌ 一部の保存に失敗しました:', errors);
+      } else {
+        console.log('✅ 全ての並び順を保存しました');
+      }
     } catch (err) {
       console.error('❌ 保存エラー:', err);
     } finally {
@@ -379,17 +387,27 @@ export default function StoreCast() {
   };
 
   // 🆕 ドラッグによる並び替え
-  const handleReorder = (newCasts: Cast[]) => {
-    // 1. ローカルステートを即座に更新
+  const handleReorder = useCallback((newCasts: Cast[]) => {
     const updatedCasts = newCasts.map((c, index) => ({
       ...c,
       storePriorities: { ...c.storePriorities, [selectedStore]: index + 1 }
     }));
     setCasts(updatedCasts);
-    
-    // 2. DBへ一括保存
-    savePriorityOrder(updatedCasts);
-  };
+    setHasUnsavedChanges(true);
+  }, [selectedStore]);
+
+  // 🆕 変更があった場合のみ数秒後に自動保存
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  useEffect(() => {
+    if (!hasUnsavedChanges || isLoading || casts.length === 0) return;
+
+    const timer = setTimeout(() => {
+      savePriorityOrder(casts);
+      setHasUnsavedChanges(false);
+    }, 3000); // 3秒間操作がなければ保存
+
+    return () => clearTimeout(timer);
+  }, [casts, hasUnsavedChanges, isLoading]);
 
   const handlePriorityChange = async (castId: string, value: number) => {
     // UI-side duplicate check
@@ -593,6 +611,7 @@ export default function StoreCast() {
   // Load Casts for selected store
   useEffect(() => {
     if (!selectedStore) return;
+    setHasUnsavedChanges(false); // 店舗切り替え時は変更フラグをリセット
 
     const loadCasts = async () => {
       try {
@@ -846,7 +865,10 @@ export default function StoreCast() {
 
           <div className="flex items-center gap-3">
             <button
-              onClick={() => savePriorityOrder(casts)}
+              onClick={() => {
+                savePriorityOrder(casts);
+                setHasUnsavedChanges(false);
+              }}
               disabled={isSaving || casts.length === 0}
               className="flex items-center gap-2 rounded-lg bg-brand-accent px-4 py-2.5 text-sm font-bold text-white shadow-lg transition-all hover:bg-blue-500 disabled:opacity-50"
             >

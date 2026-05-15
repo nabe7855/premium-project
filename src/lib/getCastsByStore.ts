@@ -271,11 +271,16 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       if (a.isIchioshi && !b.isIchioshi) return -1;
       if (!a.isIchioshi && b.isIchioshi) return 1;
       if (a.isIchioshi && b.isIchioshi) {
-        return (a.ichioshiRank || 999) - (b.ichioshiRank || 999);
+        const rankA = a.ichioshiRank ?? 999;
+        const rankB = b.ichioshiRank ?? 999;
+        if (rankA !== rankB) return rankA - rankB;
+        // ランクが同じ場合は priority で比較
       }
 
       // 3. それ以外は優先度（昇順：小さい順）
-      return (a.priority ?? 999) - (b.priority ?? 999);
+      const priorityA = a.priority ?? 999;
+      const priorityB = b.priority ?? 999;
+      return priorityA - priorityB;
     });
 }
 
@@ -335,6 +340,8 @@ export async function getCastListMini(storeSlug: string): Promise<CastListMini[]
       if (!(a as any).isShopAccount && (b as any).isShopAccount) return -1;
 
       // 2. それ以外は優先度（昇順）
-      return (a.priority ?? 999) - (b.priority ?? 999);
+      const priorityA = a.priority ?? 999;
+      const priorityB = b.priority ?? 999;
+      return priorityA - priorityB;
     });
 }
