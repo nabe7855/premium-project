@@ -404,7 +404,7 @@ export default function StoreCast() {
     const timer = setTimeout(() => {
       savePriorityOrder(casts);
       setHasUnsavedChanges(false);
-    }, 3000); // 3秒間操作がなければ保存
+    }, 1000); // 1秒間操作がなければ保存
 
     return () => clearTimeout(timer);
   }, [casts, hasUnsavedChanges, isLoading]);
@@ -637,7 +637,12 @@ export default function StoreCast() {
           return;
         }
 
-        const castIds = memberData.map((m: any) => m.cast?.id).filter(Boolean);
+        const castIds = memberData
+          .map((m: any) => {
+            const cast = Array.isArray(m.cast) ? m.cast[0] : m.cast;
+            return cast?.id;
+          })
+          .filter(Boolean);
 
         // 2. Fetch all statuses and features for these casts separately to avoid join ambiguity
         const [statusRes, featureRes] = await Promise.all([
@@ -672,13 +677,17 @@ export default function StoreCast() {
 
         // 4. Map and Merge
         const mappedCasts: Cast[] = memberData
-          .map((item: any) => ({
-            ...item.cast,
-            priority: item.priority,
-            is_ichioshi: item.is_ichioshi,
-            is_shop_account: item.is_shop_account,
-          }))
-          .filter((c: any) => c && c.is_active)
+          .map((item: any) => {
+            const cast = Array.isArray(item.cast) ? item.cast[0] : item.cast;
+            if (!cast) return null;
+            return {
+              ...cast,
+              priority: item.priority,
+              is_ichioshi: item.is_ichioshi,
+              is_shop_account: item.is_shop_account,
+            };
+          })
+          .filter((c: any): c is any => c !== null && c.is_active)
           .map((c: any) => {
             // Find statuses for this cast
             const cStatuses = statusRes.data?.filter((s) => s.cast_id === c.id) || [];
@@ -718,7 +727,27 @@ export default function StoreCast() {
             };
           });
 
-        setCasts(mappedCasts);
+        setCasts(mappedCasts.sort((a, b) => {
+          // 1. 店舗アカウントを一番下に
+          if (a.storeIsShopAccount?.[selectedStore] && !b.storeIsShopAccount?.[selectedStore]) return 1;
+          if (!a.storeIsShopAccount?.[selectedStore] && b.storeIsShopAccount?.[selectedStore]) return -1;
+
+          // 2. イチ押しを最優先（ランク順：小さい順）
+          const isIchioshiA = a.storeIchioshi?.[selectedStore];
+          const isIchioshiB = b.storeIchioshi?.[selectedStore];
+          if (isIchioshiA && !isIchioshiB) return -1;
+          if (!isIchioshiA && isIchioshiB) return 1;
+          if (isIchioshiA && isIchioshiB) {
+            const rankA = a.storeIchioshiRank?.[selectedStore] ?? 999;
+            const rankB = b.storeIchioshiRank?.[selectedStore] ?? 999;
+            if (rankA !== rankB) return rankA - rankB;
+          }
+
+          // 3. それ以外は優先度（昇順：小さい順）
+          const pA = a.storePriorities?.[selectedStore] ?? 999;
+          const pB = b.storePriorities?.[selectedStore] ?? 999;
+          return pA - pB;
+        }));
       } catch (err) {
         console.error('Load casts error:', err);
       }
