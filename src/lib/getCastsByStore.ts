@@ -267,20 +267,21 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       if (a.isShopAccount && !b.isShopAccount) return 1;
       if (!a.isShopAccount && b.isShopAccount) return -1;
 
-      // 🆕 2. イチ押しを最優先（ランク順：小さい順）
+      // 🆕 2. 優先度（順位）を最優先（昇順：小さい順）
+      const priorityA = a.priority ?? 999;
+      const priorityB = b.priority ?? 999;
+      if (priorityA !== priorityB) return priorityA - priorityB;
+
+      // 3. イチ押し判定（ランク順：小さい順）をサブ条件に
       if (a.isIchioshi && !b.isIchioshi) return -1;
       if (!a.isIchioshi && b.isIchioshi) return 1;
       if (a.isIchioshi && b.isIchioshi) {
         const rankA = a.ichioshiRank ?? 999;
         const rankB = b.ichioshiRank ?? 999;
-        if (rankA !== rankB) return rankA - rankB;
-        // ランクが同じ場合は priority で比較
+        return rankA - rankB;
       }
 
-      // 3. それ以外は優先度（昇順：小さい順）
-      const priorityA = a.priority ?? 999;
-      const priorityB = b.priority ?? 999;
-      return priorityA - priorityB;
+      return 0;
     });
 }
 
@@ -339,7 +340,7 @@ export async function getCastListMini(storeSlug: string): Promise<CastListMini[]
       if ((a as any).isShopAccount && !(b as any).isShopAccount) return 1;
       if (!(a as any).isShopAccount && (b as any).isShopAccount) return -1;
 
-      // 2. それ以外は優先度（昇順）
+      // 2. 優先度（昇順）を優先
       const priorityA = a.priority ?? 999;
       const priorityB = b.priority ?? 999;
       return priorityA - priorityB;

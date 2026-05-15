@@ -732,7 +732,12 @@ export default function StoreCast() {
           if (a.storeIsShopAccount?.[selectedStore] && !b.storeIsShopAccount?.[selectedStore]) return 1;
           if (!a.storeIsShopAccount?.[selectedStore] && b.storeIsShopAccount?.[selectedStore]) return -1;
 
-          // 2. イチ押しを最優先（ランク順：小さい順）
+          // 🆕 2. 優先度（順位）を最優先（昇順：小さい順）
+          const pA = a.storePriorities?.[selectedStore] ?? 999;
+          const pB = b.storePriorities?.[selectedStore] ?? 999;
+          if (pA !== pB) return pA - pB;
+
+          // 3. イチ押し判定（ランク順：小さい順）をサブ条件に
           const isIchioshiA = a.storeIchioshi?.[selectedStore];
           const isIchioshiB = b.storeIchioshi?.[selectedStore];
           if (isIchioshiA && !isIchioshiB) return -1;
@@ -740,13 +745,10 @@ export default function StoreCast() {
           if (isIchioshiA && isIchioshiB) {
             const rankA = a.storeIchioshiRank?.[selectedStore] ?? 999;
             const rankB = b.storeIchioshiRank?.[selectedStore] ?? 999;
-            if (rankA !== rankB) return rankA - rankB;
+            return rankA - rankB;
           }
 
-          // 3. それ以外は優先度（昇順：小さい順）
-          const pA = a.storePriorities?.[selectedStore] ?? 999;
-          const pB = b.storePriorities?.[selectedStore] ?? 999;
-          return pA - pB;
+          return 0;
         }));
       } catch (err) {
         console.error('Load casts error:', err);
