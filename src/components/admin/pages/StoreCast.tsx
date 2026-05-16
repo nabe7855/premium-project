@@ -372,6 +372,9 @@ export default function StoreCast() {
   const [isSaving, setIsSaving] = useState(false);
   const [priorityErrors, setPriorityErrors] = useState<Record<string, string>>({});
   
+  // 🆕 全メンバーシップ情報（非表示含む）を保持
+  const [allMemberships, setAllMemberships] = useState<any[]>([]);
+  
   // 🆕 デバッグログ用
   const [debugLogs, setDebugLogs] = useState<{time: string, msg: string, type: 'info' | 'success' | 'error'}[]>([]);
   const addLog = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
@@ -384,40 +387,57 @@ export default function StoreCast() {
   const savePriorityOrder = async (currentCasts: Cast[]) => {
     if (!selectedStore || currentCasts.length === 0) return;
     setIsSaving(true);
-    addLog(`並び順の一括保存を開始: ${currentCasts.length}件`, 'info');
+    addLog(`順位の再構成と一括保存を開始: ${currentCasts.length}件`, 'info');
     
     try {
-      const upsertData = currentCasts
-        .map((cast, index) => {
-          const membershipId = cast.storeMembershipIds?.[selectedStore];
-          if (!membershipId) {
-            addLog(`警告: キャスト ${cast.name} の membershipId が見つかりません`, 'error');
-            return null;
-          }
-          return {
-            id: membershipId,
-            priority: index + 1
-          };
-        })
-        .filter((row): row is { id: string; priority: number } => row !== null);
+      // 1. 現在表示されているキャストのIDセット
+      const activeIds = new Set(currentCasts.map(c => c.id));
+      
+      // 2. 非表示（inactive）のメンバーシップを抽出
+      const inactiveMembers = allMemberships.filter(m => {
+        const cast = Array.isArray(m.cast) ? m.cast[0] : m.cast;
+        return !activeIds.has(cast?.id);
+      });
 
-      if (upsertData.length === 0) {
-        addLog('エラー: 保存対象の有効なデータが0件です', 'error');
-        toast.error('保存対象が見つかりません');
-        return;
+      // 3. 全件の順位を衝突しないように再割り当て (1..N)
+      // 表示中のキャストを優先的に1位から割り当て
+      const upsertData = [
+        ...currentCasts.map((cast, index) => ({
+          id: cast.storeMembershipIds?.[selectedStore]!,
+          priority: index + 1
+        })),
+        ...inactiveMembers.map((m, index) => ({
+          id: m.id,
+          priority: currentCasts.length + index + 1
+        }))
+      ];
+
+      addLog(`全${upsertData.length}件（表示:${currentCasts.length}件, 非表示:${inactiveMembers.length}件）を更新`, 'info');
+
+      // 4. 重複回避のため、二段階で更新
+      // 一旦すべてを負の値にして衝突を解消
+      const tempUpsert = upsertData.map(d => ({ ...d, priority: -d.priority }));
+      
+      addLog('ステップ1: 一時的な負の順位へ退避...', 'info');
+      const { error: tempError } = await supabase
+        .from('cast_store_memberships')
+        .upsert(tempUpsert);
+
+      if (tempError) {
+        addLog(`退避失敗: ${tempError.message}`, 'error');
+        throw tempError;
       }
 
-      addLog(`送信データサンプル: ${JSON.stringify(upsertData[0])}...`, 'info');
-
-      const { data, error, status } = await supabase
+      addLog('ステップ2: 最終的な順位へ更新...', 'info');
+      const { error, status } = await supabase
         .from('cast_store_memberships')
-        .upsert(upsertData, { onConflict: 'id' });
+        .upsert(upsertData);
 
       if (error) {
         addLog(`保存失敗 [${status}]: ${error.message}`, 'error');
-        toast.error(`保存に失敗しました: ${error.message}`);
+        toast.error(`保存失敗: ${error.message}`);
       } else {
-        addLog(`保存成功 [${status}]: 順位を更新しました`, 'success');
+        addLog(`保存成功 [${status}]: 順位を完全に再構成しました`, 'success');
         toast.success('並び順を保存しました');
       }
     } catch (err: any) {
@@ -721,6 +741,8 @@ export default function StoreCast() {
           addLog(`データ取得エラー: ${memberError.message}`, 'error');
           throw memberError;
         }
+        
+        setAllMemberships(memberData || []);
         
         if (!memberData || memberData.length === 0) {
           addLog('メンバーシップ情報が0件です', 'info');
