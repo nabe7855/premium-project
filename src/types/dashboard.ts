@@ -21,6 +21,7 @@ export interface Cast {
   name: string;
   slug?: string;
   storeIds: string[];
+  storeMembershipIds?: Record<string, string>;
   storePriorities: Record<string, number>;
   storeIsShopAccount?: Record<string, boolean>;
   storeIchioshi: Record<string, boolean>;

@@ -5,7 +5,25 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, Store } from '@/types/dashboard';
-import { Tag as TagIcon, Trash2, Star, GripVertical, Save, Loader2 } from 'lucide-react';
+import { 
+  Save, 
+  Search, 
+  Tags, 
+  Tag as TagIcon,
+  Trash2, 
+  UserPlus, 
+  Store as StoreIcon, 
+  ChevronRight, 
+  Loader2, 
+  AlertCircle,
+  Bug,
+  History,
+  CheckCircle2,
+  XCircle,
+  Star, 
+  GripVertical
+} from 'lucide-react';
+import { toast } from 'sonner';
 import React, { useEffect, useState, useCallback } from 'react';
 import { motion, Reorder } from 'framer-motion';
 import { PlusIcon } from '../admin-assets/Icons';
@@ -353,34 +371,58 @@ export default function StoreCast() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [priorityErrors, setPriorityErrors] = useState<Record<string, string>>({});
+  
+  // 🆕 デバッグログ用
+  const [debugLogs, setDebugLogs] = useState<{time: string, msg: string, type: 'info' | 'success' | 'error'}[]>([]);
+  const addLog = (msg: string, type: 'info' | 'success' | 'error' = 'info') => {
+    const time = new Date().toLocaleTimeString();
+    setDebugLogs(prev => [{time, msg, type}, ...prev].slice(0, 50));
+    console.log(`[${type.toUpperCase()}] ${msg}`);
+  };
 
   // 🆕 並び順をDBに一括保存
   const savePriorityOrder = async (currentCasts: Cast[]) => {
     if (!selectedStore || currentCasts.length === 0) return;
     setIsSaving(true);
-    console.log('💾 並び順の保存を開始します...', currentCasts.length, '件');
+    addLog(`並び順の一括保存を開始: ${currentCasts.length}件`, 'info');
+    
     try {
-      // 全キャストに対して新しいインデックスをpriorityとして保存
-      // Promise.all で並列実行するが、件数が多い場合は直列またはチャンク分けを検討
-      const updates = currentCasts.map((cast, index) => {
-        const priority = index + 1;
-        return supabase
-          .from('cast_store_memberships')
-          .update({ priority })
-          .eq('cast_id', cast.id)
-          .eq('store_id', selectedStore);
-      });
+      const upsertData = currentCasts
+        .map((cast, index) => {
+          const membershipId = cast.storeMembershipIds?.[selectedStore];
+          if (!membershipId) {
+            addLog(`警告: キャスト ${cast.name} の membershipId が見つかりません`, 'error');
+            return null;
+          }
+          return {
+            id: membershipId,
+            priority: index + 1
+          };
+        })
+        .filter((row): row is { id: string; priority: number } => row !== null);
 
-      const results = await Promise.all(updates);
-      const errors = results.filter(r => r.error);
-      
-      if (errors.length > 0) {
-        console.error('❌ 一部の保存に失敗しました:', errors);
-      } else {
-        console.log('✅ 全ての並び順を保存しました');
+      if (upsertData.length === 0) {
+        addLog('エラー: 保存対象の有効なデータが0件です', 'error');
+        toast.error('保存対象が見つかりません');
+        return;
       }
-    } catch (err) {
-      console.error('❌ 保存エラー:', err);
+
+      addLog(`送信データサンプル: ${JSON.stringify(upsertData[0])}...`, 'info');
+
+      const { data, error, status } = await supabase
+        .from('cast_store_memberships')
+        .upsert(upsertData, { onConflict: 'id' });
+
+      if (error) {
+        addLog(`保存失敗 [${status}]: ${error.message}`, 'error');
+        toast.error(`保存に失敗しました: ${error.message}`);
+      } else {
+        addLog(`保存成功 [${status}]: 順位を更新しました`, 'success');
+        toast.success('並び順を保存しました');
+      }
+    } catch (err: any) {
+      addLog(`システムエラー: ${err.message}`, 'error');
+      toast.error('予期せぬエラーが発生しました');
     } finally {
       setIsSaving(false);
     }
@@ -439,20 +481,29 @@ export default function StoreCast() {
     });
 
     // Only save to DB if it's not a duplicate (to avoid 409) or if user wants to force it
-    // But usually we should try to save if the user really wants to, DB will handle constraint.
-    // For now, let's just update DB.
+    addLog(`順位の個別更新を開始: ${castId} -> ${value}`, 'info');
     try {
-      const { error } = await supabase
+      const targetCast = casts.find(c => c.id === castId);
+      const membershipId = targetCast?.storeMembershipIds?.[selectedStore];
+
+      if (!membershipId) {
+        addLog(`エラー: ${castId} の membershipId が見つかりません`, 'error');
+        return;
+      }
+
+      const { error, status } = await supabase
         .from('cast_store_memberships')
         .update({ priority: value })
-        .eq('cast_id', castId)
-        .eq('store_id', selectedStore);
+        .eq('id', membershipId);
 
       if (error) {
-        console.error('Update priority error:', error);
+        addLog(`順位更新失敗 [${status}]: ${error.message}`, 'error');
+        toast.error(`順位の更新に失敗しました: ${error.message}`);
+      } else {
+        addLog(`順位更新成功 [${status}]`, 'success');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      addLog(`順位更新システムエラー: ${err.message}`, 'error');
     }
   };
 
@@ -469,18 +520,29 @@ export default function StoreCast() {
       ),
     );
 
+    addLog(`店舗垢設定の更新を開始: ${castId} -> ${value}`, 'info');
     try {
-      const { error } = await supabase
+      const targetCast = casts.find(c => c.id === castId);
+      const membershipId = targetCast?.storeMembershipIds?.[selectedStore];
+
+      if (!membershipId) {
+        addLog(`エラー: ${castId} の membershipId が見つかりません`, 'error');
+        return;
+      }
+
+      const { error, status } = await supabase
         .from('cast_store_memberships')
         .update({ is_shop_account: value })
-        .eq('cast_id', castId)
-        .eq('store_id', selectedStore);
+        .eq('id', membershipId);
 
       if (error) {
-        console.error('Update is_shop_account error:', error);
+        addLog(`店舗垢設定失敗 [${status}]: ${error.message}`, 'error');
+        toast.error('店舗アカウント設定の保存に失敗しました');
+      } else {
+        addLog(`店舗垢設定成功 [${status}]`, 'success');
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      addLog(`店舗垢設定システムエラー: ${err.message}`, 'error');
     }
   };
 
@@ -499,13 +561,27 @@ export default function StoreCast() {
       ),
     );
 
+    addLog(`イチ押し設定の更新を開始: ${castId} -> ${value}`, 'info');
     try {
       // 2. Update DB (Membership table for flag)
-      await supabase
+      const targetCast = casts.find(c => c.id === castId);
+      const membershipId = targetCast?.storeMembershipIds?.[selectedStore];
+
+      if (!membershipId) {
+        addLog(`エラー: ${castId} の membershipId が見つかりません`, 'error');
+        return;
+      }
+
+      const { error: membershipError, status } = await supabase
         .from('cast_store_memberships')
         .update({ is_ichioshi: value })
-        .eq('cast_id', castId)
-        .eq('store_id', selectedStore);
+        .eq('id', membershipId);
+
+      if (membershipError) {
+        addLog(`イチ押しフラグ更新失敗 [${status}]: ${membershipError.message}`, 'error');
+      } else {
+        addLog(`イチ押しフラグ更新成功 [${status}]`, 'success');
+      }
 
       // 3. Update StoreTopConfig (JSON for point/rank details)
       const { data: configData } = await supabase
@@ -539,14 +615,21 @@ export default function StoreCast() {
         });
       }
       
-      const { error: updateError } = await supabase
+      addLog(`StoreTopConfigの更新を開始...`, 'info');
+      const { error: updateError, status: configStatus } = await supabase
         .from('store_top_configs')
         .update({ config })
         .eq('store_id', selectedStore);
 
-      if (updateError) throw updateError;
-    } catch (err) {
-      console.error('Update ichioshi error:', err);
+      if (updateError) {
+        addLog(`StoreTopConfig更新失敗 [${configStatus}]: ${updateError.message}`, 'error');
+        throw updateError;
+      } else {
+        addLog(`StoreTopConfig更新成功 [${configStatus}]`, 'success');
+        toast.success('一押し詳細を保存しました');
+      }
+    } catch (err: any) {
+      addLog(`イチ押し更新システムエラー: ${err.message}`, 'error');
     }
   };
 
@@ -612,14 +695,17 @@ export default function StoreCast() {
   useEffect(() => {
     if (!selectedStore) return;
     setHasUnsavedChanges(false); // 店舗切り替え時は変更フラグをリセット
+    addLog(`店舗データを読み込み中: ${selectedStore}`, 'info');
 
     const loadCasts = async () => {
       try {
+        setIsLoading(true);
         // 1. Fetch memberships and cast details
         const { data: memberData, error: memberError } = await supabase
           .from('cast_store_memberships')
           .select(
             `
+            id,
             priority,
             is_ichioshi,
             is_shop_account,
@@ -631,11 +717,18 @@ export default function StoreCast() {
           .eq('store_id', selectedStore)
           .order('priority', { ascending: true });
 
-        if (memberError) throw memberError;
+        if (memberError) {
+          addLog(`データ取得エラー: ${memberError.message}`, 'error');
+          throw memberError;
+        }
+        
         if (!memberData || memberData.length === 0) {
+          addLog('メンバーシップ情報が0件です', 'info');
           setCasts([]);
           return;
         }
+
+        addLog(`${memberData.length} 件のデータを取得しました`, 'info');
 
         const castIds = memberData
           .map((m: any) => {
@@ -682,6 +775,7 @@ export default function StoreCast() {
             if (!cast) return null;
             return {
               ...cast,
+              membership_id: item.id,
               priority: item.priority,
               is_ichioshi: item.is_ichioshi,
               is_shop_account: item.is_shop_account,
@@ -700,6 +794,7 @@ export default function StoreCast() {
               id: c.id,
               name: c.name,
               storeIds: [selectedStore],
+              storeMembershipIds: { [selectedStore]: c.membership_id },
               storePriorities: { [selectedStore]: c.priority || 0 },
               status: '在籍中',
               storeStatuses: cStatuses
@@ -956,6 +1051,43 @@ export default function StoreCast() {
             <p className="text-brand-text-secondary">この店舗に在籍中のキャストはいません。</p>
           </div>
         )}
+      </div>
+      {/* 🆕 デバッグログパネル */}
+      <div className="mt-12 rounded-xl border border-gray-700 bg-brand-secondary/50 p-6 shadow-2xl">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2 text-brand-text-primary">
+            <Bug size={20} className="text-brand-accent" />
+            <h3 className="text-lg font-bold">デバッグログ (リアルタイム)</h3>
+          </div>
+          <button 
+            onClick={() => setDebugLogs([])}
+            className="text-xs text-brand-text-secondary hover:text-white"
+          >
+            ログを消去
+          </button>
+        </div>
+        <div className="max-h-60 overflow-y-auto rounded-lg bg-black/40 p-4 font-mono text-sm">
+          {debugLogs.length === 0 ? (
+            <p className="text-gray-500 italic">操作ログはまだありません...</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              {debugLogs.map((log, i) => (
+                <div key={i} className="flex gap-3 border-b border-gray-800 pb-1">
+                  <span className="shrink-0 text-gray-500">[{log.time}]</span>
+                  <span className={
+                    log.type === 'error' ? 'text-red-400' : 
+                    log.type === 'success' ? 'text-green-400' : 
+                    'text-blue-300'
+                  }>
+                    {log.type === 'error' && <XCircle size={14} className="mr-1 inline" />}
+                    {log.type === 'success' && <CheckCircle2 size={14} className="mr-1 inline" />}
+                    {log.msg}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
