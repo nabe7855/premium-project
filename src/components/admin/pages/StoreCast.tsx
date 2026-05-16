@@ -847,6 +847,9 @@ export default function StoreCast() {
         }));
       } catch (err) {
         console.error('Load casts error:', err);
+        addLog(`読み込み失敗: ${err instanceof Error ? err.message : String(err)}`, 'error');
+      } finally {
+        setIsLoading(false);
       }
     };
     loadCasts();
