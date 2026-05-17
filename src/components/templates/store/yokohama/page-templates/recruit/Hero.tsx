@@ -1,4 +1,5 @@
 
+import NextImage from 'next/image';
 import React from 'react';
 import { ArrowRight, CheckCircle2 } from 'lucide-react';
 
@@ -6,10 +7,13 @@ const Hero: React.FC = () => {
   return (
     <div className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-slate-900">
       <div className="absolute inset-0 z-0">
-        <img 
+        <NextImage 
           src="https://images.unsplash.com/photo-1596464716127-f2a82984de30?auto=format&fit=crop&q=80&w=2070" 
-          alt="Fukuoka Luxury Night View" 
-          className="w-full h-full object-cover opacity-30"
+          alt="Yokohama Luxury Night View" 
+          fill
+          priority
+          className="object-cover opacity-30"
+          sizes="100vw"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40"></div>
       </div>

@@ -250,10 +250,12 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                           className={`mt-5 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
                         >
                           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
-                            <img
+                            <NextImage
                               src={concept.imageUrl}
                               alt={concept.title}
-                              className="h-full w-full object-cover"
+                              fill
+                              className="object-cover"
+                              sizes="(max-width: 768px) 100vw, 800px"
                             />
                             {isEditing && (
                               <label
