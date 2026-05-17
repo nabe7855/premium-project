@@ -200,14 +200,30 @@ export default function StoreManagement() {
 
   const handleFileUpload = async (file: File): Promise<string> => {
     // ファイル名のサニタイズ（日本語などのマルチバイト文字を排除）
-    const fileExt = file.name.split('.').pop() || 'png';
+    let fileExt = file.name.split('.').pop() || 'png';
+    let fileToUpload = file;
+    setUploading(true);
+
+    try {
+      const { default: imageCompression } = await import('browser-image-compression');
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+        fileType: 'image/webp' as const,
+      };
+      fileToUpload = await imageCompression(file, options);
+      fileExt = 'webp';
+    } catch (error) {
+      console.warn('⚠️ Store image compression failed, using original file:', error);
+    }
+
     const fileName = `${Date.now()}.${fileExt}`;
 
-    setUploading(true);
     try {
       const { error: uploadError } = await supabase.storage
         .from('store-images')
-        .upload(fileName, file);
+        .upload(fileName, fileToUpload);
 
       if (uploadError) {
         // エラー内容に応じた日本語メッセージ

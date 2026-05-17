@@ -7,12 +7,27 @@ import { supabase } from '../supabaseClient';
  * @param file アップロードするファイル
  * @returns 公開URL
  */
+import imageCompression from 'browser-image-compression';
+
 export async function uploadPriceImageClient(
   storeSlug: string,
   path: string,
   file: File,
 ): Promise<string | null> {
-  const fileExt = file.name.split('.').pop();
+  let fileToUpload = file;
+  try {
+    const options = {
+      maxSizeMB: 1,
+      maxWidthOrHeight: 1200,
+      useWebWorker: true,
+      fileType: 'image/webp' as const,
+    };
+    fileToUpload = await imageCompression(file, options);
+  } catch (error) {
+    console.warn('⚠️ Price image compression failed, using original file:', error);
+  }
+
+  const fileExt = 'webp';
   const timestamp = Date.now();
   const fileName = `${path}_${timestamp}.${fileExt}`;
   const filePath = `price/${storeSlug}/${fileName}`;
@@ -23,7 +38,7 @@ export async function uploadPriceImageClient(
 
   const { error: uploadError } = await supabase.storage
     .from(bucketName)
-    .upload(filePath, file, { upsert: false });
+    .upload(filePath, fileToUpload, { upsert: false });
 
   if (uploadError) {
     console.error('❌ [uploadPriceImageClient] Upload error:', uploadError);

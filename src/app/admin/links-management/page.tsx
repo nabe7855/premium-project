@@ -109,29 +109,23 @@ export default function LinksManagementPage() {
 
   const closeModal = () => { setIsModalOpen(false); setEditing(null); };
 
-  const convertToWebP = async (file: File): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const img = new Image();
-      img.onload = () => {
-        const canvas = document.createElement('canvas');
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        ctx?.drawImage(img, 0, 0);
-        canvas.toBlob((blob) => {
-          if (blob) resolve(blob);
-          else reject(new Error('WebP変換に失敗しました'));
-        }, 'image/webp', 0.8);
-      };
-      img.onerror = reject;
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
   const uploadBanner = async (file: File): Promise<string | null> => {
-    const webpBlob = await convertToWebP(file);
+    let fileToUpload = file;
+    try {
+      const { default: imageCompression } = await import('browser-image-compression');
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+        fileType: 'image/webp' as const,
+      };
+      fileToUpload = await imageCompression(file, options);
+    } catch (error) {
+      console.warn('⚠️ Partner link banner compression failed, using original file:', error);
+    }
+
     const path = `partner-links/${Date.now()}.webp`;
-    const { error } = await supabase.storage.from('banners').upload(path, webpBlob, { 
+    const { error } = await supabase.storage.from('banners').upload(path, fileToUpload, { 
       upsert: false,
       contentType: 'image/webp'
     });

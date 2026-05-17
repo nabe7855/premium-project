@@ -124,13 +124,27 @@ export default function BannerManagementPage() {
   };
 
   const uploadImage = async (file: File): Promise<string | null> => {
-    const fileExt = file.name.split('.').pop();
+    let fileToUpload = file;
+    try {
+      const { default: imageCompression } = await import('browser-image-compression');
+      const options = {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1200,
+        useWebWorker: true,
+        fileType: 'image/webp' as const,
+      };
+      fileToUpload = await imageCompression(file, options);
+    } catch (error) {
+      console.warn('⚠️ Banner image compression failed, using original file:', error);
+    }
+
+    const fileExt = 'webp';
     const fileName = `${Date.now()}.${fileExt}`;
     const filePath = `${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from('banners')
-      .upload(filePath, file, { upsert: false });
+      .upload(filePath, fileToUpload, { upsert: false });
 
     if (uploadError) {
       console.error('Error uploading image:', uploadError);
