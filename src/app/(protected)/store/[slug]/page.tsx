@@ -78,6 +78,8 @@ export function generateStaticParams() {
 }
 
 export const dynamicParams = true;
+export const revalidate = 300;
+export const dynamic = 'force-static';
 
 export default async function StorePage({ params }: StorePageProps) {
   console.log('🔍 StorePage params:', params);
