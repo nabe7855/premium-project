@@ -202,7 +202,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                         <div className="relative h-full w-full">
                           <NextImage
                             src={img}
-                            alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                            alt={isFirst ? `${slug === 'fukuoka' ? '福岡の女性用風俗' : slug === 'yokohama' ? '横浜の女性用風俗' : '女性用風俗'}ストロベリーボーイズ メインビジュアル` : `ストロベリーボーイズ${slug === 'fukuoka' ? '福岡店' : slug === 'yokohama' ? '横浜店' : ''} イメージ${index + 1}`}
                             fill
                             priority={isFirst}
                             fetchPriority={isFirst ? "high" : undefined}

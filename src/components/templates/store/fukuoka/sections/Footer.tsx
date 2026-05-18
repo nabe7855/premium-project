@@ -184,7 +184,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       >
                         <NextImage
                           src={getAbsoluteHref(banner.imageUrl)}
-                          alt=""
+                          alt={banner.label || 'ストロベリーボーイズ バナー'}
                           width={180}
                           height={100}
                           sizes="(max-width: 768px) 50vw, 25vw"
@@ -274,7 +274,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         src={getAbsoluteHref(
                           config.largeBanner?.imageUrl || 'https://placehold.jp/400x400.png?text=Large%20Banner',
                         )}
-                        alt="Large Banner"
+                        alt="ストロベリーボーイズ キャンペーンバナー"
                         fill
                         className="object-cover"
                         loading="lazy"

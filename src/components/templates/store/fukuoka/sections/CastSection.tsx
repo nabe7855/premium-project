@@ -339,7 +339,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                         {/* 画像エリア - 既存デザイン流用 */}
                         <div className="relative aspect-[3/4] overflow-hidden">
                           <NextImage
-                            src={cast.imageUrl}
+                            src={getTransformedImageUrl(cast.imageUrl, { width: 300, quality: 80 }) || cast.imageUrl}
                             alt={cast.name}
                             fill
                             className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -596,7 +596,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                           {/* 画像エリア */}
                           <div className="relative aspect-[3/4] overflow-hidden">
                             <NextImage
-                              src={cast.imageUrl}
+                              src={getTransformedImageUrl(cast.imageUrl, { width: 300, quality: 80 }) || cast.imageUrl}
                               alt={cast.name}
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -744,7 +744,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                           {/* 画像エリア */}
                           <div className="relative aspect-[3/4] overflow-hidden">
                             <NextImage
-                              src={cast.imageUrl}
+                              src={getTransformedImageUrl(cast.imageUrl, { width: 300, quality: 80 }) || cast.imageUrl}
                               alt={cast.name}
                               fill
                               className="object-cover transition-transform duration-700 group-hover:scale-105"

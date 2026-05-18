@@ -67,20 +67,24 @@ export default function FukuokaPage({
           storeSlug={storeSlug}
         />
       )}
-      <BeginnerGuideBanner
-        config={safeConfig?.beginnerGuide}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-        sectionName="beginnerGuide"
-      />
-      <BeginnerGuideBanner
-        config={safeConfig?.beginnerGuide2}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-        sectionName="beginnerGuide2"
-      />
+      <>
+        <h2 className="sr-only">初めての女性用風俗ガイド｜{storeSlug === 'fukuoka' ? '福岡' : ''}で安心して利用するには</h2>
+        <BeginnerGuideBanner
+          config={safeConfig?.beginnerGuide}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+          sectionName="beginnerGuide"
+        />
+        <h2 className="sr-only">{storeSlug === 'fukuoka' ? '福岡市内（博多・天神・中洲・薬院）' : '対応地域'}への出張エリア</h2>
+        <BeginnerGuideBanner
+          config={safeConfig?.beginnerGuide2}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+          sectionName="beginnerGuide2"
+        />
+      </>
       {(!safeConfig || safeConfig.quickAccess.isVisible || isEditing) && (
         <QuickAccessMenu
           config={safeConfig?.quickAccess}
@@ -89,12 +93,15 @@ export default function FukuokaPage({
         />
       )}
       {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
-        <ConceptSection
-          config={safeConfig?.concept}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <h2 className="sr-only">ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡' : ''}店が選ばれる5つの理由</h2>
+          <ConceptSection
+            config={safeConfig?.concept}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
       )}
       {(!safeConfig || safeConfig.campaign.isVisible || isEditing) && (
         <CampaignSection
@@ -115,14 +122,17 @@ export default function FukuokaPage({
         />
       )}
       {(!safeConfig || safeConfig.cast.isVisible || isEditing) && (
-        <CastSection
-          config={safeConfig?.cast}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-          storeSlug={storeSlug}
-          todayCasts={todayCasts}
-        />
+        <>
+          <h2 className="sr-only">在籍セラピスト一覧（{storeSlug === 'fukuoka' ? '福岡店' : ''}）</h2>
+          <CastSection
+            config={safeConfig?.cast}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+            storeSlug={storeSlug}
+            todayCasts={todayCasts}
+          />
+        </>
       )}
       {(!safeConfig || safeConfig.newcomer.isVisible || isEditing) && (
         <NewcomerSection
@@ -134,29 +144,38 @@ export default function FukuokaPage({
         />
       )}
       {(!safeConfig || safeConfig.price.isVisible || isEditing) && (
-        <PriceSection
-          config={safeConfig?.price}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <h2 className="sr-only">料金プラン｜{storeSlug === 'fukuoka' ? '福岡' : ''}の女性用風俗で明朗会計</h2>
+          <PriceSection
+            config={safeConfig?.price}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
       )}
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
-        <FlowSection
-          config={safeConfig?.flow}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <h2 className="sr-only">ご利用の流れ</h2>
+          <FlowSection
+            config={safeConfig?.flow}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
       )}
       <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
-        <FAQSection
-          config={safeConfig?.faq}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <h2 className="sr-only">よくあるご質問（{storeSlug === 'fukuoka' ? '福岡店FAQ' : 'FAQ'}）</h2>
+          <FAQSection
+            config={safeConfig?.faq}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
       )}
       <SNSProfile
         config={safeConfig?.snsProfile}
@@ -164,12 +183,15 @@ export default function FukuokaPage({
         onUpdate={(key, value) => onUpdate?.('snsProfile', key, value)}
         onImageUpload={(file) => onImageUpload?.('snsProfile', file, undefined, 'iconUrl')}
       />
-      <Footer
-        config={safeConfig?.footer}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
+      <>
+        <h2 className="sr-only">アクセス｜{storeSlug === 'fukuoka' ? '博多駅・天神駅から即日出張' : '即日出張対応'}</h2>
+        <Footer
+          config={safeConfig?.footer}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+        />
+      </>
     </div>
   );
 }

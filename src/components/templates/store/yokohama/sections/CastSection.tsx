@@ -3,6 +3,7 @@ import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowUpDown, RotateCcw, Search, Star } from 'lucide-react';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import React, { useEffect, useMemo, useState } from 'react';
@@ -313,7 +314,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                           >
                             <div className="relative aspect-[3/4] overflow-hidden">
                               <NextImage
-                                src={cast.imageUrl}
+                                src={getTransformedImageUrl(cast.imageUrl, { width: 300, quality: 80 }) || cast.imageUrl}
                                 alt={cast.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"
@@ -442,7 +443,7 @@ const CastSection: React.FC<CastSectionProps> = ({
                           >
                             <div className="relative aspect-[3/4] overflow-hidden">
                               <NextImage
-                                src={cast.imageUrl}
+                                src={getTransformedImageUrl(cast.imageUrl, { width: 300, quality: 80 }) || cast.imageUrl}
                                 alt={cast.name}
                                 fill
                                 className="object-cover transition-transform duration-700 group-hover:scale-105"

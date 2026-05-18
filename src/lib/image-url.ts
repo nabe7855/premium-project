@@ -42,12 +42,38 @@ export interface ImageTransformOptions {
 }
 
 /**
- * 将来的な最適化のためのプレースホルダー
- * 現状は表示の安定性を優先し、加工せずそのまま公開URLを返す
+ * Supabase Render API を使用して画像を動的に変換・最適化する
+ * unoptimized: true を解除した際、Vercelの無料枠画像制限を回避しつつ高速化するために使用
  */
 export function getTransformedImageUrl(
   path: string | null | undefined, 
   options: ImageTransformOptions & { slug?: string } = {}
 ): string | undefined {
-  return getSupabasePublicUrl(path, options.slug);
+  const publicUrl = getSupabasePublicUrl(path, options.slug);
+  if (!publicUrl) return undefined;
+
+  // SupabaseのストレージURLかつ画像である場合のみ変換処理を適用する
+  const isSupabaseStorage = publicUrl.includes('/storage/v1/object/public/');
+  if (!isSupabaseStorage) {
+    return publicUrl;
+  }
+
+  // クエリパラメータの構築
+  const params = new URLSearchParams();
+  if (options.width) params.append('width', options.width.toString());
+  if (options.height) params.append('height', options.height.toString());
+  if (options.quality) {
+    params.append('quality', options.quality.toString());
+  } else if (options.width || options.height) {
+    // リサイズ指定がある場合はデフォルト品質80を設定して圧縮
+    params.append('quality', '80');
+  }
+  if (options.resize) params.append('resize', options.resize);
+
+  // オプションが何も指定されていない場合はオリジナルのURLを返す
+  const paramString = params.toString();
+  if (!paramString) return publicUrl;
+
+  // object/public/ を render/image/public/ に置換してパラメータを付与
+  return publicUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?' + paramString;
 }

@@ -41,7 +41,7 @@ const StepCard: React.FC<StepCardProps> = ({
             imageSrc ||
             'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'
           }
-          alt=""
+          alt={typeof title === 'string' ? `ご利用の流れ - ${title}` : 'ご利用ステップ'}
           onUpload={onImageUpload}
           className={`h-full w-full object-cover transition-transform duration-500 group-hover:scale-105 ${!imageSrc ? 'opacity-0 group-hover:opacity-100' : ''}`}
         />
@@ -49,7 +49,7 @@ const StepCard: React.FC<StepCardProps> = ({
         imageSrc && (
           <NextImage
             src={imageSrc}
-            alt=""
+            alt={typeof title === 'string' ? `ご利用の流れ - ${title}` : 'ご利用ステップ'}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-105"
             sizes="(max-width: 768px) 100px, 150px"

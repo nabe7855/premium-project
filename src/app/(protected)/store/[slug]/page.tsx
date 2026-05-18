@@ -38,18 +38,22 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const description = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
   const ogImage = config?.hero?.images?.[0] || store.seo.ogImage;
 
-  // MEO最適化タイトル: 「店名 地域店 | 地域名 業態キャッチコピー」の形式に
-  const title = config?.hero?.mainHeading
-    ? `${shopName} ${store.city}店 | ${store.city}の${mainHeading}${subHeading}`
-    : `${shopName} ${store.city}店 | ${store.city}の女性専用リラクゼーション・女性用風俗`;
+  // MEO最適化タイトルとdescription
+  const title = store.city === '福岡'
+    ? '福岡の女性用風俗｜ストロベリーボーイズ福岡店【博多・天神・中洲対応】'
+    : `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
+
+  const metaDescription = store.city === '福岡'
+    ? '福岡市の女性用風俗ならストロベリーボーイズ福岡店。博多・天神・中洲・薬院エリアへ即日出張可。厳選セラピスト在籍、初めての方も安心の女性専用リラクゼーション。明朗会計・追加料金なしで利用できます。'
+    : config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
 
   return {
     title,
-    description,
+    description: metaDescription,
     keywords: store.seo.keywords,
     openGraph: {
       title,
-      description,
+      description: metaDescription,
       images: [
         {
           url: ogImage,
@@ -64,7 +68,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     twitter: {
       card: 'summary_large_image',
       title,
-      description,
+      description: metaDescription,
       images: [ogImage],
     },
     alternates: {
@@ -151,7 +155,7 @@ export default async function StorePage({ params }: StorePageProps) {
     notFound();
   }
 
-  const structuredData = {
+  const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     name: topConfig?.footer?.shopInfo?.name || store.name,
@@ -185,6 +189,42 @@ export default async function StorePage({ params }: StorePageProps) {
     })),
   };
 
+  const serviceSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: '女性用風俗・女性専用リラクゼーション',
+    provider: {
+      '@type': 'LocalBusiness',
+      name: topConfig?.footer?.shopInfo?.name || store.name,
+    },
+    areaServed: store.city === '福岡' 
+      ? [
+          { '@type': 'City', name: '福岡市博多区' },
+          { '@type': 'City', name: '福岡市中央区' },
+          { '@type': 'City', name: '福岡市南区' },
+          { '@type': 'City', name: '福岡市早良区' },
+          { '@type': 'City', name: '福岡市東区' },
+          { '@type': 'City', name: '福岡市西区' },
+          { '@type': 'City', name: '福岡市城南区' }
+        ]
+      : store.city === '横浜'
+      ? [
+          { '@type': 'City', name: '横浜市西区' },
+          { '@type': 'City', name: '横浜市中区' },
+          { '@type': 'City', name: '横浜市神奈川区' },
+          { '@type': 'City', name: '横浜市南区' }
+        ]
+      : { '@type': 'City', name: store.city },
+    serviceType: '女性用風俗・出張リラクゼーション',
+  };
+
+  const structuredData = [localBusinessSchema, serviceSchema];
+
+  // SEO用H1テキスト
+  const h1Text = store.city === '福岡'
+    ? '福岡の女性用風俗｜ストロベリーボーイズ福岡店【博多・天神・中洲対応】'
+    : `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
+
   // テンプレート振り分け
   return (
     <>
@@ -192,6 +232,7 @@ export default async function StorePage({ params }: StorePageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
+      <h1 className="sr-only">{h1Text}</h1>
       {store.template === 'fukuoka' ? (
         <FukuokaTopPage
           config={topConfig as any}
