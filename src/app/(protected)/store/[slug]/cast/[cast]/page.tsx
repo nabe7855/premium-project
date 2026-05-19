@@ -67,9 +67,41 @@ export default async function CastDetailPage({ params }: Props) {
     select: { id: true },
   });
 
+  // ✅ キャストのインタビュー記事URLを取得
+  const castInterviewLink = await prisma.interviewCastLink.findFirst({
+    where: {
+      OR: [
+        { cast_id: cast.id },
+        { cast_name_romaji: params.cast },
+        { cast_name: cast.name }
+      ],
+      interview_meta: {
+        area: params.slug
+      }
+    },
+    include: {
+      interview_meta: true
+    }
+  });
+
+  let interviewUrl: string | null = null;
+  if (castInterviewLink && castInterviewLink.interview_meta) {
+    const article = await prisma.mediaArticle.findUnique({
+      where: {
+        id: castInterviewLink.interview_meta.article_id,
+        status: 'published'
+      }
+    });
+    if (article) {
+      const castSlug = castInterviewLink.cast_id || castInterviewLink.cast_name_romaji || 'unknown';
+      interviewUrl = `/store/${params.slug}/interview/${castSlug}/${article.slug}`;
+    }
+  }
+
   // ✅ デバッグログ
   console.log('🟢 CastDetailPage params:', params);
   console.log('🟢 CastDetailPage loaded cast:', cast);
+  console.log('🟢 CastDetailPage interviewUrl:', interviewUrl);
 
   // ✅ 構造化データ (ProfilePage / Person)
   const castProfileSD = {
@@ -109,8 +141,8 @@ export default async function CastDetailPage({ params }: Props) {
         </>
       )}
 
-      {/* ✅ storeSlug と storeId を渡す */}
-      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} />
+      {/* ✅ storeSlug と storeId と interviewUrl を渡す */}
+      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} interviewUrl={interviewUrl} />
 
       {/* ✅ テンプレートに応じたフッターを表示 */}
       {store?.template === 'yokohama' ? (
