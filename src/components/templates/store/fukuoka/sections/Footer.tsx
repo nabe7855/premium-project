@@ -6,6 +6,7 @@ import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
 import { ImageIcon, Link2 } from 'lucide-react';
 import NextImage from 'next/image';
 import React from 'react';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 
 interface FooterProps {
   config?: FooterConfig;
@@ -183,7 +184,7 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         className="block w-full overflow-hidden rounded-[10px] bg-white shadow-sm transition-opacity hover:opacity-90"
                       >
                         <NextImage
-                          src={getAbsoluteHref(banner.imageUrl)}
+                          src={getOptimizedImageUrl(getAbsoluteHref(banner.imageUrl), 'banner') || getAbsoluteHref(banner.imageUrl)}
                           alt={banner.label || 'ストロベリーボーイズ バナー'}
                           width={180}
                           height={100}

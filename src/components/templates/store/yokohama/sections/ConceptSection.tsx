@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 
 const getConceptIcon = (title: string, index: number) => {
   if (title.includes('セラピスト')) return <Users size={20} />;
@@ -142,7 +143,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                 <div className="relative mx-auto flex max-w-[300px] items-center justify-center md:max-w-[400px]">
                   <div className="relative h-20 w-full md:h-28">
                     <NextImage
-                      src={config.headingImageUrl}
+                      src={getOptimizedImageUrl(config.headingImageUrl, 'icon') || config.headingImageUrl}
                       alt={config.heading || 'Concept'}
                       fill
                       className="object-contain"
@@ -251,7 +252,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                         >
                           <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
                             <NextImage
-                              src={concept.imageUrl}
+                              src={getOptimizedImageUrl(concept.imageUrl, 'content') || concept.imageUrl}
                               alt={concept.title}
                               fill
                               className="object-cover"

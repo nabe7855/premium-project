@@ -77,3 +77,26 @@ export function getTransformedImageUrl(
   // object/public/ を render/image/public/ に置換してパラメータを付与
   return publicUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?' + paramString;
 }
+
+export type ImagePreset = 'hero' | 'banner' | 'content' | 'thumb' | 'icon';
+
+export const IMAGE_PRESETS = {
+  hero: { width: 1600, quality: 75 },    // メインビジュアル、ヒーロー
+  banner: { width: 1200, quality: 75 },  // フッターバナー、ニュース画像
+  content: { width: 800, quality: 75 },  // 通常コンテンツ用画像
+  thumb: { width: 400, quality: 70 },    // キャストサムネイル、ギャラリー
+  icon: { width: 200, quality: 70 },     // アイコン、小サムネイル
+} as const;
+
+/**
+ * プリセットを指定して画像を最適化するラッパー関数
+ */
+export function getOptimizedImageUrl(
+  path: string | null | undefined,
+  preset: ImagePreset,
+  slug?: string
+): string | undefined {
+  const config = IMAGE_PRESETS[preset];
+  return getTransformedImageUrl(path, { width: config.width, quality: config.quality, slug }) || undefined;
+}
+

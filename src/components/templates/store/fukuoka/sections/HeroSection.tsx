@@ -4,7 +4,7 @@ import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
-import { getTransformedImageUrl } from '@/lib/image-url';
+import { getTransformedImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
@@ -201,7 +201,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       const imageContent = (
                         <div className="relative h-full w-full">
                           <NextImage
-                            src={img}
+                            src={getOptimizedImageUrl(img, 'hero', slug) || img}
                             alt={isFirst ? `${slug === 'fukuoka' ? '福岡の女性用風俗' : slug === 'yokohama' ? '横浜の女性用風俗' : '女性用風俗'}ストロベリーボーイズ メインビジュアル` : `ストロベリーボーイズ${slug === 'fukuoka' ? '福岡店' : slug === 'yokohama' ? '横浜店' : ''} イメージ${index + 1}`}
                             fill
                             priority={isFirst}

@@ -218,7 +218,32 @@ export default async function StorePage({ params }: StorePageProps) {
     serviceType: '女性用風俗・出張リラクゼーション',
   };
 
-  const structuredData = [localBusinessSchema, serviceSchema];
+  const breadcrumbSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'ホーム',
+        item: 'https://www.sutoroberrys.jp/',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: '店舗一覧',
+        item: 'https://www.sutoroberrys.jp/store',
+      },
+      {
+        '@type': 'ListItem',
+        position: 3,
+        name: store.city === '福岡' ? '福岡店' : store.city === '横浜' ? '横浜店' : `${store.city}店`,
+        item: `https://www.sutoroberrys.jp/store/${params.slug}`,
+      },
+    ],
+  };
+
+  const structuredData = [localBusinessSchema, serviceSchema, breadcrumbSchema];
 
   // SEO用H1テキスト
   const h1Text = store.city === '福岡'

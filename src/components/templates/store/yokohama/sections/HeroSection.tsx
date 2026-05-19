@@ -7,6 +7,7 @@ import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
 import { HeroConfig } from '@/lib/store/storeTopConfig';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 
 interface HeroSectionProps {
   config?: HeroConfig;
@@ -168,7 +169,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       const imageContent = (
                         <div className="relative h-full w-full">
                           <NextImage
-                            src={img}
+                            src={getOptimizedImageUrl(img, 'hero', slug) || img}
                             alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
                             fill
                             priority={isFirst}
