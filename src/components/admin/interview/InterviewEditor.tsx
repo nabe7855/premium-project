@@ -257,6 +257,8 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
             <DialogueEditor 
               sections={data.sections} 
               participants={data.participants}
+              photos={data.photos}
+              onPhotosChange={(p) => setData({ ...data, photos: p })}
               onChange={(s) => setData({ ...data, sections: s })}
             />
           </>

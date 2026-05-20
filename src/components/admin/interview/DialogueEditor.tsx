@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { 
   CheckSquare, 
   ChevronDown, 
@@ -13,21 +13,97 @@ import {
   UserIcon,
   XCircle,
   MessageSquare,
-  X
+  X,
+  Camera,
+  Loader2
 } from 'lucide-react';
 import { DialogueSection, DialogueItem, Participant } from './types';
+import { uploadMediaImage } from '@/lib/uploadMediaImage';
 
 interface DialogueEditorProps {
   sections: DialogueSection[];
   participants: Participant[];
+  photos: Record<string, any>;
+  onPhotosChange: (photos: Record<string, any>) => void;
   onChange: (sections: DialogueSection[]) => void;
 }
 
-export default function DialogueEditor({ sections, participants, onChange }: DialogueEditorProps) {
+export default function DialogueEditor({ sections, participants, photos, onPhotosChange, onChange }: DialogueEditorProps) {
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
+  const [uploadingSlotId, setUploadingSlotId] = useState<string | null>(null);
+  const [activeSlotUploadId, setActiveSlotUploadId] = useState<string | null>(null);
+  const slotFileInputRef = useRef<HTMLInputElement>(null);
 
   const updateSections = (newSections: DialogueSection[]) => {
     onChange(newSections);
+  };
+
+  const handlePhotoKeyChange = (oldKey: string, newKey: string) => {
+    if (!oldKey || !newKey || oldKey === newKey) return;
+    const newPhotos = { ...photos };
+    if (newPhotos[oldKey]) {
+      newPhotos[newKey] = newPhotos[oldKey];
+      delete newPhotos[oldKey];
+      onPhotosChange(newPhotos);
+    }
+  };
+
+  const triggerSlotUpload = (itemId: string) => {
+    setActiveSlotUploadId(itemId);
+    setTimeout(() => {
+      slotFileInputRef.current?.click();
+    }, 10);
+  };
+
+  const handleSlotFileChange = async (itemId: string, file: File) => {
+    if (!file) return;
+    
+    // Find the item to get its photo_key
+    let photoKey = '';
+    for (const s of sections) {
+      const found = s.items.find(item => item.id === itemId);
+      if (found && found.photo_key) {
+        photoKey = found.photo_key;
+        break;
+      }
+    }
+    
+    if (!photoKey) {
+      alert('先にスロット名（photo_key）を入力してください');
+      return;
+    }
+
+    setUploadingSlotId(itemId);
+    try {
+      const url = await uploadMediaImage(file);
+      if (url) {
+        const newPhotos = { ...photos };
+        newPhotos[photoKey] = {
+          url,
+          layout: 'landscape', // default layout
+          alt: '',
+          caption: '',
+        };
+        onPhotosChange(newPhotos);
+      } else {
+        alert('画像のアップロードに失敗しました。');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('アップロード中にエラーが発生しました。');
+    } finally {
+      setUploadingSlotId(null);
+      setActiveSlotUploadId(null);
+    }
+  };
+
+  const deleteSlotPhoto = (photoKey: string) => {
+    if (!photoKey) return;
+    if (!window.confirm('この画像をスロットおよびデータベースから完全に削除しますか？')) return;
+    
+    const newPhotos = { ...photos };
+    delete newPhotos[photoKey];
+    onPhotosChange(newPhotos);
   };
 
   const addSection = () => {
@@ -119,6 +195,20 @@ export default function DialogueEditor({ sections, participants, onChange }: Dia
 
   return (
     <div className="space-y-8">
+      {/* 画像差し込みスロット用 共通隠しファイル入力 */}
+      <input
+        type="file"
+        ref={slotFileInputRef}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file && activeSlotUploadId) {
+            handleSlotFileChange(activeSlotUploadId, file);
+          }
+          if (e.target) e.target.value = '';
+        }}
+        accept="image/*"
+        className="hidden"
+      />
       {selectedItemIds.size > 0 && (
         <div className="fixed bottom-10 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-4 rounded-full bg-slate-900 px-6 py-3 shadow-2xl ring-4 ring-brand-accent/30">
           <span className="text-sm font-bold text-white">{selectedItemIds.size}件選択中</span>
@@ -265,15 +355,75 @@ export default function DialogueEditor({ sections, participants, onChange }: Dia
                         }}
                       />
                     ) : item.type === 'photo' ? (
-                      <div className="rounded-lg border-2 border-dashed border-gray-200 p-4 text-center">
-                        <p className="text-xs font-bold text-gray-400">画像差し込みスロット: {item.photo_key}</p>
-                        <input 
-                          type="text" 
-                          value={item.photo_key} 
-                          onChange={(e) => updateItem(section.id, item.id, { photo_key: e.target.value })}
-                          className="mt-2 rounded border border-gray-200 px-2 py-1 text-[10px]"
-                          placeholder="photo_keyを入力..."
-                        />
+                      <div className="rounded-xl border-2 border-dashed border-gray-200 bg-neutral-50 p-5 text-center transition-all hover:border-brand-accent/40">
+                        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                          <span className="text-xs font-bold text-gray-500">スロット名 (photo_key):</span>
+                          <input 
+                            type="text" 
+                            value={item.photo_key || ''} 
+                            onChange={(e) => {
+                              const newKey = e.target.value;
+                              const oldKey = item.photo_key || '';
+                              updateItem(section.id, item.id, { photo_key: newKey });
+                              handlePhotoKeyChange(oldKey, newKey);
+                            }}
+                            className="rounded border border-gray-200 bg-white px-2 py-1 text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent w-full sm:w-48"
+                            placeholder="例: fullbody"
+                          />
+                        </div>
+
+                        {/* 画像アップロード & プレビュー */}
+                        {item.photo_key ? (
+                          (() => {
+                            const photoData = photos[item.photo_key];
+                            const imageUrl = photoData?.url || photoData?.filename;
+                            const isSlotUploading = uploadingSlotId === item.id;
+
+                            return imageUrl ? (
+                              <div className="group/photo relative mx-auto max-w-sm overflow-hidden rounded-xl border bg-white shadow-sm">
+                                <img src={imageUrl} alt="" className="aspect-[16/9] w-full object-cover" />
+                                <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/50 opacity-0 transition-opacity group-hover/photo:opacity-100">
+                                  <button
+                                    type="button"
+                                    onClick={() => triggerSlotUpload(item.id)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-700 hover:bg-neutral-100 shadow-md"
+                                    title="画像を差し替え"
+                                  >
+                                    <Camera size={16} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteSlotPhoto(item.photo_key!)}
+                                    className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-red-600 hover:bg-red-50 shadow-md"
+                                    title="画像を削除"
+                                  >
+                                    <TrashIcon size={16} />
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <div 
+                                onClick={() => triggerSlotUpload(item.id)}
+                                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white py-6 transition-all hover:bg-brand-accent/5 hover:border-brand-accent/40"
+                              >
+                                {isSlotUploading ? (
+                                  <>
+                                    <Loader2 className="h-6 w-6 animate-spin text-brand-accent" />
+                                    <span className="text-[10px] font-bold text-gray-400">アップロード中...</span>
+                                  </>
+                                ) : (
+                                  <>
+                                    <Camera className="h-6 w-6 text-gray-400" />
+                                    <span className="text-xs font-bold text-gray-500">画像を選択してアップロード</span>
+                                    <span className="text-[10px] text-gray-400">※自動的にWebP圧縮され、データベースに保存されます</span>
+                                  </>
+                                )}
+                              </div>
+                            );
+                          })()
+                        ) : (
+                          <p className="text-xs text-gray-400 italic">スロット名を入力してください</p>
+                        )}
                       </div>
                     ) : null}
                   </div>
