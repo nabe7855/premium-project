@@ -2,6 +2,7 @@ import React from 'react';
 import DialogueBubble, { SpeakerType } from './DialogueBubble';
 import FAQSection, { FaqItem } from './FAQSection';
 import ProfileCard, { CastProfileData } from './ProfileCard';
+import { prisma } from '@/lib/prisma';
 
 // ---------------------------------------------------------------------------
 // インタビュー記事の本体UIコンポーネント（サーバーコンポーネント）
@@ -61,7 +62,7 @@ interface InterviewArticleUIProps {
   }[];
 }
 
-export default function InterviewArticleUI({
+export default async function InterviewArticleUI({
   article,
   interviewMeta,
   castLinks,
@@ -74,6 +75,29 @@ export default function InterviewArticleUI({
   const photos = (interviewMeta?.photos ?? {}) as PhotoData;
   const photosAny = photos as any;
   const writerNote = interviewMeta?.writer_note as string[] | string | undefined;
+
+  // DBからキャストの公式画像を引いてくる
+  const castIds = castLinks?.map(c => c.cast_id).filter(Boolean) as string[];
+  const castPhotoMap = new Map<string, string>();
+  const castNameToIdMap = new Map<string, string>();
+  
+  if (castLinks) {
+    for (const cl of castLinks) {
+      if (cl.cast_id && cl.cast_name) {
+        castNameToIdMap.set(cl.cast_name, cl.cast_id);
+      }
+    }
+  }
+
+  if (castIds && castIds.length > 0) {
+    const casts = await prisma.cast.findMany({
+      where: { id: { in: castIds } },
+      select: { id: true, main_image_url: true, image_url: true },
+    });
+    for (const c of casts) {
+      castPhotoMap.set(c.id, c.main_image_url || c.image_url || '');
+    }
+  }
 
   // ✅ DBに保存されている profile_data の形式（配列、オブジェクト、または { fields: [...] }）を判別し、安全に CastProfileData[] に正規化します。
   const profileList: CastProfileData[] = [];
@@ -90,9 +114,11 @@ export default function InterviewArticleUI({
         const areaSlug = interviewMeta?.area === '福岡' ? 'fukuoka' : interviewMeta?.area === '横浜' ? 'yokohama' : 'fukuoka';
         const profileUrl = castSlug ? `/store/${areaSlug}/cast/${castSlug}` : undefined;
 
-        // 全身画像やサブ写真があればそれをアイコン画像に代入する
+        // DBから取得した公式画像を最優先とし、なければ記事内の写真を使用する
+        const officialPhotoUrl = (primaryCast as any).cast_id ? castPhotoMap.get((primaryCast as any).cast_id) : undefined;
         const photosData = photos as any;
-        const mainPhotoUrl = photosData?.fullbody?.url || photosData?.saiphoto1?.url || photosData?.saiphoto2?.url || photosData?.saiphoto3?.url;
+        const fallbackPhotoUrl = photosData?.fullbody?.url || photosData?.saiphoto1?.url || photosData?.saiphoto2?.url || photosData?.saiphoto3?.url;
+        const mainPhotoUrl = officialPhotoUrl || fallbackPhotoUrl;
 
         profileList.push({
           name: primaryCast.cast_name || '',
@@ -119,14 +145,23 @@ export default function InterviewArticleUI({
 
   // ✅ speaker_name と speaker タイプからアイコンURLを解決するヘルパー
   const resolveIconUrl = (speakerType: string | undefined, speakerName: string | undefined, itemIconUrl: string | undefined): string | undefined => {
-    // アイテムに直接 icon_url が設定されていればそれを優先
+    // 1. アイテムに直接 icon_url が設定されていればそれを優先
     if (itemIconUrl) return itemIconUrl;
     if (!speakerName) return undefined;
-    // インタビュアー（スタッフ）の場合: photos.staff_photos[speakerName]
+    
+    // 2. インタビュアー（スタッフ）の場合: photos.staff_photos[speakerName]
     if (speakerType === 'interviewer') {
       return photosAny?.staff_photos?.[speakerName] ?? undefined;
     }
-    // キャスト側: photos.fullbody > saiphoto1 > saiphoto2 の順で探す
+    
+    // 3. キャスト側: DBから取得した公式アイコン画像を最優先
+    const castId = castNameToIdMap.get(speakerName);
+    if (castId) {
+      const officialUrl = castPhotoMap.get(castId);
+      if (officialUrl) return officialUrl;
+    }
+    
+    // 4. フォールバック: photos.fullbody > saiphoto1 > saiphoto2 の順で探す
     return photosAny?.fullbody?.url || photosAny?.saiphoto1?.url || photosAny?.saiphoto2?.url || photosAny?.saiphoto3?.url || undefined;
   };
 
