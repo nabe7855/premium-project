@@ -68,7 +68,9 @@ export async function getInterviewArticles(options?: {
 }) {
   try {
     const metaWhere: Record<string, unknown> = {};
-    if (options?.area) metaWhere.area = options.area;
+    if (options?.area) {
+      metaWhere.area = options.area === 'fukuoka' ? { in: ['fukuoka', '福岡'] } : options.area === 'yokohama' ? { in: ['yokohama', '横浜'] } : options.area;
+    }
     if (options?.series_slug) metaWhere.series_slug = options.series_slug;
     if (options?.article_type) metaWhere.article_type = options.article_type;
 

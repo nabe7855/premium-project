@@ -67,7 +67,9 @@ export default async function CastDetailPage({ params }: Props) {
     select: { id: true },
   });
 
-  // ✅ キャストのインタビュー記事URLを取得
+  // ✅ キャストのインタビュー記事URLを取得 (エリア名は英語・日本語どちらでも紐付けできるようにロバスト化)
+  const areaQuery = params.slug === 'fukuoka' ? { in: ['fukuoka', '福岡'] } : params.slug === 'yokohama' ? { in: ['yokohama', '横浜'] } : params.slug;
+
   const castInterviewLink = await prisma.interviewCastLink.findFirst({
     where: {
       OR: [
@@ -76,7 +78,7 @@ export default async function CastDetailPage({ params }: Props) {
         { cast_name: cast.name }
       ],
       interview_meta: {
-        area: params.slug
+        area: areaQuery
       }
     },
     include: {
