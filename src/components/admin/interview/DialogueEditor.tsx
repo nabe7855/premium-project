@@ -381,6 +381,30 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                           </select>
                         </div>
 
+                        {/* Caption Input */}
+                        <div className="mb-4 flex flex-col gap-1 border-t pt-3 border-gray-200/50">
+                          <span className="text-xs font-bold text-gray-500">写真の説明文 (caption):</span>
+                          <input
+                            type="text"
+                            value={photos[item.photo_key || '']?.caption || ''}
+                            onChange={(e) => {
+                              if (!item.photo_key) return;
+                              const newPhotos = { ...photos };
+                              if (newPhotos[item.photo_key]) {
+                                newPhotos[item.photo_key] = {
+                                  ...newPhotos[item.photo_key],
+                                  caption: e.target.value
+                                };
+                                onPhotosChange(newPhotos);
+                              }
+                            }}
+                            disabled={!item.photo_key || !photos[item.photo_key]}
+                            placeholder="例: 撮影場所・補足コメントなど（任意）"
+                            className="w-full rounded border border-gray-200 bg-white px-3 py-1.5 text-xs text-gray-700 placeholder-gray-300 focus:outline-none focus:ring-1 focus:ring-brand-accent disabled:opacity-50"
+                          />
+                          <p className="text-[10px] text-gray-400">入力した説明文は写真の下に小さく表示されます。</p>
+                        </div>
+
                         {/* 画像アップロード & プレビュー */}
                         {item.photo_key ? (
                           (() => {
