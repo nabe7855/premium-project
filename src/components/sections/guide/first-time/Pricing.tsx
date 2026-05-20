@@ -181,7 +181,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
                       handleUpdateCourse(currentCourses.indexOf(mainCourse), 'oldPrice', e)
                     }
                     suppressContentEditableWarning
-                    className="text-2xl text-gray-300 line-through"
+                    className="text-2xl text-gray-500 line-through"
                   >
                     {mainCourse.oldPrice}
                   </span>
@@ -204,7 +204,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
                       handleUpdateCourse(currentCourses.indexOf(mainCourse), 'description', e)
                     }
                     suppressContentEditableWarning
-                    className="whitespace-pre-wrap text-sm leading-relaxed text-gray-600 md:text-base"
+                    className="whitespace-pre-wrap text-sm leading-relaxed text-gray-700 md:text-base"
                   >
                     {mainCourse.description}
                   </p>
@@ -235,7 +235,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
                       handleUpdateCourse(currentCourses.indexOf(course), 'oldPrice', e)
                     }
                     suppressContentEditableWarning
-                    className="text-sm text-gray-300 line-through"
+                    className="text-sm text-gray-500 line-through"
                   >
                     {course.oldPrice}
                   </span>
@@ -256,7 +256,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
                     handleUpdateCourse(currentCourses.indexOf(course), 'description', e)
                   }
                   suppressContentEditableWarning
-                  className="text-center text-sm text-gray-500 whitespace-pre-wrap outline-none"
+                  className="text-center text-sm text-gray-700 whitespace-pre-wrap outline-none"
                 >
                   {course.description}
                 </p>
@@ -321,7 +321,7 @@ export const Pricing: React.FC<PricingProps> = ({ config, isEditing, onUpdate, o
             contentEditable={isEditing}
             onBlur={(e) => handleUpdateField('notes', e)}
             suppressContentEditableWarning
-            className="mt-6 text-[10px] leading-relaxed text-gray-400 whitespace-pre-wrap outline-none"
+            className="mt-6 text-[11px] leading-relaxed text-gray-600 whitespace-pre-wrap outline-none"
           >
             {data.notes}
           </p>
