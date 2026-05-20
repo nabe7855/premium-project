@@ -293,7 +293,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                   value={data.title}
                   onChange={(e) => setData({ ...data, title: e.target.value })}
                   placeholder="タイトルを入力..."
-                  className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-brand-accent focus:outline-none"
+                  className="w-full rounded-lg border border-gray-300 px-4 py-3 text-gray-900 focus:border-brand-accent focus:outline-none"
                 />
               </div>
               
@@ -303,7 +303,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                   value={data.excerpt}
                   onChange={(e) => setData({ ...data, excerpt: e.target.value })}
                   rows={4}
-                  className="w-full rounded-lg border border-gray-300 p-4 focus:border-brand-accent focus:outline-none"
+                  className="w-full rounded-lg border border-gray-300 p-4 text-gray-900 focus:border-brand-accent focus:outline-none"
                 />
               </div>
 
@@ -316,7 +316,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                       type="text"
                       value={data.seo_title}
                       onChange={(e) => setData({ ...data, seo_title: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-accent focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-brand-accent focus:outline-none"
                     />
                   </div>
                   <div>
@@ -325,7 +325,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                       type="text"
                       value={data.seo_keywords}
                       onChange={(e) => setData({ ...data, seo_keywords: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-accent focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-brand-accent focus:outline-none"
                     />
                   </div>
                 </div>
@@ -344,7 +344,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                     <select
                       value={data.status}
                       onChange={(e) => setData({ ...data, status: e.target.value as any })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-accent focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-brand-accent focus:outline-none"
                     >
                       <option value="draft">下書き</option>
                       <option value="published">公開</option>
@@ -356,7 +356,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                       type="text"
                       value={data.slug}
                       onChange={(e) => setData({ ...data, slug: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-accent focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-brand-accent focus:outline-none"
                     />
                   </div>
                   <div>
@@ -364,7 +364,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                     <select
                       value={data.area}
                       onChange={(e) => setData({ ...data, area: e.target.value })}
-                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-accent focus:outline-none"
+                      className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:border-brand-accent focus:outline-none"
                     >
                       <option value="fukuoka">福岡</option>
                       <option value="yokohama">横浜</option>
@@ -392,7 +392,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                   value={data.thumbnail_url}
                   onChange={(e) => setData({ ...data, thumbnail_url: e.target.value })}
                   placeholder="画像URLを入力..."
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs focus:border-brand-accent focus:outline-none"
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-xs text-gray-900 focus:border-brand-accent focus:outline-none"
                 />
               </div>
             </div>
