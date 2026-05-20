@@ -46,16 +46,23 @@ const poppins = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: 'ストロベリーボーイズ - 女性向け癒しサービス',
-  description: '20代後半〜40代女性に選ばれる上質な癒し体験をお届けします。',
-  keywords: 'イケメン派遣,癒し,女性向け,マッチング,ホスト,エンターテイメント',
+  metadataBase: new URL('https://www.sutoroberrys.jp'),
+  title: {
+    default: '福岡の女性用風俗・出張ホストなら｜ストロベリーボーイズ',
+    template: '%s｜ストロベリーボーイズ福岡店',
+  },
+  description: '福岡で女性用風俗・出張ホストをお探しならストロベリーボーイズへ。完全審査制の厳選されたイケメンセラピストが、ホテルやご自宅で極上の癒しを提供します。天神・博多エリア対応。',
+  keywords: '女性用風俗,出張ホスト,福岡,天神,博多,女性向け,イケメン派遣',
   authors: [{ name: 'ストロベリーボーイズ' }],
   creator: 'ストロベリーボーイズ',
+  applicationName: 'ストロベリーボーイズ',
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
-    url: 'https://www.sutoroberrys.jp', // This URL is for the root layout, not dynamic. Dynamic URLs should be handled in page.tsx or generateMetadata.
+    url: 'https://www.sutoroberrys.jp',
     siteName: 'ストロベリーボーイズ',
+    title: '福岡の女性用風俗・出張ホストなら｜ストロベリーボーイズ',
+    description: '福岡で女性用風俗・出張ホストをお探しならストロベリーボーイズへ。完全審査制の厳選されたイケメンセラピストが、ホテルやご自宅で極上の癒しを提供します。天神・博多エリア対応。',
   },
   robots: {
     index: true,
@@ -138,6 +145,36 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   },
                 },
               ],
+            }),
+          }}
+        />
+        {/* ✅ JSON-LD構造化データ（Organization） */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Organization",
+              "name": "ストロベリーボーイズ",
+              "url": "https://www.sutoroberrys.jp",
+              "logo": "https://www.sutoroberrys.jp/logo.png"
+            }),
+          }}
+        />
+        {/* ✅ JSON-LD構造化データ（WebSite） */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "WebSite",
+              "name": "ストロベリーボーイズ",
+              "url": "https://www.sutoroberrys.jp",
+              "potentialAction": {
+                "@type": "SearchAction",
+                "target": "https://www.sutoroberrys.jp/search?q={search_term_string}",
+                "query-input": "required name=search_term_string"
+              }
             }),
           }}
         />
