@@ -1,5 +1,6 @@
 import { PageData } from '@/components/admin/news/types';
 import { CampaignConfig } from '@/lib/store/storeTopConfig';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 import { ArrowLeft, ArrowRight, ChevronRight } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -182,6 +183,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md shadow-sm md:h-20 md:w-20">
                         <NextImage
                           src={
+                            getOptimizedImageUrl(page.thumbnailUrl, 'content') ||
                             page.thumbnailUrl ||
                             'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=200'
                           }

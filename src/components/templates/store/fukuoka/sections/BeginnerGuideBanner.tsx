@@ -1,6 +1,6 @@
 'use client';
 import { BeginnerGuideConfig } from '@/lib/store/storeTopConfig';
-import { getTransformedImageUrl } from '@/lib/image-url';
+import { getTransformedImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -42,7 +42,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
         >
           <div className="relative aspect-[25/4] w-full overflow-hidden rounded-2xl bg-gray-100">
             <NextImage
-              src={(config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || '')}
+              src={getOptimizedImageUrl((config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || ''), 'banner') || (config.imageUrl || '/女性用風俗初体験の方はこちら.png').replace('{slug}', slug || '')}
               alt="女性用風俗初体験の方はこちら"
               fill
               className="object-cover"

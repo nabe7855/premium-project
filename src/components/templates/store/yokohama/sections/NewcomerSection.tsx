@@ -1,5 +1,6 @@
 import { Camera } from 'lucide-react';
 import { NewcomerConfig } from '@/lib/store/storeTopConfig';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 import NextImage from 'next/image';
 import Link from 'next/link';
 import React from 'react';
@@ -120,7 +121,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                     {/* Image with brown/gold border matching the image */}
                     <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
                     <NextImage
-                      src={item.imageUrl || '/cast-default.jpg'}
+                      src={getOptimizedImageUrl(item.imageUrl, 'thumb') || item.imageUrl || '/cast-default.jpg'}
                       alt={item.name}
                       fill
                       className="object-cover transition-transform duration-700 group-hover:scale-105"
