@@ -97,7 +97,14 @@ export default function NewsListClient({
                   ◆
                 </span>
                 <h1 className="text-2xl font-bold tracking-[0.2em] text-slate-800 md:text-3xl">
-                  ニュース
+                  <NextImage
+                    src="/ニュース一覧ページタイトル.jpg"
+                    alt="ニュース"
+                    width={200}
+                    height={48}
+                    className="h-auto w-auto max-h-12 object-contain"
+                    unoptimized
+                  />
                 </h1>
                 <span className="absolute -right-3 top-1/2 -translate-y-1/2 transform text-xs text-slate-300">
                   ◆
