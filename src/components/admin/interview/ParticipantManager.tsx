@@ -1,9 +1,10 @@
 'use client';
 
 import { getAllCasts } from '@/lib/actions/interview';
-import { PlusIcon, TrashIcon, UserIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { PlusIcon, TrashIcon, UserIcon, Camera, Loader2 } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
 import { Participant } from './types';
+import { uploadMediaImage } from '@/lib/uploadMediaImage';
 
 interface ParticipantManagerProps {
   participants: Participant[];
@@ -13,6 +14,7 @@ interface ParticipantManagerProps {
 export default function ParticipantManager({ participants, onChange }: ParticipantManagerProps) {
   const [availableCasts, setAvailableCasts] = useState<any[]>([]);
   const [showCastSelector, setShowCastSelector] = useState(false);
+  const [uploadingId, setUploadingId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchCasts = async () => {
@@ -31,7 +33,7 @@ export default function ParticipantManager({ participants, onChange }: Participa
     const newParticipant: Participant = {
       id: `staff-${Date.now()}`,
       name,
-      photoUrl: '', // Will be handled by image uploader later
+      photoUrl: '', // Will be handled by upload or text input
       type: 'staff',
     };
     onChange([...participants, newParticipant]);
@@ -61,6 +63,24 @@ export default function ParticipantManager({ participants, onChange }: Participa
     onChange(participants.map(p => p.id === id ? { ...p, photoUrl: url } : p));
   };
 
+  const handleFileChange = async (id: string, file: File) => {
+    if (!file) return;
+    setUploadingId(id);
+    try {
+      const url = await uploadMediaImage(file);
+      if (url) {
+        updatePhotoUrl(id, url);
+      } else {
+        alert('画像のアップロードに失敗しました。');
+      }
+    } catch (e) {
+      console.error(e);
+      alert('アップロード中にエラーが発生しました。');
+    } finally {
+      setUploadingId(null);
+    }
+  };
+
   return (
     <div className="rounded-xl bg-white p-6 shadow-sm">
       <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-800">
@@ -69,38 +89,77 @@ export default function ParticipantManager({ participants, onChange }: Participa
       </h3>
       
       <div className="flex flex-wrap gap-4">
-        {participants.map((p) => (
-          <div key={p.id} className="group relative flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 pr-10 shadow-sm transition-all hover:border-brand-accent/30">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm">
-              {p.photoUrl ? (
-                <img src={p.photoUrl} alt={p.name} className="h-full w-full object-cover" />
-              ) : (
-                <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-400">
-                  <UserIcon size={24} />
-                </div>
+        {participants.map((p) => {
+          const fileInputRef = useRef<HTMLInputElement>(null);
+          const isUploading = uploadingId === p.id;
+
+          return (
+            <div key={p.id} className="group relative flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 pr-10 shadow-sm transition-all hover:border-brand-accent/30">
+              {/* アバターコンポーネント (スタッフの場合はクリックでアップロード可能に) */}
+              <div 
+                onClick={() => p.type === 'staff' && !isUploading && fileInputRef.current?.click()}
+                className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm bg-neutral-100 select-none ${
+                  p.type === 'staff' ? 'cursor-pointer hover:ring-2 hover:ring-brand-accent/50 transition-all' : ''
+                }`}
+              >
+                {p.photoUrl ? (
+                  <img src={p.photoUrl} alt={p.name} className="h-full w-full object-cover" />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-gray-200 text-gray-400">
+                    <UserIcon size={24} />
+                  </div>
+                )}
+
+                {/* スタッフのホバー時カメラアイコン＆ロード中インジケータ */}
+                {p.type === 'staff' && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                    {isUploading ? (
+                      <Loader2 className="h-5 w-5 animate-spin text-white" />
+                    ) : (
+                      <Camera className="h-5 w-5 text-white" />
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* スタッフ用隠しファイル入力 */}
+              {p.type === 'staff' && (
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleFileChange(p.id, file);
+                  }}
+                  accept="image/*"
+                  className="hidden"
+                />
               )}
+
+              <div>
+                <p className="text-sm font-bold text-gray-800">{p.name}</p>
+                <p className="text-[10px] uppercase tracking-wider text-gray-400">
+                  {p.type === 'staff' ? 'スタッフ' : 'キャスト'}
+                </p>
+              </div>
+              
+              <button
+                onClick={() => removeParticipant(p.id)}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 transition-colors hover:text-red-500"
+              >
+                <TrashIcon size={16} />
+              </button>
+              
+              <input
+                type="text"
+                placeholder="画像URL"
+                value={p.photoUrl}
+                onChange={(e) => updatePhotoUrl(p.id, e.target.value)}
+                className="absolute -bottom-1 left-0 w-full scale-0 rounded bg-white px-2 py-0.5 text-[9px] shadow-md transition-transform group-hover:scale-100"
+              />
             </div>
-            <div>
-              <p className="text-sm font-bold text-gray-800">{p.name}</p>
-              <p className="text-[10px] uppercase tracking-wider text-gray-400">{p.type}</p>
-            </div>
-            
-            <button
-              onClick={() => removeParticipant(p.id)}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-300 transition-colors hover:text-red-500"
-            >
-              <TrashIcon size={16} />
-            </button>
-            
-            <input
-              type="text"
-              placeholder="画像URL"
-              value={p.photoUrl}
-              onChange={(e) => updatePhotoUrl(p.id, e.target.value)}
-              className="absolute -bottom-1 left-0 w-full scale-0 rounded bg-white px-2 py-0.5 text-[9px] shadow-md transition-transform group-hover:scale-100"
-            />
-          </div>
-        ))}
+          );
+        })}
 
         <div className="flex gap-2">
           <button
