@@ -53,6 +53,7 @@ interface InterviewArticleUIProps {
     seo_keywords?: string | null;
   } | null;
   castLinks?: {
+    cast_id?: string | null;
     cast_name: string;
     cast_name_romaji?: string | null;
     role: string;
@@ -68,18 +69,47 @@ export default function InterviewArticleUI({
   const dialogueData = interviewMeta?.dialogue_data as
     | { sections: DialogueSection[] }
     | undefined;
-  const profileDataRaw = interviewMeta?.profile_data as
-    | CastProfileData[]
-    | CastProfileData
-    | undefined;
-  const profileList: CastProfileData[] = profileDataRaw
-    ? Array.isArray(profileDataRaw)
-      ? profileDataRaw
-      : [profileDataRaw]
-    : [];
+  const profileDataRaw = interviewMeta?.profile_data as any | undefined;
   const faqData = interviewMeta?.faq_data as { items: FaqItem[] } | undefined;
   const photos = (interviewMeta?.photos ?? {}) as PhotoData;
   const writerNote = interviewMeta?.writer_note as string[] | string | undefined;
+
+  // ✅ DBに保存されている profile_data の形式（配列、オブジェクト、または { fields: [...] }）を判別し、安全に CastProfileData[] に正規化します。
+  const profileList: CastProfileData[] = [];
+  if (profileDataRaw) {
+    if (Array.isArray(profileDataRaw)) {
+      // 1. 複数キャスト（座談会など）の配列データの場合
+      profileList.push(...profileDataRaw);
+    } else if (profileDataRaw.fields && Array.isArray(profileDataRaw.fields)) {
+      // 2. 単一キャスト用の独自項目項目リスト { fields: [...] } の場合、キャストリンクとマージする
+      const primaryCast = castLinks && castLinks.length > 0 ? castLinks[0] : null;
+      if (primaryCast) {
+        // cast_idがあればそれを、なければcast_name_romajiをslugとして利用する
+        const castSlug = (primaryCast as any).cast_id || primaryCast.cast_name_romaji || '';
+        const areaSlug = interviewMeta?.area === '福岡' ? 'fukuoka' : interviewMeta?.area === '横浜' ? 'yokohama' : 'fukuoka';
+        const profileUrl = castSlug ? `/store/${areaSlug}/cast/${castSlug}` : undefined;
+
+        // 全身画像やサブ写真があればそれをアイコン画像に代入する
+        const photosData = photos as any;
+        const mainPhotoUrl = photosData?.fullbody?.url || photosData?.saiphoto1?.url || photosData?.saiphoto2?.url || photosData?.saiphoto3?.url;
+
+        profileList.push({
+          name: primaryCast.cast_name || '',
+          name_romaji: primaryCast.cast_name_romaji || undefined,
+          area: interviewMeta?.area || undefined,
+          attributes: profileDataRaw.fields.map((f: any) => ({
+            label: f.key,
+            value: f.value,
+          })),
+          icon_url: mainPhotoUrl,
+          profile_url: profileUrl,
+        });
+      }
+    } else if (profileDataRaw.name) {
+      // 3. 通常の name を持った単一キャストオブジェクトの場合
+      profileList.push(profileDataRaw as CastProfileData);
+    }
+  }
   const writerNoteList: string[] = writerNote
     ? Array.isArray(writerNote)
       ? writerNote

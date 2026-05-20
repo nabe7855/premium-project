@@ -40,10 +40,10 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
         className="flex items-center gap-4 px-5 py-4"
         style={{ background: '#FFF0F3' }}
       >
-        {cast.icon_url ? (
+        {cast?.icon_url ? (
           <img
             src={cast.icon_url}
-            alt={cast.name}
+            alt={cast?.name || ''}
             className="rounded-full border-2 object-cover"
             style={{
               width: isCompact ? 52 : 68,
@@ -60,7 +60,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
               background: 'linear-gradient(135deg, #E8567A, #f4a0b5)',
             }}
           >
-            {cast.name.charAt(0)}
+            {(cast?.name || '').charAt(0)}
           </div>
         )}
 
@@ -72,9 +72,9 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
             className="font-serif text-xl font-bold"
             style={{ color: '#1a1a1a', letterSpacing: '-0.3px' }}
           >
-            {cast.name}
+            {cast?.name || ''}
           </h3>
-          {cast.name_romaji && (
+          {cast?.name_romaji && (
             <p className="text-xs tracking-widest" style={{ color: '#9ca3af' }}>
               {cast.name_romaji.toUpperCase()}
             </p>
@@ -86,7 +86,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
       {!isCompact && (
         <div className="px-5 py-4">
           <dl className="space-y-2.5">
-            {cast.area && (
+            {cast?.area && (
               <div className="flex items-baseline gap-3">
                 <dt className="w-20 flex-shrink-0 text-[11px] font-bold tracking-wider" style={{ color: '#9ca3af' }}>
                   エリア
@@ -94,7 +94,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
                 <dd className="text-sm" style={{ color: '#1a1a1a' }}>{cast.area}</dd>
               </div>
             )}
-            {cast.age && (
+            {cast?.age && (
               <div className="flex items-baseline gap-3">
                 <dt className="w-20 flex-shrink-0 text-[11px] font-bold tracking-wider" style={{ color: '#9ca3af' }}>
                   年齢
@@ -102,7 +102,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
                 <dd className="text-sm" style={{ color: '#1a1a1a' }}>{cast.age}歳</dd>
               </div>
             )}
-            {cast.height && (
+            {cast?.height && (
               <div className="flex items-baseline gap-3">
                 <dt className="w-20 flex-shrink-0 text-[11px] font-bold tracking-wider" style={{ color: '#9ca3af' }}>
                   身長
@@ -110,7 +110,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
                 <dd className="text-sm" style={{ color: '#1a1a1a' }}>{cast.height}cm</dd>
               </div>
             )}
-            {cast.attributes?.map((attr) => (
+            {cast?.attributes?.map((attr) => (
               <div key={attr.label} className="flex items-baseline gap-3">
                 <dt className="w-20 flex-shrink-0 text-[11px] font-bold tracking-wider" style={{ color: '#9ca3af' }}>
                   {attr.label}
@@ -120,7 +120,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
             ))}
           </dl>
 
-          {cast.catch_copy && (
+          {cast?.catch_copy && (
             <p
               className="mt-4 border-l-4 pl-3 text-sm italic leading-relaxed"
               style={{ borderColor: '#E8567A', color: '#555' }}
@@ -132,7 +132,7 @@ export default function ProfileCard({ cast, variant = 'default' }: ProfileCardPr
       )}
 
       {/* プロフィールページへのリンク */}
-      {cast.profile_url && (
+      {cast?.profile_url && (
         <div className="px-5 pb-4">
           <a
             href={cast.profile_url}
