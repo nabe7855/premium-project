@@ -198,7 +198,23 @@ export default function DialogueEditor({ sections, participants, onChange }: Dia
 
           <div className="space-y-4">
             {section.items.map((item) => {
-              const participant = participants.find(p => p.id === item.speaker);
+              const participant = participants.find(p => {
+                if (!p) return false;
+                // 1. IDでの完全一致
+                if (p.id === item.speaker) return true;
+                
+                // 2. 名前での完全一致 (例: "イトウ" === "イトウ")
+                if (p.name === item.speaker || p.name === item.speaker_name) return true;
+                
+                // 3. 部分一致・あいまい一致 (例: "采（サイ）" に "サイ" が含まれる場合)
+                if (item.speaker && (p.name.includes(item.speaker) || item.speaker.includes(p.name))) return true;
+                if (item.speaker_name && (p.name.includes(item.speaker_name) || item.speaker_name.includes(p.name))) return true;
+
+                // 4. "interviewer" のフォールバック (スタッフ名「イトウ」へのマッピング)
+                if (item.speaker === 'interviewer' && p.type === 'staff' && p.name === 'イトウ') return true;
+
+                return false;
+              });
               const isSelected = selectedItemIds.has(item.id);
 
               return (

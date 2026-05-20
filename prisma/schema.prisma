@@ -16,6 +16,7 @@ model Cast {
   blood_type      String?
   profile         String?
   image_url       String?
+  main_image_url  String?
   voice_url       String?
   email           String?
   login_password  String?

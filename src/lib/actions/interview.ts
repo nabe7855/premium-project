@@ -170,6 +170,7 @@ export async function getAllCasts() {
         id: true,
         name: true,
         image_url: true,
+        main_image_url: true,
       },
       orderBy: { name: 'asc' },
     });
@@ -177,7 +178,7 @@ export async function getAllCasts() {
     const casts = castsRaw.map(c => ({
       id: c.id,
       name: c.name,
-      photoUrl: c.image_url,
+      photoUrl: c.main_image_url || c.image_url || '',
     }));
 
     return { success: true, casts };
