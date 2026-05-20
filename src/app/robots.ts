@@ -8,5 +8,6 @@ export default function robots(): MetadataRoute.Robots {
       disallow: ['/admin/', '/api/', '/_next/'],
     },
     sitemap: 'https://www.sutoroberrys.jp/sitemap.xml',
+    host: 'https://www.sutoroberrys.jp',
   };
 }
