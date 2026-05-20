@@ -339,7 +339,7 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                           target.style.height = target.scrollHeight + 'px';
                         }}
                       />
-                    ) : item.type === 'photo' ? (
+                      ) : item.type === 'photo' ? (
                       <div className="rounded-xl border-2 border-dashed border-gray-200 bg-neutral-50 p-5 text-center transition-all hover:border-brand-accent/40">
                         <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
                           <span className="text-xs font-bold text-gray-500">スロット名 (photo_key):</span>
@@ -357,16 +357,43 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                           />
                         </div>
 
+                        {/* Layout Selector */}
+                        <div className="mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-t pt-3 border-gray-200/50">
+                          <span className="text-xs font-bold text-gray-500">表示レイアウト:</span>
+                          <select 
+                            value={photos[item.photo_key || '']?.layout || 'landscape'} 
+                            onChange={(e) => {
+                              if (!item.photo_key) return;
+                              const newPhotos = { ...photos };
+                              if (newPhotos[item.photo_key]) {
+                                newPhotos[item.photo_key] = {
+                                  ...newPhotos[item.photo_key],
+                                  layout: e.target.value
+                                };
+                                onPhotosChange(newPhotos);
+                              }
+                            }}
+                            disabled={!item.photo_key || !photos[item.photo_key]}
+                            className="rounded border border-gray-200 bg-white px-2 py-1 text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-brand-accent w-full sm:w-48 disabled:opacity-50"
+                          >
+                            <option value="landscape">横長 (フルサイズ表示)</option>
+                            <option value="portrait">縦長 (中央寄せ最大400px表示)</option>
+                          </select>
+                        </div>
+
                         {/* 画像アップロード & プレビュー */}
                         {item.photo_key ? (
                           (() => {
                             const photoData = photos[item.photo_key];
                             const imageUrl = photoData?.url || photoData?.filename;
                             const isSlotUploading = uploadingSlotId === item.photo_key;
+                            const currentLayout = photoData?.layout || 'landscape';
 
                             return imageUrl ? (
-                              <div className="group/photo relative mx-auto max-w-sm overflow-hidden rounded-xl border bg-white shadow-sm">
-                                <img src={imageUrl} alt="" className="aspect-[16/9] w-full object-cover" />
+                              <div className={`group/photo relative mx-auto overflow-hidden rounded-xl border bg-white shadow-sm transition-all duration-300 ${
+                                currentLayout === 'portrait' ? 'max-w-[200px] aspect-[3/4]' : 'max-w-sm aspect-[16/9]'
+                              }`}>
+                                <img src={imageUrl} alt="" className="h-full w-full object-cover" />
                                 <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/50 opacity-0 transition-opacity group-hover/photo:opacity-100">
                                   <button
                                     type="button"
