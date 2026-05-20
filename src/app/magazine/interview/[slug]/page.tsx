@@ -176,6 +176,7 @@ export default async function InterviewArticlePage({ params }: PageProps) {
             : null
         }
         castLinks={castLinks.map((cl) => ({
+          cast_id: cl.cast_id,
           cast_name: cl.cast_name,
           cast_name_romaji: cl.cast_name_romaji,
           role: cl.role,
