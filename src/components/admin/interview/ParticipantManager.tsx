@@ -15,6 +15,8 @@ export default function ParticipantManager({ participants, onChange }: Participa
   const [availableCasts, setAvailableCasts] = useState<any[]>([]);
   const [showCastSelector, setShowCastSelector] = useState(false);
   const [uploadingId, setUploadingId] = useState<string | null>(null);
+  const [activeUploadId, setActiveUploadId] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const fetchCasts = async () => {
@@ -78,6 +80,7 @@ export default function ParticipantManager({ participants, onChange }: Participa
       alert('アップロード中にエラーが発生しました。');
     } finally {
       setUploadingId(null);
+      setActiveUploadId(null);
     }
   };
 
@@ -87,17 +90,39 @@ export default function ParticipantManager({ participants, onChange }: Participa
         <UserIcon size={20} className="text-brand-accent" />
         インタビュー参加者
       </h3>
+
+      {/* スタッフ画像用共通隠しファイル入力 (フック違反を避けるためループ外に設置) */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          if (file && activeUploadId) {
+            handleFileChange(activeUploadId, file);
+          }
+          if (e.target) e.target.value = ''; // 連続アップロード可能にリセット
+        }}
+        accept="image/*"
+        className="hidden"
+      />
       
       <div className="flex flex-wrap gap-4">
         {participants.map((p) => {
-          const fileInputRef = useRef<HTMLInputElement>(null);
           const isUploading = uploadingId === p.id;
 
           return (
             <div key={p.id} className="group relative flex items-center gap-3 rounded-lg border border-gray-100 bg-gray-50 p-3 pr-10 shadow-sm transition-all hover:border-brand-accent/30">
               {/* アバターコンポーネント (スタッフの場合はクリックでアップロード可能に) */}
               <div 
-                onClick={() => p.type === 'staff' && !isUploading && fileInputRef.current?.click()}
+                onClick={() => {
+                  if (p.type === 'staff' && !isUploading) {
+                    setActiveUploadId(p.id);
+                    // 確実にステートが反映されてからクリックイベントをトリガー
+                    setTimeout(() => {
+                      fileInputRef.current?.click();
+                    }, 10);
+                  }
+                }}
                 className={`relative h-12 w-12 overflow-hidden rounded-full border-2 border-white shadow-sm bg-neutral-100 select-none ${
                   p.type === 'staff' ? 'cursor-pointer hover:ring-2 hover:ring-brand-accent/50 transition-all' : ''
                 }`}
@@ -121,20 +146,6 @@ export default function ParticipantManager({ participants, onChange }: Participa
                   </div>
                 )}
               </div>
-
-              {/* スタッフ用隠しファイル入力 */}
-              {p.type === 'staff' && (
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) handleFileChange(p.id, file);
-                  }}
-                  accept="image/*"
-                  className="hidden"
-                />
-              )}
 
               <div>
                 <p className="text-sm font-bold text-gray-800">{p.name}</p>
