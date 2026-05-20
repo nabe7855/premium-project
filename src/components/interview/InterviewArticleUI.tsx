@@ -72,6 +72,7 @@ export default function InterviewArticleUI({
   const profileDataRaw = interviewMeta?.profile_data as any | undefined;
   const faqData = interviewMeta?.faq_data as { items: FaqItem[] } | undefined;
   const photos = (interviewMeta?.photos ?? {}) as PhotoData;
+  const photosAny = photos as any;
   const writerNote = interviewMeta?.writer_note as string[] | string | undefined;
 
   // ✅ DBに保存されている profile_data の形式（配列、オブジェクト、または { fields: [...] }）を判別し、安全に CastProfileData[] に正規化します。
@@ -115,6 +116,19 @@ export default function InterviewArticleUI({
       ? writerNote
       : [writerNote]
     : [];
+
+  // ✅ speaker_name と speaker タイプからアイコンURLを解決するヘルパー
+  const resolveIconUrl = (speakerType: string | undefined, speakerName: string | undefined, itemIconUrl: string | undefined): string | undefined => {
+    // アイテムに直接 icon_url が設定されていればそれを優先
+    if (itemIconUrl) return itemIconUrl;
+    if (!speakerName) return undefined;
+    // インタビュアー（スタッフ）の場合: photos.staff_photos[speakerName]
+    if (speakerType === 'interviewer') {
+      return photosAny?.staff_photos?.[speakerName] ?? undefined;
+    }
+    // キャスト側: photos.fullbody > saiphoto1 > saiphoto2 の順で探す
+    return photosAny?.fullbody?.url || photosAny?.saiphoto1?.url || photosAny?.saiphoto2?.url || photosAny?.saiphoto3?.url || undefined;
+  };
 
   const publishedDate = article.published_at ?? article.created_at;
   const dateStr = publishedDate.toLocaleDateString('ja-JP', {
@@ -228,7 +242,7 @@ export default function InterviewArticleUI({
                       key={ii}
                       speaker={(item.speaker ?? 'cast') as SpeakerType}
                       speakerName={item.speaker_name}
-                      iconUrl={item.icon_url}
+                      iconUrl={resolveIconUrl(item.speaker, item.speaker_name, item.icon_url)}
                       text={item.text}
                     />
                   );
