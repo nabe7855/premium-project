@@ -11,8 +11,12 @@ import {
   EyeIcon, 
   ImageIcon, 
   SaveIcon, 
-  SettingsIcon 
+  SettingsIcon,
+  Loader2,
+  Trash2,
+  UploadCloud
 } from 'lucide-react';
+import { uploadMediaImage } from '@/lib/uploadMediaImage';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
@@ -30,6 +34,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'content' | 'profile' | 'settings'>('content');
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploadingThumbnail, setIsUploadingThumbnail] = useState(false);
   const [availableCasts, setAvailableCasts] = useState<any[]>([]);
 
   // Initialize form data from initialData
@@ -378,15 +383,87 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
                   <ImageIcon size={16} className="text-brand-accent" />
                   メイン画像
                 </h3>
-                <div className="mb-4 aspect-video overflow-hidden rounded-lg bg-gray-100">
+                
+                {/* Upload Area */}
+                <div 
+                  onClick={() => !isUploadingThumbnail && document.getElementById('main-thumbnail-input')?.click()}
+                  className={`group relative mb-4 flex aspect-video cursor-pointer flex-col items-center justify-center overflow-hidden rounded-xl border-2 border-dashed transition-all duration-300 ${
+                    data.thumbnail_url 
+                      ? 'border-transparent bg-gray-100 hover:border-brand-accent/40' 
+                      : 'border-gray-300 bg-gray-50 hover:border-brand-accent hover:bg-pink-50/10'
+                  }`}
+                >
                   {data.thumbnail_url ? (
-                    <img src={data.thumbnail_url} className="h-full w-full object-cover" />
+                    <>
+                      <img src={data.thumbnail_url} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-300 group-hover:opacity-100">
+                        <div className="flex gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              document.getElementById('main-thumbnail-input')?.click();
+                            }}
+                            className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-gray-700 shadow hover:bg-gray-150 active:scale-95"
+                          >
+                            変更する
+                          </button>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              if (window.confirm('メイン画像を削除しますか？')) {
+                                setData({ ...data, thumbnail_url: '' });
+                              }
+                            }}
+                            className="flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-red-700 active:scale-95"
+                          >
+                            <Trash2 size={12} />
+                            削除
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  ) : isUploadingThumbnail ? (
+                    <div className="flex flex-col items-center gap-2 text-brand-accent">
+                      <Loader2 className="animate-spin" size={32} />
+                      <span className="text-xs font-bold">アップロード中...</span>
+                    </div>
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-gray-400">
-                      <ImageIcon size={32} />
+                    <div className="flex flex-col items-center gap-2 text-gray-400 group-hover:text-brand-accent">
+                      <UploadCloud size={32} className="transition-transform duration-300 group-hover:-translate-y-0.5" />
+                      <span className="text-xs font-bold">クリックして画像を選択</span>
+                      <span className="text-[10px] text-gray-400">またはドラッグ＆ドロップ</span>
                     </div>
                   )}
                 </div>
+                
+                <input
+                  id="main-thumbnail-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (!file) return;
+                    
+                    setIsUploadingThumbnail(true);
+                    try {
+                      const url = await uploadMediaImage(file);
+                      if (url) {
+                        setData({ ...data, thumbnail_url: url });
+                      } else {
+                        alert('画像のアップロードに失敗しました。');
+                      }
+                    } catch (err) {
+                      console.error(err);
+                      alert('アップロード中にエラーが発生しました。');
+                    } finally {
+                      setIsUploadingThumbnail(false);
+                    }
+                  }}
+                />
+
                 <input
                   type="text"
                   value={data.thumbnail_url}
