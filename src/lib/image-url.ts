@@ -68,7 +68,13 @@ export function getTransformedImageUrl(
     // リサイズ指定がある場合はデフォルト品質80を設定して圧縮
     params.append('quality', '80');
   }
-  if (options.resize) params.append('resize', options.resize);
+  
+  if (options.resize) {
+    params.append('resize', options.resize);
+  } else if (options.width || options.height) {
+    // 縦横比が崩れたり見切れたりするのを防ぐため、デフォルトで 'contain'（アスペクト比維持）を適用
+    params.append('resize', 'contain');
+  }
 
   // オプションが何も指定されていない場合はオリジナルのURLを返す
   const paramString = params.toString();
