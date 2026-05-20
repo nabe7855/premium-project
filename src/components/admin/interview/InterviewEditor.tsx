@@ -51,7 +51,18 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
     seo_keywords: initialData?.interview_meta?.seo_keywords || '',
     writer_note: initialData?.interview_meta?.writer_note || [],
     
-    sections: initialData?.interview_meta?.dialogue_data?.sections || [],
+    sections: (initialData?.interview_meta?.dialogue_data?.sections || []).map((s: any) => ({
+      id: s.id || `section-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+      heading: s.heading || '',
+      items: (s.items || []).map((item: any) => ({
+        id: item.id || `item-${Date.now()}-${Math.random().toString(36).substr(2, 5)}`,
+        type: item.type,
+        speaker: item.speaker,
+        speaker_name: item.speaker_name,
+        text: item.text,
+        photo_key: item.photo_key,
+      })),
+    })),
     profile_fields: initialData?.interview_meta?.profile_data?.fields || [],
     faqs: initialData?.interview_meta?.faq_data?.items || [],
     photos: initialData?.interview_meta?.photos || {},

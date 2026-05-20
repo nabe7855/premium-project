@@ -31,7 +31,7 @@ interface DialogueEditorProps {
 export default function DialogueEditor({ sections, participants, photos, onPhotosChange, onChange }: DialogueEditorProps) {
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [uploadingSlotId, setUploadingSlotId] = useState<string | null>(null);
-  const [activeSlotUploadId, setActiveSlotUploadId] = useState<string | null>(null);
+  const [activeSlotPhotoKey, setActiveSlotPhotoKey] = useState<string | null>(null);
   const slotFileInputRef = useRef<HTMLInputElement>(null);
 
   const updateSections = (newSections: DialogueSection[]) => {
@@ -48,32 +48,17 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
     }
   };
 
-  const triggerSlotUpload = (itemId: string) => {
-    setActiveSlotUploadId(itemId);
+  const triggerSlotUpload = (photoKey: string) => {
+    setActiveSlotPhotoKey(photoKey);
     setTimeout(() => {
       slotFileInputRef.current?.click();
     }, 10);
   };
 
-  const handleSlotFileChange = async (itemId: string, file: File) => {
-    if (!file) return;
-    
-    // Find the item to get its photo_key
-    let photoKey = '';
-    for (const s of sections) {
-      const found = s.items.find(item => item.id === itemId);
-      if (found && found.photo_key) {
-        photoKey = found.photo_key;
-        break;
-      }
-    }
-    
-    if (!photoKey) {
-      alert('先にスロット名（photo_key）を入力してください');
-      return;
-    }
+  const handleSlotFileChange = async (photoKey: string, file: File) => {
+    if (!file || !photoKey) return;
 
-    setUploadingSlotId(itemId);
+    setUploadingSlotId(photoKey);
     try {
       const url = await uploadMediaImage(file);
       if (url) {
@@ -93,7 +78,7 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
       alert('アップロード中にエラーが発生しました。');
     } finally {
       setUploadingSlotId(null);
-      setActiveSlotUploadId(null);
+      setActiveSlotPhotoKey(null);
     }
   };
 
@@ -201,8 +186,8 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
         ref={slotFileInputRef}
         onChange={(e) => {
           const file = e.target.files?.[0];
-          if (file && activeSlotUploadId) {
-            handleSlotFileChange(activeSlotUploadId, file);
+          if (file && activeSlotPhotoKey) {
+            handleSlotFileChange(activeSlotPhotoKey, file);
           }
           if (e.target) e.target.value = '';
         }}
@@ -377,7 +362,7 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                           (() => {
                             const photoData = photos[item.photo_key];
                             const imageUrl = photoData?.url || photoData?.filename;
-                            const isSlotUploading = uploadingSlotId === item.id;
+                            const isSlotUploading = uploadingSlotId === item.photo_key;
 
                             return imageUrl ? (
                               <div className="group/photo relative mx-auto max-w-sm overflow-hidden rounded-xl border bg-white shadow-sm">
@@ -385,7 +370,7 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                                 <div className="absolute inset-0 flex items-center justify-center gap-3 bg-black/50 opacity-0 transition-opacity group-hover/photo:opacity-100">
                                   <button
                                     type="button"
-                                    onClick={() => triggerSlotUpload(item.id)}
+                                    onClick={() => triggerSlotUpload(item.photo_key!)}
                                     className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-gray-700 hover:bg-neutral-100 shadow-md"
                                     title="画像を差し替え"
                                   >
@@ -403,7 +388,7 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
                               </div>
                             ) : (
                               <div 
-                                onClick={() => triggerSlotUpload(item.id)}
+                                onClick={() => triggerSlotUpload(item.photo_key!)}
                                 className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-gray-300 bg-white py-6 transition-all hover:bg-brand-accent/5 hover:border-brand-accent/40"
                               >
                                 {isSlotUploading ? (
