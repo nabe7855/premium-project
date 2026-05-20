@@ -2,7 +2,8 @@
 
 import { 
   createInterviewArticle, 
-  updateInterviewMeta 
+  updateInterviewMeta,
+  getAllCasts
 } from '@/lib/actions/interview';
 import { updateMediaArticle } from '@/lib/actions/media';
 import { 
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import DialogueEditor from './DialogueEditor';
 import ParticipantManager from './ParticipantManager';
 import ProfileFaqEditor from './ProfileFaqEditor';
@@ -29,6 +30,7 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<'content' | 'profile' | 'settings'>('content');
   const [isSaving, setIsSaving] = useState(false);
+  const [availableCasts, setAvailableCasts] = useState<any[]>([]);
 
   // Initialize form data from initialData
   const [data, setData] = useState<InterviewData>({
@@ -54,13 +56,46 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
     faqs: initialData?.interview_meta?.faq_data?.items || [],
     photos: initialData?.interview_meta?.photos || {},
     
-    participants: initialData?.interview_meta?.cast_links?.map((l: any) => ({
-      id: l.cast_id || `staff-${l.cast_name}`,
-      name: l.cast_name,
-      photoUrl: l.cast_photo_url || '', // Need to ensure this is passed or fetched
-      type: l.cast_id ? 'cast' : 'staff',
-    })) || [],
+    participants: initialData?.interview_meta?.cast_links?.map((l: any) => {
+      const isCast = !!l.cast_id;
+      const staffPhotos = initialData?.interview_meta?.photos?.staff_photos || {};
+      return {
+        id: l.cast_id || `staff-${l.cast_name}`,
+        name: l.cast_name,
+        photoUrl: isCast ? '' : (staffPhotos[l.cast_name] || ''),
+        type: isCast ? 'cast' : 'staff',
+      };
+    }) || [],
   });
+
+  // キャストマスターデータの取得
+  useEffect(() => {
+    const fetchCasts = async () => {
+      const result = await getAllCasts();
+      if (result.success) {
+        setAvailableCasts(result.casts || []);
+      }
+    };
+    fetchCasts();
+  }, []);
+
+  // キャスト画像情報が取得できたら、participantsのキャストの画像を自動マッピングして反映
+  useEffect(() => {
+    if (availableCasts.length > 0) {
+      setData(prev => ({
+        ...prev,
+        participants: prev.participants.map(p => {
+          if (p.type === 'cast' && !p.photoUrl) {
+            const matched = availableCasts.find(c => c.id === p.id);
+            if (matched) {
+              return { ...p, photoUrl: matched.photoUrl };
+            }
+          }
+          return p;
+        })
+      }));
+    }
+  }, [availableCasts]);
 
   const handleSave = async () => {
     if (!data.title || !data.slug) {
@@ -92,7 +127,12 @@ export default function InterviewEditor({ initialData, articleId }: InterviewEdi
           dialogue_data: { sections: data.sections },
           profile_data: { fields: data.profile_fields },
           faq_data: { items: data.faqs },
-          photos: data.photos,
+          photos: {
+            ...data.photos,
+            staff_photos: data.participants
+              .filter(p => p.type === 'staff')
+              .reduce((acc, p) => ({ ...acc, [p.name]: p.photoUrl }), {}),
+          },
         },
         cast_links: data.participants.map((p, idx) => ({
           cast_id: p.type === 'cast' ? p.id : null,
