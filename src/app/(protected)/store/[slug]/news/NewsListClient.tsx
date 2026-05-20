@@ -98,7 +98,7 @@ export default function NewsListClient({
                 </span>
                 <h1 className="text-2xl font-bold tracking-[0.2em] text-slate-800 md:text-3xl">
                   <NextImage
-                    src="/ニュース一覧ページタイトル.jpg"
+                    src="/news-list-title.jpg"
                     alt="ニュース"
                     width={200}
                     height={48}
