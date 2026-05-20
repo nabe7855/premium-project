@@ -70,7 +70,7 @@ export default async function CastDetailPage({ params }: Props) {
   // ✅ キャストのインタビュー記事URLを取得 (エリア名は英語・日本語どちらでも紐付けできるようにロバスト化)
   const areaQuery = params.slug === 'fukuoka' ? { in: ['fukuoka', '福岡'] } : params.slug === 'yokohama' ? { in: ['yokohama', '横浜'] } : params.slug;
 
-  const castInterviewLink = await prisma.interviewCastLink.findFirst({
+  const castInterviewLinks = await prisma.interviewCastLink.findMany({
     where: {
       OR: [
         { cast_id: cast.id },
@@ -83,22 +83,30 @@ export default async function CastDetailPage({ params }: Props) {
     },
     include: {
       interview_meta: true
-    }
+    },
+    orderBy: { display_order: 'asc' }
   });
 
-  let interviewUrl: string | null = null;
-  if (castInterviewLink && castInterviewLink.interview_meta) {
+  // 各リンクから公開済み記事を展開し、カード表示用の配列を構築
+  const interviewArticles: { title: string; url: string; thumbnailUrl: string | null; volNumber: number | null }[] = [];
+  for (const link of castInterviewLinks) {
+    if (!link.interview_meta) continue;
     const article = await prisma.mediaArticle.findUnique({
-      where: {
-        id: castInterviewLink.interview_meta.article_id,
-        status: 'published'
-      }
+      where: { id: link.interview_meta.article_id, status: 'published' }
     });
     if (article) {
-      const castSlug = castInterviewLink.cast_id || castInterviewLink.cast_name_romaji || 'unknown';
-      interviewUrl = `/store/${params.slug}/interview/${castSlug}/${article.slug}`;
+      const castSlug = link.cast_id || link.cast_name_romaji || 'unknown';
+      interviewArticles.push({
+        title: article.title,
+        url: `/store/${params.slug}/interview/${castSlug}/${article.slug}`,
+        thumbnailUrl: article.thumbnail_url,
+        volNumber: link.interview_meta.vol_number,
+      });
     }
   }
+
+  // 後方互換用: 最初の公開記事のURLのみ単独で使う場合も引き続き対応
+  const interviewUrl = interviewArticles.length > 0 ? interviewArticles[0].url : null;
 
   // ✅ デバッグログ
   console.log('🟢 CastDetailPage params:', params);
@@ -143,8 +151,8 @@ export default async function CastDetailPage({ params }: Props) {
         </>
       )}
 
-      {/* ✅ storeSlug と storeId と interviewUrl を渡す */}
-      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} interviewUrl={interviewUrl} />
+      {/* ✅ storeSlug と storeId と interviewUrl と interviewArticles を渡す */}
+      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} interviewUrl={interviewUrl} interviewArticles={interviewArticles} />
 
       {/* ✅ テンプレートに応じたフッターを表示 */}
       {store?.template === 'yokohama' ? (
