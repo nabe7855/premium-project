@@ -97,7 +97,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://${storeData.domain || 'strawberryboys.jp'}/store/${slug}/news/${newsSlug}`,
+      '@id': `https://strawberryboys.jp/store/${slug}/news/${newsSlug}`,
     },
   };
 
