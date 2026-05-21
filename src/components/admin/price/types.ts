@@ -67,6 +67,7 @@ export interface StoreConfig {
   faqs: FAQItem[];
   prohibitions: string[];
   cancellation_policy?: any;
+  precautions?: string[];
 }
 
 export type Category = 'COURSES' | 'TRANSPORT' | 'OPTIONS' | 'DISCOUNTS' | 'PROHIBITIONS';
