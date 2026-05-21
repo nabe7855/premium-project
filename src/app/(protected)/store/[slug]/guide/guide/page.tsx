@@ -795,7 +795,7 @@ function App() {
                 料金・サービス詳細
               </h2>
               <p className="mb-10 text-pretty text-lg leading-relaxed text-gray-600 md:text-xl">
-                ご利用料金や送迎エリア、各種オプションサービスの詳細は
+                ご利用料金や出張エリア、各種オプションサービスの詳細は
                 <br className="hidden md:inline" />
                 こちらの専用ページにて詳しくご案内しております。
               </p>

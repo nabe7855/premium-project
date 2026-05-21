@@ -57,7 +57,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
 
   const tabs = [
     { id: 'COURSES' as const, label: 'コース' },
-    { id: 'TRANSPORT' as const, label: '送迎' },
+    { id: 'TRANSPORT' as const, label: '出張' },
     { id: 'OPTIONS' as const, label: 'オプション' },
     { id: 'DISCOUNTS' as const, label: '割引' },
   ];
@@ -137,12 +137,12 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
               </div>
             )}
 
-            {/* 送迎タブ */}
+            {/* 出張タブ */}
             {activeTab === 'TRANSPORT' && (
               <div className="space-y-8">
                 <div className="mb-10 text-center">
                   <h2 className="font-rounded mb-2 text-2xl font-bold text-rose-900 md:text-3xl">
-                    送迎エリア・料金
+                    出張エリア・料金
                   </h2>
                   <p className="text-sm text-rose-400">ご指定の場所までセラピストが伺います。</p>
                 </div>

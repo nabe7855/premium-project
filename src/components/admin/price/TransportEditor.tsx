@@ -35,7 +35,7 @@ export default function TransportEditor({ transportAreas, onUpdate }: TransportE
   return (
     <div className="space-y-6 rounded-2xl border-2 border-rose-100 bg-white p-6 shadow-lg">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-bold text-rose-900">送迎エリア設定</h3>
+        <h3 className="text-lg font-bold text-rose-900">出張エリア設定</h3>
         <button
           onClick={addArea}
           className="flex items-center gap-1 rounded-lg bg-rose-100 px-3 py-1 text-sm font-bold text-rose-600 transition-colors hover:bg-rose-200"
@@ -106,7 +106,7 @@ export default function TransportEditor({ transportAreas, onUpdate }: TransportE
 
         {transportAreas.length === 0 && (
           <div className="rounded-xl border-2 border-dashed border-rose-100 py-8 text-center text-rose-400">
-            送迎エリアが設定されていません
+            出張エリアが設定されていません
           </div>
         )}
       </div>

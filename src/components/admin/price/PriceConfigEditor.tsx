@@ -95,7 +95,7 @@ export default function PriceConfigEditor({
   // タブ定義
   const tabs: { id: TabType; label: string }[] = [
     { id: 'COURSES', label: 'コース' },
-    { id: 'TRANSPORT', label: '送迎' },
+    { id: 'TRANSPORT', label: '出張' },
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'CAMPAIGN', label: 'キャンペーン' },
   ];
@@ -165,7 +165,7 @@ export default function PriceConfigEditor({
               料金設定へ編集
             </h2>
             <p className="mt-2 text-sm font-bold text-white/90">
-              コース、送迎エリア、オプション、キャンペーンの設定
+              コース、出張エリア、オプション、キャンペーンの設定
             </p>
           </div>
         </div>

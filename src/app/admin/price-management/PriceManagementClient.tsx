@@ -66,7 +66,7 @@ export default function PriceManagementClient({ initialStores }: PriceManagement
 
   const tabs: { id: Category; label: string }[] = [
     { id: 'COURSES', label: 'コース' },
-    { id: 'TRANSPORT', label: '送迎' },
+    { id: 'TRANSPORT', label: '出張' },
     { id: 'OPTIONS', label: 'オプション' },
     { id: 'DISCOUNTS', label: '割引' },
     { id: 'PROHIBITIONS', label: '禁止事項' },
