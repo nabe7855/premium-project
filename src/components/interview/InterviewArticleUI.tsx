@@ -160,7 +160,17 @@ export default async function InterviewArticleUI({
     }
     
     // 3. キャスト側: DBから取得した公式アイコン画像を最優先
-    const castId = castNameToIdMap.get(speakerName);
+    // speakerType が castId に一致するか確認
+    let castId = speakerType && castPhotoMap.has(speakerType) ? speakerType : undefined;
+    
+    // 見つからなければ名前で完全一致または部分一致を試みる
+    if (!castId && speakerName) {
+      castId = castNameToIdMap.get(speakerName);
+      if (!castId) {
+        castId = Array.from(castNameToIdMap.entries()).find(([name]) => name.includes(speakerName) || speakerName.includes(name))?.[1];
+      }
+    }
+
     if (castId) {
       const officialUrl = castPhotoMap.get(castId);
       if (officialUrl) {
