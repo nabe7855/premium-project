@@ -83,21 +83,14 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
         >
           <div className="relative w-full max-w-lg overflow-hidden rounded-[3rem] border-4 border-rose-100 bg-white/95 p-8 text-center shadow-[0_20px_50px_rgba(255,182,193,0.3)] backdrop-blur-md transition-all duration-500 ease-out md:p-12 animate-in fade-in zoom-in">
               <div className="animate-in fade-in zoom-in duration-500">
-                {/* 装飾用イチゴアイコンイメージ */}
-                <div className="mb-6 flex justify-center">
-                  <div className="relative">
-                    <span className="text-6xl">🍓</span>
-                    <span className="absolute -right-2 -top-2 animate-pulse text-2xl">✨</span>
-                  </div>
+                {/* お店ロゴ */}
+                <div className="mb-8 flex justify-center">
+                  <img 
+                    src="/images/store-logo.png" 
+                    alt="ストロベリーボーイズ" 
+                    className="max-h-28 w-auto object-contain md:max-h-36" 
+                  />
                 </div>
-
-                <div className="mb-8">
-                  <h2 className="mb-2 font-serif text-xl font-bold tracking-widest text-rose-500 md:text-2xl">
-                    女性用風俗
-                  </h2>
-                  <p className="mb-6 text-sm font-bold tracking-[0.2em] text-rose-300">
-                    《 ストロベリーボーイズ 》
-                  </p>
 
                   <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl border-2 border-rose-100 bg-rose-50 shadow-inner">
                     <div className="text-center">
