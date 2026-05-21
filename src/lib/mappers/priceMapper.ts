@@ -53,6 +53,7 @@ export function mapStoreConfigToEditableConfig(store: StoreConfig): EditablePric
       display_order: idx,
     })),
     prohibitions: store.prohibitions || [],
+    precautions: store.precautions || [],
     faqs: store.faqs || [],
     cancellation_policy: store.cancellation_policy || {
       tokyo23ku: { title: '', rules: [] },
