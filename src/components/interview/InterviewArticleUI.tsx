@@ -99,6 +99,11 @@ export default async function InterviewArticleUI({
     }
   }
 
+  console.log('[DEBUG InterviewArticleUI] castLinks:', JSON.stringify(castLinks, null, 2));
+  console.log('[DEBUG InterviewArticleUI] castIds:', castIds);
+  console.log('[DEBUG InterviewArticleUI] castNameToIdMap:', Array.from(castNameToIdMap.entries()));
+  console.log('[DEBUG InterviewArticleUI] castPhotoMap:', Array.from(castPhotoMap.entries()));
+
   // ✅ DBに保存されている profile_data の形式（配列、オブジェクト、または { fields: [...] }）を判別し、安全に CastProfileData[] に正規化します。
   const profileList: CastProfileData[] = [];
   if (profileDataRaw) {
@@ -158,11 +163,16 @@ export default async function InterviewArticleUI({
     const castId = castNameToIdMap.get(speakerName);
     if (castId) {
       const officialUrl = castPhotoMap.get(castId);
-      if (officialUrl) return officialUrl;
+      if (officialUrl) {
+        console.log(`[DEBUG InterviewArticleUI] resolveIconUrl for ${speakerName}: using officialUrl`, officialUrl);
+        return officialUrl;
+      }
     }
     
     // 4. フォールバック: photos.fullbody > saiphoto1 > saiphoto2 の順で探す
-    return photosAny?.fullbody?.url || photosAny?.saiphoto1?.url || photosAny?.saiphoto2?.url || photosAny?.saiphoto3?.url || undefined;
+    const fallbackUrl = photosAny?.fullbody?.url || photosAny?.saiphoto1?.url || photosAny?.saiphoto2?.url || photosAny?.saiphoto3?.url || undefined;
+    console.log(`[DEBUG InterviewArticleUI] resolveIconUrl for ${speakerName}: using fallbackUrl`, fallbackUrl);
+    return fallbackUrl;
   };
 
   const publishedDate = article.published_at ?? article.created_at;
