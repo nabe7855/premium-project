@@ -89,13 +89,18 @@ export default async function InterviewArticleUI({
     }
   }
 
+  const castStoreSlugMap = new Map<string, string>();
+
   if (castIds && castIds.length > 0) {
     const casts = await prisma.cast.findMany({
       where: { id: { in: castIds } },
-      select: { id: true, main_image_url: true, image_url: true },
+      select: { id: true, main_image_url: true, image_url: true, store: { select: { slug: true } } },
     });
     for (const c of casts) {
       castPhotoMap.set(c.id, c.main_image_url || c.image_url || '');
+      if (c.store?.slug) {
+        castStoreSlugMap.set(c.id, c.store.slug);
+      }
     }
   }
 
@@ -452,7 +457,11 @@ export default async function InterviewArticleUI({
               : 'キャストのプロフィールを見る'}
           </p>
           <a
-            href="/store/fukuoka"
+            href={
+              castLinks && castLinks.length > 0 && castLinks[0].cast_id
+                ? `/store/${castStoreSlugMap.get(castLinks[0].cast_id) || 'fukuoka'}/cast/${castLinks[0].cast_id}#reservation`
+                : '/store/fukuoka'
+            }
             className="inline-block rounded-full px-8 py-3 text-sm font-bold text-white shadow-md transition-opacity hover:opacity-80"
             style={{ background: '#E8567A' }}
           >
