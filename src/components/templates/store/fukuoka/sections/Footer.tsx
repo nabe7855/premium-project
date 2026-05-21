@@ -175,7 +175,6 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                   if (bannerLink.startsWith('tel:') && store.contact?.phone) {
                     bannerLink = `tel:${store.contact.phone.replace(/-/g, '')}`;
                   }
-                  return (
                   const isTelephone = bannerLink.startsWith('tel:');
 
                   return (
