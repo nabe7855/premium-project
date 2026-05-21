@@ -36,6 +36,13 @@ const BASIC_SERVICES = [
 
 const FREE_OPTIONS = ['キス', 'ハグ', 'フェラ', '手コキ', 'ボディータッチ', 'ローター', 'バイブ'];
 
+const DEFAULT_PRECAUTIONS = [
+  '全コース、入室後のコース変更は致しかねます。',
+  'キャストにより指名料が異なる場合がございます。',
+  '泥酔・18歳未満の方の入店は固くお断りします。',
+  '貴重品の管理はご自身でお願いいたします。'
+];
+
 export default function PricePageClient({ priceConfig, config }: PricePageClientProps) {
   const { store } = useStore();
   const activeCancellationPolicy = priceConfig.cancellation_policy?.tokyo23ku
@@ -116,22 +123,15 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                     <span>【安心してご利用いただくために】</span>
                   </div>
                   <ul className="grid list-none grid-cols-1 gap-x-8 gap-y-2 pl-0 md:grid-cols-2">
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-300">●</span>
-                      <span>全コース、入室後のコース変更は致しかねます。</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-300">●</span>
-                      <span>キャストにより指名料が異なる場合がございます。</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-300">●</span>
-                      <span>泥酔・18歳未満の方の入店は固くお断りします。</span>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <span className="text-rose-300">●</span>
-                      <span>貴重品の管理はご自身でお願いいたします。</span>
-                    </li>
+                    {(priceConfig.precautions && (priceConfig.precautions as string[]).length > 0 
+                      ? (priceConfig.precautions as string[]) 
+                      : DEFAULT_PRECAUTIONS
+                    ).map((item, index) => (
+                      <li key={index} className="flex items-start gap-2">
+                        <span className="text-rose-300">●</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
                   </ul>
                 </div>
               </div>

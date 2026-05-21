@@ -98,6 +98,7 @@ export async function savePriceConfig(
           update: {
             hero_image_url: config.hero_image_url,
             prohibitions: config.prohibitions,
+            precautions: config.precautions,
             faqs: config.faqs as any,
             cancellation_policy: config.cancellation_policy as any,
             updated_at: new Date(),
@@ -106,6 +107,7 @@ export async function savePriceConfig(
             store_id: store.id,
             hero_image_url: config.hero_image_url,
             prohibitions: config.prohibitions,
+            precautions: config.precautions,
             faqs: config.faqs as any,
             cancellation_policy: config.cancellation_policy as any,
           },
@@ -292,6 +294,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
           campaigns: [],
           faqs: DEFAULT_FAQS,
           prohibitions: [],
+          precautions: [],
           cancellation_policy: DEFAULT_CANCELLATION_POLICY,
         };
       }
@@ -357,6 +360,7 @@ export async function getStoreConfigsForAdmin(): Promise<StoreConfig[]> {
         })),
         faqs: (config.faqs as any[])?.length > 0 ? (config.faqs as any[]) : DEFAULT_FAQS,
         prohibitions: (config.prohibitions as string[]) || [],
+        precautions: (config.precautions as string[]) || [],
         cancellation_policy: (config.cancellation_policy as any)?.tokyo23ku?.title
           ? (config.cancellation_policy as any)
           : DEFAULT_CANCELLATION_POLICY,

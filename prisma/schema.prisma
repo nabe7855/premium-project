@@ -404,6 +404,7 @@ model PriceConfig {
   store_id            String          @unique
   hero_image_url      String?
   prohibitions        Json?           @default("[]")
+  precautions         Json?           @default("[]")
   faqs                Json?           @default("[]")
   cancellation_policy Json?
   updated_at          DateTime        @updatedAt

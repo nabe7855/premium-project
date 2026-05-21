@@ -11,6 +11,7 @@ import { DEFAULT_CANCELLATION_POLICY, DEFAULT_FAQS } from './defaultData';
 import FAQEditor from './FAQEditor';
 import OptionEditor from './OptionEditor';
 import ProhibitionEditor from './ProhibitionEditor';
+import PrecautionsEditor from './PrecautionsEditor';
 import TransportEditor from './TransportEditor';
 
 interface PriceConfigEditorProps {
@@ -45,6 +46,7 @@ export default function PriceConfigEditor({
     return {
       ...initialConfig,
       faqs: initialConfig.faqs && initialConfig.faqs.length > 0 ? initialConfig.faqs : DEFAULT_FAQS,
+      precautions: initialConfig.precautions || [],
       cancellation_policy:
         initialConfig.cancellation_policy && initialConfig.cancellation_policy.tokyo23ku
           ? initialConfig.cancellation_policy
@@ -227,6 +229,13 @@ export default function PriceConfigEditor({
           prohibitions={config.prohibitions}
           onUpdate={(prohibitions) => setConfig({ ...config, prohibitions })}
         />
+
+        <div className="border-t border-rose-100 pt-12">
+          <PrecautionsEditor
+            precautions={config.precautions}
+            onUpdate={(precautions) => setConfig({ ...config, precautions })}
+          />
+        </div>
 
         <div className="border-t border-rose-100 pt-12">
           <FAQEditor faqs={config.faqs} onUpdate={(faqs) => setConfig({ ...config, faqs })} />

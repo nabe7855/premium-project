@@ -5,6 +5,7 @@ export interface PriceConfig {
   store_id: string;
   hero_image_url?: string;
   prohibitions?: any;
+  precautions?: any;
   faqs?: any;
   cancellation_policy?: any;
   updated_at: string;
@@ -162,6 +163,7 @@ export interface EditablePriceConfig {
   options: EditablePriceOption[];
   campaigns: EditableCampaign[];
   prohibitions: string[];
+  precautions: string[];
   faqs: FAQ[];
   cancellation_policy: CancellationPolicy;
 }
