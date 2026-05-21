@@ -143,7 +143,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
               <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
                 <div className="relative h-20 w-full md:h-28">
                   <NextImage
-                    src={getOptimizedImageUrl(config.headingImageUrl, 'icon') || config.headingImageUrl}
+                    src={getOptimizedImageUrl(config.headingImageUrl, 'content') || config.headingImageUrl}
                     alt={config.heading || 'Concept'}
                     fill
                     className="object-contain"
