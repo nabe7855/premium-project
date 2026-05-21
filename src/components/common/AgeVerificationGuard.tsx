@@ -92,6 +92,7 @@ const AgeVerificationGuard: React.FC<AgeVerificationGuardProps> = ({ children })
                   />
                 </div>
 
+                <div className="mb-8">
                   <div className="mx-auto mb-8 flex h-24 w-24 items-center justify-center rounded-3xl border-2 border-rose-100 bg-rose-50 shadow-inner">
                     <div className="text-center">
                       <p className="font-serif text-3xl font-black text-rose-500">R18</p>
