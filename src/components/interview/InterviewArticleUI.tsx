@@ -94,12 +94,17 @@ export default async function InterviewArticleUI({
   if (castIds && castIds.length > 0) {
     const casts = await prisma.cast.findMany({
       where: { id: { in: castIds } },
-      select: { id: true, main_image_url: true, image_url: true, store: { select: { slug: true } } },
+      select: { 
+        id: true, 
+        main_image_url: true, 
+        image_url: true, 
+        memberships: { select: { store: { select: { slug: true } } } } 
+      },
     });
     for (const c of casts) {
       castPhotoMap.set(c.id, c.main_image_url || c.image_url || '');
-      if (c.store?.slug) {
-        castStoreSlugMap.set(c.id, c.store.slug);
+      if (c.memberships && c.memberships.length > 0 && c.memberships[0].store?.slug) {
+        castStoreSlugMap.set(c.id, c.memberships[0].store.slug);
       }
     }
   }
