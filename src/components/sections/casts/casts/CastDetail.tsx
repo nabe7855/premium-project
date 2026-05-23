@@ -6,11 +6,15 @@ import {
   Calendar,
   ChevronRight,
   Heart,
+  Instagram,
   MessageCircle,
   Play,
   Share2,
+  Twitter,
   User,
+  X,
 } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -52,6 +56,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
     handleBookingModalOpen,
     handleBookingModalClose,
   } = useCastDetail();
+
+  const [isSnsModalOpen, setIsSnsModalOpen] = React.useState(false);
 
   // ✅ タブ
   const tabs: { id: TabType; label: string; icon: any }[] = [
@@ -201,13 +207,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
           onTabChange={setActiveTab}
           onBookingOpen={handleBookingModalOpen}
           onDiaryClick={() => router.push(`/store/${storeSlug}/diary/cast/${encodeURIComponent(cast.name)}`)}
-          onSNSClick={() => {
-            if (cast.snsUrl) {
-              window.open(cast.snsUrl, '_blank', 'noopener,noreferrer');
-            } else {
-              alert('SNSリンクが登録されていません');
-            }
-          }}
+          onSNSClick={() => setIsSnsModalOpen(true)}
         />
       </div>
 
@@ -234,6 +234,84 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
           onClose={handleBookingModalClose}
         />
       )}
+
+      {/* SNS Modal */}
+      <AnimatePresence>
+        {isSnsModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+            onClick={() => setIsSnsModalOpen(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0, y: 10 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 10 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-2xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                onClick={() => setIsSnsModalOpen(false)}
+                className="absolute right-4 top-4 rounded-full p-2 text-neutral-400 transition-colors hover:bg-neutral-100 hover:text-neutral-600"
+              >
+                <X className="h-5 w-5" />
+              </button>
+
+              <h3 className="mb-6 text-center text-lg font-bold text-neutral-800">
+                {cast.name}のSNS
+              </h3>
+
+              <div className="flex flex-col gap-3">
+                {/* SNS Links */}
+                {cast.sns?.twitter && (
+                  <a href={cast.sns.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#1DA1F2]/10 p-4 font-medium text-[#1DA1F2] transition-colors hover:bg-[#1DA1F2]/20">
+                    <Twitter className="h-6 w-6" />
+                    <span>X (Twitter)</span>
+                  </a>
+                )}
+                {cast.sns?.instagram && (
+                  <a href={cast.sns.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#E1306C]/10 p-4 font-medium text-[#E1306C] transition-colors hover:bg-[#E1306C]/20">
+                    <Instagram className="h-6 w-6" />
+                    <span>Instagram</span>
+                  </a>
+                )}
+                {cast.sns?.tiktok && (
+                  <a href={cast.sns.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-black/5 p-4 font-medium text-black transition-colors hover:bg-black/10">
+                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.34 2.88 2.88 0 012.31-4.53 2.66 2.66 0 011.69.53V6.6a6.32 6.32 0 00-4-.79 6.3 6.3 0 00-5.3 6.2 6.36 6.36 0 006.27 6.38 6.27 6.27 0 006.12-6.19V8.62a8.08 8.08 0 005.33 2.05V7.22a5.1 5.1 0 01-2.02-.53z" />
+                    </svg>
+                    <span>TikTok</span>
+                  </a>
+                )}
+                {cast.sns?.line && (
+                  <a href={cast.sns.line} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#00B900]/10 p-4 font-medium text-[#00B900] transition-colors hover:bg-[#00B900]/20">
+                    <MessageCircle className="h-6 w-6" />
+                    <span>LINE</span>
+                  </a>
+                )}
+
+                {/* Fallback to legacy snsUrl */}
+                {!cast.sns?.twitter && !cast.sns?.instagram && !cast.sns?.tiktok && !cast.sns?.line && cast.snsUrl && (
+                  <a href={cast.snsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 p-4 font-medium text-white shadow-md transition-all hover:scale-[1.02]">
+                    <Instagram className="h-6 w-6" />
+                    <span>SNSを見る</span>
+                  </a>
+                )}
+
+                {/* If nothing is set */}
+                {!cast.sns?.twitter && !cast.sns?.instagram && !cast.sns?.tiktok && !cast.sns?.line && !cast.snsUrl && (
+                  <div className="py-4 text-center text-sm text-neutral-500">
+                    SNSリンクが登録されていません
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
