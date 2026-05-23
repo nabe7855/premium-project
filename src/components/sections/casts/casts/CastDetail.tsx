@@ -13,6 +13,8 @@ import {
   Twitter,
   User,
   X,
+  Music,
+  Globe,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
@@ -264,40 +266,33 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
                 {cast.name}のSNS
               </h3>
 
-              <div className="flex flex-col gap-3">
+              <div className="flex flex-wrap items-center justify-center gap-4">
                 {/* SNS Links */}
-                {cast.sns?.twitter && (
-                  <a href={cast.sns.twitter} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#1DA1F2]/10 p-4 font-medium text-[#1DA1F2] transition-colors hover:bg-[#1DA1F2]/20">
-                    <Twitter className="h-6 w-6" />
-                    <span>X (Twitter)</span>
+                {cast.sns?.line && (
+                  <a href={cast.sns.line} target="_blank" rel="noopener noreferrer" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#06C755] text-white shadow-md transition-all hover:scale-105 hover:opacity-90">
+                    <span className="text-sm font-black tracking-tighter">LINE</span>
                   </a>
                 )}
                 {cast.sns?.instagram && (
-                  <a href={cast.sns.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#E1306C]/10 p-4 font-medium text-[#E1306C] transition-colors hover:bg-[#E1306C]/20">
-                    <Instagram className="h-6 w-6" />
-                    <span>Instagram</span>
+                  <a href={cast.sns.instagram} target="_blank" rel="noopener noreferrer" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-md transition-all hover:scale-105 hover:opacity-90">
+                    <Instagram className="h-8 w-8" />
+                  </a>
+                )}
+                {cast.sns?.twitter && (
+                  <a href={cast.sns.twitter} target="_blank" rel="noopener noreferrer" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-md transition-all hover:scale-105 hover:opacity-90">
+                    <span className="font-serif text-3xl font-bold">𝕏</span>
                   </a>
                 )}
                 {cast.sns?.tiktok && (
-                  <a href={cast.sns.tiktok} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-black/5 p-4 font-medium text-black transition-colors hover:bg-black/10">
-                    <svg className="h-6 w-6" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-5.2 1.34 2.88 2.88 0 012.31-4.53 2.66 2.66 0 011.69.53V6.6a6.32 6.32 0 00-4-.79 6.3 6.3 0 00-5.3 6.2 6.36 6.36 0 006.27 6.38 6.27 6.27 0 006.12-6.19V8.62a8.08 8.08 0 005.33 2.05V7.22a5.1 5.1 0 01-2.02-.53z" />
-                    </svg>
-                    <span>TikTok</span>
-                  </a>
-                )}
-                {cast.sns?.line && (
-                  <a href={cast.sns.line} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-xl bg-[#00B900]/10 p-4 font-medium text-[#00B900] transition-colors hover:bg-[#00B900]/20">
-                    <MessageCircle className="h-6 w-6" />
-                    <span>LINE</span>
+                  <a href={cast.sns.tiktok} target="_blank" rel="noopener noreferrer" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-black text-white shadow-md transition-all hover:scale-105 hover:opacity-90">
+                    <Music className="h-8 w-8" />
                   </a>
                 )}
 
                 {/* Fallback to legacy snsUrl */}
-                {!cast.sns?.twitter && !cast.sns?.instagram && !cast.sns?.tiktok && !cast.sns?.line && cast.snsUrl && (
-                  <a href={cast.snsUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 p-4 font-medium text-white shadow-md transition-all hover:scale-[1.02]">
-                    <Instagram className="h-6 w-6" />
-                    <span>SNSを見る</span>
+                {!cast.sns?.line && !cast.sns?.instagram && !cast.sns?.twitter && !cast.sns?.tiktok && cast.snsUrl && (
+                  <a href={cast.snsUrl} target="_blank" rel="noopener noreferrer" className="flex h-16 w-16 items-center justify-center rounded-2xl bg-neutral-100 text-neutral-500 shadow-md transition-all hover:scale-105 hover:opacity-90">
+                    <Globe className="h-8 w-8" />
                   </a>
                 )}
 
