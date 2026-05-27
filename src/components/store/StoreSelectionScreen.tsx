@@ -24,7 +24,8 @@ const StoreSelectionScreen: React.FC = () => {
         .from('stores')
         .select(
           'id, name, slug, catch_copy, description, image_url, theme_color, tags, external_url, use_external_url',
-        );
+        )
+        .eq('is_active', true);
 
       if (error) {
         console.error('❌ stores取得エラー:', error.message);
