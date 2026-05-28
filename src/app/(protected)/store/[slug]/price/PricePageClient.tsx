@@ -294,7 +294,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                           {campaign.title}
                         </h3>
                         {campaign.description && (
-                          <p className="text-sm text-rose-600">{campaign.description}</p>
+                          <p className="whitespace-pre-wrap text-sm text-rose-600">{campaign.description}</p>
                         )}
                       </div>
                     </div>
@@ -366,7 +366,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                     <h3 className="mb-2 text-base font-bold text-rose-900 md:text-lg">
                       【{policy.outside23ku.title || '地域B'}】
                     </h3>
-                    <p className="text-sm leading-relaxed text-rose-700">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-rose-700">
                       {policy.outside23ku.description}
                     </p>
                   </div>
@@ -375,7 +375,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
                 {/* 変更（延期）について */}
                 {policy.reschedule && (
                   <div className="rounded-xl bg-emerald-50 p-4">
-                    <p className="text-sm leading-relaxed text-emerald-900">{policy.reschedule}</p>
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed text-emerald-900">{policy.reschedule}</p>
                   </div>
                 )}
               </div>
@@ -486,7 +486,7 @@ function CourseAccordion({
           <h3 className="font-rounded text-xl font-bold leading-tight text-rose-900 md:text-2xl">
             {course.name}
           </h3>
-          <p className="mt-1 text-[11px] leading-relaxed text-rose-400 md:text-sm">
+          <p className="mt-1 whitespace-pre-wrap text-[11px] leading-relaxed text-rose-400 md:text-sm">
             {course.description}
           </p>
         </div>
@@ -635,7 +635,7 @@ function FaqItem({ question, answer }: { question: string; answer: string }) {
             <span className="shrink-0 rounded-full bg-rose-100 px-2 py-0.5 text-xs font-bold text-rose-500">
               A
             </span>
-            <span>{answer}</span>
+            <span className="whitespace-pre-wrap">{answer}</span>
           </div>
         </div>
       </div>

@@ -183,10 +183,11 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         <a
                           href={bannerLink}
                           onClick={(e) => isEditing && e.preventDefault()}
-                          className="flex w-full items-center justify-center gap-2 rounded-full bg-pink-500 py-3 px-2 md:px-6 font-bold text-white shadow-lg transition-colors hover:bg-pink-600"
+                          className="flex h-full w-full flex-col items-center justify-center gap-1 rounded-[10px] bg-pink-500 p-2 font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                          style={{ aspectRatio: '180/100' }}
                         >
-                          <span className="text-[10px] md:text-sm">▶ ワンクリックでつながります</span>
-                          <span className="text-sm md:text-xl">{store.contact?.phone || banner.link.replace('tel:', '')}</span>
+                          <span className="text-[10px] md:text-xs">▶ ワンクリックでつながります</span>
+                          <span className="text-sm tracking-wider md:text-lg">{store.contact?.phone || banner.link.replace('tel:', '')}</span>
                         </a>
                       ) : (
                         <a
