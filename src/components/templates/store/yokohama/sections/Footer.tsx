@@ -3,7 +3,7 @@
 import { useStore } from '@/contexts/StoreContext';
 import { FooterConfig } from '@/lib/store/storeTopConfig';
 import { resolveStoreLink } from '@/lib/utils/resolveStoreLink';
-import { ImageIcon, Link2 } from 'lucide-react';
+import { ImageIcon, Link2, PhoneCall } from 'lucide-react';
 import NextImage from 'next/image';
 import React from 'react';
 import { getOptimizedImageUrl } from '@/lib/image-url';
@@ -192,11 +192,23 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                         <a
                           href={bannerLink}
                           onClick={(e) => isEditing && e.preventDefault()}
-                          className="flex h-full w-full flex-col items-center justify-center gap-1 rounded-[10px] bg-pink-500 p-2 font-bold text-white shadow-sm transition-opacity hover:opacity-90"
+                          className="group relative flex h-full w-full flex-col items-center justify-center gap-1.5 overflow-hidden rounded-[10px] bg-gradient-to-br from-rose-400 via-pink-500 to-rose-600 p-2 font-bold text-white shadow-md transition-all hover:scale-[1.02] hover:shadow-lg"
                           style={{ aspectRatio: '180/100' }}
                         >
-                          <span className="text-[10px] md:text-xs">▶ ワンクリックでつながります</span>
-                          <span className="text-sm tracking-wider md:text-lg">{store.contact?.phone || banner.link.replace('tel:', '')}</span>
+                          <div className="absolute inset-0 bg-gradient-to-b from-white/30 to-transparent opacity-60"></div>
+                          
+                          <div className="relative flex items-center gap-1">
+                            <PhoneCall className="h-3.5 w-3.5 animate-pulse md:h-4 md:w-4" />
+                            <span className="text-[9px] drop-shadow-sm md:text-[11px]">お電話でのご相談</span>
+                          </div>
+                          
+                          <span className="relative text-sm tracking-widest drop-shadow-md md:text-lg">
+                            {store.contact?.phone || banner.link.replace('tel:', '')}
+                          </span>
+                          
+                          <span className="relative mt-0.5 rounded-full bg-white/20 px-2 py-0.5 text-[8px] font-medium backdrop-blur-sm md:text-[9px]">
+                            タップで発信
+                          </span>
                         </a>
                       ) : (
                         <a

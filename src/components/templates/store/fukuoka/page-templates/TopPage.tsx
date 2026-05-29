@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import Header from '../sections/Header';
 import HeroSection from '../sections/HeroSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
+import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
 
 const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
 const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
@@ -67,6 +68,9 @@ export default function FukuokaPage({
           storeSlug={storeSlug}
         />
       )}
+      
+      <StoreJumpBanners currentStoreSlug={storeSlug} />
+
       <>
         <h2 className="sr-only">初めての女性用風俗ガイド｜{storeSlug === 'fukuoka' ? '福岡' : ''}で安心して利用するには</h2>
         <BeginnerGuideBanner

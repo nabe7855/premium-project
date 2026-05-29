@@ -10,6 +10,7 @@ import Header from '../sections/Header';
 import ReviewSection from '@/components/sections/store/ReviewSection';
 import SNSProfile from '@/components/templates/news/SNSProfile';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
+import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
 import DiarySection from '../sections/DiarySection';
 import HeroSection from '../sections/HeroSection';
 import NewcomerSection from '../sections/NewcomerSection';
@@ -56,6 +57,9 @@ export default function YokohamaPage({
         onUpdate={onUpdate}
         onImageUpload={onImageUpload}
       />
+      
+      <StoreJumpBanners currentStoreSlug={storeSlug} />
+
       <>
         <h2 className="sr-only">初めての女性用風俗ガイド｜{storeSlug === 'yokohama' ? '横浜' : ''}で安心して利用するには</h2>
         <BeginnerGuideBanner
