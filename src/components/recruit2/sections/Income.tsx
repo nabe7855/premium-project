@@ -133,22 +133,22 @@ const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpl
     <section className="relative bg-slate-950 py-32 overflow-hidden">
       <div className="mx-auto max-w-7xl px-4">
         <div className="mb-16 text-center">
-          <h2
+          <div
             className="mb-4 text-sm font-bold uppercase tracking-widest text-amber-600 outline-none"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => onUpdate?.('sectionHeader', e.currentTarget.innerText)}
           >
             {config?.sectionHeader || 'Therapist Lifestyle'}
-          </h2>
-          <h3
+          </div>
+          <h2
             className="mb-6 font-serif text-3xl font-bold outline-none md:text-5xl"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => onUpdate?.('mainHeading', e.currentTarget.innerText)}
           >
             {config?.mainHeading || '「なりたい自分」を叶える1日'}
-          </h3>
+          </h2>
           <p
             className="mx-auto max-w-2xl text-lg text-slate-400 outline-none"
             contentEditable={isEditing}

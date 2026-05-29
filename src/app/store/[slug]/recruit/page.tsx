@@ -46,5 +46,40 @@ export default async function RecruitPage({ params }: { params: { slug: string }
     topConfig: result.success ? result.topConfig : null,
   };
 
-  return <RecruitPageClient initialData={initialData} slug={slug} />;
+  const s = STORE_META[slug] || STORE_META.fukuoka;
+
+  const jobPostingSchema = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: `${s.city}店 女性用風俗セラピスト募集（未経験OK・週1日〜）`,
+    description: `${s.city}（${s.area}）で女性用風俗セラピストを募集中。<br/>未経験歓迎、週1日〜OK、全額日払い、登録料0円。最短10日でデビュー可能。プロ講師によるマンツーマン研修あり。`,
+    datePosted: "2026-05-01",
+    validThrough: "2026-12-31",
+    employmentType: ["PART_TIME", "CONTRACTOR"],
+    hiringOrganization: { "@type": "Organization", name: "ストロベリーボーイズ", sameAs: "https://www.sutoroberrys.jp" },
+    jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressRegion: s.city, addressCountry: "JP" } },
+    baseSalary: { "@type": "MonetaryAmount", currency: "JPY", value: { "@type": "QuantitativeValue", minValue: 300000, maxValue: 1500000, unitText: "MONTH" } },
+    jobBenefits: "全額日払い、罰金・ノルマなし、マンツーマン研修、宣材写真無料、顔出し不要OK",
+    qualifications: "20歳以上の男性、心身ともに健康な方",
+    experienceRequirements: "未経験可（プロ講師によるマンツーマン研修あり）",
+  };
+
+  const breadcrumbsSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "ホーム", item: "https://www.sutoroberrys.jp/" },
+      { "@type": "ListItem", position: 2, name: `${s.city}店`, item: `https://www.sutoroberrys.jp/store/${slug}` },
+      { "@type": "ListItem", position: 3, name: "求人募集", item: `https://www.sutoroberrys.jp/store/${slug}/recruit` }
+    ]
+  };
+
+  return (
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jobPostingSchema) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbsSchema) }} />
+      <h1 className="sr-only">{`${s.city}店 女性用風俗セラピスト求人`}</h1>
+      <RecruitPageClient initialData={initialData} slug={slug} />
+    </>
+  );
 }

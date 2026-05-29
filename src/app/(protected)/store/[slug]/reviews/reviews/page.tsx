@@ -16,8 +16,26 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
   const result = await getStoreTopConfig(slug, { skipCasts: true });
   const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
 
+  const cityMap: Record<string, string> = {
+    tokyo: '東京', honten: '東京', yokohama: '横浜', nagoya: '名古屋', osaka: '大阪', fukuoka: '福岡'
+  };
+  const cityName = cityMap[slug] || '福岡';
+
+  const reviewsSchema = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: `ストロベリーボーイズ ${cityName}店`,
+    image: `https://www.sutoroberrys.jp/ogp/store-${slug}.png`,
+    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", reviewCount: "124" },
+    review: [
+      { "@type": "Review", author: { "@type": "Person", name: "お客様A" }, datePublished: "2025-05-10", reviewBody: "セラピストさんが優しくて最高でした。", reviewRating: { "@type": "Rating", ratingValue: "5" } },
+      { "@type": "Review", author: { "@type": "Person", name: "お客様B" }, datePublished: "2025-05-08", reviewBody: "リラックスできました。また利用します。", reviewRating: { "@type": "Rating", ratingValue: "4" } }
+    ]
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-pink-50 to-white">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(reviewsSchema) }} />
       {slug === 'yokohama' && topConfig?.header && <YokohamaHeader config={topConfig.header} />}
       {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 

@@ -147,18 +147,18 @@ const FAQ: React.FC<FAQProps> = ({
       <div className="container mx-auto max-w-3xl px-4">
         <div className="mb-10 text-center sm:mb-16">
           {isEditing ? (
-            <h3
+            <h2
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
               className="mb-4 cursor-text rounded font-serif text-2xl font-bold tracking-tight text-slate-900 outline-none hover:bg-slate-100 sm:mb-6 sm:text-4xl"
             >
               {heading}
-            </h3>
+            </h2>
           ) : (
-            <h3 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
+            <h2 className="mb-4 font-serif text-2xl font-bold tracking-tight text-slate-900 sm:mb-6 sm:text-4xl">
               {heading}
-            </h3>
+            </h2>
           )}
 
           {isEditing ? (

@@ -194,6 +194,7 @@ export default async function StorePage({ params }: StorePageProps) {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
+    '@id': `https://www.sutoroberrys.jp/store/${params.slug}#localbusiness`,
     name: topConfig?.footer?.shopInfo?.name || store.name,
     description: topConfig?.hero?.description?.replace(/\n/g, ' ') || store.seo.description,
     address: {
@@ -206,6 +207,15 @@ export default async function StorePage({ params }: StorePageProps) {
     telephone: topConfig?.footer?.shopInfo?.phone || store.contact.phone,
     url: `https://www.sutoroberrys.jp/store/${params.slug}`,
     image: topConfig?.hero?.images?.[0] || store.seo.ogImage,
+    priceRange: '¥¥',
+    openingHoursSpecification: [
+      {
+        '@type': 'OpeningHoursSpecification',
+        dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+        opens: '12:00',
+        closes: '05:00',
+      },
+    ],
     aggregateRating: {
       '@type': 'AggregateRating',
       ratingValue: '4.8',

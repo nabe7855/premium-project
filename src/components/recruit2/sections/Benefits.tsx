@@ -55,7 +55,7 @@ const Benefits: React.FC<BenefitsProps> = ({
         <div className="mx-auto max-w-5xl">
           <div className="mb-16 text-center">
             {isEditing ? (
-              <h3
+              <h2
                 contentEditable
                 suppressContentEditableWarning
                 onBlur={(e) => handleInput('heading', e.currentTarget.innerText)}
@@ -63,14 +63,14 @@ const Benefits: React.FC<BenefitsProps> = ({
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
-              </h3>
+              </h2>
             ) : (
-              <h3
+              <h2
                 className="mb-6 font-serif text-3xl font-bold tracking-tight text-white md:text-5xl"
                 style={{ whiteSpace: 'pre-wrap' }}
               >
                 {heading}
-              </h3>
+              </h2>
             )}
 
             {isEditing ? (

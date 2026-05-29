@@ -158,8 +158,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "@context": "https://schema.org",
               "@type": "Organization",
               "name": "ストロベリーボーイズ",
+              "alternateName": "Strawberry Boys",
               "url": "https://www.sutoroberrys.jp",
-              "logo": "https://www.sutoroberrys.jp/logo.png"
+              "logo": "https://www.sutoroberrys.jp/logo.png",
+              "sameAs": [
+                "https://twitter.com/oden0713"
+              ],
+              "description": "東京・横浜・名古屋・大阪・福岡で展開する女性用風俗・出張ホストの全国チェーン。"
             }),
           }}
         />
@@ -171,6 +176,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "@context": "https://schema.org",
               "@type": "WebSite",
               "name": "ストロベリーボーイズ",
+              "alternateName": "女性用風俗 ストロベリーボーイズ",
               "url": "https://www.sutoroberrys.jp",
               "potentialAction": {
                 "@type": "SearchAction",
