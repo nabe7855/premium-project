@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.sutoroberrys.jp';
-  const stores = getAllStores();
+  const storeSlugs = ['honten', 'tokyo', 'yokohama', 'nagoya', 'osaka', 'fukuoka'];
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -51,8 +51,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const storePages: MetadataRoute.Sitemap = [];
 
-  for (const store of stores) {
-    const storeSlug = store.slug;
+  for (const storeSlug of storeSlugs) {
     const storeBase = `/store/${storeSlug}`;
 
     // Store main pages

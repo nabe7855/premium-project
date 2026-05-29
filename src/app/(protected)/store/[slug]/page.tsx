@@ -10,6 +10,17 @@ import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeT
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+const STORE_META: Record<string, {
+  city: string; cityKana: string; area: string; areaKw: string[];
+}> = {
+  tokyo:   { city: "東京",   cityKana: "とうきょう", area: "新宿・渋谷・池袋", areaKw: ["新宿","渋谷","池袋","東京駅","品川"] },
+  honten:  { city: "東京",   cityKana: "とうきょう", area: "新宿・渋谷・池袋", areaKw: ["新宿","渋谷","池袋","東京駅","品川"] },
+  yokohama:{ city: "横浜",   cityKana: "よこはま",   area: "みなとみらい・関内", areaKw: ["みなとみらい","関内","桜木町","新横浜"] },
+  nagoya:  { city: "名古屋", cityKana: "なごや",     area: "栄・名古屋駅",     areaKw: ["栄","名駅","金山","伏見"] },
+  osaka:   { city: "大阪",   cityKana: "おおさか",   area: "梅田・難波",       areaKw: ["梅田","難波","心斎橋","天王寺"] },
+  fukuoka: { city: "福岡",   cityKana: "ふくおか",   area: "天神・博多",       areaKw: ["天神","博多","中洲"] },
+};
+
 interface StorePageProps {
   params: {
     slug: string;
@@ -38,14 +49,37 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const description = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
   const ogImage = config?.hero?.images?.[0] || store.seo.ogImage;
 
-  // MEO最適化タイトルとdescription
-  const title = store.city === '福岡'
-    ? '福岡の女性用風俗｜ストロベリーボーイズ福岡店【博多・天神・中洲対応】'
-    : `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
+  const s = STORE_META[params.slug];
+  
+  if (s) {
+    const title = `${s.city}の女性用風俗・出張ホスト｜ストロベリーボーイズ${s.city}店【${s.area}対応】`;
+    const metaDescription = `${s.city}（${s.area}）で女性用風俗・出張ホストをお探しならストロベリーボーイズ${s.city}店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しを提供します。`;
+    return {
+      title,
+      description: metaDescription,
+      keywords: ["女性用風俗", "女風", "出張ホスト", s.city, ...s.areaKw, "セラピスト", "女性専用"],
+      alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}` },
+      openGraph: {
+        title, 
+        description: metaDescription,
+        url: `https://www.sutoroberrys.jp/store/${params.slug}`,
+        siteName: "ストロベリーボーイズ",
+        images: [{ url: `/ogp/store-${params.slug}.png`, width: 1200, height: 630, alt: shopName }],
+        locale: "ja_JP", 
+        type: "website",
+      },
+      twitter: { 
+        card: "summary_large_image", 
+        title, 
+        description: metaDescription, 
+        images: [`/ogp/store-${params.slug}.png`] 
+      },
+    };
+  }
 
-  const metaDescription = store.city === '福岡'
-    ? '福岡市の女性用風俗ならストロベリーボーイズ福岡店。博多・天神・中洲・薬院エリアへ即日出張可。厳選セラピスト在籍、初めての方も安心の女性専用リラクゼーション。明朗会計・追加料金なしで利用できます。'
-    : config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
+  // フォールバック（定義外の店舗）
+  const title = `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
+  const metaDescription = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
 
   return {
     title,
@@ -64,6 +98,8 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
       ],
       type: 'website',
       locale: 'ja_JP',
+      url: `https://www.sutoroberrys.jp/store/${params.slug}`,
+      siteName: "ストロベリーボーイズ",
     },
     twitter: {
       card: 'summary_large_image',
