@@ -1,52 +1,56 @@
-'use client';
-
-import CastHeader from '@/components/cast/CastHeader';
-import CastTabs from '@/components/cast/CastTabs';
+import type { Metadata } from 'next';
+import { STORE_META } from '@/lib/store/storeMeta';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
-import { useEffect, useState } from 'react';
+import CastClient from './CastClient';
 
-interface CastDetailPageProps {
-  params: { store: string; cast: string };
+interface Props {
+  params: {
+    slug: string;
+    cast: string;
+  };
 }
 
-const CastDetailPage = ({ params }: CastDetailPageProps) => {
-  const { cast } = params;
-  const [castData, setCastData] = useState<any | null>(null);
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug, cast: castSlug } = params;
+  const s = STORE_META[slug];
+  const cast = await getCastProfileBySlug(castSlug);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const cast = await getCastProfileBySlug(params.cast);
-      if (cast?.isActive) {
-        setCastData(cast);
-      }
-    };
-    fetchData();
-  }, [cast]);
+  if (!s || !cast || !cast.isActive) return {
+    title: 'セラピストが見つかりません | ストロベリーボーイズ',
+  };
 
-  if (!cast) {
-    return <div className="p-8 text-center text-red-500">無効なURLです。</div>;
-  }
+  const title = `${cast.name}のプロフィール｜${s.city}の女性用風俗｜ストロベリーボーイズ${s.city}店`;
+  const description = `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍するイケメンセラピスト、${cast.name}のプロフィール。${cast.catchCopy || ''} ${cast.aiSummary ? cast.aiSummary.slice(0, 50) + '...' : ''}`;
+  const siteUrl = 'https://www.sutoroberrys.jp';
+  const pageUrl = `${siteUrl}/store/${slug}/cast/${castSlug}`;
+  
+  // profile image logic - assuming galleryItems[0] exists
+  const firstGalleryItem = cast.galleryItems && cast.galleryItems.length > 0 ? cast.galleryItems[0] : null;
+  const image = firstGalleryItem ? (typeof firstGalleryItem === 'string' ? firstGalleryItem : (firstGalleryItem as any).url || (firstGalleryItem as any).src || `/ogp/store-${slug}.png`) : `/ogp/store-${slug}.png`;
 
-  if (!castData) {
-    return (
-      <div className="p-8 text-center text-gray-500">
-        現在このセラピストの情報は表示できません。
-      </div>
-    );
-  }
+  return {
+    title,
+    description,
+    alternates: { canonical: pageUrl },
+    openGraph: {
+      title,
+      description,
+      url: pageUrl,
+      images: [{ url: image, width: 1200, height: 630, alt: cast.name }],
+      type: 'profile',
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [image]
+    }
+  };
+}
 
-  return (
-    <div className="min-h-screen bg-pink-50">
-      <CastHeader
-        name={castData.name}
-        catchCopy={castData.catchCopy}
-        aiSummary={castData.aiSummary}
-        galleryItems={castData.galleryItems}
-      />
-      {/* ✅ isSticky は不要なので削除 */}
-      <CastTabs cast={castData} />
-    </div>
-  );
-};
-
-export default CastDetailPage;
+export default function CastPage({ params }: Props) {
+  // params contains store (mapped to slug in route maybe?) and cast
+  // Wait, route is /store/[slug]/[cast]/page.tsx so params has slug and cast.
+  // The client component expects { params: { store: string; cast: string; } } but is using it loosely.
+  return <CastClient params={{ store: params.slug, cast: params.cast }} />;
+}

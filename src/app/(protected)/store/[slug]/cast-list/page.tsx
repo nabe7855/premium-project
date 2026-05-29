@@ -20,23 +20,33 @@ interface Props {
   searchParams: { [key: string]: string | string[] | undefined };
 }
 
+import { STORE_META } from '@/lib/store/storeMeta';
+
 // ✅ ページごとのSEO情報を生成
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = params;
-  const search = searchParams.search as string;
-  const tags = searchParams.tags as string;
-  const mbti = searchParams.mbti as string;
+  const s = STORE_META[slug];
+  if (!s) return {};
 
-  let title = `${slug} - キャスト一覧`;
-  let description = `${slug}の魅力的なキャストをご紹介。`;
-
-  if (search) title += ` - "${search}"`;
-  if (mbti) title += ` - ${mbti}タイプ`;
-  if (tags) title += ` - ${tags.split(',').slice(0, 2).join('・')}`;
+  const title = `${s.city}店 在籍セラピスト一覧｜女性用風俗｜ストロベリーボーイズ${s.city}店`;
+  const description = `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する、厳しい審査を通過したイケメンセラピスト一覧。あなたにぴったりのセラピストが見つかります。`;
 
   return {
-    title: `${title} | Strawberry Boys`,
+    title,
     description,
+    alternates: { canonical: `https://www.sutoroberrys.jp/store/${slug}/cast-list` },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.sutoroberrys.jp/store/${slug}/cast-list`,
+      images: [{ url: `/ogp/store-${slug}.png`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`/ogp/store-${slug}.png`]
+    }
   };
 }
 

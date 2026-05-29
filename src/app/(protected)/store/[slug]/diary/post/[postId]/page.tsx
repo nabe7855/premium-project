@@ -13,18 +13,21 @@ interface Props {
   params: { slug: string; postId: string };
 }
 
+import { STORE_META } from '@/lib/store/storeMeta';
+
 // ✅ メタデータ生成 (SEO対策)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const s = STORE_META[params.slug];
   const post = await getDiaryPostById(params.postId, params.slug);
 
-  if (!post) {
+  if (!post || !s) {
     return {
-      title: '記事が見つかりません | Strawberry Boys',
+      title: '記事が見つかりません | ストロベリーボーイズ',
     };
   }
 
-  const title = `${post.title} | ${post.castName} | Strawberry Boys`;
-  const description = post.excerpt || `${post.castName}さんが更新した最新の写メ日記です。${(post.content || '').slice(0, 50)}...`;
+  const title = `${post.title}｜${post.castName}の写メ日記｜ストロベリーボーイズ${s.city}店`;
+  const description = post.excerpt || `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する${post.castName}さんの写メ日記です。${(post.content || '').slice(0, 50)}...`;
   const siteUrl = 'https://www.sutoroberrys.jp';
   const pageUrl = `${siteUrl}/store/${params.slug}/diary/post/${params.postId}`;
 
