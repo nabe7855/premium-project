@@ -162,7 +162,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "url": "https://www.sutoroberrys.jp",
               "logo": "https://www.sutoroberrys.jp/logo.png",
               "sameAs": [
-                "https://twitter.com/oden0713"
+                "https://twitter.com/oden0713",
+                "https://www.instagram.com/sutoroberrys/"
               ],
               "description": "東京・横浜・名古屋・大阪・福岡で展開する女性用風俗・出張ホストの全国チェーン。"
             }),
