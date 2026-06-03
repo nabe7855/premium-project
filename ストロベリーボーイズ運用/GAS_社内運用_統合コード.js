@@ -360,6 +360,22 @@ function classifyStore(path) {
   return 'その他・共通'; // トップ / cast一覧 / news / interview など
 }
 
+// 日付値（文字列でもDateオブジェクトでも）から YYYYMMDD を取り出す
+function toYmd(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, 'Asia/Tokyo', 'yyyyMMdd');
+  }
+  return String(v).replace(/[^0-9]/g, '').substring(0, 8);
+}
+
+// YYYYMMDD → 日本語表記「2026/05/27(水)」（テキストとして扱われる）
+function formatDateJP(ymd) {
+  var y = ymd.substring(0, 4), m = ymd.substring(4, 6), d = ymd.substring(6, 8);
+  var dt = new Date(Number(y), Number(m) - 1, Number(d));
+  var wd = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
+  return y + '/' + m + '/' + d + '(' + wd + ')';
+}
+
 function fetchGA4StorePageTraffic() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName('GA4_店舗別');
@@ -370,9 +386,25 @@ function fetchGA4StorePageTraffic() {
     sheet.setFrozenRows(1);
   }
 
+  // --- 既存データを読み込み（重複排除のため key=YYYYMMDD|店舗 でマップ化）---
+  var merged = {};
+  if (sheet.getLastRow() > 1) {
+    var existing = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+    existing.forEach(function(r) {
+      var ymd = toYmd(r[1]);
+      if (ymd.length === 8) {
+        merged[ymd + '|' + r[2]] = {
+          ymd: ymd, fetch: r[0], store: r[2],
+          sessions: Number(r[3]) || 0, users: Number(r[4]) || 0, pv: Number(r[5]) || 0
+        };
+      }
+    });
+  }
+
+  // --- GA4から過去30日分を取得 ---
   var today = new Date();
   var endDate = new Date(today.getTime() - 86400000);
-  var startDate = new Date(today.getTime() - 7 * 86400000);
+  var startDate = new Date(today.getTime() - 30 * 86400000);
 
   var request = AnalyticsData.newRunReportRequest();
   request.dateRanges = [AnalyticsData.newDateRange()];
@@ -386,38 +418,136 @@ function fetchGA4StorePageTraffic() {
     var response = AnalyticsData.Properties.runReport(request, 'properties/' + GA4_PROPERTY_ID);
     if (!response.rows) { Logger.log('GA4店舗別: データなし'); return; }
 
-    // 「日付|店舗」キーで合算
+    // 日付×店舗で集計
     var agg = {};
     response.rows.forEach(function(r) {
-      var d = r.dimensionValues[0].value;
+      var ymd = r.dimensionValues[0].value; // YYYYMMDD
       var path = r.dimensionValues[1].value;
       var store = classifyStore(path);
-      var key = d + '|' + store;
+      var key = ymd + '|' + store;
       if (!agg[key]) agg[key] = { sessions: 0, users: 0, pv: 0 };
       agg[key].sessions += parseInt(r.metricValues[0].value);
       agg[key].users    += parseInt(r.metricValues[1].value);
       agg[key].pv       += parseInt(r.metricValues[2].value);
     });
 
+    // 新しい数値で上書き（GA4は直近日を後から確定するため、新データを優先）
     var fetchDate = formatDate(today);
-    var out = Object.keys(agg).map(function(key) {
-      var parts = key.split('|');
-      var d = parts[0];
-      var dateStr = d.substring(0, 4) + '-' + d.substring(4, 6) + '-' + d.substring(6, 8);
+    Object.keys(agg).forEach(function(key) {
+      var p = key.split('|');
       var a = agg[key];
-      return [fetchDate, dateStr, parts[1], a.sessions, a.users, a.pv];
-    });
-    // 日付→店舗の順に並べ替え
-    out.sort(function(a, b) {
-      if (a[1] !== b[1]) return a[1] < b[1] ? -1 : 1;
-      return a[2] < b[2] ? -1 : 1;
+      merged[key] = {
+        ymd: p[0], fetch: fetchDate, store: p[1],
+        sessions: a.sessions, users: a.users, pv: a.pv
+      };
     });
 
-    sheet.getRange(sheet.getLastRow() + 1, 1, out.length, 6).setValues(out);
-    Logger.log('GA4店舗別: ' + out.length + '行追加');
+    // 並べ替え（日付→店舗）して全行を書き直し
+    var list = Object.keys(merged).map(function(k) { return merged[k]; });
+    list.sort(function(a, b) {
+      if (a.ymd !== b.ymd) return a.ymd < b.ymd ? -1 : 1;
+      return a.store < b.store ? -1 : (a.store > b.store ? 1 : 0);
+    });
+    var out = list.map(function(x) {
+      return [x.fetch, formatDateJP(x.ymd), x.store, x.sessions, x.users, x.pv];
+    });
+
+    // 既存データをクリアして全書き換え（重複ゼロを保証）
+    if (sheet.getLastRow() > 1) {
+      sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).clearContent();
+    }
+    if (out.length > 0) {
+      sheet.getRange(2, 2, out.length, 1).setNumberFormat('@'); // 対象日を文字列扱いに固定
+      sheet.getRange(2, 1, out.length, 6).setValues(out);
+    }
+    Logger.log('GA4店舗別: ' + out.length + '行（重複排除・上書き / 過去30日）');
   } catch (e) {
     Logger.log('GA4店舗別エラー: ' + e.message);
   }
+}
+
+
+// ============================================================
+// 店舗・メディア別 セッション推移グラフ（日付×店舗のピボット＋折れ線）
+// ============================================================
+function buildStoreTrafficChart() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var src = ss.getSheetByName('GA4_店舗別');
+  if (!src || src.getLastRow() < 2) { Logger.log('店舗別グラフ: 元データなし'); return; }
+
+  var values = src.getDataRange().getValues(); // [取得日, 対象日, 店舗, セッション, ユーザー, PV]
+
+  // 同じ(対象日×店舗)が複数の取得日にまたがる場合は「最新の取得日」を採用（重複排除）
+  var latest = {};
+  for (var i = 1; i < values.length; i++) {
+    var fetchDate  = String(values[i][0]);
+    var targetDate = String(values[i][1]);
+    var store      = String(values[i][2]);
+    var sessions   = Number(values[i][3]) || 0;
+    var key = targetDate + '|' + store;
+    if (!latest[key] || fetchDate >= latest[key].fetch) {
+      latest[key] = { fetch: fetchDate, sessions: sessions };
+    }
+  }
+
+  // 日付・店舗の一覧を抽出
+  var dateSet = {}, storeSet = {};
+  Object.keys(latest).forEach(function(k) {
+    var p = k.split('|');
+    dateSet[p[0]] = true;
+    storeSet[p[1]] = true;
+  });
+  var dates = Object.keys(dateSet).sort(function(a, b) {
+    var ya = toYmd(a), yb = toYmd(b);
+    return ya < yb ? -1 : (ya > yb ? 1 : 0);
+  }); // 古い→新しい（日付順）
+
+  // 店舗の表示順（指定順 → それ以外は後ろに）
+  var preferred = ['横浜店', '福岡店', 'Amorabo', 'イケオジ', 'Magazine', 'SweetStay', 'その他・共通'];
+  var stores = preferred.filter(function(s) { return storeSet[s]; });
+  Object.keys(storeSet).forEach(function(s) { if (stores.indexOf(s) === -1) stores.push(s); });
+
+  // ピボット表を作成（行=日付, 列=店舗, 値=セッション数）
+  var header = ['対象日'].concat(stores);
+  var table = [header];
+  dates.forEach(function(dt) {
+    var r = [dt];
+    stores.forEach(function(s) {
+      var rec = latest[dt + '|' + s];
+      r.push(rec ? rec.sessions : 0);
+    });
+    table.push(r);
+  });
+
+  // 出力シート（毎回作り直し）
+  var out = ss.getSheetByName('店舗別グラフ');
+  if (!out) out = ss.insertSheet('店舗別グラフ');
+  out.getCharts().forEach(function(c) { out.removeChart(c); });
+  out.clear();
+
+  out.getRange(1, 1, table.length, 1).setNumberFormat('@'); // 対象日を文字列扱いに固定（英語日付化を防止）
+  out.getRange(1, 1, table.length, header.length).setValues(table);
+  out.getRange(1, 1, 1, header.length)
+    .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+  out.setFrozenRows(1);
+  out.setFrozenColumns(1);
+
+  // 折れ線グラフ（店舗ごとに1本ずつ）
+  var chart = out.newChart()
+    .setChartType(Charts.ChartType.LINE)
+    .addRange(out.getRange(1, 1, table.length, header.length))
+    .setPosition(2, header.length + 2, 0, 0)
+    .setNumHeaders(1)
+    .setOption('title', '店舗・メディア別 セッション数の推移')
+    .setOption('width', 760)
+    .setOption('height', 440)
+    .setOption('legend', { position: 'right' })
+    .setOption('pointSize', 4)
+    .setOption('curveType', 'none')
+    .build();
+  out.insertChart(chart);
+
+  Logger.log('店舗別グラフ: ' + dates.length + '日分 × ' + stores.length + '区分 を出力');
 }
 
 
@@ -1052,7 +1182,7 @@ function syncToClientSheet() {
     }
 
     // --- 生データシートを同期（なければ自動作成） ---
-    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元',
+    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元', 'GA4_店舗別', '店舗別グラフ',
       'KW順位_ブランド共通', 'KW順位_横浜店', 'KW順位_福岡店',
       'メディア別SC', 'KW順位_AmoLab', 'KW順位_IkeoLab', 'KW順位_SweetStay'];
     dataSheets.forEach(function(sheetName) {
@@ -1122,6 +1252,7 @@ function formatDate(d) {
 
 function testSearchConsole() { fetchSearchConsoleData(); }
 function testGA4() { fetchGA4Data(); fetchGA4TrafficSources(); }
+function testStoreTraffic() { fetchGA4StorePageTraffic(); buildStoreTrafficChart(); }
 function debugSearchConsole() {
   var today = new Date();
   var endDate = new Date(today.getTime() - 1 * 86400000);
@@ -1135,84 +1266,4 @@ function debugSearchConsole() {
   var response = UrlFetchApp.fetch(apiUrl, options);
   Logger.log('HTTPステータス: ' + response.getResponseCode());
   Logger.log('レスポンス: ' + response.getContentText());
-}
-
-
-// ============================================================
-// 店舗・メディア別 セッション推移グラフ（日付×店舗のピボット＋折れ線）
-// ============================================================
-function buildStoreTrafficChart() {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var src = ss.getSheetByName('GA4_店舗別');
-  if (!src || src.getLastRow() < 2) { Logger.log('店舗別グラフ: 元データなし'); return; }
-
-  var values = src.getDataRange().getValues(); // [取得日, 対象日, 店舗, セッション, ユーザー, PV]
-
-  // 同じ(対象日×店舗)が複数の取得日にまたがる場合は「最新の取得日」を採用（重複排除）
-  var latest = {};
-  for (var i = 1; i < values.length; i++) {
-    var fetchDate  = String(values[i][0]);
-    var targetDate = String(values[i][1]);
-    var store      = String(values[i][2]);
-    var sessions   = Number(values[i][3]) || 0;
-    var key = targetDate + '|' + store;
-    if (!latest[key] || fetchDate >= latest[key].fetch) {
-      latest[key] = { fetch: fetchDate, sessions: sessions };
-    }
-  }
-
-  // 日付・店舗の一覧を抽出
-  var dateSet = {}, storeSet = {};
-  Object.keys(latest).forEach(function(k) {
-    var p = k.split('|');
-    dateSet[p[0]] = true;
-    storeSet[p[1]] = true;
-  });
-  var dates = Object.keys(dateSet).sort(); // 古い→新しい
-
-  // 店舗の表示順（指定順 → それ以外は後ろに）
-  var preferred = ['横浜店', '福岡店', 'Amorabo', 'イケオジ', 'Magazine', 'SweetStay', 'その他・共通'];
-  var stores = preferred.filter(function(s) { return storeSet[s]; });
-  Object.keys(storeSet).forEach(function(s) { if (stores.indexOf(s) === -1) stores.push(s); });
-
-  // ピボット表を作成（行=日付, 列=店舗, 値=セッション数）
-  var header = ['対象日'].concat(stores);
-  var table = [header];
-  dates.forEach(function(dt) {
-    var r = [dt];
-    stores.forEach(function(s) {
-      var rec = latest[dt + '|' + s];
-      r.push(rec ? rec.sessions : 0);
-    });
-    table.push(r);
-  });
-
-  // 出力シート（毎回作り直し）
-  var out = ss.getSheetByName('店舗別グラフ');
-  if (!out) out = ss.insertSheet('店舗別グラフ');
-  out.getCharts().forEach(function(c) { out.removeChart(c); });
-  out.clear();
-
-  out.getRange(1, 1, table.length, header.length).setValues(table);
-  out.getRange(1, 1, 1, header.length)
-    .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
-  out.setFrozenRows(1);
-  out.setFrozenColumns(1);
-
-  // 折れ線グラフ（店舗ごとに1本ずつ）
-  var chart = out.newChart()
-    .setChartType(Charts.ChartType.LINE)
-    .addRange(out.getRange(1, 1, table.length, header.length))
-    .setPosition(2, header.length + 2, 0, 0)
-    .setNumHeaders(1)
-    .setOption('title', '店舗・メディア別 セッション数の推移')
-    .setOption('width', 760)
-    .setOption('height', 440)
-    .setOption('legend', { position: 'right' })
-    .setOption('pointSize', 4)
-    .setOption('curveType', 'none')
-    .build();
-  out.insertChart(chart);
-
-  Logger.log('店舗別グラフ: ' + dates.length + '日分 × ' + stores.length + '区分 を出力');
 }

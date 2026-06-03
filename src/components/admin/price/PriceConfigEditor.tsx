@@ -464,6 +464,26 @@ function CourseListLogic({
                   />
                 </div>
               </div>
+              <div>
+                <label className="mb-1 block text-sm font-bold text-rose-700">指名料備考</label>
+                <input
+                  type="text"
+                  value={course.designation_fee_note || ''}
+                  onChange={(e) => updateCourse(courseIndex, { designation_fee_note: e.target.value })}
+                  className="w-full rounded-lg border border-rose-200 p-2 text-sm text-rose-900"
+                  placeholder="全セラピスト一律。特にご希望がなければ無料となります♫"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm font-bold text-rose-700">注意事項 (COURSE NOTES)</label>
+                <textarea
+                  value={course.notes || ''}
+                  onChange={(e) => updateCourse(courseIndex, { notes: e.target.value })}
+                  className="w-full rounded-lg border border-rose-200 p-3 text-sm text-rose-900"
+                  rows={3}
+                  placeholder="コースの注意事項や備考（常識の範囲内で...等）"
+                />
+              </div>
             </div>
 
             {/* プラン一覧 */}
