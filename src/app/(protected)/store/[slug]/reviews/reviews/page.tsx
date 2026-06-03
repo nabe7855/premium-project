@@ -55,11 +55,6 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
     "@type": "Product",
     name: `ストロベリーボーイズ ${cityName}店`,
     image: `https://www.sutoroberrys.jp/ogp/store-${slug}.png`,
-    aggregateRating: { "@type": "AggregateRating", ratingValue: "4.8", reviewCount: "124" },
-    review: [
-      { "@type": "Review", author: { "@type": "Person", name: "お客様A" }, datePublished: "2025-05-10", reviewBody: "セラピストさんが優しくて最高でした。", reviewRating: { "@type": "Rating", ratingValue: "5" } },
-      { "@type": "Review", author: { "@type": "Person", name: "お客様B" }, datePublished: "2025-05-08", reviewBody: "リラックスできました。また利用します。", reviewRating: { "@type": "Rating", ratingValue: "4" } }
-    ]
   };
 
   return (

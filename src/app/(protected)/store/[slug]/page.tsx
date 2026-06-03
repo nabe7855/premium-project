@@ -55,7 +55,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     const title = `${s.city}の女性用風俗・出張ホスト｜ストロベリーボーイズ${s.city}店【${s.area}対応】`;
     const metaDescription = `${s.city}（${s.area}）で女性用風俗・出張ホストをお探しならストロベリーボーイズ${s.city}店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しを提供します。`;
     return {
-      title,
+      title: { absolute: title },
       description: metaDescription,
       keywords: ["女性用風俗", "女風", "出張ホスト", s.city, ...s.areaKw, "セラピスト", "女性専用"],
       alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}` },
@@ -82,7 +82,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const metaDescription = config?.hero?.description?.replace(/\n/g, ' ') || store.seo.description;
 
   return {
-    title,
+    title: { absolute: title },
     description: metaDescription,
     keywords: store.seo.keywords,
     openGraph: {
@@ -195,7 +195,7 @@ export default async function StorePage({ params }: StorePageProps) {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `https://www.sutoroberrys.jp/store/${params.slug}#localbusiness`,
-    name: topConfig?.footer?.shopInfo?.name || store.name,
+    name: `ストロベリーボーイズ${store.city}店`,
     description: topConfig?.hero?.description?.replace(/\n/g, ' ') || store.seo.description,
     address: {
       '@type': 'PostalAddress',
@@ -204,7 +204,7 @@ export default async function StorePage({ params }: StorePageProps) {
       'addressRegion': store.city === '福岡' ? '福岡県' : store.city === '横浜' ? '神奈川県' : '',
       'addressCountry': 'JP',
     },
-    telephone: topConfig?.footer?.shopInfo?.phone || store.contact.phone,
+    telephone: '+81-50-5491-3991',
     url: `https://www.sutoroberrys.jp/store/${params.slug}`,
     image: topConfig?.hero?.images?.[0] || store.seo.ogImage,
     priceRange: '¥¥',
@@ -216,23 +216,6 @@ export default async function StorePage({ params }: StorePageProps) {
         closes: '05:00',
       },
     ],
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: '4.8',
-      reviewCount: '247',
-    },
-    review: store.reviews?.slice(0, 3).map((review: any) => ({
-      '@type': 'Review',
-      author: {
-        '@type': 'Person',
-        name: review.author,
-      },
-      reviewRating: {
-        '@type': 'Rating',
-        ratingValue: review.rating,
-      },
-      reviewBody: review.content,
-    })),
   };
 
   const serviceSchema = {

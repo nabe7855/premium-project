@@ -155,6 +155,7 @@ function dailyDataCollection() {
   fetchSearchConsoleData();
   fetchGA4Data();
   fetchGA4TrafficSources();
+  fetchGA4StorePageTraffic();
   updateTargetKWRanking();
   fetchMediaSCData();
   updateMediaKWRanking();
@@ -332,6 +333,89 @@ function fetchGA4TrafficSources() {
     Logger.log('GA4流入元: ' + rows.length + '行追加');
   } catch (e) {
     Logger.log('GA4流入元エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// GA4 店舗・メディア別ページ流入（pagePath を URL で振り分け）
+// ============================================================
+
+// 振り分けルール（前方一致・上から順に判定）
+var STORE_PATH_RULES = [
+  { name: '福岡店',    prefix: '/store/fukuoka' },
+  { name: '横浜店',    prefix: '/store/yokohama' },
+  { name: 'Amorabo',  prefix: '/amolab' },
+  { name: 'イケオジ',  prefix: '/ikeo' },
+  { name: 'Magazine', prefix: '/magazine' },
+  { name: 'SweetStay', prefix: '/sweetstay' },
+];
+
+// pagePath から店舗／メディアを判定（前方一致）
+function classifyStore(path) {
+  for (var i = 0; i < STORE_PATH_RULES.length; i++) {
+    if (path.indexOf(STORE_PATH_RULES[i].prefix) === 0) return STORE_PATH_RULES[i].name;
+  }
+  return 'その他・共通'; // トップ / cast一覧 / news / interview など
+}
+
+function fetchGA4StorePageTraffic() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('GA4_店舗別');
+  if (!sheet) {
+    sheet = ss.insertSheet('GA4_店舗別');
+    sheet.appendRow(['取得日', '対象日', '店舗・メディア', 'セッション数', 'アクティブユーザー', 'PV数']);
+    sheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 7 * 86400000);
+
+  var request = AnalyticsData.newRunReportRequest();
+  request.dateRanges = [AnalyticsData.newDateRange()];
+  request.dateRanges[0].startDate = formatDate(startDate);
+  request.dateRanges[0].endDate = formatDate(endDate);
+  request.dimensions = [{ name: 'date' }, { name: 'pagePath' }];
+  request.metrics = [{ name: 'sessions' }, { name: 'activeUsers' }, { name: 'screenPageViews' }];
+  request.limit = 100000;
+
+  try {
+    var response = AnalyticsData.Properties.runReport(request, 'properties/' + GA4_PROPERTY_ID);
+    if (!response.rows) { Logger.log('GA4店舗別: データなし'); return; }
+
+    // 「日付|店舗」キーで合算
+    var agg = {};
+    response.rows.forEach(function(r) {
+      var d = r.dimensionValues[0].value;
+      var path = r.dimensionValues[1].value;
+      var store = classifyStore(path);
+      var key = d + '|' + store;
+      if (!agg[key]) agg[key] = { sessions: 0, users: 0, pv: 0 };
+      agg[key].sessions += parseInt(r.metricValues[0].value);
+      agg[key].users    += parseInt(r.metricValues[1].value);
+      agg[key].pv       += parseInt(r.metricValues[2].value);
+    });
+
+    var fetchDate = formatDate(today);
+    var out = Object.keys(agg).map(function(key) {
+      var parts = key.split('|');
+      var d = parts[0];
+      var dateStr = d.substring(0, 4) + '-' + d.substring(4, 6) + '-' + d.substring(6, 8);
+      var a = agg[key];
+      return [fetchDate, dateStr, parts[1], a.sessions, a.users, a.pv];
+    });
+    // 日付→店舗の順に並べ替え
+    out.sort(function(a, b) {
+      if (a[1] !== b[1]) return a[1] < b[1] ? -1 : 1;
+      return a[2] < b[2] ? -1 : 1;
+    });
+
+    sheet.getRange(sheet.getLastRow() + 1, 1, out.length, 6).setValues(out);
+    Logger.log('GA4店舗別: ' + out.length + '行追加');
+  } catch (e) {
+    Logger.log('GA4店舗別エラー: ' + e.message);
   }
 }
 
