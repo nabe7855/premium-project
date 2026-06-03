@@ -24,9 +24,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return {
       title: `${hotel.name} | ${hotel.area}のおすすめホテル | Strawberry Boys`,
       description: `${hotel.name}をご利用の際におすすめな、${hotel.area}のホテル情報をご紹介します。`,
+      robots: { index: false, follow: false },
     };
   } catch (error) {
-    return { title: 'Hotel Details' };
+    return { title: 'Hotel Details', robots: { index: false, follow: false } };
   }
 }
 

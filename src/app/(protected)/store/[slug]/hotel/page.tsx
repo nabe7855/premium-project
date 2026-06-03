@@ -34,6 +34,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${store.displayName}周辺のおすすめホテル | Strawberry Boys`,
     description: `${store.displayName}周辺で厳選されたブティックホテルをご紹介します。エリアやこだわり条件から簡単に検索できます。`,
+    robots: { index: false, follow: false },
   };
 }
 

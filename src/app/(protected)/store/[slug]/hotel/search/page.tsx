@@ -31,6 +31,7 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
   return {
     title: `「${query}」の検索結果 | ${store.displayName}周辺のおすすめホテル`,
     description: `${store.displayName}周辺での「${query}」の検索結果を表示しています。`,
+    robots: { index: false, follow: false },
   };
 }
 

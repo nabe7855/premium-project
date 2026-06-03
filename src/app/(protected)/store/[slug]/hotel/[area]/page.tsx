@@ -30,6 +30,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: `${store.displayName}周辺のおすすめホテル（${areaName}エリア） | Strawberry Boys`,
     description: `${store.displayName}の${areaName}エリア周辺で厳選されたブティックホテルをご紹介します。`,
+    robots: { index: false, follow: false },
   };
 }
 
