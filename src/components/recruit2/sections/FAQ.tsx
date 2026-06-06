@@ -205,90 +205,159 @@ const FAQ: React.FC<FAQProps> = ({
         </div>
 
         <div className="space-y-4">
-          {filteredFaqs.map((faq, idx) => (
-            <div
-              key={idx}
-              className="group overflow-hidden rounded-2xl border border-slate-200 transition-all duration-300"
-            >
-              <button
-                onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
-                className={`flex w-full items-center justify-between p-5 text-left transition-colors sm:p-7 ${openIdx === idx ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
-              >
-                <div className="flex flex-grow items-start gap-4">
-                  <span
-                    className={`font-serif text-lg font-bold text-amber-600 transition-opacity ${openIdx === idx ? 'opacity-100' : 'opacity-40'}`}
-                  >
-                    Q.
-                  </span>
-                  {isEditing ? (
-                    <span
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => {
-                        const newItems = [...items];
-                        const globalIdx = items.indexOf(faq);
-                        if (globalIdx !== -1) {
-                          newItems[globalIdx] = {
-                            ...newItems[globalIdx],
-                            q: e.currentTarget.innerText,
-                          };
-                          handleInput('items', newItems);
-                        }
-                      }}
-                      className="cursor-text rounded text-sm font-bold leading-relaxed text-slate-900 outline-none hover:bg-slate-100 sm:text-base"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {faq.q}
-                    </span>
-                  ) : (
-                    <span 
-                      className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base"
-                      style={{ whiteSpace: 'pre-wrap' }}
-                    >
-                      {faq.q}
-                    </span>
-                  )}
-                </div>
-                <span
-                  className={`shrink-0 transform text-[10px] text-amber-600 transition-transform duration-500 ${openIdx === idx ? 'rotate-180' : ''}`}
-                >
-                  ▼
-                </span>
-              </button>
+          {filteredFaqs.map((faq, idx) => {
+            const globalIdx = items.indexOf(faq);
+            return (
               <div
-                className={`overflow-hidden transition-all duration-500 ease-in-out ${
-                  openIdx === idx || isEditing ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
-                }`}
+                key={`${globalIdx}-${idx}`}
+                className="group overflow-hidden rounded-2xl border border-slate-200 transition-all duration-300"
               >
-                <div className="flex gap-4 border-t border-slate-200/50 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600 sm:p-7 sm:text-base">
-                  <span className="font-serif text-lg font-bold text-slate-300">A.</span>
-                  {isEditing ? (
-                    <div
-                      contentEditable
-                      suppressContentEditableWarning
-                      onBlur={(e) => {
+                {isEditing && (
+                  <div className="flex flex-wrap items-center justify-end gap-2 border-b border-slate-200 bg-slate-100 p-2">
+                    <span className="mr-auto text-xs font-bold text-slate-400 pl-2">表示設定:</span>
+                    <select
+                      value={faq.cat}
+                      onChange={(e) => {
                         const newItems = [...items];
-                        const globalIdx = items.indexOf(faq);
-                        if (globalIdx !== -1) {
-                          newItems[globalIdx] = {
-                            ...newItems[globalIdx],
-                            a: e.currentTarget.innerText,
-                          };
+                        newItems[globalIdx] = { ...newItems[globalIdx], cat: e.target.value };
+                        handleInput('items', newItems);
+                      }}
+                      className="rounded border border-slate-300 px-2 py-1 text-xs"
+                    >
+                      <option value="general">すべて</option>
+                      <option value="beginner">未経験の方</option>
+                      <option value="expert">経験者の方</option>
+                    </select>
+                    <button
+                      onClick={() => {
+                        if (globalIdx > 0) {
+                          const newItems = [...items];
+                          [newItems[globalIdx - 1], newItems[globalIdx]] = [newItems[globalIdx], newItems[globalIdx - 1]];
                           handleInput('items', newItems);
                         }
                       }}
-                      className="flex-grow cursor-text rounded outline-none hover:bg-slate-100"
-                      style={{ whiteSpace: 'pre-wrap' }}
+                      disabled={globalIdx === 0}
+                      className="rounded bg-white px-3 py-1 text-xs font-bold shadow hover:bg-slate-50 disabled:opacity-50"
                     >
-                      {faq.a}
-                    </div>
-                  ) : (
-                    <div style={{ whiteSpace: 'pre-wrap' }}>{faq.a}</div>
-                  )}
+                      ↑ 上へ
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (globalIdx < items.length - 1) {
+                          const newItems = [...items];
+                          [newItems[globalIdx + 1], newItems[globalIdx]] = [newItems[globalIdx], newItems[globalIdx + 1]];
+                          handleInput('items', newItems);
+                        }
+                      }}
+                      disabled={globalIdx === items.length - 1}
+                      className="rounded bg-white px-3 py-1 text-xs font-bold shadow hover:bg-slate-50 disabled:opacity-50"
+                    >
+                      ↓ 下へ
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (window.confirm('この質問を削除しますか？')) {
+                          const newItems = items.filter((_, i) => i !== globalIdx);
+                          handleInput('items', newItems);
+                        }
+                      }}
+                      className="rounded bg-red-50 px-3 py-1 text-xs font-bold text-red-600 shadow hover:bg-red-100"
+                    >
+                      削除
+                    </button>
+                  </div>
+                )}
+                <button
+                  onClick={() => setOpenIdx(openIdx === idx ? null : idx)}
+                  className={`flex w-full items-center justify-between p-5 text-left transition-colors sm:p-7 ${openIdx === idx ? 'bg-slate-50' : 'hover:bg-slate-50/50'}`}
+                >
+                  <div className="flex flex-grow items-start gap-4">
+                    <span
+                      className={`font-serif text-lg font-bold text-amber-600 transition-opacity ${openIdx === idx ? 'opacity-100' : 'opacity-40'}`}
+                    >
+                      Q.
+                    </span>
+                    {isEditing ? (
+                      <span
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          const newItems = [...items];
+                          if (globalIdx !== -1) {
+                            newItems[globalIdx] = {
+                              ...newItems[globalIdx],
+                              q: e.currentTarget.innerText,
+                            };
+                            handleInput('items', newItems);
+                          }
+                        }}
+                        className="cursor-text rounded text-sm font-bold leading-relaxed text-slate-900 outline-none hover:bg-slate-100 sm:text-base"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {faq.q}
+                      </span>
+                    ) : (
+                      <span 
+                        className="text-sm font-bold leading-relaxed text-slate-900 sm:text-base"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                      >
+                        {faq.q}
+                      </span>
+                    )}
+                  </div>
+                  <span
+                    className={`shrink-0 transform text-[10px] text-amber-600 transition-transform duration-500 ${openIdx === idx ? 'rotate-180' : ''}`}
+                  >
+                    ▼
+                  </span>
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-500 ease-in-out ${
+                    openIdx === idx || isEditing ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+                  }`}
+                >
+                  <div className="flex gap-4 border-t border-slate-200/50 bg-slate-50 p-5 text-sm leading-relaxed text-slate-600 sm:p-7 sm:text-base">
+                    <span className="font-serif text-lg font-bold text-slate-300">A.</span>
+                    {isEditing ? (
+                      <div
+                        contentEditable
+                        suppressContentEditableWarning
+                        onBlur={(e) => {
+                          const newItems = [...items];
+                          if (globalIdx !== -1) {
+                            newItems[globalIdx] = {
+                              ...newItems[globalIdx],
+                              a: e.currentTarget.innerText,
+                            };
+                            handleInput('items', newItems);
+                          }
+                        }}
+                        className="flex-grow cursor-text rounded outline-none hover:bg-slate-100"
+                        style={{ whiteSpace: 'pre-wrap' }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {faq.a}
+                      </div>
+                    ) : (
+                      <div style={{ whiteSpace: 'pre-wrap' }}>{faq.a}</div>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
+          {isEditing && (
+            <button
+              onClick={() => {
+                const newItems = [...items, { cat: 'general', q: '新しい質問（クリックで編集）', a: '新しい回答（クリックで編集）' }];
+                handleInput('items', newItems);
+              }}
+              className="mt-4 w-full rounded-2xl border-2 border-dashed border-slate-300 p-4 font-bold text-slate-500 transition-colors hover:bg-slate-50"
+            >
+              ＋ 新しい質問を追加
+            </button>
+          )}
         </div>
 
         <div className="mt-16 text-center">
