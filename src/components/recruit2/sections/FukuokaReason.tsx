@@ -91,12 +91,12 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
               contentEditable
               suppressContentEditableWarning
               onBlur={(e) => handleInput('heading', e)}
-              className="mb-10 cursor-text whitespace-pre-line text-balance rounded font-serif text-3xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 md:text-5xl"
+              className="mb-10 w-full cursor-text break-words whitespace-pre-line rounded font-serif text-2xl font-bold leading-tight outline-none drop-shadow-lg hover:bg-white/10 sm:text-3xl md:text-balance md:text-5xl"
             >
               {heading}
             </h3>
           ) : (
-            <h3 className="mb-10 whitespace-pre-line text-balance font-serif text-3xl font-bold leading-tight drop-shadow-lg md:text-5xl">
+            <h3 className="mb-10 w-full break-words whitespace-pre-line font-serif text-2xl font-bold leading-tight drop-shadow-lg sm:text-3xl md:text-balance md:text-5xl">
               {heading}
             </h3>
           )}
