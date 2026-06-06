@@ -101,7 +101,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
             </h3>
           )}
 
-          <div className="mx-auto max-w-3xl space-y-6 text-lg leading-relaxed text-slate-300">
+          <div className="mx-auto max-w-3xl space-y-6 text-left text-lg leading-relaxed text-slate-300">
             {isEditing ? (
               <>
                 <p
@@ -134,7 +134,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                   contentEditable
                   suppressContentEditableWarning
                   onBlur={(e) => handleInput('italicText', e)}
-                  className="cursor-text whitespace-pre-line rounded pt-4 font-serif text-2xl font-bold italic text-amber-500 outline-none drop-shadow-md hover:bg-white/10"
+                  className="cursor-text whitespace-pre-line rounded pt-4 text-center font-serif text-2xl font-bold italic text-amber-500 outline-none drop-shadow-md hover:bg-white/10"
                 >
                   {italicText}
                 </p>
@@ -147,7 +147,7 @@ const FukuokaReason: React.FC<FukuokaReasonProps> = ({
                   {description2 && description3 && <br />}
                   {description3}
                 </p>
-                <p className="whitespace-pre-line pt-4 font-serif text-2xl font-bold italic text-amber-500 drop-shadow-md">
+                <p className="whitespace-pre-line pt-4 text-center font-serif text-2xl font-bold italic text-amber-500 drop-shadow-md">
                   {italicText}
                 </p>
               </>
