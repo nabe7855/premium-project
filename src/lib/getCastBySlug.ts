@@ -16,6 +16,7 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
       image_url,
       is_active,
       sexiness_level,
+      voice_url,
       mbti:feature_master!casts_mbti_id_fkey ( name ),
       face:feature_master!casts_face_id_fkey ( name ),
       cast_statuses (
@@ -39,11 +40,6 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
     console.error('❌ getCastBySlug エラー:', error?.message);
     return null;
   }
-
-  // 🎤 Supabase Storage の音声URL
-  const { data: urlData } = supabase.storage
-    .from('cast-voices')
-    .getPublicUrl(`voice-${data.id}.webm`);
 
   // ✅ statuses を CastStatus[] に整形
   const statuses: CastStatus[] = (data.cast_statuses ?? []).map((s: any) => ({
@@ -77,6 +73,6 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
     statuses, // CastStatus[]
     sexinessLevel: data.sexiness_level ?? 3,
     sexinessStrawberry: '🍓'.repeat(data.sexiness_level ?? 3),
-    voiceUrl: urlData?.publicUrl ?? undefined,
+    voiceUrl: data.voice_url ?? undefined,
   };
 }

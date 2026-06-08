@@ -38,6 +38,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         is_active,
         sexiness_level,
         sns_url,
+        voice_url,
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name ),
         cast_statuses (
@@ -174,11 +175,6 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
       const cast = Array.isArray(item.casts) ? item.casts[0] : item.casts;
       if (!cast || !cast.is_active) return null;
 
-      // ✅ Supabase Storage の公開URL
-      const { data: urlData } = supabase.storage
-        .from('cast-voices')
-        .getPublicUrl(`voice-${cast.id}.webm`);
-
       // ✅ statuses を CastStatus[] に整形
       const statuses: CastStatus[] =
         cast.cast_statuses?.map((s: any) => ({
@@ -234,7 +230,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         statuses,
         sexinessLevel: (cast.sexiness_level ?? 3) * 20,
         sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
-        voiceUrl: urlData?.publicUrl ?? undefined,
+        voiceUrl: cast.voice_url ?? undefined,
         latestTweet: tweetsMap[cast.id]?.content ?? null,
         latestTweetAt: tweetsMap[cast.id]?.createdAt ?? null,
         latestDiaryAt: diariesMap[cast.id] ?? null,
