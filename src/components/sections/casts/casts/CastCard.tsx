@@ -2,7 +2,7 @@
 
 import { Cast, ScoredCast } from '@/types/cast';
 import { motion } from 'framer-motion';
-import { Clock, Pause, Play, Star, MessageCircle, Instagram, Music, Globe } from 'lucide-react';
+import { Clock, Pause, Play, Star, MessageCircle, Instagram, Music, Globe, Mic } from 'lucide-react';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -166,8 +166,8 @@ const CastCard: React.FC<CastCardProps> = ({
           </div>
         )}
 
-        {/* ▶️ 音声再生ボタン or 音声なし */}
-        {audioSampleUrl && !audioError ? (
+        {/* 🎙️ 音声再生ボタン */}
+        {audioSampleUrl && !audioError && (
           <>
             <button
               onClick={handleAudioToggle}
@@ -177,7 +177,7 @@ const CastCard: React.FC<CastCardProps> = ({
               {isPlaying ? (
                 <Pause className="h-5 w-5 text-primary" />
               ) : (
-                <Play className="h-5 w-5 text-primary" />
+                <Mic className="h-5 w-5 text-primary" />
               )}
             </button>
 
@@ -191,10 +191,6 @@ const CastCard: React.FC<CastCardProps> = ({
               }}
             />
           </>
-        ) : (
-          <div className="absolute bottom-2 right-2 rounded-full bg-gray-200 px-3 py-1 text-xs text-gray-600 shadow-md">
-            🎤 音声なし
-          </div>
         )}
 
         {/* 💬 最新つぶやき吹き出し */}
