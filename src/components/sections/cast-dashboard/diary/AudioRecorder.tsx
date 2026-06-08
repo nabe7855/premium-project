@@ -36,12 +36,18 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       
-      // ブラウザがサポートする形式を確認
-      const mimeType = MediaRecorder.isTypeSupported('audio/webm') 
-        ? 'audio/webm' 
-        : 'audio/ogg';
+      // ブラウザがサポートする形式を確認 (iOS Safari対応含む)
+      const getSupportedMimeType = () => {
+        const types = ['audio/webm', 'audio/mp4', 'audio/ogg'];
+        for (const t of types) {
+          if (MediaRecorder.isTypeSupported(t)) return t;
+        }
+        return ''; // サポート形式が取得できない場合は空文字（ブラウザデフォルト）
+      };
+      const mimeType = getSupportedMimeType();
         
-      const mediaRecorder = new MediaRecorder(stream, { mimeType });
+      const options = mimeType ? { mimeType } : undefined;
+      const mediaRecorder = new MediaRecorder(stream, options);
       mediaRecorderRef.current = mediaRecorder;
       audioChunksRef.current = [];
 
@@ -52,7 +58,8 @@ const AudioRecorder: React.FC<AudioRecorderProps> = ({ onGenerated, onCancel }) 
       };
 
       mediaRecorder.onstop = () => {
-        const audioBlob = new Blob(audioChunksRef.current, { type: mimeType });
+        const actualMimeType = mediaRecorder.mimeType || mimeType || 'audio/webm';
+        const audioBlob = new Blob(audioChunksRef.current, { type: actualMimeType });
         const url = URL.createObjectURL(audioBlob);
         setAudioUrl(url);
         stream.getTracks().forEach(track => track.stop());

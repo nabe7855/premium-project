@@ -73,15 +73,29 @@ export default function VoiceSection({ cast, setCastState, activeTab }: VoiceSec
   // 🎤 録音開始
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    mediaRecorderRef.current = new MediaRecorder(stream);
+    
+    // ブラウザがサポートする形式を確認 (iOS Safari対応含む)
+    const getSupportedMimeType = () => {
+      const types = ['audio/webm', 'audio/mp4', 'audio/ogg'];
+      for (const t of types) {
+        if (MediaRecorder.isTypeSupported(t)) return t;
+      }
+      return ''; // サポート形式が取得できない場合は空文字（ブラウザデフォルト）
+    };
+    const mimeType = getSupportedMimeType();
+    
+    const options = mimeType ? { mimeType } : undefined;
+    mediaRecorderRef.current = new MediaRecorder(stream, options);
     chunks.current = [];
 
     mediaRecorderRef.current.ondataavailable = (e) => chunks.current.push(e.data);
     mediaRecorderRef.current.onstop = () => {
-      const blob = new Blob(chunks.current, { type: 'audio/webm' });
+      const actualMimeType = mediaRecorderRef.current?.mimeType || 'audio/webm';
+      const extension = actualMimeType.includes('mp4') ? 'mp4' : actualMimeType.includes('ogg') ? 'ogg' : 'webm';
+      const blob = new Blob(chunks.current, { type: actualMimeType });
       const url = URL.createObjectURL(blob);
       setRecordedUrl(url);
-      setVoiceFile(new File([blob], `voice-${cast.id}.webm`, { type: 'audio/webm' }));
+      setVoiceFile(new File([blob], `voice-${cast.id}.${extension}`, { type: actualMimeType }));
     };
 
     mediaRecorderRef.current.start();

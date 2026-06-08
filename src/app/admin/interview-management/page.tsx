@@ -133,8 +133,8 @@ export default function InterviewManagementPage() {
                           </div>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">
-                          <span className="inline-flex rounded-full bg-blue-100 px-2 text-xs font-bold leading-5 text-blue-800 uppercase">
-                            {meta?.area || '不明'}
+                          <span className="inline-flex rounded-full bg-blue-100 px-2 text-xs font-bold leading-5 text-blue-800">
+                            {meta?.area === 'fukuoka' ? '福岡' : meta?.area === 'yokohama' ? '横浜' : (meta?.area || '不明')}
                           </span>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4">

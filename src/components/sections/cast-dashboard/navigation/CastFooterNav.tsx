@@ -7,7 +7,8 @@ import {
   Calendar, 
   ExternalLink,
   ChevronUp,
-  X
+  X,
+  Mic
 } from 'lucide-react';
 import React, { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -34,9 +35,10 @@ const CastFooterNav: React.FC<CastFooterNavProps> = ({
 
   const navItems = [
     { id: 'dashboard', label: 'ホーム', icon: Home },
-    { id: 'diary', label: '写メ日記', icon: Camera },
-    { id: 'profile', label: 'プロフィール', icon: User },
-    { id: 'schedule', label: 'スケジュール', icon: Calendar },
+    { id: 'diary', label: '日記', icon: Camera },
+    { id: 'profile', label: 'プロフ', icon: User },
+    { id: 'schedule', label: '予定', icon: Calendar },
+    { id: 'voice', label: 'ボイス', icon: Mic },
   ];
 
   const handleUserPageClick = () => {
