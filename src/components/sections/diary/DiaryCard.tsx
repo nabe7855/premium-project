@@ -53,10 +53,10 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
 
   const linkHref = `/store/${post.storeSlug}/diary/post/${post.id}`;
 
-  // ✅ サムネイル画像が無い場合のフォールバック（外部の高品質なプレースホルダーを使用）
+  // ✅ サムネイル画像が無い場合のフォールバック（ローカルのNo Image画像を使用）
   const imageSrc =
     post.image_url ||
-    'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop';
+    '/no-image.png';
 
   // ✅ キャスト名とアバターのフォールバック
   const castName = post.castName || 'キャスト名未設定';

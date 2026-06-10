@@ -191,7 +191,14 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
       // ---- 新規アップロード画像 ----
       const newImageUrls: string[] = [];
       for (const file of files) {
-        const filePath = `diary/${uuidv4()}-${file.name}`;
+        // ファイル名の拡張子を取得
+        const ext = file.name.split('.').pop() || '';
+        // 拡張子を除いたファイル名を取得し、英数字ハイフンアンダースコア以外を削除
+        const originalNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+        const safeName = originalNameWithoutExt.replace(/[^a-zA-Z0-9_-]/g, "");
+        const finalSafeName = safeName || 'image';
+        
+        const filePath = `diary/${uuidv4()}-${finalSafeName}.${ext}`;
         const { error: uploadError } = await supabase.storage.from('diary').upload(filePath, file);
         if (!uploadError) {
           const url = supabase.storage.from('diary').getPublicUrl(filePath).data.publicUrl;
@@ -201,6 +208,9 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
             image_url: url,
             file_path: filePath, // 👈 削除用に保存
           });
+        } else {
+          console.error('❌ Diary image upload failed:', uploadError);
+          alert(`画像のアップロードに失敗しました (${file.name})\nもう一度お試しください。`);
         }
       }
 
