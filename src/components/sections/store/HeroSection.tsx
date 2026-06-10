@@ -36,9 +36,9 @@ export default function HeroSection() {
       <div className="relative z-20 mx-auto max-w-4xl px-4 text-center">
         <div className="space-y-8">
           <div className="space-y-4">
-            <h1 className="text-4xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
+            <h2 className="text-4xl font-bold leading-tight text-white md:text-6xl lg:text-7xl">
               {store.hero.title}
-            </h1>
+            </h2>
             <p className="text-xl font-light text-white/90 md:text-2xl lg:text-3xl">
               {store.hero.subtitle}
             </p>

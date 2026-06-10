@@ -86,13 +86,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     });
 
-    // Cast pages
     try {
       const casts = await getCastsByStore(storeSlug);
       for (const cast of casts) {
-        if (cast.slug || cast.id) {
+        const slugStr = cast.slug || cast.id;
+        // 文字化けURLを除外するため、半角英数字ハイフンアンダースコアのみを許可
+        if (slugStr && /^[a-zA-Z0-9-_]+$/.test(slugStr)) {
           storePages.push({
-            url: `${baseUrl}${storeBase}/cast/${encodeURI(cast.slug || cast.id)}`,
+            url: `${baseUrl}${storeBase}/cast/${slugStr}`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,
@@ -127,12 +128,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'daily',
       priority: 0.8,
     },
-    {
-      url: `${baseUrl}/career`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
+    // /career is redirected, so excluded from sitemap
     // インタビューセクション（新規追加・既存エントリーは変更なし）
     {
       url: `${baseUrl}/magazine/interview`,
@@ -142,6 +138,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ];
 
+  /* 
   try {
     const { getMediaArticles } = await import('@/lib/actions/media');
     const result = await getMediaArticles();
@@ -161,6 +158,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch (e) {
     console.error('Sitemap: Error fetching media articles:', e);
   }
+  */
 
   // インタビュー記事の動的ページ（新規追加・既存処理は変更なし）
   try {

@@ -57,11 +57,6 @@ export default function CommonStorePage({
           onImageUpload={onImageUpload}
         />
       )}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
       <main>
         <HeroSection />
         <TestimonialSection />
