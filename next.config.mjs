@@ -43,6 +43,30 @@ const nextConfig = {
       bodySizeLimit: '20mb',
     },
   },
+  async redirects() {
+    return [
+      {
+        source: '/store/honten',
+        destination: '/store/tokyo',
+        permanent: true,
+      },
+      {
+        source: '/store/honten/:path*',
+        destination: '/store/tokyo/:path*',
+        permanent: true,
+      },
+      {
+        source: '/career',
+        destination: '/store/tokyo/recruit',
+        permanent: true,
+      },
+      {
+        source: '/career/:path*',
+        destination: '/store/tokyo/recruit',
+        permanent: true,
+      },
+    ];
+  },
 };
 
 export default nextConfig;

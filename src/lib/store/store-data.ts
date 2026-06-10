@@ -103,7 +103,6 @@ export interface Store {
 }
 
 const storeData: Record<string, Store> = {
-  /*
   tokyo: {
     slug: 'tokyo',
     template: 'common',
@@ -402,7 +401,6 @@ const storeData: Record<string, Store> = {
       },
     ],
   },
-*/
   fukuoka: {
     slug: 'fukuoka',
     template: 'fukuoka',

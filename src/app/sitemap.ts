@@ -7,7 +7,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.sutoroberrys.jp';
-  const storeSlugs = ['honten', 'tokyo', 'yokohama', 'nagoya', 'osaka', 'fukuoka'];
+  const storeSlugs = ['tokyo', 'yokohama', 'nagoya', 'osaka', 'fukuoka'];
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
@@ -92,7 +92,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const cast of casts) {
         if (cast.slug || cast.id) {
           storePages.push({
-            url: `${baseUrl}${storeBase}/cast/${cast.slug || cast.id}`,
+            url: `${baseUrl}${storeBase}/cast/${encodeURI(cast.slug || cast.id)}`,
             lastModified: new Date(),
             changeFrequency: 'weekly',
             priority: 0.6,
@@ -150,7 +150,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         if (article.status === 'published') {
           const path = article.target_audience === 'user' ? '/magazine' : '/career';
           mediaPages.push({
-            url: `${baseUrl}${path}/${article.slug}`,
+            url: `${baseUrl}${path}/${encodeURI(article.slug)}`,
             lastModified: new Date(article.updated_at),
             changeFrequency: 'monthly',
             priority: 0.6,
