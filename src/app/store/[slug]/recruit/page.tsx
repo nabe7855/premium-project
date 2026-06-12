@@ -51,17 +51,26 @@ export default async function RecruitPage({ params }: { params: { slug: string }
   const jobPostingSchema = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: `${s.city}店 女性用風俗セラピスト募集（未経験OK・週1日〜）`,
+    title: "男性セラピスト（女性用風俗・出張ホスト）",
     description: `${s.city}（${s.area}）で女性用風俗セラピストを募集中。<br/>未経験歓迎、週1日〜OK、全額日払い、登録料0円。最短10日でデビュー可能。プロ講師によるマンツーマン研修あり。`,
-    datePosted: "2026-05-01",
+    datePosted: "2026-06-10",
     validThrough: "2026-12-31",
     employmentType: ["PART_TIME", "CONTRACTOR"],
-    hiringOrganization: { "@type": "Organization", name: "ストロベリーボーイズ", sameAs: "https://www.sutoroberrys.jp" },
-    jobLocation: { "@type": "Place", address: { "@type": "PostalAddress", addressRegion: s.city, addressCountry: "JP" } },
-    baseSalary: { "@type": "MonetaryAmount", currency: "JPY", value: { "@type": "QuantitativeValue", minValue: 300000, maxValue: 1500000, unitText: "MONTH" } },
-    jobBenefits: "全額日払い、罰金・ノルマなし、マンツーマン研修、宣材写真無料、顔出し不要OK",
-    qualifications: "20歳以上の男性、心身ともに健康な方",
-    experienceRequirements: "未経験可（プロ講師によるマンツーマン研修あり）",
+    hiringOrganization: { "@type": "Organization", name: "ストロベリーボーイズ", sameAs: "https://www.sutoroberrys.jp/" },
+    jobLocation: { 
+      "@type": "Place", 
+      address: { 
+        "@type": "PostalAddress", 
+        addressLocality: `${s.city}市`, 
+        addressRegion: s.city === '東京' ? '東京都' : s.city === '大阪' ? '大阪府' : `${s.city}県`, 
+        addressCountry: "JP" 
+      } 
+    },
+    baseSalary: { 
+      "@type": "MonetaryAmount", 
+      currency: "JPY", 
+      value: { "@type": "QuantitativeValue", minValue: 5000, maxValue: 20000, unitText: "HOUR" } 
+    },
   };
 
   const breadcrumbsSchema = {

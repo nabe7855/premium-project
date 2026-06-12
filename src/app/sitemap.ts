@@ -122,12 +122,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Media (Magazine & Career)
   const mediaPages: MetadataRoute.Sitemap = [
-    {
-      url: `${baseUrl}/magazine`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
+    // /magazine (404) is excluded from sitemap
     // /career is redirected, so excluded from sitemap
     // インタビューセクション（新規追加・既存エントリーは変更なし）
     {
@@ -168,7 +163,23 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       for (const article of interviewResult.articles) {
         if (article && (article as any).status === 'published') {
           const meta = (article as any).interview_meta;
-          const area = meta?.area || 'fukuoka';
+          
+          // 日本語エリア名（福岡など）を英語スラッグにマッピング
+          const areaMap: Record<string, string> = {
+            福岡: 'fukuoka',
+            東京: 'tokyo',
+            横浜: 'yokohama',
+            名古屋: 'nagoya',
+            大阪: 'osaka',
+            fukuoka: 'fukuoka',
+            tokyo: 'tokyo',
+            yokohama: 'yokohama',
+            nagoya: 'nagoya',
+            osaka: 'osaka',
+          };
+          const rawArea = meta?.area || 'fukuoka';
+          const area = areaMap[rawArea] || 'fukuoka';
+
           const castLink = meta?.cast_links?.[0];
           const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
           

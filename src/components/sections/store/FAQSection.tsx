@@ -17,8 +17,25 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config }) => {
     setOpenIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
   };
 
+  const schemaJson = JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: config.items.map((item) => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  });
+
   return (
     <section id="faq" className="bg-white py-16 md:py-24">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: schemaJson }}
+      />
       <div className="mx-auto max-w-4xl px-4">
         <div className="mb-12 text-center">
           <h2 className="mb-2 text-3xl font-bold md:text-4xl">

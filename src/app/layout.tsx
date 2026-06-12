@@ -114,42 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           }}
         />
 
-        {/* ✅ JSON-LD構造化データ（FAQ） */}
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              '@context': 'https://schema.org',
-              '@type': 'FAQPage',
-              mainEntity: [
-                {
-                  '@type': 'Question',
-                  name: '初めてでも大丈夫ですか？',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'はい、初回の方には専任のコンシェルジュが丁寧にサポートいたします。不安なことがあれば何でもお気軽にご相談ください。',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: '料金システムはどうなっていますか？',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: '時間制の明確な料金システムです。追加料金等は一切発生いたしません。詳細はプランページをご確認ください。',
-                  },
-                },
-                {
-                  '@type': 'Question',
-                  name: 'キャンセルはできますか？',
-                  acceptedAnswer: {
-                    '@type': 'Answer',
-                    text: 'ご予約の24時間前まででしたら無料でキャンセル可能です。それ以降はキャンセル料が発生する場合がございます。',
-                  },
-                },
-              ],
-            }),
-          }}
-        />
+        {/* ✅ 固定のJSON-LD構造化データ（FAQ）は削除済 */}
         {/* ✅ JSON-LD構造化データ（Organization） */}
         <script
           type="application/ld+json"

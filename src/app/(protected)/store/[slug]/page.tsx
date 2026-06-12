@@ -275,8 +275,9 @@ export default async function StorePage({ params }: StorePageProps) {
   const structuredData = [localBusinessSchema, serviceSchema, breadcrumbSchema];
 
   // SEO用H1テキスト
-  const h1Text = store.city === '福岡'
-    ? '福岡の女性用風俗｜ストロベリーボーイズ福岡店【博多・天神・中洲対応】'
+  const s = STORE_META[params.slug];
+  const h1Text = s
+    ? `${s.city}の女性用風俗｜ストロベリーボーイズ${s.city}店【${params.slug === 'fukuoka' ? '博多・天神・中洲' : s.area}対応】`
     : `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
 
   // テンプレート振り分け
