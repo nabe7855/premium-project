@@ -577,7 +577,7 @@ const CastSection: React.FC<CastSectionProps> = ({
               href={`/store/${storeSlug}/cast-list`}
               className="group relative inline-flex items-center justify-center overflow-hidden rounded-full bg-rose-500 px-10 py-4 font-black transition-all hover:bg-rose-600 active:scale-95"
             >
-              <span className="relative z-10 text-sm tracking-[0.2em] text-white">もっと見る</span>
+              <span className="relative z-10 text-sm tracking-[0.2em] text-white">セラピスト一覧</span>
               <div className="absolute inset-0 translate-y-full bg-white/20 transition-transform duration-300 group-hover:translate-y-0" />
             </Link>
           </div>

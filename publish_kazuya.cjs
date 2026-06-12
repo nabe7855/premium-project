@@ -12,7 +12,7 @@ async function main() {
       excerpt: '「ガツガツしていない、大人の余裕」。カズヤさんとお話しして一番強く感じたのはこれです。声のトーンや言葉選びの端々から伝わる安心感は、日々のストレスや疲れを抱える女性にとって、最高のオアシスになるはず。それでいて、ふと見せる末っ子のような甘えん坊な一面……これはズルいです。',
       thumbnail_url: '/images/casts/kazuya/dome.jpg',
       category: 'interview',
-      status: 'published',
+      status: 'draft',
       seo_title: '現役SE×長身塩顔男子・カズヤ — “大人の余裕”の正体に迫る',
       seo_description: 'ストロベリーボーイズのキャスト「カズヤ」のインタビュー記事。現役エンジニアとしての横顔や、女性客を虜にする「美しい手」、そして落ち着いた雰囲気に隠された素顔に迫ります。'
     },
@@ -23,7 +23,7 @@ async function main() {
       excerpt: '「ガツガツしていない、大人の余裕」。カズヤさんとお話しして一番強く感じたのはこれです。声のトーンや言葉選びの端々から伝わる安心感は、日々のストレスや疲れを抱える女性にとって、最高のオアシスになるはず。それでいて、ふと見せる末っ子のような甘えん坊な一面……これはズルいです。',
       thumbnail_url: '/images/casts/kazuya/dome.jpg',
       category: 'interview',
-      status: 'published',
+      status: 'draft',
       seo_title: '現役SE×長身塩顔男子・カズヤ — “大人の余裕”の正体に迫る',
       seo_description: 'ストロベリーボーイズのキャスト「カズヤ」のインタビュー記事。現役エンジニアとしての横顔や、女性客を虜にする「美しい手」、そして落ち着いた雰囲気に隠された素顔に迫ります。',
       author_name: 'イトウ'
