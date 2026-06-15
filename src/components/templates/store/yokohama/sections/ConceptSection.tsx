@@ -307,6 +307,16 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
                 </button>
               )}
             </div>
+
+            <p
+              contentEditable={isEditing}
+              suppressContentEditableWarning={isEditing}
+              onBlur={(e) => handleTextUpdate('footerText', e)}
+              className={`mt-8 whitespace-pre-line border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+            >
+              {config?.footerText ||
+                '「自分へのご褒美」を、もっと身近で、もっと心地よいものに。ストロベリーボーイズは横浜の女性を応援します。'}
+            </p>
           </div>
         </div>
       </div>
