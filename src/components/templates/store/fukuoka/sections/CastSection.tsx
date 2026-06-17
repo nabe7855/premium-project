@@ -274,7 +274,7 @@ const CastSection: React.FC<CastSectionProps> = ({
 
       <div className="relative mx-auto max-w-7xl px-4 md:px-6">
         <SectionTitle
-          en={config?.subHeading || 'Strawberry Selection'}
+          en={config?.subHeading || 'Therapists'}
           ja={config?.heading || '本日出勤のセラピスト'}
           imageUrl={config?.headingImageUrl}
           isEditing={isEditing}

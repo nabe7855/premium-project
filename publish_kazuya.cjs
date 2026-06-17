@@ -89,7 +89,7 @@ async function main() {
           { type: "dialogue", speaker: "cast", speaker_name: "カズヤ", text: "それが、「手」をすごく褒められるんですよ。手が大きくて、指が長くて細いねって。" },
           { type: "dialogue", speaker: "staff", speaker_name: "イトウ", text: "手！ 確かに女性は男性の手や指先、けっこう見てますよね。" },
           { type: "dialogue", speaker: "cast", speaker_name: "カズヤ", text: "本当によく見られてるみたいで。「手のタレント（パーツモデル）になれるよ！」って褒められるぐらいなんです。なので、そこは自分の大きな武器かなと思ってます。オイルマッサージや指圧もすごく「気持ちいい」って好評をいただいてますし。" },
-          { type: "image", photo_key: "hand" }
+          { type: "photo", photo_key: "hand" }
         ]
       },
       {
@@ -105,7 +105,7 @@ async function main() {
           { type: "dialogue", speaker: "staff", speaker_name: "イトウ", text: "負けが込んでても球場に行くモチベーションって何なんですか？" },
           { type: "dialogue", speaker: "cast", speaker_name: "カズヤ", text: "球場で飲むビールが一番美味しいんですよ！ それだけで行く価値があります。負けても「まぁ次頑張ろう」って切り替えられますし。" },
           { type: "dialogue", speaker: "staff", speaker_name: "イトウ", text: "（なんて大人なんだ……）カズヤさんって、ゲームにしても野球にしても、すごく「いい距離感」で楽しんでますよね。ガツガツしすぎてないというか、心の余裕を感じます。その落ち着きが、女性からするとすごく安心感に繋がるんだと思います。" },
-          { type: "image", photo_key: "dome" }
+          { type: "photo", photo_key: "dome" }
         ]
       },
       {
@@ -134,8 +134,8 @@ async function main() {
   };
 
   const photos = {
-    dome: "/images/casts/kazuya/dome.jpg",
-    hand: "/images/casts/kazuya/hand.jpg",
+    dome: { url: "/images/casts/kazuya/dome.jpg", caption: "PayPayドーム前のカズヤさん", layout: "landscape" },
+    hand: { url: "/images/casts/kazuya/hand.jpg", caption: "美しい手", layout: "landscape" },
     staff_photos: {
       "イトウ": "/images/staff/ito.jpg"
     }

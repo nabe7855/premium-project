@@ -99,7 +99,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <SectionTitle
-          en={config.subHeading || 'Cast Diary'}
+          en={config.subHeading || 'Photo Diary'}
           ja={config.heading || 'セラピスト日記'}
           imageUrl={config.headingImageUrl}
           isEditing={isEditing}

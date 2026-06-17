@@ -55,7 +55,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate, on
       <div className="mx-auto max-w-4xl px-4 md:px-6">
         <div className="text-center">
           <SectionTitle
-            en={config.subHeading || 'Common Questions'}
+            en={config.subHeading || 'FAQ'}
             ja={config.heading || 'よくあるご質問'}
             imageUrl={config.headingImageUrl}
             isEditing={isEditing}

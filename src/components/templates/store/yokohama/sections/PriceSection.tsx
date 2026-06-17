@@ -38,7 +38,7 @@ const defaultPricesByTab = [
 
 const defaultNotes = [
   '全てのプランに消費税が含まれております。延長は30分 ¥6,000にて承ります。',
-  '指名料（¥1,000〜）および出張交通費が別途発生いたします。',
+  '指名料（¥3,000〜）および出張交通費が別途発生いたします。',
 ];
 
 interface PriceSectionProps {

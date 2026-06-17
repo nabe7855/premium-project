@@ -134,7 +134,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
             onBlur={(e) => handleTextUpdate('badge', e)}
             className={`text-[10px] font-bold uppercase tracking-[0.4em] text-rose-600 md:text-xs ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
           >
-            {config?.badge || 'Our Concept'}
+            {config?.badge || '初めてのストロベリーボーイズにようこそ！'}
           </span>
           <h2
             className={`mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl ${isEditing ? 'group/heading relative rounded px-1 hover:bg-slate-50' : ''}`}
