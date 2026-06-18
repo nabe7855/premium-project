@@ -1,41 +1,44 @@
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+
+import { HeroConfig } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import useEmblaCarousel from 'embla-carousel-react';
 import Autoplay from 'embla-carousel-autoplay';
 
-import { HeroConfig } from '@/lib/store/storeTopConfig';
-import { getOptimizedImageUrl } from '@/lib/image-url';
+const defaultHeroImages = [
+  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1920',
+  'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=1920',
+  'https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&q=80&w=1920',
+];
 
 interface HeroSectionProps {
   config?: HeroConfig;
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  storeSlug?: string;
 }
-
-const heroImages = [
-  'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1920',
-  'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=1920',
-  'https://images.unsplash.com/photo-1600334129128-685c5582fd35?auto=format&fit=crop&q=80&w=1920',
-];
 
 const HeroSection: React.FC<HeroSectionProps> = ({
   config,
   isEditing,
   onUpdate,
   onImageUpload,
+  storeSlug,
 }) => {
-  const params = useParams();
-  const slug = (params?.slug as string) || '';
+  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
 
-  const images = (config?.images?.length ? config.images : heroImages).map((img) =>
+  const slug = storeSlug || '';
+
+  const images = (config?.images?.filter((img) => img) || defaultHeroImages).map((img) =>
     img.replace(/\{slug\}/g, slug),
   );
-  
-  const [currentHeroSlide, setCurrentHeroSlide] = useState(0);
+  if (images.length === 0) images.push(defaultHeroImages[0]);
 
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { 
@@ -73,6 +76,29 @@ const HeroSection: React.FC<HeroSectionProps> = ({
     }
   }, [currentHeroSlide, emblaApi, selectedIndex]);
 
+  const nextSlide = () => {
+    if (emblaApi) emblaApi.scrollNext();
+  };
+
+  const prevSlide = () => {
+    if (emblaApi) emblaApi.scrollPrev();
+  };
+
+  // Ensure current slide is within bounds when images change
+  useEffect(() => {
+    if (currentHeroSlide >= images.length) {
+      const newIdx = Math.max(0, images.length - 1);
+      setCurrentHeroSlide(newIdx);
+      if (emblaApi) emblaApi.scrollTo(newIdx);
+    }
+  }, [images.length, emblaApi, currentHeroSlide]);
+
+  const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
+    if (onUpdate) {
+      onUpdate('hero', key, e.currentTarget.innerText);
+    }
+  };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
     const file = e.target.files?.[0];
     if (file && onImageUpload) {
@@ -92,6 +118,10 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         newLinks.splice(index, 1);
         onUpdate('hero', 'imageLinks', newLinks);
       }
+
+      if (currentHeroSlide >= newImages.length) {
+        setCurrentHeroSlide(Math.max(0, newImages.length - 1));
+      }
     }
   };
 
@@ -106,6 +136,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
     if (config.imageLinks) {
       const newLinks = [...config.imageLinks];
+      // Ensure the array is long enough to cover both indices
       const maxIdx = Math.max(index, newIndex);
       while (newLinks.length <= maxIdx) {
         newLinks.push('');
@@ -142,6 +173,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
         id="hero"
         className="relative w-full overflow-hidden"
         style={{
+          // Header(64px) と Footer(約82px) を考慮して計算
           height: 'calc(100svh - 146px)', 
           minHeight: '420px', 
         }}
@@ -170,7 +202,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                         <div className="relative h-full w-full">
                           <NextImage
                             src={getOptimizedImageUrl(img, 'hero', slug) || img}
-                            alt={isFirst ? "店舗メインビジュアル" : `Hero Image ${index + 1}`}
+                            alt={isFirst ? `${slug === 'yokohama' ? '横浜の女性用風俗' : slug === 'yokohama' ? '横浜の女性用風俗' : '女性用風俗'}ストロベリーボーイズ メインビジュアル` : `ストロベリーボーイズ${slug === 'yokohama' ? '横浜店' : slug === 'yokohama' ? '横浜店' : ''} イメージ${index + 1}`}
                             fill
                             priority={isFirst}
                             fetchPriority={isFirst ? "high" : undefined}
@@ -197,7 +229,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                       return imageContent;
                     })()}
 
-                    {/* モバイル用グラデーションオーバーレイ */}
+                    {/* モバイル用グラデーションオーバーレイ（オプション） */}
                     <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/20 to-transparent md:hidden" />
                     
                     {/* 編集モード用のコントロール */}
@@ -293,7 +325,7 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                   ? 'scale-125 bg-rose-500 w-6'
                   : 'bg-white/50 hover:bg-white/80'
               }`}
-              aria-label={`Slide ${index + 1}`}
+              aria-label={`スライド ${index + 1}`}
             />
           ))}
         </div>

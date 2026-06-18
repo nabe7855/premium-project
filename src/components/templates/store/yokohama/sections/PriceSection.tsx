@@ -2,7 +2,6 @@
 
 import { useStore } from '@/contexts/StoreContext';
 import { PriceConfig } from '@/lib/store/storeTopConfig';
-import { AnimatePresence, motion } from 'framer-motion';
 import { AlertCircle, Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -38,7 +37,7 @@ const defaultPricesByTab = [
 
 const defaultNotes = [
   '全てのプランに消費税が含まれております。延長は30分 ¥6,000にて承ります。',
-  '指名料（¥3,000〜）および出張交通費が別途発生いたします。',
+  '指名料（¥1,000〜）および出張交通費が別途発生いたします。',
 ];
 
 interface PriceSectionProps {
@@ -132,7 +131,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
                     };
                     input.click();
                   }}
-                  className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                  className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[#642B2B] text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
                   title="タイトル画像を変更"
                 >
                   <Camera size={16} />
@@ -163,7 +162,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
                     };
                     input.click();
                   }}
-                  className="mt-2 text-[10px] text-slate-400 opacity-0 group-hover/heading:opacity-100 hover:text-slate-600"
+                  className="mt-2 text-[10px] text-rose-300 opacity-0 group-hover/heading:opacity-100 hover:text-rose-500"
                 >
                   画像をタイトルとして設定
                 </button>
@@ -175,7 +174,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           contentEditable={isEditing}
           onBlur={(e) => handleTextUpdate('subHeading', e)}
           suppressContentEditableWarning
-          className="mt-2 text-sm font-bold uppercase tracking-widest text-[#D4AF37] md:text-base outline-none"
+          className="mt-2 text-sm font-bold uppercase tracking-widest text-[#967117] md:text-base outline-none"
         >
           {config?.subHeading || 'Price Menu'}
         </p>
@@ -210,7 +209,8 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           {/* Navigation Arrows (Floating) */}
           <button
             onClick={prevTab}
-            className="absolute left-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:left-[-24px] md:h-12 md:w-12"
+            className="absolute left-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#967117] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:left-[-24px] md:h-12 md:w-12"
+            aria-label="前のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path
@@ -224,7 +224,8 @@ const PriceSection: React.FC<PriceSectionProps> = ({
 
           <button
             onClick={nextTab}
-            className="absolute right-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#D4AF37] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:right-[-24px] md:h-12 md:w-12"
+            className="absolute right-[-20px] top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#967117] text-white shadow-lg transition-all hover:scale-110 active:scale-95 md:right-[-24px] md:h-12 md:w-12"
+            aria-label="次のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M9 5l7 7-7 7" />
@@ -233,34 +234,28 @@ const PriceSection: React.FC<PriceSectionProps> = ({
 
           {/* New PriceCard with Animation */}
           <div className="overflow-hidden">
-            <AnimatePresence mode="wait" custom={direction}>
-              <motion.div
-                key={page}
-                custom={direction}
-                initial={{ opacity: 0, x: direction > 0 ? 50 : -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: direction > 0 ? -50 : 50 }}
-                transition={{ duration: 0.3, ease: 'easeInOut' }}
-              >
-                <PriceCard
-                  title={tabs[activeTab].label}
-                  description={categoryDescriptions[activeTab]}
-                  items={prices}
-                  isEditing={isEditing}
-                  onUpdate={(key, value) => {
-                    if (key === 'description' && onUpdate) {
-                      const newDescs = [...categoryDescriptions];
-                      newDescs[activeTab] = value;
-                      onUpdate('price', 'tabDescriptions', newDescs);
-                    } else if (key === 'items' && onUpdate) {
-                      const newItemsByTab = config?.itemsByTab ? [...config.itemsByTab] : [...defaultPricesByTab];
-                      newItemsByTab[activeTab] = value;
-                      onUpdate('price', 'itemsByTab', newItemsByTab);
-                    }
-                  }}
-                />
-              </motion.div>
-            </AnimatePresence>
+            <div
+              key={page}
+              className="animate-in fade-in duration-300 ease-in-out"
+            >
+              <PriceCard
+                title={tabs[activeTab].label}
+                description={categoryDescriptions[activeTab]}
+                items={prices}
+                isEditing={isEditing}
+                onUpdate={(key, value) => {
+                  if (key === 'description' && onUpdate && config) {
+                    const newDescs = [...categoryDescriptions];
+                    newDescs[activeTab] = value;
+                    onUpdate('price', 'tabDescriptions', newDescs);
+                  } else if (key === 'items' && onUpdate && config) {
+                    const newItemsByTab = config.itemsByTab ? [...config.itemsByTab] : [...defaultPricesByTab];
+                    newItemsByTab[activeTab] = value;
+                    onUpdate('price', 'itemsByTab', newItemsByTab);
+                  }
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

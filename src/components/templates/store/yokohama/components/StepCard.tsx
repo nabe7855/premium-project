@@ -51,8 +51,8 @@ const StepCard: React.FC<StepCardProps> = ({
             src={imageSrc}
             alt={typeof title === 'string' ? `ご利用の流れ - ${title}` : 'ご利用ステップ'}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            sizes="(max-width: 768px) 150px, 200px"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100px, 150px"
           />
         )
       )}

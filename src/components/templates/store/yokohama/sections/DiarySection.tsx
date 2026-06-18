@@ -1,4 +1,5 @@
 import { DiaryConfig } from '@/lib/store/storeTopConfig';
+import { getTransformedImageUrl } from '@/lib/image-url';
 import { supabase } from '@/lib/supabaseClient';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -89,13 +90,16 @@ const DiarySection: React.FC<DiarySectionProps> = ({
     fetchDiaries();
   }, [storeSlug, config?.items]);
 
-  if (!config || !config.isVisible) return null;
+  if (!config || (!config.isVisible && !isEditing)) return null;
 
   return (
-    <section id="diary" className="bg-white py-16 md:py-24">
+    <section
+      id="diary"
+      className={`bg-white py-16 md:py-24 ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
+    >
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         <SectionTitle
-          en={config.subHeading || 'Cast Diary'}
+          en={config.subHeading || 'Photo Diary'}
           ja={config.heading || 'セラピスト日記'}
           imageUrl={config.headingImageUrl}
           isEditing={isEditing}
@@ -126,7 +130,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
                 href={`/store/${storeSlug}/diary/post/${item.id}`}
                 className="group min-w-[240px] snap-center overflow-hidden rounded-2xl bg-neutral-50 transition-all duration-500 hover:shadow-lg md:min-w-0"
               >
-                <div className="relative aspect-square overflow-hidden">
+                <div className="relative aspect-square overflow-hidden bg-neutral-100">
                   <NextImage
                     src={item.image}
                     alt={item.title}
@@ -141,7 +145,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
                   </div>
                 </div>
                 <div className="p-4">
-                  <p className="mb-1 text-[9px] font-medium text-slate-400">{item.date}</p>
+                  <p className="mb-1 text-[9px] font-medium text-slate-600">{item.date}</p>
                   <h3 className="line-clamp-2 text-xs font-bold leading-relaxed text-slate-700">
                     {item.title}
                   </h3>
@@ -150,7 +154,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             ))
           ) : (
             <div className="col-span-4 flex w-full items-center justify-center py-20 text-center">
-              <p className="font-serif text-lg tracking-[0.3em] text-slate-300">日記準備中</p>
+              <p className="font-serif text-lg tracking-[0.3em] text-slate-500">日記準備中</p>
             </div>
           )}
         </div>
@@ -158,7 +162,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
         <div className="mt-8 text-center md:mt-12">
           <Link
             href={`/store/${storeSlug}/diary/diary-list`}
-            className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-slate-800 hover:shadow-lg active:scale-95 sm:px-10"
+            className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-red-500 hover:shadow-lg active:scale-95 sm:px-10 sm:py-4 sm:text-sm"
           >
             <span>Show All Diary</span>
             <span className="text-[10px] opacity-70"> / 写メ日記一覧</span>

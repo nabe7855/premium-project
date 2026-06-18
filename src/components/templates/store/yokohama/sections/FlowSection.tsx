@@ -1,15 +1,9 @@
-import { FlowConfig } from '@/lib/store/storeTopConfig';
 import { Calendar, Heart, MapPin, User } from 'lucide-react';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
 import StepCard from '../components/StepCard';
 
-interface FlowSectionProps {
-  config?: FlowConfig;
-  isEditing?: boolean;
-  onUpdate?: (section: string, key: string, value: any) => void;
-  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
-}
+import { FlowConfig } from '@/lib/store/storeTopConfig';
 
 const defaultSteps = [
   {
@@ -38,6 +32,13 @@ const defaultSteps = [
   },
 ];
 
+interface FlowSectionProps {
+  config?: FlowConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+}
+
 const getIcon = (iconName: string) => {
   switch (iconName) {
     case 'User':
@@ -61,6 +62,13 @@ const FlowSection: React.FC<FlowSectionProps> = ({
 }) => {
   const steps = config?.steps || defaultSteps;
 
+  const stepImages = [
+    '/images/flow/ご利用までのステップ１.jpg',
+    '/images/flow/ご利用までのステップ２.jpg',
+    '/images/flow/ご利用までのステップ３.jpg',
+    '/images/flow/ご利用までのステップ４.jpg',
+  ];
+
   const handleStepUpdate = (index: number, key: string, value: string) => {
     if (onUpdate) {
       const newSteps = [...steps];
@@ -72,7 +80,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({
   return (
     <section id="flow" className="relative bg-white py-16 md:py-24">
       <div className="absolute left-0 top-0 h-full w-full bg-[radial-gradient(#fce7f3_0.8px,transparent_0.8px)] opacity-30 [background-size:24px_24px]"></div>
-      <div className="relative z-10 mx-auto max-w-7xl px-4 md:px-6">
+      <div className="relative z-10 mx-auto max-w-7xl px-6">
         <SectionTitle
           en={config?.subHeading || 'Guide'}
           ja={config?.heading || 'ご利用までのステップ'}
@@ -98,7 +106,7 @@ const FlowSection: React.FC<FlowSectionProps> = ({
                 key={idx}
                 num={idx + 1}
                 icon={getIcon(step.icon)}
-                imageSrc={step.image}
+                imageSrc={step.image || stepImages[idx]}
                 isEditing={isEditing}
                 onImageUpload={(file) => onImageUpload?.('flow', file, idx)}
                 title={

@@ -17,20 +17,22 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
   config,
   isEditing,
   onUpdate,
-  onImageUpload,
+  onImageUpload, // Changed from onImageUpload: _onImageUpload
   storeSlug = 'yokohama',
 }) => {
   if (!config || (!config.isVisible && !isEditing)) return null;
 
+  const items = config.items || [];
+
   return (
-    <section 
-      id="newcomer" 
+    <section
+      id="newcomer"
       className={`bg-white py-16 md:py-24 ${!config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto max-w-7xl px-4 md:px-6">
         {/* Image-matching Header */}
         <div className="mb-12 overflow-hidden rounded-xl bg-gradient-to-r from-[#9C7E4F] via-[#C4A97A] to-[#9C7E4F] py-6 text-center text-white shadow-lg md:py-8">
-          {config?.headingImageUrl ? (
+          {config.headingImageUrl ? (
             <div className="relative mx-auto flex max-w-[300px] items-center justify-center md:max-w-[400px]">
               <div className="relative h-20 w-full md:h-28">
                 <NextImage
@@ -55,7 +57,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                     };
                     input.click();
                   }}
-                  className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+                  className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
                 >
                   <Camera size={16} />
                 </button>
@@ -63,19 +65,19 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
             </div>
           ) : (
             <div className="group/heading relative">
-              <h2 
+              <h2
                 contentEditable={isEditing}
                 suppressContentEditableWarning={isEditing}
                 onBlur={(e) => onUpdate?.('newcomer', 'heading', e.currentTarget.innerText)}
-                className={`mb-2 font-serif text-xl font-bold tracking-[0.2em] md:text-3xl outline-none ${isEditing ? 'hover:bg-white/10 rounded px-2' : ''}`}
+                className={`mb-2 font-serif text-xl font-bold tracking-[0.2em] outline-none md:text-3xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
               >
                 {config.heading}
               </h2>
-              <p 
+              <p
                 contentEditable={isEditing}
                 suppressContentEditableWarning={isEditing}
                 onBlur={(e) => onUpdate?.('newcomer', 'courseText', e.currentTarget.innerText)}
-                className={`text-sm font-medium tracking-widest md:text-xl outline-none ${isEditing ? 'hover:bg-white/10 rounded px-2' : ''}`}
+                className={`text-sm font-medium tracking-widest outline-none md:text-xl ${isEditing ? 'rounded px-2 hover:bg-white/10' : ''}`}
               >
                 {config.courseText}
               </p>
@@ -102,15 +104,9 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
           )}
         </div>
 
-        {isEditing && (
-          <div className="mb-8 rounded border border-[#C4A97A] bg-amber-50 p-2 text-center text-xs text-[#9C7E4F]">
-            ※ 新人キャスト情報の編集は管理者設定からのみ可能です
-          </div>
-        )}
-
         {/* Horizontal Slider / Grid */}
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-8 scrollbar-hide md:mx-0 md:grid md:grid-cols-6 md:gap-4 md:px-0">
-          {config.items.map((item) => {
+          {items.map((item) => {
             return (
               <div key={item.id} className="min-w-[140px] snap-center md:min-w-0">
                 <Link
@@ -118,7 +114,6 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                   className="group relative block h-full w-full overflow-hidden rounded-xl transition-all duration-300 hover:opacity-90"
                 >
                   <div className="relative mb-2">
-                    {/* Image with brown/gold border matching the image */}
                     <div className="relative aspect-[3/4] overflow-hidden border-[2px] border-[#C4A97A] shadow-md transition-all duration-500 group-hover:shadow-xl">
                     <NextImage
                       src={getOptimizedImageUrl(item.imageUrl, 'thumb') || item.imageUrl || '/cast-default.jpg'}
@@ -134,6 +129,7 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                         }
                       }}
                     />
+
                     {/* "New Face" Badge */}
                     <div className="absolute right-2 top-2 flex h-10 w-10 flex-col items-center justify-center rounded-full border border-[#C4A97A] bg-white/95 text-center shadow-sm">
                       <span className="font-serif text-[8px] leading-none text-[#9C7E4F]">New</span>
@@ -145,22 +141,38 @@ const NewcomerSection: React.FC<NewcomerSectionProps> = ({
                 </div>
 
                 <div className="px-1 text-left">
-                  <h3 className="mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800">
+                  <h3
+                    className={`mb-0.5 font-serif text-sm font-bold tracking-widest text-slate-800 outline-none`}
+                  >
                     {item.name}
                   </h3>
-                  <p className="font-serif text-[10px] tracking-widest text-[#9C7E4F]">
-                    {item.age} / <span className="text-[#C4A97A]">T</span>
-                    {item.height}cm
-                  </p>
+                  <div className="flex gap-1 font-serif text-[10px] tracking-widest text-[#9C7E4F]">
+                    <span className="outline-none">{item.age}</span>
+                    <span>/</span>
+                    <span className="text-[#C4A97A]">T</span>
+                    <span className="tracking-tighter outline-none">{item.height}</span>
+                    <span className="ml-[-1px]">cm</span>
+                  </div>
                 </div>
               </Link>
             </div>
           );
         })}
+
+          {/* Manual Addition Disabled for dynamic Newcomer section */}
+          {/* isEditing && (
+            <button
+              onClick={addItem}
+              className="flex min-h-[350px] flex-col items-center justify-center rounded-xl border-2 border-dashed border-[#C4A97A] bg-white/50 p-8 text-[#9C7E4F] transition-all hover:bg-neutral-50"
+            >
+              <Plus size={40} className="mb-2" />
+              <span className="text-xs font-bold">新人を追加</span>
+            </button>
+          ) */}
         </div>
 
         {/* もっと見るボタン */}
-        {!isEditing && config && config.items && config.items.length > 0 && (
+        {!isEditing && items.length > 0 && (
           <div className="mt-8 flex justify-center">
             <Link
               href={`/store/${storeSlug}/cast-list?sort=newcomerOnly`}

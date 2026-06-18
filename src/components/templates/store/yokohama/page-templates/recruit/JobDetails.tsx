@@ -52,7 +52,7 @@ const JobDetails: React.FC = () => {
             <DetailRow
               icon={<MapPin className="h-5 w-5 text-amber-500" />}
               label="活動エリア"
-              content="福岡主要エリアを中心とした活動（リモート待機システム完備）"
+              content="横浜主要エリアを中心とした活動（リモート待機システム完備）"
             />
           </div>
         </div>

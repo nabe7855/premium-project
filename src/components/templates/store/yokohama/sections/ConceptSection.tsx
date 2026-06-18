@@ -1,34 +1,10 @@
-'use client';
-import { Camera, ChevronDown, Heart, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
+import { Camera, ChevronDown, Home, Plus, Receipt, Trash2, Users } from 'lucide-react';
 import NextImage from 'next/image';
 import { useParams } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 
 import { ConceptConfig } from '@/lib/store/storeTopConfig';
 import { getOptimizedImageUrl } from '@/lib/image-url';
-
-const getConceptIcon = (title: string, index: number) => {
-  if (title.includes('セラピスト')) return <Users size={20} />;
-  if (title.includes('安心')) return <Heart size={20} />;
-  if (title.includes('プライベート')) return <Home size={20} />;
-  if (title.includes('会計') || title.includes('料金')) return <Receipt size={20} />;
-
-  // Fallback based on index
-  const icons = [
-    <Users size={20} />,
-    <Heart size={20} />,
-    <Home size={20} />,
-    <Receipt size={20} />,
-  ];
-  return icons[index % icons.length];
-};
-
-interface ConceptSectionProps {
-  config?: ConceptConfig;
-  isEditing?: boolean;
-  onUpdate?: (section: string, key: string, value: any) => void;
-  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
-}
 
 const defaultConcepts = [
   {
@@ -39,7 +15,7 @@ const defaultConcepts = [
   },
   {
     title: '女性目線の安心感',
-    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全のセキュリティ体制で、初めての方でも安心してご利用いただけます。',
+    desc: '女性スタッフによる運営・管理を徹底。女性ならではの細やかな配慮と、万全의セキュリティ体制で、初めての方でも安心してご利用いただけます。',
     imageUrl:
       'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&q=80&w=1000',
   },
@@ -57,6 +33,29 @@ const defaultConcepts = [
   },
 ];
 
+const getConceptIcon = (title: string, index: number) => {
+  if (title.includes('セラピスト')) return <Users size={20} />;
+  if (title.includes('安心')) return <Users size={20} />;
+  if (title.includes('プライベート')) return <Home size={20} />;
+  if (title.includes('会計') || title.includes('料金')) return <Receipt size={20} />;
+
+  // Fallback based on index
+  const icons = [
+    <Users size={20} />,
+    <Users size={20} />,
+    <Home size={20} />,
+    <Receipt size={20} />,
+  ];
+  return icons[index % icons.length];
+};
+
+interface ConceptSectionProps {
+  config?: ConceptConfig;
+  isEditing?: boolean;
+  onUpdate?: (section: string, key: string, value: any) => void;
+  onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+}
+
 const ConceptSection: React.FC<ConceptSectionProps> = ({
   config,
   isEditing,
@@ -66,20 +65,20 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   const params = useParams();
   const slug = (params?.slug as string) || '';
   const [currentConceptIndex, setCurrentConceptIndex] = useState(0);
-  const items = (config?.items || defaultConcepts).map((item) => ({
+
+  const concepts = (config?.items || defaultConcepts).map((item) => ({
     ...item,
     imageUrl: item.imageUrl.replace(/\{slug\}/g, slug),
   }));
-  const heading = config?.heading || '安心と癒やしを、すべての女性の日常に。';
-  const subHeading = config?.subHeading || 'Our Concept';
 
   useEffect(() => {
-    if (isEditing) return;
+    if (isEditing) return; // 編集時は自動スライドを停止
+    if (concepts.length === 0) return;
     const timer = setInterval(() => {
-      setCurrentConceptIndex((prev) => (prev + 1) % items.length);
+      setCurrentConceptIndex((prev) => (prev + 1) % concepts.length);
     }, 11250);
     return () => clearInterval(timer);
-  }, [items.length, isEditing]);
+  }, [concepts.length, isEditing]);
 
   const handleTextUpdate = (key: string, e: React.FocusEvent<HTMLElement>) => {
     if (onUpdate) {
@@ -89,7 +88,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
 
   const handleItemUpdate = (index: number, key: string, value: string) => {
     if (onUpdate) {
-      const newItems = [...items];
+      const newItems = [...concepts];
       newItems[index] = { ...newItems[index], [key]: value };
       onUpdate('concept', 'items', newItems);
     }
@@ -109,14 +108,14 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
         desc: '説明文を入力してください',
         imageUrl: defaultConcepts[0].imageUrl,
       };
-      onUpdate('concept', 'items', [...items, newItem]);
+      onUpdate('concept', 'items', [...concepts, newItem]);
     }
   };
 
   const removeItem = (index: number, e: React.MouseEvent) => {
     e.stopPropagation();
     if (onUpdate) {
-      const newItems = items.filter((_, i) => i !== index);
+      const newItems = concepts.filter((_, i) => i !== index);
       onUpdate('concept', 'items', newItems);
       if (currentConceptIndex >= newItems.length) {
         setCurrentConceptIndex(Math.max(0, newItems.length - 1));
@@ -125,199 +124,194 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
   };
 
   return (
-    <section id="concept" className="bg-slate-50 py-16 md:py-24">
-      <div className="mx-auto max-w-4xl px-4 md:px-6">
-        <div className="relative">
-          {/* Content Side */}
-          <div>
-            <span
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => handleTextUpdate('badge', e)}
-              className={`text-xs font-bold uppercase tracking-[0.3em] text-rose-500 ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
-            >
-              {config?.badge || subHeading}
-            </span>
-            <div className={`group/heading relative mb-8 mt-4 ${isEditing ? 'rounded px-1 hover:bg-white/10' : ''}`}>
-              {config?.headingImageUrl ? (
-                <div className="relative mx-auto flex max-w-[300px] items-center justify-center md:max-w-[400px]">
-                  <div className="relative h-20 w-full md:h-28">
-                    <NextImage
-                      src={getOptimizedImageUrl(config.headingImageUrl, 'content') || config.headingImageUrl}
-                      alt={config.heading || 'Concept'}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 768px) 300px, 400px"
-                    />
-                  </div>
-                  {isEditing && (
-                    <button
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = (e) => {
-                          const file = (e.target as HTMLInputElement).files?.[0];
-                          if (file && onImageUpload) {
-                            onImageUpload('concept', file, 0, 'headingImageUrl');
-                          }
-                        };
-                        input.click();
-                      }}
-                      className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
-                    >
-                      <Camera size={16} />
-                    </button>
-                  )}
+    <section id="concept" className="mx-auto max-w-7xl overflow-hidden px-6 py-16 md:py-24">
+      <div className="mx-auto max-w-4xl">
+        {/* Content Side */}
+        <div>
+          <span
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => handleTextUpdate('badge', e)}
+            className={`text-[10px] font-bold uppercase tracking-[0.4em] text-rose-600 md:text-xs ${isEditing ? 'rounded px-1 hover:bg-rose-50' : ''}`}
+          >
+            {config?.badge || '初めてのストロベリーボーイズにようこそ！'}
+          </span>
+          <h2
+            className={`mb-6 mt-3 whitespace-pre-line font-serif text-2xl leading-snug text-slate-800 md:text-4xl ${isEditing ? 'group/heading relative rounded px-1 hover:bg-slate-50' : ''}`}
+          >
+            {config?.headingImageUrl ? (
+              <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+                <div className="relative h-20 w-full md:h-28">
+                  <NextImage
+                    src={getOptimizedImageUrl(config.headingImageUrl, 'content') || config.headingImageUrl}
+                    alt={config.heading || 'Concept'}
+                    fill
+                    className="object-contain"
+                    sizes="(max-width: 768px) 300px, 400px"
+                  />
                 </div>
-              ) : (
-                <>
-                  <h2
-                    contentEditable={isEditing}
-                    suppressContentEditableWarning={isEditing}
-                    onBlur={(e) => handleTextUpdate('heading', e)}
-                    className="font-serif text-3xl font-bold leading-tight text-slate-800 outline-none md:text-5xl"
+                {isEditing && (
+                  <button
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file && onImageUpload)
+                          onImageUpload('concept', file, 0, 'headingImageUrl');
+                      };
+                      input.click();
+                    }}
+                    className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
                   >
-                    {config?.heading || heading}
-                  </h2>
-                  {isEditing && (
-                    <button
-                      onClick={() => {
-                        const input = document.createElement('input');
-                        input.type = 'file';
-                        input.accept = 'image/*';
-                        input.onchange = (e) => {
-                          const file = (e.target as HTMLInputElement).files?.[0];
-                          if (file && onImageUpload) {
-                            onImageUpload('concept', file, 0, 'headingImageUrl');
-                          }
-                        };
-                        input.click();
-                      }}
-                      className="mt-2 text-[10px] text-slate-400 opacity-0 group-hover/heading:opacity-100 hover:text-slate-600"
-                    >
-                      画像をタイトルとして設定
-                    </button>
-                  )}
-                </>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              {items.map((concept, idx) => (
-                <div
-                  key={idx}
-                  className={`group cursor-pointer rounded-2xl border p-6 transition-all duration-300 ${
-                    idx === currentConceptIndex
-                      ? 'border-rose-200 bg-white shadow-xl shadow-rose-100/20'
-                      : 'border-transparent bg-transparent hover:bg-white/50 hover:shadow-md'
-                  }`}
-                  onClick={() => setCurrentConceptIndex(idx)}
+                    <Camera size={16} />
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                <span
+                  contentEditable={isEditing}
+                  suppressContentEditableWarning={isEditing}
+                  onBlur={(e) => handleTextUpdate('heading', e)}
+                  className="outline-none"
                 >
-                  <div className="flex items-start gap-5">
-                    <div
-                      className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${
-                        idx === currentConceptIndex
-                          ? 'rotate-0 bg-rose-500 text-white shadow-lg'
-                          : '-rotate-3 bg-rose-50 text-rose-400 group-hover:rotate-0'
-                      }`}
-                    >
-                      {getConceptIcon(concept.title, idx)}
+                  {config?.heading || '安心と癒やしを、\nすべての女性の日常に。'}
+                </span>
+                {isEditing && (
+                  <button
+                    onClick={() => {
+                      const input = document.createElement('input');
+                      input.type = 'file';
+                      input.accept = 'image/*';
+                      input.onchange = (e) => {
+                        const file = (e.target as HTMLInputElement).files?.[0];
+                        if (file && onImageUpload)
+                          onImageUpload('concept', file, 0, 'headingImageUrl');
+                      };
+                      input.click();
+                    }}
+                    className="mt-2 block w-full text-center text-[10px] text-rose-300 opacity-0 group-hover/heading:opacity-100 hover:text-rose-500"
+                  >
+                    画像をタイトルとして設定
+                  </button>
+                )}
+              </>
+            )}
+          </h2>
+
+          <div className="mb-8 space-y-4 text-left">
+            {concepts.map((concept, idx) => (
+              <div
+                key={idx}
+                className={`group relative cursor-pointer rounded-[1.5rem] border p-4 transition-all duration-500 md:p-6 ${
+                  idx === currentConceptIndex
+                    ? 'scale-[1.01] border-rose-200 bg-white shadow-xl shadow-rose-50'
+                    : 'border-neutral-100 bg-white/50 hover:border-rose-100 hover:bg-white hover:shadow-md'
+                }`}
+                onClick={() => setCurrentConceptIndex(idx)}
+              >
+                <div className="flex items-start gap-4">
+                  <div
+                    className={`mt-1 rounded-2xl p-3 transition-all duration-500 ${idx === currentConceptIndex ? 'rotate-0 bg-rose-500 text-white shadow-lg' : '-rotate-3 bg-neutral-100 text-slate-400 group-hover:rotate-0'}`}
+                  >
+                    {getConceptIcon(concept.title, idx)}
+                  </div>
+                  <div className="flex-grow pt-1">
+                    <div className="flex items-center justify-between">
+                      <h3
+                        contentEditable={isEditing}
+                        suppressContentEditableWarning={isEditing}
+                        onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
+                        onClick={(e) => isEditing && e.stopPropagation()}
+                        className={`text-sm font-bold transition-colors md:text-lg ${idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'} ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+                      >
+                        {concept.title}
+                      </h3>
+                      <ChevronDown
+                        size={20}
+                        className={`transition-all duration-500 ${idx === currentConceptIndex ? 'rotate-180 text-rose-500' : 'text-slate-300'}`}
+                      />
                     </div>
-                    <div className="flex-grow pt-1">
-                      <div className="flex items-center justify-between">
-                        <h3
+                    {(idx === currentConceptIndex || isEditing) && (
+                      <div
+                        className={`mt-3 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
+                      >
+                        <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
+                          <NextImage
+                            src={getOptimizedImageUrl(concept.imageUrl, 'content') || concept.imageUrl}
+                            alt={concept.title}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 100vw, 800px"
+                          />
+                          {isEditing && (
+                            <label
+                              onClick={(e) => e.stopPropagation()}
+                              className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100"
+                            >
+                              <Camera size={24} className="mb-1" />
+                              <span className="text-[10px] font-bold">画像変更</span>
+                              <input
+                                type="file"
+                                className="hidden"
+                                accept="image/*"
+                                onChange={(e) => handleImageChange(e, idx)}
+                              />
+                            </label>
+                          )}
+                        </div>
+                        <p
                           contentEditable={isEditing}
                           suppressContentEditableWarning={isEditing}
-                          onBlur={(e) => handleItemUpdate(idx, 'title', e.currentTarget.innerText)}
+                          onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
                           onClick={(e) => isEditing && e.stopPropagation()}
-                          className={`text-lg font-bold transition-colors ${
-                            idx === currentConceptIndex ? 'text-slate-800' : 'text-slate-500'
-                          } ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+                          className={`text-xs leading-relaxed text-slate-500 md:text-sm ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : ''}`}
                         >
-                          {concept.title}
-                        </h3>
-                        <ChevronDown
-                          size={20}
-                          className={`transition-all duration-500 ${
-                            idx === currentConceptIndex
-                              ? 'rotate-180 text-rose-500'
-                              : 'text-slate-300'
-                          }`}
-                        />
+                          {concept.desc}
+                        </p>
                       </div>
-                      {(idx === currentConceptIndex || isEditing) && (
-                        <div
-                          className={`mt-5 space-y-4 overflow-hidden ${isEditing ? '' : 'duration-500 animate-in fade-in slide-in-from-top-2'}`}
-                        >
-                          <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl shadow-sm md:aspect-[21/9]">
-                            <NextImage
-                              src={getOptimizedImageUrl(concept.imageUrl, 'content') || concept.imageUrl}
-                              alt={concept.title}
-                              fill
-                              className="object-cover"
-                              sizes="(max-width: 768px) 100vw, 800px"
-                            />
-                            {isEditing && (
-                              <label
-                                onClick={(e) => e.stopPropagation()}
-                                className="absolute inset-0 z-10 flex cursor-pointer flex-col items-center justify-center bg-black/30 text-white opacity-0 transition-opacity hover:opacity-100"
-                              >
-                                <Camera size={24} className="mb-1" />
-                                <span className="text-[10px] font-bold">画像変更</span>
-                                <input
-                                  type="file"
-                                  className="hidden"
-                                  accept="image/*"
-                                  onChange={(e) => handleImageChange(e, idx)}
-                                />
-                              </label>
-                            )}
-                          </div>
-                          <p
-                            contentEditable={isEditing}
-                            suppressContentEditableWarning={isEditing}
-                            onBlur={(e) => handleItemUpdate(idx, 'desc', e.currentTarget.innerText)}
-                            onClick={(e) => isEditing && e.stopPropagation()}
-                            className={`text-sm leading-relaxed text-slate-500 ${isEditing ? 'block min-h-[1em] rounded px-1 hover:bg-slate-50' : ''}`}
-                          >
-                            {concept.desc}
-                          </p>
-                        </div>
-                      )}
-                    </div>
+                    )}
                   </div>
                   {isEditing && (
                     <button
                       onClick={(e) => removeItem(idx, e)}
                       className="ml-2 rounded-full p-2 text-red-300 hover:bg-red-50 hover:text-red-500"
+                      aria-label="このコンセプト項目を削除"
                     >
                       <Trash2 size={16} />
                     </button>
                   )}
                 </div>
-              ))}
-              {isEditing && (
-                <button
-                  onClick={addItem}
-                  className="flex w-full items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
-                >
-                  <Plus size={20} />
-                  <span>コンセプトを追加</span>
-                </button>
-              )}
-            </div>
-
-            <p
-              contentEditable={isEditing}
-              suppressContentEditableWarning={isEditing}
-              onBlur={(e) => handleTextUpdate('footerText', e)}
-              className={`mt-8 whitespace-pre-line border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
-            >
-              {config?.footerText ||
-                '「自分へのご褒美」を、もっと身近で、もっと心地よいものに。ストロベリーボーイズは横浜の女性を応援します。'}
-            </p>
+                {idx === currentConceptIndex && !isEditing && (
+                  <div className="absolute bottom-0 left-0 h-1 w-full overflow-hidden rounded-b-[1.5rem] bg-rose-100">
+                    <div className="h-full animate-pulse bg-rose-500"></div>
+                  </div>
+                )}
+              </div>
+            ))}
+            {isEditing && (
+              <button
+                onClick={addItem}
+                className="flex w-full items-center justify-center gap-2 rounded-[1.5rem] border-2 border-dashed border-neutral-200 py-4 text-slate-400 transition-colors hover:border-rose-300 hover:text-rose-500"
+                aria-label="新しいコンセプト項目を追加"
+              >
+                <Plus size={20} />
+                <span>コンセプトを追加</span>
+              </button>
+            )}
           </div>
+
+          <p
+            contentEditable={isEditing}
+            suppressContentEditableWarning={isEditing}
+            onBlur={(e) => handleTextUpdate('footerText', e)}
+            className={`whitespace-pre-line border-l-4 border-pink-200 py-2 pl-4 text-xs italic text-slate-500 md:text-sm ${isEditing ? 'rounded px-1 hover:bg-slate-50' : ''}`}
+          >
+            {config?.footerText ||
+              '「自分へのご褒美」を、もっと身近で、もっと心地よいものに。ストロベリーボーイズは横浜の女性を応援します。'}
+          </p>
         </div>
       </div>
     </section>

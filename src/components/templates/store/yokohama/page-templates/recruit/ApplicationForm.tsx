@@ -119,7 +119,7 @@ const ApplicationForm: React.FC = () => {
               <div className="grid grid-cols-1 gap-x-8 gap-y-6 md:grid-cols-2">
                 <Input
                   label="居住エリア"
-                  placeholder="例: 福岡市中央区"
+                  placeholder="例: 横浜市中央区"
                   value={formData.location}
                   onChange={(v) => setFormData({ ...formData, location: v })}
                 />

@@ -8,6 +8,39 @@ import { useParams, useRouter } from 'next/navigation';
 import React from 'react';
 import SectionTitle from '../components/SectionTitle';
 
+const defaultCampaigns: any[] = [
+  {
+    id: 1,
+    title: '初回限定キャンペーン',
+    desc: '全コース¥2,000 OFF！初めての方も安心してお試しいただけます。ご予約時にサイトを見たとお伝えください。',
+    badge: 'Limited',
+    color: 'primary',
+    icon: 'Gift',
+    imageUrl:
+      'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 2,
+    title: 'SNSフォロー特典',
+    desc: '公式Instagramをフォロー＆DMで指名料が1回無料に。最新の出勤情報や限定動画も配信中です。',
+    badge: 'Campaign',
+    color: 'secondary',
+    icon: 'Instagram',
+    imageUrl:
+      'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=800',
+  },
+  {
+    id: 3,
+    title: '深夜割スタート',
+    desc: '23時以降のご予約で、アロマオイルオプションをサービス中。一日の疲れを極上の香りで癒やしませんか。',
+    badge: 'NEW',
+    color: 'primary',
+    icon: 'Zap',
+    imageUrl:
+      'https://images.unsplash.com/photo-1590439471364-192aa70c0b53?auto=format&fit=crop&q=80&w=800',
+  },
+];
+
 interface CampaignSectionProps {
   config?: CampaignConfig;
   newsPages?: PageData[];
@@ -26,9 +59,6 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
   const params = useParams();
   const router = useRouter();
   const storeSlug = params.slug as string;
-
-  const heading = config?.heading || '最新情報・キャンペーン';
-  const subHeading = config?.subHeading || 'News & Campaigns';
 
   // ニュースページのソートロジック
   const sortedNewsPages = React.useMemo(() => {
@@ -58,6 +88,12 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
     return pages;
   }, [newsPages, config?.orderedNewsPageIds]);
 
+  const handleTextUpdate = (key: string, value: string) => {
+    if (onUpdate) {
+      onUpdate('campaign', key, value);
+    }
+  };
+
   const moveOrder = (index: number, direction: 'prev' | 'next') => {
     if (!onUpdate) return;
     const currentOrder = sortedNewsPages.map((p) => p.id);
@@ -72,13 +108,13 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
   return (
     <section
       id="campaign"
-      className="bg-primary-50/50 border-primary-100/50 border-y py-16 md:py-24"
+      className="bg-primary-50/50 border-primary-100/50 border-y py-16 transition-all duration-300 md:py-24"
     >
       <div className="mx-auto max-w-4xl px-4">
         <div className="relative">
           <SectionTitle
-            en={config?.subHeading || 'Strawberry Highlights'}
-            ja={config?.heading || '最新キャンペーン'}
+            en={config?.subHeading || 'News & Campaigns'}
+            ja={config?.heading || '最新情報・キャンペーン'}
             imageUrl={config?.headingImageUrl}
             isEditing={isEditing}
             onUpdateEn={(val) => onUpdate?.('campaign', 'subHeading', val)}
@@ -96,6 +132,12 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
           />
           {isEditing && (
             <div className="absolute right-0 top-0 flex gap-2">
+              <span
+                contentEditable
+                suppressContentEditableWarning
+                onBlur={(e) => handleTextUpdate('heading', e.currentTarget.innerText)}
+                className="hidden"
+              />
               <div className="rounded border bg-white/80 px-2 py-1 text-[10px] text-slate-400">
                 表示テキストは直接クリックして編集
               </div>
@@ -139,21 +181,21 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                   className="flex w-full min-w-0 items-center justify-between gap-4 pr-4"
                 >
                   <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md shadow-sm md:h-20 md:w-20">
-                    <NextImage
-                      src={
-                        getOptimizedImageUrl(page.thumbnailUrl, 'content') ||
-                        page.thumbnailUrl ||
-                        'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=200'
-                      }
-                      alt={page.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
-                      sizes="80px"
-                    />
+                        <NextImage
+                          src={
+                            getOptimizedImageUrl(page.thumbnailUrl, 'content') ||
+                            page.thumbnailUrl ||
+                            'https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&q=80&w=200'
+                          }
+                          alt={page.title}
+                          fill
+                          className="object-cover transition-transform duration-500 group-hover:scale-110"
+                          sizes="80px"
+                        />
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="mb-1 flex items-center gap-3">
-                      <time className="text-xs text-slate-500">
+                      <time className="text-xs text-slate-700">
                         {new Date(page.storeSettings?.[storeSlug]?.publishedAt || page.updatedAt).toLocaleDateString('ja-JP', {
                           year: 'numeric',
                           month: '2-digit',
@@ -166,7 +208,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
                     </div>
                     <h3 className="truncate font-bold text-slate-800 md:text-lg">{page.title}</h3>
                   </div>
-                  <ChevronRight size={20} className="group-hover:text-primary-600 text-slate-400" />
+                  <ChevronRight size={20} className="group-hover:text-primary-600 text-slate-600" />
                 </Link>
               </li>
             ))}
@@ -174,7 +216,7 @@ const CampaignSection: React.FC<CampaignSectionProps> = ({
 
           {isEditing && sortedNewsPages.length === 0 && (
             <div className="border-primary-200 rounded-[1rem] border-2 border-dashed p-12 text-center">
-              <p className="font-bold text-slate-400">
+              <p className="font-bold text-slate-600">
                 ニュース管理ページで作成・公開されたページがここに表示されます。
               </p>
             </div>

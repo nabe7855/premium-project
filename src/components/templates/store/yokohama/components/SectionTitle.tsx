@@ -36,7 +36,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         {isEditing && (
           <button
             onClick={onImageUpload}
-            className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+            className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
             title="タイトル画像を変更"
           >
             <Camera size={16} />
@@ -56,7 +56,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         {isEditing && (
           <button
             onClick={onImageUpload}
-            className="mb-4 inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-[10px] font-bold text-slate-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-slate-100"
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50/50 px-3 py-1 text-[10px] font-bold text-rose-400 opacity-0 transition-opacity group-hover:opacity-100 hover:bg-rose-100"
           >
             <ImageIcon size={12} />
             タイトルを画像に設定
@@ -66,16 +66,16 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
     )}
 
     <div className="flex items-center justify-center gap-3">
-      <div className="h-[1px] w-6 bg-slate-200 md:w-8"></div>
+      <div className="h-[1px] w-6 bg-pink-200 md:w-8"></div>
       <p
         contentEditable={isEditing}
         suppressContentEditableWarning={isEditing}
         onBlur={(e) => isEditing && onUpdateJa?.(e.currentTarget.innerText)}
-        className={`font-sans text-[10px] tracking-[0.2em] text-slate-500 md:text-sm outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
+        className={`font-sans text-[10px] tracking-[0.2em] text-slate-700 md:text-sm outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
       >
         {ja}
       </p>
-      <div className="h-[1px] w-6 bg-slate-200 md:w-8"></div>
+      <div className="h-[1px] w-6 bg-pink-200 md:w-8"></div>
     </div>
   </div>
 );

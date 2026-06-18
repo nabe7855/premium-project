@@ -56,8 +56,8 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
   if (!config) return null;
 
   const scrollToSection = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
-    if (isEditing) return;
-    if (!href.startsWith('#')) return;
+    if (isEditing) return; // 編集モード時はスクロールしない
+    if (!href.startsWith('#')) return; // ページ内リンクでなければ何もしない
 
     e.preventDefault();
     const element = document.querySelector(href);
@@ -85,7 +85,7 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
     if (!onUpdate) return;
     const currentLink = config.items[index]?.href || '';
     const newLink = window.prompt(
-      'リンクURLまたはセクションID(#cast等)を入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
+      'リンクURLまたはセクションID(#cast等)を入力してください:\n※ {slug} は店舗スラグ（yokohama等）に自動置換されます',
       currentLink,
     );
     if (newLink !== null) {
@@ -104,6 +104,7 @@ const QuickAccessMenu: React.FC<QuickAccessMenuProps> = ({ config, isEditing, on
                 key={index}
                 href={isEditing ? undefined : resolveLink(item.href)}
                 onClick={(e) => scrollToSection(e, resolveLink(item.href))}
+                aria-label={item.ja}
                 className="group relative flex flex-col items-center justify-center overflow-hidden rounded-md border border-white/10 bg-rose-950 py-2 text-center shadow-sm transition-all duration-300 hover:bg-rose-900 hover:shadow-md"
               >
                 {/* Icon decoration */}

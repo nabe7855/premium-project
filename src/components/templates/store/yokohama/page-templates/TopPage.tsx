@@ -1,21 +1,22 @@
 'use client';
-import CampaignSection from '../sections/CampaignSection';
-import CastSection from '../sections/CastSection';
-import ConceptSection from '../sections/ConceptSection';
-import FAQSection from '../sections/FAQSection';
-import FlowSection from '../sections/FlowSection';
-import Footer from '../sections/Footer';
+import dynamic from 'next/dynamic';
 import Header from '../sections/Header';
-
-import ReviewSection from '@/components/sections/store/ReviewSection';
-import SNSProfile from '@/components/templates/news/SNSProfile';
+import HeroSection from '../sections/HeroSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
-import DiarySection from '../sections/DiarySection';
-import HeroSection from '../sections/HeroSection';
-import NewcomerSection from '../sections/NewcomerSection';
-import PriceSection from '../sections/PriceSection';
-import QuickAccessMenu from '../sections/QuickAccessMenu';
+
+const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
+const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
+const CampaignSection = dynamic(() => import('../sections/CampaignSection'));
+const DiarySection = dynamic(() => import('../sections/DiarySection'));
+const CastSection = dynamic(() => import('../sections/CastSection'));
+const NewcomerSection = dynamic(() => import('../sections/NewcomerSection'));
+const PriceSection = dynamic(() => import('../sections/PriceSection'));
+const FlowSection = dynamic(() => import('../sections/FlowSection'));
+const ReviewSection = dynamic(() => import('@/components/sections/store/ReviewSection'));
+const FAQSection = dynamic(() => import('../sections/FAQSection'));
+const SNSProfile = dynamic(() => import('@/components/templates/news/SNSProfile'));
+const Footer = dynamic(() => import('../sections/Footer'));
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -41,115 +42,155 @@ export default function YokohamaPage({
   hideHeader,
   storeSlug,
 }: YokohamaPageProps) {
+  // 設定がない場合はデフォルト値を使用
+  const safeConfig = config || undefined;
+
   return (
     <div className="selection:bg-primary-100 selection:text-primary-800 relative min-h-screen font-sans text-slate-600">
-      {!hideHeader && (!config || config.header.isVisible || isEditing) && (
-        <Header
-          config={config?.header}
+      {!hideHeader && (!safeConfig || safeConfig.header.isVisible || isEditing) && (
+        <>
+          <Header
+            config={safeConfig?.header}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+          {/* Header Spacer - Match the actual header height (48px + py-2*2 = 64px) */}
+          <div className="h-[64px] md:h-[65px]" />
+        </>
+      )}
+      {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (
+        <HeroSection
+          config={safeConfig?.hero}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
       )}
-      <HeroSection
-        config={config?.hero}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
       
       <StoreJumpBanners currentStoreSlug={storeSlug} />
 
       <>
         <h2 className="sr-only">初めての女性用風俗ガイド｜{storeSlug === 'yokohama' ? '横浜' : ''}で安心して利用するには</h2>
         <BeginnerGuideBanner
-          config={config?.beginnerGuide}
+          config={safeConfig?.beginnerGuide}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          sectionName="beginnerGuide"
+        />
+        <h2 className="sr-only">{storeSlug === 'yokohama' ? '横浜市内（博多・天神・中洲・薬院）' : '対応地域'}への出張エリア</h2>
+        <BeginnerGuideBanner
+          config={safeConfig?.beginnerGuide2}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+          onImageUpload={onImageUpload}
+          sectionName="beginnerGuide2"
         />
       </>
-      {(!config || config.quickAccess.isVisible || isEditing) && (
-        <QuickAccessMenu config={config?.quickAccess} isEditing={isEditing} onUpdate={onUpdate} />
+      {(!safeConfig || safeConfig.quickAccess.isVisible || isEditing) && (
+        <QuickAccessMenu
+          config={safeConfig?.quickAccess}
+          isEditing={isEditing}
+          onUpdate={onUpdate}
+        />
       )}
-      <>
-        <h2 className="sr-only">ストロベリーボーイズ{storeSlug === 'yokohama' ? '横浜' : ''}店が選ばれる5つの理由</h2>
-        <ConceptSection
-          config={config?.concept}
+      {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
+        <>
+          <h2 className="sr-only">ストロベリーボーイズ{storeSlug === 'yokohama' ? '横浜' : ''}店が選ばれる5つの理由</h2>
+          <ConceptSection
+            config={safeConfig?.concept}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
+      )}
+      {(!safeConfig || safeConfig.campaign.isVisible || isEditing) && (
+        <CampaignSection
+          config={safeConfig?.campaign}
+          newsPages={newsPages}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
         />
-      </>
-      <CampaignSection
-        config={config?.campaign}
-        newsPages={newsPages}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-      />
-      <DiarySection
-        config={config?.diary}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-        storeSlug={storeSlug}
-      />
-      <>
-        <h2 className="sr-only">在籍セラピスト一覧（{storeSlug === 'yokohama' ? '横浜店' : ''}）</h2>
-        <CastSection
-          config={config?.cast}
+      )}
+      {(!safeConfig || safeConfig.diary.isVisible || isEditing) && (
+        <DiarySection
+          config={safeConfig?.diary}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
           storeSlug={storeSlug}
         />
-      </>
-      <NewcomerSection
-        config={config?.newcomer}
-        isEditing={isEditing}
-        onUpdate={onUpdate}
-        onImageUpload={onImageUpload}
-        storeSlug={storeSlug}
-      />
-      <>
-        <h2 className="sr-only">料金プラン｜{storeSlug === 'yokohama' ? '横浜' : ''}の女性用風俗で明朗会計</h2>
-        <PriceSection
-          config={config?.price}
+      )}
+      {(!safeConfig || safeConfig.cast.isVisible || isEditing) && (
+        <>
+          <h2 className="sr-only">在籍セラピスト一覧（{storeSlug === 'yokohama' ? '横浜店' : ''}）</h2>
+          <CastSection
+            config={safeConfig?.cast}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+            storeSlug={storeSlug}
+            todayCasts={todayCasts}
+          />
+        </>
+      )}
+      {(!safeConfig || safeConfig.newcomer.isVisible || isEditing) && (
+        <NewcomerSection
+          config={safeConfig?.newcomer}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
+          storeSlug={storeSlug}
         />
-      </>
-      <>
-        <h2 className="sr-only">ご利用の流れ</h2>
-        <FlowSection
-          config={config?.flow}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-      </>
+      )}
+      {(!safeConfig || safeConfig.price.isVisible || isEditing) && (
+        <>
+          <h2 className="sr-only">料金プラン｜{storeSlug === 'yokohama' ? '横浜' : ''}の女性用風俗で明朗会計</h2>
+          <PriceSection
+            config={safeConfig?.price}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
+      )}
+      {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
+        <>
+          <h2 className="sr-only">ご利用の流れ</h2>
+          <FlowSection
+            config={safeConfig?.flow}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
+      )}
       <ReviewSection />
-      <>
-        <h2 className="sr-only">よくあるご質問（{storeSlug === 'yokohama' ? '横浜店FAQ' : 'FAQ'}）</h2>
-        <FAQSection
-          config={config?.faq}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
-      </>
+      {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
+        <>
+          <h2 className="sr-only">よくあるご質問（{storeSlug === 'yokohama' ? '横浜店FAQ' : 'FAQ'}）</h2>
+          <FAQSection
+            config={safeConfig?.faq}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+        </>
+      )}
       <SNSProfile
-        config={config?.snsProfile}
+        config={safeConfig?.snsProfile}
         isEditing={isEditing}
         onUpdate={(key, value) => onUpdate?.('snsProfile', key, value)}
         onImageUpload={(file) => onImageUpload?.('snsProfile', file, undefined, 'iconUrl')}
       />
       <>
-        <h2 className="sr-only">アクセス｜{storeSlug === 'yokohama' ? '横浜駅から即日出張' : '即日出張対応'}</h2>
+        <h2 className="sr-only">アクセス｜{storeSlug === 'yokohama' ? '博多駅・天神駅から即日出張' : '即日出張対応'}</h2>
         <Footer
-          config={config?.footer}
+          config={safeConfig?.footer}
           isEditing={isEditing}
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}

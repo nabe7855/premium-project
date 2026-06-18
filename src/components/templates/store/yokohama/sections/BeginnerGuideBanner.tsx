@@ -1,6 +1,6 @@
 'use client';
 import { BeginnerGuideConfig } from '@/lib/store/storeTopConfig';
-import { getOptimizedImageUrl } from '@/lib/image-url';
+import { getTransformedImageUrl, getOptimizedImageUrl } from '@/lib/image-url';
 import { Camera } from 'lucide-react';
 import NextImage from 'next/image';
 import Link from 'next/link';
@@ -11,6 +11,7 @@ interface BeginnerGuideBannerProps {
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
+  sectionName?: string;
 }
 
 const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
@@ -18,6 +19,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
   isEditing,
   onUpdate,
   onImageUpload,
+  sectionName = 'beginnerGuide',
 }) => {
   const params = useParams();
   const slug = params?.slug as string;
@@ -28,7 +30,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
   const finalLink = config.link.replace('{slug}', slug || '');
 
   return (
-    <section id="beginnerGuide" className="relative z-30 w-full bg-white px-2 py-3">
+    <section id={sectionName} className="relative z-30 w-full bg-white px-2 py-3">
       <div className="group/section relative mx-auto max-w-7xl">
         <Link
           href={isEditing ? '#' : finalLink}
@@ -36,6 +38,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
             if (isEditing) e.preventDefault();
           }}
           className="group relative block w-full overflow-hidden rounded-2xl shadow-xl transition-all duration-300 hover:scale-[1.01] hover:shadow-rose-200/50 active:scale-[0.99]"
+          aria-label="初めてのお客様ガイドページへ"
         >
           <div className="relative aspect-[25/4] w-full overflow-hidden rounded-2xl bg-gray-100">
             <NextImage
@@ -43,6 +46,8 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
               alt="女性用風俗初体験の方はこちら"
               fill
               className="object-cover"
+              priority={true}
+              fetchPriority="high"
               sizes="(max-width: 768px) 100vw, 1200px"
             />
           </div>
@@ -63,7 +68,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
                   input.onchange = (e) => {
                     const file = (e.target as HTMLInputElement).files?.[0];
                     if (file && onImageUpload) {
-                      onImageUpload('beginnerGuide', file, undefined, 'imageUrl');
+                      onImageUpload(sectionName, file, undefined, 'imageUrl');
                     }
                   };
                   input.click();
@@ -82,7 +87,7 @@ const BeginnerGuideBanner: React.FC<BeginnerGuideBannerProps> = ({
             <input
               type="text"
               value={config.link}
-              onChange={(e) => onUpdate?.('beginnerGuide', 'link', e.target.value)}
+              onChange={(e) => onUpdate?.(sectionName, 'link', e.target.value)}
               className="w-48 rounded bg-white/10 px-2 py-1 text-xs text-white"
               placeholder="/store/{slug}/first-time"
             />

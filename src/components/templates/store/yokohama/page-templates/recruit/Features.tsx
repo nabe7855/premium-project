@@ -7,7 +7,7 @@ const Features: React.FC = () => {
     {
       icon: <DollarSign className="w-8 h-8 text-amber-500" />,
       title: "高水準のバック率",
-      description: "基本50%からスタートし、最大70%まで昇給。指名料は100%バック。福岡エリアでも最高クラスの報酬体系を整えています。"
+      description: "基本50%からスタートし、最大70%まで昇給。指名料は100%バック。横浜エリアでも最高クラスの報酬体系を整えています。"
     },
     {
       icon: <ShieldCheck className="w-8 h-8 text-amber-500" />,
