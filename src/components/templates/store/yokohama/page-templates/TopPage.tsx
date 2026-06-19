@@ -80,7 +80,7 @@ export default function YokohamaPage({
           onImageUpload={onImageUpload}
           sectionName="beginnerGuide"
         />
-        <h2 className="sr-only">{storeSlug === 'yokohama' ? '横浜市内（博多・天神・中洲・薬院）' : '対応地域'}への出張エリア</h2>
+        <h2 className="sr-only">{storeSlug === 'yokohama' ? '横浜市内（みなとみらい・関内）' : '対応地域'}への出張エリア</h2>
         <BeginnerGuideBanner
           config={safeConfig?.beginnerGuide2}
           isEditing={isEditing}
