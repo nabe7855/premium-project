@@ -188,7 +188,7 @@ export default function YokohamaPage({
         onImageUpload={(file) => onImageUpload?.('snsProfile', file, undefined, 'iconUrl')}
       />
       <>
-        <h2 className="sr-only">アクセス｜{storeSlug === 'yokohama' ? '博多駅・天神駅から即日出張' : '即日出張対応'}</h2>
+        <h2 className="sr-only">アクセス｜{storeSlug === 'yokohama' ? 'みなとみらい・関内から即日出張' : '即日出張対応'}</h2>
         <Footer
           config={safeConfig?.footer}
           isEditing={isEditing}
