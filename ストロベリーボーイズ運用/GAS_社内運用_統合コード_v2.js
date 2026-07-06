@@ -1,0 +1,1288 @@
+// ============================================================
+// ストロベリーボーイズ 社内運用管理（統合版）
+// SEOデータ収集 + SNS管理 + ダッシュボード + インテリジェンス
+// ============================================================
+//
+// 【設置手順】
+// 1. このコードを コード.gs に貼り付け
+// 2. 左メニュー「サービス」→「+」→「Google Analytics Data API」追加
+// 3. 左の⚙️設定 → GCPプロジェクト → 673051079201 に変更
+// 4. appsscript.json を設定（マニフェスト表示ON）
+// 5. 「setupAll」を実行 → 全シート構築
+// 6. 「dailyDataCollection」を実行 → データ取得テスト
+// 7. 「createDailyTrigger」を実行 → 毎朝6時自動化
+//
+// ============================================================
+
+
+// ===== 設定値 =====
+var SITE_URL = 'https://www.sutoroberrys.jp/';
+var GA4_PROPERTY_ID = '526595944';
+
+// クライアント共有用スプレッドシート（ダッシュボード・KW順位を同期）
+var CLIENT_SHEET_ID = '1dwsviubjpv2gQpxLOXVJCGRYxMinOb1NOoAY54GnRH0';
+
+// ===== 店舗別キーワード設定 =====
+var STORES = [
+  {
+    name: 'ブランド共通',
+    keywords: [
+      'ストロベリーボーイズ',
+      '女性用風俗 流れ',
+      '女性用風俗 当日予約',
+      '女風 相場',
+      '女性用風俗 何をする',
+      '女性用風俗 初めて',
+    ]
+  },
+  {
+    name: '横浜店',
+    keywords: [
+      '女性用風俗 横浜',
+      '女性用風俗 神奈川',
+      '女性向け 風俗 横浜',
+      '女性向け リラクゼーション 横浜',
+      'レディースコミック 横浜',
+      '女風 横浜',
+      '横浜駅 女性用風俗',
+      '関内 女性用風俗',
+      '川崎 女性用風俗',
+      '横浜 女性用風俗 おすすめ',
+      '横浜 女性用風俗 口コミ',
+      '女性用風俗 料金 横浜',
+    ]
+  },
+  {
+    name: '福岡店',
+    keywords: [
+      '女性用風俗 福岡',
+      '女性用風俗 博多',
+      '女性向け 風俗 福岡',
+      '女性向け リラクゼーション 福岡',
+      'レディースコミック 福岡',
+      '女風 福岡',
+      '女風 博多',
+      '天神 女性用風俗',
+      '中洲 女性用風俗',
+      '博多駅 女性用風俗',
+      '小倉 女性用風俗',
+      '女性用風俗 九州',
+      '女性用風俗 料金 福岡',
+      '女風 相場 福岡',
+    ]
+  },
+];
+
+// ===== オウンドメディア設定 =====
+var OWNED_MEDIA = [
+  {
+    name: 'AmoLab',
+    path: '/amolab',
+    purpose: '新規顧客獲得',
+    keywords: [
+      '女性用風俗 体験談',
+      '女性用風俗 口コミ',
+      '女性用風俗 何する',
+      '女性用風俗 選び方',
+      '女性用風俗 怖い',
+      '女性用風俗 安全',
+      '女性用風俗 初めて',
+      '女性用風俗 罪悪感',
+      '癒されたい 女性',
+      '女性 セルフケア',
+    ]
+  },
+  {
+    name: 'IkeoLab',
+    path: '/ikeo',
+    purpose: 'セラピスト採用',
+    keywords: [
+      '女性用風俗 求人',
+      '男性セラピスト 求人',
+      '清潔感 男性',
+      'モテる男 習慣',
+      '副業 男性 高収入',
+      'コミュニケーション力 鍛える',
+      'マッサージ 独学',
+      '夜職 男性 求人',
+      '未経験 高収入 男性',
+      '接客 スキル 男性',
+    ]
+  },
+  {
+    name: 'SweetStay',
+    path: '/sweetstay',
+    purpose: 'ラブホ特化メディア',
+    keywords: [
+      'ラブホ 横浜 おすすめ',
+      'ラブホ 福岡 おすすめ',
+      'ラブホ 女子会',
+      'ラブホ 一人 休憩',
+      'ラブホ 女性 安心',
+      'ラブホ 清潔',
+      'ホテル デイユース',
+      'ラブホ 初心者 女性',
+      'ラブホテル 横浜 きれい',
+      'ラブホテル 福岡 きれい',
+    ]
+  },
+];
+
+// 全キーワード統合（Search Consoleのターゲット判定用）
+var TARGET_KEYWORDS = [];
+STORES.forEach(function(s) { TARGET_KEYWORDS = TARGET_KEYWORDS.concat(s.keywords); });
+OWNED_MEDIA.forEach(function(m) { TARGET_KEYWORDS = TARGET_KEYWORDS.concat(m.keywords); });
+
+
+// ============================================================
+// 初期セットアップ（1回だけ実行）
+// ============================================================
+function setupAll() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  createPostLogSheet(ss);
+  createIntelligenceSheet(ss);
+  createAIWorkflowSheet(ss);
+  formatAllSheets(ss);
+  Logger.log('✅ 全シート構築完了！次に dailyDataCollection を実行してください');
+}
+
+
+// ============================================================
+// メイン: 全データ一括取得（トリガーから毎朝呼ばれる）
+// ============================================================
+function dailyDataCollection() {
+  Logger.log('=== データ収集開始: ' + new Date() + ' ===');
+  fetchSearchConsoleData();
+  fetchGA4Data();
+  fetchGA4TrafficSources();
+  fetchGA4StorePageTraffic();
+  buildStoreTrafficChart();
+  updateTargetKWRanking();
+  fetchMediaSCData();
+  updateMediaKWRanking();
+  refreshDashboard();
+  syncToClientSheet();
+  sendHeartbeat();
+  Logger.log('=== 全データ取得完了: ' + new Date() + ' ===');
+}
+
+
+// ============================================================
+// Search Console データ取得（REST API / 過去28日間）
+// ============================================================
+function fetchSearchConsoleData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('SearchConsole');
+  if (!sheet) {
+    sheet = ss.insertSheet('SearchConsole');
+  }
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['取得日', '対象日', 'クエリ', 'クリック数', '表示回数', 'CTR', '平均順位', 'ターゲットKW']);
+    var headerRange = sheet.getRange(1, 1, 1, 8);
+    headerRange.setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(3, 250);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 1 * 86400000);
+  var startDate = new Date(today.getTime() - 28 * 86400000);
+
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+
+  var payload = {
+    startDate: formatDate(startDate),
+    endDate: formatDate(endDate),
+    dimensions: ['query', 'date'],
+    rowLimit: 1000,
+  };
+
+  var options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    var response = UrlFetchApp.fetch(apiUrl, options);
+    if (response.getResponseCode() !== 200) {
+      Logger.log('Search Console APIエラー (HTTP ' + response.getResponseCode() + '): ' + response.getContentText());
+      return;
+    }
+
+    var data = JSON.parse(response.getContentText());
+    if (!data.rows || data.rows.length === 0) {
+      Logger.log('Search Console: データなし');
+      return;
+    }
+
+    var fetchDate = formatDate(today);
+    var rows = data.rows.map(function(row) {
+      var query = row.keys[0];
+      var date = row.keys[1];
+      var isTarget = TARGET_KEYWORDS.some(function(kw) {
+        return query.indexOf(kw) !== -1;
+      }) ? 'YES' : '';
+      return [fetchDate, date, query, row.clicks, row.impressions,
+        (row.ctr * 100).toFixed(2) + '%', row.position.toFixed(1), isTarget];
+    });
+
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow + 1, 1, rows.length, 8).setValues(rows);
+    Logger.log('Search Console: ' + rows.length + '行追加');
+  } catch (e) {
+    Logger.log('Search Consoleエラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// GA4 基本データ取得
+// ============================================================
+function fetchGA4Data() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('GA4');
+  if (!sheet) { sheet = ss.insertSheet('GA4'); }
+
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(['取得日', '対象日', 'アクティブユーザー', 'セッション数', 'PV数', '平均セッション時間(秒)', '新規ユーザー率']);
+    sheet.getRange(1, 1, 1, 7).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 14 * 86400000);
+
+  var request = AnalyticsData.newRunReportRequest();
+  request.dateRanges = [AnalyticsData.newDateRange()];
+  request.dateRanges[0].startDate = formatDate(startDate);
+  request.dateRanges[0].endDate = formatDate(endDate);
+  request.dimensions = [{ name: 'date' }];
+  request.metrics = [
+    { name: 'activeUsers' }, { name: 'sessions' },
+    { name: 'screenPageViews' }, { name: 'averageSessionDuration' },
+    { name: 'newUsers' },
+  ];
+
+  try {
+    var response = AnalyticsData.Properties.runReport(request, 'properties/' + GA4_PROPERTY_ID);
+    if (!response.rows) { Logger.log('GA4: データなし'); return; }
+
+    var fetchDate = formatDate(today);
+    var rows = response.rows.map(function(row) {
+      var d = row.dimensionValues[0].value;
+      var dateStr = d.substring(0, 4) + '-' + d.substring(4, 6) + '-' + d.substring(6, 8);
+      var m = row.metricValues;
+      var activeUsers = parseInt(m[0].value);
+      var newUsers = parseInt(m[4].value);
+      var newRate = activeUsers > 0 ? ((newUsers / activeUsers) * 100).toFixed(1) + '%' : '0%';
+      return [fetchDate, dateStr, activeUsers, parseInt(m[1].value),
+        parseInt(m[2].value), parseFloat(m[3].value).toFixed(1), newRate];
+    });
+
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow + 1, 1, rows.length, 7).setValues(rows);
+    Logger.log('GA4: ' + rows.length + '行追加');
+  } catch (e) {
+    Logger.log('GA4エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// GA4 流入元別レポート
+// ============================================================
+function fetchGA4TrafficSources() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('GA4_流入元');
+  if (!sheet) {
+    sheet = ss.insertSheet('GA4_流入元');
+    sheet.appendRow(['取得日', 'チャネル', 'ソース/メディア', 'セッション数', 'ユーザー数']);
+    sheet.getRange(1, 1, 1, 5).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 7 * 86400000);
+
+  var request = AnalyticsData.newRunReportRequest();
+  request.dateRanges = [AnalyticsData.newDateRange()];
+  request.dateRanges[0].startDate = formatDate(startDate);
+  request.dateRanges[0].endDate = formatDate(endDate);
+  request.dimensions = [{ name: 'sessionDefaultChannelGroup' }, { name: 'sessionSourceMedium' }];
+  request.metrics = [{ name: 'sessions' }, { name: 'activeUsers' }];
+  request.orderBys = [{ metric: { metricName: 'sessions' }, desc: true }];
+  request.limit = 50;
+
+  try {
+    var response = AnalyticsData.Properties.runReport(request, 'properties/' + GA4_PROPERTY_ID);
+    if (!response.rows) return;
+
+    var fetchDate = formatDate(today);
+    var rows = response.rows.map(function(r) {
+      return [fetchDate, r.dimensionValues[0].value, r.dimensionValues[1].value,
+        parseInt(r.metricValues[0].value), parseInt(r.metricValues[1].value)];
+    });
+
+    var lastRow = sheet.getLastRow();
+    sheet.getRange(lastRow + 1, 1, rows.length, 5).setValues(rows);
+    Logger.log('GA4流入元: ' + rows.length + '行追加');
+  } catch (e) {
+    Logger.log('GA4流入元エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// GA4 店舗・メディア別ページ流入（pagePath を URL で振り分け）
+// ============================================================
+
+// 振り分けルール（前方一致・上から順に判定）
+var STORE_PATH_RULES = [
+  { name: '福岡店',    prefix: '/store/fukuoka' },
+  { name: '横浜店',    prefix: '/store/yokohama' },
+  { name: 'Amorabo',  prefix: '/amolab' },
+  { name: 'イケオジ',  prefix: '/ikeo' },
+  { name: 'Magazine', prefix: '/magazine' },
+  { name: 'SweetStay', prefix: '/sweetstay' },
+];
+
+// pagePath から店舗／メディアを判定（前方一致）
+function classifyStore(path) {
+  for (var i = 0; i < STORE_PATH_RULES.length; i++) {
+    if (path.indexOf(STORE_PATH_RULES[i].prefix) === 0) return STORE_PATH_RULES[i].name;
+  }
+  return 'その他・共通'; // トップ / cast一覧 / news / interview など
+}
+
+// 日付値（文字列でもDateオブジェクトでも）から YYYYMMDD を取り出す
+function toYmd(v) {
+  if (Object.prototype.toString.call(v) === '[object Date]') {
+    return Utilities.formatDate(v, 'Asia/Tokyo', 'yyyyMMdd');
+  }
+  return String(v).replace(/[^0-9]/g, '').substring(0, 8);
+}
+
+// YYYYMMDD → 日本語表記「2026/05/27(水)」（テキストとして扱われる）
+function formatDateJP(ymd) {
+  var y = ymd.substring(0, 4), m = ymd.substring(4, 6), d = ymd.substring(6, 8);
+  var dt = new Date(Number(y), Number(m) - 1, Number(d));
+  var wd = ['日', '月', '火', '水', '木', '金', '土'][dt.getDay()];
+  return y + '/' + m + '/' + d + '(' + wd + ')';
+}
+
+function fetchGA4StorePageTraffic() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('GA4_店舗別');
+  if (!sheet) {
+    sheet = ss.insertSheet('GA4_店舗別');
+    sheet.appendRow(['取得日', '対象日', '店舗・メディア', 'セッション数', 'アクティブユーザー', 'PV数']);
+    sheet.getRange(1, 1, 1, 6).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+  }
+
+  // --- 既存データを読み込み（重複排除のため key=YYYYMMDD|店舗 でマップ化）---
+  var merged = {};
+  if (sheet.getLastRow() > 1) {
+    var existing = sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).getValues();
+    existing.forEach(function(r) {
+      var ymd = toYmd(r[1]);
+      if (ymd.length === 8) {
+        merged[ymd + '|' + r[2]] = {
+          ymd: ymd, fetch: r[0], store: r[2],
+          sessions: Number(r[3]) || 0, users: Number(r[4]) || 0, pv: Number(r[5]) || 0
+        };
+      }
+    });
+  }
+
+  // --- GA4から過去30日分を取得 ---
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 30 * 86400000);
+
+  var request = AnalyticsData.newRunReportRequest();
+  request.dateRanges = [AnalyticsData.newDateRange()];
+  request.dateRanges[0].startDate = formatDate(startDate);
+  request.dateRanges[0].endDate = formatDate(endDate);
+  request.dimensions = [{ name: 'date' }, { name: 'pagePath' }];
+  request.metrics = [{ name: 'sessions' }, { name: 'activeUsers' }, { name: 'screenPageViews' }];
+  request.limit = 100000;
+
+  try {
+    var response = AnalyticsData.Properties.runReport(request, 'properties/' + GA4_PROPERTY_ID);
+    if (!response.rows) { Logger.log('GA4店舗別: データなし'); return; }
+
+    // 日付×店舗で集計
+    var agg = {};
+    response.rows.forEach(function(r) {
+      var ymd = r.dimensionValues[0].value; // YYYYMMDD
+      var path = r.dimensionValues[1].value;
+      var store = classifyStore(path);
+      var key = ymd + '|' + store;
+      if (!agg[key]) agg[key] = { sessions: 0, users: 0, pv: 0 };
+      agg[key].sessions += parseInt(r.metricValues[0].value);
+      agg[key].users    += parseInt(r.metricValues[1].value);
+      agg[key].pv       += parseInt(r.metricValues[2].value);
+    });
+
+    // 新しい数値で上書き（GA4は直近日を後から確定するため、新データを優先）
+    var fetchDate = formatDate(today);
+    Object.keys(agg).forEach(function(key) {
+      var p = key.split('|');
+      var a = agg[key];
+      merged[key] = {
+        ymd: p[0], fetch: fetchDate, store: p[1],
+        sessions: a.sessions, users: a.users, pv: a.pv
+      };
+    });
+
+    // 並べ替え（日付→店舗）して全行を書き直し
+    var list = Object.keys(merged).map(function(k) { return merged[k]; });
+    list.sort(function(a, b) {
+      if (a.ymd !== b.ymd) return a.ymd < b.ymd ? -1 : 1;
+      return a.store < b.store ? -1 : (a.store > b.store ? 1 : 0);
+    });
+    var out = list.map(function(x) {
+      return [x.fetch, formatDateJP(x.ymd), x.store, x.sessions, x.users, x.pv];
+    });
+
+    // 既存データをクリアして全書き換え（重複ゼロを保証）
+    if (sheet.getLastRow() > 1) {
+      sheet.getRange(2, 1, sheet.getLastRow() - 1, 6).clearContent();
+    }
+    if (out.length > 0) {
+      sheet.getRange(2, 2, out.length, 1).setNumberFormat('@'); // 対象日を文字列扱いに固定
+      sheet.getRange(2, 1, out.length, 6).setValues(out);
+    }
+    Logger.log('GA4店舗別: ' + out.length + '行（重複排除・上書き / 過去30日）');
+  } catch (e) {
+    Logger.log('GA4店舗別エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// 店舗・メディア別 セッション推移グラフ（日付×店舗のピボット＋折れ線）
+// ============================================================
+function buildStoreTrafficChart() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var src = ss.getSheetByName('GA4_店舗別');
+  if (!src || src.getLastRow() < 2) { Logger.log('店舗別グラフ: 元データなし'); return; }
+
+  var values = src.getDataRange().getValues(); // [取得日, 対象日, 店舗, セッション, ユーザー, PV]
+
+  // 同じ(対象日×店舗)が複数の取得日にまたがる場合は「最新の取得日」を採用（重複排除）
+  var latest = {};
+  for (var i = 1; i < values.length; i++) {
+    var fetchDate  = String(values[i][0]);
+    var targetDate = String(values[i][1]);
+    var store      = String(values[i][2]);
+    var sessions   = Number(values[i][3]) || 0;
+    var key = targetDate + '|' + store;
+    if (!latest[key] || fetchDate >= latest[key].fetch) {
+      latest[key] = { fetch: fetchDate, sessions: sessions };
+    }
+  }
+
+  // 日付・店舗の一覧を抽出
+  var dateSet = {}, storeSet = {};
+  Object.keys(latest).forEach(function(k) {
+    var p = k.split('|');
+    dateSet[p[0]] = true;
+    storeSet[p[1]] = true;
+  });
+  var dates = Object.keys(dateSet).sort(function(a, b) {
+    var ya = toYmd(a), yb = toYmd(b);
+    return ya < yb ? -1 : (ya > yb ? 1 : 0);
+  }); // 古い→新しい（日付順）
+
+  // 店舗の表示順（指定順 → それ以外は後ろに）
+  var preferred = ['横浜店', '福岡店', 'Amorabo', 'イケオジ', 'Magazine', 'SweetStay', 'その他・共通'];
+  var stores = preferred.filter(function(s) { return storeSet[s]; });
+  Object.keys(storeSet).forEach(function(s) { if (stores.indexOf(s) === -1) stores.push(s); });
+
+  // ピボット表を作成（行=日付, 列=店舗, 値=セッション数）
+  var header = ['対象日'].concat(stores);
+  var table = [header];
+  dates.forEach(function(dt) {
+    var r = [dt];
+    stores.forEach(function(s) {
+      var rec = latest[dt + '|' + s];
+      r.push(rec ? rec.sessions : 0);
+    });
+    table.push(r);
+  });
+
+  // 出力シート（毎回作り直し）
+  var out = ss.getSheetByName('店舗別グラフ');
+  if (!out) out = ss.insertSheet('店舗別グラフ');
+  out.getCharts().forEach(function(c) { out.removeChart(c); });
+  out.clear();
+
+  out.getRange(1, 1, table.length, 1).setNumberFormat('@'); // 対象日を文字列扱いに固定（英語日付化を防止）
+  out.getRange(1, 1, table.length, header.length).setValues(table);
+  out.getRange(1, 1, 1, header.length)
+    .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+  out.setFrozenRows(1);
+  out.setFrozenColumns(1);
+
+  // 折れ線グラフ（店舗ごとに1本ずつ）
+  var chart = out.newChart()
+    .setChartType(Charts.ChartType.LINE)
+    .addRange(out.getRange(1, 1, table.length, header.length))
+    .setPosition(2, header.length + 2, 0, 0)
+    .setNumHeaders(1)
+    .setOption('title', '店舗・メディア別 セッション数の推移')
+    .setOption('width', 760)
+    .setOption('height', 440)
+    .setOption('legend', { position: 'right' })
+    .setOption('pointSize', 4)
+    .setOption('curveType', 'none')
+    .build();
+  out.insertChart(chart);
+
+  Logger.log('店舗別グラフ: ' + dates.length + '日分 × ' + stores.length + '区分 を出力');
+}
+
+
+// ============================================================
+// 店舗別KW順位サマリー（過去7日間）
+// ============================================================
+function updateTargetKWRanking() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 7 * 86400000);
+  var fetchDate = formatDate(today);
+
+  // Search Console APIからデータ一括取得
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var payload = {
+    startDate: formatDate(startDate),
+    endDate: formatDate(endDate),
+    dimensions: ['query'],
+    rowLimit: 1000,
+  };
+  var options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    payload: JSON.stringify(payload),
+    muteHttpExceptions: true
+  };
+
+  try {
+    var response = UrlFetchApp.fetch(apiUrl, options);
+    if (response.getResponseCode() !== 200) {
+      Logger.log('KW順位APIエラー: ' + response.getContentText());
+      return;
+    }
+    var data = JSON.parse(response.getContentText());
+
+    // 店舗ごとにシートを作成・更新
+    STORES.forEach(function(store) {
+      var sheetName = 'KW順位_' + store.name;
+      var sheet = ss.getSheetByName(sheetName);
+      if (!sheet) {
+        sheet = ss.insertSheet(sheetName);
+        var headers = ['取得日'].concat(store.keywords);
+        sheet.appendRow(headers);
+        sheet.getRange(1, 1, 1, headers.length)
+          .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF').setWrap(true);
+        sheet.setFrozenRows(1);
+        sheet.setFrozenColumns(1);
+      }
+
+      // このストアのKWの順位を取得
+      var rankings = {};
+      if (data.rows) {
+        data.rows.forEach(function(row) {
+          var query = row.keys[0];
+          store.keywords.forEach(function(kw) {
+            if (query.indexOf(kw) !== -1) {
+              if (!rankings[kw] || row.position < rankings[kw]) {
+                rankings[kw] = row.position;
+              }
+            }
+          });
+        });
+      }
+
+      var rowData = [fetchDate];
+      store.keywords.forEach(function(kw) {
+        rowData.push(rankings[kw] ? rankings[kw].toFixed(1) : '-');
+      });
+      sheet.appendRow(rowData);
+      Logger.log('KW順位: ' + store.name + ' 更新完了');
+    });
+
+  } catch (e) {
+    Logger.log('KW順位エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// オウンドメディア別 Search Console データ取得
+// ============================================================
+function fetchMediaSCData() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('メディア別SC');
+  if (!sheet) {
+    sheet = ss.insertSheet('メディア別SC');
+    sheet.appendRow(['取得日', '対象日', 'メディア', 'ページURL', 'クエリ', 'クリック数', '表示回数', 'CTR', '平均順位']);
+    sheet.getRange(1, 1, 1, 9).setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF');
+    sheet.setFrozenRows(1);
+    sheet.setColumnWidth(3, 100);
+    sheet.setColumnWidth(4, 300);
+    sheet.setColumnWidth(5, 250);
+  }
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 28 * 86400000);
+  var fetchDate = formatDate(today);
+
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var options = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  };
+
+  OWNED_MEDIA.forEach(function(media) {
+    var payload = {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      dimensions: ['query', 'page'],
+      dimensionFilterGroups: [{
+        filters: [{
+          dimension: 'page',
+          operator: 'contains',
+          expression: media.path
+        }]
+      }],
+      rowLimit: 500,
+    };
+    options.payload = JSON.stringify(payload);
+
+    try {
+      var response = UrlFetchApp.fetch(apiUrl, options);
+      if (response.getResponseCode() !== 200) {
+        Logger.log('メディアSC APIエラー (' + media.name + '): ' + response.getContentText());
+        return;
+      }
+      var data = JSON.parse(response.getContentText());
+      if (!data.rows || data.rows.length === 0) {
+        Logger.log('メディアSC: ' + media.name + ' データなし（記事公開後に取得開始）');
+        return;
+      }
+
+      var rows = data.rows.map(function(row) {
+        return [
+          fetchDate, formatDate(endDate), media.name,
+          row.keys[1], row.keys[0],
+          row.clicks, row.impressions,
+          (row.ctr * 100).toFixed(2) + '%',
+          row.position.toFixed(1)
+        ];
+      });
+
+      var lastRow = sheet.getLastRow();
+      sheet.getRange(lastRow + 1, 1, rows.length, 9).setValues(rows);
+      Logger.log('メディアSC: ' + media.name + ' ' + rows.length + '行追加');
+    } catch (e) {
+      Logger.log('メディアSCエラー (' + media.name + '): ' + e.message);
+    }
+  });
+}
+
+
+// ============================================================
+// オウンドメディア別 KW順位サマリー
+// ============================================================
+function updateMediaKWRanking() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 86400000);
+  var startDate = new Date(today.getTime() - 7 * 86400000);
+  var fetchDate = formatDate(today);
+
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var baseOptions = {
+    method: 'post',
+    contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    muteHttpExceptions: true
+  };
+
+  OWNED_MEDIA.forEach(function(media) {
+    var sheetName = 'KW順位_' + media.name;
+    var sheet = ss.getSheetByName(sheetName);
+    if (!sheet) {
+      sheet = ss.insertSheet(sheetName);
+      var headers = ['取得日'].concat(media.keywords);
+      sheet.appendRow(headers);
+      sheet.getRange(1, 1, 1, headers.length)
+        .setFontWeight('bold').setBackground('#2B5797').setFontColor('#FFFFFF').setWrap(true);
+      sheet.setFrozenRows(1);
+      sheet.setFrozenColumns(1);
+    }
+
+    var payload = {
+      startDate: formatDate(startDate),
+      endDate: formatDate(endDate),
+      dimensions: ['query'],
+      rowLimit: 500,
+    };
+    baseOptions.payload = JSON.stringify(payload);
+
+    try {
+      var response = UrlFetchApp.fetch(apiUrl, baseOptions);
+      if (response.getResponseCode() !== 200) {
+        Logger.log('メディアKW APIエラー (' + media.name + '): ' + response.getContentText());
+        return;
+      }
+      var data = JSON.parse(response.getContentText());
+      var rankings = {};
+
+      if (data.rows) {
+        data.rows.forEach(function(row) {
+          var query = row.keys[0];
+          media.keywords.forEach(function(kw) {
+            if (query.indexOf(kw) !== -1) {
+              if (!rankings[kw] || row.position < rankings[kw]) {
+                rankings[kw] = row.position;
+              }
+            }
+          });
+        });
+      }
+
+      var rowData = [fetchDate];
+      media.keywords.forEach(function(kw) {
+        rowData.push(rankings[kw] ? rankings[kw].toFixed(1) : '-');
+      });
+      sheet.appendRow(rowData);
+      Logger.log('メディアKW順位: ' + media.name + ' 更新完了');
+    } catch (e) {
+      Logger.log('メディアKWエラー (' + media.name + '): ' + e.message);
+    }
+  });
+}
+
+
+// ============================================================
+// X投稿ログシート
+// ============================================================
+function createPostLogSheet(ss) {
+  var sheet = ss.getSheetByName('📱 X投稿ログ');
+  if (sheet) { Logger.log('📱 X投稿ログ: 既存スキップ'); return; }
+  sheet = ss.insertSheet('📱 X投稿ログ');
+
+  sheet.getRange('A1:I1').merge().setValue('X（Twitter）投稿ログ')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#1DA1F2').setHorizontalAlignment('center');
+  sheet.setRowHeight(1, 40);
+
+  sheet.getRange('A2:I2').merge()
+    .setValue('💡 毎日の投稿データをここに記録 → ダッシュボードに自動反映されます')
+    .setFontSize(9).setFontColor('#666666').setBackground('#f0f8ff');
+
+  var headers = ['日付', '時間帯', 'ピラー', '投稿テキスト（冒頭40字）', 'Imp', 'Eng', 'いいね', 'RT', 'ER(%)'];
+  sheet.getRange(3, 1, 1, 9).setValues([headers])
+    .setFontWeight('bold').setBackground('#1DA1F2').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+  sheet.setFrozenRows(3);
+
+  var pillarRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['共感・エンパワメント', 'ブランド・キャスト紹介', 'お役立ち・コラム', 'キャンペーン・イベント', 'インタラクション'])
+    .setAllowInvalid(false).build();
+  sheet.getRange(4, 3, 500, 1).setDataValidation(pillarRule);
+
+  var timeRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['朝(7時)', '昼(12時)', '夕(19時)', '夜1(22時)', '夜2(23時)'])
+    .setAllowInvalid(false).build();
+  sheet.getRange(4, 2, 500, 1).setDataValidation(timeRule);
+
+  for (var i = 4; i <= 103; i++) {
+    sheet.getRange(i, 9).setFormula('=IF(E' + i + '>0, ROUND(F' + i + '/E' + i + '*100, 2), "")');
+  }
+
+  var erRange = sheet.getRange(4, 9, 500, 1);
+  sheet.setConditionalFormatRules([
+    SpreadsheetApp.newConditionalFormatRule().whenNumberGreaterThanOrEqualTo(3)
+      .setBackground('#C8E6C9').setFontColor('#1B5E20').setRanges([erRange]).build(),
+    SpreadsheetApp.newConditionalFormatRule().whenNumberLessThan(1)
+      .setBackground('#FFCDD2').setFontColor('#B71C1C').setRanges([erRange]).build(),
+  ]);
+
+  sheet.setColumnWidth(1, 100); sheet.setColumnWidth(2, 100); sheet.setColumnWidth(3, 160);
+  sheet.setColumnWidth(4, 300); sheet.setColumnWidth(5, 80); sheet.setColumnWidth(6, 80);
+  sheet.setColumnWidth(7, 70); sheet.setColumnWidth(8, 60); sheet.setColumnWidth(9, 80);
+  sheet.getRange(3, 1, 1, 9).createFilter();
+  sheet.getRange(4, 5, 500, 2).setNumberFormat('#,##0');
+
+  Logger.log('📱 X投稿ログシート作成完了');
+}
+
+
+// ============================================================
+// インテリジェンスシート
+// ============================================================
+function createIntelligenceSheet(ss) {
+  var sheet = ss.getSheetByName('🧠 インテリジェンス');
+  if (sheet) { Logger.log('🧠 インテリジェンス: 既存スキップ'); return; }
+  sheet = ss.insertSheet('🧠 インテリジェンス');
+
+  sheet.getRange('A1:G1').merge().setValue('マーケットインテリジェンス')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#6A1B9A').setHorizontalAlignment('center');
+  sheet.setRowHeight(1, 40);
+
+  // セクション1: 競合バズ分析
+  sheet.getRange('A3:G3').merge().setValue('🔥 競合バズ投稿分析（Grok収集 / 週2回）')
+    .setFontSize(12).setFontWeight('bold').setBackground('#F3E5F5').setFontColor('#4A148C');
+  sheet.getRange(4, 1, 1, 7).setValues([['日付', 'アカウント', 'バズ要因', '推定Imp', '活用ポイント', '自社転用案', 'ステータス']])
+    .setFontWeight('bold').setBackground('#CE93D8').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var statusRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['未対応', '検討中', '採用', '見送り']).setAllowInvalid(true).build();
+  sheet.getRange(5, 7, 14, 1).setDataValidation(statusRule);
+
+  // セクション2: トレンド・時事
+  sheet.getRange('A20:G20').merge().setValue('📰 トレンド・時事ネタ（Perplexity収集 / 週1回）')
+    .setFontSize(12).setFontWeight('bold').setBackground('#E3F2FD').setFontColor('#0D47A1');
+  sheet.getRange(21, 1, 1, 7).setValues([['日付', 'カテゴリ', '概要', 'ソースURL', '投稿転用案', 'ピラー', 'ステータス']])
+    .setFontWeight('bold').setBackground('#90CAF9').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var catRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['業界トレンド', 'メンタルヘルス', 'セルフケア', '地域情報（横浜）', '地域情報（福岡）', '季節イベント', 'その他'])
+    .setAllowInvalid(true).build();
+  sheet.getRange(22, 2, 14, 1).setDataValidation(catRule);
+  sheet.getRange(22, 7, 14, 1).setDataValidation(statusRule);
+
+  // セクション3: Xアルゴリズム変動ログ
+  sheet.getRange('A37:G37').merge().setValue('⚙️ Xアルゴリズム変動ログ（Grok確認 / 月2回）')
+    .setFontSize(12).setFontWeight('bold').setBackground('#FFF3E0').setFontColor('#E65100');
+  sheet.getRange(38, 1, 1, 7).setValues([['確認日', '変更内容', '影響度', '影響範囲', '対応アクション', '対応状況', '効果']])
+    .setFontWeight('bold').setBackground('#FFB74D').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var impactRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['高', '中', '低']).setAllowInvalid(true).build();
+  sheet.getRange(39, 3, 10, 1).setDataValidation(impactRule);
+
+  var doneRule = SpreadsheetApp.newDataValidation()
+    .requireValueInList(['未対応', '対応中', '完了']).setAllowInvalid(true).build();
+  sheet.getRange(39, 6, 10, 1).setDataValidation(doneRule);
+
+  // セクション4: Grok vs Perplexity 使い分けガイド
+  sheet.getRange('A52:G52').merge().setValue('📖 Grok vs Perplexity 使い分けガイド')
+    .setFontSize(12).setFontWeight('bold').setBackground('#E8EAF6').setFontColor('#283593');
+  sheet.getRange(53, 1, 1, 4).setValues([['用途', '最適ツール', '理由', '頻度']])
+    .setFontWeight('bold').setBackground('#9FA8DA').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var guideData = [
+    ['競合バズ投稿分析', 'Grok', 'X内部データにアクセス可能', '週2回'],
+    ['Xアルゴリズム最新動向', 'Grok', 'アルゴリズム変更をいち早く反映', '月2回'],
+    ['ターゲット層の話題', 'Grok', 'リアルタイムX会話トレンド分析', '週1回'],
+    ['業界トレンド・市場データ', 'Perplexity', '引用付きで信頼性が高い', '週1回'],
+    ['横浜/福岡の地域情報', 'Perplexity', '地域情報の網羅性が高い', '月2回'],
+    ['記事一次情報・統計', 'Perplexity', '学術・政府統計に強い', '記事執筆時'],
+  ];
+  sheet.getRange(54, 1, guideData.length, 4).setValues(guideData);
+
+  sheet.setColumnWidth(1, 120); sheet.setColumnWidth(2, 130); sheet.setColumnWidth(3, 250);
+  sheet.setColumnWidth(4, 100); sheet.setColumnWidth(5, 250); sheet.setColumnWidth(6, 150); sheet.setColumnWidth(7, 100);
+
+  Logger.log('🧠 インテリジェンスシート作成完了');
+}
+
+
+// ============================================================
+// AI運用フローシート
+// ============================================================
+function createAIWorkflowSheet(ss) {
+  var sheet = ss.getSheetByName('🤖 AI運用フロー');
+  if (sheet) { Logger.log('🤖 AI運用フロー: 既存スキップ'); return; }
+  sheet = ss.insertSheet('🤖 AI運用フロー');
+
+  sheet.getRange('A1:F1').merge().setValue('AI自動化 運用フロー')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#00695C').setHorizontalAlignment('center');
+  sheet.setRowHeight(1, 40);
+
+  // 毎日の運用フロー
+  sheet.getRange('A3:F3').merge().setValue('📅 毎日の運用フロー')
+    .setFontSize(12).setFontWeight('bold').setBackground('#E0F2F1').setFontColor('#004D40');
+  sheet.getRange(4, 1, 1, 6).setValues([['時間', '担当', 'タスク', '詳細', '所要時間', 'チェック']])
+    .setFontWeight('bold').setBackground('#80CBC4').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var dailyFlow = [
+    ['6:00', '🤖 自動', 'データ収集', 'GASがSearch Console/GA4データを自動取得', '-', false],
+    ['7:00', '🤖 自動', 'X投稿案生成', 'Coworkが5本の投稿案を.mdで出力', '-', false],
+    ['7:00-7:30', '👤 手動(5分)', '投稿案レビュー', '投稿案を確認、朝の投稿を実行', '5分', false],
+    ['12:00', '👤 手動(1分)', '昼投稿', '予定の投稿を実行', '1分', false],
+    ['19:00', '👤 手動(1分)', '夕方投稿', '予定の投稿を実行', '1分', false],
+    ['22:00', '👤 手動(1分)', '夜投稿①', '予定の投稿を実行', '1分', false],
+    ['23:00', '👤 手動(1分)', '夜投稿②', '予定の投稿を実行', '1分', false],
+    ['翌朝', '👤 手動(3分)', 'データ記録', 'X Analyticsを「📱 X投稿ログ」に転記', '3分', false],
+  ];
+
+  sheet.getRange(5, 1, dailyFlow.length, 6).setValues(dailyFlow)
+    .setHorizontalAlignment('center').setVerticalAlignment('middle');
+
+  for (var d = 5; d < 5 + dailyFlow.length; d++) {
+    if (dailyFlow[d - 5][1].indexOf('自動') !== -1) {
+      sheet.getRange(d, 1, 1, 6).setBackground('#E8F5E9');
+    }
+  }
+
+  var checkboxRule = SpreadsheetApp.newDataValidation().requireCheckbox().build();
+  sheet.getRange(5, 6, dailyFlow.length, 1).setDataValidation(checkboxRule);
+
+  // 週次フロー
+  sheet.getRange('A16:F16').merge().setValue('📊 週次インテリジェンス収集フロー')
+    .setFontSize(12).setFontWeight('bold').setBackground('#E0F2F1').setFontColor('#004D40');
+  sheet.getRange(17, 1, 1, 6).setValues([['頻度', 'ツール', 'タスク', '手順', '記録先', '所要時間']])
+    .setFontWeight('bold').setBackground('#80CBC4').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  var weeklyFlow = [
+    ['週2回', 'Grok', '競合バズ分析', 'Grokにプロンプト → 結果を記録', '🧠 インテリジェンス', '10分'],
+    ['週1回', 'Perplexity', 'トレンド収集', 'Perplexityで検索 → 記録', '🧠 インテリジェンス', '10分'],
+    ['月2回', 'Grok', 'アルゴリズム確認', 'アルゴリズム変更確認 → 更新', '🧠 インテリジェンス', '5分'],
+    ['週1回', '-', 'PDCA振り返り', '投稿ログのER分析 → 改善特定', '📱 X投稿ログ', '15分'],
+  ];
+  sheet.getRange(18, 1, weeklyFlow.length, 6).setValues(weeklyFlow).setHorizontalAlignment('center');
+
+  // PDCAサイクル
+  sheet.getRange('A25:F25').merge().setValue('🔄 PDCAサイクル記録（週次振り返り）')
+    .setFontSize(12).setFontWeight('bold').setBackground('#E0F2F1').setFontColor('#004D40');
+  sheet.getRange(26, 1, 1, 6).setValues([['週', 'Plan（計画）', 'Do（実行結果）', 'Check（分析）', 'Act（改善策）', '次週の重点']])
+    .setFontWeight('bold').setBackground('#80CBC4').setFontColor('#FFFFFF').setHorizontalAlignment('center').setWrap(true);
+  sheet.getRange(27, 1, 50, 6).setWrap(true);
+
+  sheet.setColumnWidth(1, 100); sheet.setColumnWidth(2, 160); sheet.setColumnWidth(3, 200);
+  sheet.setColumnWidth(4, 200); sheet.setColumnWidth(5, 150); sheet.setColumnWidth(6, 100);
+
+  Logger.log('🤖 AI運用フローシート作成完了');
+}
+
+
+// ============================================================
+// データシートのフォーマット整備
+// ============================================================
+function formatAllSheets(ss) {
+  var scSheet = ss.getSheetByName('SearchConsole');
+  if (scSheet && scSheet.getLastRow() > 1) {
+    if (!scSheet.getFilter()) scSheet.getRange(1, 1, scSheet.getLastRow(), 8).createFilter();
+  }
+
+  var ga4Sheet = ss.getSheetByName('GA4');
+  if (ga4Sheet && ga4Sheet.getLastRow() > 1) {
+    if (!ga4Sheet.getFilter()) ga4Sheet.getRange(1, 1, ga4Sheet.getLastRow(), 7).createFilter();
+  }
+
+  var kwSheet = ss.getSheetByName('ターゲットKW順位');
+  if (kwSheet && kwSheet.getLastRow() > 1) {
+    var kwLastRow = kwSheet.getLastRow();
+    var kwLastCol = kwSheet.getLastColumn();
+    var dataRange = kwSheet.getRange(2, 2, Math.max(kwLastRow - 1, 1), Math.max(kwLastCol - 1, 1));
+    kwSheet.setConditionalFormatRules([
+      SpreadsheetApp.newConditionalFormatRule().whenNumberBetween(0, 3)
+        .setBackground('#C8E6C9').setFontColor('#1B5E20').setRanges([dataRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenNumberBetween(3.1, 10)
+        .setBackground('#FFF9C4').setFontColor('#F57F17').setRanges([dataRange]).build(),
+      SpreadsheetApp.newConditionalFormatRule().whenNumberGreaterThan(10)
+        .setBackground('#FFCDD2').setFontColor('#B71C1C').setRanges([dataRange]).build(),
+    ]);
+  }
+  Logger.log('フォーマット整備完了');
+}
+
+
+// ============================================================
+// 統合ダッシュボード
+// ============================================================
+function refreshDashboard() {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName('📊 ダッシュボード');
+  if (!sheet) { sheet = ss.insertSheet('📊 ダッシュボード', 0); }
+  sheet.clear();
+
+  // タイトル
+  sheet.getRange('A1:H1').merge().setValue('ストロベリーボーイズ 社内統合ダッシュボード')
+    .setFontSize(18).setFontWeight('bold').setFontColor('#FFFFFF').setBackground('#1a1a2e').setHorizontalAlignment('center');
+  sheet.setRowHeight(1, 50);
+  sheet.getRange('A2:H2').merge()
+    .setValue('SEO × SNS 統合レポート ｜ 最終更新: ' + formatDate(new Date()))
+    .setFontSize(10).setFontColor('#666666').setHorizontalAlignment('center').setBackground('#f0f0f0');
+
+  // セクションA: GA4
+  var row = 4;
+  sheet.getRange('A' + row + ':H' + row).merge().setValue('📈 サイトパフォーマンス（GA4）')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#e8eaf6');
+
+  var ga4Sheet = ss.getSheetByName('GA4');
+  if (ga4Sheet && ga4Sheet.getLastRow() > 1) {
+    sheet.getRange(5, 1, 1, 6).setValues([['日付', 'ユーザー数', 'セッション数', 'PV数', '平均滞在時間', '新規率']])
+      .setFontWeight('bold').setBackground('#c5cae9').setHorizontalAlignment('center');
+    var ga4Data = ga4Sheet.getDataRange().getValues();
+    var latest = {};
+    for (var i = 1; i < ga4Data.length; i++) latest[ga4Data[i][1]] = ga4Data[i];
+    var dates = Object.keys(latest).sort().reverse().slice(0, 5);
+    var r = 6, tU = 0, tS = 0, tP = 0;
+    dates.forEach(function(date) {
+      var d = latest[date];
+      sheet.getRange(r, 1, 1, 6).setValues([[d[1], d[2], d[3], d[4], d[5] + '秒', d[6]]]).setHorizontalAlignment('center');
+      if (r % 2 === 0) sheet.getRange(r, 1, 1, 6).setBackground('#f5f5f5');
+      tU += Number(d[2]) || 0; tS += Number(d[3]) || 0; tP += Number(d[4]) || 0;
+      r++;
+    });
+    sheet.getRange(r, 1, 1, 6).setValues([['合計', tU, tS, tP, '-', '-']])
+      .setFontWeight('bold').setBackground('#e8eaf6').setHorizontalAlignment('center');
+  }
+
+  // セクションB: SNS
+  row = 13;
+  sheet.getRange('A' + row + ':H' + row).merge().setValue('📱 X（SNS）パフォーマンス')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#E3F2FD');
+
+  var postSheet = ss.getSheetByName('📱 X投稿ログ');
+  if (postSheet && postSheet.getLastRow() > 3) {
+    var postData = postSheet.getDataRange().getValues();
+    var tPosts = 0, tImp = 0, tEng = 0, tLikes = 0, tRT = 0;
+    for (var p = 3; p < postData.length; p++) {
+      if (!postData[p][0] || String(postData[p][0]).indexOf('サンプル') !== -1) continue;
+      tPosts++; tImp += Number(postData[p][4]) || 0; tEng += Number(postData[p][5]) || 0;
+      tLikes += Number(postData[p][6]) || 0; tRT += Number(postData[p][7]) || 0;
+    }
+    sheet.getRange(row + 1, 1, 1, 2).setValues([['指標', '値']])
+      .setFontWeight('bold').setBackground('#90CAF9').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+    var avgER = tImp > 0 ? (tEng / tImp * 100).toFixed(2) + '%' : '0%';
+    sheet.getRange(row + 2, 1, 5, 2).setValues([
+      ['総投稿数', tPosts], ['合計Imp', tImp], ['合計Eng', tEng], ['平均ER', avgER], ['合計RT', tRT]
+    ]).setHorizontalAlignment('center');
+  } else {
+    sheet.getRange(row + 1, 1).setValue('💡 「📱 X投稿ログ」にデータを入力すると集計されます').setFontColor('#999999');
+  }
+
+  // セクションC: 店舗別KW順位
+  row = 22;
+  var kwR = row;
+
+  STORES.forEach(function(store) {
+    sheet.getRange('A' + kwR + ':H' + kwR).merge()
+      .setValue('🎯 ' + store.name + ' キーワード順位')
+      .setFontSize(13).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#e8eaf6');
+    kwR++;
+
+    var kwSheet = ss.getSheetByName('KW順位_' + store.name);
+    if (kwSheet && kwSheet.getLastRow() > 1) {
+      sheet.getRange(kwR, 1, 1, 3).setValues([['キーワード', '現在の順位', 'ステータス']])
+        .setFontWeight('bold').setBackground('#c5cae9').setHorizontalAlignment('center');
+      kwR++;
+
+      var kwData = kwSheet.getDataRange().getValues();
+      var latestKW = kwData[kwData.length - 1];
+      for (var m = 1; m < kwData[0].length; m++) {
+        var rank = latestKW[m];
+        var status = '圏外', bg = '#FFEBEE';
+        if (rank !== '-' && rank !== '' && rank !== null) {
+          var rn = parseFloat(rank);
+          if (rn <= 3) { status = '🥇 上位表示'; bg = '#E8F5E9'; }
+          else if (rn <= 10) { status = '✅ 1ページ目'; bg = '#FFF9C4'; }
+          else if (rn <= 20) { status = '📈 改善中'; bg = '#FFF3E0'; }
+          else { status = '⚠️ 要改善'; bg = '#FFEBEE'; }
+        }
+        sheet.getRange(kwR, 1, 1, 3).setValues([[kwData[0][m], rank, status]])
+          .setHorizontalAlignment('center').setBackground(bg);
+        kwR++;
+      }
+    } else {
+      sheet.getRange(kwR, 1).setValue('データなし（次回実行後に表示）').setFontColor('#999999');
+      kwR++;
+    }
+    kwR++; // 店舗間の空白行
+  });
+
+  // セクションD: オウンドメディア別パフォーマンス
+  row = kwR + 2;
+  sheet.getRange('A' + row + ':H' + row).merge().setValue('📰 オウンドメディア別パフォーマンス')
+    .setFontSize(14).setFontWeight('bold').setFontColor('#1a1a2e').setBackground('#E8F5E9');
+
+  row++;
+  sheet.getRange(row, 1, 1, 5)
+    .setValues([['メディア', '目的', '追跡KW数', '順位取得KW数', '平均順位']])
+    .setFontWeight('bold').setBackground('#4CAF50').setFontColor('#FFFFFF').setHorizontalAlignment('center');
+
+  row++;
+  OWNED_MEDIA.forEach(function(media) {
+    var kwSheetName = 'KW順位_' + media.name;
+    var kwMediaSheet = ss.getSheetByName(kwSheetName);
+    var rankedCount = 0;
+    var totalRank = 0;
+    var avgRank = '-';
+
+    if (kwMediaSheet && kwMediaSheet.getLastRow() > 1) {
+      var lastKWRow = kwMediaSheet.getLastRow();
+      var kwVals = kwMediaSheet.getRange(lastKWRow, 2, 1, media.keywords.length).getValues()[0];
+      kwVals.forEach(function(v) {
+        if (v !== '-' && v !== '' && v !== null) {
+          rankedCount++;
+          totalRank += parseFloat(v);
+        }
+      });
+      if (rankedCount > 0) avgRank = (totalRank / rankedCount).toFixed(1);
+    }
+
+    sheet.getRange(row, 1, 1, 5).setValues([[
+      media.name, media.purpose, media.keywords.length, rankedCount, avgRank
+    ]]).setHorizontalAlignment('center');
+
+    if (row % 2 === 0) sheet.getRange(row, 1, 1, 5).setBackground('#f5f5f5');
+    row++;
+  });
+
+  sheet.setColumnWidth(1, 200); sheet.setColumnWidth(2, 150); sheet.setColumnWidth(3, 150);
+  sheet.setColumnWidth(4, 130); sheet.setColumnWidth(5, 130); sheet.setColumnWidth(6, 100);
+
+  Logger.log('📊 ダッシュボード更新完了');
+}
+
+
+// ============================================================
+// クライアント共有シートにサマリーを同期
+// ============================================================
+function syncToClientSheet() {
+  try {
+    var clientSS = SpreadsheetApp.openById(CLIENT_SHEET_ID);
+    var srcSS = SpreadsheetApp.getActiveSpreadsheet();
+
+    // --- ダッシュボードを同期 ---
+    var srcDash = srcSS.getSheetByName('📊 ダッシュボード');
+    var dstDash = clientSS.getSheetByName('📊 ダッシュボード');
+    if (srcDash && dstDash) {
+      var data = srcDash.getDataRange().getValues();
+      dstDash.clear();
+      if (data.length > 0) {
+        dstDash.getRange(1, 1, data.length, data[0].length).setValues(data);
+      }
+      dstDash.getRange('A1:H1').merge().setFontSize(18).setFontWeight('bold')
+        .setFontColor('#FFFFFF').setBackground('#1a1a2e').setHorizontalAlignment('center');
+      dstDash.getRange('A2:H2').merge().setFontSize(10).setFontColor('#666666')
+        .setHorizontalAlignment('center').setBackground('#f0f0f0');
+    }
+
+    // --- 生データシートを同期（なければ自動作成） ---
+    var dataSheets = ['SearchConsole', 'GA4', 'GA4_流入元', 'GA4_店舗別', '店舗別グラフ',
+      'KW順位_ブランド共通', 'KW順位_横浜店', 'KW順位_福岡店',
+      'メディア別SC', 'KW順位_AmoLab', 'KW順位_IkeoLab', 'KW順位_SweetStay'];
+    dataSheets.forEach(function(sheetName) {
+      var src = srcSS.getSheetByName(sheetName);
+      if (!src) {
+        Logger.log('同期スキップ（ソースなし）: ' + sheetName);
+        return;
+      }
+
+      var srcData = src.getDataRange().getValues();
+      if (srcData.length === 0) {
+        Logger.log('同期スキップ（データなし）: ' + sheetName);
+        return;
+      }
+
+      // クライアント側にシートがなければ作成
+      var dst = clientSS.getSheetByName(sheetName);
+      if (!dst) {
+        dst = clientSS.insertSheet(sheetName);
+        Logger.log('📄 クライアント側にシート作成: ' + sheetName);
+      }
+
+      // データを上書き
+      dst.clear();
+      dst.getRange(1, 1, srcData.length, srcData[0].length).setValues(srcData);
+
+      // ヘッダー行をフォーマット
+      dst.getRange(1, 1, 1, srcData[0].length)
+        .setFontWeight('bold')
+        .setBackground('#2B5797')
+        .setFontColor('#FFFFFF');
+      dst.setFrozenRows(1);
+
+      Logger.log('✅ 同期完了: ' + sheetName + '（' + srcData.length + '行）');
+    });
+
+    Logger.log('📤 クライアントシート同期完了（全シート）');
+  } catch (e) {
+    Logger.log('クライアントシート同期エラー: ' + e.message);
+  }
+}
+
+
+// ============================================================
+// トリガー設定
+// ============================================================
+function createDailyTrigger() {
+  ScriptApp.getProjectTriggers().forEach(function(t) {
+    if (t.getHandlerFunction() === 'dailyDataCollection') {
+      ScriptApp.deleteTrigger(t);
+    }
+  });
+
+  ScriptApp.newTrigger('dailyDataCollection')
+    .timeBased().atHour(6).everyDays(1).create();
+
+  Logger.log('毎朝6時の自動実行トリガーを設定しました');
+}
+
+
+// ============================================================
+// ユーティリティ
+// ============================================================
+function formatDate(d) {
+  return Utilities.formatDate(d, 'Asia/Tokyo', 'yyyy-MM-dd');
+}
+
+// 毎朝の稼働確認メール（このメールが来ない日＝トリガー停止のサイン）
+function sendHeartbeat() {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sc = ss.getSheetByName('SearchConsole');
+    var email = Session.getEffectiveUser().getEmail();
+    var last = (sc && sc.getLastRow() > 1) ? sc.getRange(sc.getLastRow(), 2).getValue() : '不明';
+    MailApp.sendEmail(
+      email,
+      '✅ SB自動取得OK ' + formatDate(new Date()),
+      'ストロベリーボーイズのSEO自動取得が正常完了しました。\n最新の対象日: ' + last +
+      '\n\n※このメールが毎朝届かない日があれば、トリガーが止まっている合図です。'
+    );
+  } catch (e) {
+    Logger.log('heartbeatエラー: ' + e.message);
+  }
+}
+
+function testSearchConsole() { fetchSearchConsoleData(); }
+function testGA4() { fetchGA4Data(); fetchGA4TrafficSources(); }
+function testStoreTraffic() { fetchGA4StorePageTraffic(); buildStoreTrafficChart(); }
+function debugSearchConsole() {
+  var today = new Date();
+  var endDate = new Date(today.getTime() - 1 * 86400000);
+  var startDate = new Date(today.getTime() - 28 * 86400000);
+  var apiUrl = 'https://www.googleapis.com/webmasters/v3/sites/'
+    + encodeURIComponent(SITE_URL) + '/searchAnalytics/query';
+  var payload = { startDate: formatDate(startDate), endDate: formatDate(endDate), dimensions: ['query'], rowLimit: 10 };
+  var options = { method: 'post', contentType: 'application/json',
+    headers: { Authorization: 'Bearer ' + ScriptApp.getOAuthToken() },
+    payload: JSON.stringify(payload), muteHttpExceptions: true };
+  var response = UrlFetchApp.fetch(apiUrl, options);
+  Logger.log('HTTPステータス: ' + response.getResponseCode());
+  Logger.log('レスポンス: ' + response.getContentText());
+}

@@ -1,17 +1,15 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
-
 async function main() {
-  const articles = await prisma.mediaArticle.findMany({
-    select: {
-      id: true,
-      slug: true,
-      title: true
+  try {
+    const articles = await prisma.mediaArticle.count();
+    console.log('MediaArticle count:', articles);
+    if (articles > 0) {
+      const first = await prisma.mediaArticle.findFirst();
+      console.log('First article title:', first.title);
     }
-  });
-  console.log("Articles:", articles);
+  } catch(e) {
+    console.log('Error:', e.message);
+  }
 }
-
-main()
-  .catch(e => console.error(e))
-  .finally(async () => await prisma.$disconnect());
+main().finally(() => prisma.$disconnect());
