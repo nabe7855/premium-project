@@ -87,6 +87,18 @@ const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
               </span>
             </div>
           </div>
+
+          {/* 最新のつぶやき (フル表示) */}
+          {cast.latestTweet && (
+            <div className="relative mt-6 rounded-2xl border border-pink-100 bg-pink-50 p-4 shadow-sm">
+              <div className="absolute -top-3 left-4 rounded-full bg-pink-500 px-3 py-1 text-[10px] font-bold text-white shadow-sm sm:left-6">
+                💬 今日のつぶやき
+              </div>
+              <p className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-neutral-800 sm:text-base">
+                {cast.latestTweet}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
