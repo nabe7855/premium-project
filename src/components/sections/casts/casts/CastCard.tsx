@@ -196,8 +196,10 @@ const CastCard: React.FC<CastCardProps> = ({
         {/* 💬 最新つぶやき吹き出し */}
         {cast.latestTweet && (
           <div className="pointer-events-none absolute bottom-3 left-1/2 max-w-[95%] -translate-x-1/2">
-            <div className="animate-float relative rounded-2xl bg-white/90 px-4 py-2 text-xs text-gray-800 shadow-lg sm:text-sm">
-              {cast.latestTweet}
+            <div className="animate-float relative rounded-2xl bg-white/90 px-3 py-2 text-xs text-gray-800 shadow-lg sm:px-4 sm:text-sm">
+              <p className="line-clamp-2 whitespace-pre-wrap leading-snug">
+                {cast.latestTweet}
+              </p>
               {/* 吹き出しの三角 */}
               <div className="border-l-6 border-r-6 absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-8 border-l-transparent border-r-transparent border-t-white/90"></div>
             </div>
