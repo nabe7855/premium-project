@@ -54,7 +54,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
   };
 
   return (
-    <div className="relative mx-auto w-full max-w-[700px] bg-[#fffdf8] p-8 shadow-xl md:p-16 rounded-[2.5rem]">
+    <div className="relative mx-auto w-full max-w-[700px] bg-[#fffdf8] p-16 shadow-xl rounded-[2.5rem]">
       {/* Frame Background Image */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[2.5rem]">
         <NextImage 
@@ -83,7 +83,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
           {/* Header Area */}
           <div className="mb-8 flex flex-col items-center text-center">
             {/* Small Strawberry Icon */}
-            <div className="relative mb-3 h-[80px] w-[80px] md:h-[100px] md:w-[100px]">
+            <div className="relative mb-3 h-[100px] w-[100px]">
                <NextImage 
                  src="/images/store/fukuoka/price/A_お得なイベントコース/card_strawberry.png" 
                  fill 
@@ -96,7 +96,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
               contentEditable={isEditing}
               onBlur={(e) => onUpdate?.('title', e.currentTarget.innerText)}
               suppressContentEditableWarning
-              className="font-serif text-3xl font-bold tracking-widest text-[#b8324f] outline-none md:text-4xl"
+              className="font-serif text-4xl font-bold tracking-widest text-[#b8324f] outline-none"
             >
               {title}
             </h3>
@@ -108,12 +108,12 @@ const PriceCard: React.FC<PriceCardProps> = ({
                <div className="h-[1px] w-16 bg-[#d5a447]"></div>
             </div>
 
-            <div className="flex min-h-[6.5rem] w-full items-center justify-center md:min-h-[8rem]">
+            <div className="flex min-h-[8rem] w-full items-center justify-center">
               <p
                 contentEditable={isEditing}
                 onBlur={(e) => onUpdate?.('description', e.currentTarget.innerText)}
                 suppressContentEditableWarning
-                className="whitespace-pre-line text-sm leading-loose text-[#3b1f1a] outline-none md:text-base font-medium"
+                className="whitespace-pre-line text-base leading-loose text-[#3b1f1a] outline-none font-medium"
               >
                 {description}
               </p>
@@ -121,11 +121,11 @@ const PriceCard: React.FC<PriceCardProps> = ({
           </div>
 
           {/* Price Table */}
-          <div className="relative z-10 rounded-2xl border border-[#ead1a1] bg-[#fffdf8] p-5 shadow-sm md:p-8">
+          <div className="relative z-10 rounded-2xl border border-[#ead1a1] bg-[#fffdf8] p-8 shadow-sm">
             <div className="flex flex-col space-y-6">
               {items.map((item, idx) => (
                 <div key={idx} className="flex flex-col">
-                  <div className="flex flex-col items-center justify-between gap-3 md:flex-row md:gap-4">
+                  <div className="flex flex-row items-center justify-between gap-4">
                     {/* Pill Label */}
                     <div className="flex shrink-0 items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#b8324f] to-[#dd5d7a] px-5 py-2.5 shadow-md min-w-[160px] border border-[#fffdf8]">
                       <span className="text-white text-xs">🌸</span>
@@ -133,14 +133,14 @@ const PriceCard: React.FC<PriceCardProps> = ({
                         contentEditable={isEditing}
                         onBlur={(e) => handleItemUpdate(idx, 'duration', e.currentTarget.innerText)}
                         suppressContentEditableWarning
-                        className="text-sm font-bold tracking-wide text-white outline-none md:text-base whitespace-nowrap"
+                        className="text-base font-bold tracking-wide text-white outline-none whitespace-nowrap"
                       >
                         {item.duration}
                       </span>
                     </div>
 
                     {/* Dot Leader */}
-                    <div className="hidden h-[2px] flex-grow border-b-2 border-dotted border-[#ead1a1] md:block mx-4 opacity-70" />
+                    <div className="block h-[2px] flex-grow border-b-2 border-dotted border-[#ead1a1] mx-4 opacity-70" />
 
                     {/* Price */}
                     <div className="flex shrink-0 items-baseline gap-1 text-[#b8324f]">
@@ -155,11 +155,11 @@ const PriceCard: React.FC<PriceCardProps> = ({
                           )
                         }
                         suppressContentEditableWarning
-                        className="font-serif text-4xl font-bold tabular-nums tracking-tight outline-none md:text-5xl"
+                        className="font-serif text-5xl font-bold tabular-nums tracking-tight outline-none"
                       >
                         {item.price.toLocaleString()}
                       </span>
-                      <span className="text-sm font-medium text-[#3b1f1a] md:text-base ml-1">（税込）</span>
+                      <span className="text-base font-medium text-[#3b1f1a] ml-1">（税込）</span>
                     </div>
                   </div>
                   

@@ -7,6 +7,7 @@ import NextImage from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import PriceCard from '../components/PriceCard';
+import DesktopScaleWrapper from '../components/DesktopScaleWrapper';
 
 const defaultPricesByTab = [
   // お得なイベントコース
@@ -95,13 +96,13 @@ const PriceSection: React.FC<PriceSectionProps> = ({
   };
 
   return (
-    <section id="price" className="relative mx-auto w-full max-w-[1120px] bg-[#fffaf7] px-4 py-16 md:px-6 md:py-24">
+    <section id="price" className="relative mx-auto w-full max-w-[1120px] bg-[#fffaf7] px-6 py-24">
       {/* ヒーロー背景的な全体背景（アイボリー・淡ピンク基調） */}
-      
+      <DesktopScaleWrapper desktopWidth={1024}>
       {/* Header Area */}
       <div className="relative z-10 flex flex-col items-center text-center w-full">
         {/* トップ装飾ライン */}
-        <div className="mb-4 h-[60px] w-full max-w-[800px] opacity-90 drop-shadow-sm md:h-[100px] md:max-w-[1200px]">
+        <div className="mb-4 h-[100px] w-full max-w-[1200px] opacity-90 drop-shadow-sm">
           <NextImage
             src="/images/store/fukuoka/price/A_お得なイベントコース/divider.png"
             fill
@@ -111,11 +112,11 @@ const PriceSection: React.FC<PriceSectionProps> = ({
         </div>
 
         <h2
-          className={`flex flex-col items-center font-serif text-5xl font-bold tracking-[0.15em] text-[#3b1f1a] md:text-6xl ${isEditing ? 'group/heading relative' : ''}`}
+          className={`flex flex-col items-center font-serif text-6xl font-bold tracking-[0.15em] text-[#3b1f1a] ${isEditing ? 'group/heading relative' : ''}`}
         >
           {config?.headingImageUrl ? (
-            <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
-              <div className="relative h-20 w-full md:h-28">
+            <div className="relative mx-auto mb-4 flex max-w-[400px] items-center justify-center">
+              <div className="relative h-28 w-full">
                 <NextImage
                   src={config.headingImageUrl}
                   alt={config.heading || 'Price'}
@@ -147,7 +148,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
             </div>
           ) : (
             <>
-              <div className="relative flex h-[80px] w-full max-w-[560px] items-center justify-center md:h-[120px] md:max-w-[900px]">
+              <div className="relative flex h-[120px] w-full max-w-[900px] items-center justify-center">
                 <img
                   src="/images/store/fukuoka/price/A_お得なイベントコース/title_price_menu.png"
                   className="h-full w-full object-contain mix-blend-multiply"
@@ -180,7 +181,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           contentEditable={isEditing}
           onBlur={(e) => handleTextUpdate('subHeading', e)}
           suppressContentEditableWarning
-          className="mt-4 font-serif text-sm font-bold tracking-[0.3em] text-[#6f4a42] md:text-base outline-none flex items-center gap-4"
+          className="mt-4 font-serif text-base font-bold tracking-[0.3em] text-[#6f4a42] outline-none flex items-center gap-4"
         >
           <span className="text-[#d5a447] text-xs">⟷</span>
           {config?.subHeading || '料金プラン'}
@@ -189,27 +190,27 @@ const PriceSection: React.FC<PriceSectionProps> = ({
       </div>
 
       {/* Tabs Area - Folder Style */}
-      <div className="relative z-20 mt-8 flex w-full max-w-[700px] mx-auto justify-center gap-1 md:gap-2 px-2 md:px-0 -mb-[2px]">
+      <div className="relative z-20 mt-8 flex w-full max-w-[700px] mx-auto justify-center gap-2 px-0 -mb-[2px]">
         {tabs.map((tab, idx) => {
           const isActive = activeTab === tab.id;
           return (
             <button
               key={tab.id}
               onClick={() => setPage([tab.id, idx > activeTab ? 1 : -1])}
-              className={`flex-1 flex items-center justify-center gap-1 rounded-t-2xl px-2 py-3 md:px-4 md:py-4 transition-all duration-300 shadow-sm border-2 border-b-0 ${
+              className={`flex-1 flex items-center justify-center gap-1 rounded-t-2xl px-4 py-4 transition-all duration-300 shadow-sm border-2 border-b-0 ${
                 isActive
                   ? 'bg-gradient-to-b from-[#dd5d7a] to-[#b8324f] text-white border-[#ead1a1] z-30 pt-4'
                   : 'bg-[#fffdf8] text-[#6f4a42] border-transparent hover:bg-[#fff7f5] z-10'
               }`}
             >
               {/* Tab Strawberry Icon */}
-              <span className={`text-xs md:text-sm ${isActive ? 'text-white' : 'text-[#b8324f]'}`}>🌸</span>
+              <span className={`text-sm ${isActive ? 'text-white' : 'text-[#b8324f]'}`}>🌸</span>
               <span
                 contentEditable={isEditing}
                 onBlur={(e) => handleTabLabelUpdate(idx, e)}
                 suppressContentEditableWarning
                 onClick={(e) => isEditing && e.stopPropagation()}
-                className="text-xs md:text-sm font-bold whitespace-nowrap outline-none tracking-wider"
+                className="text-sm font-bold whitespace-nowrap outline-none tracking-wider"
               >
                 {tab.label}
               </span>
@@ -218,13 +219,13 @@ const PriceSection: React.FC<PriceSectionProps> = ({
         })}
       </div>
 
-      <div className="relative z-10 flex flex-col gap-8 md:flex-row md:justify-center">
+      <div className="relative z-10 flex flex-row justify-center gap-8">
         {/* メインメニューカードエリア */}
         <div className="relative w-full max-w-[700px]">
           {/* Navigation Arrows (Floating) */}
           <button
             onClick={prevTab}
-            className="absolute -left-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#fffdf8] text-[#8f2439] shadow-md border border-[#f2b6bd] transition-all hover:scale-110 active:scale-95 md:-left-6 md:h-12 md:w-12"
+            className="absolute -left-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#fffdf8] text-[#8f2439] shadow-md border border-[#f2b6bd] transition-all hover:scale-110 active:scale-95"
             aria-label="前のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -234,7 +235,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
 
           <button
             onClick={nextTab}
-            className="absolute -right-3 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-[#fffdf8] text-[#8f2439] shadow-md border border-[#f2b6bd] transition-all hover:scale-110 active:scale-95 md:-right-6 md:h-12 md:w-12"
+            className="absolute -right-6 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-[#fffdf8] text-[#8f2439] shadow-md border border-[#f2b6bd] transition-all hover:scale-110 active:scale-95"
             aria-label="次のプランを表示"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -243,7 +244,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           </button>
 
           {/* New PriceCard with Animation */}
-          <div className="overflow-x-hidden px-4 md:px-0 pb-4 pt-0">
+          <div className="overflow-x-hidden px-0 pb-4 pt-0">
             <PriceCard
               title={tabs[activeTab].label}
               description={categoryDescriptions[activeTab]}
@@ -268,7 +269,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
       </div>
 
       {/* 注意事項 */}
-      <div className="mx-auto mt-12 max-w-[700px] space-y-3 px-4 text-left text-xs text-[#6f4a42] md:px-12 md:text-sm">
+      <div className="mx-auto mt-12 max-w-[700px] space-y-3 px-12 text-left text-sm text-[#6f4a42]">
         {notes.map((note: string, idx: number) => (
           <div key={idx} className="flex items-start gap-2">
             <span className="text-[#d5a447]">🌸</span>
@@ -303,11 +304,11 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-50" />
 
           {/* いちごアイコン (2連いちごのラインアート想定) */}
-          <div className="relative mr-2 h-10 w-10 md:h-12 md:w-12 opacity-100 drop-shadow-md">
+          <div className="relative mr-2 h-12 w-12 opacity-100 drop-shadow-md">
             <NextImage src="/images/store/fukuoka/price/A_お得なイベントコース/strawberries_transparent.png" fill className="object-contain" alt="" />
           </div>
 
-          <span className="font-serif text-lg font-bold tracking-widest text-white drop-shadow-sm md:text-xl">
+          <span className="font-serif text-xl font-bold tracking-widest text-white drop-shadow-sm">
             詳しいコースを見る
           </span>
 
@@ -327,7 +328,6 @@ const PriceSection: React.FC<PriceSectionProps> = ({
         </Link>
       </div>
       
-      {/* Hide scrollbar utility class */}
       <style dangerouslySetInnerHTML={{__html: `
         .hide-scrollbar::-webkit-scrollbar {
           display: none;
@@ -337,6 +337,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           scrollbar-width: none;
         }
       `}} />
+      </DesktopScaleWrapper>
     </section>
   );
 };

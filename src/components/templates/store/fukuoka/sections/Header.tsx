@@ -365,72 +365,78 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md py-1.5' : 'bg-white py-2'
       } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
-      <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
-        <div className="flex items-stretch overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
-          {/* Logo Section */}
-          <Link
-            href={getAbsoluteHref(
-              config?.logoLink === '/' || !config?.logoLink ? '/store/{slug}' : config.logoLink,
-            )}
-            className="group relative flex flex-[0.7] min-w-0 max-w-[70px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50"
-          >
-            {config?.logoUrl ? (
-              <div className="relative h-7 w-full md:h-10 md:w-24">
-                <NextImage
-                  src={getOptimizedImageUrl(getAbsoluteHref(config.logoUrl), 'icon') || getAbsoluteHref(config.logoUrl)}
-                  alt="Logo"
-                  fill
-                  priority
-                  className="object-contain"
-                  sizes="(max-width: 768px) 60px, 96px"
-                />
-              </div>
-            ) : (
-              <span className="font-serif text-xs font-black italic tracking-tighter text-[#D43D6F] md:text-xl">
-                {config?.logoText || '🍓'}
-              </span>
-            )}
-            {isEditing && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerLogoUpload(); }}
-                  className="rounded-full bg-black/60 p-1 text-white"
-                >
-                  <Camera size={12} />
-                </button>
-              </div>
-            )}
+      <div className="mx-auto w-full max-w-[1200px] bg-[#fffcf9] shadow-[0_12px_24px_-8px_rgba(219,39,119,0.15)] overflow-hidden relative" style={{ borderBottomLeftRadius: '1.5rem', borderBottomRightRadius: '1.5rem' }}>
+        <div className="relative w-full" style={{ aspectRatio: '2169/725' }}>
+          
+          {/* Base Background (一時的に非表示) */}
+          {/* <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill" alt="" /> */}
+          
+          {/* Non-Group Parts (Decorations) */}
+          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className="absolute pointer-events-none" style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/05_silk_top_left.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '16.598%', height: '28.966%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/06_silk_top_right.png" className="absolute pointer-events-none" style={{ left: '83.402%', top: '0.000%', width: '16.598%', height: '28.966%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/07_silk_bottom_left.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '71.034%', width: '16.598%', height: '28.966%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/08_silk_bottom_right.png" className="absolute pointer-events-none" style={{ left: '83.402%', top: '71.034%', width: '16.598%', height: '28.966%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/23_bottom_bar.png" className="absolute pointer-events-none" style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/29_center_ornament.png" className="absolute pointer-events-none" style={{ left: '49.285%', top: '81.931%', width: '1.614%', height: '6.069%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/35_flower.png" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/36_sparkles.png" className="absolute pointer-events-none" style={{ left: '16.413%', top: '25.103%', width: '1.936%', height: '41.379%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/37_separator_dotted.png" className="absolute pointer-events-none" style={{ left: '78.562%', top: '86.621%', width: '15.122%', height: '3.862%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/37b_ornament_line.png" className="absolute pointer-events-none" style={{ left: '5.071%', top: '11.310%', width: '89.811%', height: '4.690%' }} alt="" />
+
+          {/* Interactive Group: logo_center */}
+          <Link href={getAbsoluteHref('/store/{slug}')} className="absolute z-10 transition-transform hover:scale-[1.02] block" style={{ left: '20.931%', top: '15.448%', width: '62.610%', height: '53.517%' }}>
+            <img src="/images/store/fukuoka/new-header/13_center_logo.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '22.680%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/14_title_line1.png" className="absolute pointer-events-none" style={{ left: '26.510%', top: '19.588%', width: '50.810%', height: '37.113%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/15_title_line2.png" className="absolute pointer-events-none" style={{ left: '24.891%', top: '55.156%', width: '49.631%', height: '42.785%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/16_script_eng.png" className="absolute pointer-events-none" style={{ left: '80.559%', top: '20.620%', width: '11.782%', height: '28.866%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/17_fukuoka_badge.png" className="absolute pointer-events-none" style={{ left: '83.137%', top: '61.857%', width: '16.863%', height: '28.350%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/18_fukuoka_text.png" className="absolute pointer-events-none" style={{ left: '79.970%', top: '63.918%', width: '14.285%', height: '26.289%' }} alt="" />
           </Link>
 
-          {/* Banners Section */}
-          <div className="flex flex-[3.8] items-stretch overflow-hidden min-w-0 border-x border-slate-100">
+          {/* Interactive Group: today_card */}
+          <Link href={getAbsoluteHref('/store/{slug}/cast')} className="absolute z-10 transition-transform hover:scale-[1.05] block" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
+            <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+          </Link>
+
+          {/* Interactive Group: menu_card */}
+          <button onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }} className="absolute z-20 outline-none transition-transform hover:scale-[1.05] block" style={{ left: '86.307%', top: '20.690%', width: '10.881%', height: '49.379%' }}>
+            <img src="/images/store/fukuoka/new-header/19_menu_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/20_menu_crown.png" className="absolute pointer-events-none" style={{ left: '27.121%', top: '6.144%', width: '49.995%', height: '20.671%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/21_menu_text.png" className="absolute pointer-events-none" style={{ left: '-0.846%', top: '34.636%', width: '100.423%', height: '18.435%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/22_menu_hamburger.png" className="absolute pointer-events-none" style={{ left: '23.729%', top: '58.938%', width: '57.623%', height: '19.273%' }} alt="" />
+          </button>
+
+          {/* Interactive Group: cta_left */}
+          <Link href={getAbsoluteHref('/store/{slug}/first-time')} className="absolute z-10 transition-transform hover:scale-[1.02] block" style={{ left: '3.596%', top: '73.793%', width: '43.061%', height: '17.241%' }}>
+            <img src="/images/store/fukuoka/new-header/24_left_segment.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/25_pc_icon.png" className="absolute pointer-events-none" style={{ left: '3.212%', top: '15.202%', width: '12.849%', height: '83.203%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/26_web_yoyaku_text.png" className="absolute pointer-events-none" style={{ left: '16.702%', top: '42.399%', width: '23.341%', height: '41.599%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/27_24h_ok_text.png" className="absolute pointer-events-none" style={{ left: '47.753%', top: '46.401%', width: '19.700%', height: '32.800%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/28_cta_button.png" className="absolute pointer-events-none" style={{ left: '66.596%', top: '26.402%', width: '32.549%', height: '60.803%' }} alt="" />
+          </Link>
+
+          {/* Interactive Group: phone_right */}
+          <a href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/[^0-9]/g, '')}`} className="absolute z-10 transition-opacity hover:opacity-80 block" style={{ left: '49.424%', top: '73.793%', width: '48.133%', height: '17.241%' }}>
+            <img src="/images/store/fukuoka/new-header/30_right_segment.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/31_phone_icon.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '13.601%', width: '12.835%', height: '86.405%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/32_denwa_uketsuke.png" className="absolute pointer-events-none" style={{ left: '13.984%', top: '31.999%', width: '19.731%', height: '50.403%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/33_time_range_text.png" className="absolute pointer-events-none" style={{ left: '39.464%', top: '46.401%', width: '21.455%', height: '32.800%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/34_phone_number.png" className="absolute pointer-events-none" style={{ left: '60.728%', top: '44.000%', width: '33.333%', height: '39.203%' }} alt="" />
+          </a>
+        </div>
+
+        {/* 既存機能の保護: CMSバナー領域をレイアウト下部に保持（一時的に非表示） */}
+        {/* 
+        {(config?.specialBanner || config?.specialBanner2 || config?.specialBanner3) && (
+          <div className="flex w-full items-stretch overflow-hidden border-t border-slate-100 h-8 md:h-10">
             {renderHeaderBanner(config?.specialBanner, 'specialBanner')}
             {renderHeaderBanner(config?.specialBanner2, 'specialBanner2')}
             {renderHeaderBanner(config?.specialBanner3, 'specialBanner3')}
           </div>
-
-          {/* Buttons Section */}
-          <div className="flex flex-[0.5] items-stretch min-w-0">
-            {/* MENU Button */}
-            <button
-              onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
-              className={`flex flex-1 min-w-0 flex-col items-center justify-center px-0.5 transition-all active:bg-slate-300 ${
-                isMenuOpen
-                  ? 'bg-pink-100 text-pink-600'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {isMenuOpen ? (
-                <X size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              ) : (
-                <Menu size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              )}
-              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">
-                {isMenuOpen ? '閉じる' : 'MENU'}
-              </span>
-            </button>
-          </div>
-        </div>
+        )}
+        */}
       </div>
 
       {/* モバイルメニューオーバーレイ */}
