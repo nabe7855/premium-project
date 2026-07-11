@@ -15,9 +15,10 @@ interface Cast {
 
 interface ReviewListProps {
   storeSlug: string;
+  initialData?: { reviews: Review[]; totalCount: number };
 }
 
-const ReviewList: React.FC<ReviewListProps> = ({ storeSlug }) => {
+const ReviewList: React.FC<ReviewListProps> = ({ storeSlug, initialData }) => {
   const [selectedEmotion, setSelectedEmotion] = useState<string>('');
   const [selectedCastId, setSelectedCastId] = useState<string>('all');
   const [casts, setCasts] = useState<Cast[]>([]);
@@ -65,6 +66,10 @@ const ReviewList: React.FC<ReviewListProps> = ({ storeSlug }) => {
         castId: selectedCastId !== 'all' ? selectedCastId : undefined,
       }),
     initialPageParam: 0,
+    initialData: initialData ? {
+      pages: [initialData],
+      pageParams: [0],
+    } : undefined,
     // ✅ 次のページ取得判定: DBへのリクエストでずらす件数（ページ数 × limit）
     getNextPageParam: (lastPage, allPages) => {
       if (!lastPage) return undefined;
@@ -146,7 +151,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ storeSlug }) => {
     handleClose();
   };
 
-  if (status === 'pending') {
+  if (!data) {
     return <p className="text-center text-gray-500 py-12">読み込み中...</p>;
   }
 

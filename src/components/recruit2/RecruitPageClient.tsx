@@ -16,7 +16,7 @@ import ThanksPage from '@/components/recruit2/ThanksPage';
 import { STOCK_RECRUIT_CONFIG } from '@/components/recruit2/constants';
 import { stores } from '@/data/stores';
 import React, { useEffect, useState } from 'react';
-import { HashRouter, Route, Routes, useLocation } from 'react-router-dom';
+import { HashRouter, MemoryRouter, Route, Routes, useLocation } from 'react-router-dom';
 
 interface RecruitPageClientProps {
   initialData: {
@@ -180,7 +180,17 @@ export default function RecruitPageClient(props: RecruitPageClientProps) {
   useEffect(() => {
     setMounted(true);
   }, []);
-  if (!mounted) return <div className="min-h-screen bg-slate-950" />;
+
+  // サーバーサイド（SSR時）は MemoryRouter を使用して初期HTMLを生成する
+  if (!mounted) {
+    return (
+      <MemoryRouter initialEntries={['/']}>
+        <AppContent {...props} />
+      </MemoryRouter>
+    );
+  }
+
+  // クライアントサイドでは HashRouter を使用
   return (
     <HashRouter>
       <AppContent {...props} />

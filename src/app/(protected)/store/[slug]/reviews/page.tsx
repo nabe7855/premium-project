@@ -8,6 +8,7 @@ import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sect
 import YokohamaMobileStickyButton from '@/components/templates/store/yokohama/sections/MobileStickyButton';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
+import { getReviewsByStore } from '@/lib/getReviewsByStore';
 
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
@@ -42,7 +43,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 export default async function StoreReviewsPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const result = await getStoreTopConfig(slug, { skipCasts: true });
+  
+  // 並列で設定と初期口コミを取得
+  const [result, initialReviewsData] = await Promise.all([
+    getStoreTopConfig(slug, { skipCasts: true }),
+    getReviewsByStore(slug, { limit: 20, offset: 0 })
+  ]);
+  
   const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
 
   const cityMap: Record<string, string> = {
@@ -71,7 +78,7 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
             </div>
           }
         >
-          <ReviewList storeSlug={slug} />
+          <ReviewList storeSlug={slug} initialData={initialReviewsData} />
         </Suspense>
 
         <FAQ />
