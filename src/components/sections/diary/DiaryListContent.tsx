@@ -150,9 +150,12 @@ const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
     <main className="container mx-auto px-3 py-4 sm:px-4 sm:py-6 md:py-8">
       {/* Hero Section (Optionally move this to server component if it's static) */}
       <div className="mb-8 text-center">
-        <h1 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl md:text-4xl">
-          Photo Diary
+        <h1 className="mb-2 text-[10px] sm:text-xs text-gray-400 font-normal">
+          女性用風俗 日本最大級 ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | 写メ日記一覧
         </h1>
+        <h2 className="mb-2 text-2xl font-bold text-gray-800 sm:text-3xl md:text-4xl">
+          Photo Diary
+        </h2>
         <p className="mx-auto max-w-2xl font-serif text-sm text-gray-600 sm:text-base">
           キャストが綴る、とびきり甘い&quot;日常&quot;の記録。誰にも言えない想いを、あなたにだけ。
         </p>

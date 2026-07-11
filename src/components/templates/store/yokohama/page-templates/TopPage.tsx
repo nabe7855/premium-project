@@ -72,7 +72,6 @@ export default function YokohamaPage({
       <StoreJumpBanners currentStoreSlug={storeSlug} />
 
       <>
-        <h2 className="sr-only">初めての女性用風俗ガイド｜{storeSlug === 'yokohama' ? '横浜' : ''}で安心して利用するには</h2>
         <BeginnerGuideBanner
           config={safeConfig?.beginnerGuide}
           isEditing={isEditing}
@@ -80,7 +79,6 @@ export default function YokohamaPage({
           onImageUpload={onImageUpload}
           sectionName="beginnerGuide"
         />
-        <h2 className="sr-only">{storeSlug === 'yokohama' ? '横浜市内（みなとみらい・関内）' : '対応地域'}への出張エリア</h2>
         <BeginnerGuideBanner
           config={safeConfig?.beginnerGuide2}
           isEditing={isEditing}
@@ -98,7 +96,6 @@ export default function YokohamaPage({
       )}
       {(!safeConfig || safeConfig.concept.isVisible || isEditing) && (
         <>
-          <h2 className="sr-only">ストロベリーボーイズ{storeSlug === 'yokohama' ? '横浜' : ''}店が選ばれる5つの理由</h2>
           <ConceptSection
             config={safeConfig?.concept}
             isEditing={isEditing}
@@ -127,7 +124,6 @@ export default function YokohamaPage({
       )}
       {(!safeConfig || safeConfig.cast.isVisible || isEditing) && (
         <>
-          <h2 className="sr-only">在籍セラピスト一覧（{storeSlug === 'yokohama' ? '横浜店' : ''}）</h2>
           <CastSection
             config={safeConfig?.cast}
             isEditing={isEditing}
@@ -149,7 +145,6 @@ export default function YokohamaPage({
       )}
       {(!safeConfig || safeConfig.price.isVisible || isEditing) && (
         <>
-          <h2 className="sr-only">料金プラン｜{storeSlug === 'yokohama' ? '横浜' : ''}の女性用風俗で明朗会計</h2>
           <PriceSection
             config={safeConfig?.price}
             isEditing={isEditing}
@@ -160,7 +155,6 @@ export default function YokohamaPage({
       )}
       {(!safeConfig || safeConfig.flow.isVisible || isEditing) && (
         <>
-          <h2 className="sr-only">ご利用の流れ</h2>
           <FlowSection
             config={safeConfig?.flow}
             isEditing={isEditing}
@@ -172,7 +166,6 @@ export default function YokohamaPage({
       <ReviewSection />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <>
-          <h2 className="sr-only">よくあるご質問（{storeSlug === 'yokohama' ? '横浜店FAQ' : 'FAQ'}）</h2>
           <FAQSection
             config={safeConfig?.faq}
             isEditing={isEditing}
@@ -188,7 +181,6 @@ export default function YokohamaPage({
         onImageUpload={(file) => onImageUpload?.('snsProfile', file, undefined, 'iconUrl')}
       />
       <>
-        <h2 className="sr-only">アクセス｜{storeSlug === 'yokohama' ? 'みなとみらい・関内から即日出張' : '即日出張対応'}</h2>
         <Footer
           config={safeConfig?.footer}
           isEditing={isEditing}

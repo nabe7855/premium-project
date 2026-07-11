@@ -22,9 +22,12 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
               {page.category}
             </span>
           )}
-          <h1 className="mb-6 font-serif text-3xl font-black leading-tight text-slate-900 md:text-[32px]">
-            {page.title}
+          <h1 className="mb-2 text-[10px] sm:text-xs text-slate-400 font-normal">
+            女性用風俗 日本最大級 ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | お店ニュース
           </h1>
+          <h2 className="mb-6 font-serif text-3xl font-black leading-tight text-slate-900 md:text-[32px]">
+            {page.title}
+          </h2>
           <div className="flex items-center gap-4 text-sm font-medium text-slate-400">
             <time dateTime={new Date(storeSlug && page.storeSettings?.[storeSlug]?.publishedAt ? page.storeSettings[storeSlug].publishedAt : page.updatedAt).toISOString()}>
               {new Date(storeSlug && page.storeSettings?.[storeSlug]?.publishedAt ? page.storeSettings[storeSlug].publishedAt : page.updatedAt).toLocaleDateString('ja-JP', {

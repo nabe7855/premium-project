@@ -89,6 +89,9 @@ export default function NewsListClient({
           <div className="relative flex w-full max-w-2xl items-center justify-center px-12 py-4">
             <div className="absolute left-0 top-1/2 h-[1px] w-full -translate-y-1/2 bg-slate-200"></div>
             <div className="relative z-10 bg-[#fffafa] px-6 text-center">
+              <h1 className="mb-2 block text-[10px] font-normal tracking-[0.2em] text-slate-400">
+                女性用風俗 日本最大級 ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | お店ニュース
+              </h1>
               <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
                 News & Topics
               </span>
@@ -96,7 +99,7 @@ export default function NewsListClient({
                 <span className="absolute -left-3 top-1/2 -translate-y-1/2 transform text-xs text-slate-300">
                   ◆
                 </span>
-                <h1 className="text-2xl font-bold tracking-[0.2em] text-slate-800 md:text-3xl">
+                <h2 className="text-2xl font-bold tracking-[0.2em] text-slate-800 md:text-3xl">
                   <NextImage
                     src="/news-list-title.jpg"
                     alt="ニュース"
@@ -105,7 +108,7 @@ export default function NewsListClient({
                     className="h-auto w-auto max-h-12 object-contain"
                     unoptimized
                   />
-                </h1>
+                </h2>
                 <span className="absolute -right-3 top-1/2 -translate-y-1/2 transform text-xs text-slate-300">
                   ◆
                 </span>

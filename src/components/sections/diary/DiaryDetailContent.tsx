@@ -220,7 +220,10 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
               </div>
             )}
             <div className="p-4 sm:p-8">
-              <h1 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">{post.title}</h1>
+              <h1 className="mb-2 text-[10px] sm:text-xs text-gray-400 font-normal">
+                女性用風俗 日本最大級 ストロベリーボーイズ{slug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | {post.castName}の写メ日記
+              </h1>
+              <h2 className="mb-4 text-2xl font-bold sm:text-3xl lg:text-4xl">{post.title}</h2>
               <Link
                 href={`/store/${slug}/cast/${post.castSlug}`}
                 className="mb-6 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-pink-600"

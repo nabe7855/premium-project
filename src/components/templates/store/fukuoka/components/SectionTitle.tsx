@@ -21,7 +21,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   onUpdateJa,
   onImageUpload,
 }) => (
-  <div className="group relative z-10 mb-8 px-4 text-center md:mb-12">
+  <h2 className="group relative z-10 mb-8 px-4 text-center md:mb-12 flex flex-col items-center">
     {imageUrl ? (
       <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
         <div className="relative h-20 w-full md:h-28">
@@ -45,14 +45,14 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
       </div>
     ) : (
       <>
-        <h2
+        <div
           contentEditable={isEditing}
           suppressContentEditableWarning={isEditing}
           onBlur={(e) => isEditing && onUpdateEn?.(e.currentTarget.innerText)}
           className={`mb-2 font-serif text-2xl tracking-widest text-slate-800 md:text-4xl outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
         >
           {en}
-        </h2>
+        </div>
         {isEditing && (
           <button
             onClick={onImageUpload}
@@ -67,17 +67,17 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
 
     <div className="flex items-center justify-center gap-3">
       <div className="h-[1px] w-6 bg-pink-200 md:w-8"></div>
-      <p
+      <div
         contentEditable={isEditing}
         suppressContentEditableWarning={isEditing}
         onBlur={(e) => isEditing && onUpdateJa?.(e.currentTarget.innerText)}
         className={`font-sans text-[10px] tracking-[0.2em] text-slate-700 md:text-sm outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
       >
         {ja}
-      </p>
+      </div>
       <div className="h-[1px] w-6 bg-pink-200 md:w-8"></div>
     </div>
-  </div>
+  </h2>
 );
 
 export default SectionTitle;
