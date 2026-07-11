@@ -393,7 +393,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           </Link>
 
           {/* Interactive Group: today_card */}
-          <Link href={getAbsoluteHref('/store/{slug}/schedule/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
+          <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
             <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
           </Link>
 

@@ -59,13 +59,10 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       '',
       '/cast-list',
       '/price',
-      '/system',
       '/recruit',
-      '/q-and-a',
       '/diary',
-      '/reviews/reviews',
-      '/schedule/schedule',
-      '/videos',
+      '/reviews',
+      '/schedule',
       '/first-time',
     ];
 

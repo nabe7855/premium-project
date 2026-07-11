@@ -65,6 +65,31 @@ const nextConfig = {
         destination: '/store/tokyo/recruit',
         permanent: true,
       },
+      {
+        source: '/store/:store/reviews/reviews',
+        destination: '/store/:store/reviews',
+        permanent: true,
+      },
+      {
+        source: '/store/:store/schedule/schedule',
+        destination: '/store/:store/schedule',
+        permanent: true,
+      },
+      {
+        source: '/store/:store/diary/diary-list',
+        destination: '/store/:store/diary',
+        permanent: true,
+      },
+      {
+        source: '/store/:store/system',
+        destination: '/store/:store/price',
+        permanent: true,
+      },
+      {
+        source: '/store/:store/videos/videos',
+        destination: '/store/:store/videos',
+        permanent: true,
+      },
     ];
   },
 };

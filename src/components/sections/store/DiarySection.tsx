@@ -140,7 +140,7 @@ export default function DiarySection() {
         </div>
 
         <div className="mt-12 text-center">
-          <Link href={`/store/${storeSlug}/diary/diary-list`}>
+          <Link href={`/store/${storeSlug}/diary`}>
             <Button
               className={`bg-gradient-to-r ${store.theme.gradient} hover:${store.theme.gradientHover} rounded-full px-8 py-3 text-lg font-semibold text-white`}
             >

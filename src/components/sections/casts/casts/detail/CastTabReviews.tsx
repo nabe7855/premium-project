@@ -213,7 +213,7 @@ const CastTabReviewPage: React.FC<CastTabReviewPageProps> = ({ castId, castName,
         {storeSlug && (
           <div className="mt-8 text-center">
             <Link
-              href={`/store/${storeSlug}/reviews/reviews`}
+              href={`/store/${storeSlug}/reviews`}
               className="inline-block rounded-full bg-pink-500 px-6 py-3 text-white font-medium shadow-md hover:bg-pink-600 transition-all"
             >
               📖 口コミ一覧を見る

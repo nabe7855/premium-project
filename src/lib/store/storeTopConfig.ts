@@ -841,7 +841,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       { label: 'ご利用料金', link: '/store/{slug}/price' },
       { label: 'コース', link: '/store/{slug}/price' },
       { label: '口コミ', link: '/store/{slug}/reviews' },
-      { label: '写メ日記', link: '/store/{slug}/diary/diary-list' },
+      { label: '写メ日記', link: '/store/{slug}/diary' },
       { label: '動画', link: '/store/{slug}/videos' },
       { label: 'ホテル', link: '/store/{slug}/hotel' },
       { label: '求人募集', link: '/store/{slug}/Announcement-information/recruit' },
@@ -896,7 +896,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     isBottomNavVisible: true,
     bottomNav: [
       { label: 'ホーム', icon: 'Home', href: '/store/{slug}', color: 'text-slate-600', isVisible: true },
-      { label: '出勤', icon: 'Calendar', href: '/store/{slug}/schedule/schedule', color: 'text-pink-500', isVisible: true },
+      { label: '出勤', icon: 'Calendar', href: '/store/{slug}/schedule', color: 'text-pink-500', isVisible: true },
       { label: '料金', icon: 'Coins', href: '/store/{slug}/price', color: 'text-amber-500', isVisible: true },
       { label: '写メ日記', icon: 'Camera', href: '/store/{slug}/diary', color: 'text-blue-500', isVisible: true },
       { label: '口コミ', icon: 'Star', href: '/store/{slug}/reviews', color: 'text-green-500', isVisible: true },

@@ -118,7 +118,7 @@ const Footer: React.FC<FooterProps> = ({ className = '', hideBottomNav = false }
 
   const items = navItems.length > 0 ? navItems : [
     { id: 'home', label: 'ホーム', icon: Home, href: `/store/${slug}` },
-    { id: 'schedule', label: '出勤', icon: Calendar, href: `/store/${slug}/schedule/schedule` },
+    { id: 'schedule', label: '出勤', icon: Calendar, href: `/store/${slug}/schedule` },
     { id: 'pricing', label: '料金', icon: CreditCard, href: `/store/${slug}/price`, badge: isFirstVisit ? '初' : null },
     { id: 'diary', label: '写メ日記', icon: Camera, href: `/store/${slug}/diary` },
     { id: 'line', label: 'LINE', icon: MessageCircle, href: storeContact.lineUrl },

@@ -153,7 +153,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
         <div>
           <Share2 size={48} className="mx-auto mb-4 text-pink-200" />
           <h2 className="mb-2 text-xl font-bold">記事が見つかりませんでした</h2>
-          <Link href={`/store/${slug}/diary/diary-list`} className="text-pink-500 underline">
+          <Link href={`/store/${slug}/diary`} className="text-pink-500 underline">
             一覧に戻る
           </Link>
         </div>
@@ -175,7 +175,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
           Home
         </Link>
         <span className="mx-1">{'>'}</span>
-        <Link href={`/store/${slug}/diary/diary-list`} className="hover:text-pink-600">
+        <Link href={`/store/${slug}/diary`} className="hover:text-pink-600">
           写メ日記
         </Link>
         <span className="mx-1">{'>'}</span>
@@ -268,7 +268,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
           <div className="rounded-2xl border border-pink-100 bg-white p-6">
             <h3 className="mb-4 font-bold">アクション</h3>
             <Link
-              href={`/store/${slug}/diary/diary-list`}
+              href={`/store/${slug}/diary`}
               className="block w-full rounded-lg bg-pink-50 py-3 text-center text-pink-600"
             >
               全ての日記を見る

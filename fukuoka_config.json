@@ -292,7 +292,7 @@
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/footer_1770470971715.png"
       },
       {
-        "link": "https://premium-project-alpha.vercel.app/store/fukuoka/recruit",
+        "link": "/store/fukuoka/recruit",
         "imageUrl": "/フッターバナー/セラピスト大募集.jpg"
       }
     ],
@@ -319,7 +319,7 @@
         "label": "セラピスト一覧"
       },
       {
-        "link": "https://www.sutoroberrys.jp/store/{slug}/schedule/schedule",
+        "link": "https://www.sutoroberrys.jp/store/{slug}/schedule",
         "label": "出勤スケジュール"
       },
       {
@@ -331,11 +331,11 @@
         "label": "コース"
       },
       {
-        "link": "https://www.sutoroberrys.jp/store/{slug}/reviews/reviews",
+        "link": "https://www.sutoroberrys.jp/store/{slug}/reviews",
         "label": "口コミ"
       },
       {
-        "link": "https://www.sutoroberrys.jp/store/{slug}/diary/diary-list",
+        "link": "https://www.sutoroberrys.jp/store/{slug}/diary",
         "label": "写メ日記"
       },
       {
@@ -368,11 +368,11 @@
     "logoImageUrl": "https://images.unsplash.com/photo-1519735812324-ecb585a06a26?auto=format&fit=crop&q=80&w=1000",
     "smallBanners": [
       {
-        "link": "https://premium-project-alpha.vercel.app/store/fukuoka/contact",
+        "link": "/store/fukuoka/contact",
         "imageUrl": "/フッターバナー/モニター募集.jpg"
       },
       {
-        "link": "https://premium-project-alpha.vercel.app/store/fukuoka/contact",
+        "link": "/store/fukuoka/contact",
         "imageUrl": "/フッターバナー/講師募集.jpg"
       },
       {
@@ -402,7 +402,7 @@
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/header_1770728261056.png"
       },
       {
-        "href": "/store/{slug}/schedule/schedule",
+        "href": "/store/{slug}/schedule",
         "name": "スケジュール",
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/header_1770648552390.png"
       },
@@ -412,12 +412,12 @@
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/header_1770690995678.png"
       },
       {
-        "href": "/store/{slug}/diary/diary-list",
+        "href": "/store/{slug}/diary",
         "name": "写メ日記",
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/header_1770551415855.png"
       },
       {
-        "href": "/store/{slug}/reviews/reviews",
+        "href": "/store/{slug}/reviews",
         "name": "口コミ",
         "imageUrl": "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/object/public/banners/store-top/fukuoka/header_1770618061286.png"
       },
@@ -597,7 +597,7 @@
       {
         "en": "REVIEW",
         "ja": "口コミ",
-        "href": "https://www.sutoroberrys.jp/store/{slug}/reviews/reviews",
+        "href": "https://www.sutoroberrys.jp/store/{slug}/reviews",
         "icon": "MessageCircle"
       },
       {

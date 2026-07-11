@@ -27,23 +27,23 @@ export const primaryNavItems = [
   },
   {
     name: '本日の出勤情報',
-    href: '/schedule/schedule',
+    href: '/schedule',
     icon: Calendar,
   },
   {
     name: '口コミ・レビュー',
-    href: '/reviews/reviews',
+    href: '/reviews',
     icon: MessageCircle,
   },
   {
     name: '写メ日記（更新中）',
-    href: '/diary/diary-list',
+    href: '/diary',
     icon: Image,
     hasUpdate: true,
   },
   {
     name: '動画',
-    href: '/videos/videos',
+    href: '/videos',
     icon: Video,
   },
   {

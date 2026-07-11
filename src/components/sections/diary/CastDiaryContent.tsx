@@ -103,7 +103,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
         <div className="text-center">
           <p className="mb-4 text-gray-600">キャストが見つかりません</p>
           <Link
-            href={`/store/${slug}/diary/diary-list`}
+            href={`/store/${slug}/diary`}
             className="rounded-lg bg-pink-500 px-6 py-2 text-white hover:bg-pink-600"
           >
             日記一覧に戻る
@@ -120,7 +120,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
           Home
         </Link>
         <span className="mx-1 sm:mx-2">{'>'}</span>
-        <Link href={`/store/${slug}/diary/diary-list`} className="hover:text-pink-600">
+        <Link href={`/store/${slug}/diary`} className="hover:text-pink-600">
           写メ日記
         </Link>
         <span className="mx-1 sm:mx-2">{'>'}</span>
@@ -129,7 +129,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
 
       <div className="mb-4 sm:mb-6">
         <Link
-          href={`/store/${slug}/diary/diary-list`}
+          href={`/store/${slug}/diary`}
           className="inline-flex items-center gap-1 text-sm text-gray-600 transition-colors hover:text-pink-600"
         >
           <ArrowLeft size={16} />
@@ -195,7 +195,7 @@ const CastDiaryContent: React.FC<CastDiaryContentProps> = ({ slug, castName }) =
               {decodedCastName}の最初の日記をお待ちください
             </p>
             <Link
-              href={`/store/${slug}/diary/diary-list`}
+              href={`/store/${slug}/diary`}
               className="inline-flex items-center gap-2 rounded-lg bg-pink-500 px-4 py-2 text-white"
             >
               他の日記を見る

@@ -161,7 +161,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
 
         <div className="mt-8 text-center md:mt-12">
           <Link
-            href={`/store/${storeSlug}/diary/diary-list`}
+            href={`/store/${storeSlug}/diary`}
             className="group inline-flex items-center gap-2 rounded-full bg-slate-900 px-8 py-3 text-xs font-bold uppercase tracking-widest text-white transition-all hover:bg-red-500 hover:shadow-lg active:scale-95 sm:px-10 sm:py-4 sm:text-sm"
           >
             <span>Show All Diary</span>
