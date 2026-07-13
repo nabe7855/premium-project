@@ -99,7 +99,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate, on
                   onClick={() => toggleAccordion(item.id)}
                   className="flex w-full items-center justify-between p-5 text-left md:p-6"
                 >
-                  <span
+                  <h3
                     contentEditable={isEditing}
                     suppressContentEditableWarning={isEditing}
                     onBlur={(e) => handleItemUpdate(idx, 'question', e.currentTarget.innerText)}
@@ -107,7 +107,7 @@ const FAQSection: React.FC<FAQSectionProps> = ({ config, isEditing, onUpdate, on
                     className={`text-sm font-bold tracking-wider text-slate-700 outline-none md:text-base ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
                   >
                     {item.question}
-                  </span>
+                  </h3>
                   <ChevronDown
                     className={`text-primary-300 h-5 w-5 transition-transform duration-300 ${
                       isOpen || isEditing ? 'rotate-180' : ''

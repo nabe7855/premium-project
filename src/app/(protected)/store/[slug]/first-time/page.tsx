@@ -76,11 +76,14 @@ export default async function Page({ params }: PageProps) {
       ) : store.template === 'yokohama' ? (
         <YokohamaHeader config={topConfig.header} />
       ) : null}
-      <FirstTimePageContent 
-        slug={slug} 
-        storeName={store.name} 
-        config={firstTimeConfig}
-      />
+      <main className="min-h-screen">
+        <h1 className="sr-only">はじめての方へ</h1>
+        <FirstTimePageContent 
+          slug={slug} 
+          storeName={store.name} 
+          config={firstTimeConfig}
+        />
+      </main>
     </>
   );
 }

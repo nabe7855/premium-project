@@ -53,7 +53,8 @@ export default async function SchedulePage({ params }: { params: { slug: string 
       {/* Header Spacer */}
       <div className="h-[54px] md:h-[65px]" />
 
-      <div className="flex-grow">
+      <main className="flex-grow">
+        <h1 className="sr-only">出勤スケジュール</h1>
         <Suspense
           fallback={
             <div className="flex h-64 items-center justify-center">
@@ -63,7 +64,7 @@ export default async function SchedulePage({ params }: { params: { slug: string 
         >
           <ScheduleContent storeSlug={slug} />
         </Suspense>
-      </div>
+      </main>
 
       {/* Footer */}
       {slug === 'yokohama' && topConfig?.footer && <YokohamaFooter config={topConfig.footer} />}

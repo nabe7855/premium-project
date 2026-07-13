@@ -24,6 +24,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   <h2 className="group relative z-10 mb-8 px-4 text-center md:mb-12 flex flex-col items-center">
     {imageUrl ? (
       <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+        <span className="sr-only">{ja || en}</span>
         <div className="relative h-20 w-full md:h-28">
           <NextImage
             src={imageUrl}

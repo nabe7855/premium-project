@@ -21,9 +21,10 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
   onUpdateJa,
   onImageUpload,
 }) => (
-  <div className="group relative z-10 mb-8 px-4 text-center md:mb-12">
+  <h2 className="group relative z-10 mb-8 px-4 text-center md:mb-12 flex flex-col items-center">
     {imageUrl ? (
       <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+        <span className="sr-only">{ja || en}</span>
         <div className="relative h-20 w-full md:h-28">
           <NextImage
             src={imageUrl}
@@ -36,7 +37,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
         {isEditing && (
           <button
             onClick={onImageUpload}
-            className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-rose-500 text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
+            className="absolute -right-2 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[#E5B5B5] text-white shadow-lg transition-transform hover:scale-110 active:scale-95"
             title="タイトル画像を変更"
           >
             <Camera size={16} />
@@ -45,14 +46,14 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
       </div>
     ) : (
       <>
-        <h2
+        <div
           contentEditable={isEditing}
           suppressContentEditableWarning={isEditing}
           onBlur={(e) => isEditing && onUpdateEn?.(e.currentTarget.innerText)}
           className={`mb-2 font-serif text-2xl tracking-widest text-slate-800 md:text-4xl outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
         >
           {en}
-        </h2>
+        </div>
         {isEditing && (
           <button
             onClick={onImageUpload}
@@ -77,7 +78,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
       </p>
       <div className="h-[1px] w-6 bg-pink-200 md:w-8"></div>
     </div>
-  </div>
+  </h2>
 );
 
 export default SectionTitle;

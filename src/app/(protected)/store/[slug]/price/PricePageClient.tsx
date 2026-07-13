@@ -76,6 +76,7 @@ export default function PricePageClient({ priceConfig, config }: PricePageClient
 
         {/* Main Content Container */}
         <main className="mx-auto max-w-4xl px-4 pt-8">
+          <h1 className="sr-only">料金システム</h1>
           {/* Hero Image */}
           {priceConfig.hero_image_url && (
             <div className="mb-12 overflow-hidden rounded-[2rem] shadow-2xl duration-700 animate-in fade-in">

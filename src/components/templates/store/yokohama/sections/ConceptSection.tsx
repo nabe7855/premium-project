@@ -141,6 +141,7 @@ const ConceptSection: React.FC<ConceptSectionProps> = ({
           >
             {config?.headingImageUrl ? (
               <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
+                <span className="sr-only">{config.heading || 'Concept'}</span>
                 <div className="relative h-20 w-full md:h-28">
                   <NextImage
                     src={getOptimizedImageUrl(config.headingImageUrl, 'content') || config.headingImageUrl}

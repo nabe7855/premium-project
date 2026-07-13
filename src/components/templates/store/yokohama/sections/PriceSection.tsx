@@ -104,8 +104,9 @@ const PriceSection: React.FC<PriceSectionProps> = ({
     <section id="price" className="mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24">
       <div className="flex flex-col items-center text-center">
         <h2
-          className={`flex flex-col items-center text-3xl font-black text-[#642B2B] md:text-5xl ${isEditing ? 'group/heading relative' : ''}`}
+          className={`flex flex-col items-center font-serif text-3xl font-black text-[#642B2B] md:text-5xl ${isEditing ? 'group/heading relative' : ''}`}
         >
+          <span className="sr-only">{config?.heading || '料金プラン'}</span>
           {config?.headingImageUrl ? (
             <div className="relative mx-auto mb-4 flex max-w-[300px] items-center justify-center md:max-w-[400px]">
               <div className="relative h-20 w-full md:h-28">

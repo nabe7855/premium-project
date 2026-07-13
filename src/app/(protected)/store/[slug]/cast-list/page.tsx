@@ -76,8 +76,10 @@ export default async function CastListPage({ params }: Props) {
         <YokohamaHeader config={topConfig.header} />
       ) : null}
 
-      {/* ✅ 本日のおすすめキャスト（カルーセル表示） */}
-      <Hero casts={todayCasts} />
+      <main className="min-h-screen pb-12">
+        <h1 className="sr-only">在籍セラピスト一覧</h1>
+        {/* ✅ 本日のおすすめキャスト（カルーセル表示） */}
+        <Hero casts={todayCasts} />
 
 
       {/* 相性診断ページへの誘導バナー */}
@@ -91,6 +93,7 @@ export default async function CastListPage({ params }: Props) {
           <CastList storeSlug={params.slug} />
         </Suspense>
       </div>
+      </main>
 
       {/* フッター */}
       {store.template === 'yokohama' ? (

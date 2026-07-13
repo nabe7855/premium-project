@@ -42,6 +42,7 @@ export default async function MatchingPage({ params }: Props) {
       ) : null}
 
       <main className="mx-auto max-w-4xl px-4 py-12 pt-24 md:px-0 md:pt-32">
+        <h1 className="sr-only">セラピスト相性診断</h1>
         <DiagnosisSection />
       </main>
 

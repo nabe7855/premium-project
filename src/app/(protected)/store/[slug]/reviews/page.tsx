@@ -71,6 +71,7 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
       {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       <main className="mx-auto max-w-6xl flex-grow px-4 py-8">
+        <h1 className="sr-only">お客様の声・口コミ</h1>
         <Suspense
           fallback={
             <div className="flex h-64 items-center justify-center">
