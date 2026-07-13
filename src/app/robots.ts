@@ -21,7 +21,17 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/', '/_next/'],
+        disallow: [
+          '/admin/',
+          '/api/',
+          '/_next/',
+          '/test',
+          '/store/*/aaaa/',
+          '/age-check/',
+          '/store-select/',
+          '/privacy/',
+          '/terms/'
+        ],
       },
       {
         userAgent: ['GPTBot', 'ClaudeBot', 'PerplexityBot'],

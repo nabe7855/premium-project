@@ -1,9 +1,0 @@
-# *
-User-agent: *
-Allow: /
-
-# Host
-Host: https://premium-project-alpha.vercel.app
-
-# Sitemaps
-Sitemap: https://premium-project-alpha.vercel.app/sitemap.xml
