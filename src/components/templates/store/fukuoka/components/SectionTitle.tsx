@@ -51,6 +51,7 @@ const SectionTitle: React.FC<SectionTitleProps> = ({
           suppressContentEditableWarning={isEditing}
           onBlur={(e) => isEditing && onUpdateEn?.(e.currentTarget.innerText)}
           className={`mb-2 font-serif text-2xl tracking-widest text-slate-800 md:text-4xl outline-none ${isEditing ? 'rounded px-1 hover:bg-neutral-50' : ''}`}
+          aria-hidden="true"
         >
           {en}
         </div>

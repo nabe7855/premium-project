@@ -4,6 +4,7 @@ import Header from '../sections/Header';
 import HeroSection from '../sections/HeroSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
 
 const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
 const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
@@ -64,6 +65,16 @@ export default function FukuokaPage({
           onUpdate={onUpdate}
           onImageUpload={onImageUpload}
           storeSlug={storeSlug}
+        />
+      )}
+
+      {!hideHeader && storeSlug && (
+        <Breadcrumbs
+          items={[
+            { name: 'ホーム', href: '/' },
+            { name: '店舗一覧', href: '/store' },
+            { name: storeSlug === 'fukuoka' ? '福岡店' : storeSlug === 'yokohama' ? '横浜店' : `${storeSlug}店`, href: `/store/${storeSlug}` }
+          ]}
         />
       )}
       

@@ -52,8 +52,14 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const s = STORE_META[params.slug];
   
   if (s) {
-    const title = `${s.city}の女性用風俗・出張ホスト｜ストロベリーボーイズ${s.city}店【${s.area}対応】`;
-    const metaDescription = `${s.city}（${s.area}）で女性用風俗・出張ホストをお探しならストロベリーボーイズ${s.city}店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しを提供します。`;
+    let title = `${s.city}の女性用風俗・出張ホスト｜ストロベリーボーイズ${s.city}店【${s.area}対応】`;
+    let metaDescription = `${s.city}（${s.area}）で女性用風俗・出張ホストをお探しならストロベリーボーイズ${s.city}店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しを提供します。`;
+
+    if (params.slug === 'fukuoka') {
+      title = `福岡・博多の女性用風俗｜ストロベリーボーイズ福岡店`;
+      metaDescription = `福岡（博多・天神・中洲）で女性用風俗・出張ホストをお探しならストロベリーボーイズ福岡店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しをお届け。追加料金なしの明朗会計、初めての方も安心のサポート体制。当日予約OK。`;
+    }
+
     return {
       title: { absolute: title },
       description: metaDescription,
@@ -191,6 +197,25 @@ export default async function StorePage({ params }: StorePageProps) {
     notFound();
   }
 
+  const areaServedData = store.city === '福岡' 
+    ? [
+        { '@type': 'City', name: '福岡市博多区' },
+        { '@type': 'City', name: '福岡市中央区' },
+        { '@type': 'City', name: '福岡市南区' },
+        { '@type': 'City', name: '福岡市早良区' },
+        { '@type': 'City', name: '福岡市東区' },
+        { '@type': 'City', name: '福岡市西区' },
+        { '@type': 'City', name: '福岡市城南区' }
+      ]
+    : store.city === '横浜'
+    ? [
+        { '@type': 'City', name: '横浜市西区' },
+        { '@type': 'City', name: '横浜市中区' },
+        { '@type': 'City', name: '横浜市神奈川区' },
+        { '@type': 'City', name: '横浜市南区' }
+      ]
+    : { '@type': 'City', name: store.city };
+
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
@@ -204,6 +229,7 @@ export default async function StorePage({ params }: StorePageProps) {
       'addressRegion': store.city === '福岡' ? '福岡県' : store.city === '横浜' ? '神奈川県' : '',
       'addressCountry': 'JP',
     },
+    areaServed: areaServedData,
     telephone: '+81-50-5491-3991',
     url: `https://www.sutoroberrys.jp/store/${params.slug}`,
     image: topConfig?.hero?.images?.[0] || store.seo.ogImage,
@@ -224,26 +250,9 @@ export default async function StorePage({ params }: StorePageProps) {
     name: '女性用風俗・女性専用リラクゼーション',
     provider: {
       '@type': 'LocalBusiness',
-      name: topConfig?.footer?.shopInfo?.name || store.name,
+      name: `ストロベリーボーイズ${store.city}店`,
     },
-    areaServed: store.city === '福岡' 
-      ? [
-          { '@type': 'City', name: '福岡市博多区' },
-          { '@type': 'City', name: '福岡市中央区' },
-          { '@type': 'City', name: '福岡市南区' },
-          { '@type': 'City', name: '福岡市早良区' },
-          { '@type': 'City', name: '福岡市東区' },
-          { '@type': 'City', name: '福岡市西区' },
-          { '@type': 'City', name: '福岡市城南区' }
-        ]
-      : store.city === '横浜'
-      ? [
-          { '@type': 'City', name: '横浜市西区' },
-          { '@type': 'City', name: '横浜市中区' },
-          { '@type': 'City', name: '横浜市神奈川区' },
-          { '@type': 'City', name: '横浜市南区' }
-        ]
-      : { '@type': 'City', name: store.city },
+    areaServed: areaServedData,
     serviceType: '女性用風俗・出張リラクゼーション',
   };
 

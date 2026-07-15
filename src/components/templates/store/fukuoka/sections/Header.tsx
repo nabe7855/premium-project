@@ -394,12 +394,12 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
 
           {/* Interactive Group: today_card */}
           <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
-            <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
           </Link>
 
           {/* Interactive Group: menu_card */}
           <button onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }} className="absolute z-20 outline-none transition-transform hover:scale-[1.05] block" style={{ left: '86.307%', top: '20.690%', width: '10.881%', height: '49.379%' }}>
-            <img src="/images/store/fukuoka/new-header/19_menu_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="" />
+            <img src="/images/store/fukuoka/new-header/19_menu_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 料金メニュー" />
           </button>
 
           {/* Interactive Group: cta_left (Hitbox only) */}

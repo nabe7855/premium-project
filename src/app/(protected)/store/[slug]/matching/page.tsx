@@ -14,11 +14,29 @@ interface Props {
   params: { slug: string };
 }
 
+import { STORE_META } from '@/lib/store/storeMeta';
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const store = getStoreData(params.slug);
+  const store = STORE_META[params.slug];
+  const title = `キャスト相性診断｜${store?.city || ''}の女性用風俗｜ストロベリーボーイズ${store?.city || ''}店`;
+  const description = `${store?.city || ''}（${store?.area || ''}）の女性用風俗「ストロベリーボーイズ${store?.city || ''}店」のイケメンセラピスト相性診断。あなたにぴったりのキャストを、簡単な質問に答えるだけでご提案します。`;
+
   return {
-    title: `${store?.name || params.slug} - キャスト相性診断 | Strawberry Boys`,
-    description: `あなたにぴったりのキャストを診断。3つの質問に答えるだけで相性抜群のキャストをご提案します。`,
+    title,
+    description,
+    alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}/matching` },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.sutoroberrys.jp/store/${params.slug}/matching`,
+      images: [{ url: `/ogp/store-${params.slug}.png`, width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: [`/ogp/store-${params.slug}.png`]
+    }
   };
 }
 

@@ -19,6 +19,8 @@ import { TestimonialSection } from '@/components/sections/TestimonialSection';
 import { Store } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import Footer from '../../fukuoka/sections/Footer';
+import Breadcrumbs from '@/components/common/Breadcrumbs';
+
 interface CommonStorePageProps {
   store: Store;
   todayCasts: TodayCast[];
@@ -59,6 +61,15 @@ export default function CommonStorePage({
       )}
       <main>
         <HeroSection />
+        
+        <Breadcrumbs
+          items={[
+            { name: 'ホーム', href: '/' },
+            { name: '店舗一覧', href: '/store' },
+            { name: store?.city ? `${store.city}店` : '店舗', href: `/store/${store?.slug}` }
+          ]}
+        />
+
         <TestimonialSection />
         <BannerSlideSection />
         <CastSliderSection casts={todayCasts} storeSlug={store.slug} />
