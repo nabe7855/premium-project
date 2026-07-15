@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import ReactMarkdown from 'react-markdown';
 
 interface RecruitAnalyticsProps {
@@ -22,10 +23,34 @@ interface RecruitAnalyticsProps {
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
+const STATUS_COLORS: Record<string, string> = {
+  new: 'bg-blue-500/10 text-blue-500 border-blue-500/20',
+  contacted: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
+  interviewing: 'bg-purple-500/10 text-purple-500 border-purple-500/20',
+  hired: 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20',
+  rejected: 'bg-rose-500/10 text-rose-500 border-rose-500/20',
+  pending: 'bg-slate-500/10 text-slate-500 border-slate-500/20',
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  new: '未対応',
+  contacted: '連絡済',
+  interviewing: '面接中',
+  hired: '採用',
+  rejected: '不採用',
+  pending: '保留',
+};
+
+const formatDate = (dateString: string) => {
+  const d = new Date(dateString);
+  return `${d.getFullYear()}/${(d.getMonth() + 1).toString().padStart(2, '0')}/${d.getDate().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
+};
+
 export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps) {
   const [period, setPeriod] = useState<'month' | 'quarter' | 'year' | 'all'>('month');
   const [aiReport, setAiReport] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [selectedSource, setSelectedSource] = useState<string | null>(null);
 
   // 1. Data Processing
   const stats = useMemo(() => {
@@ -121,6 +146,24 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
       generateAIReport();
     }
   }, [stats.totalCount]);
+
+  // 3. Source Applicants Filtering
+  const sourceApplicants = useMemo(() => {
+    if (!selectedSource) return [];
+    return applications.filter(app => {
+      let source = '直接入力 / 不明';
+      if (app.details?.attribution?.utm_source) {
+        source = app.details.attribution.utm_source;
+      } else if (app.details?.attribution?.referrer) {
+        try {
+          source = new URL(app.details.attribution.referrer).hostname;
+        } catch (e) {
+          source = app.details.attribution.referrer;
+        }
+      }
+      return source === selectedSource;
+    }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  }, [applications, selectedSource]);
 
   return (
     <div className="space-y-6">
@@ -238,7 +281,11 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
               <CardContent className="p-0">
                 <div className="divide-y divide-slate-800/50">
                   {stats.sources.map((s, idx) => (
-                    <div key={s.name} className="flex items-center justify-between p-3.5 px-5 hover:bg-white/5 transition-colors">
+                    <div 
+                      key={s.name} 
+                      onClick={() => setSelectedSource(s.name)}
+                      className="flex items-center justify-between p-3.5 px-5 hover:bg-white/5 transition-colors cursor-pointer"
+                    >
                       <div className="flex items-center gap-3 min-w-0">
                         <span className="text-[10px] text-slate-600 font-bold tabular-nums w-4">#{idx + 1}</span>
                         <p className="text-xs text-slate-200 font-bold truncate">{s.name}</p>
@@ -364,6 +411,56 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
           </Card>
         </div>
       </div>
+
+      {/* Source Applicants Dialog */}
+      <Dialog open={!!selectedSource} onOpenChange={(open) => !open && setSelectedSource(null)}>
+        <DialogContent className="sm:max-w-3xl bg-slate-900 border-slate-800 text-slate-100 h-[80vh] flex flex-col overflow-hidden p-0">
+          <DialogHeader className="p-6 border-b border-slate-800 shrink-0">
+            <DialogTitle className="text-xl font-black text-white flex items-center gap-2">
+              <MousePointer2 className="text-blue-500" size={20} />
+              「{selectedSource}」からの応募者
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex-1 overflow-y-auto p-6">
+            <div className="space-y-3">
+              {sourceApplicants.map((app) => (
+                <a 
+                  key={app.id}
+                  href={`/admin/interview-reservations?id=${app.id}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex flex-col sm:flex-row sm:items-center gap-4 p-4 rounded-xl border border-slate-800 bg-slate-950/50 hover:bg-slate-800 hover:border-slate-700 transition-all group"
+                >
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-sm font-bold text-slate-200 truncate">{app.name || '名前なし'}</span>
+                      <span className="text-[10px] text-slate-500 font-mono">{formatDate(app.createdAt)}</span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge variant="outline" className={`text-[10px] px-2 py-0 h-5 border ${STATUS_COLORS[app.status] || STATUS_COLORS.new}`}>
+                        {STATUS_LABELS[app.status] || '未対応'}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] bg-slate-800/50 text-slate-400 border-slate-700/50 px-2 py-0 h-5">
+                        {app.type === 'chatbot' ? '🤖 チャットボット' : app.type === 'quick' ? '⚡ 簡易応募' : app.type === 'fullmodal' ? '📝 簡易WEB応募' : '📝 本応募'}
+                      </Badge>
+                      <Badge variant="outline" className="text-[10px] bg-blue-900/20 text-blue-400 border-blue-900/50 px-2 py-0 h-5">
+                        {app.store === 'fukuoka' ? '福岡店' : app.store === 'yokohama' ? '横浜店' : app.store}
+                      </Badge>
+                    </div>
+                  </div>
+                  <div className="shrink-0 flex items-center gap-2">
+                    <span className="text-xs text-blue-400 font-bold opacity-0 group-hover:opacity-100 transition-opacity">詳細を見る</span>
+                    <ChevronRight size={16} className="text-slate-600 group-hover:text-blue-400 transition-colors" />
+                  </div>
+                </a>
+              ))}
+              {sourceApplicants.length === 0 && (
+                <div className="text-center py-12 text-slate-500">応募データがありません</div>
+              )}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
