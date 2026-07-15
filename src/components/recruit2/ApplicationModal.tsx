@@ -2,6 +2,7 @@
 
 import { submitRecruitApplication } from '@/actions/recruit';
 import { resizeImage } from '@/lib/image-utils';
+import { getAttributionData } from '@/lib/attribution';
 import { AnimatePresence, motion } from 'framer-motion';
 import React, { useState } from 'react';
 
@@ -64,6 +65,12 @@ const ApplicationModal: React.FC<ApplicationModalProps> = ({
       dataToSend.append('type', 'fullmodal');
       if (storeName) {
         dataToSend.append('store', storeSlug || storeName || '不明');
+      }
+
+      // アトリビューションデータの付与 (Stealth)
+      const attribution = getAttributionData();
+      if (attribution) {
+        dataToSend.append('attribution', JSON.stringify(attribution));
       }
 
       // 1. Resizing Images

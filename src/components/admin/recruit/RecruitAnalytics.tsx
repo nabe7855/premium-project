@@ -48,8 +48,17 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
     const timeSeriesMap: Record<string, number> = {};
 
     filtered.forEach(app => {
-      // Source / Referrer
-      const source = app.details?.source || (app.details?.attribution?.referrer ? new URL(app.details.attribution.referrer).hostname : '直接入力 / 不明');
+      // Source / Referrer (System detected)
+      let source = '直接入力 / 不明';
+      if (app.details?.attribution?.utm_source) {
+        source = app.details.attribution.utm_source;
+      } else if (app.details?.attribution?.referrer) {
+        try {
+          source = new URL(app.details.attribution.referrer).hostname;
+        } catch (e) {
+          source = app.details.attribution.referrer;
+        }
+      }
       sourceMap[source] = (sourceMap[source] || 0) + 1;
 
       // Status
@@ -223,7 +232,7 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
             <Card className="bg-slate-900/50 border-slate-800 shadow-xl overflow-hidden">
               <CardHeader className="bg-slate-950/50 border-b border-slate-800 py-3">
                 <CardTitle className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2">
-                  <MousePointer2 size={14} className="text-blue-500" /> 流入元分析（分析表）
+                  <MousePointer2 size={14} className="text-blue-500" /> システム検出の流入元分析
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0">
