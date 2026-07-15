@@ -150,7 +150,17 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
   // 3. Source Applicants Filtering
   const sourceApplicants = useMemo(() => {
     if (!selectedSource) return [];
-    return applications.filter(app => {
+
+    const now = new Date();
+    const periodFiltered = applications.filter(app => {
+      const date = new Date(app.createdAt);
+      if (period === 'month') return (now.getTime() - date.getTime()) < 30 * 24 * 60 * 60 * 1000;
+      if (period === 'quarter') return (now.getTime() - date.getTime()) < 90 * 24 * 60 * 60 * 1000;
+      if (period === 'year') return (now.getTime() - date.getTime()) < 365 * 24 * 60 * 60 * 1000;
+      return true;
+    });
+
+    return periodFiltered.filter(app => {
       let source = '直接入力 / 不明';
       if (app.details?.attribution?.utm_source) {
         source = app.details.attribution.utm_source;
@@ -163,7 +173,7 @@ export default function RecruitAnalytics({ applications }: RecruitAnalyticsProps
       }
       return source === selectedSource;
     }).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
-  }, [applications, selectedSource]);
+  }, [applications, selectedSource, period]);
 
   return (
     <div className="space-y-6">
