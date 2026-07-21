@@ -82,9 +82,28 @@ export default function DashboardHome({
                 <textarea
                   value={tweetContent}
                   onChange={(e) => setTweetContent(e.target.value)}
-                  placeholder="今日は○○に行きました！とても楽しかったです ✨"
-                  className="min-h-[120px] w-full resize-none rounded-xl border-2 border-gray-100 bg-gray-50/50 p-4 pr-16 text-gray-700 outline-none transition-all focus:border-pink-300 focus:bg-white focus:ring-4 focus:ring-pink-500/5"
+                  maxLength={30}
+                  placeholder="今日も元気に頑張ります✨"
+                  className={`min-h-[120px] w-full resize-none rounded-xl border-2 bg-gray-50/50 p-4 pb-12 pr-16 text-gray-700 outline-none transition-all focus:bg-white focus:ring-4 ${
+                    tweetContent.length >= 30
+                      ? 'border-rose-400 focus:border-rose-400 focus:ring-rose-500/10'
+                      : 'border-gray-100 focus:border-pink-300 focus:ring-pink-500/5'
+                  }`}
                 />
+                
+                {/* Character Counter */}
+                <div className="absolute bottom-6 left-4 flex items-center gap-1">
+                  <span
+                    className={`text-xs font-bold ${
+                      tweetContent.length >= 30 ? 'text-rose-500' : 'text-gray-400'
+                    }`}
+                  >
+                    {tweetContent.length}
+                  </span>
+                  <span className="text-xs text-gray-300">/</span>
+                  <span className="text-xs text-gray-400">30</span>
+                </div>
+
                 <button
                   type="submit"
                   disabled={!tweetContent.trim()}
