@@ -103,7 +103,7 @@ export function normalizeCast(
     // ステータス
     isActive: cast.is_active ?? false,
     snsUrl: cast.sns_url ?? undefined,
-    sexinessLevel: cast.sexiness_level ? cast.sexiness_level * 20 : 60,
+    sexinessLevel: cast.sexiness_level ? (cast.sexiness_level <= 5 ? cast.sexiness_level * 20 : cast.sexiness_level) : 60,
     statuses: castStatuses,
 
     // 特徴カテゴリ

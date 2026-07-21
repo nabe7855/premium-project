@@ -149,7 +149,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     animalId: cast.animal_id ?? undefined,
     faceId: cast.face_id ?? undefined,
     catchCopy: cast.catch_copy ?? undefined,
-    sexinessLevel: cast.sexiness_level ? cast.sexiness_level * 20 : undefined,
+    sexinessLevel: cast.sexiness_level ? (cast.sexiness_level <= 5 ? cast.sexiness_level * 20 : cast.sexiness_level) : undefined,
     bloodType: cast.blood_type ?? undefined,
     managerComment: cast.manager_comment ?? undefined,
     slug: cast.slug,

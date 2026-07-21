@@ -56,6 +56,9 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
     } as Status, // ✅ null を許容しないようにキャスト
   }));
 
+  const computedSexinessLevel = data.sexiness_level ? (data.sexiness_level <= 5 ? data.sexiness_level * 20 : data.sexiness_level) : 60;
+  const sexinessStrawberryCount = Math.max(1, Math.min(5, Math.round(computedSexinessLevel / 20)));
+
   return {
     id: data.id,
     slug: data.slug,
@@ -71,8 +74,8 @@ export async function getCastBySlug(castSlug: string): Promise<Cast | null> {
     faceType: data.face ? [(data.face as any).name] : [],
 
     statuses, // CastStatus[]
-    sexinessLevel: data.sexiness_level ?? 3,
-    sexinessStrawberry: '🍓'.repeat(data.sexiness_level ?? 3),
+    sexinessLevel: computedSexinessLevel,
+    sexinessStrawberry: '🍓'.repeat(sexinessStrawberryCount),
     voiceUrl: data.voice_url ?? undefined,
   };
 }

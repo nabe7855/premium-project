@@ -152,6 +152,9 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
       ? Number((castReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount).toFixed(1)) 
       : 0;
 
+    const computedSexinessLevel = cast.sexiness_level ? (cast.sexiness_level <= 5 ? cast.sexiness_level * 20 : cast.sexiness_level) : 60;
+    const sexinessStrawberryCount = Math.max(1, Math.min(5, Math.round(computedSexinessLevel / 20)));
+
     const mapped: TodayCast = {
       id: castId,
       name: cast.name,
@@ -168,8 +171,8 @@ export const getTodayCastsByStore = cache(async function getTodayCastsByStore(
         .filter(Boolean),
       rating: rating,
       review_count: reviewCount,
-      sexiness_strawberry: '🍓'.repeat(Math.max(1, Math.min(5, cast.sexiness_level || 3))),
-      sexiness_level: (cast.sexiness_level || 3) * 20,
+      sexiness_strawberry: '🍓'.repeat(sexinessStrawberryCount),
+      sexiness_level: computedSexinessLevel,
       mbti_name: Array.isArray(cast.mbti) ? cast.mbti[0]?.name : cast.mbti?.name,
       face_name: Array.isArray(cast.face) ? cast.face[0]?.name : cast.face?.name,
       start_datetime: item.start_datetime,

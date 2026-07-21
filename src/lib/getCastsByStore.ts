@@ -207,6 +207,9 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
             )
           : 0;
 
+      const computedSexinessLevel = cast.sexiness_level ? (cast.sexiness_level <= 5 ? cast.sexiness_level * 20 : cast.sexiness_level) : 60;
+      const sexinessStrawberryCount = Math.max(1, Math.min(5, Math.round(computedSexinessLevel / 20)));
+
       const mapped: Cast = {
         id: cast.id,
         slug: cast.slug,
@@ -228,8 +231,8 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
             ? [cast.face.name]
             : [],
         statuses,
-        sexinessLevel: (cast.sexiness_level ?? 3) * 20,
-        sexinessStrawberry: '🍓'.repeat(cast.sexiness_level ?? 3),
+        sexinessLevel: computedSexinessLevel,
+        sexinessStrawberry: '🍓'.repeat(sexinessStrawberryCount),
         voiceUrl: cast.voice_url ?? undefined,
         latestTweet: tweetsMap[cast.id]?.content ?? null,
         latestTweetAt: tweetsMap[cast.id]?.createdAt ?? null,

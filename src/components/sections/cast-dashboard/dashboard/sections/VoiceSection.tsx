@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, Upload } from 'lucide-react';
+import { Mic, Upload, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { CastProfile } from '@/types/cast';
 
@@ -70,6 +70,46 @@ export default function VoiceSection({ cast, setCastState, activeTab }: VoiceSec
     alert('音声を更新しました');
   };
 
+  // 🗑️ 削除処理
+  const handleDeleteVoice = async () => {
+    if (!window.confirm('音声データを削除してもよろしいですか？')) return;
+    setUploading(true);
+
+    // ストレージから確実に削除するため、現在の voiceUrl からファイルパスを抽出
+    if (voiceUrl) {
+      try {
+        const urlParts = voiceUrl.split('/cast-voices/');
+        if (urlParts.length > 1) {
+          const filePath = urlParts[urlParts.length - 1].split('?')[0]; // クエリパラメータがあれば除去
+          await supabase.storage.from('cast-voices').remove([decodeURIComponent(filePath)]);
+        } else {
+          await supabase.storage.from('cast-voices').remove([`voice-${cast.id}.webm`]);
+        }
+      } catch (err) {
+        console.error('Failed to delete from storage:', err);
+      }
+    } else {
+      await supabase.storage.from('cast-voices').remove([`voice-${cast.id}.webm`]);
+    }
+
+    // DB側のURLをクリア
+    const { error } = await supabase.from('casts').update({ voice_url: null }).eq('id', cast.id);
+
+    
+    if (error) {
+      console.error(error);
+      alert('削除に失敗しました');
+      setUploading(false);
+      return;
+    }
+
+    setVoiceUrl(null);
+    setCastState((prev) => ({ ...prev, voiceUrl: undefined }));
+    setUploading(false);
+    alert('音声データを削除しました');
+  };
+
+
   // 🎤 録音開始
   const startRecording = async () => {
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -117,9 +157,17 @@ export default function VoiceSection({ cast, setCastState, activeTab }: VoiceSec
 
       {/* 現在の音声データ */}
       {voiceUrl ? (
-        <div className="space-y-2">
+        <div className="space-y-3">
           <p className="text-green-600 font-medium">✅ 現在の音声データがあります</p>
           <audio key={voiceUrl} controls src={voiceUrl} className="w-full" />
+          <button
+            onClick={handleDeleteVoice}
+            disabled={uploading}
+            className="flex w-full items-center justify-center rounded-md border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-600 shadow-sm transition-colors hover:bg-red-100 disabled:opacity-50"
+          >
+            <Trash2 className="mr-2 h-4 w-4" />
+            音声データを削除する
+          </button>
         </div>
       ) : (
         <p className="text-gray-500">❌ まだ音声データは保存されていません</p>
