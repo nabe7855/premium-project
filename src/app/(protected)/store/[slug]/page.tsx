@@ -70,7 +70,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
         description: metaDescription,
         url: `https://www.sutoroberrys.jp/store/${params.slug}`,
         siteName: "ストロベリーボーイズ",
-        images: [{ url: `/ogp/store-${params.slug}.png`, width: 1200, height: 630, alt: shopName }],
+        images: [{ url: ogImage || `/images/store-logo.png`, width: 1200, height: 630, alt: shopName }],
         locale: "ja_JP", 
         type: "website",
       },
@@ -78,7 +78,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
         card: "summary_large_image", 
         title, 
         description: metaDescription, 
-        images: [`/ogp/store-${params.slug}.png`] 
+        images: [ogImage || `/images/store-logo.png`] 
       },
     };
   }
