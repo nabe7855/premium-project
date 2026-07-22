@@ -257,7 +257,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     return (
       <div
         key={item.href}
-        className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pt-4 pb-12 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+        className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pt-6 pb-10 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
         style={{
           backgroundImage: 'url("/ハンバーガーメニュー背景.png")',
           backgroundSize: '100% 100%',
@@ -265,7 +265,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         }}
       >
         <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center pl-2" aria-label={`${item.name}ページへ`}>
-          <div className="relative mb-2 h-24 w-24 flex-shrink-0 transition-transform group-hover:scale-105">
+          <div className="relative mb-2 h-20 w-20 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage 
                 src={item.imageUrl} 
