@@ -258,7 +258,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
     return (
       <div
         key={item.href}
-        className="group relative flex flex-col items-center justify-center gap-2 rounded-[40px] bg-transparent px-2 py-8 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+        className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pt-5 pb-10 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
         style={{
           backgroundImage: 'url("/ハンバーガーメニュー背景.png")',
           backgroundSize: '100% 100%',
@@ -270,7 +270,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           onClick={closeMenu}
           className="flex w-full flex-col items-center"
         >
-          <div className="relative mb-4 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
+          <div className="relative mb-0 h-24 w-24 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage
                 src={getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'thumb') || getAbsoluteHref(item.imageUrl)}
@@ -299,7 +299,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             )}
           </div>
           <span
-            className="px-2 text-center text-[15px] font-bold tracking-wider text-[#4A4A4A] outline-none"
+            className="z-10 -mt-4 px-1 text-center text-[12.5px] font-bold leading-tight tracking-wider text-[#4A4A4A] outline-none"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => {
@@ -309,7 +309,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               onUpdate?.('header', 'navLinks', newLinks);
             }}
           >
-            {item.name}
+            {item.name === 'ニュース・イベント・お知らせ' ? (
+              <span className="flex flex-col leading-tight">
+                <span>ニュース・イベント</span>
+                <span>お知らせ</span>
+              </span>
+            ) : (
+              item.name
+            )}
           </span>
         </Link>
       </div>
