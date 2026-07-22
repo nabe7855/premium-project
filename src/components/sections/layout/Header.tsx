@@ -265,7 +265,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         }}
       >
         <Link href={item.href} onClick={closeMenu} className="flex w-full flex-col items-center pl-2" aria-label={`${item.name}ページへ`}>
-          <div className="relative mb-0 h-28 w-28 flex-shrink-0 transition-transform group-hover:scale-105">
+          <div className="relative mb-0 h-24 w-24 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage 
                 src={item.imageUrl} 
@@ -293,7 +293,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             )}
           </div>
           <span
-            className="px-1 text-center text-[13.5px] font-bold leading-tight tracking-wider text-[#4A4A4A] outline-none"
+            className="z-10 -mt-4 px-1 text-center text-[12.5px] font-bold leading-tight tracking-wider text-[#4A4A4A] outline-none"
             contentEditable={isEditing}
             suppressContentEditableWarning={isEditing}
             onBlur={(e) => {
@@ -303,7 +303,14 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
               onUpdate?.('header', 'navLinks', newLinks);
             }}
           >
-            {item.name}
+            {item.name === 'ニュース・イベント・お知らせ' ? (
+              <span className="flex flex-col leading-tight">
+                <span>ニュース・イベント</span>
+                <span>お知らせ</span>
+              </span>
+            ) : (
+              item.name
+            )}
           </span>
         </Link>
       </div>
