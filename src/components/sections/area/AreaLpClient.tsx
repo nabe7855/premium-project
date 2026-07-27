@@ -153,52 +153,67 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
           <div className="text-center mb-10">
             <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">DISPATCH HOTEL GUIDE</span>
             <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl mt-1">
-              {areaInfo.name}エリアで出張セラピー（女性用風俗）が利用できる安心おすすめホテル
+              {areaInfo.name}エリアで女性用風俗・女風セラピストを呼べるおすすめホテル
             </h2>
             <p className="text-xs text-gray-500 mt-2 max-w-xl mx-auto">
-              ストロベリーボーイズ{areaInfo.cityName}店のご指定出張先として利用可能なホテル一覧です。完全個室で安全・快適に女性用風俗サービスをお楽しみいただけます。
+              ストロベリーボーイズ{areaInfo.cityName}店のご指定出張先として人気のおすすめホテル一覧です。お気に入りのセラピストと特別な時間をお楽しみいただけます。
             </p>
           </div>
 
           {/* DB連動ホテルカード (スマホ横スワイプ & レスポンシブグリッド) */}
           {hotels && hotels.length > 0 ? (
             <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
-              {hotels.map((hotel: any, idx: number) => (
-                <div
-                  key={hotel.id || idx}
-                  className="w-[82vw] shrink-0 snap-center rounded-2xl border border-rose-100 bg-white p-4 shadow-sm hover:border-rose-300 md:w-auto md:shrink"
-                >
-                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 mb-3">
-                    <img
-                      src={
-                        hotel.imageUrl ||
-                        hotel.images?.[0] ||
-                        'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
-                      }
-                      alt={`${hotel.name} - ${areaInfo.name}出張風俗利用可能ホテル`}
-                      className="h-full w-full object-cover"
-                    />
-                    <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                      風俗出張利用OK
-                    </span>
+              {hotels.map((hotel: any, idx: number) => {
+                // ホテルごとに異なる魅力的なバッジ・タグのバリエーションパターン
+                const tagPatterns = [
+                  { badge: '女子人気NO.1', tags: ['＃博多駅近く', '＃ラグジュアリー内装', '＃風俗利用OK'] },
+                  { badge: 'デザイナーズ個室', tags: ['＃雰囲気重視', '＃静音プライベート', '＃出張実績多数'] },
+                  { badge: 'アクセス抜群', tags: ['＃駅徒歩圏内', '＃きれいめ客室', '＃女性安心'] },
+                  { badge: '隠れ家ホテル', tags: ['＃完全個室', '＃秘密厳守', '＃出張ホスト推奨'] },
+                  { badge: '最高級スイート', tags: ['＃ジャグジー完備', '＃特別空間', '＃女風利用可'] },
+                ];
+                const currentPattern = tagPatterns[idx % tagPatterns.length];
+
+                return (
+                  <div
+                    key={hotel.id || idx}
+                    className="w-[82vw] shrink-0 snap-center rounded-2xl border border-rose-100 bg-white p-4 shadow-sm hover:border-rose-300 md:w-auto md:shrink"
+                  >
+                    <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 mb-3">
+                      <img
+                        src={
+                          hotel.imageUrl ||
+                          hotel.images?.[0] ||
+                          'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
+                        }
+                        alt={`${hotel.name} - ${areaInfo.name}女性用風俗・女風対応ホテル`}
+                        className="h-full w-full object-cover"
+                      />
+                      <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
+                        {currentPattern.badge}
+                      </span>
+                    </div>
+                    <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{hotel.name}</h3>
+                    <p className="text-[11px] text-gray-500 line-clamp-2 mb-3">
+                      {hotel.address || `${areaInfo.cityName}${areaInfo.name}周辺`}
+                    </p>
+                    <div className="flex flex-wrap gap-1">
+                      {currentPattern.tags.map((t, tIdx) => (
+                        <span
+                          key={tIdx}
+                          className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${
+                            tIdx === 0
+                              ? 'bg-rose-50 text-rose-600 border border-rose-200'
+                              : 'bg-slate-100 text-slate-600'
+                          }`}
+                        >
+                          {t}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                  <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{hotel.name}</h3>
-                  <p className="text-[11px] text-gray-500 line-clamp-2 mb-3">
-                    {hotel.address || `${areaInfo.cityName}${areaInfo.name}周辺`}
-                  </p>
-                  <div className="flex flex-wrap gap-1">
-                    <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-600">
-                      ＃出張風俗利用可
-                    </span>
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
-                      ＃秘密厳守
-                    </span>
-                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
-                      ＃完全個室
-                    </span>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
