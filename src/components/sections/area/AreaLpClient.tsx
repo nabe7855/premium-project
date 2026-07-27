@@ -21,9 +21,10 @@ interface AreaLpClientProps {
   areaInfo: AreaDetailInfo;
   casts: Cast[];
   storeSlug: string;
+  hotels?: any[];
 }
 
-export default function AreaLpClient({ areaInfo, casts, storeSlug }: AreaLpClientProps) {
+export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }: AreaLpClientProps) {
   return (
     <div className="min-h-screen bg-slate-50 text-neutral-800">
       {/* ヒーローセクション */}
@@ -148,29 +149,73 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug }: AreaLpClien
 
       {/* おすすめ出張エリア・ホテル案内 */}
       <section className="py-12 bg-white sm:py-16">
-        <div className="mx-auto max-w-4xl px-4 sm:px-6">
-          <div className="rounded-3xl border border-rose-100 bg-gradient-to-br from-rose-50 to-pink-50/50 p-6 sm:p-10 shadow-sm">
-            <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <CheckCircle2 className="h-6 w-6 text-rose-500" />
-              <span>{areaInfo.name}エリアの主な出張対応スポット・ホテル</span>
-            </h3>
-            <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-              {areaInfo.description}
+        <div className="mx-auto max-w-6xl px-4 sm:px-6">
+          <div className="text-center mb-10">
+            <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">LOVE HOTELS & SUITES</span>
+            <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl mt-1">
+              {areaInfo.name}出張対応！おすすめホテル・ラブホテル
+            </h2>
+            <p className="text-xs text-gray-500 mt-2">
+              セラピストの出張派遣実績多数。完全個室・安心のおすすめホテル一覧です。
             </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              {areaInfo.recommendedHotels.map((hotel, idx) => (
-                <div key={idx} className="flex items-center gap-2 rounded-xl bg-white p-3 text-xs font-bold text-gray-700 shadow-sm border border-rose-100">
-                  <Hotel className="h-4 w-4 text-rose-400 shrink-0" />
-                  <span>{hotel}</span>
+          </div>
+
+          {/* DB連動ホテルカード (スマホ横スワイプ & レスポンシブグリッド) */}
+          {hotels && hotels.length > 0 ? (
+            <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+              {hotels.map((hotel: any, idx: number) => (
+                <div
+                  key={hotel.id || idx}
+                  className="w-[82vw] shrink-0 snap-center rounded-2xl border border-rose-100 bg-white p-4 shadow-sm hover:border-rose-300 md:w-auto md:shrink"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 mb-3">
+                    <img
+                      src={
+                        hotel.imageUrl ||
+                        hotel.images?.[0] ||
+                        'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
+                      }
+                      alt={hotel.name}
+                      className="h-full w-full object-cover"
+                    />
+                    <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
+                      出張対応実績あり
+                    </span>
+                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{hotel.name}</h3>
+                  <p className="text-[11px] text-gray-500 line-clamp-2 mb-3">
+                    {hotel.address || `${areaInfo.cityName}${areaInfo.name}周辺`}
+                  </p>
+                  <div className="flex flex-wrap gap-1">
+                    <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-600">
+                      ＃女子ウケ
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
+                      ＃秘密厳守
+                    </span>
+                    <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
+                      ＃個室対応
+                    </span>
+                  </div>
                 </div>
               ))}
             </div>
-          </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+              {areaInfo.recommendedHotels.map((hotel, idx) => (
+                <div key={idx} className="flex items-center gap-2 rounded-xl bg-white p-4 text-xs font-bold text-gray-700 shadow-sm border border-rose-100">
+                  <Hotel className="h-4 w-4 text-rose-400 shrink-0" />
+                  <span>{hotel}</span>
+                  <span className="ml-auto text-[10px] text-rose-500 font-normal">出張可</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
-      {/* エリア特化FAQ */}
-      <section className="py-12 bg-slate-50 sm:py-16">
+      {/* エリア特化FAQ (最下部パディング pb-28 で追従予約ボタン被り回避) */}
+      <section className="py-12 bg-slate-50 pb-28 sm:py-16 sm:pb-32">
         <div className="mx-auto max-w-4xl px-4 sm:px-6">
           <div className="text-center mb-10">
             <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl">

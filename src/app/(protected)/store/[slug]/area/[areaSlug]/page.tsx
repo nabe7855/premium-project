@@ -148,6 +148,13 @@ export function generateStaticParams() {
   }));
 }
 
+import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
+
+const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> = {
+  fukuoka: { prefectureId: 'Fukuoka' },
+  yokohama: { prefectureId: 'Kanagawa', cityId: 'Yokohama-shi' },
+};
+
 export default async function AreaLPPage({ params }: AreaPageProps) {
   const key = `${params.slug}-${params.areaSlug}`;
   const areaInfo = AREA_MAP[key];
@@ -156,13 +163,17 @@ export default async function AreaLPPage({ params }: AreaPageProps) {
     notFound();
   }
 
-  // 並列フェッチ
-  const [casts, topConfigResult] = await Promise.all([
+  const loc = STORE_LOCATION[params.slug] || { prefectureId: 'Fukuoka' };
+
+  // 並列フェッチ (キャスト、設定、エリア対応ホテル)
+  const [casts, topConfigResult, dbHotels] = await Promise.all([
     getCastsByStore(params.slug),
     getStoreTopConfig(params.slug, { skipCasts: true }),
+    getHotels({ prefectureId: loc.prefectureId, cityId: loc.cityId }),
   ]);
 
   const topConfig = topConfigResult.success ? (topConfigResult.config as StoreTopPageConfig) : null;
+  const hotels = (dbHotels || []).map(mapDbHotelToHotel);
 
   // JSON-LD (FAQ & Service)
   const structuredData = {
@@ -193,7 +204,7 @@ export default async function AreaLPPage({ params }: AreaPageProps) {
       {params.slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       <main className="min-h-screen">
-        <AreaLpClient areaInfo={areaInfo} casts={casts} storeSlug={params.slug} />
+        <AreaLpClient areaInfo={areaInfo} casts={casts} hotels={hotels} storeSlug={params.slug} />
       </main>
 
       {/* フッター */}
