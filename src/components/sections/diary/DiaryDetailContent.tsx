@@ -15,37 +15,42 @@ import { DiaryDetailSkeleton } from './DiaryDetailSkeleton';
 interface DiaryDetailContentProps {
   postId: string;
   slug: string;
+  initialPost?: PostType | null;
 }
 
-const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug }) => {
-  const [post, setPost] = useState<PostType | null>(null);
+const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, initialPost }) => {
+  const [post, setPost] = useState<PostType | null>(initialPost || null);
   const [readingProgress, setReadingProgress] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(!initialPost);
   const [imageLoaded, setImageLoaded] = useState(false);
   const [dbStoreId, setDbStoreId] = useState<string | undefined>(undefined);
   const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
 
   useEffect(() => {
     const fetchPost = async () => {
-      // ローディング開始
-      setIsLoading(true);
+      // initialPost が既にある場合は画面描画のローディングを行わない
+      if (!initialPost) {
+        setIsLoading(true);
+      }
       
       try {
-        // 並列でリクエストを投げる
+        // 店舗情報および記事データの取得
         const [postResult, storeResult] = await Promise.all([
-          supabase
-            .from('blogs')
-            .select(`
-              id, title, content, created_at, published_at, updated_at,
-              casts ( id, name, image_url, main_image_url, slug ),
-              blog_images ( image_url ),
-              blog_tags ( blog_tag_master ( name ) ),
-              is_comment_enabled,
-              blog_comments ( count )
-            `)
-            .eq('id', postId)
-            .eq('status', 'published')
-            .single(),
+          !initialPost
+            ? supabase
+                .from('blogs')
+                .select(`
+                  id, title, content, created_at, published_at, updated_at,
+                  casts ( id, name, image_url, main_image_url, slug ),
+                  blog_images ( image_url ),
+                  blog_tags ( blog_tag_master ( name ) ),
+                  is_comment_enabled,
+                  blog_comments ( count )
+                `)
+                .eq('id', postId)
+                .eq('status', 'published')
+                .single()
+            : Promise.resolve({ data: null, error: null }),
           getStoreBySlug(slug)
         ]);
 
@@ -54,34 +59,36 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
 
         if (dbStore) setDbStoreId(dbStore.id);
 
-        if (error || !data) {
-          const foundMock = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
-          setPost(foundMock || null);
-        } else {
-          const castData = Array.isArray(data.casts) ? data.casts[0] : data.casts;
-          const formatted: PostType = {
-            id: data.id,
-            title: data.title,
-            content: data.content || '',
-            excerpt: data.content ? data.content.slice(0, 100) : '',
-            date: new Date(data.published_at || data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
-            updatedDate: data.updated_at ? new Date(data.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.') : undefined,
-            tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
-            storeSlug: slug,
-            castName: castData?.name || '不明なキャスト',
-            castId: castData?.id || '',
-            castSlug: castData?.slug || '',
-            image: getSupabasePublicUrl(data.blog_images?.[0]?.image_url) ||
-              'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
-            castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) ||
-              `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
-            images: (data.blog_images?.map((img: any) => getSupabasePublicUrl(img.image_url)).filter(Boolean) as string[]) || [],
-            readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
-            commentCount: data.blog_comments?.[0]?.count || 0,
-            isCommentEnabled: data.is_comment_enabled ?? true,
-            reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
-          };
-          setPost(formatted);
+        if (!initialPost) {
+          if (error || !data) {
+            const foundMock = mockDiaryPosts.find((p) => p.id === postId && p.storeSlug === slug);
+            setPost(foundMock || null);
+          } else {
+            const castData = Array.isArray(data.casts) ? data.casts[0] : data.casts;
+            const formatted: PostType = {
+              id: data.id,
+              title: data.title,
+              content: data.content || '',
+              excerpt: data.content ? data.content.slice(0, 100) : '',
+              date: new Date(data.published_at || data.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+              updatedDate: data.updated_at ? new Date(data.updated_at).toLocaleDateString('ja-JP').replace(/\//g, '.') : undefined,
+              tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
+              storeSlug: slug,
+              castName: castData?.name || '不明なキャスト',
+              castId: castData?.id || '',
+              castSlug: castData?.slug || '',
+              image: getSupabasePublicUrl(data.blog_images?.[0]?.image_url) ||
+                'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
+              castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) ||
+                `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
+              images: (data.blog_images?.map((img: any) => getSupabasePublicUrl(img.image_url)).filter(Boolean) as string[]) || [],
+              readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
+              commentCount: data.blog_comments?.[0]?.count || 0,
+              isCommentEnabled: data.is_comment_enabled ?? true,
+              reactions: { total: 0, likes: 0, healing: 0, energized: 0, supportive: 0 },
+            };
+            setPost(formatted);
+          }
         }
 
         // 閲覧数を非同期で更新（レンダリングをブロックしない）
@@ -95,7 +102,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug })
       }
     };
     fetchPost();
-  }, [postId, slug]);
+  }, [postId, slug, initialPost]);
 
   useEffect(() => {
     const fetchCastStats = async () => {

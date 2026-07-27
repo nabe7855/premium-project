@@ -47,22 +47,22 @@ const nextConfig = {
     return [
       {
         source: '/store/honten',
-        destination: '/store/tokyo',
+        destination: '/store/fukuoka',
         permanent: true,
       },
       {
         source: '/store/honten/:path*',
-        destination: '/store/tokyo/:path*',
+        destination: '/store/fukuoka/:path*',
         permanent: true,
       },
       {
         source: '/career',
-        destination: '/store/tokyo/recruit',
+        destination: '/store/fukuoka/recruit',
         permanent: true,
       },
       {
         source: '/career/:path*',
-        destination: '/store/tokyo/recruit',
+        destination: '/store/fukuoka/recruit',
         permanent: true,
       },
       {

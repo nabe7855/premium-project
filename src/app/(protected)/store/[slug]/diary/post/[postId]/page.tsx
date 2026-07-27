@@ -108,7 +108,7 @@ export default async function DiaryDetailPage({ params }: Props) {
       {topConfig?.header.isVisible && <Header config={topConfig.header} />}
 
       <div className="flex-grow pt-24 sm:pt-28 md:pt-32">
-        <DiaryDetailContent slug={slug} postId={postId} />
+        <DiaryDetailContent slug={slug} postId={postId} initialPost={post} />
       </div>
 
       {/* Footer */}
