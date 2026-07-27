@@ -52,18 +52,21 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const s = STORE_META[params.slug];
   
   if (s) {
-    let title = `${s.city}の女性用風俗・出張ホスト｜ストロベリーボーイズ${s.city}店【${s.area}対応】`;
-    let metaDescription = `${s.city}（${s.area}）で女性用風俗・出張ホストをお探しならストロベリーボーイズ${s.city}店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しを提供します。`;
+    let title = `【公式】${s.city}の女性用風俗・女風｜ストロベリーボーイズ${s.city}店【${s.area}】`;
+    let metaDescription = `${s.city}（${s.area}）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ${s.city}店。厳選された人気セラピストがご指定ホテルやご自宅で最高級の癒やしをお届け。明朗会計・初心者歓迎・当日予約OK！`;
 
     if (params.slug === 'fukuoka') {
-      title = `福岡・博多の女性用風俗｜ストロベリーボーイズ福岡店`;
-      metaDescription = `福岡（博多・天神・中洲）で女性用風俗・出張ホストをお探しならストロベリーボーイズ福岡店。完全審査制のイケメンセラピストがホテル・ご自宅で極上の癒しをお届け。追加料金なしの明朗会計、初めての方も安心のサポート体制。当日予約OK。`;
+      title = `【公式】福岡・博多の女性用風俗・女風｜ストロベリーボーイズ福岡店【天神・中洲】`;
+      metaDescription = `福岡（博多・天神・中洲・薬院）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ福岡店。厳選されたイケメンセラピストがご指定ホテルやご自宅で最高級の癒やしをお届け。明朗会計・初心者歓迎・当日予約OK！`;
+    } else if (params.slug === 'yokohama') {
+      title = `【公式】横浜の女性用風俗・女風｜ストロベリーボーイズ横浜店【関内・みなとみらい】`;
+      metaDescription = `横浜（みなとみらい・関内・桜木町・新横浜）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ横浜店。洗練された人気セラピストがご指定ホテル・ご自宅へ出張。完全個室・安心明朗会計・初めての方も丁寧サポート！`;
     }
 
     return {
       title: { absolute: title },
       description: metaDescription,
-      keywords: ["女性用風俗", "女風", "出張ホスト", s.city, ...s.areaKw, "セラピスト", "女性専用"],
+      keywords: ["女性用風俗", "女風", "出張ホスト", "出張セラピー", s.city, ...s.areaKw, "セラピスト", "女性専用"],
       alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}` },
       openGraph: {
         title, 
@@ -286,8 +289,12 @@ export default async function StorePage({ params }: StorePageProps) {
   // SEO用H1テキスト
   const s = STORE_META[params.slug];
   const h1Text = s
-    ? `${s.city}の女性用風俗｜ストロベリーボーイズ${s.city}店【${params.slug === 'fukuoka' ? '博多・天神・中洲' : s.area}対応】`
-    : `${store.city}の女性用風俗｜ストロベリーボーイズ${store.city}店【${store.city}対応】`;
+    ? params.slug === 'fukuoka'
+      ? `福岡・博多の女性用風俗・女風｜ストロベリーボーイズ福岡店【天神・中洲・薬院】`
+      : params.slug === 'yokohama'
+        ? `横浜の女性用風俗・女風｜ストロベリーボーイズ横浜店【関内・みなとみらい・新横浜】`
+        : `${s.city}の女性用風俗・女風｜ストロベリーボーイズ${s.city}店【${s.area}対応】`
+    : `${store.city}の女性用風俗・女風｜ストロベリーボーイズ${store.city}店`;
 
   // テンプレート振り分け
   return (
