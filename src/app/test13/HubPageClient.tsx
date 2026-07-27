@@ -10,6 +10,12 @@ import {
   Play,
   Sparkles,
   Users,
+  Compass,
+  Map,
+  Calculator,
+  Award,
+  Lock,
+  Crown,
 } from 'lucide-react';
 import Link from 'next/link';
 import Script from 'next/script';
@@ -156,243 +162,348 @@ export default function HubPageClient({
         }}
       />
 
-      {/* ─── 1. HERO + 検索セクション (Layout from Image 1 but Bright Theme) ─── */}
-      {/* ─── 1. HERO + 検索セクション (実用的コンテンツ表示 & SEOビッグキーワード最適化) ─── */}
-      <section className="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-28 sm:px-6">
-        {/* SEO・AIO最適化用固定H1（アクセシブルヘッダー） */}
+      {/* ─── 1. HERO (画像2のデザインを100%完全再現) ─── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-[#FAF6F3] via-[#F7F0EB] to-white pt-6 pb-16">
+        {/* SEOアクセシブルH1 */}
         <h1 className="sr-only">
-          【公式】女性用風俗・女風・出張ホスト ストロベリーボーイズ | 福岡（博多・天神）・横浜（関内）対応
+          【公式】女性用風俗・女風・出張ホスト ストロベリーボーイズ | 大人になっても、ときめいていい。全国対応拠点
         </h1>
 
-        {/* メインナビゲーションタブ (Top Nav) */}
-        <div className="absolute top-0 z-50 flex w-full items-center justify-center border-b border-slate-100 bg-white/90 px-4 py-4 backdrop-blur-xl sm:px-6">
-          <div className="flex gap-2 sm:gap-4">
-            {(
-              [
-                { id: 'news', label: '最新ニュース', icon: <Sparkles className="h-4 w-4" /> },
-                { id: 'tweet', label: '写メ日記', icon: <Users className="h-4 w-4" /> },
-                { id: 'video', label: '新着動画', icon: <Play className="h-4 w-4" /> },
-              ] as const
-            ).map((tab) => (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs sm:px-7 sm:py-3 sm:text-sm font-black transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/25 scale-105'
-                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                }`}
-              >
-                {tab.icon}
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* タブ切り替えに応じた「実際に役立つ最新コンテンツ」カード表示 */}
-        <div className="relative z-10 w-full max-w-6xl mt-8">
-          <AnimatePresence mode="wait">
-            {activeTab === 'news' && (
-              <motion.div
-                key="news"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.4 }}
-                className="text-center"
-              >
-                <span className="inline-block rounded-full bg-rose-100 px-4 py-1 text-xs font-bold text-rose-600 mb-3">
-                  日本最大級の女性用風俗・女風グループ
-                </span>
-                <h2 className="text-3xl font-extrabold sm:text-5xl md:text-6xl text-slate-900 tracking-tight mb-4">
-                  極上の癒やしと、トキメキを。<br />
-                  <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 bg-clip-text text-transparent">
-                    女性用風俗・出張ホスト
-                  </span>
-                </h2>
-                <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 font-medium mb-8 leading-relaxed">
-                  厳選されたイケメンセラピストが、ご指定ホテルやご自宅へ出張派遣。<br className="hidden sm:inline" />
-                  完全明朗会計・個室・秘密厳守で、初めての方も安心してご利用いただけます。
-                </p>
-
-                {/* 最新トピックス */}
-                {diaries.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-4xl mx-auto">
-                    {diaries.slice(0, 3).map((d: any) => (
-                      <Link
-                        key={d.id}
-                        href={`/store/${d.storeSlug || 'fukuoka'}/diary/post/${d.id}`}
-                        className="group flex flex-col rounded-2xl border border-rose-100 bg-white p-4 shadow-sm hover:border-rose-300 hover:shadow-md transition-all"
-                      >
-                        <span className="text-[10px] font-bold text-rose-500 mb-1">
-                          {d.casts?.name ? `${d.casts.name}の日記` : '最新トピック'}
-                        </span>
-                        <h3 className="text-xs font-bold text-slate-800 group-hover:text-rose-600 line-clamp-2 mb-2">
-                          {d.title}
-                        </h3>
-                        <span className="text-[10px] text-slate-400 mt-auto flex items-center gap-1">
-                          読む <ChevronRight className="h-3 w-3" />
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {activeTab === 'tweet' && (
-              <motion.div
-                key="tweet"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.4 }}
-                className="text-center"
-              >
-                <span className="inline-block rounded-full bg-blue-100 px-4 py-1 text-xs font-bold text-blue-600 mb-3">
-                  キャストの日常・リアルな声
-                </span>
-                <h2 className="text-3xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
-                  セラピスト最新写メ日記
-                </h2>
-                <p className="max-w-2xl mx-auto text-sm text-slate-600 font-medium mb-8">
-                  お気に入りのキャストの出勤前の一言や日常の写真をチェック。
-                </p>
-
-                {diaries.length > 0 && (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
-                    {diaries.slice(0, 4).map((d: any) => (
-                      <Link
-                        key={d.id}
-                        href={`/store/${d.storeSlug || 'fukuoka'}/diary/post/${d.id}`}
-                        className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all"
-                      >
-                        {d.images?.[0]?.image_url && (
-                          <div className="relative aspect-square overflow-hidden bg-slate-100">
-                            <img
-                              src={d.images[0].image_url}
-                              alt={d.title}
-                              className="h-full w-full object-cover group-hover:scale-105 transition-transform"
-                            />
-                          </div>
-                        )}
-                        <div className="p-3">
-                          <p className="text-[10px] font-bold text-slate-500">{d.casts?.name}</p>
-                          <h3 className="text-xs font-bold text-slate-800 truncate">{d.title}</h3>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                )}
-              </motion.div>
-            )}
-
-            {activeTab === 'video' && (
-              <motion.div
-                key="video"
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -15 }}
-                transition={{ duration: 0.4 }}
-                className="text-center"
-              >
-                <span className="inline-block rounded-full bg-amber-100 px-4 py-1 text-xs font-bold text-amber-600 mb-3">
-                  キャストの雰囲気を動画で体感
-                </span>
-                <h2 className="text-3xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
-                  新着ショート動画・ムービー
-                </h2>
-                <p className="max-w-2xl mx-auto text-sm text-slate-600 font-medium mb-8">
-                  写真だけでは伝わらないキャストの声や仕草を動画でご確認いただけます。
-                </p>
-
-                {videos.length > 0 ? (
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
-                    {videos.slice(0, 4).map((v: any) => (
-                      <div key={v.id} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                        <div className="relative aspect-[9/16] bg-black">
-                          <img
-                            src={v.thumbnail_url || 'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=400'}
-                            alt={v.title}
-                            className="h-full w-full object-cover opacity-80"
-                          />
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-rose-500 backdrop-blur-md shadow-lg">
-                              <Play className="h-5 w-5 fill-current ml-0.5" />
-                            </div>
-                          </div>
-                        </div>
-                        <div className="p-2">
-                          <p className="text-[10px] font-bold text-slate-700 truncate">{v.title}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                ) : (
-                  <p className="text-xs text-slate-400">現在公開中の新着動画を準備中です。</p>
-                )}
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-
-        {/* 店舗マーキー */}
-        {stores.length > 0 && (
-          <div className="absolute bottom-0 z-10 w-full overflow-hidden border-t border-slate-100 bg-white/60 backdrop-blur-md">
-            <div className="animate-scroll-text flex whitespace-nowrap py-4">
-              {[...stores, ...stores].map((store, i) => (
-                <Link
-                  key={i}
-                  href={
-                    store.use_external_url && store.external_url
-                      ? store.external_url
-                      : `/store/${store.slug}`
-                  }
-                  target={store.use_external_url && store.external_url ? '_blank' : undefined}
-                  className="group mx-8 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:text-rose-500"
-                >
-                  <MapPin className="h-3.5 w-3.5 text-rose-500" />
-                  {store.name} 出張エリア
-                  <ArrowRight className="h-3 w-3 opacity-0 transition-all group-hover:opacity-100" />
-                </Link>
-              ))}
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* ─── 1.2 ブランドメッセージ (SEOビッグキーワード「女性用風俗・女風」完全最適化) ─── */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-white via-rose-50/30 to-white px-6 py-20 border-y border-rose-100/60">
-        <div className="relative mx-auto max-w-5xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <span className="inline-block rounded-full bg-rose-500 px-4 py-1 text-xs font-bold text-white mb-4 shadow-sm">
-              ABOUT STRAWBERRY BOYS
+        {/* ブランドヘッダーナビ */}
+        <div className="mx-auto max-w-7xl px-6 flex items-center justify-between py-4 mb-8 border-b border-rose-100/60">
+          <div className="flex flex-col">
+            <span className="font-serif text-xl font-black tracking-widest text-slate-800">
+              STRAWBERRY BOYS
             </span>
-            <h2 className="text-2xl font-black sm:text-4xl md:text-5xl text-slate-900 tracking-tight mb-6 leading-tight">
-              全国対応・女性専用<br className="sm:hidden" />
-              <span className="text-rose-500">高級女性用風俗・女風・出張ホスト</span>
-            </h2>
-            
-            <div className="mx-auto mb-8 h-1 w-20 rounded-full bg-rose-400" />
+            <span className="text-[9px] font-bold tracking-widest text-rose-400 uppercase">
+              WOMEN'S PRIVATE SERVICE — 女性専用・全国対応
+            </span>
+          </div>
 
-            <div className="max-w-3xl mx-auto space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
-              <p>
-                「ストロベリーボーイズ」は、厳格な採用基準（採用率3%）をクリアした容姿端麗・洗練されたマナーを持つ人気セラピストが多数在籍する、日本最大級の<strong>女性用風俗・女風・出張ホスト</strong>グループです。
-              </p>
-              <p>
-                <strong>福岡（博多・天神・中洲・薬院）</strong>や<strong>横浜（関内・みなとみらい・桜木町）</strong>などの対応拠点エリアをはじめ、ご指定のビジネスホテル・シティホテル・ラブホテル、またはご自宅へセラピストを出張派遣いたします。
-              </p>
-              <p className="text-rose-600 font-bold">
-                完全明朗会計・指名料不要・秘密厳守。初めての女性のお客様も、専任スタッフが丁寧にお申し込みから当日までサポートいたしますので、安心してお気軽にご利用ください。
-              </p>
+          <div className="hidden md:flex items-center gap-6 text-xs font-bold text-slate-600">
+            <a href="#stores" className="flex items-center gap-1 hover:text-rose-500 transition">
+              <MapPin className="h-3.5 w-3.5 text-rose-500" />
+              全国の店舗
+            </a>
+            <a href="#about" className="hover:text-rose-500 transition">
+              ブランドについて
+            </a>
+            <Link
+              href="/login"
+              className="flex items-center gap-1.5 rounded-full border border-slate-700 px-4 py-1.5 text-slate-800 hover:bg-slate-900 hover:text-white transition"
+            >
+              <Lock className="h-3 w-3" />
+              ログイン
+            </Link>
+          </div>
+        </div>
+
+        {/* ヒーローメインコンテンツ (画像2の左右非対称レイアウト) */}
+        <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
+          {/* 左側: キャッチコピー & 説明文 */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.8 }}
+            className="lg:col-span-6 space-y-6 text-left"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full bg-rose-100/80 px-3.5 py-1 text-xs font-bold text-rose-600">
+              <Sparkles className="h-3.5 w-3.5 text-rose-500" />
+              女性専用・全国対応
+            </div>
+
+            <h2 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.15] tracking-tight">
+              大人になっても、<br />
+              <span className="text-rose-500">ときめいていい。</span>
+            </h2>
+
+            <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed max-w-md">
+              あなたの街で、心ほどける時間を。<br />
+              全国の店舗からお選びください。
+            </p>
+
+            <div className="pt-2 flex items-center gap-1 text-amber-500">
+              <Crown className="h-4 w-4 fill-current" />
+              <span className="text-xs font-bold tracking-wider text-slate-500 uppercase">
+                PREMIUM QUALITY FOR LADIES
+              </span>
             </div>
           </motion.div>
+
+          {/* 右側: イケメンセラピスト3重切り抜きビジュアル */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.9 }}
+            className="lg:col-span-6 relative flex justify-center lg:justify-end"
+          >
+            <div className="relative w-full max-w-lg aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-rose-900/10 border-4 border-white">
+              <img
+                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200"
+                alt="イケメンセラピスト - ストロベリーボーイズ"
+                className="h-full w-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent flex items-end p-6">
+                <span className="font-serif italic text-2xl text-rose-200 drop-shadow-md">
+                  Find your special time.
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* ─── エリアを選択する (画像2下部) ─── */}
+        <div id="stores" className="mx-auto max-w-7xl px-6">
+          <div className="text-center mb-8">
+            <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
+              <MapPin className="h-5 w-5 text-rose-500" />
+              利用するエリアを選ぶ
+            </h3>
+          </div>
+
+          {/* 5大都市カードグリッド */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            {[
+              {
+                name: '東京',
+                en: 'TOKYO',
+                count: '24名',
+                href: 'https://strawberryboys.net/',
+                isExternal: true,
+                img: 'https://images.unsplash.com/photo-1503899036084-c55cdd92da26?auto=format&fit=crop&q=80&w=600',
+              },
+              {
+                name: '大阪',
+                en: 'OSAKA',
+                count: '18名',
+                href: 'https://strawberryboys-osaka.net/',
+                isExternal: true,
+                img: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&q=80&w=600',
+              },
+              {
+                name: '横浜',
+                en: 'YOKOHAMA',
+                count: '16名',
+                href: '/store/yokohama',
+                isExternal: false,
+                img: 'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&q=80&w=600',
+              },
+              {
+                name: '名古屋',
+                en: 'NAGOYA',
+                count: '14名',
+                href: 'https://strawberryboys-nagoya.net/',
+                isExternal: true,
+                img: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&q=80&w=600',
+              },
+              {
+                name: '福岡',
+                en: 'FUKUOKA',
+                count: '12名',
+                href: '/store/fukuoka',
+                isExternal: false,
+                img: 'https://images.unsplash.com/photo-1526481280693-3bfa7568e0f3?auto=format&fit=crop&q=80&w=600',
+              },
+            ].map((city, idx) => (
+              <motion.div
+                key={city.name}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: idx * 0.08 }}
+                className="group relative overflow-hidden rounded-2xl bg-white shadow-md border border-rose-100 hover:shadow-xl hover:border-rose-300 transition-all duration-300 flex flex-col"
+              >
+                <Link
+                  href={city.href}
+                  target={city.isExternal ? '_blank' : undefined}
+                  className="flex flex-col h-full"
+                >
+                  <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                    <img
+                      src={city.img}
+                      alt={`${city.name}店 夜景`}
+                      className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2 py-0.5 text-[9px] font-bold text-white backdrop-blur-md">
+                      本日受付中
+                    </span>
+                  </div>
+                  <div className="p-3 text-left flex-grow flex flex-col justify-between">
+                    <div>
+                      <div className="flex items-baseline justify-between mb-1">
+                        <h4 className="font-serif text-base font-bold text-slate-800">
+                          {city.name} <span className="text-[10px] text-slate-400 font-normal">{city.en}</span>
+                        </h4>
+                      </div>
+                      <p className="text-[10px] text-slate-500 mb-3">
+                        セラピスト <span className="font-bold text-slate-700">{city.count}</span>
+                      </p>
+                    </div>
+                    <button className="w-full rounded-xl bg-rose-500 py-2 text-xs font-bold text-white shadow-sm transition group-hover:bg-rose-600 flex items-center justify-center gap-1">
+                      <span>{city.name}店を見る</span>
+                      <ChevronRight className="h-3 w-3" />
+                    </button>
+                  </div>
+                </Link>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* 下部サーチナビ */}
+          <div className="mt-8 flex flex-col sm:flex-row justify-center items-center gap-4 text-xs font-bold">
+            <a
+              href="#stores"
+              className="flex items-center gap-2 rounded-full bg-white px-6 py-3 border border-slate-200 shadow-sm hover:border-rose-300 text-slate-700"
+            >
+              <Compass className="h-4 w-4 text-rose-500" />
+              現在地から近い店舗を探す
+            </a>
+            <a
+              href="#stores"
+              className="flex items-center gap-2 rounded-full bg-white px-6 py-3 border border-slate-200 shadow-sm hover:border-rose-300 text-slate-700"
+            >
+              <Map className="h-4 w-4 text-rose-500" />
+              都道府県から探す
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 2. 「わたしたちについて」セクション (画像1のデザインを100%完全再現) ─── */}
+      <section id="about" className="relative overflow-hidden bg-white py-20 border-t border-rose-100/60">
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            {/* 左側: ラウンドカット画像 (スーツ紳士の手) */}
+            <motion.div
+              initial={{ opacity: 0, x: -30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="lg:col-span-5 relative flex justify-center"
+            >
+              <div className="relative w-full max-w-md aspect-[4/5] rounded-[3rem] overflow-hidden shadow-xl border-4 border-rose-50">
+                <img
+                  src="https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=800"
+                  alt="安心とエスコート - ストロベリーボーイズ"
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            </motion.div>
+
+            {/* 右側: メッセージ ＆ 4つの安心機能カード */}
+            <motion.div
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+              className="lg:col-span-7 text-left space-y-6"
+            >
+              <div className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-1.5 text-xs font-bold text-rose-600 border border-rose-100">
+                <Crown className="h-3.5 w-3.5 text-rose-500" />
+                ABOUT STRAWBERRY BOYS わたしたちについて
+              </div>
+
+              <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
+                安心できるから、<br />
+                <span className="text-rose-500">ときめき</span>に素直になれる。
+              </h3>
+
+              <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-xl">
+                仕事も、日常も、いつも頑張っているあなたへ。<br />
+                癒やされたい夜も、誰かに甘えたい夜も、ここでは、あなたの気持ちとペースを大切にします。<br />
+                ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。
+              </p>
+
+              {/* 4つの安心カード (画像1再現) */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
+                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
+                    <MapPin className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">全国主要エリアに対応</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">東京・横浜・名古屋・大阪・福岡など</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
+                    <Calculator className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">分かりやすい料金体系</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">ご利用前に料金をご確認いただけます</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
+                    <Lock className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">プライバシーへの配慮</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">ご相談・ご利用内容を慎重に取り扱います</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
+                    <Award className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-bold text-slate-800">独自基準による採用</h4>
+                    <p className="text-[11px] text-slate-500 mt-0.5">接客・清潔感・マナーを重視しています</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* ボタン2種 (画像1再現) */}
+              <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">
+                <Link
+                  href="/store/fukuoka/first-time"
+                  className="flex items-center gap-2 rounded-full bg-rose-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition"
+                >
+                  <Sparkles className="h-4 w-4" />
+                  <span>初めての方へ</span>
+                  <ChevronRight className="h-4 w-4" />
+                </Link>
+
+                <a
+                  href="#faq"
+                  className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-rose-500 underline underline-offset-4 transition"
+                >
+                  安心への取り組みを見る <ArrowRight className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </motion.div>
+          </div>
+
+          {/* ドメインパワー巡回用 SEOキーワードアンカーテキストブロック (画像1最下部再現) */}
+          <div className="mt-16 rounded-3xl bg-[#FAF6F3] p-6 sm:p-8 border border-rose-100/80 text-center">
+            <p className="text-xs sm:text-sm text-slate-600 font-medium leading-relaxed max-w-3xl mx-auto mb-4">
+              ストロベリーボーイズは、東京・横浜・名古屋・大阪・福岡など全国の主要エリアに対応する女性専用の出張サービスです。女性用風俗・女風を始めて利用される方にも安心してお選びいただけるよう、料金、ご予約方法、セラピスト情報を分かりやすくご案内しています。
+            </p>
+            <div className="flex flex-wrap justify-center items-center gap-4 sm:gap-6 text-xs font-bold text-rose-600">
+              <a href="https://strawberryboys.net/" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> 東京のセラピスト
+              </a>
+              <span className="text-slate-300">/</span>
+              <Link href="/store/yokohama" className="hover:underline flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> 横浜のセラピスト
+              </Link>
+              <span className="text-slate-300">/</span>
+              <a href="https://strawberryboys-nagoya.net/" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> 名古屋のセラピスト
+              </a>
+              <span className="text-slate-300">/</span>
+              <a href="https://strawberryboys-osaka.net/" target="_blank" rel="noopener noreferrer" className="hover:underline flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> 大阪のセラピスト
+              </a>
+              <span className="text-slate-300">/</span>
+              <Link href="/store/fukuoka" className="hover:underline flex items-center gap-1">
+                <MapPin className="h-3 w-3" /> 福岡のセラピスト
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 
