@@ -157,28 +157,30 @@ export default function HubPageClient({
       />
 
       {/* ─── 1. HERO + 検索セクション (Layout from Image 1 but Bright Theme) ─── */}
-      <section className="relative flex min-h-[95vh] flex-col items-center justify-center overflow-hidden px-6 pb-24 pt-32">
+      {/* ─── 1. HERO + 検索セクション (実用的コンテンツ表示 & SEOビッグキーワード最適化) ─── */}
+      <section className="relative flex min-h-[85vh] flex-col items-center justify-center overflow-hidden px-4 pb-20 pt-28 sm:px-6">
         {/* SEO・AIO最適化用固定H1（アクセシブルヘッダー） */}
         <h1 className="sr-only">
-          女性専用ウェルネス・出張セラピー ストロベリーボーイズ 公式 | 全国対応拠点・エリア検索
+          【公式】女性用風俗・女風・出張ホスト ストロベリーボーイズ | 福岡（博多・天神）・横浜（関内）対応
         </h1>
+
         {/* メインナビゲーションタブ (Top Nav) */}
-        <div className="absolute top-0 z-50 flex w-full items-center justify-center border-b border-slate-100 bg-white/80 px-6 py-6 backdrop-blur-xl">
-          <div className="flex gap-4">
+        <div className="absolute top-0 z-50 flex w-full items-center justify-center border-b border-slate-100 bg-white/90 px-4 py-4 backdrop-blur-xl sm:px-6">
+          <div className="flex gap-2 sm:gap-4">
             {(
               [
-                { id: 'news', label: 'News', icon: <Sparkles className="h-4 w-4" /> },
-                { id: 'tweet', label: 'Tweet', icon: <Users className="h-4 w-4" /> },
-                { id: 'video', label: 'Video', icon: <Play className="h-4 w-4" /> },
+                { id: 'news', label: '最新ニュース', icon: <Sparkles className="h-4 w-4" /> },
+                { id: 'tweet', label: '写メ日記', icon: <Users className="h-4 w-4" /> },
+                { id: 'video', label: '新着動画', icon: <Play className="h-4 w-4" /> },
               ] as const
             ).map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-2 rounded-full px-8 py-3 text-xs font-black transition-all ${
+                className={`flex items-center gap-2 rounded-full px-5 py-2.5 text-xs sm:px-7 sm:py-3 sm:text-sm font-black transition-all ${
                   activeTab === tab.id
-                    ? 'bg-rose-500 text-white shadow-xl shadow-rose-500/20'
-                    : 'bg-slate-50 text-slate-500 hover:bg-slate-100'
+                    ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/25 scale-105'
+                    : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                 }`}
               >
                 {tab.icon}
@@ -188,91 +190,157 @@ export default function HubPageClient({
           </div>
         </div>
 
-        {/* 動的コンテンツマッピング */}
-        {(() => {
-          const contentMap = {
-            news: {
-              title: '最新のトピックスを、\nこの一箇所で。',
-              desc: '女性のウェルネス、ライフスタイル、そして物語。情報の「ハブ」として、最新の情報をいち早くお届けします。',
-              img: 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&q=80&w=2000',
-              accent: 'from-rose-500 via-rose-400 to-rose-600',
-            },
-            tweet: {
-              title: 'キャストの「いま」、\n日常を覗く。',
-              desc: 'セラピストたちが綴る、飾らない日常とリアルな声。写メ日記を通じて、もっと身近な物語に触れてください。',
-              img: 'https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?auto=format&fit=crop&q=80&w=2000',
-              accent: 'from-blue-500 via-sky-400 to-blue-600',
-            },
-            video: {
-              title: '躍動する物語を、\nその目で。',
-              desc: '一分一秒に込められた想い。最高品質の映像コンテンツが、あなたの感性を刺激するプレミアムな体験を演出します。',
-              img: 'https://images.unsplash.com/photo-1485043433441-db091ef2b141?auto=format&fit=crop&q=80&w=2000',
-              accent: 'from-amber-500 via-orange-400 to-amber-600',
-            },
-          };
-          const current = contentMap[activeTab];
+        {/* タブ切り替えに応じた「実際に役立つ最新コンテンツ」カード表示 */}
+        <div className="relative z-10 w-full max-w-6xl mt-8">
+          <AnimatePresence mode="wait">
+            {activeTab === 'news' && (
+              <motion.div
+                key="news"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+                className="text-center"
+              >
+                <span className="inline-block rounded-full bg-rose-100 px-4 py-1 text-xs font-bold text-rose-600 mb-3">
+                  日本最大級の女性用風俗・女風グループ
+                </span>
+                <h2 className="text-3xl font-extrabold sm:text-5xl md:text-6xl text-slate-900 tracking-tight mb-4">
+                  極上の癒やしと、トキメキを。<br />
+                  <span className="bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600 bg-clip-text text-transparent">
+                    女性用風俗・出張ホスト
+                  </span>
+                </h2>
+                <p className="max-w-2xl mx-auto text-sm sm:text-base text-slate-600 font-medium mb-8 leading-relaxed">
+                  厳選されたイケメンセラピストが、ご指定ホテルやご自宅へ出張派遣。<br className="hidden sm:inline" />
+                  完全明朗会計・個室・秘密厳守で、初めての方も安心してご利用いただけます。
+                </p>
 
-          return (
-            <>
-              {/* 背景 (フェード切り替え) */}
-              <div className="absolute inset-0 z-0">
-                <div className="absolute inset-0 bg-white" />
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 0.15 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                    className="absolute inset-0 bg-cover bg-center grayscale-[0.3]"
-                    style={{ backgroundImage: `url(${current.img})` }}
-                  />
-                </AnimatePresence>
-                <div className="absolute bottom-0 h-64 w-full bg-gradient-to-t from-white to-transparent" />
-                <div className="absolute left-0 top-0 h-full w-full bg-gradient-to-br from-rose-500/5 via-transparent to-amber-500/5" />
-              </div>
-
-              <div className="relative z-10 w-full max-w-7xl px-4 md:px-12 lg:px-24">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={activeTab}
-                    initial={{ opacity: 0, x: -30 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 30 }}
-                    transition={{ duration: 0.8, ease: 'easeOut' }}
-                    className="text-left"
-                  >
-                    <h1 className="mb-12 font-serif text-6xl font-black leading-[1.15] tracking-tighter text-slate-900 md:text-8xl lg:text-[8rem]">
-                      {current.title.split('\n').map((line, idx) => (
-                        <span key={idx} className="block">
-                          {line.includes('この一箇所') ||
-                          line.includes('日常を覗く') ||
-                          line.includes('その目で') ? (
-                            <span
-                              className={`bg-gradient-to-r ${current.accent} bg-clip-text text-transparent`}
-                            >
-                              {line}
-                            </span>
-                          ) : (
-                            line
-                          )}
+                {/* 最新トピックス */}
+                {diaries.length > 0 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-left max-w-4xl mx-auto">
+                    {diaries.slice(0, 3).map((d: any) => (
+                      <Link
+                        key={d.id}
+                        href={`/store/${d.storeSlug || 'fukuoka'}/diary/post/${d.id}`}
+                        className="group flex flex-col rounded-2xl border border-rose-100 bg-white p-4 shadow-sm hover:border-rose-300 hover:shadow-md transition-all"
+                      >
+                        <span className="text-[10px] font-bold text-rose-500 mb-1">
+                          {d.casts?.name ? `${d.casts.name}の日記` : '最新トピック'}
                         </span>
-                      ))}
-                    </h1>
-                    <p className="max-w-2xl text-lg font-medium leading-relaxed text-slate-500 md:text-2xl">
-                      {current.desc}
-                    </p>
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </>
-          );
-        })()}
+                        <h3 className="text-xs font-bold text-slate-800 group-hover:text-rose-600 line-clamp-2 mb-2">
+                          {d.title}
+                        </h3>
+                        <span className="text-[10px] text-slate-400 mt-auto flex items-center gap-1">
+                          読む <ChevronRight className="h-3 w-3" />
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'tweet' && (
+              <motion.div
+                key="tweet"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+                className="text-center"
+              >
+                <span className="inline-block rounded-full bg-blue-100 px-4 py-1 text-xs font-bold text-blue-600 mb-3">
+                  キャストの日常・リアルな声
+                </span>
+                <h2 className="text-3xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
+                  セラピスト最新写メ日記
+                </h2>
+                <p className="max-w-2xl mx-auto text-sm text-slate-600 font-medium mb-8">
+                  お気に入りのキャストの出勤前の一言や日常の写真をチェック。
+                </p>
+
+                {diaries.length > 0 && (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
+                    {diaries.slice(0, 4).map((d: any) => (
+                      <Link
+                        key={d.id}
+                        href={`/store/${d.storeSlug || 'fukuoka'}/diary/post/${d.id}`}
+                        className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm hover:shadow-md transition-all"
+                      >
+                        {d.images?.[0]?.image_url && (
+                          <div className="relative aspect-square overflow-hidden bg-slate-100">
+                            <img
+                              src={d.images[0].image_url}
+                              alt={d.title}
+                              className="h-full w-full object-cover group-hover:scale-105 transition-transform"
+                            />
+                          </div>
+                        )}
+                        <div className="p-3">
+                          <p className="text-[10px] font-bold text-slate-500">{d.casts?.name}</p>
+                          <h3 className="text-xs font-bold text-slate-800 truncate">{d.title}</h3>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </motion.div>
+            )}
+
+            {activeTab === 'video' && (
+              <motion.div
+                key="video"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -15 }}
+                transition={{ duration: 0.4 }}
+                className="text-center"
+              >
+                <span className="inline-block rounded-full bg-amber-100 px-4 py-1 text-xs font-bold text-amber-600 mb-3">
+                  キャストの雰囲気を動画で体感
+                </span>
+                <h2 className="text-3xl font-extrabold sm:text-5xl text-slate-900 tracking-tight mb-4">
+                  新着ショート動画・ムービー
+                </h2>
+                <p className="max-w-2xl mx-auto text-sm text-slate-600 font-medium mb-8">
+                  写真だけでは伝わらないキャストの声や仕草を動画でご確認いただけます。
+                </p>
+
+                {videos.length > 0 ? (
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-left max-w-4xl mx-auto">
+                    {videos.slice(0, 4).map((v: any) => (
+                      <div key={v.id} className="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                        <div className="relative aspect-[9/16] bg-black">
+                          <img
+                            src={v.thumbnail_url || 'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=400'}
+                            alt={v.title}
+                            className="h-full w-full object-cover opacity-80"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/80 text-rose-500 backdrop-blur-md shadow-lg">
+                              <Play className="h-5 w-5 fill-current ml-0.5" />
+                            </div>
+                          </div>
+                        </div>
+                        <div className="p-2">
+                          <p className="text-[10px] font-bold text-slate-700 truncate">{v.title}</p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-xs text-slate-400">現在公開中の新着動画を準備中です。</p>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
 
         {/* 店舗マーキー */}
         {stores.length > 0 && (
-          <div className="absolute bottom-0 z-10 w-full overflow-hidden border-t border-slate-100 bg-white/40 backdrop-blur-md">
-            <div className="animate-scroll-text flex whitespace-nowrap py-5">
+          <div className="absolute bottom-0 z-10 w-full overflow-hidden border-t border-slate-100 bg-white/60 backdrop-blur-md">
+            <div className="animate-scroll-text flex whitespace-nowrap py-4">
               {[...stores, ...stores].map((store, i) => (
                 <Link
                   key={i}
@@ -282,10 +350,10 @@ export default function HubPageClient({
                       : `/store/${store.slug}`
                   }
                   target={store.use_external_url && store.external_url ? '_blank' : undefined}
-                  className="group mx-8 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 transition-colors hover:text-rose-500"
+                  className="group mx-8 flex items-center gap-2 text-[11px] font-black uppercase tracking-widest text-slate-500 transition-colors hover:text-rose-500"
                 >
-                  <MapPin className="h-3 w-3 text-rose-500" />
-                  {store.name}
+                  <MapPin className="h-3.5 w-3.5 text-rose-500" />
+                  {store.name} 出張エリア
                   <ArrowRight className="h-3 w-3 opacity-0 transition-all group-hover:opacity-100" />
                 </Link>
               ))}
@@ -294,95 +362,38 @@ export default function HubPageClient({
         )}
       </section>
 
-      {/* ─── 1.2 Message from Store (Added Section) ─── */}
-      <section className="relative overflow-hidden bg-[#f0f9ff]/30 px-6 py-32">
-        {/* 背景の幾何学パターンをCSSで再現 */}
-        <div
-          className="absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(30deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(150deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(30deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(150deg, #444 12%, transparent 12.5%, transparent 87%, #444 87.5%, #444), linear-gradient(60deg, #999 25%, transparent 25.5%, transparent 75%, #999 75%, #999), linear-gradient(60deg, #999 25%, transparent 25.5%, transparent 75%, #999 75%, #999)',
-            backgroundSize: '40px 70px',
-            backgroundPosition: '0 0, 0 0, 20px 35px, 20px 35px, 0 0, 20px 35px',
-          }}
-        />
+      {/* ─── 1.2 ブランドメッセージ (SEOビッグキーワード「女性用風俗・女風」完全最適化) ─── */}
+      <section className="relative overflow-hidden bg-gradient-to-b from-white via-rose-50/30 to-white px-6 py-20 border-y border-rose-100/60">
+        <div className="relative mx-auto max-w-5xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-block rounded-full bg-rose-500 px-4 py-1 text-xs font-bold text-white mb-4 shadow-sm">
+              ABOUT STRAWBERRY BOYS
+            </span>
+            <h2 className="text-2xl font-black sm:text-4xl md:text-5xl text-slate-900 tracking-tight mb-6 leading-tight">
+              全国対応・女性専用<br className="sm:hidden" />
+              <span className="text-rose-500">高級女性用風俗・女風・出張ホスト</span>
+            </h2>
+            
+            <div className="mx-auto mb-8 h-1 w-20 rounded-full bg-rose-400" />
 
-        <div className="relative mx-auto max-w-7xl">
-          <div className="flex flex-col items-center justify-center gap-12 lg:flex-row">
-            {/* 左のシルエット */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 0.15, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2 }}
-              className="hidden shrink-0 lg:block"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400"
-                alt="silhouette"
-                className="h-96 w-auto object-contain mix-blend-multiply grayscale"
-              />
-            </motion.div>
-
-            {/* テキストコンテンツ */}
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="max-w-2xl text-center"
-            >
-              <div className="space-y-8 font-serif text-slate-600 md:text-lg md:leading-relaxed">
-                <div className="space-y-2">
-                  <p>誰にも打ち明けられなかった、胸の奥の疼き</p>
-                  <p>正解が見つからない、自分だけの迷い</p>
-                  <p>ずっと鍵をかけてきた、純粋な衝動</p>
-                </div>
-
-                <div className="py-4 font-black">
-                  <p className="text-rose-500">自分自身を慈しみ、心も体も自由になるために</p>
-                  <p>本当の気持ちから、もう目を逸らさないために</p>
-                  <p>あなたに寄り添う、確かな居場所</p>
-                </div>
-
-                <div className="py-2">
-                  <p className="text-2xl font-black text-slate-900">女性専用ウェルネスサービス</p>
-                  <p className="text-xs font-black tracking-[0.3em] text-slate-400">
-                    - ストロベリーボーイズ -
-                  </p>
-                </div>
-
-                <div className="space-y-2 pt-4">
-                  <p>ほんの少し、心を開いて</p>
-                  <p>最上級の技術と優しさを持つセラピストと共に</p>
-                  <p>昨日までの自分を超えて</p>
-                  <p className="mt-4 text-xl font-bold text-slate-900">
-                    まだ見ぬ、幸福な物語を始めませんか
-                  </p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* 右のシルエット */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              whileInView={{ opacity: 0.15, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 1.2 }}
-              className="hidden shrink-0 lg:block"
-            >
-              <img
-                src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&q=80&w=400"
-                alt="silhouette"
-                className="h-96 w-auto object-contain mix-blend-multiply grayscale"
-              />
-            </motion.div>
-          </div>
+            <div className="max-w-3xl mx-auto space-y-4 text-sm sm:text-base text-slate-700 leading-relaxed font-medium">
+              <p>
+                「ストロベリーボーイズ」は、厳格な採用基準（採用率3%）をクリアした容姿端麗・洗練されたマナーを持つ人気セラピストが多数在籍する、日本最大級の<strong>女性用風俗・女風・出張ホスト</strong>グループです。
+              </p>
+              <p>
+                <strong>福岡（博多・天神・中洲・薬院）</strong>や<strong>横浜（関内・みなとみらい・桜木町）</strong>などの対応拠点エリアをはじめ、ご指定のビジネスホテル・シティホテル・ラブホテル、またはご自宅へセラピストを出張派遣いたします。
+              </p>
+              <p className="text-rose-600 font-bold">
+                完全明朗会計・指名料不要・秘密厳守。初めての女性のお客様も、専任スタッフが丁寧にお申し込みから当日までサポートいたしますので、安心してお気軽にご利用ください。
+              </p>
+            </div>
+          </motion.div>
         </div>
-
-        {/* 背景の境界線 */}
-        <div className="absolute left-0 right-0 top-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-slate-200 to-transparent" />
       </section>
 
       {/* ─── 1.3 全国の対応拠点・出張エリア (Service Locations & Areas) ─── */}
