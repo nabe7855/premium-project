@@ -164,15 +164,30 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
           {hotels && hotels.length > 0 ? (
             <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
               {hotels.map((hotel: any, idx: number) => {
-                // ホテルごとに異なる魅力的なバッジ・タグのバリエーションパターン
-                const tagPatterns = [
-                  { badge: '女子人気NO.1', tags: ['＃博多駅近く', '＃ラグジュアリー内装', '＃風俗利用OK'] },
-                  { badge: 'デザイナーズ個室', tags: ['＃雰囲気重視', '＃静音プライベート', '＃出張実績多数'] },
-                  { badge: 'アクセス抜群', tags: ['＃駅徒歩圏内', '＃きれいめ客室', '＃女性安心'] },
-                  { badge: '隠れ家ホテル', tags: ['＃完全個室', '＃秘密厳守', '＃出張ホスト推奨'] },
-                  { badge: '最高級スイート', tags: ['＃ジャグジー完備', '＃特別空間', '＃女風利用可'] },
+                // DB内のリアルデータ（amenities / distanceFromStation / services）を最優先利用
+                const realTags: string[] = [];
+                if (hotel.distanceFromStation) realTags.push(`＃${hotel.distanceFromStation}`);
+                if (hotel.amenities && hotel.amenities.length > 0) {
+                  hotel.amenities.slice(0, 2).forEach((a: string) => realTags.push(`＃${a}`));
+                }
+                if (hotel.services && hotel.services.length > 0 && realTags.length < 3) {
+                  hotel.services.slice(0, 2).forEach((s: string) => realTags.push(`＃${s}`));
+                }
+                // データ不足時のフォールバックタグ
+                const fallbackPatterns = [
+                  ['＃女性利用多数', '＃完全個室', '＃風俗利用可'],
+                  ['＃駅近く', '＃きれいめ客室', '＃秘密厳守'],
+                  ['＃静音プライベート', '＃ラグジュアリー', '＃出張対応可'],
                 ];
-                const currentPattern = tagPatterns[idx % tagPatterns.length];
+                const displayTags =
+                  realTags.length > 0
+                    ? realTags
+                    : fallbackPatterns[idx % fallbackPatterns.length];
+
+                // リアル評価バッジまたは出張安心バッジ
+                const badgeText = hotel.rating && hotel.rating > 0
+                  ? `★ ${hotel.rating.toFixed(1)} 高評価`
+                  : hotel.distanceFromStation || '女性安心・個室';
 
                 return (
                   <div
@@ -183,6 +198,7 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                       <img
                         src={
                           hotel.imageUrl ||
+                          hotel.images?.[0]?.url ||
                           hotel.images?.[0] ||
                           'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
                         }
@@ -190,7 +206,7 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                         className="h-full w-full object-cover"
                       />
                       <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                        {currentPattern.badge}
+                        {badgeText}
                       </span>
                     </div>
                     <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{hotel.name}</h3>
@@ -198,7 +214,7 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                       {hotel.address || `${areaInfo.cityName}${areaInfo.name}周辺`}
                     </p>
                     <div className="flex flex-wrap gap-1">
-                      {currentPattern.tags.map((t, tIdx) => (
+                      {displayTags.map((t: string, tIdx: number) => (
                         <span
                           key={tIdx}
                           className={`rounded-full px-2 py-0.5 text-[9px] font-bold ${
