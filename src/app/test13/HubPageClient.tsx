@@ -252,7 +252,7 @@ export default function HubPageClient({
           </motion.div>
         </div>
 
-        {/* ─── エリアを選択する (画像2下部) ─── */}
+        {/* ─── エリアを選択する (画像2下部 - 本物都市夜景画像) ─── */}
         <div id="stores" className="mx-auto max-w-7xl px-6">
           <div className="text-center mb-8">
             <h3 className="font-serif text-xl sm:text-2xl font-bold text-slate-800 flex items-center justify-center gap-2">
@@ -320,7 +320,7 @@ export default function HubPageClient({
                   <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                     <img
                       src={city.img}
-                      alt={`${city.name}店 夜景`}
+                      alt={`${city.name}店 本物の夜景`}
                       className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2 py-0.5 text-[9px] font-bold text-white backdrop-blur-md">
@@ -372,7 +372,7 @@ export default function HubPageClient({
       <section id="about" className="relative overflow-hidden bg-white py-20 border-t border-rose-100/60">
         <div className="mx-auto max-w-7xl px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* 左側: ラウンドカット画像 (スーツ紳士の手) */}
+            {/* 左側: ラウンドカット画像 (洗練された日本人セラピストモデル) */}
             <motion.div
               initial={{ opacity: 0, x: -30 }}
               whileInView={{ opacity: 1, x: 0 }}
@@ -382,7 +382,7 @@ export default function HubPageClient({
             >
               <div className="relative w-full max-w-md aspect-[4/5] rounded-[3rem] overflow-hidden shadow-xl border-4 border-rose-50">
                 <img
-                  src="https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=800"
+                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
                   alt="安心とエスコート - ストロベリーボーイズ"
                   className="h-full w-full object-cover"
                 />
@@ -503,104 +503,6 @@ export default function HubPageClient({
                 <MapPin className="h-3 w-3" /> 福岡のセラピスト
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ─── 1.3 全国の対応拠点・出張エリア (Service Locations & Areas) ─── */}
-      <section className="bg-white px-6 py-24">
-        <div className="mx-auto max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-16 text-center"
-          >
-            <h2 className="mb-4 text-4xl font-black tracking-tighter text-slate-900 md:text-6xl">
-              全国の<span className="text-rose-500">対応拠点・出張エリア</span>
-            </h2>
-            <div className="mx-auto mb-6 h-1 w-24 rounded-full bg-rose-500" />
-            <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">
-              SERVICE LOCATIONS & DISPATCH AREAS
-            </p>
-          </motion.div>
-
-          <div className="no-scrollbar flex snap-x snap-mandatory gap-8 overflow-x-auto pb-12 md:grid md:grid-cols-2 md:overflow-visible md:pb-0 lg:grid-cols-3">
-            {stores.map((store, i) => {
-              // 福岡・横浜等の主要出張対応エリアタグ例（切り離し・拡張が容易なオプショナル設定）
-              const defaultTags = store.name?.includes('福岡')
-                ? ['博多', '天神', '中洲', '薬院']
-                : store.name?.includes('横浜')
-                  ? ['横浜', 'みなとみらい', '関内']
-                  : store.name?.includes('大阪') || store.name?.includes('梅田')
-                    ? ['梅田', '難波', '心斎橋']
-                    : ['主要駅対応', 'ホテル出張可'];
-
-              return (
-                <motion.div
-                  key={store.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.1 }}
-                  className="group relative w-[70vw] shrink-0 snap-center overflow-hidden rounded-[2.5rem] border border-slate-100 bg-slate-50 p-2 transition-all duration-500 hover:border-rose-200 hover:shadow-2xl hover:shadow-rose-500/10 md:w-auto md:shrink"
-                >
-                  <Link
-                    href={
-                      store.use_external_url && store.external_url
-                        ? store.external_url
-                        : `/store/${store.slug}`
-                    }
-                    target={store.use_external_url && store.external_url ? '_blank' : undefined}
-                  >
-                    <div className="relative aspect-[16/9] overflow-hidden rounded-[2rem]">
-                      <img
-                        src={
-                          store.image_url ||
-                          'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=800'
-                        }
-                        alt={store.name}
-                        className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                      />
-                      <div className="absolute inset-0 flex items-end bg-gradient-to-t from-black/60 to-transparent p-6 opacity-0 transition-opacity duration-500 group-hover:opacity-100">
-                        <span className="flex items-center gap-2 text-xs font-black text-white">
-                          VIEW DISPATCH AREA & DETAILS <ArrowRight className="h-3 w-3" />
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-6">
-                      <div className="mb-2 flex items-center justify-between gap-2">
-                        <div className="flex items-center gap-1.5 text-rose-500">
-                          <MapPin className="h-4 w-4" />
-                          <span className="text-[10px] font-black uppercase tracking-widest text-slate-500">
-                            {store.address?.includes(' ') ? store.address.split(' ')[0] : 'DISPATCH AREA'}
-                          </span>
-                        </div>
-                      </div>
-                      <h3 className="mb-2 truncate text-2xl font-black text-slate-800 transition-colors group-hover:text-rose-500">
-                        {store.name}
-                      </h3>
-
-                      {/* 主要対応エリアタグ（地域SEO用バッジ） */}
-                      <div className="mb-3 flex flex-wrap gap-1.5">
-                        {defaultTags.map((tag) => (
-                          <span
-                            key={tag}
-                            className="rounded-full bg-rose-50 px-2.5 py-0.5 text-[10px] font-bold text-rose-600 border border-rose-100"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-
-                      <p className="line-clamp-2 text-sm font-medium text-slate-500">
-                        {store.catch_copy || store.description || 'ご指定の場所や提携ホテルへスピーディーに出張いたします。'}
-                      </p>
-                    </div>
-                  </Link>
-                </motion.div>
-              );
-            })}
           </div>
         </div>
       </section>
