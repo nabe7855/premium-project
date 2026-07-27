@@ -151,12 +151,12 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
       <section className="py-12 bg-white sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center mb-10">
-            <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">LOVE HOTELS & SUITES</span>
+            <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">DISPATCH HOTEL GUIDE</span>
             <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl mt-1">
-              {areaInfo.name}出張対応！おすすめホテル・ラブホテル
+              {areaInfo.name}エリアで出張セラピー（女性用風俗）が利用できる安心おすすめホテル
             </h2>
-            <p className="text-xs text-gray-500 mt-2">
-              セラピストの出張派遣実績多数。完全個室・安心のおすすめホテル一覧です。
+            <p className="text-xs text-gray-500 mt-2 max-w-xl mx-auto">
+              ストロベリーボーイズ{areaInfo.cityName}店のご指定出張先として利用可能なホテル一覧です。完全個室で安全・快適に女性用風俗サービスをお楽しみいただけます。
             </p>
           </div>
 
@@ -175,11 +175,11 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                         hotel.images?.[0] ||
                         'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
                       }
-                      alt={hotel.name}
+                      alt={`${hotel.name} - ${areaInfo.name}出張風俗利用可能ホテル`}
                       className="h-full w-full object-cover"
                     />
                     <span className="absolute top-2 left-2 rounded-full bg-rose-500/90 px-2.5 py-1 text-[10px] font-bold text-white backdrop-blur-md">
-                      出張対応実績あり
+                      風俗出張利用OK
                     </span>
                   </div>
                   <h3 className="text-sm font-bold text-gray-900 truncate mb-1">{hotel.name}</h3>
@@ -188,13 +188,13 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                   </p>
                   <div className="flex flex-wrap gap-1">
                     <span className="rounded-full bg-rose-50 px-2 py-0.5 text-[9px] font-bold text-rose-600">
-                      ＃女子ウケ
+                      ＃出張風俗利用可
                     </span>
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
                       ＃秘密厳守
                     </span>
                     <span className="rounded-full bg-slate-100 px-2 py-0.5 text-[9px] font-bold text-slate-600">
-                      ＃個室対応
+                      ＃完全個室
                     </span>
                   </div>
                 </div>
