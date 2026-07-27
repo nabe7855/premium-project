@@ -1,14 +1,107 @@
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
+import AreaLpClient, { AreaDetailInfo } from '@/components/sections/area/AreaLpClient';
+import { getCastsByStore } from '@/lib/getCastsByStore';
+import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
+import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
+import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
+import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sections/MobileStickyButton';
+import YokohamaMobileStickyButton from '@/components/templates/store/yokohama/sections/MobileStickyButton';
 
-// 第一弾の実装対象エリア
-const TARGET_AREAS = [
-  { slug: 'fukuoka', areaSlug: 'tenjin', name: '天神' },
-  { slug: 'fukuoka', areaSlug: 'hakata', name: '博多' },
-  { slug: 'fukuoka', areaSlug: 'nakasu', name: '中洲' },
-  { slug: 'yokohama', areaSlug: 'kannai', name: '関内' },
-  { slug: 'yokohama', areaSlug: 'minatomirai', name: 'みなとみらい' },
-];
+// 出張対応エリア詳細データマップ
+const AREA_MAP: Record<string, AreaDetailInfo> = {
+  'fukuoka-hakata': {
+    slug: 'fukuoka',
+    areaSlug: 'hakata',
+    name: '博多',
+    cityName: '福岡',
+    description: '博多駅周辺（筑紫口・博多口）の主要ホテルやご自宅へ出張セラピストがお伺いします。出張費・交通費もわかりやすい明朗会計。',
+    features: ['博多駅徒歩圏内の全ホテル対応', '24時間即日派遣可能', '完全個室で秘密厳守'],
+    recommendedHotels: ['博多駅筑紫口周辺ビジネスホテル', '博多駅博多口シティホテル', '博多エリア各種ラブホテル', 'ご指定のご自宅・マンション'],
+    faqs: [
+      { question: '博多駅近くのホテルでも利用できますか？', answer: 'はい、博多駅筑紫口・博多口周辺の全てのビジネスホテル・シティホテル・ラブホテルに対応しております。' },
+      { question: '初めてで不安なのですが大丈夫ですか？', answer: 'ストロベリーボーイズは女性初心者様を大歓迎しております。丁寧で優しいセラピストがご希望に合わせてエスコートいたします。' },
+    ],
+  },
+  'fukuoka-tenjin': {
+    slug: 'fukuoka',
+    areaSlug: 'tenjin',
+    name: '天神',
+    cityName: '福岡',
+    description: '天神・親富孝通り・大名エリアの指定ホテルや自宅へイケメンセラピストを派遣。お買物帰りや仕事終わりのリフレッシュに最適です。',
+    features: ['天神・大名・今泉エリア即対応', '洗練された人気キャスト在籍', '明朗会計・安心サポート'],
+    recommendedHotels: ['天神駅周辺シティホテル', '大名・今泉エリアデザイナーズホテル', '天神エリアラブホテル', 'ご自宅・指定マンション'],
+    faqs: [
+      { question: '天神で当日の予約は可能ですか？', answer: 'はい、当日の急なご予約も対応可能です。LINEまたはWeb予約フォームより出勤状況をご確認いただけます。' },
+      { question: '利用料金以外に追加料金は発生しますか？', answer: '基本コース料金と規定の出張交通費以外、指名料や不当な追加費用は一切かかりません。' },
+    ],
+  },
+  'fukuoka-nakasu': {
+    slug: 'fukuoka',
+    areaSlug: 'nakasu',
+    name: '中洲',
+    cityName: '福岡',
+    description: '中洲・川端川沿いエリアのホテルやご指定の場所へ出張。最高級の接客と癒やしのセラピーをお届けします。',
+    features: ['中洲・中洲川端駅すぐ', 'ナイトタイム即日派遣対応', '上質な完全プライベート空間'],
+    recommendedHotels: ['中洲川端周辺ラグジュアリーホテル', '中洲エリア各種ホテル', '天神・中洲近郊ご自宅'],
+    faqs: [
+      { question: '深夜帯の利用も対応していますか？', answer: 'はい、深夜の時間帯の出張派遣・ご予約にも柔軟に対応しております。' },
+    ],
+  },
+  'fukuoka-yakuin': {
+    slug: 'fukuoka',
+    areaSlug: 'yakuin',
+    name: '薬院',
+    cityName: '福岡',
+    description: '薬院・平尾エリアのお洒落なご自宅やホテルへ出張。落ち着いた雰囲気の中で特別なひとときをお過ごしいただけます。',
+    features: ['薬院・平尾エリア密着', '完全プライベート厳守', '事前Web予約で快適利用'],
+    recommendedHotels: ['薬院駅周辺ホテル', '渡辺通エリアホテル', 'ご自宅・マンション'],
+    faqs: [
+      { question: '自宅への出張時にご近所にバレませんか？', answer: 'セラピストは私服で目立たないよう細心の注意を払ってお伺いしますのでご安心ください。' },
+    ],
+  },
+  'yokohama-kannai': {
+    slug: 'yokohama',
+    areaSlug: 'kannai',
+    name: '関内',
+    cityName: '横浜',
+    description: '関内・伊勢佐木町エリアのホテルやご自宅へ出張セラピストを派遣。横浜店自慢のイケメンセラピストが極上の癒やしを提供します。',
+    features: ['関内駅・伊勢佐木長者町エリア即対応', '厳選されたイケメンキャスト', '安心明朗会計・完全予約制'],
+    recommendedHotels: ['関内駅周辺ビジネスホテル', '伊勢佐木町エリアラブホテル', '馬車道・日本大通りエリアホテル', 'ご自宅'],
+    faqs: [
+      { question: '関内エリアでの出張費用はいくらですか？', answer: '横浜店の標準出張交通費が適用されます。予約時に明確な合計金額をご案内いたします。' },
+    ],
+  },
+  'yokohama-minatomirai': {
+    slug: 'yokohama',
+    areaSlug: 'minatomirai',
+    name: 'みなとみらい',
+    cityName: '横浜',
+    description: 'みなとみらい・桜木町エリアの高級シティホテルや高層ホテルへ出張。夜景とともに最高のロマンチックな癒やしをお届けします。',
+    features: ['みなとみらい高級ホテル対応', '接客マナー徹底の高品質キャスト', '洗練された癒やしの時間'],
+    recommendedHotels: ['みなとみらいエリア各種シティホテル', '桜木町駅前ホテル', '横浜港周辺リゾートホテル'],
+    faqs: [
+      { question: 'みなとみらいの高級ホテルでも利用できますか？', answer: 'はい、みなとみらい地区の主要ホテルに対応しております。お部屋番号をご連絡いただければセラピストがお伺いします。' },
+    ],
+  },
+  'yokohama-sakuragicho': {
+    slug: 'yokohama',
+    areaSlug: 'sakuragicho',
+    name: '桜木町',
+    cityName: '横浜',
+    description: '桜木町・野毛エリア周辺の指定ホテルやご自宅へ迅速に出張。観光やお仕事帰りのプライベートタイムを華やかに彩ります。',
+    features: ['桜木町駅徒歩圏対応', '当日即日ご予約受付中', '秘密厳守・丁寧な対応'],
+    recommendedHotels: ['桜木町駅周辺ホテル', '野毛・日ノ出町エリアホテル', 'ご自宅'],
+    faqs: [
+      { question: '当日急に予約することは可能ですか？', answer: 'はい、セラピストの空き状況に応じて当日予約が可能です。' },
+    ],
+  },
+};
+
+const TARGET_AREAS = Object.values(AREA_MAP);
 
 interface AreaPageProps {
   params: {
@@ -18,26 +111,32 @@ interface AreaPageProps {
 }
 
 export async function generateMetadata({ params }: AreaPageProps): Promise<Metadata> {
-  const areaInfo = TARGET_AREAS.find(
-    (a) => a.slug === params.slug && a.areaSlug === params.areaSlug
-  );
+  const key = `${params.slug}-${params.areaSlug}`;
+  const areaInfo = AREA_MAP[key];
 
   if (!areaInfo) {
     return { title: 'ページが見つかりません' };
   }
 
-  const title = `${areaInfo.name}の女性用風俗｜ストロベリーボーイズ`;
-  
+  const title = `【公式】${areaInfo.name}の女性用風俗・女風｜ストロベリーボーイズ${areaInfo.cityName}店【出張セラピー】`;
+  const description = `${areaInfo.name}（${areaInfo.cityName}）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ。${areaInfo.description}`;
+
   return {
     title,
-    description: `${areaInfo.name}エリアの女性用風俗・出張ホストはストロベリーボーイズにお任せください。`,
-    // TODO: コンテンツ入稿完了後に noindex を外す（または index: true に変更）
+    description,
     robots: {
-      index: false,
-      follow: false,
+      index: true,
+      follow: true,
     },
     alternates: {
       canonical: `https://www.sutoroberrys.jp/store/${params.slug}/area/${params.areaSlug}`,
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://www.sutoroberrys.jp/store/${params.slug}/area/${params.areaSlug}`,
+      siteName: 'Strawberry Boys',
+      type: 'website',
     },
   };
 }
@@ -50,35 +149,70 @@ export function generateStaticParams() {
 }
 
 export default async function AreaLPPage({ params }: AreaPageProps) {
-  const areaInfo = TARGET_AREAS.find(
-    (a) => a.slug === params.slug && a.areaSlug === params.areaSlug
-  );
+  const key = `${params.slug}-${params.areaSlug}`;
+  const areaInfo = AREA_MAP[key];
 
   if (!areaInfo) {
     notFound();
   }
 
-  // TODO: 本実装ではCMSまたはDBからエリア別LPのコンテンツ（本文、FAQ、セラピスト）を取得して表示する
+  // 並列フェッチ
+  const [casts, topConfigResult] = await Promise.all([
+    getCastsByStore(params.slug),
+    getStoreTopConfig(params.slug, { skipCasts: true }),
+  ]);
+
+  const topConfig = topConfigResult.success ? (topConfigResult.config as StoreTopPageConfig) : null;
+
+  // JSON-LD (FAQ & Service)
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: `${areaInfo.name}出張女性用風俗サービス - ストロベリーボーイズ${areaInfo.cityName}店`,
+    provider: {
+      '@type': 'Organization',
+      name: 'Strawberry Boys',
+      url: 'https://www.sutoroberrys.jp',
+    },
+    areaServed: {
+      '@type': 'AdministrativeArea',
+      name: `${areaInfo.name}（${areaInfo.cityName}）`,
+    },
+    description: areaInfo.description,
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 pt-24 pb-16">
-      <div className="mx-auto max-w-4xl px-4 text-center">
-        <h1 className="text-3xl md:text-4xl font-bold mb-8">
-          {areaInfo.name}エリアの女性用風俗・出張ホスト
-        </h1>
-        
-        <div className="bg-white p-8 rounded-2xl shadow-sm border border-gray-100">
-          <p className="text-gray-600 mb-6">
-            現在、{areaInfo.name}エリア特設ページは準備中です。<br/>
-            公開までもうしばらくお待ちください。
-          </p>
-          <a 
-            href={`/store/${params.slug}`} 
-            className="inline-block bg-rose-500 text-white px-8 py-3 rounded-full font-bold hover:bg-rose-600 transition"
-          >
-            店舗トップへ戻る
-          </a>
-        </div>
-      </div>
-    </div>
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+
+      {/* ヘッダー */}
+      {params.slug === 'yokohama' && topConfig?.header && <YokohamaHeader config={topConfig.header} />}
+      {params.slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
+
+      <main className="min-h-screen">
+        <AreaLpClient areaInfo={areaInfo} casts={casts} storeSlug={params.slug} />
+      </main>
+
+      {/* フッター */}
+      {params.slug === 'yokohama' && topConfig?.footer && <YokohamaFooter config={topConfig.footer} />}
+      {params.slug === 'fukuoka' && topConfig?.footer && <FukuokaFooter config={topConfig.footer} />}
+
+      {/* モバイル追従予約ボタン */}
+      {params.slug === 'fukuoka' && (
+        <FukuokaMobileStickyButton
+          config={topConfig?.footer?.bottomNav}
+          isVisible={topConfig?.footer?.isBottomNavVisible}
+        />
+      )}
+      {params.slug === 'yokohama' && (
+        <YokohamaMobileStickyButton
+          config={topConfig?.footer?.bottomNav}
+          isVisible={topConfig?.footer?.isBottomNavVisible}
+        />
+      )}
+    </>
   );
 }
