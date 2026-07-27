@@ -11,17 +11,22 @@ import React, { useEffect, useState } from 'react';
 
 interface DiaryListContentProps {
   storeSlug: string;
+  initialPosts?: DiaryPost[];
 }
 
-const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug }) => {
+const DiaryListContent: React.FC<DiaryListContentProps> = ({ storeSlug, initialPosts }) => {
   const { store } = useStore();
   const [sortBy, setSortBy] = useState('newest');
   const [showFilters, setShowFilters] = useState(false);
-  const [allPosts, setAllPosts] = useState<DiaryPost[]>([]);
-  const [filteredAndSortedPosts, setFilteredAndSortedPosts] = useState<DiaryPost[]>([]);
+  const [allPosts, setAllPosts] = useState<DiaryPost[]>(initialPosts || []);
+  const [filteredAndSortedPosts, setFilteredAndSortedPosts] = useState<DiaryPost[]>(initialPosts || []);
   const [selectedHashtags, setSelectedHashtags] = useState<string[]>([]);
 
   useEffect(() => {
+    if (initialPosts && initialPosts.length > 0) {
+      return;
+    }
+
     const fetchPosts = async () => {
       const now = new Date().toISOString();
       const { data, error } = await supabase

@@ -38,9 +38,71 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
+import { supabase } from '@/lib/supabaseClient';
+import { getSupabasePublicUrl } from '@/lib/image-url';
+import { DiaryPost } from '@/types/diary';
+
+async function getInitialDiaryPosts(storeSlug: string): Promise<DiaryPost[]> {
+  try {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+      .from('blogs')
+      .select(`
+        id, title, content, created_at, published_at, updated_at, status,
+        casts ( id, name, image_url, main_image_url, cast_store_memberships ( stores ( slug ) ) ),
+        blog_images ( image_url ),
+        blog_tags ( blog_tag_master ( name ) ),
+        is_comment_enabled, blog_comments ( count ), view_count
+      `)
+      .in('status', ['published', 'scheduled'])
+      .lte('published_at', now)
+      .order('published_at', { ascending: false });
+
+    if (error || !data) return [];
+
+    return data
+      .filter((post: any) => {
+        const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        const memberships = castObj?.cast_store_memberships ?? [];
+        const slugs = Array.isArray(memberships)
+          ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
+          : [];
+        return slugs.includes(storeSlug);
+      })
+      .map((post: any) => {
+        const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        return {
+          id: post.id,
+          title: post.title,
+          content: post.content ?? '',
+          excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
+          date: post.published_at || post.created_at,
+          updatedDate: post.updated_at,
+          tags: post.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) ?? [],
+          reactions: { total: 0 },
+          commentCount: post.blog_comments?.[0]?.count || 0,
+          isCommentEnabled: post.is_comment_enabled ?? true,
+          viewCount: post.view_count ?? 0,
+          storeSlug,
+          castName: castObj?.name ?? '不明なキャスト',
+          castId: castObj?.id || '',
+          castSlug: castObj?.slug || '',
+          castAvatar: getSupabasePublicUrl(castObj?.main_image_url || castObj?.image_url),
+          image_url: getSupabasePublicUrl(post.blog_images?.[0]?.image_url),
+        };
+      });
+  } catch (err) {
+    console.error('getInitialDiaryPosts error:', err);
+    return [];
+  }
+}
+
 export default async function DiaryListPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const result = await getStoreTopConfig(slug, { skipCasts: true });
+  const [result, initialPosts] = await Promise.all([
+    getStoreTopConfig(slug, { skipCasts: true }),
+    getInitialDiaryPosts(slug),
+  ]);
   const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
 
   return (
@@ -56,7 +118,7 @@ export default async function DiaryListPage({ params }: { params: { slug: string
             </div>
           }
         >
-          <DiaryListContent storeSlug={slug} />
+          <DiaryListContent storeSlug={slug} initialPosts={initialPosts} />
         </Suspense>
       </div>
 

@@ -16,10 +16,11 @@ import Link from 'next/link';
 
 interface CastListProps {
   storeSlug: string; // ✅ 店舗slug必須
+  initialCasts?: Cast[];
 }
 
-const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
-  const [loading, setLoading] = useState(true);
+const CastList: React.FC<CastListProps> = ({ storeSlug, initialCasts }) => {
+  const [loading, setLoading] = useState(!initialCasts || initialCasts.length === 0);
   const [currentlyPlayingId, setCurrentlyPlayingId] = useState<string | null>(null);
 
   // 🎯 状態管理（useCastSearchを置き換え）
@@ -42,7 +43,15 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
   const [selectedFaceTypes, setSelectedFaceTypes] = useState<string[]>([]);
   const [showFilters, setShowFilters] = useState(false);
   const [favorites, setFavorites] = useState<string[]>([]);
-  const [originalCasts, setOriginalCasts] = useState<Cast[]>([]);
+  const [originalCasts, setOriginalCasts] = useState<Cast[]>(() => {
+    if (!initialCasts) return [];
+    return initialCasts.map((c) => ({
+      ...c,
+      isNewcomer: c.isNewcomer ?? c.statuses?.some(
+        (s) => s.status_master?.name === '新人' && s.isActive
+      ),
+    }));
+  });
   const [isDiagnosisResult, setIsDiagnosisResult] = useState(false);
 
   // 🆕 イチ押しキャストの抽出
@@ -65,8 +74,13 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
     if (emblaApi) emblaApi.scrollNext();
   }, [emblaApi]);
 
-  // DBからキャスト取得
+  // DBからキャスト取得（initialCastsがない場合のみフェッチ）
   useEffect(() => {
+    if (initialCasts && initialCasts.length > 0) {
+      setLoading(false);
+      return;
+    }
+
     const fetchCasts = async () => {
       setLoading(true);
       const result: Cast[] = await getCastsByStore(storeSlug);
@@ -83,7 +97,7 @@ const CastList: React.FC<CastListProps> = ({ storeSlug }) => {
       setLoading(false);
     };
     fetchCasts();
-  }, [storeSlug]);
+  }, [storeSlug, initialCasts]);
 
   useEffect(() => {
   void setIsDiagnosisResult; // 将来使う予定のダミー参照

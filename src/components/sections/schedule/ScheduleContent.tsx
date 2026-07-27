@@ -8,11 +8,14 @@ import BookingModal from '../casts/modals/BookingModal';
 
 interface ScheduleContentProps {
   storeSlug: string;
+  initialSchedule?: ScheduleDayType[];
 }
 
-const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
-  const [schedule, setSchedule] = useState<ScheduleDayType[]>([]);
-  const [activeDate, setActiveDate] = useState<string>('');
+const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSchedule }) => {
+  const [schedule, setSchedule] = useState<ScheduleDayType[]>(initialSchedule || []);
+  const [activeDate, setActiveDate] = useState<string>(
+    initialSchedule && initialSchedule.length > 0 ? initialSchedule[0].date : ''
+  );
   const [storeId, setStoreId] = useState<string>('');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
   const [selectedCast, setSelectedCast] = useState<{ id: string; name: string } | null>(null);
@@ -36,6 +39,10 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug }) => {
   };
 
   useEffect(() => {
+    if (initialSchedule && initialSchedule.length > 0) {
+      return;
+    }
+
     const fetchSchedule = async () => {
       const dateRange = generateDateRange();
       const { data: schedules, error } = await supabase

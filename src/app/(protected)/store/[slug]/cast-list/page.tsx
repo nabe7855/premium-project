@@ -3,6 +3,7 @@ import DiagnosisSection from '@/components/sections/casts/casts/DiagnosisSection
 import Hero from '@/components/sections/casts/ui/Hero';
 import MatchingBanner from '@/components/sections/casts/ui/MatchingBanner';
 import { getTodayCasts } from '@/lib/getRandomTodayCast';
+import { getCastsByStore } from '@/lib/getCastsByStore';
 import { Metadata } from 'next';
 
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
@@ -68,6 +69,9 @@ export default async function CastListPage({ params }: Props) {
 
   const shopName = topConfig?.footer?.shopInfo?.name || store.name;
 
+  // ✅ 店舗のキャスト一覧を取得（SSR用）
+  const casts = await getCastsByStore(params.slug);
+
   return (
     <>
       {store.template === 'fukuoka' ? (
@@ -77,7 +81,7 @@ export default async function CastListPage({ params }: Props) {
       ) : null}
 
       <main className="min-h-screen pb-12">
-        <h1 className="sr-only">在籍セラピスト一覧</h1>
+        <h1 className="sr-only">{shopName} 在籍セラピスト一覧</h1>
         {/* ✅ 本日のおすすめキャスト（カルーセル表示） */}
         <Hero casts={todayCasts} />
 
@@ -90,7 +94,7 @@ export default async function CastListPage({ params }: Props) {
       {/* ✅ 店舗のキャスト一覧 */}
       <div id="casts">
         <Suspense fallback={<div className="py-16 text-center">読み込み中...</div>}>
-          <CastList storeSlug={params.slug} />
+          <CastList storeSlug={params.slug} initialCasts={casts} />
         </Suspense>
       </div>
       </main>

@@ -39,10 +39,92 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
+import { supabase } from '@/lib/supabaseClient';
+import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
+
+async function getInitialScheduleData(storeSlug: string): Promise<ScheduleDayType[]> {
+  try {
+    const today = new Date();
+    const days = [];
+    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
+    for (let i = 0; i < 14; i++) {
+      const d = new Date(today);
+      d.setDate(today.getDate() + i);
+      const dateStr = d.toISOString().split('T')[0];
+      days.push({ date: dateStr, dayOfWeek: dayNames[d.getDay()] });
+    }
+
+    const { data: schedules } = await supabase
+      .from('schedules')
+      .select(`
+        *,
+        casts!inner (
+          *,
+          cast_statuses (
+            *,
+            status_master (*)
+          ),
+          cast_store_memberships!inner (
+            stores!inner ( id, slug )
+          )
+        )
+      `)
+      .gte('work_date', days[0].date)
+      .lte('work_date', days[days.length - 1].date)
+      .eq('casts.cast_store_memberships.stores.slug', storeSlug);
+
+    return days.map((day) => {
+      const castsForDay: Cast[] =
+        schedules
+          ?.filter((s) => s.work_date === day.date)
+          .map((s) => {
+            const cast = Array.isArray(s.casts) ? s.casts[0] : s.casts;
+            return {
+              id: cast?.id ?? '',
+              name: cast?.name ?? '',
+              age: cast?.age ?? 0,
+              photo: cast?.main_image_url ?? '',
+              slug: cast?.slug ?? '',
+              workingHours:
+                s.start_datetime && s.end_datetime
+                  ? `${new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${new Date(s.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`
+                  : '時間未定',
+              status: 'available',
+              description: cast?.catch_copy ?? '',
+              isFavorite: false,
+              isRecentlyViewed: false,
+              category: '',
+              scheduleStatus: s.status ?? null,
+              statuses: (cast?.cast_statuses ?? []).map((cs: any) => ({
+                id: cs.id,
+                statusId: cs.status_id,
+                label: cs.status_master?.name ?? '',
+                labelColor: cs.status_master?.label_color ?? '#fce7f3',
+                textColor: cs.status_master?.text_color ?? '#9d174d',
+              })),
+              storeSlug,
+            } as Cast;
+          }) ?? [];
+
+      return {
+        ...day,
+        casts: castsForDay,
+        recommendedCasts: [],
+      };
+    });
+  } catch (err) {
+    console.error('getInitialScheduleData error:', err);
+    return [];
+  }
+}
+
 export default async function SchedulePage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const result = await getStoreTopConfig(slug, { skipCasts: true });
-  const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
+  const [topConfigResult, initialSchedule] = await Promise.all([
+    getStoreTopConfig(slug, { skipCasts: true }),
+    getInitialScheduleData(slug),
+  ]);
+  const topConfig = topConfigResult.success ? (topConfigResult.config as StoreTopPageConfig) : null;
 
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
@@ -62,7 +144,7 @@ export default async function SchedulePage({ params }: { params: { slug: string 
             </div>
           }
         >
-          <ScheduleContent storeSlug={slug} />
+          <ScheduleContent storeSlug={slug} initialSchedule={initialSchedule} />
         </Suspense>
       </main>
 
