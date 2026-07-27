@@ -665,42 +665,42 @@ export default function HubPageClient({
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
               >
-                {[
-                  ...mediaArticles.amolabArticles,
-                  ...mediaArticles.sweetStayArticles,
-                  ...mediaArticles.ikeoArticles,
-                ]
-                  .slice(0, 9)
-                  .map((article: any) => (
+                {(diaries.length > 0 ? diaries.slice(0, 6) : [1, 2, 3]).map((d: any, idx: number) => {
+                  const title = d.title || '最新のお知せ・トピックス';
+                  const thumbnail = d.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                  const dateStr = d.created_at
+                    ? new Date(d.created_at).toLocaleDateString('ja-JP')
+                    : new Date().toLocaleDateString('ja-JP');
+
+                  return (
                     <motion.div
-                      key={article.id}
+                      key={d.id || idx}
                       whileHover={{ y: -8 }}
                       className="group cursor-pointer overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2.5rem] md:p-2"
                     >
-                      <Link href={article.url || '#'}>
-                        <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
-                          <img
-                            src={article.thumbnail_url || FALLBACK_CAST_IMG}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            alt={article.title}
-                          />
+                      <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
+                        <img
+                          src={thumbnail}
+                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          alt={title}
+                        />
+                      </div>
+                      <div className="p-3 md:p-6">
+                        <div className="mb-2 flex items-center gap-2">
+                          <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
+                            TOPICS
+                          </span>
+                          <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
+                            {dateStr}
+                          </span>
                         </div>
-                        <div className="p-3 md:p-6">
-                          <div className="mb-2 flex items-center gap-2">
-                            <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
-                              NEWS
-                            </span>
-                            <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
-                              {new Date().toLocaleDateString('ja-JP')}
-                            </span>
-                          </div>
-                          <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
-                            {article.title}
-                          </h3>
-                        </div>
-                      </Link>
+                        <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
+                          {title}
+                        </h3>
+                      </div>
                     </motion.div>
-                  ))}
+                  );
+                })}
               </motion.div>
             )}
 
@@ -812,234 +812,8 @@ export default function HubPageClient({
         </section>
       )}
 
-      {/* ─── 3.5 オウンドメディア連携 (各セクション化) ─── */}
-      {[
-        {
-          title: 'アモラボ',
-          sub: "Women's Wellness",
-          illustration: '/ハブページメディアイラスト/イケジョ.png',
-          color: 'rose',
-          bgColor: 'bg-rose-50',
-          textColor: 'text-slate-900',
-          subTextColor: 'text-slate-500',
-          href: '/ikejo',
-          icon: '💗',
-          desc: '自立した女性のライフスタイルメディア。ウェルビーイングから日常의整えまで、現代女性に寄り添うヒントを届けます。',
-          articles: mediaArticles.amolabArticles,
-        },
-        {
-          title: 'イケオラボ',
-          sub: "Men's Wellness",
-          illustration: '/ハブページメディアイラスト/イケオ.png',
-          color: 'blue',
-          bgColor: 'bg-blue-900',
-          textColor: 'text-white',
-          subTextColor: 'text-blue-200',
-          href: '/ikeo',
-          icon: '⚡',
-          desc: 'メンズウェルネス。選ばれる男へのナビゲート。心身のコンディショニングを通じた新しいライフスタイルを提案。',
-          articles: mediaArticles.ikeoArticles,
-        },
-        {
-          title: 'スイートステイ',
-          sub: 'Hotel Guide',
-          illustration: '/ハブページメディアイラスト/スイートホテル.png',
-          color: 'amber',
-          bgColor: 'bg-sky-50',
-          textColor: 'text-slate-900',
-          subTextColor: 'text-slate-500',
-          href: '/sweetstay',
-          icon: '🏨',
-          desc: '大人の隠れ家ホテルガイド。AIが導く一軒。特別な夜を彩る、あなただけに最適な空間をナビゲートします。',
-          articles: mediaArticles.sweetStayArticles,
-        },
-      ].map((media, idx) => (
-        <section
-          key={media.title}
-          className={`${media.bgColor} relative overflow-hidden px-6 py-16 transition-colors duration-500`}
-        >
-          <div className="relative z-10 mx-auto max-w-7xl">
-            {/* 1段目: メディア名と説明セクション */}
-            <div className="mb-12">
-              {/* レベル1: メディア名 */}
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.1 }}
-                className="mb-8"
-              >
-                <h2
-                  className={`text-5xl font-black tracking-tighter md:text-7xl ${media.textColor}`}
-                >
-                  {media.title}
-                </h2>
-              </motion.div>
+      {/* ─── 3.5 オウンドメディア連携（非表示化） ─── */}
 
-              {/* レベル2: 説明文と画像の50/50分割 */}
-              {/* レベル2: 説明文と画像の50/50分割 */}
-              <div className="grid grid-cols-2 items-center gap-4 md:gap-12">
-                <motion.div
-                  initial={{ opacity: 0, x: media.title === 'イケオラボ' ? 30 : -30 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: false, amount: 0.1 }}
-                  transition={{ delay: 0.2 }}
-                  className={`${media.title === 'イケオラボ' ? 'order-2' : 'order-1'} relative z-20`}
-                >
-                  <div
-                    className={`mb-4 inline-block rounded-full px-3 py-1 text-[10px] font-black uppercase tracking-widest md:mb-6 md:px-4 md:text-xs ${
-                      media.title === 'イケオラボ'
-                        ? 'bg-blue-800 text-blue-300'
-                        : 'bg-rose-100 text-rose-500'
-                    }`}
-                  >
-                    {media.sub}
-                  </div>
-                  <p
-                    className={`mb-4 text-sm font-bold leading-tight md:mb-8 md:text-2xl md:leading-relaxed ${media.textColor}`}
-                  >
-                    私たちのミッションは、
-                    <br />
-                    <span className="bg-yellow-200/30 px-1 md:px-2">
-                      「{media.desc.split('。')[0]}」
-                    </span>
-                    ことです。
-                  </p>
-                  <p
-                    className={`line-clamp-3 text-[10px] font-medium leading-relaxed opacity-80 md:line-clamp-none md:text-lg ${media.subTextColor}`}
-                  >
-                    {media.desc}
-                  </p>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: false, amount: 0.1 }}
-                  transition={{
-                    duration: 0.8,
-                    delay: 0.3,
-                    ease: [0.16, 1, 0.3, 1],
-                  }}
-                  className={`flex ${media.title === 'イケオラボ' ? 'justify-start' : 'justify-end'} ${media.title === 'イケオラボ' ? 'order-1' : 'order-2'} relative z-10`}
-                >
-                  <div
-                    className={`relative aspect-square w-[180%] max-w-[400px] md:w-[220%] md:max-w-[1000px] ${
-                      media.title === 'イケオラボ'
-                        ? '-translate-x-[20%] md:-translate-x-[30%]'
-                        : 'translate-x-[20%] md:translate-x-[30%]'
-                    }`}
-                  >
-                    <img
-                      src={(media as any).illustration}
-                      alt={media.title}
-                      className="h-full w-full object-contain drop-shadow-2xl transition-transform duration-700 hover:scale-105"
-                    />
-                    <div
-                      className={`absolute inset-0 -z-10 rounded-full opacity-30 blur-[60px] md:blur-[120px] ${
-                        media.title === 'イケオラボ'
-                          ? 'bg-blue-400'
-                          : media.title === 'アモラボ'
-                            ? 'bg-rose-400'
-                            : 'bg-amber-400'
-                      }`}
-                    />
-                  </div>
-                </motion.div>
-              </div>
-            </div>
-
-            {/* 2段目: コンテンツスライダー (画面いっぱいの枠線) */}
-            <div
-              className={`-mx-6 border-b-2 border-t-2 border-solid px-6 py-10 ${
-                media.title === 'イケオラボ'
-                  ? 'border-blue-500/40'
-                  : media.title === 'アモラボ'
-                    ? 'border-rose-200/60'
-                    : 'border-sky-200/60'
-              }`}
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 40 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.1 }}
-                transition={{ duration: 1.2, ease: 'easeOut', delay: 0.3 }}
-                className="relative mx-auto max-w-7xl"
-              >
-                <div className="no-scrollbar flex snap-x gap-6 overflow-x-auto px-4 pb-8">
-                  {media.articles && media.articles.length > 0
-                    ? media.articles.map((article: any, i: number) => (
-                        <Link
-                          key={article.id || i}
-                          href={`/media/article/${article.slug}`}
-                          className="group min-w-[300px] max-w-[350px] flex-shrink-0 snap-start"
-                        >
-                          <div className="mb-4 aspect-[4/3] overflow-hidden rounded-[2rem] bg-slate-100 shadow-lg ring-1 ring-slate-200/50 transition-all duration-500 group-hover:shadow-2xl group-hover:shadow-rose-500/10">
-                            <img
-                              src={
-                                article.thumbnail_url ||
-                                'https://images.unsplash.com/photo-1516589174184-c18259ec398e?auto=format&fit=crop&q=80&w=600'
-                              }
-                              alt={article.title}
-                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            />
-                          </div>
-                          <h4
-                            className={`line-clamp-2 text-lg font-bold transition-colors ${media.textColor} group-hover:text-rose-400`}
-                          >
-                            {article.title}
-                          </h4>
-                          <p
-                            className={`mt-2 text-xs font-medium ${media.subTextColor} opacity-60`}
-                          >
-                            {new Date(article.published_at || Date.now()).toLocaleDateString(
-                              'ja-JP',
-                            )}
-                          </p>
-                        </Link>
-                      ))
-                    : // 記事がない場合のフォールバック
-                      [1, 2, 3, 4].map((i) => (
-                        <div
-                          key={i}
-                          className="min-w-[300px] max-w-[350px] flex-shrink-0 opacity-40"
-                        >
-                          <div className="mb-4 aspect-[4/3] animate-pulse rounded-[2rem] bg-slate-200" />
-                          <div className="h-4 w-3/4 rounded bg-slate-200" />
-                        </div>
-                      ))}
-                </div>
-                {/* スライドアシスト用フェード */}
-                <div
-                  className={`pointer-events-none absolute right-0 top-0 hidden h-full w-24 bg-gradient-to-l ${media.bgColor === 'bg-blue-900' ? 'from-blue-900' : 'from-white'} to-transparent md:block`}
-                />
-                <div className="group absolute -right-4 top-1/2 hidden -translate-y-1/2 cursor-pointer rounded-full border border-slate-100 bg-white p-4 shadow-xl transition-colors hover:bg-rose-500 hover:text-white md:block">
-                  <ChevronRight className="h-6 w-6" />
-                </div>
-              </motion.div>
-            </div>
-
-            {/* 3段目: ボタン */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: false, amount: 0.1 }}
-              transition={{ delay: 0.4 }}
-              className="mt-8 flex justify-start pl-6"
-            >
-              <Link
-                href={media.href}
-                className={`flex items-center gap-3 rounded-full border px-8 py-3 text-sm font-black shadow-sm transition-all hover:gap-5 ${
-                  media.title === 'イケオラボ'
-                    ? 'border-blue-700 bg-blue-800 text-white hover:border-white hover:bg-white hover:text-blue-900'
-                    : 'border-slate-200 bg-white text-slate-700 hover:border-rose-500 hover:bg-rose-500 hover:text-white'
-                }`}
-              >
-                サイトを見る <ArrowRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
-          </div>
-        </section>
-      ))}
 
       {/* ─── 4. Knowledge Hub ─── */}
       <section className="bg-slate-50 px-6 py-24">
