@@ -128,7 +128,18 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug }: AreaLpClien
 
             <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
               {casts.slice(0, 8).map((cast, index) => (
-                <CastCard key={cast.id} cast={cast} index={index} storeSlug={storeSlug} />
+                <CastCard
+                  key={cast.id}
+                  cast={cast}
+                  index={index}
+                  storeSlug={storeSlug}
+                  isFavorite={false}
+                  onCastSelect={() => {}}
+                  onToggleFavorite={() => {}}
+                  sortBy="default"
+                  currentlyPlayingId={null}
+                  setCurrentlyPlayingId={() => {}}
+                />
               ))}
             </div>
           </div>
