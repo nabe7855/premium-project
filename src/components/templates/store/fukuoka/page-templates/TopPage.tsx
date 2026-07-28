@@ -6,6 +6,7 @@ import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
 import TopPageSeoBlock from '@/components/sections/store/TopPageSeoBlock';
+import StrawberrySectionDivider from '@/components/ui/StrawberrySectionDivider';
 
 const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
 const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
@@ -137,6 +138,10 @@ export default function FukuokaPage({
           storeSlug={storeSlug}
         />
       )}
+
+      {/* 🍓 [写メ日記 ✕ 本日出勤キャストの隙間ディバイダー] イチゴから色(#FFF9FA)が広がるシームレス接続 */}
+      <StrawberrySectionDivider color="#FFF9FA" position="center" rotation={-10} size="medium" />
+
       {(!safeConfig || safeConfig.cast.isVisible || isEditing) && (
         <>
           <CastSection

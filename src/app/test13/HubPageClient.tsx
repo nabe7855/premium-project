@@ -19,7 +19,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import Script from 'next/script';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 
 /* ─── 静的データ ─────────────────────────────────── */
 
@@ -103,6 +103,178 @@ interface HubPageClientProps {
     sweetStayArticles: any[];
     ikeoArticles: any[];
   };
+}
+
+/* ─── 🚀 店舗 ✕ 代表キャスト動的連動プレミアムスライダー ───────────────────────── */
+
+function HeroStoreCastSlider({ stores, casts }: { stores: any[]; casts: any[] }) {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  // 店舗ごとに代表キャストをバインドする動的スライドデータ作成
+  const slides = useMemo(() => {
+    if (!stores || stores.length === 0) {
+      return [
+        {
+          storeName: '福岡店',
+          storeSlug: 'fukuoka',
+          areaName: '博多・天神・中洲',
+          castName: '優斗',
+          castAge: '24',
+          castCatch: '甘く優しい言葉と至福のオイルトリートメント',
+          castImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800',
+          badgeText: '✨ 福岡店 人気看板キャスト',
+        },
+        {
+          storeName: '横浜店',
+          storeSlug: 'yokohama',
+          areaName: '関内・みなとみらい・桜木町',
+          castName: '蓮',
+          castAge: '26',
+          castCatch: '極上の癒やしと大人のプライベートサロンタイム',
+          castImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800',
+          badgeText: '👑 横浜店 人気看板キャスト',
+        },
+      ];
+    }
+
+    return stores.map((store) => {
+      // 店舗に紐づくキャストを抽出（または全キャストから検索）
+      const storeCasts = casts.filter(
+        (c) => c.store_id === store.id || c.storeSlug === store.slug || c.store_slug === store.slug,
+      );
+      const topCast = storeCasts.length > 0 ? storeCasts[0] : (casts.length > 0 ? casts[0] : null);
+
+      return {
+        storeName: store.name || `${store.slug === 'fukuoka' ? '福岡店' : '横浜店'}`,
+        storeSlug: store.slug,
+        areaName: store.slug === 'fukuoka' ? '博多・天神・中洲対応' : '関内・みなとみらい・桜木町対応',
+        castName: topCast?.name || '人気イケメンセラピスト',
+        castAge: topCast?.age ? `${topCast.age}歳` : '20代',
+        castCatch: topCast?.catchCopy || topCast?.catch_copy || store.catch_copy || '極上の癒やしをお届けいたします',
+        castImage:
+          topCast?.imageUrl ||
+          topCast?.image_url ||
+          topCast?.image ||
+          (store.slug === 'fukuoka'
+            ? 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800'
+            : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800'),
+        badgeText: `✨ ${store.name || store.slug}店 代表キャスト`,
+      };
+    });
+  }, [stores, casts]);
+
+  // 3.5秒ごとの自動スライド切替
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const timer = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % slides.length);
+    }, 3800);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  const currentSlide = slides[currentIndex] || slides[0];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.8 }}
+      className="lg:col-span-6 relative flex justify-center lg:justify-end"
+    >
+      <div className="relative w-full max-w-lg aspect-[4/5] sm:aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-rose-900/15 border-4 border-white bg-slate-900 group">
+        
+        {/* 背景画像 ＆ スライドトランジション */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentIndex}
+            initial={{ opacity: 0, scale: 1.05 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.98 }}
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0"
+          >
+            <img
+              src={currentSlide.castImage}
+              alt={`${currentSlide.storeName} - ${currentSlide.castName}`}
+              className="h-full w-full object-cover object-top"
+            />
+            {/* シネマティックグラデーションオーバーレイ */}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent" />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* 🚀 店舗名 ＆ キャスト名連動ダイナミックバッジ */}
+        <div className="absolute top-4 left-4 right-4 z-10 flex items-center justify-between pointer-events-none">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-slate-900/80 backdrop-blur-md px-3 py-1 text-xs font-bold text-white border border-white/20 shadow-lg">
+            <span className="h-2 w-2 rounded-full bg-rose-500 animate-ping" />
+            <span>{currentSlide.badgeText}</span>
+          </div>
+          <div className="rounded-full bg-rose-500/90 text-white font-serif text-[11px] font-bold px-3 py-1 backdrop-blur-sm shadow-md">
+            {currentSlide.areaName}
+          </div>
+        </div>
+
+        {/* 🚀 キャスト詳細 ＆ 店舗案内オーバーレイ (タップで店舗へ) */}
+        <div className="absolute bottom-0 inset-x-0 p-5 sm:p-6 z-10 space-y-3">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={currentIndex}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.4 }}
+              className="space-y-1.5"
+            >
+              {/* 店舗とキャストの関係一目判定表記 */}
+              <div className="flex items-center gap-2 text-rose-300 font-bold text-xs">
+                <MapPin className="h-3.5 w-3.5 text-rose-400" />
+                <span>【{currentSlide.storeName} 在籍セラピスト】</span>
+              </div>
+
+              {/* キャスト名 ＆ 年齢 */}
+              <div className="flex items-baseline gap-2">
+                <h3 className="font-serif text-2xl sm:text-3xl font-black text-white drop-shadow-md">
+                  {currentSlide.castName}
+                </h3>
+                <span className="text-xs font-bold text-slate-300">({currentSlide.castAge})</span>
+              </div>
+
+              {/* キャッチコピー */}
+              <p className="text-xs sm:text-sm text-slate-200 font-medium line-clamp-2 drop-shadow">
+                「{currentSlide.castCatch}」
+              </p>
+            </motion.div>
+          </AnimatePresence>
+
+          {/* アクションボタン ＆ ナビゲーションインジケーター */}
+          <div className="pt-2 flex items-center justify-between border-t border-white/15">
+            <Link
+              href={`/store/${currentSlide.storeSlug}`}
+              className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-300 hover:text-white transition group/btn"
+            >
+              <span>{currentSlide.storeName}の出勤スケジュールを見る</span>
+              <ArrowRight className="h-3.5 w-3.5 group-hover/btn:translate-x-1 transition" />
+            </Link>
+
+            {/* スライドドットインジケーター */}
+            <div className="flex items-center gap-1.5">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentIndex(i)}
+                  className={`h-1.5 rounded-full transition-all duration-300 ${
+                    i === currentIndex ? 'w-5 bg-rose-500' : 'w-1.5 bg-white/40 hover:bg-white/70'
+                  }`}
+                  aria-label={`スライド ${i + 1}`}
+                />
+              ))}
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </motion.div>
+  );
 }
 
 /* ─── メインコンポーネント ─────────────────────────────── */
@@ -198,9 +370,9 @@ export default function HubPageClient({
           </div>
         </div>
 
-        {/* ヒーローメインコンテンツ (画像2の左右非対称レイアウト) */}
+        {/* ヒーローメインコンテンツ (店舗×代表キャスト連動スライダー ✕ SEOパワーワード演出) */}
         <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-16">
-          {/* 左側: キャッチコピー & 説明文 */}
+          {/* 左側: キャッチコピー & SEOパワーワード演出 */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
@@ -209,47 +381,50 @@ export default function HubPageClient({
           >
             <div className="inline-flex items-center gap-2 rounded-full bg-rose-100/80 px-3.5 py-1 text-xs font-bold text-rose-600">
               <Sparkles className="h-3.5 w-3.5 text-rose-500" />
-              女性専用・全国対応
+              <span>女性用風俗・女風｜全国対応出張セラピー</span>
             </div>
 
-            <h2 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-black text-slate-900 leading-[1.15] tracking-tight">
+            <h2 className="font-serif text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.18] tracking-tight">
               大人になっても、<br />
-              <span className="text-rose-500">ときめいていい。</span>
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 via-pink-500 to-rose-600">
+                ときめいていい。
+              </span>
             </h2>
 
-            <p className="text-base sm:text-lg text-slate-600 font-medium leading-relaxed max-w-md">
-              あなたの街で、心ほどける時間を。<br />
-              全国の店舗からお選びください。
-            </p>
+            {/* SEOキーワード ＆ 店舗特徴のふわっと浮かび上がるパワープッシュ文言 */}
+            <div className="space-y-2 text-slate-600 font-medium text-sm sm:text-base leading-relaxed">
+              <p className="flex items-center gap-2 text-slate-800 font-bold">
+                <Crown className="h-4 w-4 text-amber-500 shrink-0" />
+                <span>完全審査制・明朗会計の女性専用プレミアムサロン</span>
+              </p>
+              <p className="text-xs sm:text-sm text-slate-500">
+                福岡（博多・天神・中洲）/ 横浜（関内・みなとみらい・桜木町）など、厳選されたイケメンセラピストがご指定ホテルやご自宅へ出張。
+              </p>
+            </div>
 
-            <div className="pt-2 flex items-center gap-1 text-amber-500">
-              <Crown className="h-4 w-4 fill-current" />
-              <span className="text-xs font-bold tracking-wider text-slate-500 uppercase">
-                PREMIUM QUALITY FOR LADIES
-              </span>
+            {/* 店舗ダイレクトジャンプボタン */}
+            <div className="pt-2 flex flex-wrap items-center gap-3">
+              <Link
+                href="/store/fukuoka"
+                className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-6 py-3 text-white text-xs sm:text-sm font-bold shadow-lg shadow-rose-500/25 hover:scale-105 transition duration-300"
+              >
+                <MapPin className="h-4 w-4" />
+                <span>福岡店へジャンプ</span>
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition" />
+              </Link>
+              <Link
+                href="/store/yokohama"
+                className="group flex items-center gap-2 rounded-full bg-white border border-rose-200 px-6 py-3 text-slate-800 text-xs sm:text-sm font-bold shadow-sm hover:border-rose-400 hover:text-rose-600 hover:scale-105 transition duration-300"
+              >
+                <MapPin className="h-4 w-4 text-rose-500" />
+                <span>横浜店へジャンプ</span>
+                <ChevronRight className="h-4 w-4 group-hover:translate-x-1 transition" />
+              </Link>
             </div>
           </motion.div>
 
-          {/* 右側: イケメンセラピスト3重切り抜きビジュアル */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.9 }}
-            className="lg:col-span-6 relative flex justify-center lg:justify-end"
-          >
-            <div className="relative w-full max-w-lg aspect-[4/3] rounded-3xl overflow-hidden shadow-2xl shadow-rose-900/10 border-4 border-white">
-              <img
-                src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=1200"
-                alt="イケメンセラピスト - ストロベリーボーイズ"
-                className="h-full w-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-transparent to-transparent flex items-end p-6">
-                <span className="font-serif italic text-2xl text-rose-200 drop-shadow-md">
-                  Find your special time.
-                </span>
-              </div>
-            </div>
-          </motion.div>
+          {/* 右側: 店舗 ✕ 代表キャスト完全連動レスポンシブ・スライダービジュアル */}
+          <HeroStoreCastSlider stores={stores} casts={casts} />
         </div>
 
         {/* ─── エリアを選択する (画像2下部 - 本物都市夜景画像) ─── */}
