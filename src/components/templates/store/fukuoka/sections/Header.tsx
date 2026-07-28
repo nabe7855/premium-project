@@ -421,12 +421,12 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
             <img src="/images/store/fukuoka/new-header/00_main_logo_full.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%', objectFit: 'contain' }} alt="ストロベリーボーイズ" />
           </Link>
 
-          {/* 🚀 Interactive Group: today_card (TODAY出勤ボタン上に改行なしの美しく横長な1行リアルタイムバッジを追加) */}
+          {/* 🚀 Interactive Group: today_card (TODAY出勤ボタンの内部中央上部にピタッと収まる動的バッジ) */}
           <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block group" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
             <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
             
-            {/* 1行横長カプセルバッジ (改行を完全防止) */}
-            <div className="absolute -top-2 -right-3 sm:-top-2 sm:-right-4 z-20 flex items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white px-2 py-0.5 shadow-md border border-white text-[8px] sm:text-[10px] font-black whitespace-nowrap animate-pulse">
+            {/* 1行横長カプセルバッジ (TODAYカード中央上部に綺麗に収まり画面外はみ出しを完全ゼロ化) */}
+            <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center gap-0.5 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white px-1.5 py-0.2 shadow-md border border-white text-[7px] sm:text-[9.5px] font-black whitespace-nowrap animate-pulse">
               <span>🔥</span>
               <span>本日{todayCasts.length > 0 ? todayCasts.length : (store.slug === 'yokohama' ? 16 : 12)}名</span>
             </div>
