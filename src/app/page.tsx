@@ -6,8 +6,8 @@ import HubPageClient from './test13/HubPageClient';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '【公式】女性専用ウェルネス・出張セラピー ストロベリーボーイズ | 全国対応拠点・エリア検索',
-  description: '女性専用ウェルネス・出張セラピー「ストロベリーボーイズ」公式サイト。福岡（博多・天神）・横浜（関内・みなとみらい）など全国の対応拠点から厳選されたイケメンセラピストを検索。',
+  title: { absolute: '女性用風俗・女風・出張ホスト｜ストロベリーボーイズ【福岡・横浜】' },
+  description: '女性用風俗・女風・出張ホスト「ストロベリーボーイズ」公式サイト。福岡（博多・天神・中洲）・横浜（関内・みなとみらい）など厳選された人気イケメンセラピストをご指定ホテルやご自宅へ出張。安心の明朗会計！',
   alternates: {
     canonical: 'https://www.sutoroberrys.jp/',
   },

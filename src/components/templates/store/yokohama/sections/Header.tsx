@@ -377,11 +377,11 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
       } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
-        {/* 🚀 どんなスマホ・PC画面でも絶対に見切れない完全レスポンシブ可視H1ヘッダーテキスト */}
+        {/* 🚀 最高解像度のCSS可視ヘッダーテキストバー (H1二重化防止のためdiv化 + 公式決定文言) */}
         <div className="w-full bg-[#fff5f6] py-1 px-2 border-b border-rose-100 flex items-center justify-center overflow-hidden">
-          <h1 className="text-[6.5px] xs:text-[7.5px] sm:text-[11px] md:text-[13.5px] font-extrabold text-center text-[#8C2849] tracking-tighter sm:tracking-wider whitespace-nowrap overflow-hidden">
-            ✨ 女性用風俗 日本最大級の女性専用性感マッサージ【横浜 関内・みなとみらい・桜木町対応】｜ストロベリーボーイズ横浜店
-          </h1>
+          <div className="text-[6.5px] xs:text-[7.5px] sm:text-[11px] md:text-[13.5px] font-extrabold text-center text-[#8C2849] tracking-tighter sm:tracking-wider whitespace-nowrap overflow-hidden">
+            ✨ 女性用風俗・出張ホスト｜完全審査制イケメン在籍【ストロベリーボーイズ公式】
+          </div>
         </div>
         <div className="flex items-stretch overflow-hidden rounded-b-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
           {/* Logo Section */}

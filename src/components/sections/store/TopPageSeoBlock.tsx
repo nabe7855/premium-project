@@ -39,7 +39,15 @@ export default function TopPageSeoBlock({ storeSlug, todayCasts = [] }: TopPageS
               {cityName}の女性用風俗（女風）「ストロベリーボーイズ{cityName}店」は、{areas}をはじめ{cityName}エリア全域のホテルやご自宅へ出張する完全予約制の女性専用リラクゼーションです。在籍するのは、容姿・接客マナー・人柄の厳格な審査と講習をクリアした人気イケメンセラピストのみ。
             </p>
             <p>
-              初めて女性用風俗をご利用になる方にも安心していただけるよう、追加料金のない明確な明朗会計と無料事前相談をご用意しております。当日のご予約にも対応しておりますので、まずは[本日の出勤セラピスト]をご覧いただくか、[LINE公式アカウント]よりお気軽にご相談ください。
+              初めて女性用風俗をご利用になる方にも安心していただけるよう、追加料金のない明確な明朗会計と無料事前相談をご用意しております。当日のご予約にも対応しておりますので、まずは
+              <Link href={`/store/${storeSlug}/schedule`} className="text-rose-600 font-bold underline hover:text-rose-700 mx-1">
+                本日の出勤セラピスト
+              </Link>
+              をご覧いただくか、
+              <a href="https://line.me" target="_blank" rel="noopener noreferrer" className="text-rose-600 font-bold underline hover:text-rose-700 mx-1">
+                LINE公式アカウント
+              </a>
+              よりお気軽にご相談ください。
             </p>
           </div>
 

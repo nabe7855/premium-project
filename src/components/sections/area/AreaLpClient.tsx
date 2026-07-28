@@ -160,10 +160,10 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
             </p>
           </div>
 
-          {/* DB連動ホテルカード (スマホ横スワイプ & レスポンシブグリッド) */}
+          {/* DB連動ホテルカード (スマホ横スワイプ & レスポンシブグリッド: 6件限定軽量化) */}
           {hotels && hotels.length > 0 ? (
             <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
-              {hotels.map((hotel: any, idx: number) => {
+              {hotels.slice(0, 6).map((hotel: any, idx: number) => {
                 // DB内のリアルデータ（amenities / distanceFromStation / services）を最優先利用
                 const realTags: string[] = [];
                 if (hotel.distanceFromStation) realTags.push(`＃${hotel.distanceFromStation}`);

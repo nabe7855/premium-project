@@ -1,3 +1,4 @@
+import { getSupabasePublicUrl } from '@/lib/image-url';
 import { PostType } from '@/types/diary';
 import { supabase } from './supabaseClient';
 
@@ -30,6 +31,9 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
 
   const castData = Array.isArray(data.casts) ? data.casts[0] : data.casts;
 
+  const rawImage = data.blog_images?.[0]?.image_url;
+  const rawAvatar = castData?.image_url;
+
   return {
     id: data.id,
     title: data.title,
@@ -43,11 +47,9 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
     castName: castData?.name || '不明なキャスト',
     castId: castData?.id || '',
     castSlug: castData?.slug || '',
-    image:
-      data.blog_images?.[0]?.image_url ||
+    image: (rawImage ? getSupabasePublicUrl(rawImage) : undefined) ||
       'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
-    castAvatar:
-      castData?.image_url ||
+    castAvatar: (rawAvatar ? getSupabasePublicUrl(rawAvatar) : undefined) ||
       `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),
     commentCount: data.blog_comments?.[0]?.count || 0,
