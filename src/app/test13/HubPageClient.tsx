@@ -339,116 +339,94 @@ export default function HubPageClient({
       <HubHeroSection />
 
 
-      {/* ─── 2. 「わたしたちについて」セクション (画像1のデザインを100%完全再現) ─── */}
-      <section id="about" className="relative overflow-hidden bg-white py-20 border-t border-rose-100/60">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            {/* 左側: ラウンドカット画像 (洗練された日本人セラピストモデル) */}
-            <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="lg:col-span-5 relative flex justify-center"
-            >
-              <div className="relative w-full max-w-md aspect-[4/5] rounded-[3rem] overflow-hidden shadow-xl border-4 border-rose-50">
-                <img
-                  src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=800"
-                  alt="安心とエスコート - ストロベリーボーイズ"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            </motion.div>
+      {/* ─── 2. 「わたしたちについて」セクション ─── */}
+      <section id="about" className="relative overflow-hidden bg-white py-16 sm:py-24 border-t border-rose-100/60">
+        <div className="mx-auto max-w-4xl px-6 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            className="space-y-6 flex flex-col items-center"
+          >
+            <div className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-1.5 text-xs font-bold text-rose-600 border border-rose-100">
+              <Crown className="h-3.5 w-3.5 text-rose-500" />
+              ABOUT STRAWBERRY BOYS わたしたちについて
+            </div>
 
-            {/* 右側: メッセージ ＆ 4つの安心機能カード */}
-            <motion.div
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-              className="lg:col-span-7 text-left space-y-6"
-            >
-              <div className="inline-flex items-center gap-2 rounded-full bg-rose-50 px-4 py-1.5 text-xs font-bold text-rose-600 border border-rose-100">
-                <Crown className="h-3.5 w-3.5 text-rose-500" />
-                ABOUT STRAWBERRY BOYS わたしたちについて
-              </div>
+            <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
+              安心できるから、<br />
+              <span className="text-rose-500">ときめき</span>に素直になれる。
+            </h3>
 
-              <h3 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight">
-                安心できるから、<br />
-                <span className="text-rose-500">ときめき</span>に素直になれる。
-              </h3>
+            <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
+              仕事も、日常も、いつも頑張っているあなたへ。<br className="hidden sm:inline" />
+              癒やされたい夜も、誰かに甘えたい夜も、ここでは、あなたの気持ちとペースを大切にします。<br />
+              ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。
+            </p>
 
-              <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-xl">
-                仕事も、日常も、いつも頑張っているあなたへ。<br />
-                癒やされたい夜も、誰かに甘えたい夜も、ここでは、あなたの気持ちとペースを大切にします。<br />
-                ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。
-              </p>
-
-              {/* 4つの安心カード (画像1再現) */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
-                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
-                    <MapPin className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">全国主要エリアに対応</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">東京・横浜・名古屋・大阪・福岡など</p>
-                  </div>
+            {/* 4つの安心カード */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 w-full max-w-3xl text-left">
+              <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 sm:p-5 border border-rose-100/80 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-xs">
+                  <MapPin className="h-5 w-5" />
                 </div>
-
-                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
-                    <Calculator className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">分かりやすい料金体系</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">ご利用前に料金をご確認いただけます</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
-                    <Lock className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">プライバシーへの配慮</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">ご相談・ご利用内容を慎重に取り扱います</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 border border-rose-100/80">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-sm">
-                    <Award className="h-5 w-5" />
-                  </div>
-                  <div>
-                    <h4 className="text-sm font-bold text-slate-800">独自基準による採用</h4>
-                    <p className="text-[11px] text-slate-500 mt-0.5">接客・清潔感・マナーを重視しています</p>
-                  </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">全国主要エリアに対応</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">東京・横浜・名古屋・大阪・福岡など</p>
                 </div>
               </div>
 
-              {/* ボタン2種 (画像1再現) */}
-              <div className="pt-4 flex flex-col sm:flex-row items-center gap-4">
-                <Link
-                  href="/store/fukuoka/first-time"
-                  className="flex items-center gap-2 rounded-full bg-rose-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition"
-                >
-                  <Sparkles className="h-4 w-4" />
-                  <span>初めての方へ</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Link>
-
-                <a
-                  href="#faq"
-                  className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-rose-500 underline underline-offset-4 transition"
-                >
-                  安心への取り組みを見る <ArrowRight className="h-3.5 w-3.5" />
-                </a>
+              <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 sm:p-5 border border-rose-100/80 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-xs">
+                  <Calculator className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">分かりやすい料金体系</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">ご利用前に料金をご確認いただけます</p>
+                </div>
               </div>
-            </motion.div>
-          </div>
 
+              <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 sm:p-5 border border-rose-100/80 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-xs">
+                  <Lock className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">プライバシーへの配慮</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">ご相談・ご利用内容を慎重に取り扱います</p>
+                </div>
+              </div>
 
+              <div className="flex items-start gap-3.5 rounded-2xl bg-[#FAF6F3] p-4 sm:p-5 border border-rose-100/80 shadow-sm">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-rose-500 shadow-xs">
+                  <Award className="h-5 w-5" />
+                </div>
+                <div>
+                  <h4 className="text-sm font-bold text-slate-800">独自基準による採用</h4>
+                  <p className="text-[11px] sm:text-xs text-slate-500 mt-0.5">接客・清潔感・マナーを重視しています</p>
+                </div>
+              </div>
+            </div>
+
+            {/* ボタン2種 */}
+            <div className="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
+              <Link
+                href="/store/fukuoka/first-time"
+                className="flex items-center justify-center gap-2 rounded-full bg-rose-500 px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600 transition w-full sm:w-auto"
+              >
+                <Sparkles className="h-4 w-4" />
+                <span>初めての方へ</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+
+              <a
+                href="#faq"
+                className="flex items-center gap-1.5 text-xs font-bold text-slate-700 hover:text-rose-500 underline underline-offset-4 transition py-2"
+              >
+                安心への取り組みを見る <ArrowRight className="h-3.5 w-3.5" />
+              </a>
+            </div>
+          </motion.div>
         </div>
       </section>
 
