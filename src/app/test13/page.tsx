@@ -1,8 +1,23 @@
 // Server Component - データを直接フェッチ
+import type { Metadata } from 'next';
 import { getMediaArticles } from '@/lib/actions/media';
 import { getAllCasts } from '@/lib/getAllCasts';
 import { supabase } from '@/lib/supabaseClient';
 import HubPageClient from './HubPageClient';
+
+// ━━━ SEO メタデータ ━━━
+export const metadata: Metadata = {
+  title: '女風・女性用風俗なら全国対応のストロベリーボーイズ｜東京・大阪・横浜・名古屋・福岡',
+  description:
+    '女風・女性用風俗を初めて利用する方も安心。東京・大阪・横浜・名古屋・福岡の全国5都市に対応した女性専用出張サービス「ストロベリーボーイズ」。料金・セラピスト情報・ご予約方法をわかりやすくご案内しています。',
+  keywords: ['女風', '女性用風俗', '女性専用', '出張マッサージ', '女性専用出張サービス', 'ストロベリーボーイズ', '東京', '大阪', '横浜', '名古屋', '福岡'],
+  openGraph: {
+    title: '女風・女性用風俗なら全国対応のストロベリーボーイズ',
+    description: '女風・女性用風俗を初めて利用する方も安心。東京・大阪・横浜・名古屋・福岡の全国5都市に対応した女性専用出張サービス。',
+    type: 'website',
+  },
+};
+
 
 async function getStores() {
   const { data, error } = await supabase

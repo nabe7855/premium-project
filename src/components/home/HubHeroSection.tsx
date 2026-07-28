@@ -234,6 +234,11 @@ export default function HubHeroSection() {
 
       {/* 👑 2. ヒーローエリア */}
 
+      {/* ━━━ SEO H1: ページ全体で1度だけ・女風/女性用風俗キーワードで最適化 ━━━ */}
+      <h1 className="sr-only">
+        女風・女性用風俗なら東京・大阪・横浜・名古屋・福岡対応のストロベリーボーイズ｜女性専用出張サービス
+      </h1>
+
       {/* ━━━ PC レイアウト (md 以上) ━━━ */}
       <div className="hidden md:block relative mx-auto max-w-7xl px-12 pt-4 pb-6">
         {/* 花びら装飾 */}
@@ -246,10 +251,10 @@ export default function HubHeroSection() {
           {/* 左: コピー */}
           <div className="col-span-6 text-left space-y-6 z-20">
             <p className="text-xs font-bold tracking-[0.35em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
-            <h1 className="font-serif text-5xl lg:text-6xl font-extrabold leading-[1.25] tracking-tight text-[#2b181c]">
+            <p className="font-serif text-5xl lg:text-6xl font-extrabold leading-[1.25] tracking-tight text-[#2b181c]">
               大人になっても、<br />
               <span className="text-[#d64567]">ときめ</span>いていい。
-            </h1>
+            </p>
             <p className="text-sm font-medium leading-relaxed tracking-wider text-[#634950] max-w-md">
               あなたの街で、心ほどける時間を。<br />
               全国の店舗からお選びください。
@@ -281,10 +286,10 @@ export default function HubHeroSection() {
         {/* H1 キャッチコピー */}
         <div className="text-center px-4 pb-3 space-y-0.5">
           <p className="text-[9px] font-bold tracking-[0.3em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
-          <h1 className="font-serif text-[26px] font-extrabold leading-snug tracking-tight text-[#2b181c]">
+          <p className="font-serif text-[26px] font-extrabold leading-snug tracking-tight text-[#2b181c]">
             大人になっても、<br />
             <span className="text-[#d64567]">ときめ</span>いていい。
-          </h1>
+          </p>
         </div>
 
         {/* ヒーロー写真: 画面いっぱい＋下部フェード */}
