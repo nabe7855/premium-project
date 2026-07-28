@@ -769,7 +769,7 @@ export default function HubPageClient({
                   className="flex items-center gap-4 overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-2 md:rounded-[2rem] md:p-4"
                 >
                   <div className="aspect-square w-[22vw] shrink-0 overflow-hidden rounded-xl md:w-32 md:rounded-2xl">
-                    <img src={d.images?.[0]?.image_url} className="h-full w-full object-cover" />
+                    <img src={d.images?.[0]?.image_url} alt={d.title} loading="lazy" className="h-full w-full object-cover" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <h3 className="line-clamp-1 text-sm font-black text-slate-800 md:text-lg">

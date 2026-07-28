@@ -267,6 +267,8 @@ export default function HubHeroSection() {
                 src={activeStore.heroCastImage}
                 alt={activeStore.name}
                 fill
+                sizes="(max-width: 768px) 100vw, 460px"
+                fetchPriority="high"
                 className={`object-cover transition-opacity duration-500 ${isFading ? 'opacity-40' : 'opacity-100'}`}
                 priority
               />
@@ -298,6 +300,8 @@ export default function HubHeroSection() {
             src={activeStore.heroCastImage}
             alt={activeStore.name}
             fill
+            sizes="100vw"
+            fetchPriority="high"
             className={`object-cover transition-opacity duration-500 ${isFading ? 'opacity-40' : 'opacity-100'}`}
             priority
           />
@@ -347,7 +351,7 @@ export default function HubHeroSection() {
                 >
                   {/* 店舗夜景サムネイル */}
                   <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 mb-2">
-                    <NextImage src={store.image} alt={store.name} fill className="object-cover" />
+                    <NextImage src={store.image} alt={store.name} fill sizes="200px" loading="lazy" className="object-cover" />
                   </div>
 
                   {/* 店舗名 */}

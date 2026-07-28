@@ -31,18 +31,24 @@ export const CastSampler: React.FC<CastSamplerProps> = ({
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let isMounted = true;
     const fetchCasts = async () => {
-      console.log(`[CastSampler] Fetching casts for slug: ${storeSlug}`);
-      setIsLoading(true);
-      const result = await getCastsByStore(storeSlug, 6);
-      console.log('[CastSampler] Result:', result);
-      if (result.success && result.casts) {
-        setCasts(result.casts);
+      try {
+        console.log(`[CastSampler] Fetching casts for slug: ${storeSlug}`);
+        setIsLoading(true);
+        const result = await getCastsByStore(storeSlug, 6);
+        if (isMounted && result && result.success && result.casts && result.casts.length > 0) {
+          setCasts(result.casts);
+        }
+      } catch (err) {
+        console.warn('[CastSampler] Safely caught error fetching casts:', err);
+      } finally {
+        if (isMounted) setIsLoading(false);
       }
-      setIsLoading(false);
     };
 
     fetchCasts();
+    return () => { isMounted = false; };
   }, [storeSlug]);
 
   if (data.isVisible === false && !isEditing) return null;
