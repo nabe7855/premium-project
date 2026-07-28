@@ -316,11 +316,11 @@ export default function HubHeroSection() {
       {/* スマホ: -mt-24 で写真の上に浮き上がって重なる / PC: mt-6 で通常配置 */}
       <div id="stores" className="relative z-20 -mt-24 md:mt-6 pb-2">
 
-        {/* PC: max-w-7xl 内で5枚並列、スマホ: 全幅で無限ループ水平スクロール */}
+        {/* PC: max-w-7xl 内で5枚並列、スマホ: 全幅で無限ループ水平スクロール (1枚ずつピタッとスナップ) */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="w-full overflow-x-auto hide-scrollbar pt-10 pb-4"
+          className="w-full overflow-x-auto hide-scrollbar pt-10 pb-4 snap-x snap-mandatory"
         >
           <div className="flex items-end md:justify-center gap-2 sm:gap-4 min-w-max px-[calc(50vw-115px)] md:px-8 md:max-w-7xl md:mx-auto">
             {LOOPED_STORES.map((store, loopedIdx) => {
@@ -337,6 +337,7 @@ export default function HubHeroSection() {
                   onClick={() => handleSelectStore(realIdx)}
                   className={`
                     cursor-pointer transition-all duration-300 rounded-2xl flex flex-col justify-between p-3 text-left
+                    snap-center snap-always
                     ${isActive
                       ? 'w-[200px] sm:w-[230px] bg-white ring-4 ring-[#e25c7b]/30 shadow-2xl border-2 border-[#d64567] -translate-y-5 z-30 scale-105'
                       : 'w-[140px] sm:w-[170px] bg-white/80 border border-slate-200/80 shadow-sm opacity-60 hover:opacity-90 z-10'
