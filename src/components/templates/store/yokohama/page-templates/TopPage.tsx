@@ -5,6 +5,7 @@ import HeroSection from '../sections/HeroSection';
 import BeginnerGuideBanner from '../sections/BeginnerGuideBanner';
 import StoreJumpBanners from '@/components/sections/store/StoreJumpBanners';
 import Breadcrumbs from '@/components/common/Breadcrumbs';
+import TopPageSeoBlock from '@/components/sections/store/TopPageSeoBlock';
 
 const QuickAccessMenu = dynamic(() => import('../sections/QuickAccessMenu'));
 const ConceptSection = dynamic(() => import('../sections/ConceptSection'));
@@ -69,6 +70,9 @@ export default function YokohamaPage({
           storeSlug={storeSlug}
         />
       )}
+
+      {/* 🚀 ファーストビュー直下 SEOテキスト ＆ 信頼バッジブロック (1位奪取構造) */}
+      <TopPageSeoBlock storeSlug={storeSlug || 'yokohama'} todayCasts={todayCasts} />
 
       {!hideHeader && storeSlug && (
         <Breadcrumbs
