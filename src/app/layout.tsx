@@ -6,7 +6,7 @@ import '@/styles/Footer.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { Analytics } from '@vercel/analytics/react';
 import type { Metadata, Viewport } from 'next';
-import { Inter, Noto_Sans_JP, Noto_Serif_JP, Lora, Poppins } from 'next/font/google';
+import { Inter, Noto_Sans_JP, Noto_Serif_JP } from 'next/font/google';
 import { Toaster } from 'sonner';
 import AttributionTracker from '@/components/recruit2/AttributionTracker';
 import './globals.css';
@@ -19,30 +19,17 @@ const inter = Inter({
 });
 
 const notoVariant = Noto_Sans_JP({
-  weight: ['300', '400', '500', '600', '700'],
+  weight: ['400', '500', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-noto-sans',
 });
 
 const notoSerif = Noto_Serif_JP({
-  weight: ['300', '400', '500', '700'],
+  weight: ['500', '700'],
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-noto-serif',
-});
-
-const lora = Lora({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-lora',
-});
-
-const poppins = Poppins({
-  weight: ['300', '400', '500', '600', '700'],
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-poppins',
 });
 
 export const metadata: Metadata = {
@@ -85,7 +72,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html 
       lang="ja" 
-      className={`${inter.variable} ${notoVariant.variable} ${notoSerif.variable} ${lora.variable} ${poppins.variable} antialiased`} 
+      className={`${inter.variable} ${notoVariant.variable} ${notoSerif.variable} antialiased`} 
       suppressHydrationWarning
     >
       <head>

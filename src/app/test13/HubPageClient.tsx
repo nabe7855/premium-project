@@ -122,7 +122,7 @@ function HeroStoreCastSlider({ stores, casts }: { stores: any[]; casts: any[] })
           castName: '優斗',
           castAge: '24',
           castCatch: '甘く優しい言葉と至福のオイルトリートメント',
-          castImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800',
+          castImage: '/ゆうと.png',
           badgeText: '✨ 福岡店 人気看板キャスト',
         },
         {
@@ -132,7 +132,7 @@ function HeroStoreCastSlider({ stores, casts }: { stores: any[]; casts: any[] })
           castName: '蓮',
           castAge: '26',
           castCatch: '極上の癒やしと大人のプライベートサロンタイム',
-          castImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800',
+          castImage: '/シュン.png',
           badgeText: '👑 横浜店 人気看板キャスト',
         },
       ];
@@ -157,8 +157,8 @@ function HeroStoreCastSlider({ stores, casts }: { stores: any[]; casts: any[] })
           topCast?.image_url ||
           topCast?.image ||
           (store.slug === 'fukuoka'
-            ? 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=800'
-            : 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=800'),
+            ? '/ゆうと.png'
+            : '/シュン.png'),
         badgeText: `✨ ${store.name || store.slug}店 代表キャスト`,
       };
     });
@@ -314,8 +314,7 @@ export default function HubPageClient({
       c.profile?.includes(searchQuery),
   );
 
-  const FALLBACK_CAST_IMG =
-    'https://images.unsplash.com/photo-1544161515-4ae6b91827d1?auto=format&fit=crop&q=80&w=600';
+  const FALLBACK_CAST_IMG = '/ゆうと.png';
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900 selection:bg-rose-500/30">
@@ -431,7 +430,7 @@ export default function HubPageClient({
       </section>
 
       {/* ─── 1.4 全国から選ばれた人気者 (Marquee Version) ─── */}
-      <section className="overflow-hidden bg-slate-50 py-24">
+      <section className="overflow-hidden bg-slate-50 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-7xl px-6 text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -509,7 +508,7 @@ export default function HubPageClient({
       </section>
 
       {/* ─── 1.5 最新の写メ日記 (Diary Section Refined) ─── */}
-      <section className="bg-white px-6 py-24">
+      <section className="bg-white px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -608,7 +607,7 @@ export default function HubPageClient({
       </section>
 
       {/* ─── 2. コンテンツ切り替えタブ ─── */}
-      <section className="bg-white px-6 py-20">
+      <section className="bg-white px-6 py-20 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex gap-2 overflow-x-auto pb-2">
             {(
@@ -750,7 +749,7 @@ export default function HubPageClient({
 
       {/* ─── 3. 写メ日記フィード ─── */}
       {diaries.length > 0 && (
-        <section className="bg-slate-50 px-6 py-24">
+        <section className="bg-slate-50 px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
           <div className="mx-auto max-w-7xl">
             <div className="mb-12">
               <span className="mb-3 block text-xs font-black uppercase tracking-[0.3em] text-rose-500">
@@ -793,7 +792,7 @@ export default function HubPageClient({
 
 
       {/* ─── 4. Knowledge Hub ─── */}
-      <section className="bg-slate-50 px-6 py-24">
+      <section className="bg-slate-50 px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-7xl">
           <div className="mb-12 flex items-end justify-between">
             <h2 className="text-4xl font-black text-slate-900">
@@ -823,7 +822,7 @@ export default function HubPageClient({
       </section>
 
       {/* ─── 5. FAQ ─── */}
-      <section className="bg-white px-6 py-24">
+      <section className="bg-white px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-3xl">
           <h2 className="mb-12 text-center text-4xl font-black text-slate-900">よくある質問</h2>
           <div className="space-y-4">

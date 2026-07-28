@@ -10,13 +10,14 @@ export interface StoreItem {
   enName: string;
   catchphrase: string;
   castCount: number;
-  image: string;       // 店舗夜景写真
-  heroCastImage: string; // ヒーロー写真
+  image: string;       // 店舗夜景写真 (ローカル軽量画像)
+  heroCastImage: string; // ヒーローキャスト写真 (ローカル軽量画像)
   floatCopy: string;   // 枠なし浮遊フロートコピー
   href: string;
   isExternal?: boolean;
 }
 
+// A-1 要件: Unsplash 参照を完全廃止し、ローカルの軽量画像に差し替え
 const STORES_DATA: StoreItem[] = [
   {
     id: 'tokyo',
@@ -24,8 +25,8 @@ const STORES_DATA: StoreItem[] = [
     enName: 'TOKYO',
     catchphrase: '洗練された夜に、\n心ほどける出会いを。',
     castCount: 24,
-    image: 'https://images.unsplash.com/photo-1540959733332-eab4deabeeaf?auto=format&fit=crop&w=800&q=80',
-    heroCastImage: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/banners/store-jumps/tokyo.png',
+    heroCastImage: '/ゆうと.png',
     floatCopy: '洗練された夜に。\n心ほどける出会いを。',
     href: '/store/tokyo',
     isExternal: false,
@@ -36,8 +37,8 @@ const STORES_DATA: StoreItem[] = [
     enName: 'OSAKA',
     catchphrase: '美しい夜のまちで、\nときめきの時間を。',
     castCount: 18,
-    image: 'https://images.unsplash.com/photo-1590559899731-a382839e5549?auto=format&fit=crop&w=800&q=80',
-    heroCastImage: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/banners/store-jumps/osaka.png',
+    heroCastImage: '/カイト.png',
     floatCopy: '美しい夜のまちで、\nときめきの時間を。',
     href: '/store/osaka',
     isExternal: false,
@@ -48,8 +49,8 @@ const STORES_DATA: StoreItem[] = [
     enName: 'YOKOHAMA',
     catchphrase: '海と夜景に包まれた、\n特別なひとときを。',
     castCount: 16,
-    image: 'https://images.unsplash.com/photo-1578637387939-43c525550085?auto=format&fit=crop&w=800&q=80',
-    heroCastImage: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/banners/store-jumps/yokohama.png',
+    heroCastImage: '/シュン.png',
     floatCopy: '海と夜景に包まれた、\n特別なひとときを。',
     href: '/store/yokohama',
     isExternal: false,
@@ -60,8 +61,8 @@ const STORES_DATA: StoreItem[] = [
     enName: 'NAGOYA',
     catchphrase: '上質な出会いが、\n特別なひとときを。',
     castCount: 14,
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=800&q=80',
-    heroCastImage: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/banners/store-jumps/nagoya.png',
+    heroCastImage: '/towa.png',
     floatCopy: '上質な出会いが、\n特別なひとときを。',
     href: '/store/nagoya',
     isExternal: false,
@@ -72,8 +73,8 @@ const STORES_DATA: StoreItem[] = [
     enName: 'FUKUOKA',
     catchphrase: 'あたたかい空気の中で、\n心ゆるむひとときを。',
     castCount: 12,
-    image: 'https://images.unsplash.com/photo-1528164344705-47542687990d?auto=format&fit=crop&w=800&q=80',
-    heroCastImage: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=1200&q=80',
+    image: '/images/banners/store-jumps/fukuoka.png',
+    heroCastImage: '/images/casts/yuuhi/cafe-date.jpg',
     floatCopy: 'あたたかい空気の中で、\n心ゆるむひとときを。',
     href: '/store/fukuoka',
     isExternal: false,
@@ -83,7 +84,6 @@ const STORES_DATA: StoreItem[] = [
 // 無限ループ用に3倍複製（前後各1セット付き）
 const N = STORES_DATA.length; // 5
 const LOOPED_STORES = [...STORES_DATA, ...STORES_DATA, ...STORES_DATA]; // 15枚
-// 真ん中の本物セットは index N〜2N-1 (5〜9)
 
 export default function HubHeroSection() {
   const [activeIndex, setActiveIndex] = useState(0); // 0〜N-1 の実インデックス
@@ -91,11 +91,9 @@ export default function HubHeroSection() {
   const [isFading, setIsFading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
-  // 各カードの ref (15枚分)
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  // プログラム的スクロール中フラグ（userScrollハンドラを無視）
   const isJumping = useRef(false);
-  const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const rafId = useRef<number | null>(null);
 
   const activeStore = STORES_DATA[activeIndex];
 
@@ -113,30 +111,26 @@ export default function HubHeroSection() {
     }
   }, []);
 
-  // ========= 初期表示: 真ん中セットの activeIndex カードを中央へ =========
+  // 初期表示: 真ん中セットの activeIndex カードを中央へ
   useEffect(() => {
-    // 少し遅らせてDOMが確定してから
     const t = setTimeout(() => {
       isJumping.current = true;
       scrollToLoopedIndex(N + activeIndex, false);
       setTimeout(() => { isJumping.current = false; }, 100);
     }, 60);
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // ========= activeIndex 変化時: 真ん中セットの該当カードへスムーズスクロール =========
+  // activeIndex 変化時スムーズスクロール
   const prevActive = useRef(activeIndex);
   useEffect(() => {
     if (prevActive.current === activeIndex) return;
     prevActive.current = activeIndex;
     isJumping.current = true;
     scrollToLoopedIndex(N + activeIndex, true);
-    // smooth scroll 完了後フラグ解除（500ms 想定）
-    setTimeout(() => { isJumping.current = false; }, 600);
+    setTimeout(() => { isJumping.current = false; }, 500);
   }, [activeIndex, scrollToLoopedIndex]);
 
-  // ========= 写真フェード付きで店舗切り替え =========
   const handleSelectStore = useCallback((realIdx: number) => {
     if (realIdx === activeIndex) return;
     setIsFading(true);
@@ -146,16 +140,17 @@ export default function HubHeroSection() {
     }, 180);
   }, [activeIndex]);
 
-  // ========= スクロール停止後: 中央カードを検出 → アクティブ化 & 無限ループ処理 =========
+  // A-2 要件: 強制リフロー解消。requestAnimationFrame を活用して非同期スロットリング
   const handleScroll = useCallback(() => {
     if (isJumping.current) return;
-    if (scrollTimer.current) clearTimeout(scrollTimer.current);
-    scrollTimer.current = setTimeout(() => {
+    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+
+    rafId.current = requestAnimationFrame(() => {
       const container = scrollRef.current;
       if (!container) return;
 
       const containerCenter = container.scrollLeft + container.clientWidth / 2;
-      let closestLoopedIdx = N; // デフォルト: 真ん中セット先頭
+      let closestLoopedIdx = N;
       let closestDist = Infinity;
 
       cardRefs.current.forEach((card, i) => {
@@ -170,7 +165,6 @@ export default function HubHeroSection() {
 
       const realIdx = closestLoopedIdx % N;
 
-      // 端に到達していたら真ん中セットに瞬間移動してループ
       if (closestLoopedIdx < N || closestLoopedIdx >= N * 2) {
         isJumping.current = true;
         const middleIdx = N + realIdx;
@@ -178,11 +172,10 @@ export default function HubHeroSection() {
         setTimeout(() => { isJumping.current = false; }, 100);
       }
 
-      // 写真を対応店舗に切り替え
       if (realIdx !== activeIndex) {
         handleSelectStore(realIdx);
       }
-    }, 80);
+    });
   }, [activeIndex, handleSelectStore, scrollToLoopedIndex]);
 
   return (
@@ -233,22 +226,18 @@ export default function HubHeroSection() {
       )}
 
       {/* 👑 2. ヒーローエリア */}
-
-      {/* ━━━ SEO H1: ページ全体で1度だけ・女風/女性用風俗キーワードで最適化 ━━━ */}
       <h1 className="sr-only">
         女風・女性用風俗なら東京・大阪・横浜・名古屋・福岡対応のストロベリーボーイズ｜女性専用出張サービス
       </h1>
 
       {/* ━━━ PC レイアウト (md 以上) ━━━ */}
       <div className="hidden md:block relative mx-auto max-w-7xl px-12 pt-4 pb-6">
-        {/* 花びら装飾 */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           <span className="absolute top-10 right-1/3 text-rose-400/80 text-2xl animate-pulse">🌸</span>
           <span className="absolute top-1/2 right-12 text-pink-300/70 text-xl">🌸</span>
           <span className="absolute bottom-1/3 right-1/4 text-rose-300/60 text-base">🌸</span>
         </div>
         <div className="grid grid-cols-12 gap-6 items-center min-h-[480px]">
-          {/* 左: コピー */}
           <div className="col-span-6 text-left space-y-6 z-20">
             <p className="text-xs font-bold tracking-[0.35em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
             <p className="font-serif text-5xl lg:text-6xl font-extrabold leading-[1.25] tracking-tight text-[#2b181c]">
@@ -260,7 +249,6 @@ export default function HubHeroSection() {
               全国の店舗からお選びください。
             </p>
           </div>
-          {/* 右: 写真 + フロートコピー */}
           <div className="col-span-6 relative flex justify-end items-center">
             <div className="relative w-full max-w-[460px] aspect-[4/4.6] rounded-3xl overflow-hidden shadow-xl border border-white/60">
               <NextImage
@@ -285,7 +273,6 @@ export default function HubHeroSection() {
 
       {/* ━━━ スマホレイアウト (md 未満) ━━━ */}
       <div className="md:hidden">
-        {/* H1 キャッチコピー */}
         <div className="text-center px-4 pb-3 space-y-0.5">
           <p className="text-[9px] font-bold tracking-[0.3em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
           <p className="font-serif text-[26px] font-extrabold leading-snug tracking-tight text-[#2b181c]">
@@ -293,8 +280,6 @@ export default function HubHeroSection() {
             <span className="text-[#d64567]">ときめ</span>いていい。
           </p>
         </div>
-
-        {/* ヒーロー写真: 画面いっぱい＋下部フェード */}
         <div className="relative w-full aspect-[3/4] overflow-hidden">
           <NextImage
             src={activeStore.heroCastImage}
@@ -305,22 +290,17 @@ export default function HubHeroSection() {
             className={`object-cover transition-opacity duration-500 ${isFading ? 'opacity-40' : 'opacity-100'}`}
             priority
           />
-          {/* 写真内フロートコピー（手書き風） */}
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <p className="font-serif text-xl font-bold italic leading-relaxed tracking-widest text-white drop-shadow-lg whitespace-pre-line transform -rotate-3">
               {activeStore.floatCopy}
             </p>
           </div>
-          {/* 下部グラデーションフェード（写真→背景色へぼかし） */}
           <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#fbf6f6] via-[#fbf6f6]/60 to-transparent" />
         </div>
       </div>
 
-      {/* 🎪 3. 店舗選択カルーセル (PC / スマホ共通) */}
-      {/* スマホ: -mt-24 で写真の上に浮き上がって重なる / PC: mt-6 で通常配置 */}
+      {/* 🎪 3. 店舗選択カルーセル */}
       <div id="stores" className="relative z-20 -mt-24 md:mt-6 pb-2">
-
-        {/* PC: max-w-7xl 内で5枚並列、スマホ: 全幅で無限ループ水平スクロール (1枚ずつピタッとスナップ) */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
@@ -328,10 +308,8 @@ export default function HubHeroSection() {
         >
           <div className="flex items-end md:justify-center gap-2 sm:gap-4 min-w-max px-[calc(50vw-115px)] md:px-8 md:max-w-7xl md:mx-auto">
             {LOOPED_STORES.map((store, loopedIdx) => {
-              // 実インデックス (0〜N-1) と照合
               const realIdx = loopedIdx % N;
               const isActive = realIdx === activeIndex;
-              // PC では 本物セット(N〜2N-1) のみ表示し、複製は非表示
               const isMiddleCopy = loopedIdx >= N && loopedIdx < N * 2;
 
               return (
@@ -349,12 +327,9 @@ export default function HubHeroSection() {
                     ${!isMiddleCopy ? 'md:hidden' : ''}
                   `}
                 >
-                  {/* 店舗夜景サムネイル */}
                   <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 mb-2">
                     <NextImage src={store.image} alt={store.name} fill sizes="200px" loading="lazy" className="object-cover" />
                   </div>
-
-                  {/* 店舗名 */}
                   <div className="mb-1.5">
                     <div className="flex items-baseline gap-1">
                       <h3 className={`font-serif font-bold ${isActive ? 'text-base sm:text-lg text-[#2b181c]' : 'text-xs sm:text-sm text-slate-700'}`}>
@@ -368,8 +343,6 @@ export default function HubHeroSection() {
                       {store.catchphrase.replace('\n', ' ')}
                     </p>
                   </div>
-
-                  {/* 在籍数 & ボタン */}
                   <div className="pt-2 border-t border-slate-100 space-y-1.5">
                     <div className="flex items-center gap-1 text-[8px] sm:text-[10px] font-bold text-rose-500">
                       <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
@@ -408,7 +381,6 @@ export default function HubHeroSection() {
           </div>
         </div>
 
-        {/* ドットインジケーター */}
         <div className="flex items-center justify-center gap-1.5 mt-1">
           {STORES_DATA.map((_, idx) => (
             <button

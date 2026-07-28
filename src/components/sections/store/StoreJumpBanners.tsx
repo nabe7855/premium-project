@@ -38,6 +38,7 @@ function BannerItem({ store }: { store: StoreInfo }) {
           src={`/images/banners/store-jumps/${store.slug}.png`}
           alt={`${store.name}店バナー`}
           fill
+          loading="lazy"
           className="object-cover transition-opacity duration-300 group-hover:opacity-90"
           sizes="(max-width: 640px) 50vw, 50vw"
           onError={() => setImgError(true)}
