@@ -251,82 +251,48 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
 
-              {/* 🚀 リアル検索クエリSEOタグセット (中身に応じて自動判定・動的切り替え) */}
+              {/* 🚀 キャストが選択したリアルSEO集客タグ ＆ 地域LP連携リンク */}
               {(() => {
-                const textContent = `${post.title || ''} ${post.content || ''}`;
-                const generatedTags: { label: string; href: string }[] = [];
-
-                // 1. 元々の投稿タグがあれば優先追加
-                if (post.tags && post.tags.length > 0) {
-                  post.tags.forEach((t) => {
-                    if (t) generatedTags.push({ label: `＃${t.replace(/^＃/, '')}`, href: `/store/${slug}/diary` });
-                  });
-                }
-
-                // 2. 店舗および本文キーワードによる動的タグ判定
-                if (slug === 'fukuoka') {
-                  if (textContent.includes('博多')) {
-                    generatedTags.push({ label: '＃博多女風', href: '/store/fukuoka/area/hakata' });
-                    generatedTags.push({ label: '＃博多駅ラブホテル利用', href: '/store/fukuoka/area/hakata' });
-                  }
-                  if (textContent.includes('天神')) {
-                    generatedTags.push({ label: '＃天神女性用風俗', href: '/store/fukuoka/area/tenjin' });
-                  }
-                  if (textContent.includes('中洲')) {
-                    generatedTags.push({ label: '＃中洲女風', href: '/store/fukuoka/area/nakasu' });
-                  }
-                  // 基本地域ビッグキーワード（ランダム順序付与）
-                  generatedTags.push({ label: '＃福岡女性用風俗', href: '/store/fukuoka/area/hakata' });
-                  generatedTags.push({ label: '＃福岡女風', href: '/store/fukuoka/area/tenjin' });
-                  generatedTags.push({ label: '＃福岡女風料金相場', href: '/store/fukuoka/price' });
-                  generatedTags.push({ label: '＃女風バレない', href: '/store/fukuoka/first-time' });
-                } else if (slug === 'yokohama') {
-                  if (textContent.includes('関内')) {
-                    generatedTags.push({ label: '＃関内女風', href: '/store/yokohama/area/kannai' });
-                    generatedTags.push({ label: '＃関内ラブホテル利用', href: '/store/yokohama/area/kannai' });
-                  }
-                  if (textContent.includes('みなとみらい')) {
-                    generatedTags.push({ label: '＃みなとみらい女性用風俗', href: '/store/yokohama/area/minatomirai' });
-                  }
-                  if (textContent.includes('桜木町')) {
-                    generatedTags.push({ label: '＃桜木町女風出張', href: '/store/yokohama/area/sakuragicho' });
-                  }
-                  // 基本地域ビッグキーワード
-                  generatedTags.push({ label: '＃横浜女性用風俗', href: '/store/yokohama/area/kannai' });
-                  generatedTags.push({ label: '＃横浜女風', href: '/store/yokohama/area/minatomirai' });
-                  generatedTags.push({ label: '＃横浜女風料金相場', href: '/store/yokohama/price' });
-                  generatedTags.push({ label: '＃女風バレない', href: '/store/yokohama/first-time' });
-                } else {
-                  generatedTags.push({ label: '＃女性用風俗', href: `/store/${slug}` });
-                  generatedTags.push({ label: '＃女風出張ホスト', href: `/store/${slug}` });
-                  generatedTags.push({ label: '＃女風バレない', href: `/store/${slug}` });
-                }
-
-                // 3. 重複除去して最大6個にスライス
-                const uniqueTags = Array.from(
-                  new Map(generatedTags.map((item) => [item.label, item])).values(),
-                ).slice(0, 7);
+                const activeTags = post.tags && post.tags.length > 0 ? post.tags : (
+                  slug === 'fukuoka' 
+                    ? ['福岡女性用風俗', '福岡女風', '博多女風', '女風バレない']
+                    : ['横浜女性用風俗', '横浜女風', '関内女風', '女風バレない']
+                );
 
                 return (
                   <div className="mt-8 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/60 to-pink-50/30 p-5 shadow-sm">
                     <div className="flex items-center gap-2 mb-3 text-xs font-bold text-rose-600">
                       <Share2 className="h-3.5 w-3.5 text-rose-500" />
-                      <span>この記事の関連検索キーワード</span>
+                      <span>この記事の関連タグ・検索キーワード</span>
                     </div>
                     <div className="flex flex-wrap gap-2 text-xs font-medium">
-                      {uniqueTags.map((tagObj, idx) => (
-                        <Link
-                          key={idx}
-                          href={tagObj.href}
-                          className={`rounded-full px-3 py-1 transition ${
-                            idx < 2
-                              ? 'bg-white text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white'
-                              : 'bg-white text-slate-700 border border-slate-200 hover:border-rose-300'
-                          }`}
-                        >
-                          {tagObj.label}
-                        </Link>
-                      ))}
+                      {activeTags.map((tagName, idx) => {
+                        const cleanTag = tagName.replace(/^＃/, '');
+                        // タグに応じた対応出張エリア/機能LPのリンク先マッピング
+                        let href = `/store/${slug}/diary`;
+                        if (cleanTag.includes('博多')) href = '/store/fukuoka/area/hakata';
+                        else if (cleanTag.includes('天神')) href = '/store/fukuoka/area/tenjin';
+                        else if (cleanTag.includes('関内')) href = '/store/yokohama/area/kannai';
+                        else if (cleanTag.includes('みなとみらい')) href = '/store/yokohama/area/minatomirai';
+                        else if (cleanTag.includes('料金')) href = `/store/${slug}/price`;
+                        else if (cleanTag.includes('バレない') || cleanTag.includes('初めて')) href = `/store/${slug}/first-time`;
+                        else if (cleanTag.includes('福岡')) href = '/store/fukuoka';
+                        else if (cleanTag.includes('横浜')) href = '/store/yokohama';
+
+                        return (
+                          <Link
+                            key={idx}
+                            href={href}
+                            className={`rounded-full px-3.5 py-1.5 transition-all duration-200 ${
+                              idx < 2
+                                ? 'bg-rose-500 text-white font-bold shadow-xs hover:bg-rose-600'
+                                : 'bg-white text-slate-700 font-medium border border-rose-200 hover:border-rose-400 hover:text-rose-600'
+                            }`}
+                          >
+                            ＃{cleanTag}
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 );
