@@ -1,6 +1,7 @@
 import { getCastsByStore } from '@/lib/getCastsByStore';
 import { getDiaryPostsByStore } from '@/lib/getDiaryPostsByStore';
 import { getAllStores } from '@/lib/store/store-data';
+import { AREA_MAP } from '@/lib/area-data';
 import { MetadataRoute } from 'next';
 
 export const dynamic = 'force-dynamic';
@@ -51,17 +52,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
-    // エリアLP (7枠) のサイトマップ追加 (SEO強化)
-    if (storeSlug === 'fukuoka') {
-      const areaSlugs = ['hakata', 'tenjin', 'nakasu', 'kitakyushu', 'kurume', 'ohashi', 'nishijin'];
-      for (const areaSlug of areaSlugs) {
-        storePages.push({
-          url: `${baseUrl}${storeBase}/area/${areaSlug}`,
-          lastModified: new Date(),
-          changeFrequency: 'weekly',
-          priority: 0.8,
-        });
-      }
+    // エリアLP (単一ソース AREA_MAP より実在エリア全7枠を動的生成)
+    const storeAreas = Object.values(AREA_MAP).filter((area) => area.slug === storeSlug);
+    for (const area of storeAreas) {
+      storePages.push({
+        url: `${baseUrl}/store/${area.slug}/area/${area.areaSlug}`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
     }
 
     // インタビュー一覧ページを追加
