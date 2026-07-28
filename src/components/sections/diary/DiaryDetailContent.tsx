@@ -251,73 +251,86 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
 
-              {/* 🚀 リアル検索クエリSEOタグセット (地域ビッグ・出張場所・価格相場・身バレ防止) */}
-              <div className="mt-8 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/60 to-pink-50/30 p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3 text-xs font-bold text-rose-600">
-                  <Share2 className="h-3.5 w-3.5 text-rose-500" />
-                  <span>注目の関連検索キーワード</span>
-                </div>
-                <div className="flex flex-wrap gap-2 text-xs font-medium">
-                  {slug === 'fukuoka' ? (
-                    <>
-                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
-                        ＃福岡女性用風俗
-                      </Link>
-                      <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
-                        ＃福岡女風
-                      </Link>
-                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃博多女風
-                      </Link>
-                      <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃天神女性用風俗
-                      </Link>
-                      <Link href="/store/fukuoka/area/nakasu" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃中洲女風
-                      </Link>
-                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃博多駅ラブホテル利用
-                      </Link>
-                      <Link href="/store/fukuoka/price" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃福岡女風料金相場
-                      </Link>
-                      <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃女風バレない
-                      </Link>
-                      <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃初めての女性用風俗
-                      </Link>
-                    </>
-                  ) : (
-                    <>
-                      <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
-                        ＃横浜女性用風俗
-                      </Link>
-                      <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
-                        ＃横浜女風
-                      </Link>
-                      <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃関内女風
-                      </Link>
-                      <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃みなとみらい女性用風俗
-                      </Link>
-                      <Link href="/store/yokohama/area/sakuragicho" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃関内ラブホテル利用
-                      </Link>
-                      <Link href="/store/yokohama/price" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃横浜女風料金相場
-                      </Link>
-                      <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃女風バレない
-                      </Link>
-                      <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
-                        ＃初めての女性用風俗
-                      </Link>
-                    </>
-                  )}
-                </div>
-              </div>
+              {/* 🚀 リアル検索クエリSEOタグセット (中身に応じて自動判定・動的切り替え) */}
+              {(() => {
+                const textContent = `${post.title || ''} ${post.content || ''}`;
+                const generatedTags: { label: string; href: string }[] = [];
+
+                // 1. 元々の投稿タグがあれば優先追加
+                if (post.tags && post.tags.length > 0) {
+                  post.tags.forEach((t) => {
+                    if (t) generatedTags.push({ label: `＃${t.replace(/^＃/, '')}`, href: `/store/${slug}/diary` });
+                  });
+                }
+
+                // 2. 店舗および本文キーワードによる動的タグ判定
+                if (slug === 'fukuoka') {
+                  if (textContent.includes('博多')) {
+                    generatedTags.push({ label: '＃博多女風', href: '/store/fukuoka/area/hakata' });
+                    generatedTags.push({ label: '＃博多駅ラブホテル利用', href: '/store/fukuoka/area/hakata' });
+                  }
+                  if (textContent.includes('天神')) {
+                    generatedTags.push({ label: '＃天神女性用風俗', href: '/store/fukuoka/area/tenjin' });
+                  }
+                  if (textContent.includes('中洲')) {
+                    generatedTags.push({ label: '＃中洲女風', href: '/store/fukuoka/area/nakasu' });
+                  }
+                  // 基本地域ビッグキーワード（ランダム順序付与）
+                  generatedTags.push({ label: '＃福岡女性用風俗', href: '/store/fukuoka/area/hakata' });
+                  generatedTags.push({ label: '＃福岡女風', href: '/store/fukuoka/area/tenjin' });
+                  generatedTags.push({ label: '＃福岡女風料金相場', href: '/store/fukuoka/price' });
+                  generatedTags.push({ label: '＃女風バレない', href: '/store/fukuoka/first-time' });
+                } else if (slug === 'yokohama') {
+                  if (textContent.includes('関内')) {
+                    generatedTags.push({ label: '＃関内女風', href: '/store/yokohama/area/kannai' });
+                    generatedTags.push({ label: '＃関内ラブホテル利用', href: '/store/yokohama/area/kannai' });
+                  }
+                  if (textContent.includes('みなとみらい')) {
+                    generatedTags.push({ label: '＃みなとみらい女性用風俗', href: '/store/yokohama/area/minatomirai' });
+                  }
+                  if (textContent.includes('桜木町')) {
+                    generatedTags.push({ label: '＃桜木町女風出張', href: '/store/yokohama/area/sakuragicho' });
+                  }
+                  // 基本地域ビッグキーワード
+                  generatedTags.push({ label: '＃横浜女性用風俗', href: '/store/yokohama/area/kannai' });
+                  generatedTags.push({ label: '＃横浜女風', href: '/store/yokohama/area/minatomirai' });
+                  generatedTags.push({ label: '＃横浜女風料金相場', href: '/store/yokohama/price' });
+                  generatedTags.push({ label: '＃女風バレない', href: '/store/yokohama/first-time' });
+                } else {
+                  generatedTags.push({ label: '＃女性用風俗', href: `/store/${slug}` });
+                  generatedTags.push({ label: '＃女風出張ホスト', href: `/store/${slug}` });
+                  generatedTags.push({ label: '＃女風バレない', href: `/store/${slug}` });
+                }
+
+                // 3. 重複除去して最大6個にスライス
+                const uniqueTags = Array.from(
+                  new Map(generatedTags.map((item) => [item.label, item])).values(),
+                ).slice(0, 7);
+
+                return (
+                  <div className="mt-8 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/60 to-pink-50/30 p-5 shadow-sm">
+                    <div className="flex items-center gap-2 mb-3 text-xs font-bold text-rose-600">
+                      <Share2 className="h-3.5 w-3.5 text-rose-500" />
+                      <span>この記事の関連検索キーワード</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2 text-xs font-medium">
+                      {uniqueTags.map((tagObj, idx) => (
+                        <Link
+                          key={idx}
+                          href={tagObj.href}
+                          className={`rounded-full px-3 py-1 transition ${
+                            idx < 2
+                              ? 'bg-white text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white'
+                              : 'bg-white text-slate-700 border border-slate-200 hover:border-rose-300'
+                          }`}
+                        >
+                          {tagObj.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </article>
           <CastCard
