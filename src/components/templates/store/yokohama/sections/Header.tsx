@@ -377,9 +377,9 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
       } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
-        {/* 🚀 元画像内の文字重なりを完全消去する背景カバー ＆ 可視H1ヘッダーテキスト */}
-        <div className="w-full bg-[#fff5f6] py-1 px-2 border-b border-rose-100/60 flex items-center justify-center">
-          <h1 className="text-[9px] sm:text-xs font-bold text-center text-[#B34568] tracking-wider truncate">
+        {/* 🚀 元画像内の文字重なりを完全消去する背景カバー ＆ 可視H1ヘッダーテキスト (1.5倍拡大) */}
+        <div className="w-full bg-[#fff5f6] py-1.5 px-2 border-b border-rose-100 flex items-center justify-center">
+          <h1 className="text-[13px] sm:text-base font-extrabold text-center text-[#9E3355] tracking-wider truncate">
             女性用風俗 日本最大級の女性専用性感マッサージ【横浜 関内・みなとみらい・桜木町対応】｜ストロベリーボーイズ横浜店
           </h1>
         </div>
