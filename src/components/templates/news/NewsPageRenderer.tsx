@@ -46,6 +46,52 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
           ))}
         </div>
 
+        {/* 🚀 店舗ニュース用 SEO集客おすすめタグカード (店舗に応じた厳密分離) */}
+        {(() => {
+          const isFukuoka = storeSlug === 'fukuoka';
+          const seoTags = isFukuoka ? [
+            { label: '＃福岡女性用風俗', href: '/store/fukuoka/area/hakata' },
+            { label: '＃福岡女風', href: '/store/fukuoka/area/tenjin' },
+            { label: '＃博多女風', href: '/store/fukuoka/area/hakata' },
+            { label: '＃天神女性用風俗', href: '/store/fukuoka/area/tenjin' },
+            { label: '＃博多駅ホテル出張', href: '/store/fukuoka/area/hakata' },
+            { label: '＃福岡女風料金相場', href: '/store/fukuoka/price' },
+            { label: '＃女風バレない', href: '/store/fukuoka/first-time' },
+          ] : [
+            { label: '＃横浜女性用風俗', href: '/store/yokohama/area/kannai' },
+            { label: '＃横浜女風', href: '/store/yokohama/area/minatomirai' },
+            { label: '＃関内女風', href: '/store/yokohama/area/kannai' },
+            { label: '＃みなとみらい女性用風俗', href: '/store/yokohama/area/minatomirai' },
+            { label: '＃関内ホテル出張', href: '/store/yokohama/area/kannai' },
+            { label: '＃横浜女風料金相場', href: '/store/yokohama/price' },
+            { label: '＃女風バレない', href: '/store/yokohama/first-time' },
+          ];
+
+          return (
+            <div className="mt-12 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/60 to-pink-50/30 p-6 shadow-sm">
+              <div className="flex items-center gap-2 mb-3 text-xs font-bold text-rose-600">
+                <span className="text-base">✨</span>
+                <span>{isFukuoka ? '福岡店' : '横浜店'}注目の関連検索キーワード</span>
+              </div>
+              <div className="flex flex-wrap gap-2 text-xs font-medium">
+                {seoTags.map((tagObj, idx) => (
+                  <a
+                    key={idx}
+                    href={tagObj.href}
+                    className={`rounded-full px-3.5 py-1.5 transition-all duration-200 ${
+                      idx < 2
+                        ? 'bg-rose-500 text-white font-bold shadow-xs hover:bg-rose-600'
+                        : 'bg-white text-slate-700 font-medium border border-rose-200 hover:border-rose-400 hover:text-rose-600'
+                    }`}
+                  >
+                    {tagObj.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Action / CTA Section - Moved to bottom */}
         {ctaSections.length > 0 && (
           <div className="mt-10 space-y-8 border-t border-slate-100 pt-10">
