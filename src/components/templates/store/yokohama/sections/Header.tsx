@@ -11,14 +11,18 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { PageData } from '@/components/admin/news/types';
+import { TodayCast } from '@/lib/getTodayCastsByStore';
+
 interface HeaderProps {
   config?: HeaderConfig;
+  todayCasts?: TodayCast[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-export default function Header({ config, isEditing, onUpdate, onImageUpload }: HeaderProps) {
+export default function Header({ config, todayCasts = [], isEditing, onUpdate, onImageUpload }: HeaderProps) {
   const { store } = useStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);

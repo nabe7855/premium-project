@@ -16,30 +16,11 @@ export default function TopPageSeoBlock({ storeSlug, todayCasts = [] }: TopPageS
   const castCount = todayCasts.length > 0 ? todayCasts.length : (isFukuoka ? 12 : 16);
 
   return (
-    <section className="w-full bg-gradient-to-b from-rose-50/40 via-white to-white py-6 md:py-10 border-b border-rose-100/60">
+    <section className="w-full bg-gradient-to-b from-rose-50/30 via-white to-white py-4 md:py-8 border-b border-rose-100/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        
-        {/* 1. リアルタイム出勤鮮度バッジ ＆ クイック情報 */}
-        <div className="mb-5 flex items-center justify-between gap-3 bg-white px-5 py-3 rounded-2xl border border-rose-100 shadow-2xs">
-          <div className="flex items-center gap-2 text-xs font-bold text-rose-600">
-            <Sparkles className="h-4 w-4 text-rose-500 shrink-0" />
-            <span>【{cityName}店公式】女性専用出張リラクゼーション</span>
-          </div>
-
-          {/* リアルタイム鮮度バッジ */}
-          <div className="flex items-center gap-2.5 shrink-0 bg-rose-500 text-white px-3.5 py-1.5 rounded-xl shadow-2xs">
-            <div className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
-            </div>
-            <div className="text-xs font-black flex items-baseline gap-1">
-              本日出勤 <span className="text-sm font-black underline">{castCount}名</span>
-            </div>
-          </div>
-        </div>
 
         {/* 2. FV直下地域特化SEOテキストブロック (H2 + 350文字解説 + 内部リンクバッジ) */}
-        <div className="rounded-3xl border border-rose-100 bg-[#FAF6F3] p-6 sm:p-8 shadow-xs text-left mb-6">
+        <div className="rounded-3xl border border-rose-100 bg-[#FAF6F3] p-6 sm:p-8 shadow-xs text-left">
           <h2 className="font-serif text-xl sm:text-2xl font-black text-slate-900 mb-4 flex items-center gap-2">
             <MapPin className="h-5 w-5 text-rose-500" />
             {cityName}の女性用風俗・女風なら「ストロベリーボーイズ{cityName}店」

@@ -53,6 +53,7 @@ export default function YokohamaPage({
         <>
           <Header
             config={safeConfig?.header}
+            todayCasts={todayCasts}
             isEditing={isEditing}
             onUpdate={onUpdate}
             onImageUpload={onImageUpload}

@@ -11,14 +11,18 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
+import { PageData } from '@/components/admin/news/types';
+import { TodayCast } from '@/lib/getTodayCastsByStore';
+
 interface HeaderProps {
   config?: HeaderConfig;
+  todayCasts?: TodayCast[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-export default function Header({ config, isEditing, onUpdate, onImageUpload }: HeaderProps) {
+export default function Header({ config, todayCasts = [], isEditing, onUpdate, onImageUpload }: HeaderProps) {
   const { store } = useStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -386,13 +390,13 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           {/* Base Background */}
           <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
-          {/* 🚀 可視H1ヘッダーテキスト (画像2最上部への完璧な統合SEO配置) */}
-          <h1 className={`absolute z-20 font-serif text-[8px] sm:text-[11px] md:text-[13px] font-extrabold tracking-widest text-[#B34568] transition-opacity duration-300 flex items-center justify-center w-full pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ top: '1.8%', left: '0' }}>
+          {/* 🚀 クッキリ美しく表示される可視H1ヘッダーテキスト (文字重なりを完全解消) */}
+          <h1 className={`absolute z-20 font-serif text-[8px] sm:text-[11px] md:text-[13px] font-extrabold tracking-wider text-[#B34568] transition-opacity duration-300 flex items-center justify-center w-full pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ top: '2.5%', left: '0' }}>
             女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
           </h1>
           
-          {/* Non-Group Parts (Decorations) */}
-          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
+          {/* Non-Group Parts (Decorations) - 元画像内の文字と被らないよう背景を保持 */}
+          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 opacity-0 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/23_bottom_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="Web予約・電話受付" />
           <img src="/images/store/fukuoka/new-header/35_flower.png" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
@@ -404,9 +408,15 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
             <img src="/images/store/fukuoka/new-header/00_main_logo_full.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%', objectFit: 'contain' }} alt="ストロベリーボーイズ" />
           </Link>
 
-          {/* Interactive Group: today_card */}
-          <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
+          {/* 🚀 Interactive Group: today_card (TODAY出勤ボタン上に動的リアルタイム鮮度バッジを追加) */}
+          <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block group" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
             <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
+            
+            {/* 動的バッジ (TODAYカード上にピッタリ固定) */}
+            <div className="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-0.5 rounded-full bg-rose-500 text-white px-2 py-0.5 shadow-md border border-white text-[9px] font-black animate-pulse">
+              <span>🔥</span>
+              <span>{todayCasts.length > 0 ? todayCasts.length : (store.slug === 'yokohama' ? 16 : 12)}名</span>
+            </div>
           </Link>
 
           {/* Interactive Group: menu_card */}
