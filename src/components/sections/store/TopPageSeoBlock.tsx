@@ -66,80 +66,45 @@ export default function TopPageSeoBlock({ storeSlug, todayCasts = [] }: TopPageS
           </div>
 
           {/* 直下内部リンクSEOアンカーバッジ */}
-          <div className="mt-6 pt-5 border-t border-rose-200/60 flex flex-wrap items-center gap-2.5 text-xs font-bold">
-            <span className="text-slate-400 text-[11px] font-bold">【クイック案内】:</span>
+          <div className="mt-5 pt-4 border-t border-rose-200/60 flex flex-wrap items-center gap-2 text-xs font-bold">
+            <span className="text-slate-400 text-[11px] font-bold">【公式案内】:</span>
             {isFukuoka ? (
               <>
-                <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3.5 py-1.5 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
+                <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3.5 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
                   <span>初めての方へ</span> <ChevronRight className="h-3 w-3" />
                 </Link>
-                <Link href="/store/fukuoka/price" className="rounded-full bg-white px-3.5 py-1.5 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
+                <Link href="/store/fukuoka/price" className="rounded-full bg-white px-3.5 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
                   <span>コース・料金</span> <ChevronRight className="h-3 w-3" />
                 </Link>
-                <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃博多エリアガイド
                 </Link>
-                <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃天神エリアガイド
                 </Link>
-                <Link href="/store/fukuoka/area/nakasu" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/fukuoka/area/nakasu" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃中洲エリアガイド
                 </Link>
               </>
             ) : (
               <>
-                <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3.5 py-1.5 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
+                <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3.5 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
                   <span>初めての方へ</span> <ChevronRight className="h-3 w-3" />
                 </Link>
-                <Link href="/store/yokohama/price" className="rounded-full bg-white px-3.5 py-1.5 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
+                <Link href="/store/yokohama/price" className="rounded-full bg-white px-3.5 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition flex items-center gap-1">
                   <span>コース・料金</span> <ChevronRight className="h-3 w-3" />
                 </Link>
-                <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃関内エリアガイド
                 </Link>
-                <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃みなとみらいガイド
                 </Link>
-                <Link href="/store/yokohama/area/sakuragicho" className="rounded-full bg-white px-3.5 py-1.5 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                <Link href="/store/yokohama/area/sakuragicho" className="rounded-full bg-white px-3.5 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
                   ＃桜木町エリアガイド
                 </Link>
               </>
             )}
-          </div>
-        </div>
-
-        {/* 3. 信頼・安心バッジ帯 (横並び4機能) */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left">
-          <div className="flex items-center gap-2.5 rounded-xl bg-white p-3 border border-rose-100/80 shadow-2xs">
-            <ShieldCheck className="h-5 w-5 text-rose-500 shrink-0" />
-            <div>
-              <div className="text-xs font-bold text-slate-800">完全審査制セラピスト</div>
-              <div className="text-[10px] text-slate-400">面接・講習クリア</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 rounded-xl bg-white p-3 border border-rose-100/80 shadow-2xs">
-            <Award className="h-5 w-5 text-rose-500 shrink-0" />
-            <div>
-              <div className="text-xs font-bold text-slate-800">安心の明朗会計</div>
-              <div className="text-[10px] text-slate-400">事前料金・追加なし</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 rounded-xl bg-white p-3 border border-rose-100/80 shadow-2xs">
-            <Clock className="h-5 w-5 text-rose-500 shrink-0" />
-            <div>
-              <div className="text-xs font-bold text-slate-800">当日・即日出張OK</div>
-              <div className="text-[10px] text-slate-400">ホテル・ご自宅対応</div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 rounded-xl bg-white p-3 border border-rose-100/80 shadow-2xs">
-            <CheckCircle2 className="h-5 w-5 text-rose-500 shrink-0" />
-            <div>
-              <div className="text-xs font-bold text-slate-800">秘密厳守・プライバシー</div>
-              <div className="text-[10px] text-slate-400">完全個室エスコート</div>
-            </div>
           </div>
         </div>
 
