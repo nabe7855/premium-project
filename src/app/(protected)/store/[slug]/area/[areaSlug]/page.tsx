@@ -175,8 +175,8 @@ export default async function AreaLPPage({ params }: AreaPageProps) {
   const topConfig = topConfigResult.success ? (topConfigResult.config as StoreTopPageConfig) : null;
   const hotels = (dbHotels || []).map(mapDbHotelToHotel);
 
-  // JSON-LD (FAQ & Service)
-  const structuredData = {
+  // JSON-LD (Service & FAQPage リッチリザルト対応)
+  const serviceSchema = {
     '@context': 'https://schema.org',
     '@type': 'Service',
     name: `${areaInfo.name}出張女性用風俗サービス - ストロベリーボーイズ${areaInfo.cityName}店`,
@@ -192,11 +192,46 @@ export default async function AreaLPPage({ params }: AreaPageProps) {
     description: areaInfo.description,
   };
 
+  const faqSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+      {
+        '@type': 'Question',
+        name: `${areaInfo.name}エリアでホテルや自宅への出張利用は可能ですか？`,
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: `はい、${areaInfo.name}エリア内の提携ホテル・シティホテル・ご自宅への出張利用に対応しております。`,
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '初めての利用でも安心して利用できますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'はい、完全審査制のイケメンセラピストが丁寧におもてなしいたします。明朗会計で事前の不安もしっかりサポートいたします。',
+        },
+      },
+      {
+        '@type': 'Question',
+        name: '予約方法はどのようになりますか？',
+        acceptedAnswer: {
+          '@type': 'Answer',
+          text: 'Web予約フォームまたは公式LINEより24時間いつでも簡単にご予約いただけます。',
+        },
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(serviceSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
 
       {/* ヘッダー */}

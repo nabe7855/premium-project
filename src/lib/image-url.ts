@@ -76,6 +76,12 @@ export function getTransformedImageUrl(
     params.append('resize', 'contain');
   }
 
+  // フォーマット（デフォルトで次世代フォーマット webp を使用）
+  const format = options.format || 'webp';
+  if (format !== 'origin') {
+    params.append('format', format);
+  }
+
   // オプションが何も指定されていない場合はオリジナルのURLを返す
   const paramString = params.toString();
   if (!paramString) return publicUrl;

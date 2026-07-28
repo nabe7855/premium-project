@@ -63,10 +63,13 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
       metaDescription = `横浜（みなとみらい・関内・桜木町・新横浜）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ横浜店。洗練された人気セラピストがご指定ホテル・ご自宅へ出張。完全個室・安心明朗会計・初めての方も丁寧サポート！`;
     }
 
+    const isMainActiveStore = params.slug === 'fukuoka' || params.slug === 'yokohama';
+
     return {
       title: { absolute: title },
       description: metaDescription,
       keywords: ["女性用風俗", "女風", "出張ホスト", "出張セラピー", s.city, ...s.areaKw, "セラピスト", "女性専用"],
+      robots: isMainActiveStore ? { index: true, follow: true } : { index: false, follow: true },
       alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}` },
       openGraph: {
         title, 

@@ -51,6 +51,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
+    // エリアLP (7枠) のサイトマップ追加 (SEO強化)
+    if (storeSlug === 'fukuoka') {
+      const areaSlugs = ['hakata', 'tenjin', 'nakasu', 'kitakyushu', 'kurume', 'ohashi', 'nishijin'];
+      for (const areaSlug of areaSlugs) {
+        storePages.push({
+          url: `${baseUrl}${storeBase}/area/${areaSlug}`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
+      }
+    }
+
     // インタビュー一覧ページを追加
     storePages.push({
       url: `${baseUrl}${storeBase}/interview`,
