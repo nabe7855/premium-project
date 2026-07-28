@@ -390,17 +390,17 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           {/* Base Background */}
           <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
-          {/* 🚀 元画像内の文字重なりを完全消去する背景カバー ＆ 可視H1ヘッダーテキスト (1.5倍拡大) */}
-          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '2%', top: '1.5%', width: '96%', height: '11%' }}>
-            {/* 元画像文字隠し用グラデーションパッチ */}
-            <div className="absolute inset-0 bg-[#fff5f6]/98 backdrop-blur-2xs rounded-full shadow-2xs border border-rose-100/50" />
-            <h1 className="relative z-10 font-serif text-[12.5px] sm:text-[16px] md:text-[19.5px] font-extrabold tracking-wider text-[#9E3355] flex items-center justify-center w-full px-2 text-center truncate">
+          {/* 🚀 豪華な元の下地装飾パーツ (完全復活) */}
+          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
+
+          {/* 🚀 豪華下地の上に文字部分だけクッキリ重ねる可視H1ヘッダーテキスト (1.5倍拡大) */}
+          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '10%', top: '1.5%', width: '80%', height: '10%' }}>
+            {/* 元画像文字部分のみを自然に覆うカバー */}
+            <div className="absolute inset-0 bg-[#fff5f6]/90 backdrop-blur-2xs rounded-full" />
+            <h1 className="relative z-10 font-serif text-[12px] sm:text-[15px] md:text-[18.5px] font-extrabold tracking-wider text-[#8C2849] flex items-center justify-center w-full px-2 text-center truncate">
               女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
             </h1>
           </div>
-          
-          {/* Non-Group Parts (Decorations) - 元画像内の文字と被らないよう背景を保持 */}
-          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 opacity-0 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/23_bottom_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="Web予約・電話受付" />
           <img src="/images/store/fukuoka/new-header/35_flower.png" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
