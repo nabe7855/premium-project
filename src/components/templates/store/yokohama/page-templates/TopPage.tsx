@@ -72,7 +72,7 @@ export default function YokohamaPage({
         />
       )}
 
-      {/* 🚀 ファーストビュー直下 SEOテキスト ＆ 信頼バッジブロック (1位奪取構造) */}
+      {/* 🚀 ファーストビュー直下 SEO解説 ＆ エリア案内セクション */}
       <TopPageSeoBlock storeSlug={storeSlug || 'yokohama'} todayCasts={todayCasts} />
 
       {!hideHeader && storeSlug && (
@@ -85,6 +85,7 @@ export default function YokohamaPage({
         />
       )}
       
+      {/* もともとの店舗画像ジャンプバナー (元のUIを100%保持) */}
       <StoreJumpBanners currentStoreSlug={storeSlug} />
 
       <>

@@ -70,7 +70,7 @@ export default function FukuokaPage({
         />
       )}
 
-      {/* 🚀 ファーストビュー直下 SEOテキスト ＆ 信頼バッジブロック (1位奪取構造) */}
+      {/* 🚀 ファーストビュー直下 SEO解説 ＆ エリア案内セクション */}
       <TopPageSeoBlock storeSlug={storeSlug || 'fukuoka'} todayCasts={todayCasts} />
 
       {!hideHeader && storeSlug && (
@@ -83,6 +83,7 @@ export default function FukuokaPage({
         />
       )}
       
+      {/* もともとの店舗画像ジャンプバナー (元のUIを100%保持) */}
       <StoreJumpBanners currentStoreSlug={storeSlug} />
 
       <>
