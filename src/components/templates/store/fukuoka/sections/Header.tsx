@@ -392,7 +392,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           
           {/* 🚀 文字入り元画像を完全排除した、最高解像度のCSS可視H1トップインフォバー */}
           <div 
-            className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center px-4 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} 
+            className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center px-2 sm:px-4 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} 
             style={{ 
               left: '3.412%', 
               top: '1.8%', 
@@ -404,7 +404,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
               boxShadow: '0 2px 8px -2px rgba(225, 29, 72, 0.08)'
             }}
           >
-            <h1 className="font-serif text-[9px] sm:text-[12px] md:text-[14px] font-extrabold tracking-wider text-[#9E3355] flex items-center justify-center w-full text-center truncate">
+            <h1 className="font-serif text-[6.5px] xs:text-[7.5px] sm:text-[11px] md:text-[13.5px] font-extrabold tracking-tighter sm:tracking-wider text-[#9E3355] flex items-center justify-center w-full text-center whitespace-nowrap overflow-hidden">
               ✨ 女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
             </h1>
           </div>
@@ -421,14 +421,14 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
             <img src="/images/store/fukuoka/new-header/00_main_logo_full.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%', objectFit: 'contain' }} alt="ストロベリーボーイズ" />
           </Link>
 
-          {/* 🚀 Interactive Group: today_card (TODAY出勤ボタン上に動的リアルタイム鮮度バッジを追加) */}
+          {/* 🚀 Interactive Group: today_card (TODAY出勤ボタン上に改行なしの美しく横長な1行リアルタイムバッジを追加) */}
           <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block group" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
             <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
             
-            {/* 動的バッジ (TODAYカード上にピッタリ固定) */}
-            <div className="absolute -top-1.5 -right-1.5 z-20 flex items-center gap-0.5 rounded-full bg-rose-500 text-white px-2 py-0.5 shadow-md border border-white text-[9px] font-black animate-pulse">
+            {/* 1行横長カプセルバッジ (改行を完全防止) */}
+            <div className="absolute -top-2 -right-3 sm:-top-2 sm:-right-4 z-20 flex items-center gap-1 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 text-white px-2 py-0.5 shadow-md border border-white text-[8px] sm:text-[10px] font-black whitespace-nowrap animate-pulse">
               <span>🔥</span>
-              <span>{todayCasts.length > 0 ? todayCasts.length : (store.slug === 'yokohama' ? 16 : 12)}名</span>
+              <span>本日{todayCasts.length > 0 ? todayCasts.length : (store.slug === 'yokohama' ? 16 : 12)}名</span>
             </div>
           </Link>
 
