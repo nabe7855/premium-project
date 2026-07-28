@@ -390,10 +390,14 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           {/* Base Background */}
           <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
-          {/* 🚀 クッキリ美しく表示される可視H1ヘッダーテキスト (文字重なりを完全解消) */}
-          <h1 className={`absolute z-20 font-serif text-[8px] sm:text-[11px] md:text-[13px] font-extrabold tracking-wider text-[#B34568] transition-opacity duration-300 flex items-center justify-center w-full pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ top: '2.5%', left: '0' }}>
-            女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
-          </h1>
+          {/* 🚀 元画像内の文字重なりを完全消去する背景カバー ＆ 可視H1ヘッダーテキスト */}
+          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5%', top: '2.5%', width: '90%', height: '8%' }}>
+            {/* 元画像文字隠し用グラデーションパッチ */}
+            <div className="absolute inset-0 bg-[#fff5f6]/95 backdrop-blur-2xs rounded-full" />
+            <h1 className="relative z-10 font-serif text-[8.5px] sm:text-[11.5px] md:text-[13.5px] font-extrabold tracking-wider text-[#B34568] flex items-center justify-center w-full px-2 text-center truncate">
+              女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
+            </h1>
+          </div>
           
           {/* Non-Group Parts (Decorations) - 元画像内の文字と被らないよう背景を保持 */}
           <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 opacity-0 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />

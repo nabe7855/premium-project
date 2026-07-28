@@ -377,10 +377,12 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
       } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
     >
       <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
-        {/* 🚀 可視H1ヘッダーテキスト (SEO最高評価となる最上部配置) */}
-        <h1 className="text-[10px] sm:text-xs font-bold text-center text-rose-700 bg-rose-50/80 py-0.5 px-2 border-b border-rose-100 truncate">
-          女性用風俗 日本最大級の女性専用性感マッサージ【横浜 関内・みなとみらい・桜木町対応】｜ストロベリーボーイズ横浜店
-        </h1>
+        {/* 🚀 元画像内の文字重なりを完全消去する背景カバー ＆ 可視H1ヘッダーテキスト */}
+        <div className="w-full bg-[#fff5f6] py-1 px-2 border-b border-rose-100/60 flex items-center justify-center">
+          <h1 className="text-[9px] sm:text-xs font-bold text-center text-[#B34568] tracking-wider truncate">
+            女性用風俗 日本最大級の女性専用性感マッサージ【横浜 関内・みなとみらい・桜木町対応】｜ストロベリーボーイズ横浜店
+          </h1>
+        </div>
         <div className="flex items-stretch overflow-hidden rounded-b-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
           {/* Logo Section */}
           <Link
