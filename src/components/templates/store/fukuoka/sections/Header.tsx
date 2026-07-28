@@ -386,6 +386,11 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           {/* Base Background */}
           <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
+          {/* 🚀 可視H1ヘッダーテキスト (画像2最上部への完璧な統合SEO配置) */}
+          <h1 className={`absolute z-20 font-serif text-[8px] sm:text-[11px] md:text-[13px] font-extrabold tracking-widest text-[#B34568] transition-opacity duration-300 flex items-center justify-center w-full pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ top: '1.8%', left: '0' }}>
+            女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
+          </h1>
+          
           {/* Non-Group Parts (Decorations) */}
           <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />

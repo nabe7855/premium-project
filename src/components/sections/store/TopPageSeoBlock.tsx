@@ -19,32 +19,21 @@ export default function TopPageSeoBlock({ storeSlug, todayCasts = [] }: TopPageS
     <section className="w-full bg-gradient-to-b from-rose-50/40 via-white to-white py-6 md:py-10 border-b border-rose-100/60">
       <div className="mx-auto max-w-7xl px-4 sm:px-6">
         
-        {/* 1. 可視H1 ＆ リアルタイム出勤鮮度バッジ */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4 bg-white p-5 rounded-2xl border border-rose-100 shadow-sm">
-          <div className="space-y-1 text-left">
-            <div className="inline-flex items-center gap-1.5 rounded-full bg-rose-50 px-3 py-1 text-[11px] font-bold text-rose-600 border border-rose-100">
-              <Sparkles className="h-3.5 w-3.5 text-rose-500" />
-              <span>女性用風俗・女風 出張専門【{cityName}店公式】</span>
-            </div>
-            <h1 className="font-serif text-lg sm:text-xl md:text-2xl font-black text-slate-900 leading-snug">
-              {cityName}（{areas}）の女性用風俗・女風｜ストロベリーボーイズ{cityName}店
-            </h1>
-            <p className="text-xs text-slate-500 font-medium">
-              完全審査制イケメンセラピスト在籍｜明朗会計・当日予約OK｜ご指定ホテル・ご自宅へスピーディー出張
-            </p>
+        {/* 1. リアルタイム出勤鮮度バッジ ＆ クイック情報 */}
+        <div className="mb-5 flex items-center justify-between gap-3 bg-white px-5 py-3 rounded-2xl border border-rose-100 shadow-2xs">
+          <div className="flex items-center gap-2 text-xs font-bold text-rose-600">
+            <Sparkles className="h-4 w-4 text-rose-500 shrink-0" />
+            <span>【{cityName}店公式】女性専用出張リラクゼーション</span>
           </div>
 
           {/* リアルタイム鮮度バッジ */}
-          <div className="flex items-center gap-3 shrink-0 bg-rose-500 text-white px-4 py-2.5 rounded-xl shadow-md">
-            <div className="relative flex h-3 w-3">
+          <div className="flex items-center gap-2.5 shrink-0 bg-rose-500 text-white px-3.5 py-1.5 rounded-xl shadow-2xs">
+            <div className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3 w-3 bg-white"></span>
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
             </div>
-            <div className="text-left">
-              <div className="text-[10px] font-bold text-rose-100 uppercase tracking-wider">本日受付中</div>
-              <div className="text-sm font-black flex items-baseline gap-1">
-                本日出勤 <span className="text-lg font-black underline">{castCount}名</span>
-              </div>
+            <div className="text-xs font-black flex items-baseline gap-1">
+              本日出勤 <span className="text-sm font-black underline">{castCount}名</span>
             </div>
           </div>
         </div>
