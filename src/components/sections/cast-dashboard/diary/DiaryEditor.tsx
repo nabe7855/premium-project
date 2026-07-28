@@ -11,8 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 
 interface Props {
   castId: string;
+  storeSlug?: string; // 👈 店舗スラッグ (fukuoka / yokohama)
   initialData?: CastDiary; // 編集時に渡す
-  onSave: (data: Omit<CastDiary, 'createdAt'>) => void; // ✅ id を含める
+  onSave: (data: Omit<CastDiary, 'createdAt'>) => void;
   onCancel: () => void;
 }
 
@@ -22,7 +23,7 @@ interface TagMaster {
   is_active: boolean;
 }
 
-export default function DiaryEditor({ castId, initialData, onSave, onCancel }: Props) {
+export default function DiaryEditor({ castId, storeSlug, initialData, onSave, onCancel }: Props) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
   const [files, setFiles] = useState<File[]>([]);
@@ -569,19 +570,20 @@ export default function DiaryEditor({ castId, initialData, onSave, onCancel }: P
           </button>
         </div>
 
-        {/* 🚀 SEO集客おすすめタグ (キャストがワンタップで選択可能) */}
+        {/* 🚀 SEO集客おすすめタグ (店舗に応じて完全厳密分離) */}
         <div className="mt-4 rounded-xl border border-rose-100 bg-rose-50/40 p-4">
           <div className="mb-2 flex items-center justify-between">
             <span className="flex items-center gap-1 text-xs font-bold text-rose-700">
-              <span>✨</span> SEO集客おすすめタグ（ワンタップで追加）
+              <span>✨</span> {storeSlug === 'fukuoka' ? '福岡店' : storeSlug === 'yokohama' ? '横浜店' : ''}SEO集客おすすめタグ（ワンタップで追加）
             </span>
             <span className="text-[10px] text-rose-500 font-medium">※選択すると検索結果で見つけてもらいやすくなります</span>
           </div>
           <div className="flex flex-wrap gap-1.5">
-            {[
-              '福岡女性用風俗', '福岡女風', '博多女風', '天神女性用風俗', '博多駅ホテル出張', '福岡女風料金', '女風バレない',
-              '横浜女性用風俗', '横浜女風', '関内女風', 'みなとみらい女性用風俗', '関内ホテル出張', '横浜女風料金'
-            ].map((seoTag) => (
+            {(storeSlug === 'fukuoka' ? [
+              '福岡女性用風俗', '福岡女風', '博多女風', '天神女性用風俗', '博多駅ホテル出張', '福岡女風料金', '女風バレない'
+            ] : [
+              '横浜女性用風俗', '横浜女風', '関内女風', 'みなとみらい女性用風俗', '関内ホテル出張', '横浜女風料金', '女風バレない'
+            ]).map((seoTag) => (
               <button
                 key={seoTag}
                 type="button"
