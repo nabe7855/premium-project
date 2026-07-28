@@ -393,11 +393,11 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           {/* 🚀 豪華な元の下地装飾パーツ (完全復活) */}
           <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
 
-          {/* 🚀 豪華下地の上に文字部分だけクッキリ重ねる可視H1ヘッダーテキスト (1.5倍拡大) */}
-          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '10%', top: '1.5%', width: '80%', height: '10%' }}>
+          {/* 🚀 どんなスマホ・PC画面でも絶対に見切れない完全レスポンシブ可視H1ヘッダーテキスト */}
+          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '6%', top: '1.2%', width: '88%', height: '11%' }}>
             {/* 元画像文字部分のみを自然に覆うカバー */}
-            <div className="absolute inset-0 bg-[#fff5f6]/90 backdrop-blur-2xs rounded-full" />
-            <h1 className="relative z-10 font-serif text-[12px] sm:text-[15px] md:text-[18.5px] font-extrabold tracking-wider text-[#8C2849] flex items-center justify-center w-full px-2 text-center truncate">
+            <div className="absolute inset-0 bg-[#fff5f6]/92 backdrop-blur-2xs rounded-full" />
+            <h1 className="relative z-10 font-serif text-[7.5px] xs:text-[8.5px] sm:text-[13px] md:text-[16.5px] font-extrabold tracking-tight sm:tracking-wider text-[#8C2849] flex items-center justify-center w-full px-1 text-center whitespace-nowrap overflow-hidden">
               女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
             </h1>
           </div>
