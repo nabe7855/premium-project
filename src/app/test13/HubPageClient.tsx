@@ -807,15 +807,22 @@ export default function HubPageClient({
           </div>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
             {GUIDE_ARTICLES.map((article) => (
-              <motion.div
-                key={article.title}
-                whileHover={{ y: -8 }}
-                className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm"
-              >
-                <div className="mb-6 text-4xl">{article.icon}</div>
-                <h3 className="mb-2 text-lg font-black text-slate-800">{article.title}</h3>
-                <p className="text-sm text-slate-400">{article.desc}</p>
-              </motion.div>
+              <Link key={article.title} href={article.href} className="block group">
+                <motion.div
+                  whileHover={{ y: -6 }}
+                  className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-sm group-hover:shadow-md group-hover:border-rose-200 transition-all h-full flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="mb-6 text-4xl">{article.icon}</div>
+                    <h3 className="mb-2 text-lg font-black text-slate-800 group-hover:text-rose-500 transition-colors">{article.title}</h3>
+                    <p className="text-sm text-slate-400 leading-relaxed">{article.desc}</p>
+                  </div>
+                  <div className="mt-4 pt-4 border-t border-slate-50 text-xs font-bold text-rose-500 flex items-center justify-between">
+                    <span>詳しく読む</span>
+                    <span>→</span>
+                  </div>
+                </motion.div>
+              </Link>
             ))}
           </div>
         </div>
