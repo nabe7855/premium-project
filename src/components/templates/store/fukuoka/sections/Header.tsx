@@ -390,17 +390,26 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           {/* Base Background */}
           <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
-          {/* 🚀 豪華な元の下地装飾パーツ (完全復活) */}
-          <img src="/images/store/fukuoka/new-header/02_top_info_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '0.000%', top: '1.103%', width: '100.000%', height: '11.034%' }} alt="" />
-
-          {/* 🚀 どんなスマホ・PC画面でも絶対に見切れない完全レスポンシブ可視H1ヘッダーテキスト */}
-          <div className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center pointer-events-none ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '6%', top: '1.2%', width: '88%', height: '11%' }}>
-            {/* 元画像文字部分のみを自然に覆うカバー */}
-            <div className="absolute inset-0 bg-[#fff5f6]/92 backdrop-blur-2xs rounded-full" />
-            <h1 className="relative z-10 font-serif text-[7.5px] xs:text-[8.5px] sm:text-[13px] md:text-[16.5px] font-extrabold tracking-tight sm:tracking-wider text-[#8C2849] flex items-center justify-center w-full px-1 text-center whitespace-nowrap overflow-hidden">
-              女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
+          {/* 🚀 文字入り元画像を完全排除した、最高解像度のCSS可視H1トップインフォバー */}
+          <div 
+            className={`absolute z-20 transition-opacity duration-300 flex items-center justify-center px-4 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} 
+            style={{ 
+              left: '3.412%', 
+              top: '1.8%', 
+              width: '94.145%', 
+              height: '9.5%',
+              background: 'linear-gradient(90deg, rgba(255,240,243,0.95) 0%, rgba(255,248,250,0.98) 50%, rgba(255,240,243,0.95) 100%)',
+              borderRadius: '9999px',
+              border: '1px solid rgba(244, 114, 182, 0.3)',
+              boxShadow: '0 2px 8px -2px rgba(225, 29, 72, 0.08)'
+            }}
+          >
+            <h1 className="font-serif text-[9px] sm:text-[12px] md:text-[14px] font-extrabold tracking-wider text-[#9E3355] flex items-center justify-center w-full text-center truncate">
+              ✨ 女性用風俗 日本最大級の女性専用性感マッサージ【{store.slug === 'yokohama' ? '横浜 関内・みなとみらい・桜木町対応' : '福岡 博多・天神・中洲対応'}】｜ストロベリーボーイズ{store.slug === 'yokohama' ? '横浜店' : '福岡店'}
             </h1>
           </div>
+          
+          {/* 🚀 元の文字入り画像パーツ (02_top_info_bar.png) は重なり防止のため完全除去 */}
           <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
           <img src="/images/store/fukuoka/new-header/23_bottom_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="Web予約・電話受付" />
           <img src="/images/store/fukuoka/new-header/35_flower.png" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
