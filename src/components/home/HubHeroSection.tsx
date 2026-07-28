@@ -17,7 +17,6 @@ export interface StoreItem {
   isExternal?: boolean;
 }
 
-// A-1 要件: Unsplash 参照を完全廃止し、ローカルの軽量画像に差し替え
 const STORES_DATA: StoreItem[] = [
   {
     id: 'tokyo',
@@ -87,17 +86,19 @@ const LOOPED_STORES = [...STORES_DATA, ...STORES_DATA, ...STORES_DATA]; // 15枚
 
 export default function HubHeroSection() {
   const [activeIndex, setActiveIndex] = useState(0); // 0〜N-1 の実インデックス
+  const [currentLoopedIdx, setCurrentLoopedIdx] = useState(N); // デフォルト真ん中セット
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFading, setIsFading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isJumping = useRef(false);
-  const rafId = useRef<number | null>(null);
+  const isLocked = useRef(false); // 連続スワイプ防止用ロック
+  const touchStartX = useRef<number | null>(null);
 
   const activeStore = STORES_DATA[activeIndex];
 
-  // ========= 指定した loopedIndex のカードを中央にスクロール =========
+  // 指定した loopedIndex のカードを中央に正確にスクロール
   const scrollToLoopedIndex = useCallback((loopedIdx: number, smooth: boolean = true) => {
     const container = scrollRef.current;
     const card = cardRefs.current[loopedIdx];
@@ -111,72 +112,82 @@ export default function HubHeroSection() {
     }
   }, []);
 
-  // 初期表示: 真ん中セットの activeIndex カードを中央へ
+  // 初期表示: 真ん中セットの activeIndex カードを中央へ配置
   useEffect(() => {
     const t = setTimeout(() => {
       isJumping.current = true;
-      scrollToLoopedIndex(N + activeIndex, false);
+      const initialLooped = N + activeIndex;
+      setCurrentLoopedIdx(initialLooped);
+      scrollToLoopedIndex(initialLooped, false);
       setTimeout(() => { isJumping.current = false; }, 100);
     }, 60);
     return () => clearTimeout(t);
   }, []);
 
-  // activeIndex 変化時スムーズスクロール
-  const prevActive = useRef(activeIndex);
-  useEffect(() => {
-    if (prevActive.current === activeIndex) return;
-    prevActive.current = activeIndex;
-    isJumping.current = true;
-    scrollToLoopedIndex(N + activeIndex, true);
-    setTimeout(() => { isJumping.current = false; }, 500);
-  }, [activeIndex, scrollToLoopedIndex]);
-
+  // 店舗指定切り替え
   const handleSelectStore = useCallback((realIdx: number) => {
-    if (realIdx === activeIndex) return;
+    if (realIdx === activeIndex || isLocked.current) return;
+    isLocked.current = true;
     setIsFading(true);
+
+    const targetLooped = N + realIdx;
+    setCurrentLoopedIdx(targetLooped);
+    scrollToLoopedIndex(targetLooped, true);
+
     setTimeout(() => {
       setActiveIndex(realIdx);
       setIsFading(false);
-    }, 180);
-  }, [activeIndex]);
+      isLocked.current = false;
+    }, 300);
+  }, [activeIndex, scrollToLoopedIndex]);
 
-  // A-2 要件: 強制リフロー解消。requestAnimationFrame を活用して非同期スロットリング
-  const handleScroll = useCallback(() => {
-    if (isJumping.current) return;
-    if (rafId.current !== null) cancelAnimationFrame(rafId.current);
+  // 1回のスワイプ操作で「隣の1枚だけ」移動する決定版制御
+  const stepSlide = useCallback((direction: 'next' | 'prev') => {
+    if (isLocked.current) return;
+    isLocked.current = true;
+    setIsFading(true);
 
-    rafId.current = requestAnimationFrame(() => {
-      const container = scrollRef.current;
-      if (!container) return;
+    const nextRealIdx = direction === 'next'
+      ? (activeIndex + 1) % N
+      : (activeIndex - 1 + N) % N;
 
-      const containerCenter = container.scrollLeft + container.clientWidth / 2;
-      let closestLoopedIdx = N;
-      let closestDist = Infinity;
+    let nextLoopedIdx = direction === 'next' ? currentLoopedIdx + 1 : currentLoopedIdx - 1;
 
-      cardRefs.current.forEach((card, i) => {
-        if (!card) return;
-        const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-        const dist = Math.abs(containerCenter - cardCenter);
-        if (dist < closestDist) {
-          closestDist = dist;
-          closestLoopedIdx = i;
-        }
-      });
+    // ループ領域の補正 (端に達したら中央セットへジャンプ)
+    if (nextLoopedIdx < N || nextLoopedIdx >= N * 2) {
+      nextLoopedIdx = N + nextRealIdx;
+    }
 
-      const realIdx = closestLoopedIdx % N;
+    setCurrentLoopedIdx(nextLoopedIdx);
+    scrollToLoopedIndex(nextLoopedIdx, true);
 
-      if (closestLoopedIdx < N || closestLoopedIdx >= N * 2) {
-        isJumping.current = true;
-        const middleIdx = N + realIdx;
-        scrollToLoopedIndex(middleIdx, false);
-        setTimeout(() => { isJumping.current = false; }, 100);
+    setTimeout(() => {
+      setActiveIndex(nextRealIdx);
+      setIsFading(false);
+      isLocked.current = false;
+    }, 300);
+  }, [activeIndex, currentLoopedIdx, scrollToLoopedIndex]);
+
+  // タッチスワイプイベント処理（1スワイプ＝1カード固定）
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaX = touchEndX - touchStartX.current;
+    touchStartX.current = null;
+
+    const SWIPE_THRESHOLD = 30; // 30px 以上の移動でスライド発火
+    if (Math.abs(deltaX) > SWIPE_THRESHOLD) {
+      if (deltaX < 0) {
+        stepSlide('next'); // 左へフリック -> 次の店舗
+      } else {
+        stepSlide('prev'); // 右へフリック -> 前の店舗
       }
-
-      if (realIdx !== activeIndex) {
-        handleSelectStore(realIdx);
-      }
-    });
-  }, [activeIndex, handleSelectStore, scrollToLoopedIndex]);
+    }
+  };
 
   return (
     <section className="relative w-full bg-[#fbf6f6] text-slate-800 overflow-hidden font-sans select-none pb-10">
@@ -299,12 +310,13 @@ export default function HubHeroSection() {
         </div>
       </div>
 
-      {/* 🎪 3. 店舗選択カルーセル */}
+      {/* 🎪 3. 店舗選択カルーセル (1スワイプ=1カード固定制御) */}
       <div id="stores" className="relative z-20 -mt-24 md:mt-6 pb-2">
         <div
           ref={scrollRef}
-          onScroll={handleScroll}
-          className="w-full overflow-x-auto hide-scrollbar pt-10 pb-4 snap-x snap-mandatory"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          className="w-full overflow-x-hidden hide-scrollbar pt-10 pb-4"
         >
           <div className="flex items-end md:justify-center gap-2 sm:gap-4 min-w-max px-[calc(50vw-115px)] md:px-8 md:max-w-7xl md:mx-auto">
             {LOOPED_STORES.map((store, loopedIdx) => {
@@ -319,7 +331,6 @@ export default function HubHeroSection() {
                   onClick={() => handleSelectStore(realIdx)}
                   className={`
                     cursor-pointer transition-all duration-300 rounded-2xl flex flex-col justify-between p-3 text-left
-                    snap-center snap-always
                     ${isActive
                       ? 'w-[200px] sm:w-[230px] bg-white ring-4 ring-[#e25c7b]/30 shadow-2xl border-2 border-[#d64567] -translate-y-5 z-30 scale-105'
                       : 'w-[140px] sm:w-[170px] bg-white/80 border border-slate-200/80 shadow-sm opacity-60 hover:opacity-90 z-10'
@@ -381,6 +392,7 @@ export default function HubHeroSection() {
           </div>
         </div>
 
+        {/* ドットインジケーター */}
         <div className="flex items-center justify-center gap-1.5 mt-1">
           {STORES_DATA.map((_, idx) => (
             <button
