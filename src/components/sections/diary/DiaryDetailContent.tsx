@@ -251,6 +251,73 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               </Link>
               <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
 
+              {/* 🚀 リアル検索クエリSEOタグセット (地域ビッグ・出張場所・価格相場・身バレ防止) */}
+              <div className="mt-8 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/60 to-pink-50/30 p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-3 text-xs font-bold text-rose-600">
+                  <Share2 className="h-3.5 w-3.5 text-rose-500" />
+                  <span>注目の関連検索キーワード</span>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-medium">
+                  {slug === 'fukuoka' ? (
+                    <>
+                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
+                        ＃福岡女性用風俗
+                      </Link>
+                      <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
+                        ＃福岡女風
+                      </Link>
+                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃博多女風
+                      </Link>
+                      <Link href="/store/fukuoka/area/tenjin" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃天神女性用風俗
+                      </Link>
+                      <Link href="/store/fukuoka/area/nakasu" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃中洲女風
+                      </Link>
+                      <Link href="/store/fukuoka/area/hakata" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃博多駅ラブホテル利用
+                      </Link>
+                      <Link href="/store/fukuoka/price" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃福岡女風料金相場
+                      </Link>
+                      <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃女風バレない
+                      </Link>
+                      <Link href="/store/fukuoka/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃初めての女性用風俗
+                      </Link>
+                    </>
+                  ) : (
+                    <>
+                      <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
+                        ＃横浜女性用風俗
+                      </Link>
+                      <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3 py-1 text-rose-600 border border-rose-200 shadow-2xs hover:bg-rose-500 hover:text-white transition">
+                        ＃横浜女風
+                      </Link>
+                      <Link href="/store/yokohama/area/kannai" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃関内女風
+                      </Link>
+                      <Link href="/store/yokohama/area/minatomirai" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃みなとみらい女性用風俗
+                      </Link>
+                      <Link href="/store/yokohama/area/sakuragicho" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃関内ラブホテル利用
+                      </Link>
+                      <Link href="/store/yokohama/price" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃横浜女風料金相場
+                      </Link>
+                      <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃女風バレない
+                      </Link>
+                      <Link href="/store/yokohama/first-time" className="rounded-full bg-white px-3 py-1 text-slate-700 border border-slate-200 hover:border-rose-300 transition">
+                        ＃初めての女性用風俗
+                      </Link>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
           </article>
           <CastCard
