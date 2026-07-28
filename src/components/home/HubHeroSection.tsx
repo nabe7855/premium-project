@@ -308,18 +308,19 @@ export default function HubHeroSection() {
             </p>
           </div>
           {/* 下部グラデーションフェード（写真→背景色へぼかし） */}
-          <div className="absolute bottom-0 left-0 right-0 h-28 bg-gradient-to-t from-[#fbf6f6] to-transparent" />
+          <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-[#fbf6f6] via-[#fbf6f6]/60 to-transparent" />
         </div>
       </div>
 
       {/* 🎪 3. 店舗選択カルーセル (PC / スマホ共通) */}
-      <div id="stores" className="relative z-20 mt-0 md:mt-6 pb-2">
+      {/* スマホ: -mt-24 で写真の上に浮き上がって重なる / PC: mt-6 で通常配置 */}
+      <div id="stores" className="relative z-20 -mt-24 md:mt-6 pb-2">
 
         {/* PC: max-w-7xl 内で5枚並列、スマホ: 全幅で無限ループ水平スクロール */}
         <div
           ref={scrollRef}
           onScroll={handleScroll}
-          className="w-full overflow-x-auto hide-scrollbar pt-6 pb-4"
+          className="w-full overflow-x-auto hide-scrollbar pt-10 pb-4"
         >
           <div className="flex items-end md:justify-center gap-2 sm:gap-4 min-w-max px-[calc(50vw-115px)] md:px-8 md:max-w-7xl md:mx-auto">
             {LOOPED_STORES.map((store, loopedIdx) => {
