@@ -13,7 +13,7 @@ export const STOCK_RECRUIT_CONFIG = {
     subHeading:
       '今日からでも、人生は変えられる。\n数多くの未経験者をプロに導いた、創業8年の信頼と実績。',
     isVisible: true,
-    heroImage: '/images/fukuoka/福岡募集バナー.png',
+    heroImage: '/images/fukuoka/福岡募集バナー.webp',
     stats: [
       { label: '割引', val: '全て店舗負担' },
       { label: '勤務時間', val: '自由出勤' },
@@ -25,7 +25,7 @@ export const STOCK_RECRUIT_CONFIG = {
   },
   openCast: {
     isVisible: true,
-    openCastImage: '/オープンキャスト募集.png',
+    openCastImage: '/オープンキャスト募集.webp',
     targetDate: '2026-04-01T00:00:00',
     slotsLabelBefore: '超好待遇',
     slotsCount: '5',
@@ -63,7 +63,7 @@ export const STOCK_RECRUIT_CONFIG = {
   },
   fukuoka: {
     isVisible: true,
-    backgroundImage: '/images/fukuoka/福岡夜景.png',
+    backgroundImage: '/images/fukuoka/福岡夜景.webp',
     heading: 'あなたと福岡で\n挑戦したい理由',
     description1:
       '博多エリアは、女性用風俗市場が急成長している街。\n「自分を変えたい」 「本気で高収入を目指したい」\nそう願う男性が集まる場所だから、私たちは福岡を選びました。\n東京で培った育成ノウハウと、博多の勢いを掛け合わせ、未経験からでも成功できる環境を整えています。\nあなたの挑戦を、私たちは全力で支えます。',

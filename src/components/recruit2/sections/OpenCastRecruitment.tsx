@@ -122,7 +122,7 @@ const OpenCastRecruitment: React.FC<OpenCastRecruitmentProps> = ({
     if (onUpdate) onUpdate('openCastImage', file);
   };
 
-  const currentImage = localPreview || openCastImage || '/オープンキャスト募集.png';
+  const currentImage = localPreview || openCastImage || '/オープンキャスト募集.webp';
 
   return (
     <section className="w-full bg-slate-950 py-12 font-sans">

@@ -18,7 +18,7 @@ export const FirstTimeBanner: React.FC<FirstTimeBannerProps> = ({
   onImageUpload,
 }) => {
   const data = config || {
-    imageUrl: '/初めてのお客様へバナー.png',
+    imageUrl: '/初めてのお客様へバナー.webp',
     isVisible: true,
   };
 

@@ -25,7 +25,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: '副業でのパターン',
     subtitle: 'Mainly Weekends',
     image:
-      '/キャストモデル１.png',
+      '/キャストモデル１.webp',
     workPattern: {
       frequency: '月に5回',
       hours: '19:00〜26:00迄の勤務',
@@ -40,7 +40,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: 'フルタイム並行パターン',
     subtitle: 'Evenings Only',
     image:
-      '/キャストモデル２.png',
+      '/キャストモデル２.webp',
     workPattern: {
       frequency: '月に12回',
       hours: '20:00〜24:00迄の勤務',
@@ -55,7 +55,7 @@ const CASE_STUDIES: CaseStudy[] = [
     title: '週末集中パターン',
     subtitle: 'Weekend Warrior',
     image:
-      '/キャストモデル３.png',
+      '/キャストモデル３.webp',
     workPattern: {
       frequency: '月に8回',
       hours: '15:00〜23:00迄の勤務',

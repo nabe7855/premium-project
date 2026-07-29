@@ -172,7 +172,7 @@ export interface FirstTimeConfig {
 // デフォルト設定
 export const DEFAULT_FIRST_TIME_CONFIG: FirstTimeConfig = {
   banner: {
-    imageUrl: '/初めてのお客様へバナー.png',
+    imageUrl: '/初めてのお客様へバナー.webp',
     isVisible: true,
   },
   hero: {

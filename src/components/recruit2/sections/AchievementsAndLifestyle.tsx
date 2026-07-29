@@ -33,7 +33,7 @@ const PROFILES: CastProfile[] = [
   {
     id: 'side',
     name: 'Kさん',
-    image: '/キャストモデル１.png',
+    image: '/キャストモデル１.webp',
     income: '月収 13.5万円',
     monthlyEarnings: 135000,
     workPattern: {
@@ -54,7 +54,7 @@ const PROFILES: CastProfile[] = [
   {
     id: 'novice',
     name: 'Tさん',
-    image: '/キャストモデル２.png',
+    image: '/キャストモデル２.webp',
     income: '月収 24万円',
     monthlyEarnings: 240000,
     workPattern: {
@@ -76,7 +76,7 @@ const PROFILES: CastProfile[] = [
   {
     id: 'regular',
     name: 'Sさん',
-    image: '/キャストモデル３.png',
+    image: '/キャストモデル３.webp',
     income: '月収 36万円',
     monthlyEarnings: 360000,
     workPattern: {
@@ -98,7 +98,7 @@ const PROFILES: CastProfile[] = [
   {
     id: 'top',
     name: 'トップセラピスト',
-    image: '/キャストモデル１.png',
+    image: '/キャストモデル１.webp',
     income: '月収 300万円超',
     monthlyEarnings: 3000000,
     workPattern: {

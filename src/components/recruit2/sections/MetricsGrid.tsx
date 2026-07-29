@@ -46,7 +46,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
               <div className="space-y-4 md:space-y-8 md:pt-12">
                 <div className="aspect-[3/4] overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={localPreviews.image1 || brandingImages?.image1 || '/キャストモデル１.png'}
+                    src={localPreviews.image1 || brandingImages?.image1 || '/キャストモデル１.webp'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 1"
                     isEditing={isEditing}
@@ -55,7 +55,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
                 </div>
                 <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={localPreviews.image2 || brandingImages?.image2 || '/キャストモデル２.png'}
+                    src={localPreviews.image2 || brandingImages?.image2 || '/キャストモデル２.webp'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 2"
                     isEditing={isEditing}
@@ -66,7 +66,7 @@ const MetricsGrid: React.FC<MetricsGridProps> = ({
               <div className="space-y-4 md:space-y-8">
                 <div className="aspect-square overflow-hidden rounded-3xl border border-slate-800 shadow-2xl">
                   <EditableImage
-                    src={localPreviews.image3 || brandingImages?.image3 || '/キャストモデル３.png'}
+                    src={localPreviews.image3 || brandingImages?.image3 || '/キャストモデル３.webp'}
                     className="h-full w-full object-cover brightness-75 filter transition-all duration-700 hover:brightness-100"
                     alt="Professional 3"
                     isEditing={isEditing}

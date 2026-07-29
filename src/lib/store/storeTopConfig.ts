@@ -319,12 +319,12 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         name: 'はじめての方へ',
         href: '#flow',
-        imageUrl: '/images/{slug}/福岡初めての方へ.png',
+        imageUrl: '/images/{slug}/福岡初めての方へ.webp',
       },
       {
         name: 'おすすめホテル一覧',
         href: '#hotels',
-        imageUrl: '/images/{slug}/福岡おすすめホテル一覧.png',
+        imageUrl: '/images/{slug}/福岡おすすめホテル一覧.webp',
       },
       {
         name: 'セラピスト一覧',
@@ -344,7 +344,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
       {
         name: '写メ日記（更新中）',
         href: '#diary',
-        imageUrl: '/images/{slug}/福岡出勤情報.png',
+        imageUrl: '/images/{slug}/福岡出勤情報.webp',
       },
       {
         name: 'プライバシーポリシー',
@@ -373,21 +373,21 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     receptionHours: '12:00〜23:00',
     businessHours: '12:00〜翌朝4時',
     specialBanner: {
-      imageUrl: '/初めてのお客様へバナー.png',
+      imageUrl: '/初めてのお客様へバナー.webp',
       subHeading: 'First Time',
       mainHeading: '初めての方へ',
       link: '/store/{slug}/first-time',
       isVisible: true,
     },
     specialBanner2: {
-      imageUrl: '/初めてのお客様へバナー.png',
+      imageUrl: '/初めてのお客様へバナー.webp',
       subHeading: 'Recruit',
       mainHeading: '求人募集',
       link: '/store/{slug}/recruit',
       isVisible: true,
     },
     specialBanner3: {
-      imageUrl: '/初めてのお客様へバナー.png',
+      imageUrl: '/初めてのお客様へバナー.webp',
       subHeading: 'Events',
       mainHeading: 'イベント',
       link: '/store/{slug}/campaign',
@@ -912,7 +912,7 @@ export const DEFAULT_STORE_TOP_CONFIG: StoreTopPageConfig = {
     isVisible: true,
   },
   beginnerGuide2: {
-    imageUrl: '/初めてのお客様へバナー.png',
+    imageUrl: '/初めてのお客様へバナー.webp',
     link: '/store/{slug}/first-time',
     isVisible: false,
   },

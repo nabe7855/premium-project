@@ -48,8 +48,8 @@ const HeroCollage: React.FC<HeroCollageProps> = ({
   };
 
   // Use local preview if available, otherwise prop, otherwise default
-  // fixed default path from '/福岡募集バナー.png' to '/ファーストビュー.png' which actually exists
-  const imageUrl = localPreview || heroImage || '/ファーストビュー.png';
+  // fixed default path from '/福岡募集バナー.png' to '/ファーストビュー.webp' which actually exists
+  const imageUrl = localPreview || heroImage || '/ファーストビュー.webp';
 
   // Animation Variants
   const containerVariants: Variants = {

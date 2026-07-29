@@ -333,7 +333,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         >
           <div className="relative h-full w-full">
             <NextImage
-              src={banner.imageUrl || '/初めてのお客様へバナー.png'}
+              src={banner.imageUrl || '/初めてのお客様へバナー.webp'}
               alt={banner.mainHeading || 'Banner'}
               fill
               sizes="(max-width: 768px) 33vw, 20vw"
