@@ -302,6 +302,25 @@ export default function HubPageClient({
       c.profile?.includes(searchQuery),
   );
 
+  // 自社店舗（fukuoka, yokohama）に所属するキャストのみ抽出し、外部店舗および所属不明キャストを除外 (STEP 2)
+  const validCasts = useMemo(() => {
+    return casts.filter((c: any) => {
+      const firstStore = c.stores?.[0] || c.store;
+      const storeSlug = firstStore?.slug || c.storeSlug || c.store_slug;
+
+      // 所属店舗が特定できない場合は除外（fukuokaフォールバック全廃）
+      if (!storeSlug) return false;
+
+      // 外部店舗 (use_external_url = true, tokyo, osaka, nagoya 等) のキャストは除外
+      if (firstStore?.use_external_url || ['tokyo', 'osaka', 'nagoya'].includes(storeSlug)) {
+        return false;
+      }
+
+      // fukuoka または yokohama の自社店舗所属キャストのみ合格
+      return storeSlug === 'fukuoka' || storeSlug === 'yokohama';
+    });
+  }, [casts]);
+
   const FALLBACK_CAST_IMG = '/ゆうと.png';
 
   return (
@@ -439,7 +458,7 @@ export default function HubPageClient({
         {/* 自動無限スクロール (Marquee) */}
         <div className="relative mt-8 flex overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-32 before:bg-gradient-to-r before:from-slate-50 before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-32 after:bg-gradient-to-l after:from-slate-50 after:to-transparent">
           <div className="animate-scroll-text flex cursor-pointer space-x-12 whitespace-nowrap py-10 hover:[animation-play-state:paused]">
-            {[...casts.slice(0, 10), ...casts.slice(0, 10)].map((cast, i) => {
+            {[...validCasts.slice(0, 10), ...validCasts.slice(0, 10)].map((cast: any, i: number) => {
               // 店舗スタイル (店舗名に応じてカラーリングを変更)
               const firstStore = cast.stores?.[0] || cast.store;
               const storeName = firstStore?.name;
@@ -448,14 +467,12 @@ export default function HubPageClient({
                 if (!name) return 'border-amber-400';
                 if (name.includes('福岡')) return 'border-blue-400';
                 if (name.includes('横浜')) return 'border-rose-400';
-                if (name.includes('梅田')) return 'border-emerald-400';
-                if (name.includes('渋谷')) return 'border-purple-400';
-                if (name.includes('新宿')) return 'border-sky-400';
                 return 'border-amber-400';
               };
               const storeBorder = getStoreStyle(storeName);
 
-              const castStoreSlug = firstStore?.slug || cast.storeSlug || cast.store_slug || 'fukuoka';
+              const castStoreSlug = firstStore?.slug || cast.storeSlug || cast.store_slug;
+              if (!castStoreSlug || ['tokyo', 'osaka', 'nagoya'].includes(castStoreSlug)) return null;
 
               return (
                 <div key={`${cast.id}-${i}`} className="inline-block w-48 shrink-0 text-center">
