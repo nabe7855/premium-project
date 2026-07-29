@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GEMINI_TEXT_MODEL } from '@/lib/gemini-model';
 
 // API KEY の初期化
 const apiKey = process.env.GEMINI_API_KEY;
@@ -46,7 +47,7 @@ export async function POST(req: NextRequest) {
     }
 
     const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+      model: GEMINI_TEXT_MODEL,
       generationConfig: {
         responseMimeType: "application/json",
       }
