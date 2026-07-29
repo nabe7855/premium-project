@@ -48,9 +48,50 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default function CastPage({ params }: Props) {
-  // params contains store (mapped to slug in route maybe?) and cast
-  // Wait, route is /store/[slug]/[cast]/page.tsx so params has slug and cast.
-  // The client component expects { params: { store: string; cast: string; } } but is using it loosely.
-  return <CastClient params={{ store: params.slug, cast: params.cast }} />;
+export default async function CastPage({ params }: Props) {
+  const { slug, cast: castSlug } = params;
+  const s = STORE_META[slug];
+  const cast = await getCastProfileBySlug(castSlug);
+
+  const cityName = s?.city || '福岡';
+  const reviews = (cast as any)?.reviews || [];
+  const reviewCount = reviews.length;
+  const averageRating = reviewCount > 0
+    ? (reviews.reduce((sum: number, r: any) => sum + (r.rating || 5), 0) / reviewCount).toFixed(1)
+    : '4.9';
+
+  const castSchema: any = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: cast?.name || 'セラピスト',
+    jobTitle: 'セラピスト',
+    worksFor: {
+      '@type': 'Organization',
+      name: `ストロベリーボーイズ${cityName}店`,
+      url: `https://www.sutoroberrys.jp/store/${slug}`,
+    },
+    url: `https://www.sutoroberrys.jp/store/${slug}/cast/${castSlug}`,
+    image: cast?.imageUrl || `/ogp/store-${slug}.png`,
+    description: cast?.catchCopy || `${cityName}の女性用風俗ストロベリーボーイズ${cityName}店のセラピスト`,
+  };
+
+  if (reviewCount > 0) {
+    castSchema.aggregateRating = {
+      '@type': 'AggregateRating',
+      ratingValue: averageRating,
+      reviewCount: reviewCount,
+      bestRating: '5',
+      worstRating: '1',
+    };
+  }
+
+  return (
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(castSchema) }}
+      />
+      <CastClient params={{ store: params.slug, cast: params.cast }} />
+    </>
+  );
 }
