@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { resolveGeminiModel } from '@/lib/gemini-model';
+import { recordAiUsage } from '@/lib/ai-usage';
 
 export async function POST(req: Request) {
   try {
@@ -91,6 +92,9 @@ export async function POST(req: Request) {
 
     const response = await result.response;
     const content = response.text();
+
+    // トークン消費量を記録（失敗しても本処理は継続）
+    await recordAiUsage({ feature: 'voice-assist', model: modelName, usage: response.usageMetadata });
 
     return NextResponse.json({ content });
   } catch (error: any) {

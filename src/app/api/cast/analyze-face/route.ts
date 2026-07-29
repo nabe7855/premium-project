@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { resolveGeminiModel } from '@/lib/gemini-model';
+import { recordAiUsage } from '@/lib/ai-usage';
 
 // API KEY の初期化
 const apiKey = process.env.GEMINI_API_KEY;
@@ -85,6 +86,9 @@ ${JSON.stringify(Object.keys(FACE_TYPE_DETAILS), null, 2)}
 
     console.log('⏳ Gemini API からのレスポンス待機中...');
     const response = await result.response;
+
+    // トークン消費量を記録（失敗しても本処理は継続）
+    await recordAiUsage({ feature: 'analyze-face', model: modelName, usage: response.usageMetadata });
     
     // 安全性チェックなどでレスポンスが空の場合のチェック
     let text = '';
