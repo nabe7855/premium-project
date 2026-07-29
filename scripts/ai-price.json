@@ -1,0 +1,16 @@
+{
+  "_注意": "単価はモデル・時期で変わります。正確な金額はGoogle AI Studio / Cloud Console の請求明細が最終的な正です。ここの値はあくまで概算用です。",
+  "_単価の単位": "USD / 100万トークン",
+  "_確認先": "https://ai.google.dev/pricing",
+  "_最終確認日": "未確認（Googleの料金ページで確認して更新してください）",
+
+  "models": {
+    "default": { "input": 0.30, "output": 2.50 },
+    "gemini-flash-latest": { "input": 0.30, "output": 2.50 },
+    "gemini-2.0-flash": { "input": 0.10, "output": 0.40 },
+    "gemini-2.5-flash": { "input": 0.30, "output": 2.50 }
+  },
+
+  "_為替": "JPY換算に使うレート。0 のままだと円換算を表示しません",
+  "usdJpy": 0
+}
