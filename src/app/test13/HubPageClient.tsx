@@ -99,6 +99,7 @@ interface HubPageClientProps {
   stores: any[];
   videos: any[];
   diaries: any[];
+  newsPages?: any[];
   mediaArticles: {
     amolabArticles: any[];
     sweetStayArticles: any[];
@@ -285,6 +286,7 @@ export default function HubPageClient({
   stores,
   videos,
   diaries,
+  newsPages,
   mediaArticles,
 }: HubPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
@@ -467,9 +469,11 @@ export default function HubPageClient({
               };
               const storeBorder = getStoreStyle(storeName);
 
+              const castStoreSlug = firstStore?.slug || cast.storeSlug || cast.store_slug || 'fukuoka';
+
               return (
                 <div key={`${cast.id}-${i}`} className="inline-block w-48 shrink-0 text-center">
-                  <Link href={`/cast/${cast.slug || cast.id}`}>
+                  <Link href={`/store/${castStoreSlug}/cast/${cast.slug || cast.id}`}>
                     <div className="group">
                       {/* 丸い画像と店舗別カラーの枠線 */}
                       <div
@@ -529,7 +533,7 @@ export default function HubPageClient({
           {/* 横スクロールカード */}
           <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-12 md:gap-8">
             {diaries.length > 0
-              ? diaries.map((diary, i) => {
+              ? diaries.slice(0, 6).map((diary, i) => {
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
                   const rawCast = (diary as any).casts || (diary as any).cast;
                   const castData = Array.isArray(rawCast) ? rawCast[0] : rawCast;
@@ -641,40 +645,45 @@ export default function HubPageClient({
                 exit={{ opacity: 0, y: -10 }}
                 className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
               >
-                {(diaries.length > 0 ? diaries.slice(0, 6) : [1, 2, 3]).map((d: any, idx: number) => {
-                  const title = d.title || '最新のお知せ・トピックス';
-                  const thumbnail = d.images?.[0]?.image_url || FALLBACK_CAST_IMG;
-                  const dateStr = d.created_at
-                    ? new Date(d.created_at).toLocaleDateString('ja-JP')
+                {((newsPages && newsPages.length > 0) ? newsPages : (diaries.length > 0 ? diaries.slice(0, 6) : [])).map((news: any, idx: number) => {
+                  const title = news.title || '最新のおしらせ・トピックス';
+                  const thumbnail = news.thumbnailUrl || news.thumbnail_url || news.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                  const dateRaw = news.createdAt || news.created_at || news.publishedAt || news.published_at;
+                  const dateStr = dateRaw
+                    ? new Date(dateRaw).toLocaleDateString('ja-JP')
                     : new Date().toLocaleDateString('ja-JP');
+                  const storeSlug = news.store_slug || news.storeSlug || (news.store_id === 'yokohama' ? 'yokohama' : 'fukuoka');
+                  const newsHref = news.slug ? `/store/${storeSlug}/news/${news.slug}` : `/store/${storeSlug}/news`;
 
                   return (
-                    <motion.div
-                      key={d.id || idx}
-                      whileHover={{ y: -8 }}
-                      className="group cursor-pointer overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2.5rem] md:p-2"
-                    >
-                      <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
-                        <img
-                          src={thumbnail}
-                          className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                          alt={title}
-                        />
-                      </div>
-                      <div className="p-3 md:p-6">
-                        <div className="mb-2 flex items-center gap-2">
-                          <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
-                            TOPICS
-                          </span>
-                          <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
-                            {dateStr}
-                          </span>
+                    <Link href={newsHref} key={news.id || idx} className="block group">
+                      <motion.div
+                        whileHover={{ y: -8 }}
+                        className="overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2.5rem] md:p-2"
+                      >
+                        <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
+                          <img
+                            src={thumbnail}
+                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            alt={title}
+                            loading="lazy"
+                          />
                         </div>
-                        <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
-                          {title}
-                        </h3>
-                      </div>
-                    </motion.div>
+                        <div className="p-3 md:p-6">
+                          <div className="mb-2 flex items-center gap-2">
+                            <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
+                              NEWS
+                            </span>
+                            <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
+                              {dateStr}
+                            </span>
+                          </div>
+                          <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
+                            {title}
+                          </h3>
+                        </div>
+                      </motion.div>
+                    </Link>
                   );
                 })}
               </motion.div>
@@ -747,46 +756,7 @@ export default function HubPageClient({
         </div>
       </section>
 
-      {/* ─── 3. 写メ日記フィード ─── */}
-      {diaries.length > 0 && (
-        <section className="bg-slate-50 px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-12">
-              <span className="mb-3 block text-xs font-black uppercase tracking-[0.3em] text-rose-500">
-                Daily Feed
-              </span>
-              <h2 className="font-serif text-4xl font-black text-slate-900">
-                最新の
-                <span className="text-rose-500">更新情報</span>
-              </h2>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2">
-              {diaries.slice(0, 6).map((d: any) => (
-                <motion.div
-                  key={d.id}
-                  whileHover={{ y: -4 }}
-                  className="flex items-center gap-4 overflow-hidden rounded-[1.5rem] border border-slate-100 bg-white p-2 md:rounded-[2rem] md:p-4"
-                >
-                  <div className="aspect-square w-[22vw] shrink-0 overflow-hidden rounded-xl md:w-32 md:rounded-2xl">
-                    <img src={d.images?.[0]?.image_url} alt={d.title} loading="lazy" className="h-full w-full object-cover" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="line-clamp-1 text-sm font-black text-slate-800 md:text-lg">
-                      {d.title}
-                    </h3>
-                    <p className="mt-1 line-clamp-2 text-[10px] font-medium text-slate-400 md:text-sm">
-                      {d.content}
-                    </p>
-                    <p className="mt-2 text-[8px] font-bold text-rose-300 md:hidden">
-                      {new Date(d.created_at).toLocaleDateString('ja-JP')}
-                    </p>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+
 
       {/* ─── 3.5 オウンドメディア連携（非表示化） ─── */}
 

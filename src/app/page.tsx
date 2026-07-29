@@ -56,16 +56,32 @@ async function getOwnedMediaArticles() {
   return { amolabArticles: [], sweetStayArticles: [], ikeoArticles: [] };
 }
 
+import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
+
 export const dynamic = 'force-dynamic';
 
 export default async function RootHomePage() {
-  const [casts, stores, videos, diaries, mediaArticles] = await Promise.allSettled([
+  const [casts, stores, videos, diaries, mediaArticles, fukuokaNews, yokohamaNews] = await Promise.allSettled([
     getAllCasts(),
     getStores(),
     getLatestVideos(),
     getLatestDiaries(),
     getOwnedMediaArticles(),
+    getPublishedPagesByStore('fukuoka'),
+    getPublishedPagesByStore('yokohama'),
   ]);
+
+  const fukuokaNewsList = fukuokaNews.status === 'fulfilled' && fukuokaNews.value ? fukuokaNews.value : [];
+  const yokohamaNewsList = yokohamaNews.status === 'fulfilled' && yokohamaNews.value ? yokohamaNews.value : [];
+  
+  // 日付順にソートして最大6件取得
+  const allNewsPages = [...fukuokaNewsList, ...yokohamaNewsList]
+    .sort((a, b) => {
+      const aTime = typeof a.updatedAt === 'number' ? a.updatedAt : new Date((a as any).createdAt || 0).getTime();
+      const bTime = typeof b.updatedAt === 'number' ? b.updatedAt : new Date((b as any).createdAt || 0).getTime();
+      return bTime - aTime;
+    })
+    .slice(0, 6);
 
   return (
     <HubPageClient
@@ -73,6 +89,7 @@ export default async function RootHomePage() {
       stores={stores.status === 'fulfilled' ? stores.value : []}
       videos={videos.status === 'fulfilled' ? videos.value : []}
       diaries={diaries.status === 'fulfilled' ? diaries.value : []}
+      newsPages={allNewsPages}
       mediaArticles={
         mediaArticles.status === 'fulfilled'
           ? (mediaArticles.value as any)
