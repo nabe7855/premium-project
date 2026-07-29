@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_TEXT_MODEL } from '@/lib/gemini-model';
+import { resolveGeminiModel } from '@/lib/gemini-model';
 
 export async function POST(req: Request) {
   try {
@@ -10,8 +10,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: '統計データが必要です' }, { status: 400 });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-    const model = genAI.getGenerativeModel({ model: GEMINI_TEXT_MODEL });
+    const apiKey = process.env.GEMINI_API_KEY || '';
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const modelName = await resolveGeminiModel(apiKey);
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     const prompt = `
       あなたは高度なデータ分析スキルを持つ採用コンサルタントです。

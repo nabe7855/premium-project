@@ -1,6 +1,6 @@
 import { CounselingData } from '@/types/counseling&survey';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_TEXT_MODEL } from '@/lib/gemini-model';
+import { resolveGeminiModel } from '@/lib/gemini-model';
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
 
@@ -23,10 +23,12 @@ NG項目として「${data.ngItems?.join(', ') || 'なし'}」が指定されて
 
 export const generateAIContent = async (
   prompt: string,
-  modelName: string = GEMINI_TEXT_MODEL,
+  modelName?: string,
 ): Promise<string> => {
   try {
-    const model = genAI.getGenerativeModel({ model: modelName });
+    // 未指定なら、そのAPIキーで実際に使えるモデルを解決する
+    const resolved = modelName ?? (await resolveGeminiModel(process.env.GEMINI_API_KEY || ''));
+    const model = genAI.getGenerativeModel({ model: resolved });
     const result = await model.generateContent(prompt);
     const response = await result.response;
     return response.text();

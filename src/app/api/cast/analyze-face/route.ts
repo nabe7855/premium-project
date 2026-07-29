@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_TEXT_MODEL } from '@/lib/gemini-model';
+import { resolveGeminiModel } from '@/lib/gemini-model';
 
 // API KEY の初期化
 const apiKey = process.env.GEMINI_API_KEY;
@@ -46,8 +46,9 @@ export async function POST(req: NextRequest) {
        console.log(`🔑 API Key status: Present, Length: ${apiKey.length}, Prefix: ${apiKey.substring(0, 6)}...`);
     }
 
+    const modelName = await resolveGeminiModel(apiKey || '');
     const model = genAI.getGenerativeModel({ 
-      model: GEMINI_TEXT_MODEL,
+      model: modelName,
       generationConfig: {
         responseMimeType: "application/json",
       }

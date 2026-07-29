@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { GEMINI_TEXT_MODEL } from '@/lib/gemini-model';
+import { resolveGeminiModel } from '@/lib/gemini-model';
 
 export async function POST(req: Request) {
   try {
@@ -29,7 +29,8 @@ export async function POST(req: Request) {
     }
 
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: GEMINI_TEXT_MODEL });
+    const modelName = await resolveGeminiModel(GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({ model: modelName });
 
     // BlobをArrayBufferに変換
     const arrayBuffer = await audioBlob.arrayBuffer();
