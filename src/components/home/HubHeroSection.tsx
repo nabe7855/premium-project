@@ -1,6 +1,4 @@
-'use client';
-
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import NextImage from 'next/image';
 import Link from 'next/link';
 
@@ -10,93 +8,130 @@ export interface StoreItem {
   enName: string;
   catchphrase: string;
   castCount: number;
-  image: string;       // 店舗夜景写真 (ローカル軽量画像)
-  heroCastImage: string; // ヒーローキャスト写真 (ローカル軽量画像)
-  floatCopy: string;   // 枠なし浮遊フロートコピー
+  image: string;
+  heroCastImage: string;
+  floatCopy: string;
   href: string;
   isExternal?: boolean;
 }
 
-const STORES_DATA: StoreItem[] = [
-  {
-    id: 'tokyo',
-    name: '東京',
+export interface HubHeroSectionProps {
+  stores?: any[];
+}
+
+// デフォルト表示補完用マップ
+const STORE_COMPLEMENT_MAP: Record<string, {
+  enName: string;
+  catchphrase: string;
+  castCount: number;
+  image: string;
+  heroCastImage: string;
+  floatCopy: string;
+}> = {
+  tokyo: {
     enName: 'TOKYO',
     catchphrase: '洗練された夜に、\n心ほどける出会いを。',
     castCount: 24,
     image: '/images/banners/store-jumps/tokyo.png',
     heroCastImage: '/ゆうと.png',
     floatCopy: '洗練された夜に。\n心ほどける出会いを。',
-    href: '/store/tokyo',
-    isExternal: false,
   },
-  {
-    id: 'osaka',
-    name: '大阪',
+  osaka: {
     enName: 'OSAKA',
     catchphrase: '美しい夜のまちで、\nときめきの時間を。',
     castCount: 18,
     image: '/images/banners/store-jumps/osaka.png',
     heroCastImage: '/カイト.png',
     floatCopy: '美しい夜のまちで、\nときめきの時間を。',
-    href: '/store/osaka',
-    isExternal: false,
   },
-  {
-    id: 'yokohama',
-    name: '横浜',
+  yokohama: {
     enName: 'YOKOHAMA',
     catchphrase: '海と夜景に包まれた、\n特別なひとときを。',
     castCount: 16,
     image: '/images/banners/store-jumps/yokohama.png',
     heroCastImage: '/シュン.png',
     floatCopy: '海と夜景に包まれた、\n特別なひとときを。',
-    href: '/store/yokohama',
-    isExternal: false,
   },
-  {
-    id: 'nagoya',
-    name: '名古屋',
+  nagoya: {
     enName: 'NAGOYA',
     catchphrase: '上質な出会いが、\n特別なひとときを。',
     castCount: 14,
     image: '/images/banners/store-jumps/nagoya.png',
     heroCastImage: '/towa.png',
     floatCopy: '上質な出会いが、\n特別なひとときを。',
-    href: '/store/nagoya',
-    isExternal: false,
   },
-  {
-    id: 'fukuoka',
-    name: '福岡',
+  fukuoka: {
     enName: 'FUKUOKA',
     catchphrase: 'あたたかい空気の中で、\n心ゆるむひとときを。',
     castCount: 12,
     image: '/images/banners/store-jumps/fukuoka.png',
     heroCastImage: '/images/casts/yuuhi/cafe-date.jpg',
     floatCopy: 'あたたかい空気の中で、\n心ゆるむひとときを。',
-    href: '/store/fukuoka',
-    isExternal: false,
   },
-];
+};
 
-// 無限ループ用に3倍複製（前後各1セット付き）
-const N = STORES_DATA.length; // 5
-const LOOPED_STORES = [...STORES_DATA, ...STORES_DATA, ...STORES_DATA]; // 15枚
-
-export default function HubHeroSection() {
-  const [activeIndex, setActiveIndex] = useState(0); // 0〜N-1 の実インデックス
-  const [currentLoopedIdx, setCurrentLoopedIdx] = useState(N); // デフォルト真ん中セット
+export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [currentLoopedIdx, setCurrentLoopedIdx] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFading, setIsFading] = useState(false);
 
   const scrollRef = useRef<HTMLDivElement>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const isJumping = useRef(false);
-  const isLocked = useRef(false); // 連続スワイプ防止用ロック
+  const isLocked = useRef(false);
   const touchStartX = useRef<number | null>(null);
 
-  const activeStore = STORES_DATA[activeIndex];
+  // Supabaseからのstoresデータ駆動スライドデータ生成
+  const storeItems: StoreItem[] = useMemo(() => {
+    if (!stores || stores.length === 0) {
+      return Object.entries(STORE_COMPLEMENT_MAP).map(([slug, comp]) => ({
+        id: slug,
+        name: slug === 'tokyo' ? '東京' : slug === 'osaka' ? '大阪' : slug === 'yokohama' ? '横浜' : slug === 'nagoya' ? '名古屋' : '福岡',
+        enName: comp.enName,
+        catchphrase: comp.catchphrase,
+        castCount: comp.castCount,
+        image: comp.image,
+        heroCastImage: comp.heroCastImage,
+        floatCopy: comp.floatCopy,
+        href: slug === 'fukuoka' || slug === 'yokohama' ? `/store/${slug}` : slug === 'tokyo' ? 'https://sutoroberrys.com/main/' : slug === 'osaka' ? 'https://sutoroberrys-osaka.com/main.html' : 'https://sutoroberrys-aichi.com/main.html',
+        isExternal: slug !== 'fukuoka' && slug !== 'yokohama',
+      }));
+    }
+
+    return stores.map((store) => {
+      const slug = store.slug || 'fukuoka';
+      const comp = STORE_COMPLEMENT_MAP[slug] || STORE_COMPLEMENT_MAP['fukuoka'];
+      const isExternal = Boolean(store.use_external_url && store.external_url);
+      const href = isExternal
+        ? store.external_url
+        : `/store/${slug}`;
+
+      return {
+        id: store.id || slug,
+        name: store.name?.replace('店', '') || slug,
+        enName: slug.toUpperCase(),
+        catchphrase: store.catch_copy || comp.catchphrase,
+        castCount: comp.castCount,
+        image: store.image_url || comp.image,
+        heroCastImage: comp.heroCastImage,
+        floatCopy: store.catch_copy || comp.floatCopy,
+        href,
+        isExternal,
+      };
+    });
+  }, [stores]);
+
+  const N = storeItems.length;
+  const LOOPED_STORES = useMemo(() => [...storeItems, ...storeItems, ...storeItems], [storeItems]);
+
+  useEffect(() => {
+    if (N > 0) {
+      setCurrentLoopedIdx(N);
+    }
+  }, [N]);
+
+  const activeStore = storeItems[activeIndex] || storeItems[0];
 
   // 指定した loopedIndex のカードを中央に正確にスクロール
   const scrollToLoopedIndex = useCallback((loopedIdx: number, smooth: boolean = true) => {
@@ -229,7 +264,7 @@ export default function HubHeroSection() {
 
       {/* 👑 2. ヒーローエリア */}
       <h1 className="sr-only">
-        女風・女性用風俗なら東京・大阪・横浜・名古屋・福岡対応のストロベリーボーイズ｜女性専用出張サービス
+        女風・女性用風俗なら福岡(博多・天神)・横浜(関内・みなとみらい)対応のストロベリーボーイズ|女性専用出張サービス
       </h1>
 
       {/* ━━━ PC レイアウト (md 以上) ━━━ */}
@@ -310,7 +345,7 @@ export default function HubHeroSection() {
           className="w-full overflow-x-hidden hide-scrollbar pt-10 pb-4"
         >
           <div className="flex items-end md:justify-center gap-2 sm:gap-4 min-w-max px-[calc(50vw-115px)] md:px-8 md:max-w-7xl md:mx-auto">
-            {LOOPED_STORES.map((store, loopedIdx) => {
+            {LOOPED_STORES.map((store: StoreItem, loopedIdx: number) => {
               const realIdx = loopedIdx % N;
               const isActive = realIdx === activeIndex;
               const isMiddleCopy = loopedIdx >= N && loopedIdx < N * 2;
@@ -346,11 +381,18 @@ export default function HubHeroSection() {
                     </p>
                   </div>
                   <div className="pt-2 border-t border-slate-100 space-y-1.5">
-                    <div className="flex items-center gap-1 text-[8px] sm:text-[10px] font-bold text-rose-500">
-                      <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
-                      <span>在籍</span>
-                      <span className="text-slate-700 font-extrabold ml-0.5">{store.castCount}名</span>
-                    </div>
+                    {store.isExternal ? (
+                      <div className="flex items-center gap-1 text-[8px] sm:text-[10px] font-bold text-slate-500">
+                        <span className="h-1.5 w-1.5 rounded-full bg-slate-400" />
+                        <span>グループ店舗</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-1 text-[8px] sm:text-[10px] font-bold text-rose-500">
+                        <span className="h-1.5 w-1.5 rounded-full bg-rose-500" />
+                        <span>在籍</span>
+                        <span className="text-slate-700 font-extrabold ml-0.5">{store.castCount}名</span>
+                      </div>
+                    )}
                     {store.isExternal ? (
                       <a
                         href={store.href}
@@ -385,7 +427,7 @@ export default function HubHeroSection() {
 
         {/* ドットインジケーター */}
         <div className="flex items-center justify-center gap-1.5 mt-1">
-          {STORES_DATA.map((_, idx) => (
+          {storeItems.map((_, idx: number) => (
             <button
               key={idx}
               onClick={() => handleSelectStore(idx)}

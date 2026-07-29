@@ -134,6 +134,11 @@ export const revalidate = 300;
 export const dynamic = 'force-static';
 
 export default async function StorePage({ params }: StorePageProps) {
+  // ガード: fukuoka, yokohama 以外の店舗slug（tokyo, osaka, nagoyaなど）は内部表示せず404/リダイレクトへ落とす
+  if (params.slug !== 'fukuoka' && params.slug !== 'yokohama') {
+    notFound();
+  }
+
   console.log('🔍 StorePage params:', params);
   const staticStore = getStoreData(params.slug);
 

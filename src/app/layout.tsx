@@ -49,8 +49,8 @@ export const metadata: Metadata = {
     locale: 'ja_JP',
     url: 'https://www.sutoroberrys.jp',
     siteName: 'ストロベリーボーイズ',
-    title: '女性用風俗・出張ホスト｜ストロベリーボーイズ',
-    description: '東京・横浜・名古屋・大阪・福岡で展開。完全審査制のイケメンセラピストが極上の癒しを提供する女性専用サロン。',
+    title: '女性用風俗・出張ホスト｜ストロベリーボーイズ【福岡・横浜】',
+    description: '福岡（博多・天神）・横浜（関内・みなとみらい）で展開。完全審査制のイケメンセラピストが極上の癒やしを提供する女性専用出張サロン。グループ店舗（東京・大阪・名古屋）とも連携。',
     images: [{ url: '/ogp/default.png', width: 1200, height: 630, alt: 'ストロベリーボーイズ' }],
   },
   robots: {
@@ -115,9 +115,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "logo": "https://www.sutoroberrys.jp/logo.png",
               "sameAs": [
                 "https://twitter.com/oden0713",
-                "https://www.instagram.com/sutoroberrys/"
+                "https://www.instagram.com/sutoroberrys/",
+                "https://sutoroberrys.com/main/",
+                "https://sutoroberrys-osaka.com/main.html",
+                "https://sutoroberrys-aichi.com/main.html"
               ],
-              "description": "東京・横浜・名古屋・大阪・福岡で展開する女性用風俗・出張ホストの全国チェーン。"
+              "description": "福岡（博多・天神）・横浜（関内・みなとみらい）を中心に展開する女性用風俗・出張サロン。グループ店舗（東京・大阪・名古屋）とも連携。"
             }),
           }}
         />

@@ -57,6 +57,36 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/store/tokyo',
+        destination: 'https://sutoroberrys.com/main/',
+        permanent: true,
+      },
+      {
+        source: '/store/tokyo/:path*',
+        destination: 'https://sutoroberrys.com/main/',
+        permanent: true,
+      },
+      {
+        source: '/store/osaka',
+        destination: 'https://sutoroberrys-osaka.com/main.html',
+        permanent: true,
+      },
+      {
+        source: '/store/osaka/:path*',
+        destination: 'https://sutoroberrys-osaka.com/main.html',
+        permanent: true,
+      },
+      {
+        source: '/store/nagoya',
+        destination: 'https://sutoroberrys-aichi.com/main.html',
+        permanent: true,
+      },
+      {
+        source: '/store/nagoya/:path*',
+        destination: 'https://sutoroberrys-aichi.com/main.html',
+        permanent: true,
+      },
+      {
         source: '/career',
         destination: '/store/fukuoka/recruit',
         permanent: true,
