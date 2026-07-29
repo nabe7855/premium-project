@@ -35,7 +35,7 @@ function BannerItem({ store }: { store: StoreInfo }) {
     >
       <div className="relative aspect-[3/1] w-full bg-slate-50">
         <NextImage
-          src={`/images/banners/store-jumps/${store.slug}.png`}
+          src={`/images/banners/store-jumps/${store.slug}.webp`}
           alt={`${store.name}店バナー`}
           fill
           loading="lazy"
