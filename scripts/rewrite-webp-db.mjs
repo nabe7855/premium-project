@@ -5,6 +5,7 @@
  *   node scripts/rewrite-webp-db.mjs --dry      … 差分表示のみ（DBは変更しない）
  *   node scripts/rewrite-webp-db.mjs            … 実行
  *   node scripts/rewrite-webp-db.mjs --rollback … .webp -> .png に戻す
+ *   node scripts/rewrite-webp-db.mjs --only=fukuoka … 特定store_idのみ（段階適用用）
  *
  * 安全策:
  *  - 完全一致したパス文字列のみ置換（部分一致・正規表現は使わない）
@@ -17,6 +18,7 @@ import fs from 'fs';
 
 const DRY = process.argv.includes('--dry');
 const ROLLBACK = process.argv.includes('--rollback');
+const ONLY = (process.argv.find((a) => a.startsWith('--only=')) || '').split('=')[1] || null;
 
 const env = fs.readFileSync('.env.local', 'utf8');
 const getEnv = (k) => {
@@ -80,6 +82,7 @@ for (const table of TABLES) {
   console.log(`\n=== ${table} (${data.length}行) ===`);
 
   for (const row of data) {
+    if (ONLY && !String(row.store_id).startsWith(ONLY)) continue;
     const counter = { n: 0 };
     const next = convert(row.config, counter);
     if (counter.n === 0) {
