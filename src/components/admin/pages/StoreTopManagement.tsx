@@ -84,6 +84,76 @@ const SECTION_ORDER = [
   'bottomNav',
 ];
 
+/**
+ * アップロード済みの画像URLを config に反映した新しい config を返す純粋関数。
+ *
+ * setConfig の更新関数の中と、その外側のフォールバック処理の2箇所から
+ * 同一の変換を使うために切り出している。副作用を持たせないこと。
+ */
+function applyUploadedImage(
+  prev: StoreTopPageConfig,
+  section: string,
+  index: number | undefined,
+  key: string | undefined,
+  publicUrl: string,
+): StoreTopPageConfig {
+  const newConfig = { ...prev };
+
+  if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
+    const newNavLinks = [...prev.header.navLinks];
+    newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
+    newConfig.header = { ...prev.header, navLinks: newNavLinks };
+  } else if (section === 'hero' && typeof index === 'number') {
+    // HeroSection は images を filter(Boolean) した配列を基準に index を渡してくる。
+    // 保存側が生配列を基準にすると、空要素が1つでもあると index がずれ、
+    // 「追加」のつもりが既存画像の上書きになってしまう（枚数が増えない）。
+    // そのため保存側でも空要素を除去した配列を基準に揃える。
+    // imageLinks は images と同じ添字で対応するため、同時に詰める。
+    const rawImages = prev.hero.images || [];
+    const rawLinks = prev.hero.imageLinks || [];
+    const kept = rawImages
+      .map((img, i) => ({ img, link: rawLinks[i] || '' }))
+      .filter((x) => x.img);
+
+    const newImages = kept.map((x) => x.img);
+    const newLinks = kept.map((x) => x.link);
+
+    if (index >= newImages.length) {
+      newImages.push(publicUrl);
+      newLinks.push('');
+    } else {
+      newImages[index] = publicUrl;
+    }
+
+    newConfig.hero = { ...prev.hero, images: newImages, imageLinks: newLinks };
+  } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
+    const newItems = [...prev.concept.items];
+    newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+    newConfig.concept = { ...prev.concept, items: newItems };
+  } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
+    const newItems = [...prev.campaign.items];
+    newItems[index] = { ...newItems[index], imageUrl: publicUrl };
+    newConfig.campaign = { ...prev.campaign, items: newItems };
+  } else if (section === 'flow' && typeof index === 'number' && key !== 'headingImageUrl') {
+    const newSteps = [...prev.flow.steps];
+    newSteps[index] = { ...newSteps[index], image: publicUrl };
+    newConfig.flow = { ...prev.flow, steps: newSteps };
+  } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
+    const newBanners = [...prev.footer.banners];
+    newBanners[index] = { ...newBanners[index], imageUrl: publicUrl };
+    newConfig.footer = { ...prev.footer, banners: newBanners };
+  } else {
+    const sectionName = section as keyof StoreTopPageConfig;
+    const sectionKey = key || 'imageUrl';
+    newConfig[sectionName] = {
+      ...(prev[sectionName] as any),
+      [sectionKey]: publicUrl,
+    };
+  }
+
+  return newConfig;
+}
+
 export default function StoreTopManagement() {
   const router = useRouter();
   const [selectedStore, setSelectedStore] = useState('fukuoka');
@@ -341,74 +411,32 @@ export default function StoreTopManagement() {
         return;
       }
 
-      // Functional update to avoid stale state issues and ensure latest state is used
+      // 最新の state を基準に反映するため更新関数を使う
       let configToSave: StoreTopPageConfig | null = null;
-      
+
       setConfig((prev) => {
         if (!prev) return prev;
-        const newConfig = { ...prev };
-
-        if (section === 'header' && key === 'navLinks' && typeof index === 'number') {
-          const newNavLinks = [...prev.header.navLinks];
-          newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
-          newConfig.header = { ...prev.header, navLinks: newNavLinks };
-        } else if (section === 'hero' && typeof index === 'number') {
-          // HeroSection は images を filter(Boolean) した配列を基準に index を渡してくる。
-          // 保存側が生配列を基準にすると、空要素が1つでもあると index がずれ、
-          // 「追加」のつもりが既存画像の上書きになってしまう（枚数が増えない）。
-          // そのため保存側でも空要素を除去した配列を基準に揃える。
-          // imageLinks は images と同じ添字で対応するため、同時に詰める。
-          const rawImages = prev.hero.images || [];
-          const rawLinks = prev.hero.imageLinks || [];
-          const kept = rawImages
-            .map((img, i) => ({ img, link: rawLinks[i] || '' }))
-            .filter((x) => x.img);
-
-          const newImages = kept.map((x) => x.img);
-          const newLinks = kept.map((x) => x.link);
-
-          if (index >= newImages.length) {
-            newImages.push(publicUrl);
-            newLinks.push('');
-          } else {
-            newImages[index] = publicUrl;
-          }
-
-          newConfig.hero = { ...prev.hero, images: newImages, imageLinks: newLinks };
-        } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
-          const newItems = [...prev.concept.items];
-          newItems[index] = { ...newItems[index], imageUrl: publicUrl };
-          newConfig.concept = { ...prev.concept, items: newItems };
-        } else if (section === 'campaign' && key === 'items' && typeof index === 'number') {
-          const newItems = [...prev.campaign.items];
-          newItems[index] = { ...newItems[index], imageUrl: publicUrl };
-          newConfig.campaign = { ...prev.campaign, items: newItems };
-        } else if (section === 'flow' && typeof index === 'number' && key !== 'headingImageUrl') {
-          const newSteps = [...prev.flow.steps];
-          newSteps[index] = { ...newSteps[index], image: publicUrl };
-          newConfig.flow = { ...prev.flow, steps: newSteps };
-        } else if (section === 'footer' && key === 'banners' && typeof index === 'number') {
-          const newBanners = [...prev.footer.banners];
-          newBanners[index] = { ...newBanners[index], imageUrl: publicUrl };
-          newConfig.footer = { ...prev.footer, banners: newBanners };
-        } else {
-          const sectionName = section as keyof StoreTopPageConfig;
-          const sectionKey = key || 'imageUrl';
-          newConfig[sectionName] = { 
-            ...(prev[sectionName] as any), 
-            [sectionKey]: publicUrl 
-          };
-        }
-        
+        const newConfig = applyUploadedImage(prev, section, index, key, publicUrl);
         configToSave = newConfig;
         return newConfig;
       });
+
+      // React 18 では更新関数が同期実行される保証がない。
+      // 遅延実行されると configToSave が null のままとなり保存がスキップされ、
+      // 「アップロードは成功したのに保存されない」状態になるため、
+      // その場合は現在の config から同じ変換を行って保存対象を確定させる。
+      if (!configToSave && config) {
+        configToSave = applyUploadedImage(config, section, index, key, publicUrl);
+      }
 
       // DBに保存
       if (configToSave) {
         await safeSaveConfig(configToSave);
         toast.success('画像を最適化してアップロードしました', { id: toastId });
         fetchHistory(); // 履歴更新
+      } else {
+        // config 未読み込み時。ローディング表示を残さないよう必ず結果を返す
+        toast.error('設定が読み込まれていないため保存できませんでした', { id: toastId });
       }
     } catch (error) {
       console.error('Image upload failed:', error);
