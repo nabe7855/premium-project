@@ -1,6 +1,7 @@
 // Server Component - ルートトップページ (test13ハブデザイン正式適用)
 import { getMediaArticles } from '@/lib/actions/media';
 import { getAllCasts } from '@/lib/getAllCasts';
+import { getTotalReviewCount } from '@/lib/getTotalReviewCount';
 import { supabase } from '@/lib/supabaseClient';
 import HubPageClient from './test13/HubPageClient';
 import type { Metadata } from 'next';
@@ -61,7 +62,7 @@ import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 export const dynamic = 'force-dynamic';
 
 export default async function RootHomePage() {
-  const [casts, stores, videos, diaries, mediaArticles, fukuokaNews, yokohamaNews] = await Promise.allSettled([
+  const [casts, stores, videos, diaries, mediaArticles, fukuokaNews, yokohamaNews, totalReviews] = await Promise.allSettled([
     getAllCasts(),
     getStores(),
     getLatestVideos(),
@@ -69,7 +70,11 @@ export default async function RootHomePage() {
     getOwnedMediaArticles(),
     getPublishedPagesByStore('fukuoka'),
     getPublishedPagesByStore('yokohama'),
+    getTotalReviewCount(),
   ]);
+
+  // 実数が取れなかった場合は 0 → 表示側で非表示にフォールバック（偽の固定値は入れない）
+  const reviewCount = totalReviews.status === 'fulfilled' ? totalReviews.value : 0;
 
   const fukuokaNewsList = fukuokaNews.status === 'fulfilled' && fukuokaNews.value ? fukuokaNews.value : [];
   const yokohamaNewsList = yokohamaNews.status === 'fulfilled' && yokohamaNews.value ? yokohamaNews.value : [];
@@ -90,6 +95,7 @@ export default async function RootHomePage() {
       videos={videos.status === 'fulfilled' ? videos.value : []}
       diaries={diaries.status === 'fulfilled' ? diaries.value : []}
       newsPages={allNewsPages}
+      reviewCount={reviewCount}
       mediaArticles={
         mediaArticles.status === 'fulfilled'
           ? (mediaArticles.value as any)

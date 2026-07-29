@@ -101,6 +101,7 @@ interface HubPageClientProps {
   videos: any[];
   diaries: any[];
   newsPages?: any[];
+  reviewCount?: number;
   mediaArticles: {
     amolabArticles: any[];
     sweetStayArticles: any[];
@@ -288,8 +289,11 @@ export default function HubPageClient({
   videos,
   diaries,
   newsPages,
+  reviewCount,
   mediaArticles,
 }: HubPageClientProps) {
+  // 実データが10件以上あるときだけ表示（0件・取得失敗時は非表示。偽の固定値は使わない）
+  const showReviewCount = typeof reviewCount === 'number' && reviewCount >= 10;
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'news' | 'video'>('news');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -347,6 +351,9 @@ export default function HubPageClient({
       {/* ─── 1.05 信頼バッジ帯 (Since 2018・実績訴求 / SSR静的表示) ─── */}
       <section aria-label="ストロベリーボーイズの信頼と実績" className="bg-white border-b border-rose-100/60 py-4">
         <div className="mx-auto max-w-5xl px-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          {showReviewCount && (
+            <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">お客様の口コミ {reviewCount!.toLocaleString()}件</span>
+          )}
           <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">Since 2018・グループ運営8年</span>
           <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">完全審査制セラピスト</span>
           <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">明朗会計・追加料金なし</span>
@@ -380,6 +387,12 @@ export default function HubPageClient({
               癒やされたい夜も、誰かに甘えたい夜も、ここでは、あなたの気持ちとペースを大切にします。<br />
               ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。<br />
               2018年の創業以来、グループとして8年にわたり女性専用サービス一筋で運営してまいりました。積み重ねてきた信頼と経験が、わたしたちの誇りです。
+              {showReviewCount && (
+                <>
+                  <br />
+                  これまでに{reviewCount!.toLocaleString()}件のお客様の声をいただいています。
+                </>
+              )}
             </p>
 
             {/* 4つの安心カード */}
