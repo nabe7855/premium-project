@@ -3,7 +3,6 @@ import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
-import { getReviewsByStore } from '@/lib/getReviewsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
@@ -223,14 +222,7 @@ export default async function StorePage({ params }: StorePageProps) {
       ]
     : { '@type': 'City', name: store.city };
 
-  // 口コミデータの動的取得と集計
-  const { reviews, totalCount } = await getReviewsByStore(params.slug, { limit: 50 });
-  const reviewCount = totalCount || reviews.length;
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum: number, r: any) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1)
-    : '4.9';
-
-  const localBusinessSchema: any = {
+  const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': 'LocalBusiness',
     '@id': `https://www.sutoroberrys.jp/store/${params.slug}#localbusiness`,
@@ -257,16 +249,6 @@ export default async function StorePage({ params }: StorePageProps) {
       },
     ],
   };
-
-  if (reviewCount > 0) {
-    localBusinessSchema.aggregateRating = {
-      '@type': 'AggregateRating',
-      ratingValue: averageRating,
-      reviewCount: reviewCount,
-      bestRating: '5',
-      worstRating: '1',
-    };
-  }
 
   const serviceSchema = {
     '@context': 'https://schema.org',

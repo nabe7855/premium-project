@@ -57,29 +57,12 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
   };
   const cityName = cityMap[slug] || '福岡';
 
-  const reviews = initialReviewsData.reviews || [];
-  const reviewCount = initialReviewsData.totalCount || reviews.length;
-  const averageRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + (r.rating || 5), 0) / reviews.length).toFixed(1)
-    : '4.9';
-
-  const reviewsSchema: any = {
+  const reviewsSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: `ストロベリーボーイズ ${cityName}店`,
     image: `https://www.sutoroberrys.jp/ogp/store-${slug}.png`,
-    description: `${cityName}の女性用風俗・出張サロン「ストロベリーボーイズ${cityName}店」のお客様からのリアルな口コミ・レビュー。`,
   };
-
-  if (reviewCount > 0) {
-    reviewsSchema.aggregateRating = {
-      "@type": "AggregateRating",
-      ratingValue: averageRating,
-      reviewCount: reviewCount,
-      bestRating: "5",
-      worstRating: "1",
-    };
-  }
 
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-b from-pink-50 to-white">
