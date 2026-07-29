@@ -239,6 +239,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                           <button
                             onClick={(e) => { e.stopPropagation(); handleMoveImage(index, 'left'); }}
                             disabled={index === 0}
+                            title="この画像を1つ前へ移動（並び順の変更）"
+                            aria-label="この画像を1つ前へ移動"
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
                           >
                             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -260,6 +262,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                           <button
                             onClick={(e) => { e.stopPropagation(); handleMoveImage(index, 'right'); }}
                             disabled={index === images.length - 1}
+                            title="この画像を1つ後ろへ移動（並び順の変更）"
+                            aria-label="この画像を1つ後ろへ移動"
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-black/50 text-white transition-all hover:bg-black/70 disabled:opacity-30"
                           >
                             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -269,6 +273,8 @@ const HeroSection: React.FC<HeroSectionProps> = ({
 
                           <button
                             onClick={(e) => { e.stopPropagation(); handleRemoveImage(index); }}
+                            title="この画像を削除"
+                            aria-label="この画像を削除"
                             className="flex h-10 w-10 items-center justify-center rounded-full bg-rose-500/80 text-white transition-all hover:bg-rose-600"
                           >
                             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -314,6 +320,44 @@ const HeroSection: React.FC<HeroSectionProps> = ({
             })}
           </div>
         </div>
+
+        {/*
+          ページ送りボタン（編集時のみ）
+          右上の ← → は「その画像の並び順を入れ替える」ボタンで、押すと移動先へ追従するため
+          表示中の画像は変わらない。編集したい画像まで移動する手段として別途用意する。
+        */}
+        {isEditing && images.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={prevSlide}
+              title="前の画像を表示（並び順は変わりません）"
+              aria-label="前の画像を表示"
+              className="absolute left-3 top-1/2 z-50 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/45 text-white shadow-lg backdrop-blur-sm transition-all hover:bg-black/70 md:left-6"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+
+            <button
+              type="button"
+              onClick={nextSlide}
+              title="次の画像を表示（並び順は変わりません）"
+              aria-label="次の画像を表示"
+              className="absolute right-3 top-1/2 z-50 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full border border-white/30 bg-black/45 text-white shadow-lg backdrop-blur-sm transition-all hover:bg-black/70 md:right-6"
+            >
+              <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* 現在位置（並べ替え時に何枚目を操作しているか分かるように） */}
+            <div className="absolute left-1/2 top-4 z-50 -translate-x-1/2 rounded-full bg-black/50 px-3 py-1 text-xs font-bold text-white backdrop-blur-sm">
+              {selectedIndex + 1} / {images.length}
+            </div>
+          </>
+        )}
 
         {/* 新しい画像を追加ボタン */}
         {isEditing && (
