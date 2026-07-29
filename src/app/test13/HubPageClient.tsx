@@ -320,7 +320,7 @@ export default function HubPageClient({
   const FALLBACK_CAST_IMG = '/ゆうと.png';
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-slate-50 text-slate-900 selection:bg-rose-500/30">
+    <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-900 selection:bg-rose-500/30">
       {/* ─── JSON-LD 構造化データ (AIO対応) ─── */}
       <script
         type="application/ld+json"
@@ -795,6 +795,122 @@ export default function HubPageClient({
                 </motion.div>
               </Link>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 4.4 明朗会計と料金目安 (Price & Trust Block) ─── */}
+      <section className="bg-gradient-to-b from-white to-pink-50/50 px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 text-center">
+            <span className="mb-3 inline-block rounded-full bg-rose-100 px-4 py-1.5 text-xs font-black text-rose-600 tracking-wider">
+              CLEAR PRICING & TRUST
+            </span>
+            <h2 className="text-3xl font-black text-slate-900 md:text-5xl">
+              明朗会計・安心の料金プラン
+            </h2>
+            <p className="mt-4 text-sm font-bold text-slate-500 max-w-2xl mx-auto leading-relaxed">
+              ストロベリーボーイズは不当な追加請求や入会金・年会費等は一切発生いたしません。事前のコース料金と出張交通費のみの明確な料金体系です。
+            </p>
+          </div>
+
+          {/* 3つのコース料金カード */}
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-16">
+            <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                  お試しショート
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">60分コース</h3>
+                <p className="text-xs text-slate-400 mb-6">初めての方や短時間で癒やされたい方に</p>
+                <div className="mb-6 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-rose-500">¥12,000</span>
+                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                </div>
+              </div>
+              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> 初回お試しカウンセリング付き
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> 指名料・出張費別途明記
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-[2.5rem] border-2 border-rose-400 bg-white p-8 shadow-2xl transition-all relative overflow-hidden flex flex-col justify-between transform md:-translate-y-2">
+              <div className="absolute top-0 right-0 rounded-bl-2xl bg-rose-500 px-4 py-1 text-[10px] font-black text-white uppercase tracking-wider">
+                1番人気コース
+              </div>
+              <div>
+                <div className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-600">
+                  人気No.1 標準プラン
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
+                <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
+                <div className="mb-6 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-rose-500">¥18,000</span>
+                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                </div>
+              </div>
+              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> 人気No.1の贅沢満足コース
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> フルボディオイルトリートメント
+                </li>
+              </ul>
+            </div>
+
+            <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all relative overflow-hidden flex flex-col justify-between">
+              <div>
+                <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                  極上ディープ
+                </div>
+                <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
+                <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
+                <div className="mb-6 flex items-baseline gap-1">
+                  <span className="text-4xl font-black text-rose-500">¥24,000</span>
+                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                </div>
+              </div>
+              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> 心身をリセットする特別コース
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="text-rose-500">✓</span> お好みのご要望に合わせた施術
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          {/* 信頼バッジ ＆ 料金ページへの導線 */}
+          <div className="rounded-3xl bg-white border border-rose-100 p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex flex-wrap items-center gap-6 text-center md:text-left">
+              <div className="flex items-center gap-3">
+                <Lock className="h-6 w-6 text-rose-500 shrink-0" />
+                <div>
+                  <h4 className="text-sm font-black text-slate-800">入会金・年会費 0円</h4>
+                  <p className="text-xs text-slate-400">不要な費用は一切かかりません</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-3">
+                <Calculator className="h-6 w-6 text-rose-500 shrink-0" />
+                <div>
+                  <h4 className="text-sm font-black text-slate-800">事前見積もり徹底</h4>
+                  <p className="text-xs text-slate-400">予約時に確定金額をご案内</p>
+                </div>
+              </div>
+            </div>
+            <Link
+              href="/plan"
+              className="shrink-0 rounded-full bg-rose-500 px-8 py-4 text-xs font-black text-white transition-all hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/30 flex items-center gap-2"
+            >
+              <span>料金・プランの完全解説をみる</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
         </div>
       </section>

@@ -203,12 +203,6 @@ export default function HubHeroSection() {
         <nav className="hidden md:flex items-center gap-8 text-sm font-medium tracking-widest text-[#5c3e45]">
           <a href="#stores" className="transition-colors hover:text-[#b8324f]">全国の店舗</a>
           <a href="#about" className="transition-colors hover:text-[#b8324f]">ブランドについて</a>
-          <Link
-            href="/login"
-            className="rounded-full border border-slate-300 bg-white/80 px-7 py-2.5 text-xs font-bold text-slate-700 transition-all hover:bg-slate-900 hover:text-white shadow-xs"
-          >
-            ログイン
-          </Link>
         </nav>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -229,9 +223,6 @@ export default function HubHeroSection() {
           <div className="flex flex-col gap-6 text-base font-bold text-[#5c3e45]">
             <a href="#stores" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-rose-100">全国の店舗</a>
             <a href="#about" onClick={() => setIsMobileMenuOpen(false)} className="py-2 border-b border-rose-100">ブランドについて</a>
-            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="mt-4 rounded-full bg-[#b8324f] py-3 text-center text-white font-bold shadow-md">
-              ログイン
-            </Link>
           </div>
         </div>
       )}
