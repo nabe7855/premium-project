@@ -275,6 +275,23 @@ const HeroSection: React.FC<HeroSectionProps> = ({
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                             </svg>
                           </button>
+
+                          {/* 新しい画像を末尾に追加（最下部のボタンと同じ動作を手元でも行えるようにする） */}
+                          <label
+                            title="新しい画像を末尾に追加"
+                            className="flex cursor-pointer items-center gap-1.5 rounded-full bg-emerald-500/80 px-4 py-2 text-white transition-all hover:bg-emerald-600"
+                          >
+                            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                            </svg>
+                            <span className="text-xs font-bold">追加</span>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={handleAddImage}
+                            />
+                          </label>
                         </div>
 
                         <div className="mt-2 w-72 rounded-lg bg-black/50 p-3 backdrop-blur-md border border-white/10">
