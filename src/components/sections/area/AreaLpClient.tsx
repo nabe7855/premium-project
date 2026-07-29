@@ -24,7 +24,49 @@ interface AreaLpClientProps {
   hotels?: any[];
 }
 
+/**
+ * ホテルカードの表示可否を判定する品質ゲート。
+ *
+ * lh_hotels は大半が未整備（実写真なし・エリア紐付けの誤り・下書き）のため、
+ * 基準を満たしたものだけを表示する。基準を満たさないホテルは出さない。
+ * データが整うにつれて自動的に表示件数が増える想定。
+ */
+function isPublishableHotel(hotel: any, areaName: string): boolean {
+  // ① 実写真があること（ストック写真での代替はしない）
+  const realImage = hotel?.imageUrl || hotel?.images?.[0]?.url || hotel?.images?.[0];
+  if (!realImage) return false;
+
+  // ② 住所があること
+  if (!hotel?.address) return false;
+
+  // ③ このエリアとして登録されていること
+  //    住所の部分一致だと「博多」が「博多区」全域に広がり、
+  //    博多駅から離れた郊外まで拾ってしまうため、
+  //    lh_areas に紐付けられたエリア名での一致のみを条件にする
+  if (!(hotel.area || '').includes(areaName)) return false;
+
+  return true;
+}
+
+/** 同一ホテルの二重登録があるため、名前+住所で重複を除去する */
+function dedupeHotels(list: any[]): any[] {
+  const seen = new Set<string>();
+  return list.filter((h) => {
+    const key = `${h?.name ?? ''}|${h?.address ?? ''}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+/** これ未満なら「おすすめ」として成立しないためセクションごと出さない */
+const MIN_HOTELS_TO_SHOW = 3;
+
 export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }: AreaLpClientProps) {
+  // 基準を満たすホテルだけに絞り込む
+  const publishableHotels = dedupeHotels((hotels || []).filter((h) => isPublishableHotel(h, areaInfo.name)));
+  const showHotelCards = publishableHotels.length >= MIN_HOTELS_TO_SHOW;
+
   return (
     <div className="min-h-screen bg-slate-50 text-neutral-800">
       {/* ヒーローセクション */}
@@ -151,19 +193,23 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
       <section className="py-12 bg-white sm:py-16">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="text-center mb-10">
-            <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">DISPATCH HOTEL GUIDE</span>
+            <span className="text-xs font-bold text-rose-500 uppercase tracking-wider">DISPATCH AREA GUIDE</span>
             <h2 className="text-2xl font-bold text-gray-900 sm:text-3xl mt-1">
-              {areaInfo.name}エリアで女性用風俗・女風セラピストを呼べるおすすめホテル
+              {showHotelCards
+                ? `${areaInfo.name}エリアで女性用風俗・女風セラピストを呼べるおすすめホテル`
+                : `${areaInfo.name}エリアの出張対応について`}
             </h2>
             <p className="text-xs text-gray-500 mt-2 max-w-xl mx-auto">
-              ストロベリーボーイズ{areaInfo.cityName}店のご指定出張先として人気のおすすめホテル一覧です。お気に入りのセラピストと特別な時間をお楽しみいただけます。
+              {showHotelCards
+                ? `ストロベリーボーイズ${areaInfo.cityName}店のご指定出張先として人気のおすすめホテル一覧です。お気に入りのセラピストと特別な時間をお楽しみいただけます。`
+                : `ストロベリーボーイズ${areaInfo.cityName}店が${areaInfo.name}エリアで出張対応している場所をご案内します。`}
             </p>
           </div>
 
-          {/* DB連動ホテルカード (スマホ横スワイプ & レスポンシブグリッド: 6件限定軽量化) */}
-          {hotels && hotels.length > 0 ? (
+          {/* DB連動ホテルカード (品質ゲートを通過したものだけ / 6件限定軽量化) */}
+          {showHotelCards ? (
             <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-4 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
-              {hotels.slice(0, 6).map((hotel: any, idx: number) => {
+              {publishableHotels.slice(0, 6).map((hotel: any, idx: number) => {
                 // DB内のリアルデータ（amenities / distanceFromStation / services）を最優先利用
                 const realTags: string[] = [];
                 if (hotel.distanceFromStation) realTags.push(`＃${hotel.distanceFromStation}`);
@@ -196,12 +242,9 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
                   >
                     <div className="relative aspect-[16/10] overflow-hidden rounded-xl bg-slate-100 mb-3">
                       <img
-                        src={
-                          hotel.imageUrl ||
-                          hotel.images?.[0]?.url ||
-                          hotel.images?.[0] ||
-                          'https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&q=80&w=600'
-                        }
+                        // 実写真のみ。isPublishableHotel で画像なしは除外済みのため
+                        // ストック写真によるフォールバックは行わない
+                        src={hotel.imageUrl || hotel.images?.[0]?.url || hotel.images?.[0]}
                         alt={`${hotel.name} - ${areaInfo.name}女性用風俗・女風対応ホテル`}
                         className="h-full w-full object-cover"
                       />
@@ -232,14 +275,34 @@ export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }
               })}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-              {areaInfo.recommendedHotels.map((hotel, idx) => (
-                <div key={idx} className="flex items-center gap-2 rounded-xl bg-white p-4 text-xs font-bold text-gray-700 shadow-sm border border-rose-100">
-                  <Hotel className="h-4 w-4 text-rose-400 shrink-0" />
-                  <span>{hotel}</span>
-                  <span className="ml-auto text-[10px] text-rose-500 font-normal">出張可</span>
-                </div>
-              ))}
+            /*
+             * 基準を満たすホテルが揃うまでの表示。
+             * 個別ホテルを「おすすめ」と称すると実態と乖離するため、
+             * 事実として案内できる「対応可能な施設タイプ」のみを掲載する。
+             */
+            <div className="mx-auto max-w-3xl">
+              <p className="text-sm text-gray-600 leading-relaxed mb-6 text-center">
+                {areaInfo.description}
+              </p>
+
+              <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <Hotel className="h-4 w-4 text-rose-400 shrink-0" />
+                {areaInfo.name}エリアで出張対応している場所
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                {areaInfo.recommendedHotels.map((place, idx) => (
+                  <div key={idx} className="flex items-center gap-2 rounded-xl bg-white p-4 text-xs font-bold text-gray-700 shadow-sm border border-rose-100">
+                    <CheckCircle2 className="h-4 w-4 text-rose-400 shrink-0" />
+                    <span>{place}</span>
+                    <span className="ml-auto text-[10px] text-rose-500 font-normal shrink-0">出張可</span>
+                  </div>
+                ))}
+              </div>
+
+              <p className="text-[11px] text-gray-500 leading-relaxed text-center">
+                ご利用予定の施設が対応可能かご不明な場合は、ご予約時にお気軽にお問い合わせください。
+                施設ごとの詳しいご案内は、セラピストが実際に伺った内容をもとに順次掲載してまいります。
+              </p>
             </div>
           )}
         </div>

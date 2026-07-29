@@ -60,10 +60,15 @@ export function generateStaticParams() {
 
 import { getHotels, mapDbHotelToHotel } from '@/lib/lovehotelApi';
 
+// lh_hotels.prefecture_id は表記が統一されておらず、福岡は小文字 'fukuoka' (211件)、
+// 神奈川は大文字 'Kanagawa' (79件) で登録されている。実データに合わせる。
 const STORE_LOCATION: Record<string, { prefectureId: string; cityId?: string }> = {
-  fukuoka: { prefectureId: 'Fukuoka' },
+  fukuoka: { prefectureId: 'fukuoka' },
   yokohama: { prefectureId: 'Kanagawa', cityId: 'Yokohama-shi' },
 };
+
+// 下書き(draft)を公開ページに出さない
+const PUBLISHED_HOTEL_STATUS = ['active', 'published'];
 
 export default async function AreaLPPage({ params }: AreaPageProps) {
   const key = `${params.slug}-${params.areaSlug}`;
@@ -79,7 +84,7 @@ export default async function AreaLPPage({ params }: AreaPageProps) {
   const [casts, topConfigResult, dbHotels] = await Promise.all([
     getCastsByStore(params.slug),
     getStoreTopConfig(params.slug, { skipCasts: true }),
-    getHotels({ prefectureId: loc.prefectureId, cityId: loc.cityId }),
+    getHotels({ prefectureId: loc.prefectureId, cityId: loc.cityId, status: PUBLISHED_HOTEL_STATUS }),
   ]);
 
   const topConfig = topConfigResult.success ? (topConfigResult.config as StoreTopPageConfig) : null;
