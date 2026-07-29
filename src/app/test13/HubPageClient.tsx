@@ -320,6 +320,11 @@ export default function HubPageClient({
         return false;
       }
 
+      // 画像未設定のキャストは除外。
+      // 除外しないとフォールバック画像(FALLBACK_CAST_IMG = 実在セラピストの写真)が
+      // 割り当てられ、別人の写真が表示されてしまうため。
+      if (!c.imageUrl && !c.mainImageUrl) return false;
+
       // fukuoka または yokohama の自社店舗所属キャストのみ合格
       return storeSlug === 'fukuoka' || storeSlug === 'yokohama';
     });
@@ -508,7 +513,9 @@ export default function HubPageClient({
                       >
                         <div className="h-full w-full overflow-hidden rounded-full ring-2 ring-slate-50">
                           <img
-                            src={cast.imageUrl || cast.mainImageUrl || FALLBACK_CAST_IMG}
+                            // validCasts で画像未設定のキャストを除外済みのため
+                            // フォールバック画像（別人の写真）は使わない
+                            src={cast.imageUrl || cast.mainImageUrl}
                             alt={cast.name}
                             className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
                           />
