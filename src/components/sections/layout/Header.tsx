@@ -135,7 +135,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
           key={item.href}
           className="group relative overflow-hidden rounded-[40px] bg-transparent shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-[0.98]"
           style={{
-            backgroundImage: 'url("/ハンバーガーメニュー横長背景.png")',
+            backgroundImage: 'url("/ハンバーガーメニュー横長背景.webp")',
             backgroundSize: '100% 100%',
             backgroundPosition: 'center',
           }}
@@ -259,7 +259,7 @@ export default function Header({ config, isEditing, onUpdate, onImageUpload }: H
         key={item.href}
         className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pt-6 pb-10 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
         style={{
-          backgroundImage: 'url("/ハンバーガーメニュー背景.png")',
+          backgroundImage: 'url("/ハンバーガーメニュー背景.webp")',
           backgroundSize: '100% 100%',
           backgroundPosition: 'center',
         }}
