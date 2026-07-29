@@ -58,7 +58,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
       {/* Frame Background Image */}
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-[2.5rem]">
         <NextImage 
-          src="/images/store/fukuoka/price/A_お得なイベントコース/inner_frame.png" 
+          src="/images/store/fukuoka/price/A_お得なイベントコース/inner_frame.webp" 
           fill 
           priority
           className="object-fill mix-blend-multiply opacity-90" 
@@ -85,7 +85,7 @@ const PriceCard: React.FC<PriceCardProps> = ({
             {/* Small Strawberry Icon */}
             <div className="relative mb-3 h-[100px] w-[100px]">
                <NextImage 
-                 src="/images/store/fukuoka/price/A_お得なイベントコース/card_strawberry.png" 
+                 src="/images/store/fukuoka/price/A_お得なイベントコース/card_strawberry.webp" 
                  fill 
                  className="object-contain mix-blend-multiply" 
                  alt="strawberry" 

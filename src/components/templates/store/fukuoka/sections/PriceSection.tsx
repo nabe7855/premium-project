@@ -104,7 +104,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
           {/* トップ装飾ライン */}
           <div className="mb-4 h-[100px] w-full max-w-[1200px] opacity-90 drop-shadow-sm relative">
             <NextImage
-              src="/images/store/fukuoka/price/A_お得なイベントコース/divider.png"
+              src="/images/store/fukuoka/price/A_お得なイベントコース/divider.webp"
               fill
               className="object-contain"
               alt="divider"
@@ -151,7 +151,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
               <>
                 <div className="relative flex h-[120px] w-full max-w-[900px] items-center justify-center">
                   <img
-                    src="/images/store/fukuoka/price/A_お得なイベントコース/title_price_menu.png"
+                    src="/images/store/fukuoka/price/A_お得なイベントコース/title_price_menu.webp"
                     className="h-full w-full object-contain mix-blend-multiply"
                     alt="PRICE MENU"
                   />
@@ -302,7 +302,7 @@ const PriceSection: React.FC<PriceSectionProps> = ({
             <div className="absolute inset-0 rounded-full bg-gradient-to-b from-white/20 to-transparent opacity-50" />
 
             <div className="relative mr-2 h-12 w-12 opacity-100 drop-shadow-md">
-              <NextImage src="/images/store/fukuoka/price/A_お得なイベントコース/strawberries_transparent.png" fill className="object-contain" alt="" />
+              <NextImage src="/images/store/fukuoka/price/A_お得なイベントコース/strawberries_transparent.webp" fill className="object-contain" alt="" />
             </div>
 
             <span className="font-serif text-xl font-bold tracking-widest text-white drop-shadow-sm">

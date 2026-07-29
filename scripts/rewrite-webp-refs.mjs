@@ -33,6 +33,22 @@ const REPLACEMENTS = [
   '/キャストモデル３.png',
   '/ファーストビュー.png',
   '/初めてのお客様へバナー.png',
+
+  // ── 第2弾: 福岡店ヘッダー / 料金セクション ──
+  '/images/store/fukuoka/new-header/00_main_logo_full.png',
+  '/images/store/fukuoka/new-header/23_bottom_bar.png',
+  '/images/store/fukuoka/new-header/04_background_base.png',
+  '/images/store/fukuoka/new-header/09_today_card.png',
+  '/images/store/fukuoka/new-header/19_menu_card.png',
+  '/images/store/fukuoka/new-header/03_gold_divider.png',
+  '/images/store/fukuoka/new-header/35_flower.png',
+  '/images/store/fukuoka/new-header/37b_ornament_line.png',
+  '/images/store/fukuoka/new-header/36_sparkles.png',
+  '/images/store/fukuoka/price/A_お得なイベントコース/inner_frame.png',
+  '/images/store/fukuoka/price/A_お得なイベントコース/title_price_menu.png',
+  '/images/store/fukuoka/price/A_お得なイベントコース/divider.png',
+  '/images/store/fukuoka/price/A_お得なイベントコース/card_strawberry.png',
+  '/images/store/fukuoka/price/A_お得なイベントコース/strawberries_transparent.png',
 ];
 
 // WebPの実在確認（{slug}はfukuokaで代表検証）

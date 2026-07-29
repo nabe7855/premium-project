@@ -398,7 +398,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           >
           
           {/* Base Background */}
-          <img src="/images/store/fukuoka/new-header/04_background_base.png" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
+          <img src="/images/store/fukuoka/new-header/04_background_base.webp" className="absolute left-0 top-0 w-full h-full object-fill pointer-events-none" alt="" />
           
           {/* 🚀 最高解像度のCSS可視ヘッダーテキストバー (H1二重化防止のためdiv化 + 公式決定文言) */}
           <div 
@@ -420,20 +420,20 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           </div>
           
           {/* 🚀 元の文字入り画像パーツ (02_top_info_bar.png) は重なり防止のため完全除去 */}
-          <img src="/images/store/fukuoka/new-header/03_gold_divider.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
-          <img src="/images/store/fukuoka/new-header/23_bottom_bar.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="Web予約・電話受付" />
-          <img src="/images/store/fukuoka/new-header/35_flower.png" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
-          <img src="/images/store/fukuoka/new-header/36_sparkles.png" className="absolute pointer-events-none" style={{ left: '16.413%', top: '25.103%', width: '1.936%', height: '41.379%' }} alt="" />
-          <img src="/images/store/fukuoka/new-header/37b_ornament_line.png" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.310%', width: '89.811%', height: '4.690%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/03_gold_divider.webp" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/23_bottom_bar.webp" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }} alt="Web予約・電話受付" />
+          <img src="/images/store/fukuoka/new-header/35_flower.webp" className="absolute pointer-events-none" style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/36_sparkles.webp" className="absolute pointer-events-none" style={{ left: '16.413%', top: '25.103%', width: '1.936%', height: '41.379%' }} alt="" />
+          <img src="/images/store/fukuoka/new-header/37b_ornament_line.webp" className={`absolute pointer-events-none transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`} style={{ left: '5.071%', top: '11.310%', width: '89.811%', height: '4.690%' }} alt="" />
 
           {/* Interactive Group: logo_center */}
           <Link href={getAbsoluteHref('/store/{slug}')} className="absolute z-10 transition-transform hover:scale-[1.02] block" style={{ left: '20.931%', top: '15.448%', width: '62.610%', height: '53.517%' }}>
-            <img src="/images/store/fukuoka/new-header/00_main_logo_full.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%', objectFit: 'contain' }} alt="ストロベリーボーイズ" />
+            <img src="/images/store/fukuoka/new-header/00_main_logo_full.webp" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%', objectFit: 'contain' }} alt="ストロベリーボーイズ" />
           </Link>
 
           {/* 🚀 Interactive Group: today_card (実データがある時のみ動的バッジを表示し、ダミー固定数値は非表示化) */}
           <Link href={getAbsoluteHref('/store/{slug}/schedule')} className="absolute z-10 transition-transform hover:scale-[1.05] block group" style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}>
-            <img src="/images/store/fukuoka/new-header/09_today_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
+            <img src="/images/store/fukuoka/new-header/09_today_card.webp" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 本日の出勤セラピスト" />
             
             {/* 実数データが存在する場合のみ表示 (スクロール時も見切れないよう top-0.5 の内側に適切配置) */}
             {todayCasts.length > 0 && (
@@ -446,7 +446,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
 
           {/* Interactive Group: menu_card */}
           <button onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }} className="absolute z-20 outline-none transition-transform hover:scale-[1.05] block" style={{ left: '86.307%', top: '20.690%', width: '10.881%', height: '49.379%' }}>
-            <img src="/images/store/fukuoka/new-header/19_menu_card.png" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 料金メニュー" />
+            <img src="/images/store/fukuoka/new-header/19_menu_card.webp" className="absolute pointer-events-none" style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }} alt="ストロベリーボーイズ福岡店 料金メニュー" />
           </button>
 
           {/* Interactive Group: cta_left (Hitbox only) */}
