@@ -5,6 +5,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'fukuoka-hakata': {
     slug: 'fukuoka',
     areaSlug: 'hakata',
+    districtKeywords: ['博多区博多駅', '博多区住吉', '博多区祇園町', '博多区綱場町', '博多区店屋町', '博多区上川端町', '博多区博多駅前', '博多区博多駅東', '博多区博多駅中央街', '博多区博多駅南'],
     name: '博多',
     cityName: '福岡',
     description: '博多駅周辺（筑紫口・博多口）の主要ホテルやご自宅へ出張セラピストがお伺いします。出張費・交通費もわかりやすい明朗会計。',
@@ -18,6 +19,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'fukuoka-tenjin': {
     slug: 'fukuoka',
     areaSlug: 'tenjin',
+    districtKeywords: ['中央区天神', '中央区大名', '中央区今泉', '中央区舞鶴', '中央区警固'],
     name: '天神',
     cityName: '福岡',
     description: '天神・親富孝通り・大名エリアの指定ホテルや自宅へイケメンセラピストを派遣。お買物帰りや仕事終わりのリフレッシュに最適です。',
@@ -31,6 +33,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'fukuoka-nakasu': {
     slug: 'fukuoka',
     areaSlug: 'nakasu',
+    districtKeywords: ['博多区中洲', '博多区須崎町', '中央区春吉'],
     name: '中洲',
     cityName: '福岡',
     description: '中洲・川端川沿いエリアのホテルやご指定の場所へ出張。最高級の接客と癒やしのセラピーをお届けします。',
@@ -43,6 +46,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'fukuoka-yakuin': {
     slug: 'fukuoka',
     areaSlug: 'yakuin',
+    districtKeywords: ['中央区薬院', '中央区白金', '中央区渡辺通', '中央区高砂', '中央区平尾'],
     name: '薬院',
     cityName: '福岡',
     description: '薬院・平尾エリアのお洒落なご自宅やホテルへ出張。落ち着いた雰囲気の中で特別なひとときをお過ごしいただけます。',
@@ -55,6 +59,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'yokohama-kannai': {
     slug: 'yokohama',
     areaSlug: 'kannai',
+    districtKeywords: ['中区尾上町', '中区常盤町', '中区相生町', '中区住吉町', '中区港町', '中区太田町', '中区弁天通', '中区伊勢佐木町', '中区福富町', '中区長者町', '中区翁町', '中区曙町', '中区蓬莱町', '中区末広町', '中区吉田町', '中区不老町'],
     name: '関内',
     cityName: '横浜',
     description: '関内・伊勢佐木町エリアのホテルやご自宅へ出張セラピストを派遣。横浜店自慢のイケメンセラピストが極上の癒やしを提供します。',
@@ -67,6 +72,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'yokohama-minatomirai': {
     slug: 'yokohama',
     areaSlug: 'minatomirai',
+    districtKeywords: ['西区みなとみらい', '中区新港', '中区海岸通', '西区高島'],
     name: 'みなとみらい',
     cityName: '横浜',
     description: 'みなとみらい・桜木町エリアの高級シティホテルや高層ホテルへ出張。夜景とともに最高のロマンチックな癒やしをお届けします。',
@@ -79,6 +85,7 @@ export const AREA_MAP: Record<string, AreaDetailInfo> = {
   'yokohama-sakuragicho': {
     slug: 'yokohama',
     areaSlug: 'sakuragicho',
+    districtKeywords: ['中区桜木町', '中区野毛町', '中区花咲町', '中区宮川町', '西区戸部'],
     name: '桜木町',
     cityName: '横浜',
     description: '桜木町・野毛エリア周辺の指定ホテルやご自宅へ迅速に出張。観光やお仕事帰りのプライベートタイムを華やかに彩ります。',

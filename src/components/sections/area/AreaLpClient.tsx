@@ -15,6 +15,13 @@ export interface AreaDetailInfo {
   features: string[];
   recommendedHotels: string[];
   faqs: { question: string; answer: string }[];
+  /**
+   * このエリアの商圏を構成する町名（住所の部分一致に使う）。
+   * lh_areas の紐付けは「中央区」に191件が雑に振られている等、実態と
+   * 乖離しているため使わない。行政区ではなく商圏で定義することで、
+   * 郊外のホテルが主要エリアのLPに混入するのを防ぐ。
+   */
+  districtKeywords?: string[];
 }
 
 interface AreaLpClientProps {
@@ -31,7 +38,31 @@ interface AreaLpClientProps {
  * 基準を満たしたものだけを表示する。基準を満たさないホテルは出さない。
  * データが整うにつれて自動的に表示件数が増える想定。
  */
-function isPublishableHotel(hotel: any, areaName: string): boolean {
+/** 住所表記のゆれを吸収する（「日本、」「〒812-0038」「全角空白」など） */
+function normalizeAddress(address: string): string {
+  return (address || '')
+    .replace(/^日本、?/, '')
+    .replace(/〒\s*\d{3}-?\d{4}/, '')
+    .replace(/[\s　]/g, '');
+}
+
+/**
+ * 重複判定用に住所を数値レベルまで正規化する。
+ * 同一ホテルが「春吉3-16-34」と「春吉３丁目１６−３４」の2レコードで
+ * 登録されているため、全角・丁目・各種ハイフンを吸収する。
+ */
+function addressKey(address: string): string {
+  return normalizeAddress(address)
+    // 「福岡県福岡市…」と「福岡市…」が別レコードで登録されているため県名を落とす
+    .replace(/^.{2,4}?[都道府県]/, '')
+    .replace(/[０-９]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0))
+    .replace(/[丁目番地号]/g, '-')
+    .replace(/[−ー―‐‑–—]/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/-$/, '');
+}
+
+function isPublishableHotel(hotel: any, area: AreaDetailInfo): boolean {
   // ① 実写真があること（ストック写真での代替はしない）
   const realImage = hotel?.imageUrl || hotel?.images?.[0]?.url || hotel?.images?.[0];
   if (!realImage) return false;
@@ -39,21 +70,25 @@ function isPublishableHotel(hotel: any, areaName: string): boolean {
   // ② 住所があること
   if (!hotel?.address) return false;
 
-  // ③ このエリアとして登録されていること
-  //    住所の部分一致だと「博多」が「博多区」全域に広がり、
-  //    博多駅から離れた郊外まで拾ってしまうため、
-  //    lh_areas に紐付けられたエリア名での一致のみを条件にする
-  if (!(hotel.area || '').includes(areaName)) return false;
-
-  return true;
+  // ③ 商圏（町名）に含まれること
+  //    「博多」を住所の部分一致で見ると博多区全域（井相田・西月隈など空港側の
+  //    郊外まで）に広がってしまうため、町名単位で判定する。
+  const keywords = area.districtKeywords ?? [];
+  if (keywords.length === 0) return false; // 商圏が未定義のエリアは出さない
+  const addr = normalizeAddress(hotel.address);
+  return keywords.some((k) => addr.includes(k));
 }
 
-/** 同一ホテルの二重登録があるため、名前+住所で重複を除去する */
+/**
+ * 同一ホテルの二重登録があるため重複を除去する。
+ * 店名の表記ゆれ（「【HAYAMA HOTELS】」等の付記）があるので、
+ * 正規化した住所が一致すれば同一ホテルとみなす。
+ */
 function dedupeHotels(list: any[]): any[] {
   const seen = new Set<string>();
   return list.filter((h) => {
-    const key = `${h?.name ?? ''}|${h?.address ?? ''}`;
-    if (seen.has(key)) return false;
+    const key = addressKey(h?.address ?? '');
+    if (!key || seen.has(key)) return false;
     seen.add(key);
     return true;
   });
@@ -64,7 +99,7 @@ const MIN_HOTELS_TO_SHOW = 3;
 
 export default function AreaLpClient({ areaInfo, casts, storeSlug, hotels = [] }: AreaLpClientProps) {
   // 基準を満たすホテルだけに絞り込む
-  const publishableHotels = dedupeHotels((hotels || []).filter((h) => isPublishableHotel(h, areaInfo.name)));
+  const publishableHotels = dedupeHotels((hotels || []).filter((h) => isPublishableHotel(h, areaInfo)));
   const showHotelCards = publishableHotels.length >= MIN_HOTELS_TO_SHOW;
 
   return (
