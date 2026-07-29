@@ -143,6 +143,7 @@ export default function StoreManagement() {
   });
   const [updatingStoreId, setUpdatingStoreId] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [heroSelectedFile, setHeroSelectedFile] = useState<File | null>(null);
 
   // Fetch Stores
   const fetchStores = async () => {
@@ -420,6 +421,14 @@ export default function StoreManagement() {
         imageUrl = await handleFileUpload(selectedFile);
       }
 
+      let heroImageUrl = editingStore.heroCastImageUrl || null;
+      if (heroSelectedFile) {
+        if (heroImageUrl && heroImageUrl.startsWith('http')) {
+          await deleteStorageFile(heroImageUrl);
+        }
+        heroImageUrl = await handleFileUpload(heroSelectedFile);
+      }
+
       // 1. Update stores table
       const { error: storeError } = await supabase
         .from('stores')
@@ -440,7 +449,7 @@ export default function StoreManagement() {
           reservation_email: editingStore.reservationEmail || null,
           inquiry_email: editingStore.inquiryEmail || null,
           external_url: editingStore.externalUrl || null,
-          hero_cast_image_url: editingStore.heroCastImageUrl || null,
+          hero_cast_image_url: heroImageUrl,
           use_external_url: editingStore.useExternalUrl ?? false,
         })
         .eq('id', editingStore.id);
@@ -482,10 +491,11 @@ export default function StoreManagement() {
       await saveStoreTopConfig(editingStore.slug, updatedConfig);
 
       setStores((prev) =>
-        prev.map((s) => (s.id === editingStore.id ? { ...editingStore, photoUrl: imageUrl } : s)),
+        prev.map((s) => (s.id === editingStore.id ? { ...editingStore, photoUrl: imageUrl, heroCastImageUrl: heroImageUrl || '' } : s)),
       );
       setEditingStore(null);
       setSelectedFile(null);
+      setHeroSelectedFile(null);
       alert('店舗情報を更新しました');
     } catch (err: any) {
       console.error('Update error:', err);
@@ -734,7 +744,32 @@ export default function StoreManagement() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2"                         {editingStore.useExternalUrl && (
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                  <div className="space-y-6">
+                    <div className="space-y-4 rounded-xl border border-gray-700/30 bg-gray-900/40 p-4">
+                      <div className="flex items-center gap-2 border-b border-gray-700/50 pb-2">
+                        <Edit2 size={16} className="text-brand-accent" />
+                        <h3 className="text-sm font-bold text-white">基本情報</h3>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
+                            店舗名
+                          </label>
+                          <input
+                            type="text"
+                            value={editingStore.name}
+                            onChange={(e) =>
+                              setEditingStore({
+                                ...editingStore,
+                                name: e.target.value,
+                              })
+                            }
+                            required
+                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                          />
+                        </div>
+                        {editingStore.useExternalUrl && (
                           <div className="animate-in fade-in slide-in-from-top-2 space-y-3">
                             <div>
                               <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
@@ -754,48 +789,32 @@ export default function StoreManagement() {
                                 className="mt-1 w-full rounded-md border border-brand-accent/50 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
                               />
                             </div>
-                            <div>
-                              <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                                🖼️ FVヒーロー画像URL (外部誘導店舗用)
-                              </label>
-                              <input
-                                type="text"
-                                value={editingStore.heroCastImageUrl || ''}
-                                onChange={(e) =>
-                                  setEditingStore({
-                                    ...editingStore,
-                                    heroCastImageUrl: e.target.value,
-                                  })
-                                }
-                                placeholder="https://... (未設定時はデフォルト表示)"
-                                className="mt-1 w-full rounded-md border border-brand-accent/50 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                              />
-                            </div>
-                          </div>
-                        )}equired
-                            className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                          />
-                        </div>
-                        {editingStore.useExternalUrl && (
-                          <div className="animate-in fade-in slide-in-from-top-2">
-                            <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
-                              🔗 リダイレクト先URL
-                            </label>
-                            <input
-                              type="text"
-                              value={editingStore.externalUrl || ''}
-                              onChange={(e) =>
-                                setEditingStore({
-                                  ...editingStore,
-                                  externalUrl: e.target.value,
-                                })
-                              }
-                              placeholder="https://example.com/shop"
-                              required
-                              className="mt-1 w-full rounded-md border border-brand-accent/50 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
-                            />
                           </div>
                         )}
+                        {/* 🖼️ FVヒーロー顔写真アップロード (WebP自動圧縮) */}
+                        <div className="rounded-xl border border-gray-700/60 bg-gray-900/60 p-3">
+                          <label className="text-xs font-bold uppercase tracking-wider text-brand-accent flex items-center justify-between">
+                            <span>🖼️ FVヒーロー顔写真（管理用）</span>
+                            <span className="text-[10px] text-gray-400 font-normal">※WebP自動圧縮保存</span>
+                          </label>
+                          {editingStore.heroCastImageUrl && (
+                            <div className="my-2 relative aspect-[4/3] w-24 overflow-hidden rounded-lg border border-gray-700">
+                              <img src={editingStore.heroCastImageUrl} alt="ヒーロープレビュー" className="h-full w-full object-cover" />
+                            </div>
+                          )}
+                          <label className="mt-2 flex h-20 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-700 bg-gray-800/80 transition-colors hover:bg-gray-800">
+                            <Upload className="mb-1 h-5 w-5 text-gray-400" />
+                            <p className="text-[11px] text-gray-400 font-medium">
+                              {heroSelectedFile ? heroSelectedFile.name : '新しい画像をアップロード (自動WebP化)'}
+                            </p>
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept="image/*"
+                              onChange={(e) => setHeroSelectedFile(e.target.files?.[0] || null)}
+                            />
+                          </label>
+                        </div>
                         <div>
                           <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
                             キャッチコピー

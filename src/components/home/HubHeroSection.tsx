@@ -179,8 +179,6 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
     }
   }, [N]);
 
-  const activeStore = storeItems[activeIndex] || storeItems[0];
-
   // 指定した loopedIndex のカードを中央に正確にスクロール
   const scrollToLoopedIndex = useCallback((loopedIdx: number, smooth: boolean = true) => {
     const container = scrollRef.current;
