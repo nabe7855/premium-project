@@ -1,6 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import NextImage from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, ChevronRight, ExternalLink } from 'lucide-react';
+import { TARGET_AREAS } from '@/lib/area-data';
 
 export interface StoreItem {
   id: string;
@@ -437,6 +440,83 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
               aria-label={`店舗 ${idx + 1}`}
             />
           ))}
+        </div>
+
+        {/* 📍 店舗選択連動型・ファーストビュー爆速エリア検索モジュール (行動心理導線の最適化) */}
+        <div className="mx-auto max-w-4xl px-4 pt-6 pb-2">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeStore.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.2 }}
+              className="rounded-3xl border border-rose-200/80 bg-white/90 p-4 sm:p-6 shadow-xl backdrop-blur-md"
+            >
+              {!activeStore.isExternal ? (
+                <div>
+                  <div className="mb-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-rose-500 text-white shadow-sm">
+                        <MapPin className="h-4 w-4" />
+                      </span>
+                      <span className="text-xs sm:text-sm font-black tracking-tight text-slate-800">
+                        {activeStore.name}の対応出張エリア（即日派遣可能）
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-bold text-rose-500 uppercase tracking-wider hidden sm:inline">
+                      1Tap Access
+                    </span>
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                    {TARGET_AREAS.filter((a) => a.slug === activeStore.id).map((area) => (
+                      <Link
+                        key={area.areaSlug}
+                        href={`/store/${activeStore.id}/area/${area.areaSlug}`}
+                        className="group flex items-center justify-between rounded-2xl border border-rose-100 bg-gradient-to-r from-rose-50/60 to-pink-50/40 p-2.5 sm:p-3 text-left transition-all hover:border-rose-400 hover:bg-rose-500 hover:shadow-md"
+                      >
+                        <div>
+                          <p className="text-xs font-black text-slate-800 transition-colors group-hover:text-white">
+                            {area.name}エリア
+                          </p>
+                          <p className="text-[8px] font-medium text-slate-400 group-hover:text-rose-100 hidden sm:block">
+                            指定ホテル・自宅出張
+                          </p>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-rose-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white shrink-0" />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-7 w-7 items-center justify-center rounded-xl bg-slate-100 text-slate-500">
+                      <MapPin className="h-4 w-4" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-black text-slate-800">
+                        {activeStore.name}エリアのご利用について
+                      </p>
+                      <p className="text-[10px] text-slate-500">
+                        ※{activeStore.name}地区のご予約・詳細はグループ公式Webサイトにて承っております
+                      </p>
+                    </div>
+                  </div>
+                  <a
+                    href={activeStore.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="shrink-0 rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white transition-all hover:bg-rose-600 hover:shadow-lg flex items-center gap-1.5"
+                  >
+                    <span>{activeStore.name}グループ公式サイトを開く</span>
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </a>
+                </div>
+              )}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </div>
 
