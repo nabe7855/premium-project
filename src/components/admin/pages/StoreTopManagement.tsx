@@ -353,19 +353,27 @@ export default function StoreTopManagement() {
           newNavLinks[index] = { ...newNavLinks[index], imageUrl: publicUrl };
           newConfig.header = { ...prev.header, navLinks: newNavLinks };
         } else if (section === 'hero' && typeof index === 'number') {
-          let newImages = [...prev.hero.images];
-          while (newImages.length < index) {
-            newImages.push('');
-          }
-          if (index === newImages.length) {
+          // HeroSection は images を filter(Boolean) した配列を基準に index を渡してくる。
+          // 保存側が生配列を基準にすると、空要素が1つでもあると index がずれ、
+          // 「追加」のつもりが既存画像の上書きになってしまう（枚数が増えない）。
+          // そのため保存側でも空要素を除去した配列を基準に揃える。
+          // imageLinks は images と同じ添字で対応するため、同時に詰める。
+          const rawImages = prev.hero.images || [];
+          const rawLinks = prev.hero.imageLinks || [];
+          const kept = rawImages
+            .map((img, i) => ({ img, link: rawLinks[i] || '' }))
+            .filter((x) => x.img);
+
+          const newImages = kept.map((x) => x.img);
+          const newLinks = kept.map((x) => x.link);
+
+          if (index >= newImages.length) {
             newImages.push(publicUrl);
+            newLinks.push('');
           } else {
             newImages[index] = publicUrl;
           }
-          const newLinks = [...(prev.hero.imageLinks || [])];
-          while (newLinks.length < newImages.length) {
-            newLinks.push('');
-          }
+
           newConfig.hero = { ...prev.hero, images: newImages, imageLinks: newLinks };
         } else if (section === 'concept' && key === 'items' && typeof index === 'number') {
           const newItems = [...prev.concept.items];
