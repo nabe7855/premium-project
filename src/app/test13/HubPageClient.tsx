@@ -344,6 +344,16 @@ export default function HubPageClient({
       {/* ─── 1. HERO (ワイヤーフレーム忠実再現の新HubHeroSection) ─── */}
       <HubHeroSection stores={stores} casts={casts} />
 
+      {/* ─── 1.05 信頼バッジ帯 (Since 2018・実績訴求 / SSR静的表示) ─── */}
+      <section aria-label="ストロベリーボーイズの信頼と実績" className="bg-white border-b border-rose-100/60 py-4">
+        <div className="mx-auto max-w-5xl px-4 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">Since 2018・グループ運営8年</span>
+          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">完全審査制セラピスト</span>
+          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">明朗会計・追加料金なし</span>
+          <span className="inline-flex items-center rounded-full bg-rose-50 border border-rose-100 px-3.5 py-1.5 text-[11px] sm:text-xs font-bold text-rose-600">完全予約制・秘密厳守</span>
+        </div>
+      </section>
+
 
       {/* ─── 2. 「わたしたちについて」セクション ─── */}
       <section id="about" className="relative overflow-hidden bg-white py-16 sm:py-24 border-t border-rose-100/60">
@@ -368,7 +378,8 @@ export default function HubPageClient({
             <p className="text-sm sm:text-base text-slate-600 font-medium leading-relaxed max-w-2xl mx-auto">
               仕事も、日常も、いつも頑張っているあなたへ。<br className="hidden sm:inline" />
               癒やされたい夜も、誰かに甘えたい夜も、ここでは、あなたの気持ちとペースを大切にします。<br />
-              ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。
+              ストロベリーボーイズは、初めての方にも安心してご利用いただける女性専用の出張サービスです。<br />
+              2018年の創業以来、グループとして8年にわたり女性専用サービス一筋で運営してまいりました。積み重ねてきた信頼と経験が、わたしたちの誇りです。
             </p>
 
             {/* 4つの安心カード */}

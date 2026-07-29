@@ -113,6 +113,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               "alternateName": "Strawberry Boys",
               "url": "https://www.sutoroberrys.jp",
               "logo": "https://www.sutoroberrys.jp/logo.png",
+              "foundingDate": "2018",
               "sameAs": [
                 "https://twitter.com/oden0713",
                 "https://www.instagram.com/sutoroberrys/",
