@@ -173,6 +173,7 @@ export default function StoreManagement() {
         inquiryEmail: s.inquiry_email || '',
         businessHours: s.business_hours || '',
         receptionHours: s.reception_hours || '',
+        heroCastImageUrl: s.hero_cast_image_url || '',
         externalUrl: s.external_url || '',
         useExternalUrl: s.use_external_url ?? false,
         isActive: s.is_active ?? true,
@@ -439,6 +440,7 @@ export default function StoreManagement() {
           reservation_email: editingStore.reservationEmail || null,
           inquiry_email: editingStore.inquiryEmail || null,
           external_url: editingStore.externalUrl || null,
+          hero_cast_image_url: editingStore.heroCastImageUrl || null,
           use_external_url: editingStore.useExternalUrl ?? false,
         })
         .eq('id', editingStore.id);
@@ -732,28 +734,45 @@ export default function StoreManagement() {
                   </p>
                 </div>
 
-                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                  <div className="space-y-6">
-                    <div className="space-y-4 rounded-xl border border-gray-700/30 bg-gray-900/40 p-4">
-                      <div className="flex items-center gap-2 border-b border-gray-700/50 pb-2">
-                        <Edit2 size={16} className="text-brand-accent" />
-                        <h3 className="text-sm font-bold text-white">基本情報</h3>
-                      </div>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="text-xs font-bold uppercase tracking-wider text-brand-text-secondary">
-                            店舗名
-                          </label>
-                          <input
-                            type="text"
-                            value={editingStore.name}
-                            onChange={(e) =>
-                              setEditingStore({
-                                ...editingStore,
-                                name: e.target.value,
-                              })
-                            }
-                            required
+                <div className="grid grid-cols-1 gap-6 md:grid-cols-2"                         {editingStore.useExternalUrl && (
+                          <div className="animate-in fade-in slide-in-from-top-2 space-y-3">
+                            <div>
+                              <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                                🔗 リダイレクト先URL
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.externalUrl || ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    externalUrl: e.target.value,
+                                  })
+                                }
+                                placeholder="https://example.com/shop"
+                                required
+                                className="mt-1 w-full rounded-md border border-brand-accent/50 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                              />
+                            </div>
+                            <div>
+                              <label className="text-xs font-bold uppercase tracking-wider text-brand-accent">
+                                🖼️ FVヒーロー画像URL (外部誘導店舗用)
+                              </label>
+                              <input
+                                type="text"
+                                value={editingStore.heroCastImageUrl || ''}
+                                onChange={(e) =>
+                                  setEditingStore({
+                                    ...editingStore,
+                                    heroCastImageUrl: e.target.value,
+                                  })
+                                }
+                                placeholder="https://... (未設定時はデフォルト表示)"
+                                className="mt-1 w-full rounded-md border border-brand-accent/50 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
+                              />
+                            </div>
+                          </div>
+                        )}equired
                             className="mt-1 w-full rounded-md border border-gray-700 bg-gray-800 p-2 text-white outline-none focus:ring-1 focus:ring-brand-accent"
                           />
                         </div>

@@ -342,7 +342,7 @@ export default function HubPageClient({
       />
 
       {/* ─── 1. HERO (ワイヤーフレーム忠実再現の新HubHeroSection) ─── */}
-      <HubHeroSection stores={stores} />
+      <HubHeroSection stores={stores} casts={casts} />
 
 
       {/* ─── 2. 「わたしたちについて」セクション ─── */}

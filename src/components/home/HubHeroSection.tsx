@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, ChevronRight, ExternalLink } from 'lucide-react';
 import { TARGET_AREAS } from '@/lib/area-data';
+import { getTransformedImageUrl } from '@/lib/image-url';
 
 export interface StoreItem {
   id: string;
@@ -14,6 +15,7 @@ export interface StoreItem {
   castCount: number;
   image: string;
   heroCastImage: string;
+  heroCastImages: string[];
   floatCopy: string;
   href: string;
   isExternal?: boolean;
@@ -21,6 +23,7 @@ export interface StoreItem {
 
 export interface HubHeroSectionProps {
   stores?: any[];
+  casts?: any[];
 }
 
 // デフォルト表示補完用マップ
@@ -74,9 +77,10 @@ const STORE_COMPLEMENT_MAP: Record<string, {
   },
 };
 
-export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
+export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSectionProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const [currentLoopedIdx, setCurrentLoopedIdx] = useState(0);
+  const [castImgIndex, setCastImgIndex] = useState(0);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFading, setIsFading] = useState(false);
 
@@ -98,6 +102,7 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
         castCount: comp.castCount,
         image: comp.image,
         heroCastImage: comp.heroCastImage,
+        heroCastImages: [comp.heroCastImage],
         floatCopy: comp.floatCopy,
         href: slug === 'fukuoka' || slug === 'yokohama' ? `/store/${slug}` : slug === 'tokyo' ? 'https://sutoroberrys.com/main/' : slug === 'osaka' ? 'https://sutoroberrys-osaka.com/main.html' : 'https://sutoroberrys-aichi.com/main.html',
         isExternal: slug !== 'fukuoka' && slug !== 'yokohama',
@@ -112,6 +117,22 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
         ? store.external_url
         : `/store/${slug}`;
 
+      // 管理画面で設定された所属キャスト画像リストを収集
+      const storeCasts = casts?.filter((c: any) => {
+        const castStoreSlug = c.stores?.[0]?.slug || c.storeSlug || c.store_slug;
+        return castStoreSlug === slug && (c.mainImageUrl || c.imageUrl || c.image_url || c.main_image_url);
+      }) || [];
+
+      const rawCastImages = store.hero_cast_image_url
+        ? [store.hero_cast_image_url]
+        : storeCasts.map((c: any) => c.mainImageUrl || c.imageUrl || c.main_image_url || c.image_url).filter(Boolean);
+
+      const heroCastImages = rawCastImages.length > 0
+        ? rawCastImages.map((url: string) => getTransformedImageUrl(url, { width: 640, format: 'webp' }) || comp.heroCastImage)
+        : [comp.heroCastImage];
+
+      const heroCastImage = heroCastImages[0] || comp.heroCastImage;
+
       return {
         id: store.id || slug,
         slug,
@@ -120,16 +141,37 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
         catchphrase: store.catch_copy || comp.catchphrase,
         castCount: comp.castCount,
         image: store.image_url || comp.image,
-        heroCastImage: comp.heroCastImage,
+        heroCastImage,
+        heroCastImages,
         floatCopy: store.catch_copy || comp.floatCopy,
         href,
         isExternal,
       };
     });
-  }, [stores]);
+  }, [stores, casts]);
 
   const N = storeItems.length;
   const LOOPED_STORES = useMemo(() => [...storeItems, ...storeItems, ...storeItems], [storeItems]);
+
+  const activeStore = storeItems[activeIndex] || storeItems[0];
+  const currentHeroImg = activeStore?.heroCastImages?.[castImgIndex % (activeStore.heroCastImages.length || 1)] || activeStore?.heroCastImage;
+
+  // activeIndex が変わった時は castImgIndex を 0 にリセット
+  useEffect(() => {
+    setCastImgIndex(0);
+  }, [activeIndex]);
+
+  // 5秒ごとに該当店舗の所属キャスト画像をふわっと切り替え
+  useEffect(() => {
+    const currentImages = activeStore?.heroCastImages || [];
+    if (currentImages.length <= 1) return;
+
+    const timer = setInterval(() => {
+      setCastImgIndex((prev) => (prev + 1) % currentImages.length);
+    }, 5000);
+
+    return () => clearInterval(timer);
+  }, [activeStore, activeIndex]);
 
   useEffect(() => {
     if (N > 0) {
@@ -294,16 +336,27 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
           </div>
           <div className="col-span-6 relative flex justify-end items-center">
             <div className="relative w-full max-w-[460px] aspect-[4/4.6] rounded-3xl overflow-hidden shadow-xl border border-white/60">
-              <NextImage
-                src={activeStore.heroCastImage}
-                alt={activeStore.name}
-                fill
-                sizes="(max-width: 768px) 100vw, 460px"
-                fetchPriority="high"
-                className={`object-cover transition-opacity duration-500 ${isFading ? 'opacity-40' : 'opacity-100'}`}
-                priority
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-[#fbf6f6]/60 via-transparent to-transparent" />
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${activeStore.id}-${castImgIndex}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.8 }}
+                  className="absolute inset-0"
+                >
+                  <NextImage
+                    src={currentHeroImg}
+                    alt={`ストロベリーボーイズ${activeStore.name}店の人気セラピスト`}
+                    fill
+                    sizes="(max-width: 768px) 100vw, 460px"
+                    fetchPriority="high"
+                    className="object-cover"
+                    priority
+                  />
+                </motion.div>
+              </AnimatePresence>
+              <div className="absolute inset-0 bg-gradient-to-tr from-[#fbf6f6]/60 via-transparent to-transparent pointer-events-none" />
             </div>
             <div className="absolute left-[-20px] lg:left-[-40px] top-1/2 -translate-y-1/2 z-30 pointer-events-none">
               <p className="font-serif text-2xl lg:text-3xl font-extrabold italic leading-relaxed tracking-widest text-[#7a283c] drop-shadow-md whitespace-pre-line transform -rotate-6">
@@ -324,15 +377,26 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
           </p>
         </div>
         <div className="relative w-full aspect-[3/4] overflow-hidden">
-          <NextImage
-            src={activeStore.heroCastImage}
-            alt={activeStore.name}
-            fill
-            sizes="100vw"
-            fetchPriority="high"
-            className={`object-cover transition-opacity duration-500 ${isFading ? 'opacity-40' : 'opacity-100'}`}
-            priority
-          />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`${activeStore.id}-${castImgIndex}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.8 }}
+              className="absolute inset-0"
+            >
+              <NextImage
+                src={currentHeroImg}
+                alt={`ストロベリーボーイズ${activeStore.name}店の人気セラピスト`}
+                fill
+                sizes="100vw"
+                fetchPriority="high"
+                className="object-cover"
+                priority
+              />
+            </motion.div>
+          </AnimatePresence>
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
             <p className="font-serif text-xl font-bold italic leading-relaxed tracking-widest text-white drop-shadow-lg whitespace-pre-line transform -rotate-3">
               {activeStore.floatCopy}

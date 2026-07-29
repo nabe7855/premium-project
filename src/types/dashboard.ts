@@ -68,6 +68,7 @@ export interface Store {
   recruitEmail?: string;
   reservationEmail?: string;
   inquiryEmail?: string;
+  heroCastImageUrl?: string;
   externalUrl?: string;
   useExternalUrl?: boolean;
   isActive: boolean;

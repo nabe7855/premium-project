@@ -54,6 +54,7 @@ model Store {
   phone              String?
   catch_copy         String?
   image_url          String?
+  hero_cast_image_url String?
   theme_color        String?
   tags               String[]
   description        String?
