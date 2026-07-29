@@ -7,6 +7,7 @@ import { TARGET_AREAS } from '@/lib/area-data';
 
 export interface StoreItem {
   id: string;
+  slug: string;
   name: string;
   enName: string;
   catchphrase: string;
@@ -90,6 +91,7 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
     if (!stores || stores.length === 0) {
       return Object.entries(STORE_COMPLEMENT_MAP).map(([slug, comp]) => ({
         id: slug,
+        slug,
         name: slug === 'tokyo' ? '東京' : slug === 'osaka' ? '大阪' : slug === 'yokohama' ? '横浜' : slug === 'nagoya' ? '名古屋' : '福岡',
         enName: comp.enName,
         catchphrase: comp.catchphrase,
@@ -103,7 +105,7 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
     }
 
     return stores.map((store) => {
-      const slug = store.slug || 'fukuoka';
+      const slug = store.slug || (store.name?.includes('横浜') ? 'yokohama' : store.name?.includes('東京') ? 'tokyo' : store.name?.includes('大阪') ? 'osaka' : store.name?.includes('名古屋') ? 'nagoya' : 'fukuoka');
       const comp = STORE_COMPLEMENT_MAP[slug] || STORE_COMPLEMENT_MAP['fukuoka'];
       const isExternal = Boolean(store.use_external_url && store.external_url);
       const href = isExternal
@@ -112,6 +114,7 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
 
       return {
         id: store.id || slug,
+        slug,
         name: store.name?.replace('店', '') || slug,
         enName: slug.toUpperCase(),
         catchphrase: store.catch_copy || comp.catchphrase,
@@ -470,23 +473,26 @@ export default function HubHeroSection({ stores = [] }: HubHeroSectionProps) {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-                    {TARGET_AREAS.filter((a) => a.slug === activeStore.id).map((area) => (
-                      <Link
-                        key={area.areaSlug}
-                        href={`/store/${activeStore.id}/area/${area.areaSlug}`}
-                        className="group flex items-center justify-between rounded-2xl border border-rose-100 bg-gradient-to-r from-rose-50/60 to-pink-50/40 p-2.5 sm:p-3 text-left transition-all hover:border-rose-400 hover:bg-rose-500 hover:shadow-md"
-                      >
-                        <div>
-                          <p className="text-xs font-black text-slate-800 transition-colors group-hover:text-white">
-                            {area.name}エリア
-                          </p>
-                          <p className="text-[8px] font-medium text-slate-400 group-hover:text-rose-100 hidden sm:block">
-                            指定ホテル・自宅出張
-                          </p>
-                        </div>
-                        <ChevronRight className="h-4 w-4 text-rose-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white shrink-0" />
-                      </Link>
-                    ))}
+                    {(() => {
+                      const activeSlug = activeStore.slug || (activeStore.name?.includes('横浜') ? 'yokohama' : 'fukuoka');
+                      return TARGET_AREAS.filter((a) => a.slug === activeSlug).map((area) => (
+                        <Link
+                          key={area.areaSlug}
+                          href={`/store/${activeSlug}/area/${area.areaSlug}`}
+                          className="group flex items-center justify-between rounded-2xl border border-rose-100 bg-gradient-to-r from-rose-50/60 to-pink-50/40 p-2.5 sm:p-3 text-left transition-all hover:border-rose-400 hover:bg-rose-500 hover:shadow-md"
+                        >
+                          <div>
+                            <p className="text-xs font-black text-slate-800 transition-colors group-hover:text-white">
+                              {area.name}エリア
+                            </p>
+                            <p className="text-[8px] font-medium text-slate-400 group-hover:text-rose-100 hidden sm:block">
+                              指定ホテル・自宅出張
+                            </p>
+                          </div>
+                          <ChevronRight className="h-4 w-4 text-rose-400 transition-transform group-hover:translate-x-0.5 group-hover:text-white shrink-0" />
+                        </Link>
+                      ));
+                    })()}
                   </div>
                 </div>
               ) : (
