@@ -19,7 +19,7 @@ import {
   Crown,
 } from 'lucide-react';
 import Link from 'next/link';
-import Script from 'next/script';
+
 import { useEffect, useState, useMemo } from 'react';
 import { AREA_MAP, TARGET_AREAS } from '@/lib/area-data';
 
@@ -291,23 +291,8 @@ export default function HubPageClient({
   mediaArticles,
 }: HubPageClientProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [activeTab, setActiveTab] = useState<'news' | 'tweet' | 'video'>('news');
+  const [activeTab, setActiveTab] = useState<'news' | 'video'>('news');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
-
-  // Twitterウィジェットの再初期化
-  useEffect(() => {
-    if (activeTab === 'tweet') {
-      try {
-        // @ts-ignore
-        if (window.twttr && window.twttr.widgets) {
-          // @ts-ignore
-          window.twttr.widgets.load();
-        }
-      } catch (e) {
-        console.error('Twitter widget load error:', e);
-      }
-    }
-  }, [activeTab]);
 
   const filteredCasts = casts.filter(
     (c) =>
@@ -618,7 +603,6 @@ export default function HubPageClient({
             {(
               [
                 { id: 'news', label: 'ニュース一覧', icon: <Sparkles className="h-4 w-4" /> },
-                { id: 'tweet', label: 'ツイート一覧', icon: <Users className="h-4 w-4" /> },
                 { id: 'video', label: '動画一覧', icon: <Play className="h-4 w-4" /> },
               ] as const
             ).map((tab) => (
@@ -690,27 +674,7 @@ export default function HubPageClient({
               </motion.div>
             )}
 
-            {activeTab === 'tweet' && (
-              <motion.div
-                key="tweet"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="mx-auto max-w-2xl px-4"
-              >
-                <div className="overflow-hidden rounded-[2.5rem] border border-slate-100 bg-white p-4 shadow-xl">
-                  {/* Twitter Timeline Embed */}
-                  <a
-                    className="twitter-timeline"
-                    data-height="800"
-                    data-theme="light"
-                    href="https://twitter.com/hashtag/%E3%82%B9%E3%83%88%E3%83%AD%E3%83%99%E3%83%AA%E3%83%BC%E3%83%9C%E3%83%BC%E3%82%A4%E3%82%BA?src=hash&ref_src=twsrc%5Etfw"
-                  >
-                    Tweets about #ストロベリーボーイズ
-                  </a>
-                </div>
-              </motion.div>
-            )}
+
 
             {activeTab === 'video' && (
               <motion.div
@@ -753,7 +717,7 @@ export default function HubPageClient({
               </motion.div>
             )}
           </AnimatePresence>
-          <Script src="https://platform.twitter.com/widgets.js" strategy="afterInteractive" />
+
         </div>
       </section>
 
