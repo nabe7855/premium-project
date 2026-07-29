@@ -21,6 +21,7 @@ import {
 import Link from 'next/link';
 import Script from 'next/script';
 import { useEffect, useState, useMemo } from 'react';
+import { AREA_MAP, TARGET_AREAS } from '@/lib/area-data';
 
 /* ─── 静的データ ─────────────────────────────────── */
 
@@ -798,6 +799,79 @@ export default function HubPageClient({
         </div>
       </section>
 
+      {/* ─── 4.5 出張対応エリアから探す (SEO & Area LP Hub) ─── */}
+      <section className="bg-slate-900 px-6 py-24 text-white [content-visibility:auto] [contain-intrinsic-size:500px]">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-12 flex flex-col items-start justify-between gap-4 md:flex-row md:items-end">
+            <div>
+              <span className="mb-2 block text-xs font-black uppercase tracking-[0.3em] text-rose-400">
+                SEARCH BY AREA
+              </span>
+              <h2 className="text-3xl font-black tracking-tight text-white md:text-4xl">
+                出張対応エリアから探す
+              </h2>
+            </div>
+            <p className="max-w-md text-xs leading-relaxed text-slate-400 md:text-sm">
+              博多・天神・中洲・薬院・関内・みなとみらい・桜木町など主要エリアの指定ホテルやご自宅へセラピストが出張いたします。
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
+            {/* 福岡エリア */}
+            <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl md:p-8">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/20 text-rose-400 font-black text-sm">
+                  博多
+                </span>
+                <div>
+                  <h3 className="text-xl font-black text-white">福岡エリア</h3>
+                  <p className="text-xs text-slate-400">博多駅周辺・天神・大名・中洲川端・薬院</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {TARGET_AREAS.filter((a) => a.slug === 'fukuoka').map((area) => (
+                  <Link
+                    key={area.areaSlug}
+                    href={`/store/fukuoka/area/${area.areaSlug}`}
+                    className="group flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-xs font-black text-white transition-all hover:border-rose-400 hover:bg-rose-500 hover:shadow-lg hover:shadow-rose-500/30 md:text-sm"
+                  >
+                    <MapPin className="h-4 w-4 text-rose-400 group-hover:text-white" />
+                    <span>{area.name}エリアガイド</span>
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-white" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+
+            {/* 横浜エリア */}
+            <div className="rounded-[2.5rem] border border-white/10 bg-white/5 p-6 backdrop-blur-xl md:p-8">
+              <div className="mb-6 flex items-center gap-3">
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-500/20 text-rose-400 font-black text-sm">
+                  横浜
+                </span>
+                <div>
+                  <h3 className="text-xl font-black text-white">横浜エリア</h3>
+                  <p className="text-xs text-slate-400">関内・伊勢佐木町・みなとみらい・桜木町・野毛</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3">
+                {TARGET_AREAS.filter((a) => a.slug === 'yokohama').map((area) => (
+                  <Link
+                    key={area.areaSlug}
+                    href={`/store/yokohama/area/${area.areaSlug}`}
+                    className="group flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-5 py-3 text-xs font-black text-white transition-all hover:border-rose-400 hover:bg-rose-500 hover:shadow-lg hover:shadow-rose-500/30 md:text-sm"
+                  >
+                    <MapPin className="h-4 w-4 text-rose-400 group-hover:text-white" />
+                    <span>{area.name}エリアガイド</span>
+                    <ChevronRight className="h-3.5 w-3.5 text-slate-400 group-hover:text-white" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ─── 5. FAQ ─── */}
       <section className="bg-white px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-3xl">
@@ -841,13 +915,13 @@ export default function HubPageClient({
 
       {/* ─── Footer ─── */}
       <footer className="border-t border-slate-100 bg-white px-6 py-24">
-        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-16 md:grid-cols-4">
+        <div className="mx-auto grid max-w-7xl grid-cols-1 gap-12 md:grid-cols-5">
           <div className="col-span-2">
             <div className="mb-6 font-serif text-3xl font-black text-rose-500">
               PLATFORM<span className="text-slate-900">.HUB</span>
             </div>
             <p className="max-w-sm leading-loose text-slate-400">
-              女性のウェルネスと「整え」のプラットフォーム。全国の支店とAI技術が理想をサポートします。
+              女性専用の出張リラクゼーション・ウェルネスサロン「ストロベリーボーイズ」。福岡・横浜の各指定ホテルやご自宅へ厳選セラピストを出張派遣いたします。
             </p>
           </div>
           <div>
@@ -855,9 +929,27 @@ export default function HubPageClient({
               SERVICES
             </h4>
             <ul className="space-y-4 text-sm font-bold text-slate-500">
-              <li>キャストを探す</li>
-              <li>店舗一覧</li>
-              <li>ご利用ガイド</li>
+              <li><Link href="/store/fukuoka" className="hover:text-rose-500 transition-colors">福岡店（博多・天神）</Link></li>
+              <li><Link href="/store/yokohama" className="hover:text-rose-500 transition-colors">横浜店（関内・桜木町）</Link></li>
+              <li><Link href="/guide" className="hover:text-rose-500 transition-colors">初めての方へ</Link></li>
+              <li><Link href="/plan" className="hover:text-rose-500 transition-colors">料金・プラン解説</Link></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="mb-6 text-xs font-black uppercase tracking-widest text-slate-300">
+              AREA GUIDE
+            </h4>
+            <ul className="space-y-3 text-xs font-bold text-slate-500">
+              {TARGET_AREAS.map((area) => (
+                <li key={area.areaSlug}>
+                  <Link
+                    href={`/store/${area.slug}/area/${area.areaSlug}`}
+                    className="hover:text-rose-500 transition-colors"
+                  >
+                    {area.cityName}・{area.name}エリアガイド
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
@@ -865,9 +957,9 @@ export default function HubPageClient({
               SUPPORT
             </h4>
             <ul className="space-y-4 text-sm font-bold text-slate-500">
-              <li>よくあるご質問</li>
-              <li>プライバシーポリシー</li>
-              <li>お問い合わせ</li>
+              <li><Link href="/guide/cast-select" className="hover:text-rose-500 transition-colors">キャストの選び方</Link></li>
+              <li><Link href="/guide/nomination" className="hover:text-rose-500 transition-colors">指名のご案内</Link></li>
+              <li><Link href="/store/fukuoka/contact" className="hover:text-rose-500 transition-colors">お問い合わせ</Link></li>
             </ul>
           </div>
         </div>
