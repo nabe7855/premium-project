@@ -3,8 +3,10 @@
  *
  * 使い方:
  *   node scripts/ai-usage-report.mjs              … 全期間
+ *   node scripts/ai-usage-report.mjs --month      … 今月（1日〜現在）
+ *   node scripts/ai-usage-report.mjs --month=2026-06  … 指定月
  *   node scripts/ai-usage-report.mjs --days=30    … 直近30日
- *   node scripts/ai-usage-report.mjs --days=30 --price-in=0.30 --price-out=2.50
+ *   node scripts/ai-usage-report.mjs --month --price-in=0.30 --price-out=2.50
  *       … 100万トークンあたりの単価(USD)を指定すると概算費用も表示する
  *
  * 単価はモデル・時期で変わるため保存していない。集計時に指定する方式にしている。
@@ -23,6 +25,18 @@ const days = arg('days') ? Number(arg('days')) : null;
 const priceIn = arg('price-in') ? Number(arg('price-in')) : null;
 const priceOut = arg('price-out') ? Number(arg('price-out')) : null;
 
+// --month（今月） / --month=2026-06（指定月）
+const monthFlag = process.argv.find((a) => a === '--month' || a.startsWith('--month='));
+let monthRange = null;
+if (monthFlag) {
+  const v = monthFlag.includes('=') ? monthFlag.split('=')[1] : null;
+  const now = new Date();
+  const [y, m] = v ? v.split('-').map(Number) : [now.getFullYear(), now.getMonth() + 1];
+  const start = new Date(Date.UTC(y, m - 1, 1));
+  const end = new Date(Date.UTC(y, m, 1));
+  monthRange = { label: `${y}年${m}月`, start: start.toISOString(), end: end.toISOString() };
+}
+
 const env = fs.readFileSync('.env.local', 'utf8');
 const getEnv = (k) => {
   const m = env.match(new RegExp('^' + k + '=(.*)$', 'm'));
@@ -33,7 +47,9 @@ const supabase = createClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('SUPABA
 });
 
 let query = supabase.from('ai_usage_logs').select('*').order('created_at', { ascending: false });
-if (days) {
+if (monthRange) {
+  query = query.gte('created_at', monthRange.start).lt('created_at', monthRange.end);
+} else if (days) {
   const since = new Date(Date.now() - days * 86400000).toISOString();
   query = query.gte('created_at', since);
 }
@@ -44,15 +60,18 @@ if (error) {
   process.exit(1);
 }
 
+const periodLabel = monthRange ? monthRange.label : days ? `直近${days}日` : '全期間';
+
 if (!data.length) {
-  console.log('記録がありません。');
+  console.log(`■ 対象期間: ${periodLabel}`);
+  console.log('  記録はまだありません。');
   process.exit(0);
 }
 
 const jp = (n) => n.toLocaleString('ja-JP');
 const sum = (rows, k) => rows.reduce((a, r) => a + (r[k] || 0), 0);
 
-console.log(`■ 対象期間: ${days ? `直近${days}日` : '全期間'}   記録件数: ${jp(data.length)}件`);
+console.log(`■ 対象期間: ${periodLabel}   記録件数: ${jp(data.length)}件`);
 console.log(`  最古: ${String(data[data.length - 1].created_at).slice(0, 19)}`);
 console.log(`  最新: ${String(data[0].created_at).slice(0, 19)}\n`);
 
