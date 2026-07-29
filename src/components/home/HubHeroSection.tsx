@@ -26,6 +26,21 @@ export interface HubHeroSectionProps {
   casts?: any[];
 }
 
+/*
+ * ─── 表示切替フラグ ───────────────────────────────────────────
+ * stores.hero_cast_image_url カラムがDBに存在せず getStores() が常にエラー→[] を
+ * 返していたため、これまでFVは下の STORE_COMPLEMENT_MAP のフォールバックで
+ * 描画されていた。カラム追加によりDB駆動に戻るが、キャッチコピーとヒーロー画像
+ * まで一斉に変わってしまうため、当面は従来の見た目を維持する。
+ * 有効化したくなったら true にするだけでよい（機能自体は残してある）。
+ */
+
+/** true にすると店舗カードのキャッチコピーに管理画面の catch_copy を反映する */
+const USE_DB_CATCH_COPY = false;
+
+/** true にすると hero_cast_image_url 未設定の店舗で在籍キャスト写真の自動切替が働く */
+const ENABLE_AUTO_CAST_HERO = false;
+
 // デフォルト表示補完用マップ
 const STORE_COMPLEMENT_MAP: Record<string, {
   enName: string;
@@ -123,9 +138,13 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
         return castStoreSlug === slug && (c.mainImageUrl || c.imageUrl || c.image_url || c.main_image_url);
       }) || [];
 
+      // 管理画面でヒーロー画像が明示設定されていればそれを使う（従来どおり）。
+      // 未設定時に在籍キャスト写真へ自動フォールバックするかはフラグで制御する。
       const rawCastImages = store.hero_cast_image_url
         ? [store.hero_cast_image_url]
-        : storeCasts.map((c: any) => c.mainImageUrl || c.imageUrl || c.main_image_url || c.image_url).filter(Boolean);
+        : ENABLE_AUTO_CAST_HERO
+          ? storeCasts.map((c: any) => c.mainImageUrl || c.imageUrl || c.main_image_url || c.image_url).filter(Boolean)
+          : [];
 
       const heroCastImages = rawCastImages.length > 0
         ? rawCastImages.map((url: string) => getTransformedImageUrl(url, { width: 640, format: 'webp' }) || comp.heroCastImage)
@@ -138,12 +157,14 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
         slug,
         name: store.name?.replace('店', '') || slug,
         enName: slug.toUpperCase(),
-        catchphrase: store.catch_copy || comp.catchphrase,
+        catchphrase: (USE_DB_CATCH_COPY && store.catch_copy) || comp.catchphrase,
         castCount: comp.castCount,
-        image: store.image_url || comp.image,
+        // 店舗カードは最大230px幅表示。生画像(1〜1.3MB)をそのまま配信すると
+        // FVが極端に重くなるため、Supabase Render API で 480px WebP に変換する。
+        image: getTransformedImageUrl(store.image_url, { width: 480, format: 'webp' }) || comp.image,
         heroCastImage,
         heroCastImages,
-        floatCopy: store.catch_copy || comp.floatCopy,
+        floatCopy: (USE_DB_CATCH_COPY && store.catch_copy) || comp.floatCopy,
         href,
         isExternal,
       };
