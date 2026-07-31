@@ -28,12 +28,37 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
 
   const publishedAt = page.storeSettings?.[slug]?.publishedAt || page.updatedAt;
 
+  let plainTextDescription = '';
+  if (page.sections && page.sections.length > 0) {
+    const rawTexts: string[] = [];
+    page.sections.forEach((sec) => {
+      if (sec.content?.description) {
+        rawTexts.push(sec.content.description);
+      } else if (sec.content?.subtitle) {
+        rawTexts.push(sec.content.subtitle);
+      }
+    });
+    const combined = rawTexts
+      .join(' ')
+      .replace(/<[^>]*>/g, '')
+      .replace(/\[(.*?)\]\((.*?)\)/g, '$1')
+      .replace(/\s+/g, ' ')
+      .trim();
+    if (combined) {
+      plainTextDescription = combined.slice(0, 120);
+    }
+  }
+  const metaDescription = plainTextDescription || page.title;
+
   return {
     title: `${page.title} | ${storeData.name}`,
-    description: page.title,
+    description: metaDescription,
+    alternates: {
+      canonical: `https://www.sutoroberrys.jp/store/${slug}/news/${newsSlug}`,
+    },
     openGraph: {
       title: `${page.title} | ${storeData.name}`,
-      description: page.title,
+      description: metaDescription,
       images: page.thumbnailUrl ? [page.thumbnailUrl] : [],
       type: 'article',
       publishedTime: new Date(publishedAt).toISOString(),
@@ -41,7 +66,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     twitter: {
       card: 'summary_large_image',
       title: `${page.title} | ${storeData.name}`,
-      description: page.title,
+      description: metaDescription,
       images: page.thumbnailUrl ? [page.thumbnailUrl] : [],
     },
   };

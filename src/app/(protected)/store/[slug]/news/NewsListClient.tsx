@@ -90,7 +90,7 @@ export default function NewsListClient({
             <div className="absolute left-0 top-1/2 h-[1px] w-full -translate-y-1/2 bg-slate-200"></div>
             <div className="relative z-10 bg-[#fffafa] px-6 text-center">
               <h1 className="mb-2 block text-[10px] font-normal tracking-[0.2em] text-slate-400">
-                女性用風俗 日本最大級 ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | お店ニュース
+                女性用風俗 ストロベリーボーイズ{storeSlug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | お店ニュース
               </h1>
               <span className="mb-2 block text-[10px] font-bold uppercase tracking-[0.4em] text-primary">
                 News & Topics

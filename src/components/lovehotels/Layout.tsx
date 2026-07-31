@@ -102,7 +102,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 <span className="text-xl font-bold tracking-tight text-white">LoveStay Japan</span>
               </div>
               <p className="text-xs leading-relaxed">
-                全国のラブホテルを網羅する日本最大級の検索・予約サイト。
+                全国のラブホテルを網羅する検索・予約サイト。
                 エリア、予算、こだわり設備からあなたにぴったりのホテルを。
               </p>
             </div>
