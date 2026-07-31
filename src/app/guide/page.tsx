@@ -5,6 +5,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: '初めての方へ完全ガイド｜女性用風俗・女風 ストロベリーボーイズ',
   description: '女性用風俗（女風）を初めてご利用いただく方へ。ご予約から当日の流れ、ホテル・ご自宅での過ごし方までステップ別に分かりやすく解説いたします。',
+  alternates: {
+    canonical: 'https://www.sutoroberrys.jp/guide',
+  },
 };
 
 export default function GuidePage() {

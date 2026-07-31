@@ -5,6 +5,9 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: 'プランと料金の完全解説｜女性用風俗・女風 ストロベリーボーイズ',
   description: '女性用風俗ストロベリーボーイズの料金システム解説。基本コース料金、指名料、交通費、オプション料金まで明朗・明快に説明いたします。',
+  alternates: {
+    canonical: 'https://www.sutoroberrys.jp/plan',
+  },
 };
 
 export default function PlanGuidePage() {

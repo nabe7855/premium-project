@@ -43,7 +43,6 @@ export const metadata: Metadata = {
   authors: [{ name: 'ストロベリーボーイズ' }],
   creator: 'ストロベリーボーイズ',
   applicationName: 'ストロベリーボーイズ',
-  alternates: { canonical: '/' },
   openGraph: {
     type: 'website',
     locale: 'ja_JP',
