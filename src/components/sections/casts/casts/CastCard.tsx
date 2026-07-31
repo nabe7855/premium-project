@@ -6,6 +6,7 @@ import { Clock, Pause, Play, Star, MessageCircle, Instagram, Music, Globe, Mic }
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+import { formatSnsUrl } from '@/lib/utils/sns-url';
 
 interface CastCardProps {
   cast: Cast | ScoredCast;
@@ -260,28 +261,28 @@ const CastCard: React.FC<CastCardProps> = ({
         {(cast.sns?.line || cast.sns?.twitter || cast.sns?.instagram || cast.sns?.tiktok || cast.snsUrl) && (
           <div className="mb-3 flex flex-wrap gap-1.5">
             {cast.sns?.line && (
-              <a href={cast.sns.line} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-[#06C755] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a href={formatSnsUrl(cast.sns.line, 'line')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-[#06C755] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
                 <span className="text-[9px] font-black tracking-tighter">LINE</span>
               </a>
             )}
             {cast.sns?.instagram && (
-              <a href={cast.sns.instagram} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a href={formatSnsUrl(cast.sns.instagram, 'instagram')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
                 <Instagram className="h-4 w-4" />
               </a>
             )}
             {cast.sns?.twitter && (
-              <a href={cast.sns.twitter} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a href={formatSnsUrl(cast.sns.twitter, 'twitter')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
                 <span className="font-serif text-sm font-bold">𝕏</span>
               </a>
             )}
             {cast.sns?.tiktok && (
-             <a href={cast.sns.tiktok} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+             <a href={formatSnsUrl(cast.sns.tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
                 <Music className="h-4 w-4" />
               </a>
             )}
              {/* フォールバック用: もし個別SNSが無く、汎用snsUrlだけある場合 */}
              {!cast.sns?.line && !cast.sns?.instagram && !cast.sns?.twitter && !cast.sns?.tiktok && cast.snsUrl && (
-              <a href={cast.snsUrl} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-500 shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a href={formatSnsUrl(cast.snsUrl, 'other')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-500 shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
                 <Globe className="h-4 w-4" />
               </a>
             )}

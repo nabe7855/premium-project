@@ -21,6 +21,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { toast } from 'sonner';
+import { formatSnsUrl } from '@/lib/utils/sns-url';
 
 import { useCastDetail } from '@/hooks/useCastDetail';
 import { Cast } from '@/types/cast';
@@ -62,23 +63,28 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
 
   const [isSnsModalOpen, setIsSnsModalOpen] = React.useState(false);
 
-  // ✅ SNS情報取得ヘルパー
+  // ✅ SNS情報取得ヘルパー（formatSnsUrlで404エラー防止）
   const getSnsList = React.useCallback(() => {
     const list: { name: string; url: string; icon: any; colorClass: string }[] = [];
     if (cast.sns?.line) {
-      list.push({ name: 'LINE', url: cast.sns.line, icon: MessageCircle, colorClass: 'bg-[#06C755] text-white hover:opacity-95' });
+      const formatted = formatSnsUrl(cast.sns.line, 'line');
+      if (formatted) list.push({ name: 'LINE', url: formatted, icon: MessageCircle, colorClass: 'bg-[#06C755] text-white hover:opacity-95' });
     }
     if (cast.sns?.instagram) {
-      list.push({ name: 'Instagram', url: cast.sns.instagram, icon: Instagram, colorClass: 'bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-95' });
+      const formatted = formatSnsUrl(cast.sns.instagram, 'instagram');
+      if (formatted) list.push({ name: 'Instagram', url: formatted, icon: Instagram, colorClass: 'bg-gradient-to-r from-[#f09433] via-[#dc2743] to-[#bc1888] text-white hover:opacity-95' });
     }
     if (cast.sns?.twitter) {
-      list.push({ name: '𝕏 (Twitter)', url: cast.sns.twitter, icon: Twitter, colorClass: 'bg-black text-white hover:bg-neutral-800' });
+      const formatted = formatSnsUrl(cast.sns.twitter, 'twitter');
+      if (formatted) list.push({ name: '𝕏 (Twitter)', url: formatted, icon: Twitter, colorClass: 'bg-black text-white hover:bg-neutral-800' });
     }
     if (cast.sns?.tiktok) {
-      list.push({ name: 'TikTok', url: cast.sns.tiktok, icon: Music, colorClass: 'bg-black text-white hover:bg-neutral-800' });
+      const formatted = formatSnsUrl(cast.sns.tiktok, 'tiktok');
+      if (formatted) list.push({ name: 'TikTok', url: formatted, icon: Music, colorClass: 'bg-black text-white hover:bg-neutral-800' });
     }
     if (list.length === 0 && cast.snsUrl) {
-      list.push({ name: '公式SNS', url: cast.snsUrl, icon: Globe, colorClass: 'bg-neutral-800 text-white hover:bg-neutral-900' });
+      const formatted = formatSnsUrl(cast.snsUrl, 'other');
+      if (formatted) list.push({ name: '公式SNS', url: formatted, icon: Globe, colorClass: 'bg-neutral-800 text-white hover:bg-neutral-900' });
     }
     return list;
   }, [cast]);
@@ -92,10 +98,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
       });
       return;
     }
-    if (snsList.length === 1) {
-      window.open(snsList[0].url, '_blank', 'noopener,noreferrer');
-      return;
-    }
+    // SNSが登録されている場合はSNS一覧モーダル（ボトムシート）を表示
     setIsSnsModalOpen(true);
   }, [cast, getSnsList]);
 
