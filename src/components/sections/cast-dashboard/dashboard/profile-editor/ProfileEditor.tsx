@@ -62,7 +62,20 @@ export default function ProfileEditor({
 
   return (
     <div className="overflow-x-hidden rounded-2xl border border-gray-200 bg-white p-6 pb-24 shadow-md">
-      <h2 className="mb-4 text-xl font-bold">プロフィール編集</h2>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+        <h2 className="text-xl font-bold">プロフィール編集</h2>
+        {(form.slug || form.id) && (
+          <a
+            href={`/store/fukuoka/cast/${encodeURIComponent(form.slug || form.id)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full border border-pink-200 bg-pink-50 px-3.5 py-1.5 text-xs font-bold text-pink-600 transition-all hover:bg-pink-100"
+          >
+            <span>自分のページを確認する</span>
+            <span className="text-xs">↗</span>
+          </a>
+        )}
+      </div>
 
       {/* ✅ タブ切り替え */}
       <div className="sticky top-0 z-10 -mx-6 mb-8 flex gap-1 overflow-x-auto border-b border-gray-100 bg-white/80 px-6 py-2 backdrop-blur-md scrollbar-hide">

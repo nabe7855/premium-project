@@ -16,11 +16,13 @@ interface CastCardProps {
     totalLikes: number;
     lastPost: string;
     storeId?: string; // ✅ 追加
+    questionBoxUrl?: string | null; // 🆕 質問箱URL
   };
   expanded?: boolean;
+  showQuestionBoxLink?: boolean; // 🆕 デフォルトfalse。日記詳細ページサイドバー等でのみtrueを指定
 }
 
-const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
+const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false, showQuestionBoxLink = false }) => {
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
   const handleBookingModalOpen = () => setIsBookingModalOpen(true);
@@ -115,6 +117,17 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false }) => {
             <UserCircle size={16} />
             プロフィールを見る
           </Link>
+          {showQuestionBoxLink && cast.questionBoxUrl && cast.questionBoxUrl.startsWith('https://') && (
+            <a
+              href={cast.questionBoxUrl}
+              target="_blank"
+              rel="noopener nofollow"
+              className="flex w-full items-center justify-center gap-2 rounded-lg bg-gradient-to-r from-pink-500 to-rose-500 px-3 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:brightness-105 sm:px-4 sm:text-sm"
+            >
+              <span>質問箱へ質問する</span>
+              <span className="text-xs">↗</span>
+            </a>
+          )}
           <div className="flex gap-2">
             <Link
               href={`/store/${storeSlug}/schedule?castId=${castId}`}

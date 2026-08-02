@@ -102,6 +102,7 @@ export interface Cast {
   sns?: CastSNS;
   snsLink?: string;
   snsUrl?: string;
+  questionBoxUrl?: string | null;
 
   // ステータス系
   sexinessLevel?: number;
@@ -270,6 +271,7 @@ export interface CastProfile {
 
   sns?: CastSNS;
   snsUrl?: string;
+  questionBoxUrl?: string | null;
   slug?: string;
 
   questions?: {

@@ -25,6 +25,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
   const [imageLoaded, setImageLoaded] = useState(false);
   const [dbStoreId, setDbStoreId] = useState<string | undefined>(undefined);
   const [castStats, setCastStats] = useState({ postsThisMonth: 0, lastPost: '投稿なし' });
+  const [castQuestionBoxUrl, setCastQuestionBoxUrl] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -110,18 +111,30 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
       try {
         const now = new Date();
         const firstDay = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-        const { count } = await supabase
-          .from('blogs')
-          .select('*', { count: 'exact', head: true })
-          .eq('cast_id', post.castId)
-          .gte('created_at', firstDay);
-        const { data } = await supabase
-          .from('blogs')
-          .select('created_at')
-          .eq('cast_id', post.castId)
-          .order('created_at', { ascending: false })
-          .limit(1)
-          .single();
+        const [{ count }, { data }, { data: castRes }] = await Promise.all([
+          supabase
+            .from('blogs')
+            .select('*', { count: 'exact', head: true })
+            .eq('cast_id', post.castId)
+            .gte('created_at', firstDay),
+          supabase
+            .from('blogs')
+            .select('created_at')
+            .eq('cast_id', post.castId)
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single(),
+          supabase
+            .from('casts')
+            .select('question_box_url')
+            .eq('id', post.castId)
+            .single()
+        ]);
+
+        if (castRes?.question_box_url) {
+          setCastQuestionBoxUrl(castRes.question_box_url);
+        }
+
         let lastStr = '投稿なし';
         if (data) {
           const postDate = new Date(data.created_at);
@@ -311,8 +324,10 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               totalLikes: 1234,
               lastPost: castStats.lastPost,
               storeId: dbStoreId,
+              questionBoxUrl: castQuestionBoxUrl,
             }}
             expanded
+            showQuestionBoxLink={true}
           />
           <MessageSection postId={post.id} isEnabled={post.isCommentEnabled} />
         </div>

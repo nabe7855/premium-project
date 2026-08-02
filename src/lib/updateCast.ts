@@ -22,6 +22,11 @@ export async function updateCast(cast: CastProfile) {
       blood_type: cast.bloodType ?? null,
       manager_comment: cast.managerComment ?? null,
       sns_url: cast.sns ? JSON.stringify(cast.sns) : (cast.snsUrl ?? null),
+      question_box_url: (() => {
+        if (!cast.questionBoxUrl || typeof cast.questionBoxUrl !== 'string') return null;
+        const trimmed = cast.questionBoxUrl.trim();
+        return trimmed.startsWith('https://') ? trimmed : null;
+      })(),
     })
     .eq('id', cast.id)
     .select()

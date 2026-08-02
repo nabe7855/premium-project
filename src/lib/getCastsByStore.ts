@@ -38,6 +38,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         is_active,
         sexiness_level,
         sns_url,
+        question_box_url,
         voice_url,
         mbti:feature_master!casts_mbti_id_fkey ( name ),
         face:feature_master!casts_face_id_fkey ( name ),
@@ -254,6 +255,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
           return undefined;
         })(),
         snsUrl: cast.sns_url ?? undefined,
+        questionBoxUrl: cast.question_box_url ?? undefined,
         rating, // ⭐ 平均評価
         reviewCount, // 💬 口コミ件数
       };

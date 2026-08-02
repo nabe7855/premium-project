@@ -57,6 +57,19 @@ export default function SnsInput({ form, onChange }: Props) {
         />
       </div>
       
+      {/* 質問箱 (Peing / BoxFresh 等) */}
+      <div className="pt-4 border-t border-neutral-100">
+        <label className="block text-sm font-bold text-rose-500">質問箱 (Peing / BoxFresh 等) URL</label>
+        <input
+          type="text"
+          value={form.questionBoxUrl ?? ''}
+          onChange={(e) => onChange('questionBoxUrl', e.target.value)}
+          className="w-full mt-1 border border-neutral-300 rounded-md px-3 py-2 text-sm shadow-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+          placeholder="https://peing.net/ja/..."
+        />
+        <p className="mt-1 text-xs text-neutral-500">※ https:// で始まるURLのみ保存・公開されます。空で保存するとサイト上から非表示になります。</p>
+      </div>
+
       {/* 既存のURL用フォールバック */}
       <div className="pt-4 border-t border-neutral-100">
         <label className="block text-sm font-medium text-neutral-500">その他のリンク (Webサイト等)</label>

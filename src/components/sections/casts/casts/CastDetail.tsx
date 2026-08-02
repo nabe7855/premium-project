@@ -15,6 +15,7 @@ import {
   X,
   Music,
   Globe,
+  HelpCircle,
 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Link from 'next/link';
@@ -65,7 +66,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
 
   // ✅ SNS情報取得ヘルパー（formatSnsUrlで404エラー防止）
   const getSnsList = React.useCallback(() => {
-    const list: { name: string; url: string; icon: any; colorClass: string }[] = [];
+    const list: { name: string; url: string; icon: any; colorClass: string; rel?: string }[] = [];
     if (cast.sns?.line) {
       const formatted = formatSnsUrl(cast.sns.line, 'line');
       if (formatted) list.push({ name: 'LINE', url: formatted, icon: MessageCircle, colorClass: 'bg-[#06C755] text-white hover:opacity-95' });
@@ -81,6 +82,9 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
     if (cast.sns?.tiktok) {
       const formatted = formatSnsUrl(cast.sns.tiktok, 'tiktok');
       if (formatted) list.push({ name: 'TikTok', url: formatted, icon: Music, colorClass: 'bg-black text-white hover:bg-neutral-800' });
+    }
+    if (cast.questionBoxUrl && cast.questionBoxUrl.startsWith('https://')) {
+      list.push({ name: '質問箱 (匿名Q&A)', url: cast.questionBoxUrl, icon: HelpCircle, colorClass: 'bg-gradient-to-r from-pink-500 to-rose-500 text-white hover:opacity-95', rel: 'noopener nofollow' });
     }
     if (list.length === 0 && cast.snsUrl) {
       const formatted = formatSnsUrl(cast.snsUrl, 'other');
@@ -323,7 +327,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
                       key={index}
                       href={sns.url}
                       target="_blank"
-                      rel="noopener noreferrer"
+                      rel={sns.rel || 'noopener noreferrer'}
                       className={`flex w-full items-center justify-between rounded-2xl px-5 py-4 font-bold shadow-sm transition-all active:scale-[0.98] ${sns.colorClass}`}
                       onClick={() => setIsSnsModalOpen(false)}
                     >

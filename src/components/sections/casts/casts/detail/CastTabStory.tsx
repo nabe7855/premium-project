@@ -78,6 +78,39 @@ const CastTabStory: React.FC<CastTabStoryProps> = ({ cast }) => {
               </li>
             ))}
           </ul>
+
+          {/* 質問箱ボタン（Q&A末尾） */}
+          {cast.questionBoxUrl && cast.questionBoxUrl.startsWith('https://') && (
+            <div className="mt-8 border-t border-pink-100/80 pt-6 text-center">
+              <a
+                href={cast.questionBoxUrl}
+                target="_blank"
+                rel="noopener nofollow"
+                className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 text-xs font-bold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg sm:text-sm"
+              >
+                <span>もっと聞きたいことがある方は、{cast.name}さんの質問箱へ</span>
+                <span className="text-xs">↗</span>
+              </a>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Q&Aが空で質問箱URLのみ設定されている場合 */}
+      {(!cast.castQuestions || cast.castQuestions.length === 0) && cast.questionBoxUrl && cast.questionBoxUrl.startsWith('https://') && (
+        <div className="rounded-2xl p-6 bg-gradient-to-br from-pink-50 via-rose-50 to-purple-50 shadow-sm text-center">
+          <h4 className="text-md sm:text-lg font-semibold mb-4 text-pink-600">
+            質問箱
+          </h4>
+          <a
+            href={cast.questionBoxUrl}
+            target="_blank"
+            rel="noopener nofollow"
+            className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-3 text-xs font-bold text-white shadow-md transition-all hover:scale-105 hover:shadow-lg sm:text-sm"
+          >
+            <span>もっと聞きたいことがある方は、{cast.name}さんの質問箱へ</span>
+            <span className="text-xs">↗</span>
+          </a>
         </div>
       )}
 

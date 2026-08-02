@@ -32,6 +32,7 @@ model Cast {
   slug            String?               @unique
   user_id         String?               @db.Uuid
   sns_url         String?
+  question_box_url String?
   created_at      DateTime              @default(now())
   blogs           Blog[]
   badges          CastBadge[]

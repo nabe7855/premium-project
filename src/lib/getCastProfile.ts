@@ -37,7 +37,8 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
       manager_comment,
       slug,
       user_id,
-      sns_url
+      sns_url,
+      question_box_url
     `,
     )
     .or(`id.eq."${userId}",user_id.eq."${userId}"`)
@@ -154,6 +155,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     managerComment: cast.manager_comment ?? undefined,
     slug: cast.slug,
     snsUrl: cast.sns_url ?? undefined,
+    questionBoxUrl: cast.question_box_url ?? undefined,
     sns: (() => {
       try {
         const parsed = JSON.parse(cast.sns_url || '');
