@@ -196,7 +196,7 @@ const ReviewList: React.FC<ReviewListProps> = ({ storeSlug, initialData }) => {
         <h2 className="text-2xl font-bold text-gray-800">
           口コミ一覧
           <span className="ml-2 text-lg font-normal text-gray-600">
-            ({reviews.length} / {totalCount}件)
+            {totalCount > 0 ? `(${reviews.length} / ${totalCount}件)` : '(0件)'}
           </span>
         </h2>
       </div>
@@ -208,17 +208,25 @@ const ReviewList: React.FC<ReviewListProps> = ({ storeSlug, initialData }) => {
           ))}
         </div>
       ) : (
-        <div className="py-12 text-center">
-          <p className="mb-4 text-gray-600">条件に合う口コミは見つかりませんでした。</p>
-          <button
-            onClick={() => {
-              setSelectedEmotion('');
-              setSelectedCastId('all');
-            }}
-            className="rounded-lg bg-pink-500 px-6 py-2 text-white hover:bg-pink-600"
-          >
-            すべての口コミを表示
-          </button>
+        <div className="my-6 rounded-2xl border border-rose-100 bg-gradient-to-br from-rose-50/80 to-pink-50/40 p-8 text-center shadow-sm">
+          <div className="mb-3 text-3xl">✨</div>
+          <h3 className="mb-2 text-lg font-bold text-slate-800">
+            {storeSlug === 'yokohama' ? '横浜店' : '福岡店'}の口コミを募集中！
+          </h3>
+          <p className="mb-6 text-xs text-slate-600 leading-relaxed">
+            まだ投稿された口コミがありません。ご来店いただいたお客様の体験談や温かいメッセージを心よりお待ちしております。
+          </p>
+          {(selectedEmotion || selectedCastId !== 'all') && (
+            <button
+              onClick={() => {
+                setSelectedEmotion('');
+                setSelectedCastId('all');
+              }}
+              className="rounded-full bg-rose-500 px-6 py-2.5 text-xs font-bold text-white shadow-sm transition-all hover:bg-rose-600"
+            >
+              すべての口コミを表示
+            </button>
+          )}
         </div>
       )}
 

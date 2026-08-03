@@ -294,7 +294,7 @@ export async function deletePage(id: string): Promise<boolean> {
   }
 }
 
-export async function duplicatePage(id: string): Promise<PageData | null> {
+export async function duplicatePage(id: string, targetStoreSlug?: string): Promise<PageData | null> {
   try {
     const original = await prisma.pageRequest.findUnique({
       where: { id },
@@ -305,6 +305,17 @@ export async function duplicatePage(id: string): Promise<PageData | null> {
     const category = misc.category || 'other';
     const newSlug = await generateAutoNewsSlug(category);
 
+    const storeSlugs = targetStoreSlug ? [targetStoreSlug] : (original.targetStoreSlugs as string[] || []);
+    const newMisc = { ...misc };
+    if (targetStoreSlug) {
+      newMisc.storeSettings = {
+        [targetStoreSlug]: {
+          status: 'private',
+          publishedAt: null,
+        },
+      };
+    }
+
     const record = await prisma.pageRequest.create({
       data: {
         title: `${original.title} (コピー)`,
@@ -312,8 +323,8 @@ export async function duplicatePage(id: string): Promise<PageData | null> {
         status: 'private',
         sections: original.sections || [],
         thumbnailUrl: original.thumbnailUrl,
-        targetStoreSlugs: original.targetStoreSlugs || [],
-        referenceUrls: original.referenceUrls || {},
+        targetStoreSlugs: storeSlugs,
+        referenceUrls: newMisc,
       },
     });
 
