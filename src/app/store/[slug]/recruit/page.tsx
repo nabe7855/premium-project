@@ -48,28 +48,34 @@ export default async function RecruitPage({ params }: { params: { slug: string }
 
   const s = STORE_META[slug] || STORE_META.fukuoka;
 
+  // 動的な日付計算 (Google for Jobsの期限切れ対策)
+  const now = new Date();
+  const datePostedStr = now.toISOString().split('T')[0];
+  const validThroughDate = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
+  const validThroughStr = validThroughDate.toISOString().split('T')[0];
+
   const jobPostingSchema = {
     "@context": "https://schema.org",
     "@type": "JobPosting",
-    title: "男性セラピスト（女性用風俗・出張ホスト）",
-    description: `${s.city}（${s.area}）で女性用風俗セラピストを募集中。<br/>未経験歓迎、週1日〜OK、全額日払い、登録料0円。最短10日でデビュー可能。プロ講師によるマンツーマン研修あり。`,
-    datePosted: "2026-06-10",
-    validThrough: "2026-12-31",
-    employmentType: ["PART_TIME", "CONTRACTOR"],
+    title: `男性セラピスト（女性用風俗・出張ホスト） - ${s.city}店`,
+    description: `${s.city}（${s.area}）で女性用風俗セラピストを募集中。未経験歓迎、週1日〜OK、全額日払い、登録料0円。最短10日でデビュー可能。プロ講師によるマンツーマン研修あり。`,
+    datePosted: datePostedStr,
+    validThrough: validThroughStr,
+    employmentType: ["PART_TIME", "CONTRACTOR", "FULL_TIME"],
     hiringOrganization: { "@type": "Organization", name: "ストロベリーボーイズ", sameAs: "https://www.sutoroberrys.jp/" },
     jobLocation: { 
       "@type": "Place", 
       address: { 
         "@type": "PostalAddress", 
         addressLocality: `${s.city}市`, 
-        addressRegion: s.city === '東京' ? '東京都' : s.city === '大阪' ? '大阪府' : `${s.city}県`, 
+        addressRegion: s.city === '東京' ? '東京都' : s.city === '大阪' ? '大阪府' : s.city === '横浜' ? '神奈川県' : `${s.city}県`, 
         addressCountry: "JP" 
       } 
     },
     baseSalary: { 
       "@type": "MonetaryAmount", 
       currency: "JPY", 
-      value: { "@type": "QuantitativeValue", minValue: 5000, maxValue: 20000, unitText: "HOUR" } 
+      value: { "@type": "QuantitativeValue", minValue: 30000, maxValue: 50000, unitText: "DAY" } 
     },
   };
 
