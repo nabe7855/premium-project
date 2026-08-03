@@ -7,10 +7,47 @@ interface NewsPageRendererProps {
   storeSlug?: string;
 }
 
+function resolveImageAlts(pageTitle: string, sections: SectionData[]): Map<string, string> {
+  const altMap = new Map<string, string>();
+  let imageCounter = 0;
+
+  sections.forEach((sec) => {
+    const { type, content } = sec;
+    if ((type === 'hero' || type === 'campaign') && content.imageUrl) {
+      const customAlt = content.alt?.trim();
+      let finalAlt = '';
+      if (customAlt) {
+        finalAlt = customAlt;
+      } else {
+        imageCounter += 1;
+        finalAlt = pageTitle ? (imageCounter === 1 ? pageTitle : `${pageTitle} (${imageCounter})`) : '';
+      }
+      altMap.set(`${sec.id}-main`, finalAlt);
+    } else if (type === 'gallery' && Array.isArray(content.items)) {
+      content.items.forEach((item: any, idx: number) => {
+        if (item.imageUrl) {
+          const customAlt = item.alt?.trim() || content.alt?.trim();
+          let finalAlt = '';
+          if (customAlt) {
+            finalAlt = customAlt;
+          } else {
+            imageCounter += 1;
+            finalAlt = pageTitle ? (imageCounter === 1 ? pageTitle : `${pageTitle} (${imageCounter})`) : '';
+          }
+          altMap.set(`${sec.id}-item-${idx}`, finalAlt);
+        }
+      });
+    }
+  });
+
+  return altMap;
+}
+
 const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) => {
   // Separate sections into Content and CTA
   const contentSections = page.sections.filter((s) => s.type !== 'cta');
   const ctaSections = page.sections.filter((s) => s.type === 'cta');
+  const altMap = resolveImageAlts(page.title || '', page.sections || []);
 
   return (
     <div className="w-full bg-white pb-10 pt-10">
@@ -42,7 +79,7 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
         {/* Lead Content (First Content Section's Description or Hero Image) */}
         <div className="article-body">
           {contentSections.map((section, idx) => (
-            <SectionRenderer key={section.id} section={section} isFirst={idx === 0} />
+            <SectionRenderer key={section.id} section={section} isFirst={idx === 0} altMap={altMap} />
           ))}
         </div>
 
@@ -96,7 +133,7 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
         {ctaSections.length > 0 && (
           <div className="mt-10 space-y-8 border-t border-slate-100 pt-10">
             {ctaSections.map((section) => (
-              <SectionRenderer key={section.id} section={section} />
+              <SectionRenderer key={section.id} section={section} altMap={altMap} />
             ))}
           </div>
         )}
@@ -105,9 +142,10 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
   );
 };
 
-const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = ({
+const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean; altMap: Map<string, string> }> = ({
   section,
   isFirst,
+  altMap,
 }) => {
   const { type, content } = section;
 
@@ -121,7 +159,13 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
     case 'hero':
       return (
         <div className="mb-12">
-          {content.imageUrl && <img src={content.imageUrl} alt="" className={imgClass} />}
+          {content.imageUrl && (
+            <img
+              src={content.imageUrl}
+              alt={altMap.get(`${section.id}-main`) || ''}
+              className={imgClass}
+            />
+          )}
           {content.description && (
             <RichTextContent
               content={content.description}
@@ -140,7 +184,13 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
           </p>
           <h3 className="mb-6 text-2xl font-black text-slate-900">{content.title}</h3>
           <RichTextContent content={content.description || ''} className={pClass} />
-          {content.imageUrl && <img src={content.imageUrl} className={imgClass} alt="" />}
+          {content.imageUrl && (
+            <img
+              src={content.imageUrl}
+              className={imgClass}
+              alt={altMap.get(`${section.id}-main`) || ''}
+            />
+          )}
           {content.buttonText && (
             <button className="mt-4 rounded-full bg-slate-900 px-10 py-4 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95">
               {content.buttonText}
@@ -177,7 +227,11 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean }> = (
           <div className="grid grid-cols-2 gap-4">
             {(content.items || []).map((item: any, i: number) => (
               <div key={i} className="aspect-square overflow-hidden rounded-xl">
-                <img src={item.imageUrl} className="h-full w-full object-cover" alt="" />
+                <img
+                  src={item.imageUrl}
+                  className="h-full w-full object-cover"
+                  alt={altMap.get(`${section.id}-item-${i}`) || ''}
+                />
               </div>
             ))}
           </div>

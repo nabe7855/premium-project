@@ -21,6 +21,7 @@ export interface SectionContent {
   subtitle?: string;
   description?: string;
   imageUrl?: string;
+  alt?: string;
   buttonText?: string;
   buttonLink?: string;
   items?: any[]; // For lists like gallery or cast

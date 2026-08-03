@@ -399,6 +399,22 @@ const Inspector: React.FC<InspectorProps> = ({
                 />
               </label>
             </div>
+            <div className="mt-3">
+              <label className="mb-1 block text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                代替テキスト(alt)
+              </label>
+              <input
+                type="text"
+                value={section.content.alt || ''}
+                onChange={(e) => handleFieldChange('alt', e.target.value)}
+                onBlur={(e) => handleFieldChange('alt', e.target.value.trim())}
+                className="w-full rounded-xl border border-slate-200 p-2.5 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
+                placeholder="例: 福岡店セラピストのりく / 未入力の場合は記事タイトルが自動で入ります"
+              />
+              <p className="mt-1 text-[9px] text-slate-400">
+                ※未入力の場合、記事タイトルから自動生成されます（1枚目: タイトル、2枚目以降: タイトル (2)）
+              </p>
+            </div>
           </div>
         )}
         {['hero', 'campaign', 'cast_list'].includes(section.type) && (
