@@ -6,7 +6,7 @@ import { PageData } from './types';
 
 interface NewsDashboardProps {
   pages: PageData[];
-  onCreatePage: () => void;
+  onCreatePage: (category?: string) => void;
   onEditPage: (id: string) => void;
   onDuplicatePage: (id: string) => void;
   onDeletePage: (id: string) => void;
@@ -16,13 +16,31 @@ interface NewsDashboardProps {
   onSaveRecommendedIds: (storeSlug: string, ids: string[]) => Promise<void>;
 }
 
-const CATEGORIES = [
-  { id: 'info', label: 'お知らせ' },
-  { id: 'promo', label: 'プロモーション' },
+export const NEW_CATEGORIES = [
+  { id: 'newcast', label: '新人入店' },
+  { id: 'campaign', label: 'キャンペーン・割引' },
+  { id: 'info', label: '営業案内' },
   { id: 'event', label: 'イベント' },
-  { id: 'media', label: 'メディア' },
-  { id: 'twitcasting', label: 'ツイキャス' },
+  { id: 'other', label: 'その他' },
 ];
+
+export const ALL_CATEGORY_LABELS: Record<string, string> = {
+  newcast: '新人入店',
+  campaign: 'キャンペーン・割引',
+  info: '営業案内',
+  event: 'イベント',
+  other: 'その他',
+  // 過去のカテゴリ保持用（表示用互換マッピング。DBデータは一切改変しない）
+  media: 'メディア',
+  promo: 'プロモーション',
+  twitcasting: 'ツイキャス',
+  'お知らせ': '営業案内',
+};
+
+export function getCategoryLabel(cat?: string): string {
+  if (!cat) return 'その他';
+  return ALL_CATEGORY_LABELS[cat] || cat;
+}
 
 const NewsDashboard: React.FC<NewsDashboardProps> = ({
   pages,
@@ -40,6 +58,8 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   const [selectedStore, setSelectedStore] = useState('fukuoka');
   const [recommendedIds, setRecommendedIds] = useState<string[]>([]);
   const [isSavingRecommended, setIsSavingRecommended] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [createCategory, setCreateCategory] = useState('other');
   const fileInputRef = useRef<HTMLInputElement>(null);
   const stores = getAllStores();
 
@@ -51,6 +71,11 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
     setIsSavingRecommended(true);
     await onSaveRecommendedIds(selectedStore, recommendedIds);
     setIsSavingRecommended(false);
+  };
+
+  const handleCreateSubmit = () => {
+    setIsCreateModalOpen(false);
+    onCreatePage(createCategory);
   };
 
   const handleQuickEditSave = () => {
@@ -111,7 +136,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
             </h1>
           </div>
           <button
-            onClick={onCreatePage}
+            onClick={() => setIsCreateModalOpen(true)}
             className="flex w-full transform items-center justify-center gap-2 rounded-2xl bg-slate-900 px-8 py-3 font-bold text-white shadow-xl transition-all hover:bg-rose-600 active:scale-95 md:w-auto"
           >
             <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -257,7 +282,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     </div>
                     {page.category && (
                       <span className="rounded-full bg-rose-500/90 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-white shadow-xl backdrop-blur-md">
-                        {CATEGORIES.find((c) => c.id === page.category)?.label || page.category}
+                        {getCategoryLabel(page.category)}
                       </span>
                     )}
                     {page.showInSlider && (
@@ -464,12 +489,17 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                       onChange={(e) => setEditingPage({ ...editingPage, category: e.target.value })}
                       className="w-full rounded-2xl bg-slate-50 px-6 py-4 font-bold text-slate-900 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/10"
                     >
-                      <option value="">未設定（お知らせ）</option>
-                      {CATEGORIES.map((cat) => (
+                      <option value="">未設定（その他）</option>
+                      {NEW_CATEGORIES.map((cat) => (
                         <option key={cat.id} value={cat.id}>
                           {cat.label}
                         </option>
                       ))}
+                      {editingPage.category && !NEW_CATEGORIES.some((c) => c.id === editingPage.category) && (
+                        <option value={editingPage.category}>
+                          {getCategoryLabel(editingPage.category)}
+                        </option>
+                      )}
                     </select>
                   </div>
                   <div>
@@ -500,19 +530,18 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                   </div>
                 </div>
 
-                {/* Slug Edit */}
+                {/* Slug Edit (Read Only) */}
                 <div>
                   <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
-                    URLスラッグ
+                    URLスラッグ (自動採番・変更不可)
                   </label>
-                  <div className="flex items-center gap-2 rounded-2xl bg-slate-50 px-6 py-4 transition-all focus-within:bg-white focus-within:ring-4 focus-within:ring-rose-500/10">
+                  <div className="flex items-center gap-2 rounded-2xl bg-slate-100 px-6 py-4 transition-all">
                     <span className="text-sm font-bold text-slate-400">/news/</span>
                     <input
                       type="text"
                       value={editingPage.slug}
-                      onChange={(e) => setEditingPage({ ...editingPage, slug: e.target.value })}
-                      className="flex-1 bg-transparent font-bold text-slate-900 outline-none"
-                      placeholder="url-slug"
+                      readOnly
+                      className="flex-1 bg-transparent font-bold text-slate-500 cursor-not-allowed outline-none"
                     />
                   </div>
                 </div>
@@ -547,6 +576,50 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                   保存する
                 </button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* New Page Creation Category Modal */}
+      {isCreateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 p-4 backdrop-blur-sm">
+          <div className="w-full max-w-md overflow-hidden rounded-[2.5rem] bg-white p-8 shadow-2xl duration-300 animate-in fade-in zoom-in">
+            <h2 className="mb-2 text-xl font-black text-slate-900">新規記事の作成</h2>
+            <p className="mb-6 text-xs font-medium text-slate-400">
+              記事のカテゴリを選択してください。選択したカテゴリに応じてURLスラッグが自動設定されます。
+            </p>
+
+            <div className="mb-8">
+              <label className="mb-2 block text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                カテゴリを選択 (必須)
+              </label>
+              <select
+                value={createCategory}
+                onChange={(e) => setCreateCategory(e.target.value)}
+                className="w-full rounded-2xl bg-slate-50 px-6 py-4 font-bold text-slate-900 outline-none transition-all focus:bg-white focus:ring-4 focus:ring-rose-500/10"
+              >
+                {NEW_CATEGORIES.map((cat) => (
+                  <option key={cat.id} value={cat.id}>
+                    {cat.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                onClick={() => setIsCreateModalOpen(false)}
+                className="flex-1 rounded-2xl py-3.5 text-sm font-bold text-slate-400 hover:bg-slate-50"
+              >
+                キャンセル
+              </button>
+              <button
+                onClick={handleCreateSubmit}
+                className="flex-1 rounded-2xl bg-rose-500 py-3.5 text-sm font-bold text-white shadow-lg shadow-rose-500/30 hover:bg-rose-600 active:scale-95"
+              >
+                ページを作成
+              </button>
             </div>
           </div>
         </div>

@@ -108,6 +108,80 @@ export async function getPage(id: string): Promise<PageData | null> {
   }
 }
 
+const CATEGORY_SLUG_MAP: Record<string, string> = {
+  newcast: 'newcast',
+  '新人入店': 'newcast',
+  campaign: 'campaign',
+  'キャンペーン・割引': 'campaign',
+  info: 'info',
+  '営業案内': 'info',
+  event: 'event',
+  'イベント': 'event',
+  other: 'other',
+  'その他': 'other',
+};
+
+function getJSTDateString(date: Date = new Date()): string {
+  const formatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  });
+  const parts = formatter.formatToParts(date);
+  const year = parts.find((p) => p.type === 'year')?.value || '';
+  const month = parts.find((p) => p.type === 'month')?.value || '';
+  const day = parts.find((p) => p.type === 'day')?.value || '';
+  return `${year}${month}${day}`;
+}
+
+export async function generateAutoNewsSlug(
+  categoryRaw?: string,
+  targetDate: Date = new Date()
+): Promise<string> {
+  try {
+    const yyyymmdd = getJSTDateString(targetDate);
+    const categorySlug = (categoryRaw && CATEGORY_SLUG_MAP[categoryRaw]) || 'other';
+    const baseSlug = `news-${yyyymmdd}-${categorySlug}`;
+
+    if (!/^[a-z0-9-]+$/.test(baseSlug)) {
+      throw new Error(`Generated base slug "${baseSlug}" fails regex validation.`);
+    }
+
+    let candidateSlug = baseSlug;
+    let counter = 1;
+
+    while (true) {
+      const existing = await prisma.pageRequest.findUnique({
+        where: { slug: candidateSlug },
+        select: { id: true },
+      });
+
+      if (!existing) {
+        return candidateSlug;
+      }
+
+      counter += 1;
+      candidateSlug = `${baseSlug}-${counter}`;
+    }
+  } catch (error) {
+    console.error('❌ generateAutoNewsSlug Exception, falling back to timestamp:', error);
+    return `news-${Date.now()}`;
+  }
+}
+
+function safeRevalidatePath(path: string, type?: 'layout' | 'page') {
+  try {
+    if (type) {
+      revalidatePath(path, type);
+    } else {
+      revalidatePath(path);
+    }
+  } catch (e) {
+    // Suppress error when called outside Next.js request context
+  }
+}
+
 export async function createPage(data: Partial<PageData>): Promise<PageData | null> {
   try {
     const {
@@ -125,11 +199,12 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
     } = data;
 
     const miscData: any = { shortDescription, category, tags, showInSlider, storeSettings };
+    const finalSlug = slug || (await generateAutoNewsSlug(category));
 
     const record = await prisma.pageRequest.create({
       data: {
         title: title || '名称未設定',
-        slug: slug || `news-${Date.now()}`,
+        slug: finalSlug,
         status: status || 'private',
         sections: sections ? JSON.parse(JSON.stringify(sections)) : [],
         thumbnailUrl: thumbnailUrl,
@@ -137,9 +212,9 @@ export async function createPage(data: Partial<PageData>): Promise<PageData | nu
         referenceUrls: miscData,
       },
     });
-    revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'layout');
-    revalidatePath('/', 'layout');
+    safeRevalidatePath('/admin/news-management');
+    safeRevalidatePath('/store/[slug]', 'layout');
+    safeRevalidatePath('/', 'layout');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('createPage Server Action Error:', error);
@@ -194,9 +269,9 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       where: { id },
       data: updateData,
     });
-    revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'layout');
-    revalidatePath('/', 'layout');
+    safeRevalidatePath('/admin/news-management');
+    safeRevalidatePath('/store/[slug]', 'layout');
+    safeRevalidatePath('/', 'layout');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('Failed to update page:', error);
@@ -209,9 +284,9 @@ export async function deletePage(id: string): Promise<boolean> {
     await prisma.pageRequest.delete({
       where: { id },
     });
-    revalidatePath('/admin/news-management');
-    revalidatePath('/store/[slug]', 'layout');
-    revalidatePath('/', 'layout');
+    safeRevalidatePath('/admin/news-management');
+    safeRevalidatePath('/store/[slug]', 'layout');
+    safeRevalidatePath('/', 'layout');
     return true;
   } catch (error) {
     console.error('Failed to delete page:', error);
@@ -226,10 +301,14 @@ export async function duplicatePage(id: string): Promise<PageData | null> {
     });
     if (!original) return null;
 
+    const misc = (original.referenceUrls as any) || {};
+    const category = misc.category || 'other';
+    const newSlug = await generateAutoNewsSlug(category);
+
     const record = await prisma.pageRequest.create({
       data: {
         title: `${original.title} (コピー)`,
-        slug: `${original.slug}-copy-${Date.now()}`,
+        slug: newSlug,
         status: 'private',
         sections: original.sections || [],
         thumbnailUrl: original.thumbnailUrl,
@@ -238,7 +317,7 @@ export async function duplicatePage(id: string): Promise<PageData | null> {
       },
     });
 
-    revalidatePath('/admin/news-management');
+    safeRevalidatePath('/admin/news-management');
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('Failed to duplicate page:', error);

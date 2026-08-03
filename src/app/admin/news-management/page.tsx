@@ -42,11 +42,12 @@ export default function NewsManagementPage() {
     }
   };
 
-  const handleCreatePage = async () => {
+  const handleCreatePage = async (category?: string) => {
     try {
       const newPage = await createPage({
         title: '名称未設定のページ',
         status: 'private',
+        category: category || 'other',
         sections: [
           {
             id: Math.random().toString(36).substr(2, 9),
