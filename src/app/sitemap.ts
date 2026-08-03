@@ -37,6 +37,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       '/cast-list',
       '/price',
       '/recruit',
+      '/news',
       '/diary',
       '/reviews',
       '/schedule',
@@ -50,6 +51,22 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         changeFrequency: route === '' ? 'daily' : 'weekly',
         priority: route === '' ? 0.9 : 0.7,
       });
+    }
+
+    // 店舗所属の公開ニュース記事
+    try {
+      const { getPublishedPagesByStore } = await import('@/lib/actions/news-pages');
+      const newsPages = await getPublishedPagesByStore(storeSlug);
+      for (const p of newsPages) {
+        storePages.push({
+          url: `${baseUrl}${storeBase}/news/${p.slug}`,
+          lastModified: new Date(p.storeSettings?.[storeSlug]?.publishedAt || p.updatedAt),
+          changeFrequency: 'weekly',
+          priority: 0.6,
+        });
+      }
+    } catch (e) {
+      console.error(`Sitemap: Error fetching news for store ${storeSlug}:`, e);
     }
 
     // エリアLP (単一ソース AREA_MAP より実在エリア全7枠を動的生成)

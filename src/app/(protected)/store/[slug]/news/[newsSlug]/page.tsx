@@ -1,9 +1,9 @@
 import { Metadata } from 'next';
-import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
+import { getPublishedPagesByStore, getPublishedPageBySlug } from '@/lib/actions/news-pages';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
-import { notFound } from 'next/navigation';
+import { notFound, redirect, RedirectType } from 'next/navigation';
 import NewsDetailClient from './NewsDetailClient';
 import React from 'react';
 
@@ -16,17 +16,20 @@ interface NewsDetailPageProps {
 
 export async function generateMetadata({ params }: NewsDetailPageProps): Promise<Metadata> {
   const { slug, newsSlug } = params;
-  const allPages = await getPublishedPagesByStore(slug);
-  const page = allPages.find((p) => p.slug === newsSlug);
-  const storeData = await getStoreData(slug);
-
-  if (!page || !storeData) {
-    return {
-      title: 'Not Found',
-    };
+  const page = await getPublishedPageBySlug(newsSlug);
+  if (!page || page.status !== 'published') {
+    return { title: 'Not Found' };
   }
 
-  const publishedAt = page.storeSettings?.[slug]?.publishedAt || page.updatedAt;
+  const targetSlugs = page.targetStoreSlugs || [];
+  const owningStoreSlug = targetSlugs.includes(slug) ? slug : (targetSlugs[0] || 'fukuoka');
+  const storeData = await getStoreData(owningStoreSlug);
+
+  if (!storeData) {
+    return { title: 'Not Found' };
+  }
+
+  const publishedAt = page.storeSettings?.[owningStoreSlug]?.publishedAt || page.updatedAt;
 
   let plainTextDescription = '';
   if (page.sections && page.sections.length > 0) {
@@ -54,7 +57,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     title: `${page.title} | ${storeData.name}`,
     description: metaDescription,
     alternates: {
-      canonical: `https://www.sutoroberrys.jp/store/${slug}/news/${newsSlug}`,
+      canonical: `https://www.sutoroberrys.jp/store/${owningStoreSlug}/news/${newsSlug}`,
     },
     openGraph: {
       title: `${page.title} | ${storeData.name}`,
@@ -75,15 +78,27 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
 export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const { slug, newsSlug } = params;
 
+  // 1. 店舗に限定せず全公開記事から検索
+  const page = await getPublishedPageBySlug(newsSlug);
+
+  if (!page || page.status !== 'published') {
+    notFound();
+  }
+
+  // 2. 店舗アクセス権チェック (他店舗パスでのアクセスは301リダイレクト)
+  const targetSlugs = page.targetStoreSlugs || [];
+  if (!targetSlugs.includes(slug)) {
+    const owningStoreSlug = targetSlugs[0] || 'fukuoka';
+    redirect(`/store/${owningStoreSlug}/news/${newsSlug}`, RedirectType.replace);
+  }
+
   const [allPages, storeData, topConfigResult] = await Promise.all([
     getPublishedPagesByStore(slug),
     getStoreData(slug),
     getStoreTopConfig(slug),
   ]);
 
-  const page = allPages.find((p) => p.slug === newsSlug);
-
-  if (!page || !storeData) {
+  if (!storeData) {
     notFound();
   }
 

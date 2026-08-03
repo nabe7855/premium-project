@@ -47,6 +47,9 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
     const now = new Date().getTime();
 
     const records = allPages.filter((record: any) => {
+      // 0. グローバルステータスが published でない場合は完全除外
+      if (record.status !== 'published') return false;
+
       // 1. 店舗の配信対象に含まれているかチェック
       const slugs = record.targetStoreSlugs as string[];
       if (!Array.isArray(slugs) || !slugs.includes(storeSlug)) return false;
@@ -92,6 +95,19 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
   } catch (error) {
     console.error('Failed to fetch published pages by store:', error);
     return [];
+  }
+}
+
+export async function getPublishedPageBySlug(newsSlug: string): Promise<PageData | null> {
+  try {
+    const record = await prisma.pageRequest.findFirst({
+      where: { slug: newsSlug },
+    });
+    if (!record) return null;
+    return mapPrismaToPageData(record);
+  } catch (error) {
+    console.error('Failed to fetch page by slug:', error);
+    return null;
   }
 }
 
