@@ -37,6 +37,7 @@ export async function submitRecruitApplication(formData: FormData) {
       therapist_exp: formData.get('therapist_exp') as string,
       youtube: formData.get('youtube') as string,
       transport: formData.get('transport') as string,
+      referral_source: formData.get('referral_source') as string,
       source: formData.get('source') as string,
       keyword: formData.get('keyword') as string,
       dating_app_exp: formData.get('dating_app_exp') as string,
@@ -126,7 +127,9 @@ export async function submitRecruitApplication(formData: FormData) {
       emailResult = { success: false, error: String(emailError) };
     }
 
-    revalidatePath('/admin/interview-reservations');
+    try {
+      revalidatePath('/admin/interview-reservations');
+    } catch (_) {}
 
     return { 
       success: true, 
@@ -183,7 +186,9 @@ export async function deleteRecruitApplication(id: string) {
       where: { id },
     });
 
-    revalidatePath('/admin/interview-reservations');
+    try {
+      revalidatePath('/admin/interview-reservations');
+    } catch (_) {}
     return { success: true };
   } catch (error) {
     console.error('Delete application error:', error);
@@ -197,7 +202,9 @@ export async function updateApplicationStatus(id: string, status: string) {
       where: { id },
       data: { status },
     });
-    revalidatePath('/admin/interview-reservations');
+    try {
+      revalidatePath('/admin/interview-reservations');
+    } catch (_) {}
     return { success: true };
   } catch (error) {
     console.error('Update status error:', error);

@@ -154,14 +154,31 @@ export async function sendRecruitNotification(application: any, photos: { url: s
       ${
         details
           ? Object.entries(details)
-              .map(
-                ([key, value]) => `
+              .filter(([k]) => k !== 'attribution')
+              .map(([key, value]) => {
+                const labelMap: Record<string, string> = {
+                  referral_source: '当店を知ったきっかけ',
+                  employment: '就業状況',
+                  qualifications: '資格内容',
+                  experience: '業務経歴',
+                  therapist_exp: 'セラピスト経験',
+                  youtube: 'YouTube顔出し',
+                  transport: '深夜移動',
+                  source: '検索経路・知った経緯',
+                  keyword: '検索キーワード',
+                  dating_app_exp: 'アプリ利用経験',
+                  tattoo: '刺青',
+                  appearance_concerns: '容姿の懸念',
+                };
+                const displayKey = labelMap[key] || key;
+                const displayValue = typeof value === 'object' ? JSON.stringify(value) : (value || '-');
+                return `
         <tr>
-          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">${key}</th>
-          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${value || '-'}</td>
+          <th style="text-align: left; padding: 8px; border-bottom: 1px solid #ddd;">${displayKey}</th>
+          <td style="padding: 8px; border-bottom: 1px solid #ddd;">${displayValue}</td>
         </tr>
-      `,
-              )
+      `;
+              })
               .join('')
           : ''
       }

@@ -467,10 +467,10 @@ export default function InterviewReservationsPage() {
                                             </div>
                                             <div className="col-span-2">
                                               <dt className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
-                                                流入元 / キーワード
+                                                知ったきっかけ / 流入元
                                               </dt>
-                                              <dd className="mt-0.5 text-sm font-semibold text-slate-700">
-                                                {(selectedApp.details as any).source || '-'}{' '}
+                                              <dd className="mt-0.5 text-sm font-bold text-indigo-600">
+                                                {(selectedApp.details as any).referral_source || (selectedApp.details as any).source || '-'}{' '}
                                                 {(selectedApp.details as any).keyword
                                                   ? ` (${(selectedApp.details as any).keyword})`
                                                   : ''}

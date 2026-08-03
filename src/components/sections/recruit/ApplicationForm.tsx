@@ -190,6 +190,23 @@ const ApplicationForm: React.FC = () => {
 
               <div>
                 <label className="mb-2 block text-sm font-semibold text-gray-700">
+                  当店をどこでお知りになりましたか？ <span className="text-xs font-normal text-gray-400">(任意)</span>
+                </label>
+                <select
+                  {...register('referral_source' as any)}
+                  className="w-full rounded-lg border border-gray-300 p-3 text-base focus:outline-none focus:ring-2 focus:ring-pink-500 text-gray-800"
+                >
+                  <option value="">選択してください (任意)</option>
+                  <option value="求人サイト(kaikan等)">求人サイト(kaikan等)</option>
+                  <option value="Google等の検索">Google等の検索</option>
+                  <option value="X(Twitter)・SNS">X(Twitter)・SNS</option>
+                  <option value="知人の紹介">知人の紹介</option>
+                  <option value="その他">その他</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-semibold text-gray-700">
                   経験について
                 </label>
                 <select
