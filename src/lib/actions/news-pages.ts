@@ -137,12 +137,20 @@ function getJSTDateString(date: Date = new Date()): string {
 
 export async function generateAutoNewsSlug(
   categoryRaw?: string,
-  targetDate: Date = new Date()
+  targetDateInput?: string | Date
 ): Promise<string> {
   try {
-    const yyyymmdd = getJSTDateString(targetDate);
     const categorySlug = (categoryRaw && CATEGORY_SLUG_MAP[categoryRaw]) || 'other';
-    const baseSlug = `news-${yyyymmdd}-${categorySlug}`;
+    let dateStr: string;
+
+    if (typeof targetDateInput === 'string' && /^\d{8}$/.test(targetDateInput)) {
+      dateStr = targetDateInput;
+    } else {
+      const d = targetDateInput instanceof Date ? targetDateInput : new Date();
+      dateStr = getJSTDateString(isNaN(d.getTime()) ? new Date() : d);
+    }
+
+    const baseSlug = `news-${dateStr}-${categorySlug}`;
 
     if (!/^[a-z0-9-]+$/.test(baseSlug)) {
       throw new Error(`Generated base slug "${baseSlug}" fails regex validation.`);
@@ -240,7 +248,7 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
 
     const existingRecord = await prisma.pageRequest.findUnique({
       where: { id },
-      select: { referenceUrls: true, status: true },
+      select: { referenceUrls: true, status: true, slug: true },
     });
     const currentMisc = (existingRecord?.referenceUrls as any) || {};
 
@@ -264,6 +272,41 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
     }
     
     updateData.referenceUrls = newMisc;
+
+    // 🚀 公開（Publish）ボタンが押された初回のタイミングで、その時の最新カテゴリ・公開日に基いてスラッグを自動最終確定
+    const wasPublished = existingRecord?.status === 'published' || 
+      Object.values(currentMisc.storeSettings || {}).some((s: any) => s.status === 'published');
+
+    const willBePublished = (status !== undefined ? status === 'published' : existingRecord?.status === 'published') ||
+      Object.values(newMisc.storeSettings || {}).some((s: any) => s.status === 'published');
+
+    if (!wasPublished && willBePublished && !slug) {
+      const finalCategory = category !== undefined ? category : currentMisc.category;
+      
+      let pubDateIso: string | undefined;
+      if (newMisc.storeSettings) {
+        const pubSettings = (Object.values(newMisc.storeSettings) as any[]).find((s: any) => s.status === 'published' && s.publishedAt);
+        if (pubSettings?.publishedAt) {
+          pubDateIso = pubSettings.publishedAt;
+        }
+      }
+      
+      let dateJstStr: string | undefined;
+      if (pubDateIso) {
+        const d = new Date(pubDateIso);
+        if (!isNaN(d.getTime())) {
+          // Adjust to JST (+9h)
+          const jstTime = new Date(d.getTime() + (d.getTimezoneOffset() + 540) * 60000);
+          const yyyy = jstTime.getFullYear();
+          const mm = String(jstTime.getMonth() + 1).padStart(2, '0');
+          const dd = String(jstTime.getDate()).padStart(2, '0');
+          dateJstStr = `${yyyy}${mm}${dd}`;
+        }
+      }
+
+      const freshSlug = await generateAutoNewsSlug(finalCategory, dateJstStr);
+      updateData.slug = freshSlug;
+    }
 
     const record = await prisma.pageRequest.update({
       where: { id },
