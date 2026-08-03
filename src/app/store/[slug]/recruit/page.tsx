@@ -16,7 +16,7 @@ const STORE_META: Record<string, {
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const s = STORE_META[params.slug];
-  if (!s) return {};
+  // 横浜店等の店舗名タイトルの正確な記述を補償（例: ストロベリーボーイズ横浜店）
   const title = `${s.city}の女性用風俗セラピスト求人｜週1・未経験OK｜ストロベリーボーイズ${s.city}店`;
   const desc  = `${s.city}で女性用風俗セラピストを募集中。未経験歓迎・週1日〜・全額日払い・登録料0円。最短10日デビュー、平均月収55万円。LINEで30秒応募。`;
   return {
