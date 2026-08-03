@@ -48,11 +48,11 @@ export default async function RecruitPage({ params }: { params: { slug: string }
 
   const s = STORE_META[slug] || STORE_META.fukuoka;
 
-  // 動的な日付計算 (Google for Jobsの期限切れ対策)
-  const now = new Date();
-  const datePostedStr = now.toISOString().split('T')[0];
-  const validThroughDate = new Date(now.getTime() + 180 * 24 * 60 * 60 * 1000);
-  const validThroughStr = validThroughDate.toISOString().split('T')[0];
+  // Google求人ポリシーに準拠した固定日付管理 (再掲載スパム扱い防止)
+  // datePosted: 求人原稿の作成・実質更新日
+  // validThrough: datePosted + 180日（定期見直し運用）
+  const datePostedStr = "2026-06-10";
+  const validThroughStr = "2026-12-07";
 
   const jobPostingSchema = {
     "@context": "https://schema.org",
