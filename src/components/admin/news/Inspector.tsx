@@ -126,9 +126,14 @@ const Inspector: React.FC<InspectorProps> = ({
           </div>
 
           <div className="space-y-4">
-            <label className="block text-[10px] font-black uppercase tracking-widest text-slate-900">
-              配信対象店舗ごとの設定
-            </label>
+            <div>
+              <label className="block text-[10px] font-black uppercase tracking-widest text-slate-900">
+                配信対象店舗の設定
+              </label>
+              <p className="mt-1 mb-3 text-[9px] text-slate-400">
+                ※SEOの重複コンテンツ防止のため、1記事につき1店舗のみ設定できます。
+              </p>
+            </div>
             <div className="flex flex-col gap-3">
               {Object.values(stores).map((store) => {
                 const isSelected = page.targetStoreSlugs?.includes(store.id);
@@ -141,16 +146,13 @@ const Inspector: React.FC<InspectorProps> = ({
                     <div className="flex items-center justify-between mb-2">
                       <label className="flex items-center gap-2 cursor-pointer">
                         <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={(e) => {
-                            const current = page.targetStoreSlugs || [];
-                            const next = e.target.checked
-                              ? [...current, store.id]
-                              : current.filter((s) => s !== store.id);
-                            onUpdatePage({ targetStoreSlugs: next });
+                          type="radio"
+                          name="targetStoreSlugRadio"
+                          checked={!!isSelected}
+                          onChange={() => {
+                            onUpdatePage({ targetStoreSlugs: [store.id] });
                           }}
-                          className="h-4 w-4 rounded border-slate-300 text-rose-500 focus:ring-rose-500 cursor-pointer"
+                          className="h-4 w-4 border-slate-300 text-rose-500 focus:ring-rose-500 cursor-pointer"
                         />
                         <span className="text-xs font-bold text-slate-700">{store.emoji} {store.displayName}</span>
                       </label>

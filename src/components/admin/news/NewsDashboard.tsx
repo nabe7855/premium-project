@@ -117,10 +117,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
   };
 
   const handleStoreToggle = (pageId: string, currentStores: string[], storeSlug: string) => {
-    const nextStores = currentStores.includes(storeSlug)
-      ? currentStores.filter((s) => s !== storeSlug)
-      : [...currentStores, storeSlug];
-    onUpdatePage(pageId, { targetStoreSlugs: nextStores });
+    onUpdatePage(pageId, { targetStoreSlugs: [storeSlug] });
   };
 
   return (
