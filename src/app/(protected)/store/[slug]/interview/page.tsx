@@ -117,9 +117,9 @@ export default async function StoreInterviewHubPage({ params }: Props) {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {articles.map((article) => {
             const meta = article.interview_meta as any;
-            const castLink = meta?.cast_links?.[0];
+            const castLink = meta?.cast_links?.find((l: any) => l.cast_id || l.cast_name_romaji) || meta?.cast_links?.[0];
             const castName = castLink?.cast_name || 'セラピスト';
-            const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+            const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'cast';
             const articleUrl = `/store/${slug}/interview/${castSlug}/${article.slug}`;
 
             const publishedDate = article.published_at ? new Date(article.published_at) : new Date(article.created_at);

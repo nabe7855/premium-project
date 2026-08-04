@@ -371,9 +371,9 @@ export default async function RecruitHubPage() {
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
               {interviews.slice(0, 3).map((art) => {
                 const meta = art.interview_meta as any;
-                const castLink = meta?.cast_links?.find((l: any) => l.role === 'participant') || meta?.cast_links?.[0];
+                const castLink = meta?.cast_links?.find((l: any) => l.cast_id || l.cast_name_romaji) || meta?.cast_links?.[0];
                 const castName = castLink?.cast_name || 'セラピスト';
-                const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+                const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'cast';
                 const storeSlug = meta?.area === 'yokohama' || meta?.area === '横浜' ? 'yokohama' : 'fukuoka';
                 const articleUrl = `/store/${storeSlug}/interview/${castSlug}/${art.slug}`;
 

@@ -62,11 +62,8 @@ export default async function CastInterviewPage({ params }: Props) {
     notFound();
   }
 
-  // 2. キャストデータの取得
+  // 2. キャストデータの取得（存在しない場合でも記事本体を描画）
   const cast = await getCastProfileBySlug(params.cast);
-  if (!cast) {
-    notFound();
-  }
 
   // 3. 店舗データの取得
   const store = getStoreData(params.slug);
