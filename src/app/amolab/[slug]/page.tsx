@@ -21,7 +21,9 @@ export async function generateMetadata({
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
 
   return {
-    title: `${article.title}｜アモラボ`,
+    title: {
+      absolute: article.title,
+    },
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,
