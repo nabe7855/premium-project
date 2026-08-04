@@ -20,23 +20,23 @@ export async function generateMetadata({
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
 
-  const rawTitle = (article.seo_title || article.title)
+  const cleanTitle = (article.seo_title || article.title)
     .replace(/(｜体験談)?(｜アモラボ)+$/g, '')
     .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
     .trim();
 
-  const finalTitle = `${rawTitle}｜体験談｜アモラボ`;
+  const exactTitle = `${cleanTitle}｜体験談｜アモラボ`;
 
   return {
     title: {
-      absolute: finalTitle,
+      absolute: exactTitle,
     },
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: finalTitle,
+      title: exactTitle,
       description: article.seo_description || article.excerpt || '',
       images: article.thumbnail_url
         ? [
