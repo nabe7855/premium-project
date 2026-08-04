@@ -59,6 +59,36 @@ export default async function StoreReviewsPage({ params }: { params: { slug: str
 
       <main className="mx-auto max-w-6xl flex-grow px-4 py-8">
         <h1 className="sr-only">お客様の声・口コミ</h1>
+        {/* 特集：お客様体験談インタビュー (あやさん) */}
+        <div className="mb-10 overflow-hidden rounded-3xl bg-gradient-to-r from-pink-500 via-rose-400 to-pink-500 p-1 shadow-lg">
+          <div className="flex flex-col md:flex-row items-center justify-between rounded-[22px] bg-white p-6 md:p-8">
+            <div className="flex-1 pr-0 md:pr-6 mb-6 md:mb-0">
+              <div className="inline-flex items-center gap-2 rounded-full bg-pink-100 px-3.5 py-1 text-[11px] font-bold text-pink-600 mb-3">
+                <span>✨ リアル体験ストーリー</span>
+              </div>
+              <h2 className="font-serif text-xl md:text-2xl font-bold text-gray-800 leading-snug mb-3">
+                「このままおばあさんになりたくなかった」
+              </h2>
+              <p className="text-xs md:text-sm leading-relaxed text-gray-600 mb-4">
+                夫はいるのに、女として見てもらえない——。半年以上迷った既婚のあやさん（30代・子育て中）が、予約ボタンを押すまでのリアルな葛藤と体験記。
+              </p>
+              <a
+                href="/amolab/voice-aya"
+                className="inline-flex items-center gap-2 text-xs md:text-sm font-bold text-pink-500 transition-colors hover:text-pink-600"
+              >
+                あやさんの体験談を読む <span className="text-base">→</span>
+              </a>
+            </div>
+            <div className="w-full md:w-56 flex-shrink-0 relative aspect-[16/10] overflow-hidden rounded-2xl bg-pink-50">
+              <img
+                src="/images/amolab/aya/aya-photo-top.webp"
+                alt="あやさん体験談"
+                className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+          </div>
+        </div>
+
         <Suspense
           fallback={
             <div className="flex h-64 items-center justify-center">

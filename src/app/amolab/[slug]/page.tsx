@@ -18,14 +18,20 @@ export async function generateMetadata({
     return { title: '記事が見つかりません' };
   }
 
+  const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
+
   return {
     title: `${article.title}｜アモラボ`,
     description: article.seo_description || article.excerpt || '',
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: article.seo_title || article.title,
       description: article.seo_description || article.excerpt || '',
       images: article.thumbnail_url ? [article.thumbnail_url] : [],
       type: 'article',
+      url: canonicalUrl,
     },
   };
 }

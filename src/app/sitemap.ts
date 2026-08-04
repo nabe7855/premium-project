@@ -140,6 +140,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const mediaPages: MetadataRoute.Sitemap = [
     // /magazine (404) is excluded from sitemap
     // /career is redirected, so excluded from sitemap
+    {
+      url: `${baseUrl}/amolab`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/amolab/jiten`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
     // インタビューセクション（新規追加・既存エントリーは変更なし）
     {
       url: `${baseUrl}/magazine/interview`,
@@ -148,6 +160,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
   ];
+
+  // AmoLab コラムおよび用語辞典の動的ページ
+  try {
+    const { prisma } = await import('@/lib/prisma');
+    const amolabArticles = await prisma.mediaArticle.findMany({
+      where: {
+        status: 'published',
+        category: { in: ['amolab', 'amolab-jiten'] },
+      },
+      select: { slug: true, category: true, updated_at: true },
+    });
+
+    for (const art of amolabArticles) {
+      const pathPrefix = art.category === 'amolab-jiten' ? '/amolab/jiten/words' : '/amolab';
+      mediaPages.push({
+        url: `${baseUrl}${pathPrefix}/${art.slug}`,
+        lastModified: new Date(art.updated_at),
+        changeFrequency: 'monthly',
+        priority: 0.7,
+      });
+    }
+  } catch (e) {
+    console.error('Sitemap: Error fetching amolab articles:', e);
+  }
 
   /* 
   try {

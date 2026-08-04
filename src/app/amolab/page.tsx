@@ -35,7 +35,17 @@ export default async function MagazineTopPage({
 
   // タグ一覧を取得
   const tagsResult = await getMediaTags('user');
-  const allTags = tagsResult.success ? tagsResult.tags || [] : [];
+  const rawTags = tagsResult.success ? tagsResult.tags || [] : [];
+
+  // 公開記事が1本以上存在するタグのみ抽出（改訂4: 空棚非表示原則）
+  const activeTagNames = new Set<string>();
+  allArticles.forEach((article: any) => {
+    article.tags?.forEach((t: any) => {
+      if (t.tag?.name) activeTagNames.add(t.tag.name);
+    });
+  });
+
+  const allTags = rawTags.filter((tag: any) => activeTagNames.has(tag.name));
 
   // タグでフィルタリング
   if (selectedTag) {
@@ -63,15 +73,17 @@ export default async function MagazineTopPage({
     { title: '口コミ', icon: MessageCircleIcon, href: '/store/fukuoka', label: 'REVIEW' },
   ];
 
-  const subNav = [
-    { title: '初めての方へ', href: '/amolab?tag=初めての方へ' },
-    { title: 'セルフケア', href: '/amolab?tag=セルフケア' },
-    { title: 'パートナーと', href: '/amolab?tag=パートナーと' },
-    { title: '恋愛・相談', href: '/amolab?tag=恋愛・相談' },
-    { title: '体験談', href: '/amolab?tag=体験談' },
-    { title: 'ラブグッズ', href: '/amolab?tag=ラブグッズ' },
-    { title: '女風ガイド', href: '/amolab?tag=女風ガイド' },
+  const subNavCandidates = [
+    { title: '初めての方へ', href: '/amolab?tag=初めての方へ', tag: '初めての方へ' },
+    { title: 'セルフケア', href: '/amolab?tag=セルフケア', tag: 'セルフケア' },
+    { title: 'パートナーと', href: '/amolab?tag=パートナーと', tag: 'パートナーと' },
+    { title: '恋愛・相談', href: '/amolab?tag=恋愛・相談', tag: '恋愛・相談' },
+    { title: '体験談', href: '/amolab?tag=体験談', tag: '体験談' },
+    { title: 'ラブグッズ', href: '/amolab?tag=ラブグッズ', tag: 'ラブグッズ' },
+    { title: '女風ガイド', href: '/amolab?tag=女風ガイド', tag: '女風ガイド' },
   ];
+
+  const subNav = subNavCandidates.filter(item => activeTagNames.has(item.tag));
 
   const renderEmptyState = () => (
     <div className="mt-8 rounded-2xl border border-pink-50 bg-[#FFFafb] p-16 text-center text-gray-500 shadow-sm">

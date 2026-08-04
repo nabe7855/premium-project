@@ -142,6 +142,37 @@ export default function FirstTimePageContent({
                   onUpdate={onUpdate}
                   onImageUpload={onImageUpload}
                 />
+                {/* リアル体験談導線カード (あやさん) */}
+                <div className="mx-auto max-w-4xl px-4 my-10">
+                  <div className="relative overflow-hidden rounded-3xl bg-white border border-pink-100 p-6 md:p-8 shadow-sm transition-all hover:shadow-md">
+                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                      <div className="flex-1">
+                        <span className="inline-block rounded-full bg-pink-50 px-3 py-1 text-[11px] font-bold text-pink-500 mb-2">
+                          利用者のリアルな声
+                        </span>
+                        <h3 className="font-serif text-lg md:text-xl font-bold text-gray-800 mb-2">
+                          「このままおばあさんになりたくなかった」
+                        </h3>
+                        <p className="text-xs text-gray-500 leading-relaxed mb-4">
+                          半年以上迷った既婚のあやさん（30代）が、女性用風俗の予約ボタンを押すまでの不安と実際の体験談をご紹介。
+                        </p>
+                        <a
+                          href="/amolab/voice-aya"
+                          className="inline-flex items-center gap-2 text-xs font-bold text-pink-500 hover:text-pink-600"
+                        >
+                          あやさんの体験記を読む →
+                        </a>
+                      </div>
+                      <div className="w-full md:w-44 flex-shrink-0 aspect-[16/10] overflow-hidden rounded-2xl bg-pink-50 relative">
+                        <img
+                          src="/images/amolab/aya/aya-photo-top.webp"
+                          alt="あやさん体験談"
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             );
           case 'casts':
