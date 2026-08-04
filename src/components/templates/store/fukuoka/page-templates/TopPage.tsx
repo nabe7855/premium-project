@@ -20,6 +20,7 @@ const ReviewSection = dynamic(() => import('@/components/sections/store/ReviewSe
 const FAQSection = dynamic(() => import('../sections/FAQSection'));
 const SNSProfile = dynamic(() => import('@/components/templates/news/SNSProfile'));
 const Footer = dynamic(() => import('../sections/Footer'));
+import TopInterviewSection from '@/components/sections/store/TopInterviewSection';
 import { PageData } from '@/components/admin/news/types';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
@@ -27,6 +28,7 @@ import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 interface FukuokaPageProps {
   config: StoreTopPageConfig | null;
   newsPages?: PageData[];
+  interviewArticles?: any[];
   todayCasts?: TodayCast[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
@@ -38,6 +40,7 @@ interface FukuokaPageProps {
 export default function FukuokaPage({
   config,
   newsPages,
+  interviewArticles,
   todayCasts,
   isEditing,
   onUpdate,
@@ -121,13 +124,17 @@ export default function FukuokaPage({
         </>
       )}
       {(!safeConfig || safeConfig.campaign.isVisible || isEditing) && (
-        <CampaignSection
-          config={safeConfig?.campaign}
-          newsPages={newsPages}
-          isEditing={isEditing}
-          onUpdate={onUpdate}
-          onImageUpload={onImageUpload}
-        />
+        <>
+          <CampaignSection
+            config={safeConfig?.campaign}
+            newsPages={newsPages}
+            isEditing={isEditing}
+            onUpdate={onUpdate}
+            onImageUpload={onImageUpload}
+          />
+          {/* インタビュー記事一覧セクション（ニュース直下・SSR直接レンダリング） */}
+          <TopInterviewSection storeSlug={storeSlug || 'fukuoka'} articles={interviewArticles} />
+        </>
       )}
       {(!safeConfig || safeConfig.diary.isVisible || isEditing) && (
         <DiarySection

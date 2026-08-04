@@ -2,6 +2,7 @@ import CommonTopPage from '@/components/templates/store/common/page-templates/To
 import FukuokaTopPage from '@/components/templates/store/fukuoka/page-templates/TopPage';
 import YokohamaTopPage from '@/components/templates/store/yokohama/page-templates/TopPage';
 import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
+import { getInterviewArticles } from '@/lib/actions/interview';
 import { getTodayCastsByStore } from '@/lib/getTodayCastsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
@@ -165,11 +166,14 @@ export default async function StorePage({ params }: StorePageProps) {
   });
 
   // 各種データを並列で取得して表示速度を向上
-  const [topConfigResult, todayCasts, newsPages] = await Promise.all([
+  const [topConfigResult, todayCasts, newsPages, interviewResult] = await Promise.all([
     getStoreTopConfig(params.slug),
     getTodayCastsByStore(params.slug),
     getPublishedPagesByStore(params.slug),
+    getInterviewArticles({ area: params.slug, limit: 3 }),
   ]);
+
+  const interviewArticles = interviewResult.success ? interviewResult.articles : [];
 
   const topConfig = topConfigResult.success
     ? (topConfigResult.config as StoreTopPageConfig)
@@ -316,6 +320,7 @@ export default async function StorePage({ params }: StorePageProps) {
         <FukuokaTopPage
           config={topConfig as any}
           newsPages={newsPages}
+          interviewArticles={interviewArticles}
           storeSlug={params.slug}
           todayCasts={todayCasts}
         />

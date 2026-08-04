@@ -80,13 +80,21 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
-    // インタビュー一覧ページを追加
-    storePages.push({
-      url: `${baseUrl}${storeBase}/interview`,
-      lastModified: new Date(),
-      changeFrequency: 'weekly',
-      priority: 0.8,
-    });
+    // インタビュー一覧ページ（公開インタビューが1本以上存在する店舗のみ追加）
+    try {
+      const { getInterviewArticles } = await import('@/lib/actions/interview');
+      const interviewResult = await getInterviewArticles({ area: storeSlug });
+      if (interviewResult.success && interviewResult.articles && interviewResult.articles.length > 0) {
+        storePages.push({
+          url: `${baseUrl}${storeBase}/interview`,
+          lastModified: new Date(),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
+      }
+    } catch (e) {
+      console.error(`Sitemap: Error checking interview articles for ${storeSlug}:`, e);
+    }
 
     try {
       const casts = await getCastsByStore(storeSlug);

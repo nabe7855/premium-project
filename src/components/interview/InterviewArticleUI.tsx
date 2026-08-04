@@ -1,8 +1,10 @@
 import React from 'react';
+import Link from 'next/link';
 import DialogueBubble, { SpeakerType } from './DialogueBubble';
 import FAQSection, { FaqItem } from './FAQSection';
 import ProfileCard, { CastProfileData } from './ProfileCard';
 import { prisma } from '@/lib/prisma';
+import { getInterviewArticles } from '@/lib/actions/interview';
 
 // ---------------------------------------------------------------------------
 // インタビュー記事の本体UIコンポーネント（サーバーコンポーネント）
@@ -473,6 +475,88 @@ export default async function InterviewArticleUI({
             ご予約・お問い合わせはこちら →
           </a>
         </div>
+
+        {/* 関連記事（同店舗の他インタビュー2件） & インタビュー一覧へ戻るナビゲーション */}
+        {(() => {
+          const areaName = interviewMeta?.area || '福岡';
+          const currentStoreSlug = areaName === '福岡' ? 'fukuoka' : areaName === '横浜' ? 'yokohama' : areaName.toLowerCase();
+          return (
+            <InterviewBottomNav
+              currentStoreSlug={currentStoreSlug}
+              currentArticleSlug={(article as any).slug}
+            />
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
+async function InterviewBottomNav({ currentStoreSlug, currentArticleSlug }: { currentStoreSlug: string; currentArticleSlug?: string }) {
+  const { articles: rawArticles } = await getInterviewArticles({ area: currentStoreSlug });
+  const relatedArticles = (rawArticles || [])
+    .filter((a): a is NonNullable<typeof a> => a !== null && a.slug !== currentArticleSlug)
+    .slice(0, 2);
+
+  return (
+    <div className="mt-14 pt-10 border-t border-slate-200">
+      {/* 他のインタビュー記事（関連記事2件） */}
+      {relatedArticles.length > 0 && (
+        <div className="mb-10">
+          <h3 className="text-base font-bold text-slate-800 mb-4 font-serif">
+            他のセラピストインタビュー
+          </h3>
+          <div className="grid gap-4 sm:grid-cols-2">
+            {relatedArticles.map((rel) => {
+              const relMeta = rel.interview_meta as any;
+              const relCastLink = relMeta?.cast_links?.[0];
+              const relCastName = relCastLink?.cast_name || 'セラピスト';
+              const relCastSlug = relCastLink?.cast_id || relCastLink?.cast_name_romaji || 'unknown';
+              const relUrl = `/store/${currentStoreSlug}/interview/${relCastSlug}/${rel.slug}`;
+
+              return (
+                <Link
+                  key={rel.id}
+                  href={relUrl}
+                  className="group flex gap-3 overflow-hidden rounded-xl bg-white p-3 shadow-sm border border-slate-100 transition-transform hover:-translate-y-0.5"
+                >
+                  <div className="relative h-20 w-24 flex-shrink-0 overflow-hidden rounded-lg bg-slate-100">
+                    {rel.thumbnail_url ? (
+                      <img
+                        src={rel.thumbnail_url}
+                        alt={rel.title}
+                        className="h-full w-full object-cover transition-transform group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-rose-50 text-[10px] text-rose-300 font-bold">
+                        INTERVIEW
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex flex-col justify-between py-0.5 text-left">
+                    <div>
+                      <span className="text-[11px] font-bold text-rose-500">{relCastName}</span>
+                      <h4 className="text-xs font-bold leading-snug text-slate-800 line-clamp-2 group-hover:text-rose-600 transition-colors">
+                        {rel.title}
+                      </h4>
+                    </div>
+                    <span className="text-[10px] font-semibold text-slate-400">続きを読む →</span>
+                  </div>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* インタビュー一覧へ戻るボタン */}
+      <div className="text-center">
+        <Link
+          href={`/store/${currentStoreSlug}/interview`}
+          className="inline-flex items-center rounded-full border border-rose-400 bg-white px-6 py-2.5 text-xs font-bold text-rose-500 shadow-sm transition-all hover:bg-rose-50 hover:scale-105"
+        >
+          ← インタビュー一覧へ戻る
+        </Link>
       </div>
     </div>
   );

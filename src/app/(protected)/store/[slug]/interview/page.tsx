@@ -1,126 +1,190 @@
-import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
-import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
-import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
-import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
-import { getInterviewArticles } from '@/lib/actions/interview';
-import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
-import { getStoreData } from '@/lib/store/store-data';
-import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Metadata } from 'next';
+import { getInterviewArticles } from '@/lib/actions/interview';
+import { getStoreData } from '@/lib/store/store-data';
+import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import React from 'react';
 
 interface Props {
-  params: { slug: string };
-}
-
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const store = getStoreData(params.slug);
-  return {
-    title: `${store?.name || params.slug} キャストインタビュー一覧 | Strawberry Boys`,
-    description: `${store?.name || params.slug}で活躍するキャストたちの素顔に迫る独占インタビュー。プロフィールだけでは伝わらない彼らの魅力をライターがお届けします。`,
+  params: {
+    slug: string;
   };
 }
 
-export default async function StoreInterviewListPage({ params }: Props) {
-  // 1. そのエリアのインタビュー記事を一覧取得
-  const { articles, success } = await getInterviewArticles({ area: params.slug });
-  
-  // 2. 店舗設定の取得
-  const store = getStoreData(params.slug);
-  const topConfigResult = await getStoreTopConfig(params.slug);
-  const topConfig = topConfigResult.success
-    ? (topConfigResult.config as StoreTopPageConfig)
-    : DEFAULT_STORE_TOP_CONFIG;
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = params;
+  const storeData = await getStoreData(slug);
+  if (!storeData) return { title: 'Not Found' };
+
+  const { articles } = await getInterviewArticles({ area: slug });
+  if (!articles || articles.length === 0) {
+    return { title: 'Not Found' };
+  }
+
+  const title = `セラピストインタビュー｜${storeData.name}`;
+  const description = `${storeData.name}所属セラピストのインタビュー一覧。施術のこだわり、人柄、プライベートの素顔までマンツーマン取材でご紹介します。`;
+  const canonicalUrl = `https://www.sutoroberrys.jp/store/${slug}/interview`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: canonicalUrl,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description,
+    },
+  };
+}
+
+export default async function StoreInterviewHubPage({ params }: Props) {
+  const { slug } = params;
+  const storeData = await getStoreData(slug);
+  if (!storeData) notFound();
+
+  // その店舗の公開済みインタビューを取得（0本の場合は404）
+  const { articles: rawArticles } = await getInterviewArticles({ area: slug });
+  const articles = (rawArticles || []).filter((a): a is NonNullable<typeof a> => a !== null);
+  if (articles.length === 0) {
+    notFound();
+  }
+
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: `セラピストインタビュー｜${storeData.name}`,
+    description: '施術のこだわりや人柄など、セラピストの素顔をインタビューでご紹介します。',
+    url: `https://www.sutoroberrys.jp/store/${slug}/interview`,
+    itemListElement: articles.map((article, idx) => {
+      const meta = article.interview_meta as any;
+      const castLink = meta?.cast_links?.[0];
+      const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+      return {
+        '@type': 'ListItem',
+        position: idx + 1,
+        url: `https://www.sutoroberrys.jp/store/${slug}/interview/${castSlug}/${article.slug}`,
+        name: article.title,
+      };
+    }),
+  };
 
   return (
-    <div className="bg-[#FAFAF8] min-h-screen">
-      {/* ヘッダー */}
-      {store?.template === 'yokohama' ? (
-        <>
-          <YokohamaHeader config={topConfig.header} />
-          <div className="h-[54px] md:h-[65px]" />
-        </>
-      ) : (
-        <>
-          <FukuokaHeader config={topConfig.header} />
-          <div className="h-[54px] md:h-[65px]" />
-        </>
-      )}
+    <main className="min-h-screen bg-[#FAFAF8] pb-16 pt-6 sm:pt-10">
+      {/* 構造化データ */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
 
-      {/* メインコンテンツ */}
-      <main className="max-w-7xl mx-auto px-4 py-12 md:py-16">
-        <div className="text-center mb-12">
-          <h1 className="text-3xl md:text-4xl font-serif font-bold text-[#1a1a1a] mb-4">
-            CAST INTERVIEW
-          </h1>
-          <p className="text-sm text-[#888] max-w-2xl mx-auto leading-relaxed">
-            {store?.name || params.slug}のキャストたちをライターが徹底取材。<br className="hidden md:block" />
-            普段の接客だけでは見えない、彼らの「素顔」と「想い」に迫ります。
-          </p>
-        </div>
+      <div className="mx-auto max-w-4xl px-4 sm:px-6">
+        {/* パンくずリスト */}
+        <nav className="mb-6 text-xs text-slate-500" aria-label="Breadcrumb">
+          <ol className="flex items-center space-x-2">
+            <li>
+              <Link href={`/store/${slug}`} className="hover:text-rose-500 transition-colors">
+                {storeData.name} TOP
+              </Link>
+            </li>
+            <li>&gt;</li>
+            <li className="font-semibold text-slate-800" aria-current="page">
+              セラピストインタビュー
+            </li>
+          </ol>
+        </nav>
 
-        {!success || !articles || articles.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl shadow-sm border border-[#E8E5DE]">
-            <p className="text-[#888]">現在、公開されているインタビュー記事はありません。</p>
+        {/* ヘッダーエリア */}
+        <header className="mb-10 text-center">
+          <div className="inline-block rounded-full bg-rose-100 px-4 py-1 text-xs font-bold text-rose-600 mb-3 tracking-widest">
+            INTERVIEW
           </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {articles.map((article: any) => {
-              const meta = article.interview_meta;
-              const castLink = meta?.cast_links?.[0];
-              // リンク先URLを新構造に合わせる
-              const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
-              const detailUrl = `/store/${params.slug}/interview/${castSlug}/${article.slug}`;
+          <h1 className="text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl font-serif">
+            セラピストインタビュー
+          </h1>
+          <p className="mx-auto mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+            施術のこだわりや人柄など、セラピストの素顔をインタビューでご紹介します。
+          </p>
+        </header>
 
-              return (
-                <Link key={article.id} href={detailUrl} className="group">
-                  <article className="bg-white rounded-3xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 border border-[#E8E5DE] h-full flex flex-col">
-                    {/* サムネイル */}
-                    <div className="relative aspect-[16/10] overflow-hidden">
-                      <img
-                        src={article.thumbnail_url || '/images/placeholder-interview.jpg'}
-                        alt={article.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-4 left-4">
-                        <span className="bg-[#E8567A] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">
-                          Vol.{meta?.vol_number || 1}
-                        </span>
-                      </div>
+        {/* インタビュー記事一覧グリッド */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {articles.map((article) => {
+            const meta = article.interview_meta as any;
+            const castLink = meta?.cast_links?.[0];
+            const castName = castLink?.cast_name || 'セラピスト';
+            const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+            const articleUrl = `/store/${slug}/interview/${castSlug}/${article.slug}`;
+
+            const publishedDate = article.published_at ? new Date(article.published_at) : new Date(article.created_at);
+            const dateStr = publishedDate.toLocaleDateString('ja-JP', {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+
+            return (
+              <article
+                key={article.id}
+                className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all duration-300 hover:-translate-y-1 hover:shadow-md border border-slate-100"
+              >
+                <Link href={articleUrl} className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                  {article.thumbnail_url ? (
+                    <img
+                      src={article.thumbnail_url}
+                      alt={article.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full w-full items-center justify-center bg-rose-50 text-rose-300 text-sm font-semibold">
+                      INTERVIEW
+                    </div>
+                  )}
+                  {meta?.vol_number != null && (
+                    <span className="absolute left-3 top-3 rounded-full bg-rose-500 px-2.5 py-0.5 text-[11px] font-bold text-white shadow-sm">
+                      Vol.{meta.vol_number}
+                    </span>
+                  )}
+                </Link>
+
+                <div className="flex flex-1 flex-col justify-between p-5">
+                  <div>
+                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                      <span className="font-semibold text-rose-500">{castName}</span>
+                      <time dateTime={publishedDate.toISOString()}>{dateStr}</time>
                     </div>
 
-                    {/* テキスト内容 */}
-                    <div className="p-6 flex-grow flex flex-col">
-                      <h2 className="text-lg font-bold text-[#1a1a1a] mb-3 line-clamp-2 leading-snug group-hover:text-[#E8567A] transition-colors">
-                        {article.title}
-                      </h2>
-                      <p className="text-xs text-[#666] line-clamp-3 mb-6 flex-grow leading-relaxed">
+                    <h2 className="text-base font-bold leading-snug text-slate-900 group-hover:text-rose-600 transition-colors line-clamp-2">
+                      <Link href={articleUrl}>{article.title}</Link>
+                    </h2>
+
+                    {article.excerpt && (
+                      <p className="mt-2 text-xs leading-relaxed text-slate-500 line-clamp-2">
                         {article.excerpt}
                       </p>
-                      
-                      <div className="flex items-center justify-between pt-4 border-t border-[#F5F3F0]">
-                        <span className="text-[11px] font-medium text-[#E8567A]">
-                          {castLink?.cast_name || 'CAST'}
-                        </span>
-                        <span className="text-[10px] text-[#999]">
-                          {new Date(article.published_at || article.created_at).toLocaleDateString('ja-JP')}
-                        </span>
-                      </div>
-                    </div>
-                  </article>
-                </Link>
-              );
-            })}
-          </div>
-        )}
-      </main>
+                    )}
+                  </div>
 
-      {/* フッター */}
-      {store?.template === 'yokohama' ? (
-        <YokohamaFooter config={topConfig.footer} />
-      ) : (
-        <FukuokaFooter config={topConfig.footer} />
-      )}
-    </div>
+                  <div className="mt-4 pt-3 border-t border-slate-100 flex items-center justify-end">
+                    <Link
+                      href={articleUrl}
+                      className="inline-flex items-center text-xs font-bold text-rose-500 group-hover:translate-x-1 transition-transform"
+                    >
+                      記事を読む <span className="ml-1">→</span>
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </main>
   );
 }

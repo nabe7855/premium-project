@@ -108,7 +108,7 @@ export async function getInterviewArticles(options?: {
         if (!article) return null;
         return { ...article, interview_meta: meta };
       })
-      .filter(Boolean);
+      .filter((item): item is NonNullable<typeof item> => item !== null);
 
     return { success: true, articles: result };
   } catch (error: unknown) {
