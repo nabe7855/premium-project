@@ -167,10 +167,31 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               ))}
             </div>
 
-            {/* Banners Area */}
+            {/* Banners Area (顧客向けページでは求人系大型バナーを自動除外) */}
             <div className="mt-10 overflow-hidden rounded-2xl">
               <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
-                {[...(config.banners || []), ...(config.smallBanners || [])].map((banner, idx) => {
+                {(() => {
+                  const isRecruitBanner = (banner: { link?: string; label?: string; imageUrl?: string }) => {
+                    const link = banner.link || '';
+                    const label = banner.label || '';
+                    const image = banner.imageUrl || '';
+                    return (
+                      link.includes('/recruit') ||
+                      label.includes('求人') ||
+                      label.includes('セラピスト大募集') ||
+                      label.includes('モニター') ||
+                      label.includes('講師') ||
+                      image.includes('セラピスト大募集') ||
+                      image.includes('モニター') ||
+                      image.includes('講師')
+                    );
+                  };
+
+                  const filteredBanners = (config.banners || []).filter((b) => !isRecruitBanner(b));
+                  const filteredSmallBanners = (config.smallBanners || []).filter((b) => !isRecruitBanner(b));
+                  const displayBanners = [...filteredBanners, ...filteredSmallBanners];
+
+                  return displayBanners.map((banner, idx) => {
                   let bannerLink = getAbsoluteHref(banner.link || '#');
                   if (bannerLink.startsWith('tel:') && store.contact?.phone) {
                     bannerLink = `tel:${store.contact.phone.replace(/-/g, '')}`;
@@ -286,7 +307,8 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
                       )}
                     </div>
                   );
-                })}
+                });
+                })()}
               </div>
 
               {/* Large Square Banner */}
