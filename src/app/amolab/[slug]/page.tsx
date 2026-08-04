@@ -24,7 +24,7 @@ export async function generateMetadata({
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
 
   const cleanTitle = (article.seo_title || article.title)
-    .replace(/(｜体験談)?(｜アモラボ)+$/g, '')
+    .replace(/(｜体験談|｜アモラボ)+$/g, '')
     .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
     .trim();
 
@@ -73,7 +73,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
   const relatedArticles = relatedResult.success ? relatedResult.articles : [];
 
   const cleanTitle = (article.seo_title || article.title)
-    .replace(/(｜体験談)?(｜アモラボ)+$/g, '')
+    .replace(/(｜体験談|｜アモラボ)+$/g, '')
     .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
     .trim();
 
