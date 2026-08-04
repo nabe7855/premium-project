@@ -206,5 +206,30 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Error fetching interview articles:', e);
   }
 
+  // 採用コラム (/recruit/column & /recruit/column/[slug]) - 公開記事が存在する場合のみ追加
+  try {
+    const { getPublishedRecruitColumns } = await import('@/lib/actions/recruit-column');
+    const columns = await getPublishedRecruitColumns();
+    if (columns && columns.length > 0) {
+      mediaPages.push({
+        url: `${baseUrl}/recruit/column`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+
+      for (const col of columns) {
+        mediaPages.push({
+          url: `${baseUrl}/recruit/column/${col.slug}`,
+          lastModified: new Date(col.updatedAt),
+          changeFrequency: 'monthly',
+          priority: 0.7,
+        });
+      }
+    }
+  } catch (e) {
+    console.error('Sitemap: Error fetching recruit columns:', e);
+  }
+
   return [...staticPages, ...storePages, ...mediaPages];
 }

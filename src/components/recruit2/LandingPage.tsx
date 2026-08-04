@@ -9,6 +9,7 @@ const CheckSheet = dynamic(() => import('./sections/CheckSheet'));
 const ComicSlider = dynamic(() => import('./sections/ComicSlider'));
 const Comparison = dynamic(() => import('./sections/Comparison'));
 const FAQ = dynamic(() => import('./sections/FAQ'));
+const RecruitColumnSection = dynamic(() => import('../sections/recruit/RecruitColumnSection'));
 const Flow = dynamic(() => import('./sections/Flow'));
 const FukuokaReason = dynamic(() => import('./sections/FukuokaReason'));
 import HeroCollage from './sections/HeroCollage'; 
@@ -195,6 +196,7 @@ interface LandingPageProps {
   onOpenChat: () => void;
   onOpenForm: () => void;
   config?: LandingPageConfig;
+  initialColumns?: any[];
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onUpload?: (file: File) => Promise<string | null>;
@@ -204,6 +206,7 @@ const LandingPage: React.FC<LandingPageProps> = ({
   onOpenChat,
   onOpenForm,
   config: incomingConfig,
+  initialColumns,
   isEditing = false,
   onUpdate,
   onUpload,
@@ -747,6 +750,9 @@ const LandingPage: React.FC<LandingPageProps> = ({
           />
         </div>
       )}
+
+      {/* Recruit Column Section */}
+      <RecruitColumnSection initialColumns={initialColumns} />
 
       {/* FAQ Section */}
       {(config.faq?.isVisible !== false || isEditing) && (

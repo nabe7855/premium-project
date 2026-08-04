@@ -23,6 +23,7 @@ interface RecruitPageClientProps {
     config: LandingPageConfig | undefined;
     storeInfo: any;
     topConfig: any;
+    initialColumns?: any[];
   };
   slug: string;
 }
@@ -118,7 +119,7 @@ const AppContent: React.FC<RecruitPageClientProps> = ({ initialData, slug }) => 
           <Route
             path="/"
             element={
-              <LandingPage onOpenChat={openChat} onOpenForm={openForm} config={fullMergedConfig} />
+              <LandingPage onOpenChat={openChat} onOpenForm={openForm} config={fullMergedConfig} initialColumns={initialData.initialColumns} />
             }
           />
           <Route

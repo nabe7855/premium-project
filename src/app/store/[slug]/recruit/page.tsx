@@ -34,16 +34,22 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   };
 }
 
+import { getPublishedRecruitColumns } from '@/lib/actions/recruit-column';
+
 export default async function RecruitPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
 
-  // Fetch data on the server
-  const result = await getRecruitPageConfig(slug);
+  // Fetch data on the server in parallel
+  const [result, columns] = await Promise.all([
+    getRecruitPageConfig(slug),
+    getPublishedRecruitColumns(),
+  ]);
 
   const initialData = {
     config: result.success ? (result.config as LandingPageConfig) : undefined,
     storeInfo: result.success ? result.storeInfo : null,
     topConfig: result.success ? result.topConfig : null,
+    initialColumns: columns,
   };
 
   const s = STORE_META[slug] || STORE_META.fukuoka;

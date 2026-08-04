@@ -108,20 +108,46 @@ const Inspector: React.FC<InspectorProps> = ({
 
           <div>
             <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
+              記事カテゴリ
+            </label>
+            <select
+              value={page.category || 'news'}
+              onChange={(e) => onUpdatePage({ category: e.target.value })}
+              className="w-full rounded-2xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all focus:border-rose-400 focus:ring-2 focus:ring-rose-100 cursor-pointer"
+            >
+              <option value="news">ニュース（顧客向け）</option>
+              <option value="campaign">キャンペーン（顧客向け）</option>
+              <option value="interview">インタビュー（顧客向け）</option>
+              <option value="recruit-column">採用コラム（/recruit/column 専用・求人向け）</option>
+            </select>
+            <p className="mt-1.5 text-[9px] text-slate-400">
+              ※「採用コラム」を選択すると顧客向け店舗トップ・ニュース一覧には表示されず、/recruit/column 配下にのみ表示されます。
+            </p>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-slate-900">
               URLスラッグ
             </label>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] font-bold text-slate-500">/news/</span>
+              <span className="text-[10px] font-bold text-slate-500">
+                {page.category === 'recruit-column' ? '/recruit/column/' : '/news/'}
+              </span>
               <input
                 type="text"
                 value={page.slug}
-                onChange={(e) => onUpdatePage({ slug: e.target.value })}
+                onChange={(e) => {
+                  const val = e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+                  onUpdatePage({ slug: val });
+                }}
                 className="flex-1 rounded-2xl border border-slate-200 p-3 text-xs font-bold text-slate-900 outline-none transition-all placeholder:text-slate-300 focus:border-rose-400 focus:ring-2 focus:ring-rose-100"
-                placeholder="url-slug"
+                placeholder={page.category === 'recruit-column' ? 'how-to-become-therapist' : 'url-slug'}
               />
             </div>
             <p className="mt-2 text-[9px] font-medium text-slate-500">
-              URLの一部として使用されます（例: www.sutoroberrys.jp/news/url-slug）
+              {page.category === 'recruit-column'
+                ? '※採用コラムは半角英小文字・数字・ハイフンのみ指定可能です（例: how-to-become-therapist）'
+                : 'URLの一部として使用されます（例: www.sutoroberrys.jp/news/url-slug）'}
             </p>
           </div>
 

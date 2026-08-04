@@ -50,11 +50,15 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
       // 0. グローバルステータスが published でない場合は完全除外
       if (record.status !== 'published') return false;
 
+      const misc = (record.referenceUrls as any) || {};
+
+      // 0.5 採用コラム (recruit-column) は顧客向けニュース一覧から完全除外
+      if (misc.category === 'recruit-column') return false;
+
       // 1. 店舗の配信対象に含まれているかチェック
       const slugs = record.targetStoreSlugs as string[];
       if (!Array.isArray(slugs) || !slugs.includes(storeSlug)) return false;
 
-      const misc = (record.referenceUrls as any) || {};
       const settings = misc.storeSettings?.[storeSlug];
       
       let isPublished = false;
@@ -63,11 +67,12 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
       // 2. 店舗別設定を優先、なければグローバル設定を参照
       if (settings && settings.status) {
         isPublished = settings.status === 'published';
-        pubTime = settings.publishedAt ? new Date(settings.publishedAt).getTime() : null;
+        if (settings.publishedAt) {
+          pubTime = new Date(settings.publishedAt).getTime();
+        }
       } else {
         isPublished = record.status === 'published';
-        // 全般的な公開日時設定が misc にあればそれを使用（なければ updatedAt を仮の公開日時とする）
-        pubTime = misc.publishedAt ? new Date(misc.publishedAt).getTime() : record.updatedAt.getTime();
+        pubTime = new Date(record.updatedAt).getTime();
       }
 
       // 3. 公開中ステータスでない場合は除外
@@ -101,9 +106,14 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
 export async function getPublishedPageBySlug(newsSlug: string): Promise<PageData | null> {
   try {
     const record = await prisma.pageRequest.findFirst({
-      where: { slug: newsSlug },
+      where: { slug: newsSlug, status: 'published' },
     });
     if (!record) return null;
+
+    const misc = (record.referenceUrls as any) || {};
+    // 採用コラム (recruit-column) は店舗ニュース詳細パス (/store/◯/news/[slug]) からは閲覧不可（404）
+    if (misc.category === 'recruit-column') return null;
+
     return mapPrismaToPageData(record);
   } catch (error) {
     console.error('Failed to fetch page by slug:', error);
