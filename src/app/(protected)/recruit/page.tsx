@@ -81,8 +81,11 @@ export default async function RecruitHubPage() {
             STRAWBERRY BOYS RECRUIT PORTAL
           </div>
           <h1 className="text-2xl font-bold tracking-tight text-white sm:text-4xl leading-snug">
-            誰かの&quot;癒し&quot;を仕事にする。
+            セラピスト求人・採用情報｜ストロベリーボーイズ
           </h1>
+          <p className="font-serif text-lg font-bold text-amber-300 mt-2 sm:text-xl">
+            誰かの&quot;癒し&quot;を仕事にする。
+          </p>
           <p className="mx-auto mt-4 max-w-2xl text-xs sm:text-sm leading-relaxed text-slate-300">
             ストロベリーボーイズは福岡・横浜でセラピストを募集しています。未経験から安心してスタートできる環境を整えてお待ちしております。
           </p>
