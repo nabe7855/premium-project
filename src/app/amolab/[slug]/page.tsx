@@ -28,18 +28,16 @@ export async function generateMetadata({
     .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
     .trim();
 
-  const exactTitle = `${cleanTitle}｜体験談｜アモラボ`;
+  const pageTitle = `${cleanTitle}｜体験談`;
 
   return {
-    title: {
-      absolute: exactTitle,
-    },
+    title: pageTitle,
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: exactTitle,
+      title: `${pageTitle} | アモラボ (AmoLab) by ストロベリーボーイズ`,
       description: article.seo_description || article.excerpt || '',
       images: article.thumbnail_url
         ? [
@@ -73,6 +71,11 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
   // 関連記事の取得
   const relatedResult = await getRelatedArticles(article.id, 'user');
   const relatedArticles = relatedResult.success ? relatedResult.articles : [];
+
+  const cleanTitle = (article.seo_title || article.title)
+    .replace(/(｜体験談)?(｜アモラボ)+$/g, '')
+    .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
+    .trim();
 
   // 構造化データ（JSON-LD）
   const articleLd = {
@@ -127,7 +130,7 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
       {
         '@type': 'ListItem',
         position: 3,
-        name: article.title,
+        name: cleanTitle,
         item: `https://www.sutoroberrys.jp/amolab/${params.slug}`,
       },
     ],
@@ -139,34 +142,34 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     mainEntity: [
       {
         '@type': 'Question',
-        name: '準備するものはありますか？',
+        name: '既婚で子どももいますが、女性用風俗を利用していいのでしょうか？',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: '特に用意するものはありません。ホテルやご自宅でのシャワー・タオル等の環境があれば十分です。リラックスできる服装でお待ちください。',
+          text: 'はい。既婚・子育て中の利用者も多くいます。家庭がある方ほど自分を後回しにしがちで、心のメンテナンスとして利用される方が多くいらっしゃいます。',
         },
       },
       {
         '@type': 'Question',
-        name: '本当に写真通りのセラピストが来ますか？',
+        name: '初めてで、何をされるのか分からず怖いです。',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: 'はい。掲載写真はすべて本人であり、指名いただいたキャストが必ず伺います。',
+          text: '「分からないこと」が不安の正体です。まずは当日の流れを知るところから始めるのがおすすめです。多くのセラピストは、初めての方にこそ丁寧に説明しながら進めてくれます。',
         },
       },
       {
         '@type': 'Question',
-        name: '性的な行為を強制されませんか？',
+        name: 'どうやって予約すれば、ハードルが低いですか？',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: '無理なスキンシップや同意のない行為は一切ありません。お客様のお気持ち・ペースを一番に考慮して進めます。',
+          text: '気になるセラピストとSNSなどで少し会話を重ねてから予約に進む方が、心理的なハードルは下がります。会話の延長で進める方が初めての方には自然です。もちろん通常の予約フォームも利用できます。',
         },
       },
       {
         '@type': 'Question',
-        name: '予約後のキャンセルはできますか？',
+        name: '容姿やスタイルに自信がありません。',
         acceptedAnswer: {
           '@type': 'Answer',
-          text: '所定のキャンセル規定に沿って対応しております。急な体調不良やご都合の変更の際は、LINEまたはお電話で早めにご相談ください。',
+          text: '自信のなさは利用を止める理由にはなりません。自己肯定感が低かった利用者も「ちゃんと大事にしてもらえた」と感じ、少しずつ前を向けるようになっています。',
         },
       },
       {
