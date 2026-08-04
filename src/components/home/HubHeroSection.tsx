@@ -454,7 +454,7 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
                   `}
                 >
                   <div className="relative aspect-[16/10] w-full rounded-xl overflow-hidden bg-slate-100 mb-2">
-                    <NextImage src={store.image} alt={store.name} fill sizes="200px" loading="lazy" className="object-cover" />
+                    <NextImage src={store.image} alt={`ストロベリーボーイズ${store.name}店｜初めての方歓迎`} fill sizes="200px" loading="lazy" className="object-cover" />
                   </div>
                   <div className="mb-1.5">
                     <div className="flex items-baseline gap-1">

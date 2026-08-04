@@ -27,6 +27,14 @@ function BannerItem({ store }: { store: StoreInfo }) {
     return null; 
   }
 
+  const altMap: Record<string, string> = {
+    tokyo: 'ストロベリーボーイズ東京店｜お得な遠方割引実施中・初めての方歓迎',
+    osaka: 'ストロベリーボーイズ大阪店｜梅田・難波・心斎橋へ出張・初めての方歓迎',
+    yokohama: 'ストロベリーボーイズ横浜店｜みなとみらい・関内へ出張・初めての方歓迎',
+    nagoya: 'ストロベリーボーイズ名古屋店｜栄・名駅へ出張・初めての方歓迎',
+    fukuoka: 'ストロベリーボーイズ福岡店｜博多・天神へ出張・初めての方歓迎',
+  };
+
   return (
     <a 
       href={linkHref}
@@ -36,7 +44,7 @@ function BannerItem({ store }: { store: StoreInfo }) {
       <div className="relative aspect-[3/1] w-full bg-slate-50">
         <NextImage
           src={`/images/banners/store-jumps/${store.slug}.webp`}
-          alt={`${store.name}店バナー`}
+          alt={altMap[store.slug] || `ストロベリーボーイズ${store.name}店｜初めての方歓迎`}
           fill
           loading="lazy"
           className="object-cover transition-opacity duration-300 group-hover:opacity-90"
