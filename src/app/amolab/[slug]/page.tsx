@@ -4,6 +4,9 @@ import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
   params,
