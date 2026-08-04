@@ -20,18 +20,31 @@ export async function generateMetadata({
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
 
+  const rawTitle = (article.seo_title || article.title)
+    .replace(/(｜体験談)?(｜アモラボ)+$/g, '')
+    .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
+    .trim();
+
+  const finalTitle = `${rawTitle}｜体験談｜アモラボ`;
+
   return {
     title: {
-      absolute: article.title,
+      absolute: finalTitle,
     },
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: article.seo_title || article.title,
+      title: finalTitle,
       description: article.seo_description || article.excerpt || '',
-      images: article.thumbnail_url ? [article.thumbnail_url] : [],
+      images: article.thumbnail_url
+        ? [
+            article.thumbnail_url.startsWith('http')
+              ? article.thumbnail_url
+              : `https://www.sutoroberrys.jp${article.thumbnail_url}`,
+          ]
+        : [],
       type: 'article',
       url: canonicalUrl,
     },
