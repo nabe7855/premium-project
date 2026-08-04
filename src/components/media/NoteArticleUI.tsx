@@ -151,6 +151,263 @@ export default function NoteArticleUI({
 
         {/* 本文 */}
         <style jsx global>{`
+          .prose {
+            color: #292929;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 2.0;
+            letter-spacing: 0.02em;
+          }
+          .prose p {
+            margin-top: 1.8em;
+            margin-bottom: 1.8em;
+            font-size: 1.0625rem;
+          }
+          .prose a {
+            color: #e11d48;
+            font-weight: 600;
+            text-decoration: underline;
+            text-decoration-color: rgba(225, 29, 72, 0.3);
+            text-underline-offset: 4px;
+            transition: all 0.2s ease;
+          }
+          .prose a:hover {
+            color: #be123c;
+            text-decoration-color: #be123c;
+          }
+          /* Hide redundant hero header inside content if present */
+          .prose .hero {
+            display: none !important;
+          }
+          .prose h2 {
+            position: relative;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #111827;
+            margin-top: 3.5rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 2px solid #fda4af;
+            letter-spacing: -0.01em;
+          }
+          .prose h2 .h2-en {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #f43f5e;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+          }
+          .prose h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            padding-left: 0.75rem;
+            border-left: 4px solid #f43f5e;
+          }
+          .prose .pull {
+            position: relative;
+            margin: 2.5rem 0;
+            padding: 1.75rem 2rem;
+            background: linear-gradient(135deg, #fff5f7 0%, #fff0f3 100%);
+            border-radius: 1rem;
+            border-left: 4px solid #f43f5e;
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #881337;
+            line-height: 1.75;
+            box-shadow: 0 4px 15px -3px rgba(244, 63, 94, 0.07);
+          }
+          .prose .pull::before {
+            content: "“";
+            position: absolute;
+            top: 0.25rem;
+            right: 1.25rem;
+            font-size: 4rem;
+            color: rgba(244, 63, 94, 0.15);
+            font-family: serif;
+            line-height: 1;
+          }
+          .prose .memo {
+            margin: 2.5rem 0;
+            padding: 1.5rem 1.75rem;
+            background: #fff8f8;
+            border: 1px solid #ffe4e6;
+            border-radius: 1rem;
+            color: #4b5563;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+          }
+          .prose .memo h2, .prose .memo h3 {
+            margin-top: 0;
+            padding: 0;
+            border: none;
+            font-size: 1.125rem;
+            color: #e11d48;
+          }
+          .prose figure.comic {
+            margin: 2.5rem 0;
+            text-align: center;
+          }
+          .prose figure.comic img {
+            border-radius: 1rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+            margin: 0 auto 0.75rem auto;
+          }
+          .prose figure.comic figcaption {
+            font-size: 0.8125rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+          }
+          .prose .comic-strip {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin: 2.5rem 0;
+          }
+          @media (min-width: 640px) {
+            .prose .comic-strip {
+              grid-template-columns: 1fr 1fr;
+            }
+          }
+          .prose .profile {
+            margin: 3rem 0;
+            padding: 2rem;
+            background: #ffffff;
+            border: 1px solid #fecdd3;
+            border-radius: 1.25rem;
+            box-shadow: 0 8px 30px rgba(244, 63, 94, 0.06);
+          }
+          .prose .profile h3 {
+            margin-top: 0;
+            padding-left: 0;
+            border-left: none;
+            font-size: 1.25rem;
+            color: #9f1239;
+            border-bottom: 1px solid #ffe4e6;
+            padding-bottom: 0.75rem;
+            margin-bottom: 1.25rem;
+            text-align: center;
+          }
+          .prose .profile dl {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            margin: 0;
+          }
+          @media (min-width: 640px) {
+            .prose .profile dl {
+              grid-template-columns: 140px 1fr;
+              row-gap: 1rem;
+            }
+          }
+          .prose .profile dt {
+            font-weight: 700;
+            color: #be123c;
+            font-size: 0.875rem;
+          }
+          .prose .profile dd {
+            margin-left: 0;
+            color: #374151;
+            font-size: 0.9375rem;
+          }
+          .prose .related {
+            margin: 3rem 0;
+            padding: 1.75rem;
+            background: #fbfbfb;
+            border: 1px solid #f3f4f6;
+            border-radius: 1.25rem;
+          }
+          .prose .related h2 {
+            margin-top: 0;
+            border: none;
+            font-size: 1.125rem;
+            color: #111827;
+            padding-bottom: 0;
+            margin-bottom: 1rem;
+          }
+          .prose .related ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+          }
+          .prose .related li {
+            margin: 0;
+            padding: 1.25rem;
+            background: #ffffff;
+            border: 1px solid #f1f5f9;
+            border-radius: 1rem;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+          }
+          .prose .related li:hover {
+            border-color: #fda4af;
+            box-shadow: 0 6px 20px rgba(244, 63, 94, 0.1);
+            transform: translateY(-2px);
+          }
+          .prose .related a {
+            font-weight: 700;
+            color: #111827;
+            text-decoration: none;
+            font-size: 1rem;
+            display: block;
+          }
+          .prose .related a:hover {
+            color: #e11d48;
+          }
+          .prose .related .why {
+            display: block;
+            font-size: 0.8125rem;
+            color: #64748b;
+            margin-top: 0.35rem;
+            font-weight: 400;
+          }
+          .prose .cta {
+            margin: 3.5rem 0;
+            padding: 2.5rem 2rem;
+            background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+            border-radius: 1.5rem;
+            text-align: center;
+            box-shadow: 0 10px 30px -5px rgba(244, 63, 94, 0.12);
+          }
+          .prose .cta h3 {
+            margin: 0 0 0.75rem 0;
+            padding: 0;
+            border: none;
+            font-size: 1.25rem;
+            color: #881337;
+          }
+          .prose .cta p {
+            font-size: 0.9375rem;
+            color: #9f1239;
+            margin-bottom: 1.5rem;
+          }
+          .prose .cta .btn {
+            display: inline-block;
+            padding: 1rem 2.25rem;
+            background: linear-gradient(135deg, #e11d48 0%, #be123c 100%);
+            color: #ffffff !important;
+            font-weight: 700;
+            font-size: 1rem;
+            border-radius: 9999px;
+            text-decoration: none !important;
+            box-shadow: 0 4px 15px rgba(225, 29, 72, 0.35);
+            transition: all 0.25s ease;
+          }
+          .prose .cta .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(225, 29, 72, 0.45);
+          }
+          .prose .cta .micro {
+            display: block;
+            font-size: 0.6875rem;
+            color: #fda4af;
+            margin-top: 0.75rem;
+          }
           .prose .sep {
             text-align: center;
             margin: 44px 0;
