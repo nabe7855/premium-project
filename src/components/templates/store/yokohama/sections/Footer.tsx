@@ -167,29 +167,18 @@ const Footer: React.FC<FooterProps> = ({ config, isEditing, onUpdate, onImageUpl
               ))}
             </div>
 
-            {/* Banners Area (顧客向けページでは求人系大型バナーを自動除外) */}
+            {/* Banners Area (セラピスト大募集バナーのみ除外、講師募集・モニター募集は表示) */}
             <div className="mt-10 overflow-hidden rounded-2xl">
               <div className="grid grid-cols-2 gap-3 gap-y-7 md:gap-x-4 md:gap-y-8">
                 {(() => {
-                  const isRecruitBanner = (banner: { link?: string; label?: string; imageUrl?: string }) => {
-                    const link = banner.link || '';
+                  const isTherapistRecruitBanner = (banner: { link?: string; label?: string; imageUrl?: string }) => {
                     const label = banner.label || '';
                     const image = banner.imageUrl || '';
-                    return (
-                      link.includes('/recruit') ||
-                      label.includes('求人') ||
-                      label.includes('セラピスト大募集') ||
-                      label.includes('モニター') ||
-                      label.includes('講師') ||
-                      image.includes('セラピスト大募集') ||
-                      image.includes('モニター') ||
-                      image.includes('講師')
-                    );
+                    return label.includes('セラピスト大募集') || image.includes('セラピスト大募集');
                   };
 
-                  const filteredBanners = (config.banners || []).filter((b) => !isRecruitBanner(b));
-                  const filteredSmallBanners = (config.smallBanners || []).filter((b) => !isRecruitBanner(b));
-                  const displayBanners = [...filteredBanners, ...filteredSmallBanners];
+                  const filteredBanners = (config.banners || []).filter((b) => !isTherapistRecruitBanner(b));
+                  const displayBanners = [...filteredBanners, ...(config.smallBanners || [])];
 
                   return displayBanners.map((banner, idx) => {
                   let bannerLink = getAbsoluteHref(banner.link || '#');
