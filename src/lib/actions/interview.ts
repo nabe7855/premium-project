@@ -82,7 +82,6 @@ export async function getInterviewArticles(options?: {
         },
       },
       orderBy: { created_at: 'desc' },
-      take: options?.limit,
     });
 
     // MediaArticle を article_id で一括取得
@@ -102,13 +101,17 @@ export async function getInterviewArticles(options?: {
     const articleMap = new Map(articles.map((a) => [a.id, a]));
 
     // 公開済みのものだけを結合して返す
-    const result = metas
+    let result = metas
       .map((meta) => {
         const article = articleMap.get(meta.article_id);
         if (!article) return null;
         return { ...article, interview_meta: meta };
       })
       .filter((item): item is NonNullable<typeof item> => item !== null);
+
+    if (options?.limit) {
+      result = result.slice(0, options.limit);
+    }
 
     return { success: true, articles: result };
   } catch (error: unknown) {
