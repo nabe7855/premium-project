@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>セイラ インタビュー vol.4 ｜ ドラフトプレビュー</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;}
+  body{
+    margin:0;background:#FAFAF8;color:#1a1a1a;
+    font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .serif{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;}
+
+  /* ---- ドラフトバー ---- */
+  .draftbar{
+    position:sticky;top:0;z-index:50;
+    background:#1f2937;color:#fff;padding:10px 16px;
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;
+    font-size:12px;line-height:1.6;
+  }
+  .draftbar strong{color:#fca5a5;letter-spacing:.08em;}
+  .draftbar .sep{opacity:.35;}
+  .draftbar button{
+    background:#374151;color:#fff;border:1px solid #4b5563;border-radius:999px;
+    padding:5px 14px;font-size:11px;cursor:pointer;font-family:inherit;
+  }
+  .draftbar button:hover{background:#4b5563;}
+  .draftbar button.on{background:#E8567A;border-color:#E8567A;}
+
+  /* ---- 要確認マーカー ---- */
+  .chk{
+    background:linear-gradient(transparent 58%, #FDE68A 58%);
+    border-bottom:1px dashed #d97706;cursor:help;position:relative;
+  }
+  .chk::after{
+    content:attr(data-note);
+    position:absolute;left:0;top:calc(100% + 6px);z-index:20;
+    background:#1f2937;color:#fff;font-size:11px;line-height:1.6;
+    padding:8px 10px;border-radius:8px;width:260px;
+    opacity:0;pointer-events:none;transition:opacity .15s;font-weight:400;
+  }
+  .chk:hover::after{opacity:1;}
+  body.clean .chk{background:none;border-bottom:none;cursor:auto;}
+  body.clean .chk::after{display:none;}
+  body.clean .devnote{display:none;}
+
+  /* ---- 記事本体 ---- */
+  .wrap{max-width:720px;margin:0 auto;padding:24px 20px 0;}
+  .wrap-body{max-width:720px;margin:0 auto;padding:0 20px 60px;}
+
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .badge-series{background:#E8567A;color:#fff;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:700;}
+  .badge-area{border:1px solid #E8567A;color:#E8567A;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:500;}
+
+  h1{font-size:24px;font-weight:700;line-height:1.45;letter-spacing:-0.3px;margin:0 0 16px;}
+  .lead{font-size:14px;line-height:2;color:#555;margin:0 0 20px;}
+  .metabar{
+    display:flex;align-items:center;justify-content:space-between;
+    border-top:1px solid #E8E5DE;border-bottom:1px solid #E8E5DE;
+    padding:12px 0;font-size:12px;color:#888;margin-bottom:40px;
+  }
+  .tags{display:flex;flex-wrap:wrap;gap:4px;}
+  .tag{background:#F9D1DA;color:#E8567A;border-radius:999px;padding:2px 9px;font-size:10px;}
+
+  h2{
+    font-size:18px;font-weight:700;border-left:4px solid #E8567A;
+    padding-left:16px;margin:0 0 24px;line-height:1.5;
+  }
+  .section{margin-bottom:40px;}
+  .items{display:flex;flex-direction:column;gap:20px;}
+
+  /* 吹き出し */
+  .bubble-row{display:flex;align-items:flex-start;gap:12px;}
+  .bubble-row.cast{flex-direction:row-reverse;}
+  .avatar-col{flex-shrink:0;width:44px;}
+  .avatar{
+    width:44px;height:44px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:700;color:#fff;
+  }
+  .avatar.i{background:#9ca3af;}
+  .avatar.c{background:#E8567A;}
+  .avatar-name{margin:4px 0 0;text-align:center;font-size:10px;font-weight:500;}
+  .avatar-name.i{color:#9ca3af;}
+  .avatar-name.c{color:#E8567A;}
+  .bubble{
+    max-width:calc(100% - 80px);padding:12px 16px;font-size:14px;
+    box-shadow:0 1px 2px rgba(0,0,0,.05);
+  }
+  .bubble p{margin:0;line-height:1.85;}
+  .bubble.i{background:#f3f4f6;border-radius:0 18px 18px 18px;}
+  .bubble.c{background:#FFF0F3;border-radius:18px 0 18px 18px;}
+
+  .narration{padding:0 8px;font-size:14px;line-height:2;color:#555;margin:0;}
+  .editor-note{
+    background:#F7F5F0;color:#888;border-radius:12px;padding:12px 16px;
+    font-size:14px;font-style:italic;line-height:2;
+  }
+
+  /* 写真プレースホルダ */
+  .photo-ph{
+    margin:32px 0;border:2px dashed #E8A0B4;border-radius:12px;
+    background:#FFF8FA;padding:22px 18px;text-align:center;
+  }
+  .photo-ph .k{
+    display:inline-block;background:#E8567A;color:#fff;border-radius:999px;
+    padding:3px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;margin-bottom:10px;
+  }
+  .photo-ph .fig{
+    height:150px;border-radius:8px;background:repeating-linear-gradient(45deg,#FDEEF2,#FDEEF2 10px,#FBE3EA 10px,#FBE3EA 20px);
+    display:flex;align-items:center;justify-content:center;color:#D98BA2;font-size:12px;margin-bottom:12px;
+  }
+  .photo-ph.portrait .fig{max-width:300px;margin-left:auto;margin-right:auto;height:200px;}
+  .photo-ph dl{margin:0;text-align:left;font-size:11px;line-height:1.9;color:#8a5b68;}
+  .photo-ph dt{display:inline;font-weight:700;color:#B4526C;}
+  .photo-ph dd{display:inline;margin:0;}
+  .photo-ph dd::after{content:"";display:block;}
+
+  /* プロフィール */
+  .profile{
+    border:1px solid #F9D1DA;background:#FFFBFC;border-radius:16px;
+    overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);
+  }
+  .profile-head{display:flex;align-items:center;gap:16px;padding:16px 20px;background:#FFF0F3;}
+  .profile-av{
+    width:68px;height:68px;border-radius:50%;flex-shrink:0;
+    background:linear-gradient(135deg,#E8567A,#f4a0b5);
+    display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;
+  }
+  .profile-head .lbl{font-size:11px;font-weight:500;letter-spacing:.18em;color:#E8567A;margin:0;}
+  .profile-head h3{font-size:20px;font-weight:700;margin:2px 0 0;letter-spacing:-0.3px;}
+  .profile-head .rom{font-size:12px;letter-spacing:.18em;color:#9ca3af;margin:2px 0 0;}
+  .profile dl{margin:0;padding:16px 20px;}
+  .profile .row{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;}
+  .profile dt{width:88px;flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:.05em;color:#9ca3af;}
+  .profile dd{margin:0;font-size:14px;line-height:1.7;}
+
+  /* FAQ */
+  details.faq{border:1px solid #F9D1DA;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#FFFBFC;}
+  details.faq[open]{border-color:#E8567A;}
+  details.faq summary{
+    list-style:none;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;
+    padding:16px 20px;background:#FFFBFC;gap:12px;
+  }
+  details.faq[open] summary{background:#FFF0F3;}
+  details.faq summary::-webkit-details-marker{display:none;}
+  .qbadge{background:#E8567A;color:#fff;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .qtext{font-size:14px;font-weight:500;line-height:1.7;}
+  .plus{color:#E8567A;font-size:18px;flex-shrink:0;transition:transform .2s;}
+  details.faq[open] .plus{transform:rotate(45deg);}
+  .faq-body{border-top:1px solid #F9D1DA;padding:16px 20px;display:flex;gap:12px;}
+  .abadge{background:#F9D1DA;color:#E8567A;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .faq-body p{margin:0;font-size:14px;line-height:2;color:#555;}
+
+  /* WRITER'S NOTE */
+  .wnote{margin-top:48px;background:#FFF0F3;border-radius:16px;padding:24px;}
+  .wnote .cap{font-size:11px;font-weight:700;letter-spacing:.2em;color:#E8567A;margin:0 0 12px;}
+  .wnote p{font-size:14px;line-height:2;color:#333;margin:0 0 16px;}
+  .wnote .sig{text-align:right;font-weight:700;margin:0;}
+
+  /* CTA */
+  .cta{margin-top:48px;background:linear-gradient(135deg,#FFF0F3,#FFF8FA);border-radius:16px;padding:24px;text-align:center;}
+  .cta .cap{font-size:11px;font-weight:700;letter-spacing:.2em;color:#E8567A;margin:0 0 8px;}
+  .cta .sub{font-size:14px;color:#555;margin:0 0 20px;}
+  .cta a{
+    display:inline-block;background:#E8567A;color:#fff;border-radius:999px;
+    padding:12px 32px;font-size:14px;font-weight:700;text-decoration:none;
+    box-shadow:0 2px 6px rgba(232,86,122,.3);
+  }
+
+  /* 内部リンク3本 */
+  .links{margin-top:40px;}
+  .links h2{margin-bottom:16px;}
+  .links ul{list-style:none;margin:0;padding:0;display:grid;gap:12px;}
+  @media(min-width:640px){.links ul{grid-template-columns:repeat(3,1fr);}}
+  .links a{
+    display:flex;flex-direction:column;height:100%;background:#fff;
+    border:1px solid #F0DCE1;border-radius:12px;padding:16px;text-decoration:none;
+    box-shadow:0 1px 2px rgba(0,0,0,.04);
+  }
+  .links .l{font-size:14px;font-weight:700;color:#E8567A;}
+  .links .d{font-size:12px;line-height:1.7;color:#777;margin-top:4px;}
+
+  /* 関連記事 */
+  .bottomnav{margin-top:56px;padding-top:40px;border-top:1px solid #e2e8f0;}
+  .bottomnav h3{font-size:16px;font-weight:700;color:#1e293b;margin:0 0 16px;}
+  .rel{display:grid;gap:16px;}
+  @media(min-width:640px){.rel{grid-template-columns:repeat(2,1fr);}}
+  .rel a{display:flex;gap:12px;background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:12px;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .rel .thumb{width:96px;height:80px;flex-shrink:0;border-radius:8px;background:#fff1f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fda4af;}
+  .rel .n{font-size:11px;font-weight:700;color:#f43f5e;}
+  .rel .t{font-size:12px;font-weight:700;line-height:1.5;color:#1e293b;margin:2px 0 0;}
+  .backbtn{text-align:center;margin-top:40px;}
+  .backbtn a{display:inline-block;border:1px solid #fb7185;background:#fff;color:#f43f5e;border-radius:999px;padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;}
+
+  /* 開発メモ */
+  .devnote{
+    max-width:720px;margin:0 auto 8px;padding:10px 14px;
+    background:#EEF2FF;border:1px solid #C7D2FE;border-left:4px solid #6366F1;
+    border-radius:8px;font-size:11px;line-height:1.8;color:#3730A3;
+  }
+  .devnote b{color:#1e1b4b;}
+
+  /* 巻末 */
+  .footerbox{max-width:720px;margin:40px auto 60px;padding:0 20px;}
+  .footerbox .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;}
+  .footerbox h4{margin:0 0 12px;font-size:14px;}
+  .footerbox table{width:100%;border-collapse:collapse;font-size:12px;}
+  .footerbox th,.footerbox td{border-bottom:1px solid #f1f5f9;padding:8px 6px;text-align:left;vertical-align:top;line-height:1.7;}
+  .footerbox th{width:120px;color:#6b7280;font-weight:600;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="draftbar">
+  <strong>DRAFT</strong>
+  <span>セイラ インタビュー vol.4 ／ 公開前プレビュー</span>
+  <span class="sep">|</span>
+  <span>写真4枚未着・本人確認前</span>
+  <span class="sep">|</span>
+  <button id="toggle" onclick="toggleClean()">要確認マーカーを隠す</button>
+  <span style="opacity:.6">黄色の下線にカーソルを合わせると確認理由が出ます</span>
+</div>
+
+<div class="devnote">
+  <b>このプレビューについて</b>：実装後のサイト表示（<code>InterviewArticleUI</code>）の見た目を再現したものです。青い枠のメモと写真のダッシュ枠は、実際のページには出ません。「要確認マーカーを隠す」を押すと、セイラさん本人に見せられるクリーンな表示になります。
+</div>
+
+<!-- ================= 記事本体 ================= -->
+<article>
+<div class="wrap">
+
+  <div class="badges">
+    <span class="badge-series">キャストインタビュー vol.4</span>
+    <span class="badge-area">福岡エリア</span>
+  </div>
+
+  <h1 class="serif">イトウが行く！キャスト丸裸インタビュー vol.4｜35歳、最後のチャンス — 福岡の新人セラピスト・<span class="chk" data-note="表記ゆれ確認：文字起こしに「セーラ」「セイラ」が混在しています。DBのキャスト名と揃える必要があります（指名検索の受け皿が割れるため）。">セイラ</span>が「尽くしたい」と言う理由</h1>
+
+  <p class="lead">「もう35ですし、最後のチャンスかなと思って」。生まれも育ちも福岡、普段は別の仕事をしながら、ずっとやってみたかった一歩をようやく踏み出した新人セラピスト・セイラさん。174cmの細身に、27歳と間違われる肌。7〜8年かけた全身脱毛。そして「気配りだけは誰にも負けない」という部活仕込みの一言。緊張しているのは、実はお客様だけではありませんでした。</p>
+
+  <div class="metabar">
+    <span>2026年8月4日</span>
+    <div class="tags">
+      <span class="tag">#福岡</span>
+      <span class="tag">#新人セラピスト</span>
+      <span class="tag">#インタビュー</span>
+    </div>
+  </div>
+
+  <div class="devnote">サムネイル画像：<b>写真①（上半身・明るい場所）</b> が入ります。SNSシェア時にも使われる1枚です。</div>
+
+</div>
+
+<div class="wrap-body">
+
+  <!-- sec-1 -->
+  <div class="section">
+    <h2 class="serif">「セイラ」は、前の職場の後輩からもらった名前</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>セイラさん、今日はよろしくお願いします。さっそくなんですけど、すごくセンスのいいお名前ですよね。これ、どこから取ったんですか？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>前の職場の後輩の名前なんです。「青空」って書いてセイラ。かっこいいなとずっと思っていて、使わせてもらいました。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>女性の方かと思いました。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>男性です（笑）。もう離れてしまったんですけど、名前だけはずっと頭に残ってて。</p></div></div>
+      <div class="editor-note">📝 人の名前を「かっこいい」と覚えていて、借りてまで名乗る。この時点で、人のいいところを見つけるのが得意な人なんだろうな、と分かってしまいました。</div>
+    </div>
+  </div>
+
+  <!-- sec-2 -->
+  <div class="section">
+    <h2 class="serif">174cm、35歳。「27歳ですか？」と間違われる肌の話</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>身長と体型を教えてください。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>174cmで、64〜65kgくらいですね。普通体型だと思います。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>失礼ながら、年齢を伺っても？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>35です。ただ、だいたい実年齢より若く見られますね。27くらいって言われることが多いです。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>27。画面越しでも肌がきれいなのが分かります。何かしてるんですか？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>何もしてないです（笑）。ちゃんと洗顔して、化粧水と乳液をつけるだけで。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>……ちょっとムカつきました（笑）。美意識が高いタイプなんですね。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>高いわけじゃないんです。ただ、清潔感は保っていたいなと思っていて。全身脱毛はしてます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>どのくらい続けてるんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>間が空いた時期もありますけど、トータルで7〜8年ですね。今日も行ってきました。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>今日も！？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>ヒゲとラインだけ、まだちょっと残ってて。</p></div></div>
+      <p class="narration">まつげが長い。「羨ましい」と女性から言われた回数は数えきれないという。低いのに、どこか柔らかい声。</p>
+
+      <div class="photo-ph portrait">
+        <span class="k">写真① portrait</span>
+        <div class="fig">上半身カット</div>
+        <dl>
+          <dt>alt：</dt><dd>174cm細身のセイラ</dd>
+          <dt>キャプション：</dt><dd>「27歳くらいって言われます」</dd>
+          <dt>撮影指定：</dt><dd>明るい室内か屋外で。顔出し不可なら口元〜首元のトリミングで可。取材時の映像は暗く、肌の良さ（この記事の主張の柱）が伝わりませんでした。</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <!-- sec-3 -->
+  <div class="section">
+    <h2 class="serif">生まれも育ちも福岡。ゴルフ場と球場と、譲れないラーメン3軒</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>ご出身はどちらですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>福岡です。仕事で県外にいた時期もありますけど、今はずっと福岡ですね。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>運動、されてました？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>小さい頃からずっと体を動かすのが好きで、野球とサッカーと陸上を。むしろ運動しか得意じゃないです（笑）。中学高校のころは<span class="chk" data-note="固有名詞の確認：ファンクラブ加入は本人談。クラブ名の表記が「アビスパ福岡」で正しいか、掲載してよいかを確認してください。">アビスパ福岡</span>のファンクラブにも入ってました。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>今も体を動かしてるんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>涼しくなったら友達とゴルフに行ったり、野球やサッカーを観に行ったり。……ゴルフ場で飲むお酒が最高なんですよ。朝8時から飲んだりします。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>朝8時（笑）。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>球場で飲むビールも最高です。家でも毎日飲みますね。録画したお笑い番組や映画を見ながらゴロゴロして。インドアもアウトドアも、どっちも好きです。</p></div></div>
+
+      <div class="photo-ph portrait">
+        <span class="k">写真② fullbody</span>
+        <div class="fig">全身カット</div>
+        <dl>
+          <dt>alt：</dt><dd>白Tシャツに黒パンツのシンプルな私服姿</dd>
+          <dt>キャプション：</dt><dd>普段着は「黒いパンツに白いTシャツ」</dd>
+          <dt>撮影指定：</dt><dd>私服でよい。本人談の「シンプルな普段着」と一致させる。顔は不要。</dd>
+        </dl>
+      </div>
+
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>食べ物はどうですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>自炊はしないです。好きなものはラーメン、焼肉、寿司、オムライス。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>オムライス（笑）。かわいいところがありますね。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>あと、ラーメンだけは聞いてください。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>来ました。福岡に遊びに来た人が行くべき3軒、教えてください。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>今日のお昼も食べたんですけど<span class="chk" data-note="店名の確認：音声が「1層」「心身」「福ちゃん」と誤変換されており、一双／しんしん／ふくちゃんラーメン と推定しました。3軒とも本人に店名の確定確認をお願いします。">「一双」。あとは県外の方にも人気の「しんしん」、それから「ふくちゃんラーメン」</span>。全部とんこつです。福岡ですから。</p></div></div>
+
+      <div class="photo-ph">
+        <span class="k">写真③ ramen</span>
+        <div class="fig">ラーメン</div>
+        <dl>
+          <dt>alt：</dt><dd>セイラが取材当日に食べた博多のとんこつラーメン</dd>
+          <dt>キャプション：</dt><dd>取材当日のお昼。福岡はやっぱりとんこつ</dd>
+          <dt>撮影指定：</dt><dd>丼を真上か斜め45度から。店名が写り込む場合は掲載可否を確認。</dd>
+        </dl>
+      </div>
+
+      <div class="editor-note">📝 このあとイトウが福岡のラーメン談義に夢中になり、インタビューの持ち時間を危うく溶かしかけました。</div>
+    </div>
+  </div>
+
+  <!-- sec-4 -->
+  <div class="section">
+    <h2 class="serif">「好きになった人には、好かれないんですよ」</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>モテそうな見た目をされてますけど、今はお相手は。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>今はいないです。2年くらい前までですね。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>意外です。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>好きになった人には好かれないんですよ。逆に、興味のない人からは好かれたりして。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>心当たりはあるんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>たぶん、ガツガツいっちゃうタイプなんで。それがあまりよくないのかなって。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>周りからはどんな人だと言われます？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>「適当」ってよく言われます（笑）。あまりよくないかもしれないですけど、一緒にいて楽なのは大事かなと思っていて。あとは優しいとか、面白いとか。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>相談ごとを持ちかけられるタイプでしょう。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>受けますね。まずは話を聞いてあげることが大事だと思うので。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>ご自身の性格を一言で言うと？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>優しい……ぐらいじゃないですか（笑）。人間こうあるべき、みたいに思いすぎると苦しくなっちゃうじゃないですか。そういうのが、あまりないんです。</p></div></div>
+      <p class="narration">三人きょうだいの末っ子。年上の女性から可愛がられることが多いと本人は言う。落ち着いて見えて、場面によっては全力ではしゃぐらしい。</p>
+    </div>
+  </div>
+
+  <!-- sec-5 -->
+  <div class="section">
+    <h2 class="serif">35歳、最後のチャンス。応募ボタンを押すまでの数年間</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>この仕事を始めようと思ったきっかけを教えてください。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>夜、女性と過ごすときも、相手に気持ちよくなってほしいというのが一番にあるタイプで。尽くしてあげたいというか。それで、もしかしたら向いてるのかなと思ったんです。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>こういう仕事があること自体は、前から知っていた？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>話題になった頃から知ってはいました。やってみたい気持ちはずっとあったんですけど、なかなか踏み出せなくて。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>何が背中を押したんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>もう35ですし、最後のチャンスかなと思って。一回やってみようと思って応募しました。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>何店舗か比較されましたか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>しました。ホームページを見ていて、ここは長く続いているじゃないですか。ちゃんとしたお店なんだろうなという信頼があって。ホストクラブみたいな雰囲気のところもあったんですけど、ここは柔らかい感じで、いいなと思って。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>応募前に、一番不安だったことは。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>決まりごとがいろいろあるじゃないですか。僕、頭がよくないので、覚えられるかなと（笑）。今も勉強中です。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>そこをちゃんと不安に思えるのは、いいことだと思いますよ。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>ありがとうございます。女性をちゃんと満足させられるように、気持ちも体も、頑張りたいなと思ってます。</p></div></div>
+    </div>
+  </div>
+
+  <!-- sec-6 -->
+  <div class="section">
+    <h2 class="serif">「最初はリードしたい。でも、引っ張りすぎずに」— 初めてのあなたへ</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>お客様にどんな時間を届けたいですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>「来てよかったな」と思ってもらいたいです。初めてだと絶対に緊張されると思うんですよ。僕も自分が利用する側だったとき、そうだったので。特別な時間、素敵な時間として共有できたらいいなと思ってます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>接客で一番大切にしたいことは。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>まずは相手の話を聞くこと。その人が何を求めているのかを自分で察知して、寄り添うことだと思ってます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>初めてのお客様には、どう接したいですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>最初はちゃんと僕がリードしたいですね。でも、引っ張りすぎずに。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>これだけは誰にも負けない、というものはありますか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>気配り、心配りです。ずっと部活で習ってきたことなので、そこは負けたくないです。あとは……全身脱毛しているので、肌のつるつるさは負けません（笑）。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>福岡でデートするなら、どこに行きたいですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>温泉デートしてみたいですね。あとは博多や天神でごはんを食べたり、球場に野球を観に行ったり。……健全すぎますかね（笑）。</p></div></div>
+
+      <div class="photo-ph">
+        <span class="k">写真④ handwritten</span>
+        <div class="fig">手書きメッセージ</div>
+        <dl>
+          <dt>alt：</dt><dd>セイラの手書きメッセージ</dd>
+          <dt>キャプション：</dt><dd>セイラさんからの手書きメッセージ</dd>
+          <dt>撮影指定：</dt><dd>カードを手で持って撮る。顔は不要、手元にピント。<b>この記事で一番効く1枚です。</b>手書き → 本人の言葉、の順で読ませると、次の文章が本人の声に聞こえます。</dd>
+        </dl>
+      </div>
+
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>最後に、これから会いに来る方へメッセージをお願いします。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">セ</div><p class="avatar-name c">セイラ</p></div><div class="bubble c"><p>絶対に緊張されると思いますし、今、踏みとどまっている方もいると思います。でも、一歩だけ踏み出してみてほしいです。特別な時間、素敵な時間にする自信はありますので、ぜひ会いに来てください。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>セイラさん、今日はありがとうございました。</p></div></div>
+    </div>
+  </div>
+
+  <!-- プロフィールカード -->
+  <div style="margin-top:48px;">
+    <h2 class="serif" style="border:none;padding-left:0;">出演キャスト</h2>
+    <div class="profile">
+      <div class="profile-head">
+        <div class="profile-av">セ</div>
+        <div>
+          <p class="lbl">CAST PROFILE</p>
+          <h3 class="serif">セイラ</h3>
+          <p class="rom">SEIRA</p>
+        </div>
+      </div>
+      <dl>
+        <div class="row"><dt>活動エリア</dt><dd>福岡（博多・天神エリア中心）</dd></div>
+        <div class="row"><dt>年齢</dt><dd>35歳</dd></div>
+        <div class="row"><dt>身長・体型</dt><dd>174cm／普通体型</dd></div>
+        <div class="row"><dt>雰囲気</dt><dd>爽やか・落ち着いている・まつげが長い</dd></div>
+        <div class="row"><dt>経験スポーツ</dt><dd>野球、サッカー、陸上（今もゴルフと観戦が趣味）</dd></div>
+        <div class="row"><dt>趣味</dt><dd>スポーツ観戦、ゴルフ、映画、お笑い番組、お酒</dd></div>
+        <div class="row"><dt>好きな食べ物</dt><dd>ラーメン、焼肉、寿司、オムライス</dd></div>
+        <div class="row"><dt>強み</dt><dd>部活で身につけた気配り・心配り／7〜8年続けた全身脱毛</dd></div>
+        <div class="row"><dt>ひとこと</dt><dd>最初はちゃんとリードします。でも、引っ張りすぎずに。</dd></div>
+      </dl>
+    </div>
+    <div class="devnote" style="margin-top:10px;">9項目あります。モバイルで縦に伸びて窮屈なら「経験スポーツ」「好きな食べ物」を削って7項目に（本文で両方触れているので情報は失われません）。</div>
+  </div>
+
+  <!-- FAQ -->
+  <section style="margin-top:48px;">
+    <h2 class="serif" style="border:none;padding-left:0;">よくある質問</h2>
+    <div class="devnote">アコーディオンです。実際のページでは閉じた状態で表示され、質問文3つだけが先に見えます。ここでは中身を確認できるよう1問目を開いています。</div>
+
+    <details class="faq" open>
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q1</span><span class="qtext">女性用風俗を利用するのが初めてで、とても緊張しています。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p>セイラは取材の中で「初めてだと絶対に緊張されると思う。僕も利用する側だったとき、そうだったので」と話しています。まず相手の話を聞き、何を求めているかを察して寄り添うことを一番大切にしたい、というのが本人の方針です。「最初はちゃんとリードしたい。でも引っ張りすぎずに」という距離感を大切にするタイプなので、ご自身のペースで大丈夫です。</p></div>
+    </details>
+
+    <details class="faq">
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q2</span><span class="qtext">福岡で、セイラとはどんな時間を過ごせますか。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p>生まれも育ちも福岡で、博多や天神のお店にも詳しいセラピストです。ごはんを食べに行くデート、スポーツ観戦、温泉デートなどを挙げています。野球・サッカー観戦とゴルフが趣味で、お酒も好きなので、試合を観ながら一杯という時間も楽しめます。ラーメンの話をふると止まらなくなります。</p></div>
+    </details>
+
+    <details class="faq">
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q3</span><span class="qtext">セイラは新人ですが、指名しても大丈夫でしょうか。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p><span class="chk" data-note="公開日との整合：デビュー時期を「2026年8月」と書いています。公開が9月以降にずれる場合はこの記述を更新してください。">セイラは2026年8月にデビューした新人セラピストです。</span>接客業の経験はこれからですが、学生時代の部活で身につけた気配り・心配りを「これだけは誰にも負けたくない」と語っています。ルールやマニュアルについても「覚えられるか不安だった」と正直に話したうえで、現在も勉強中です。最新の出勤状況は出勤スケジュールページでご確認ください。</p></div>
+    </details>
+  </section>
+
+  <!-- WRITER'S NOTE -->
+  <div class="wnote">
+    <p class="cap">WRITER'S NOTE</p>
+    <p>取材の中で一番印象に残ったのは、「もう35ですし、最後のチャンスかなと思って」という一言でした。ずっとやってみたかった。でも何年も踏み出せなかった。その時間の長さを、笑いながらさらっと話す人でした。</p>
+    <p>これって、初めて女性用風俗を使おうか迷っている方の気持ちと、そっくり同じなんじゃないかと思うんです。「一歩だけ踏み出してみてほしい」という彼の言葉には、自分が最近それをやったばかりの人の実感がこもっていました。</p>
+    <p>爽やかで、適当で、優しくて、肌がきれいで、ラーメンの話になると急に前のめりになる。福岡で誰かに話を聞いてもらいたい夜があったら、セイラさんはかなり良い選択だと思います。</p>
+    <p class="sig">— イトウ</p>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta">
+    <p class="cap">RESERVATION</p>
+    <p class="sub">セイラに会いに行く</p>
+    <a href="#">ご予約・お問い合わせはこちら →</a>
+  </div>
+
+  <!-- 内部リンク3本 -->
+  <div class="devnote" style="margin-top:32px;">ここから下（内部リンク3本）は<b>まだ実装されていません</b>。DBの <code>cta_data</code> フィールドはあるのに、UI側がどこからも読んでいないためです。実装パッケージの「作業2」で追加します。制作の鉄則6「記事末尾は内部リンクで締める」に必要な部分です。</div>
+  <nav class="links" aria-label="関連ページ">
+    <h2 class="serif" style="border:none;padding-left:0;">次はこちらもどうぞ</h2>
+    <ul>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/schedule"><span class="l">セイラの出勤スケジュールを見る</span><span class="d">最新の出勤日と空き状況はこちらから確認できます</span></a></li>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/price"><span class="l">料金・コースを確認する</span><span class="d">コース料金と延長・交通費の考え方をまとめています</span></a></li>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/first-time"><span class="l">初めての方へ</span><span class="d">予約から当日の流れまで、初めての方向けにご案内します</span></a></li>
+    </ul>
+  </nav>
+
+  <!-- 関連記事 -->
+  <div class="bottomnav">
+    <h3 class="serif">他のセラピストインタビュー</h3>
+    <div class="rel">
+      <a href="#"><div class="thumb">INTERVIEW</div><div><span class="n">サイ</span><p class="t">塩顔セラピスト・サイに聞いた、植物とパスタとVaundyの話</p></div></a>
+      <a href="#"><div class="thumb">INTERVIEW</div><div><span class="n">カズヤ</span><p class="t">現役SE×長身塩顔男子・カズヤ — “大人の余裕”の正体に迫る</p></div></a>
+    </div>
+    <div class="backbtn"><a href="#">← インタビュー一覧へ戻る</a></div>
+  </div>
+
+</div>
+</article>
+
+<!-- ================= 巻末サマリー ================= -->
+<div class="footerbox">
+  <div class="card">
+    <h4>この記事の設定値（実装用）</h4>
+    <table>
+      <tr><th>slug</th><td>seira-interview-vol4</td></tr>
+      <tr><th>正規URL</th><td>https://www.sutoroberrys.jp/store/fukuoka/interview/{castId}/seira-interview-vol4</td></tr>
+      <tr><th>status</th><td>draft（写真4枚の到着＋本人確認の完了後に published）</td></tr>
+      <tr><th>seo_title</th><td>35歳、最後のチャンス — 福岡の新人セラピスト・セイラが「尽くしたい」と言う理由</td></tr>
+      <tr><th>seo_description</th><td>福岡・ストロベリーボーイズの新人セラピスト「セイラ」のインタビュー。35歳で一歩を踏み出した理由、7〜8年続けた全身脱毛、部活で身につけた気配り、博多のラーメン愛まで。初めての方へのメッセージも掲載しています。</td></tr>
+      <tr><th>構造化データ</th><td>Article ／ FAQPage ／ BreadcrumbList（各1つ）</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="margin-top:16px;">
+    <h4>公開前に必要なこと</h4>
+    <table>
+      <tr><th>もり</th><td>① 表記「セイラ／セイラー」の確定　② ラーメン3店の店名確認　③ セイラさん本人の記事確認　④ 写真4枚の受け取り</td></tr>
+      <tr><th>実装AI</th><td>① 記事データ投入　② cta_data のレンダリング実装　③ canonical の正規化（3ルート）　④ speaker値のバグ修正</td></tr>
+      <tr><th>公開後</th><td>GSCでインデックス登録リクエスト／セイラさんのSNSプロフィールにリンク設定／写メ日記の1本目からリンク</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+function toggleClean(){
+  document.body.classList.toggle('clean');
+  var b=document.getElementById('toggle');
+  b.textContent = document.body.classList.contains('clean') ? '要確認マーカーを表示' : '要確認マーカーを隠す';
+  b.classList.toggle('on');
+}
+</script>
+</body>
+</html>
