@@ -36,7 +36,7 @@ const FAQ_DATA = [
     id: 2,
     question: '料金システムはどうなっていますか？',
     answer:
-      '時間制の明確な料金システムです。表示価格以外の追加料金等は一切発生いたしません。お支払いは現金・クレジットカード・電子マネーに対応しています。',
+      '時間制の明確な料金システムです。表示価格以外の追加料金等は一切発生いたしません。なお、お支払いは現在【現金払い】のみ対応となっております。（クレジットカード・電子マネーはご利用いただけませんので予めご了承ください）',
   },
   {
     id: 3,
@@ -574,59 +574,62 @@ export default function HubPageClient({
                   const castImg =
                     castData?.main_image_url || castData?.image_url || FALLBACK_CAST_IMG;
                   const castName = castData?.name || 'THERAPIST';
+                  const storeSlug = (diary as any).store_slug || (diary as any).storeSlug || (castData as any)?.store_slug || 'fukuoka';
+                  const diaryHref = `/store/${storeSlug}/diary/post/${diary.id}`;
 
                   return (
-                    <motion.div
-                      key={diary.id}
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      whileInView={{ opacity: 1, scale: 1 }}
-                      viewport={{ once: false, amount: 0.1 }}
-                      transition={{ delay: i * 0.1 }}
-                      className="group relative w-[35vw] shrink-0 cursor-pointer snap-center md:w-auto md:min-w-[320px] md:max-w-[320px]"
-                    >
-                      <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-slate-100 shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-rose-500/20 md:rounded-[2.5rem]">
-                        {/* メインの写メ画像 */}
-                        <img
-                          src={thumbnail}
-                          alt={diary.title}
-                          className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                        />
+                    <Link key={diary.id} href={diaryHref} className="block group shrink-0 snap-center">
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        whileInView={{ opacity: 1, scale: 1 }}
+                        viewport={{ once: false, amount: 0.1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className="relative w-[35vw] cursor-pointer md:w-auto md:min-w-[320px] md:max-w-[320px]"
+                      >
+                        <div className="relative aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-slate-100 shadow-2xl transition-all duration-700 group-hover:-translate-y-2 group-hover:shadow-rose-500/20 md:rounded-[2.5rem]">
+                          {/* メインの写メ画像 */}
+                          <img
+                            src={thumbnail}
+                            alt={diary.title}
+                            className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                          />
 
-                        {/* オーバーレイグラデーション */}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
+                          {/* オーバーレイグラデーション */}
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80" />
 
-                        {/* 下部コンテンツ */}
-                        <div className="absolute bottom-0 left-0 w-full p-4 text-white md:p-8">
-                          <div className="mb-2 flex items-center gap-2 md:mb-4 md:gap-3">
-                            <div className="h-6 w-6 overflow-hidden rounded-full border-2 border-white/30 md:h-10 md:w-10">
-                              <img
-                                src={castImg}
-                                alt={castName}
-                                className="h-full w-full object-cover"
-                              />
+                          {/* 下部コンテンツ */}
+                          <div className="absolute bottom-0 left-0 w-full p-4 text-white md:p-8">
+                            <div className="mb-2 flex items-center gap-2 md:mb-4 md:gap-3">
+                              <div className="h-6 w-6 overflow-hidden rounded-full border-2 border-white/30 md:h-10 md:w-10">
+                                <img
+                                  src={castImg}
+                                  alt={castName}
+                                  className="h-full w-full object-cover"
+                                />
+                              </div>
+                              <div>
+                                <p className="text-[8px] font-black tracking-wider opacity-80 md:text-xs">
+                                  {castName}
+                                </p>
+                                <p className="text-[6px] font-bold opacity-60 md:text-[10px]">
+                                  {new Date(diary.created_at).toLocaleDateString('ja-JP')}
+                                </p>
+                              </div>
                             </div>
-                            <div>
-                              <p className="text-[8px] font-black tracking-wider opacity-80 md:text-xs">
-                                {castName}
-                              </p>
-                              <p className="text-[6px] font-bold opacity-60 md:text-[10px]">
-                                {new Date(diary.created_at).toLocaleDateString('ja-JP')}
-                              </p>
-                            </div>
+                            <h3 className="line-clamp-2 text-xs font-black leading-tight tracking-tight md:text-xl">
+                              {diary.title}
+                            </h3>
                           </div>
-                          <h3 className="line-clamp-2 text-xs font-black leading-tight tracking-tight md:text-xl">
-                            {diary.title}
-                          </h3>
-                        </div>
 
-                        {/* 日付バッジ (Top Left) */}
-                        <div className="absolute left-3 top-3 rounded-full bg-white/10 px-2 py-1 backdrop-blur-md md:left-6 md:top-6 md:px-4 md:py-2">
-                          <span className="text-[6px] font-black tracking-widest text-white md:text-[10px]">
-                            NEW ENTRY
-                          </span>
+                          {/* 日付バッジ (Top Left) */}
+                          <div className="absolute left-3 top-3 rounded-full bg-white/10 px-2 py-1 backdrop-blur-md md:left-6 md:top-6 md:px-4 md:py-2">
+                            <span className="text-[6px] font-black tracking-widest text-white md:text-[10px]">
+                              NEW ENTRY
+                            </span>
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
+                      </motion.div>
+                    </Link>
                   );
                 })
               : // 記事がない場合のフォールバック
@@ -822,7 +825,8 @@ export default function HubPageClient({
               明朗会計・安心の料金プラン
             </h2>
             <p className="mt-4 text-sm font-bold text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              ストロベリーボーイズは不当な追加請求や入会金・年会費等は一切発生いたしません。事前のコース料金と出張交通費のみの明確な料金体系です。
+              ストロベリーボーイズは不当な追加請求や入会金・年会費等は一切発生いたしません。事前のコース料金と出張交通費のみの明確な料金体系です。<br />
+              <span className="text-xs text-rose-500 font-normal">※コース料金・プラン内容は店舗（福岡店・横浜店等）や出張先により異なります。正確な料金詳細は各店舗の料金表をご確認ください。</span>
             </p>
           </div>
 
@@ -837,7 +841,7 @@ export default function HubPageClient({
                 <p className="text-xs text-slate-400 mb-6">初めての方や短時間で癒やされたい方に</p>
                 <div className="mb-6 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-rose-500">¥12,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
                 </div>
               </div>
               <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
@@ -862,7 +866,7 @@ export default function HubPageClient({
                 <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
                 <div className="mb-6 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-rose-500">¥18,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
                 </div>
               </div>
               <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
@@ -884,7 +888,7 @@ export default function HubPageClient({
                 <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
                 <div className="mb-6 flex items-baseline gap-1">
                   <span className="text-4xl font-black text-rose-500">¥24,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
                 </div>
               </div>
               <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
@@ -916,13 +920,22 @@ export default function HubPageClient({
                 </div>
               </div>
             </div>
-            <Link
-              href="/plan"
-              className="shrink-0 rounded-full bg-rose-500 px-8 py-4 text-xs font-black text-white transition-all hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/30 flex items-center gap-2"
-            >
-              <span>料金・プランの完全解説をみる</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
+              <Link
+                href="/store/fukuoka/price"
+                className="rounded-full bg-rose-500 px-6 py-3.5 text-xs font-black text-white transition-all hover:bg-rose-600 hover:shadow-lg hover:shadow-rose-500/30 flex items-center gap-1.5"
+              >
+                <span>福岡店の料金表を見る</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+              <Link
+                href="/store/yokohama/price"
+                className="rounded-full bg-slate-800 px-6 py-3.5 text-xs font-black text-white transition-all hover:bg-slate-900 hover:shadow-lg flex items-center gap-1.5"
+              >
+                <span>横浜店の料金表を見る</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>

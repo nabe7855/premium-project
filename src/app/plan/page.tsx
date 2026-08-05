@@ -70,13 +70,22 @@ export default function PlanGuidePage() {
         </div>
       </section>
 
-      <div className="text-center pt-4">
-        <Link
-          href="/store/fukuoka/price"
-          className="inline-block rounded-full bg-[#d64567] px-8 py-3.5 text-xs font-bold text-white shadow-lg hover:brightness-105 transition"
-        >
-          料金表ページで詳しく見る →
-        </Link>
+      <div className="text-center pt-6 space-y-4">
+        <p className="text-xs font-bold text-slate-500">お調べの店舗の詳しい料金表をご確認ください</p>
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <Link
+            href="/store/fukuoka/price"
+            className="inline-flex items-center gap-2 rounded-full bg-[#d64567] px-8 py-3.5 text-xs font-bold text-white shadow-lg hover:brightness-105 transition"
+          >
+            福岡店の料金表を見る →
+          </Link>
+          <Link
+            href="/store/yokohama/price"
+            className="inline-flex items-center gap-2 rounded-full bg-slate-800 px-8 py-3.5 text-xs font-bold text-white shadow-lg hover:bg-slate-900 transition"
+          >
+            横浜店の料金表を見る →
+          </Link>
+        </div>
       </div>
     </main>
   );
