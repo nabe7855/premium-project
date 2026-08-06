@@ -1,15 +1,16 @@
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
-// H1 用タイトル
+// 1. H1 用タイトル (DBの title フィールド)
 const h1Title = "女性用風俗（女風）とは？初めての方に向けて、仕組みと当日の流れを解説します";
-// HTML <title> 用タイトル
+
+// 2. HTML <title> 用タイトル (DBの seo_title フィールド)
 const seoTitle = "女性用風俗（女風）とは？サービス内容・料金相場・当日の流れを初心者向けに解説｜アモラボ";
 
 const articleDescription = "女性用風俗（女風）のサービス内容、男性向け風俗との違い、料金相場、当日の流れ、よくある不安（身バレ・生理・緊張など）を初心者向けにわかりやすく解説。体験談や用語辞典リンクも充実。";
 
-// アイキャッチ画像 (Unsplashストックフォト完全廃止 -> 自社ホストWebPメインイラスト)
-const thumbnailUrl = "/images/amolab/aya/aya-photo-top.webp";
+// 3. アイキャッチ画像 (Supabase Storage の変換済み WebP URL)
+const thumbnailUrl = "https://vkrztvkpjcpejccyiviw.supabase.co/storage/v1/render/image/public/gallery/jyosei-fuzoku-guide-eyecatch_1786025006653.jpg?width=800&quality=75&resize=contain&format=webp";
 
 const articleContent = `
 <p class="lead text-lg text-gray-700 font-medium leading-relaxed mb-8">
@@ -407,21 +408,8 @@ const articleContent = `
 </script>
 `;
 
-// 純粋本文テキストの文字数を抽出・計算
-function calculatePureTextLength(htmlStr) {
-  const clean = htmlStr
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<[^>]+>/g, '')
-    .replace(/\s+/g, '');
-  return clean.length;
-}
-
 async function updateArticle() {
-  console.log('Updating article jyosei-fuzoku-guide in Prisma DB with fixes...');
-
-  const pureTextLength = calculatePureTextLength(articleContent);
-  console.log('Calculated Pure Text Length (excluding HTML/JSON-LD):', pureTextLength, 'chars');
+  console.log('Updating article jyosei-fuzoku-guide in Prisma DB with dedicated eyecatch and exact title/h1...');
 
   const updated = await prisma.mediaArticle.updateMany({
     where: { slug: 'jyosei-fuzoku-guide' },
@@ -441,11 +429,9 @@ async function updateArticle() {
     where: { slug: 'jyosei-fuzoku-guide' }
   });
 
-  console.log('New H1 Title:', check?.title);
-  console.log('New SEO Title:', check?.seo_title);
+  console.log('New H1 Title (title):', check?.title);
+  console.log('New SEO Title (seo_title):', check?.seo_title);
   console.log('New Thumbnail URL:', check?.thumbnail_url);
-  console.log('Full Raw Content Length:', check?.content?.length, 'chars');
-  console.log('Pure Text Article Length:', pureTextLength, 'chars');
 
   await prisma.$disconnect();
 }

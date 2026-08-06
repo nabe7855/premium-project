@@ -214,31 +214,36 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
           <article className="mb-8 overflow-hidden rounded-2xl border border-pink-100 bg-white">
             {post.images && post.images.length > 0 ? (
               <div className="flex flex-col">
-                {post.images.map((imgSrc, idx) => (
-                  <div key={idx} className="relative flex justify-center bg-gray-50/50 min-h-[300px] border-b border-pink-50">
-                    <img
-                      src={imgSrc}
-                      alt={`${post.title} - ${post.castName}の日記 - 画像${idx + 1}`}
-                      className="h-auto max-h-[70vh] w-auto object-contain"
-                    />
-                  </div>
-                ))}
+                {post.images.map((imgSrc, idx) => {
+                  const optimizedSrc = getSupabasePublicUrl(imgSrc) || imgSrc;
+                  return (
+                    <div key={idx} className="relative flex justify-center bg-gray-50/50 min-h-[300px] aspect-[4/3] w-full border-b border-pink-50 overflow-hidden">
+                      <img
+                        src={optimizedSrc}
+                        alt={`${post.title} - ${post.castName}の日記 - 画像${idx + 1}`}
+                        loading={idx === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        width={800}
+                        height={600}
+                        className="h-full w-full object-contain"
+                      />
+                    </div>
+                  );
+                })}
               </div>
-            ) : (
-              <div className={`relative flex justify-center bg-gray-50/50 min-h-[300px] transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}>
-                {!imageLoaded && (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-pink-200 border-t-pink-500"></div>
-                  </div>
-                )}
+            ) : post.image ? (
+              <div className="relative flex justify-center bg-gray-50/50 min-h-[300px] aspect-[4/3] w-full overflow-hidden">
                 <img
-                  src={post.image}
+                  src={getSupabasePublicUrl(post.image) || post.image}
                   alt={`${post.title} - ${post.castName}の日記`}
-                  onLoad={() => setImageLoaded(true)}
-                  className="h-auto max-h-[70vh] w-auto object-contain"
+                  loading="eager"
+                  decoding="async"
+                  width={800}
+                  height={600}
+                  className="h-full w-full object-contain"
                 />
               </div>
-            )}
+            ) : null}
             <div className="p-4 sm:p-8">
               <p className="mb-2 text-[10px] sm:text-xs text-gray-400 font-normal">
                 女性用風俗 ストロベリーボーイズ{slug === 'fukuoka' ? '福岡（博多・天神・中洲）' : '横浜（みなとみらい・関内）'} | {post.castName}の写メ日記
@@ -252,6 +257,10 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
                   src={post.castAvatar} 
                   className="h-8 w-8 rounded-full object-cover" 
                   alt={`${post.castName} - プロフィール写真`}
+                  loading="lazy"
+                  decoding="async"
+                  width={32}
+                  height={32}
                 />
                 <span className="font-medium">
                   {post.castName} • 公開: {post.date}

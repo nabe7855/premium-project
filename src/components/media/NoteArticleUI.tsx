@@ -131,7 +131,11 @@ export default function NoteArticleUI({
           <div className="relative mb-12 aspect-[16/9] w-full overflow-hidden rounded-2xl">
             <Image
               src={article.thumbnail_url}
-              alt={article.title}
+              alt={
+                article.slug === 'jyosei-fuzoku-guide'
+                  ? '女性用風俗とは？仕組み・料金の相場・当日の流れを初めての方向けに解説'
+                  : article.title
+              }
               fill
               className="object-cover"
               priority

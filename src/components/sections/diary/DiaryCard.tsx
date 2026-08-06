@@ -112,6 +112,10 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
               <img
                 src={imageSrc}
                 alt={post.title}
+                loading="lazy"
+                decoding="async"
+                width={64}
+                height={64}
                 className="h-full w-full object-contain"
               />
             </div>
@@ -151,6 +155,10 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
               <img
                 src={imageSrc}
                 alt={post.title}
+                loading="lazy"
+                decoding="async"
+                width={192}
+                height={128}
                 className="h-full w-full object-contain"
               />
             </div>
@@ -172,6 +180,10 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
                   <img
                     src={castAvatar}
                     alt={castName}
+                    loading="lazy"
+                    decoding="async"
+                    width={24}
+                    height={24}
                     className="h-5 w-5 rounded-full sm:h-6 sm:w-6"
                   />
                   <span>{castName}</span>
@@ -199,7 +211,15 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
     <Link href={linkHref} className="block">
       <div className={cardClasses}>
         <div className="relative overflow-hidden bg-gray-100">
-          <img src={imageSrc} alt={post.title} className="h-40 w-full object-contain sm:h-48" />
+          <img
+            src={imageSrc}
+            alt={post.title}
+            loading="lazy"
+            decoding="async"
+            width={400}
+            height={200}
+            className="h-40 w-full object-contain sm:h-48"
+          />
           <div className="absolute right-2 top-2 rounded-full bg-white/90 px-2 py-1 text-xs backdrop-blur-sm sm:right-3 sm:top-3">
             <Clock size={10} className="mr-1 inline sm:h-3 sm:w-3" />
             {readTime}分
@@ -233,6 +253,10 @@ const DiaryCard: React.FC<DiaryCardProps> = ({
               <img
                 src={castAvatar}
                 alt={castName}
+                loading="lazy"
+                decoding="async"
+                width={32}
+                height={32}
                 className="h-6 w-6 rounded-full object-cover sm:h-8 sm:w-8"
               />
               <div>
