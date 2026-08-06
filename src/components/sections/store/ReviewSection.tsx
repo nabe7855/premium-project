@@ -26,6 +26,13 @@ export default function ReviewSection() {
     return null;
   }
 
+  // 実データからの動的計算（20件以上の場合のみ表示）
+  const reviewCount = reviews.length;
+  const showStats = reviewCount >= 20;
+
+  const totalRating = reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
+  const avgRating = showStats ? (totalRating / reviewCount).toFixed(1) : null;
+
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
@@ -64,9 +71,11 @@ export default function ReviewSection() {
                   <span>{reviews[currentReview].date}</span>
                 </div>
               </div>
-              <div className="mt-2 text-sm text-gray-500">
-                ご利用プラン: {reviews[currentReview].service}
-              </div>
+              {reviews[currentReview].service && (
+                <div className="mt-2 text-sm text-gray-500">
+                  ご利用プラン: {reviews[currentReview].service}
+                </div>
+              )}
             </div>
           </div>
 
@@ -85,25 +94,19 @@ export default function ReviewSection() {
           </div>
         </div>
 
-        {/* Statistics */}
-        <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-4">
-          <div className="text-center">
-            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">4.8</div>
-            <div className="text-gray-600">平均評価</div>
+        {/* 🚀 動的統計表示（20件以上の場合のみ実数をDOM出力し、20件未満は完全非表示） */}
+        {showStats && (
+          <div className="mt-16 grid grid-cols-2 gap-6 md:grid-cols-2 max-w-xl mx-auto">
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">{avgRating}</div>
+              <div className="text-gray-600">平均評価</div>
+            </div>
+            <div className="text-center">
+              <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">{reviewCount}件</div>
+              <div className="text-gray-600">レビュー数</div>
+            </div>
           </div>
-          <div className="text-center">
-            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">247+</div>
-            <div className="text-gray-600">レビュー数</div>
-          </div>
-          <div className="text-center">
-            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">98%</div>
-            <div className="text-gray-600">満足度</div>
-          </div>
-          <div className="text-center">
-            <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">89%</div>
-            <div className="text-gray-600">リピート率</div>
-          </div>
-        </div>
+        )}
       </div>
     </section>
   );

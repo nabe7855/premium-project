@@ -79,7 +79,7 @@ function App() {
     {
       icon: <Award className="h-6 w-6 text-pink-500 md:h-8 md:w-8" />,
       title: '歴史が紡ぐ信頼',
-      description: '7年以上の営業実績',
+      description: '丁寧な営業と信頼',
       detail:
         '長年にわたり多くのお客様にご愛顧いただいており、確かな実績と信頼を築いてまいりました。',
     },
@@ -92,7 +92,7 @@ function App() {
     {
       icon: <Star className="h-6 w-6 text-pink-500 md:h-8 md:w-8" />,
       title: '選び抜かれたキャスト',
-      description: '口コミ100件超の実績',
+      description: '口コミ多数の確かな実績',
       detail:
         '厳選されたセラピストによる心のこもったサービスで、多くのお客様から高評価をいただいております。',
     },

@@ -354,19 +354,16 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
               あなたの街で、心ほどける時間を。全国の店舗からお選びください。
             </p>
 
-            {/* 🏆 信頼実績バッジ帯 (PC) */}
+            {/* 🏆 品質と安心への取り組みバッジ帯 (PC) */}
             <div className="pt-2 flex flex-wrap gap-2 text-xs font-bold text-slate-700">
               <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm text-rose-600">
-                ⭐ グループ累計 口コミ4,000件以上
+                ⭐ リアルなお客様の口コミを多数掲載
               </span>
               <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
-                🏆 Since 2018（グループ運営8年）
+                🏙️ 福岡・横浜の直営店舗運営
               </span>
               <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
-                🏙️ 全国主要都市展開（東京・横浜・名古屋・大阪・福岡）
-              </span>
-              <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
-                ✨ 完全審査制セラピスト
+                ✨ 完全審査制・厳選セラピスト
               </span>
             </div>
           </div>
@@ -417,16 +414,13 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
             福岡・横浜の女性用風俗・女風 ストロベリーボーイズ
           </p>
 
-          {/* 🏆 信頼実績バッジ帯 (SP) */}
+          {/* 🏆 品質と安心への取り組みバッジ帯 (SP) */}
           <div className="pt-1.5 flex flex-wrap items-center justify-center gap-1 text-[10px] font-bold text-slate-700">
             <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm text-rose-600">
-              ⭐ グループ累計 口コミ4,000件以上
+              ⭐ リアルなお客様の口コミ掲載中
             </span>
             <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm">
-              🏆 運営8年(Since 2018)
-            </span>
-            <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm">
-              🏙️ 全国主要都市展開
+              🏙️ 福岡・横浜の店舗展開
             </span>
           </div>
         </div>
