@@ -15,21 +15,34 @@ interface NewsDetailPageProps {
 }
 
 export async function generateMetadata({ params }: NewsDetailPageProps): Promise<Metadata> {
+  const JP_STORES = ['fukuoka', 'yokohama'];
   const { slug, newsSlug } = params;
+
+  if (!JP_STORES.includes(slug)) {
+    return { title: 'Not Found' };
+  }
+
   const page = await getPublishedPageBySlug(newsSlug);
   if (!page || page.status !== 'published') {
     return { title: 'Not Found' };
   }
 
   const targetSlugs = page.targetStoreSlugs || [];
-  const owningStoreSlug = targetSlugs.includes(slug) ? slug : (targetSlugs[0] || 'fukuoka');
-  const storeData = await getStoreData(owningStoreSlug);
+  const jpTargetSlugs = targetSlugs.filter((s) => JP_STORES.includes(s));
+
+  if (jpTargetSlugs.length === 0) {
+    return { title: 'Not Found' };
+  }
+
+  // アクセス中の店舗が.jp内の配信対象に含まれていればその店舗自身をcanonical、そうでなければ第一所属店舗
+  const canonicalStoreSlug = jpTargetSlugs.includes(slug) ? slug : jpTargetSlugs[0];
+  const storeData = await getStoreData(canonicalStoreSlug);
 
   if (!storeData) {
     return { title: 'Not Found' };
   }
 
-  const publishedAt = page.storeSettings?.[owningStoreSlug]?.publishedAt || page.updatedAt;
+  const publishedAt = page.storeSettings?.[canonicalStoreSlug]?.publishedAt || page.updatedAt;
 
   let plainTextDescription = '';
   if (page.sections && page.sections.length > 0) {
@@ -57,7 +70,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     title: `${page.title} | ${storeData.name}`,
     description: metaDescription,
     alternates: {
-      canonical: `https://www.sutoroberrys.jp/store/${owningStoreSlug}/news/${newsSlug}`,
+      canonical: `https://www.sutoroberrys.jp/store/${canonicalStoreSlug}/news/${newsSlug}`,
     },
     openGraph: {
       title: `${page.title} | ${storeData.name}`,
@@ -76,7 +89,12 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
 }
 
 export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
+  const JP_STORES = ['fukuoka', 'yokohama'];
   const { slug, newsSlug } = params;
+
+  if (!JP_STORES.includes(slug)) {
+    notFound();
+  }
 
   // 1. 店舗に限定せず全公開記事から検索
   const page = await getPublishedPageBySlug(newsSlug);
@@ -85,11 +103,17 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
     notFound();
   }
 
-  // 2. 店舗アクセス権チェック (他店舗パスでのアクセスは301リダイレクト)
+  // 2. 店舗アクセス権チェック (単一店舗限定の記事で、他店舗パスからアクセスされた場合は301リダイレクト)
   const targetSlugs = page.targetStoreSlugs || [];
-  if (!targetSlugs.includes(slug)) {
-    const owningStoreSlug = targetSlugs[0] || 'fukuoka';
-    redirect(`/store/${owningStoreSlug}/news/${newsSlug}`, RedirectType.replace);
+  const jpTargetSlugs = targetSlugs.filter((s) => JP_STORES.includes(s));
+
+  if (jpTargetSlugs.length === 0) {
+    notFound();
+  }
+
+  if (!jpTargetSlugs.includes(slug)) {
+    const primaryStoreSlug = jpTargetSlugs[0];
+    redirect(`/store/${primaryStoreSlug}/news/${newsSlug}`, RedirectType.replace);
   }
 
   const [allPages, storeData, topConfigResult] = await Promise.all([

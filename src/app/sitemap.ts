@@ -59,17 +59,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       });
     }
 
-    // 店舗所属の公開ニュース記事
+    // 店舗所属の公開ニュース記事 (複数店舗ニュースは .jp 内の第一所属店舗の URL のみを出力して重複防止)
     try {
       const { getPublishedPagesByStore } = await import('@/lib/actions/news-pages');
+      const JP_STORES = ['fukuoka', 'yokohama'];
       const newsPages = await getPublishedPagesByStore(storeSlug);
       for (const p of newsPages) {
-        storePages.push({
-          url: `${baseUrl}${storeBase}/news/${p.slug}`,
-          lastModified: new Date(p.storeSettings?.[storeSlug]?.publishedAt || p.updatedAt),
-          changeFrequency: 'weekly',
-          priority: 0.6,
-        });
+        const targetSlugs = p.targetStoreSlugs || [];
+        const jpTargetSlugs = targetSlugs.filter((s) => JP_STORES.includes(s));
+        const primaryStoreSlug = jpTargetSlugs[0] || storeSlug;
+
+        if (primaryStoreSlug === storeSlug) {
+          storePages.push({
+            url: `${baseUrl}${storeBase}/news/${p.slug}`,
+            lastModified: new Date(p.storeSettings?.[storeSlug]?.publishedAt || p.updatedAt),
+            changeFrequency: 'weekly',
+            priority: 0.6,
+          });
+        }
       }
     } catch (e) {
       console.error(`Sitemap: Error fetching news for store ${storeSlug}:`, e);
