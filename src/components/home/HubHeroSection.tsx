@@ -159,9 +159,8 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
         enName: slug.toUpperCase(),
         catchphrase: (USE_DB_CATCH_COPY && store.catch_copy) || comp.catchphrase,
         castCount: comp.castCount,
-        // 店舗カードは最大230px幅表示。生画像(1〜1.3MB)をそのまま配信すると
-        // FVが極端に重くなるため、Supabase Render API で 480px WebP に変換する。
-        image: getTransformedImageUrl(store.image_url, { width: 480, format: 'webp' }) || comp.image,
+        // 店舗カードは最大230px幅表示。Supabase Render API で 400px WebP に変換する。
+        image: getTransformedImageUrl(store.image_url, { width: 400, format: 'webp' }) || comp.image,
         heroCastImage,
         heroCastImages,
         floatCopy: (USE_DB_CATCH_COPY && store.catch_copy) || comp.floatCopy,

@@ -22,6 +22,7 @@ import Link from 'next/link';
 
 import { useEffect, useState, useMemo } from 'react';
 import { AREA_MAP, TARGET_AREAS } from '@/lib/area-data';
+import { getOptimizedImageUrl } from '@/lib/image-url';
 
 /* ─── 静的データ ─────────────────────────────────── */
 
@@ -597,11 +598,13 @@ export default function HubPageClient({
           <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-6 md:gap-8">
             {diaries.length > 0
               ? diaries.slice(0, 4).map((diary, i) => {
-                  const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                  const rawThumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                  const thumbnail = getOptimizedImageUrl(rawThumbnail, 'thumb') || rawThumbnail;
                   const rawCast = (diary as any).casts || (diary as any).cast;
                   const castData = Array.isArray(rawCast) ? rawCast[0] : rawCast;
-                  const castImg =
+                  const rawCastImg =
                     castData?.main_image_url || castData?.image_url || FALLBACK_CAST_IMG;
+                  const castImg = getOptimizedImageUrl(rawCastImg, 'icon') || rawCastImg;
                   const castName = castData?.name || 'THERAPIST';
                   const storeSlug = (diary as any).store_slug || (diary as any).storeSlug || (castData as any)?.store_slug || 'fukuoka';
                   const diaryHref = `/store/${storeSlug}/diary/post/${diary.id}`;
@@ -620,6 +623,8 @@ export default function HubPageClient({
                           <img
                             src={thumbnail}
                             alt={diary.title}
+                            loading="lazy"
+                            decoding="async"
                             className="h-full w-full object-cover transition-transform duration-1000 group-hover:scale-110"
                           />
 
@@ -633,6 +638,8 @@ export default function HubPageClient({
                                 <img
                                   src={castImg}
                                   alt={castName}
+                                  loading="lazy"
+                                  decoding="async"
                                   className="h-full w-full object-cover"
                                 />
                               </div>

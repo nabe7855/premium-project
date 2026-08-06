@@ -43,7 +43,7 @@ export interface ImageTransformOptions {
 
 /**
  * Supabase Render API を使用して画像を動的に変換・最適化する
- * unoptimized: true を解除した際、Vercelの無料枠画像制限を回避しつつ高速化するために使用
+ * format=webp をデフォルトで付与し、Acceptヘッダー非送信のボットにも常時WebPを配信する
  */
 export function getTransformedImageUrl(
   path: string | null | undefined, 
@@ -52,7 +52,7 @@ export function getTransformedImageUrl(
   const publicUrl = getSupabasePublicUrl(path, options.slug);
   if (!publicUrl) return undefined;
 
-  // SupabaseのストレージURLかつ画像である場合のみ変換処理を適用する
+  // SupabaseのストレージURLかつ /storage/v1/object/public/ 形式の場合のみ変換処理を適用する
   const isSupabaseStorage = publicUrl.includes('/storage/v1/object/public/');
   if (!isSupabaseStorage) {
     return publicUrl;
@@ -62,29 +62,22 @@ export function getTransformedImageUrl(
   const params = new URLSearchParams();
   if (options.width) params.append('width', options.width.toString());
   if (options.height) params.append('height', options.height.toString());
-  if (options.quality) {
-    params.append('quality', options.quality.toString());
-  } else if (options.width || options.height) {
-    // リサイズ指定がある場合はデフォルト品質80を設定して圧縮
-    params.append('quality', '80');
-  }
   
-  if (options.resize) {
-    params.append('resize', options.resize);
-  } else if (options.width || options.height) {
-    // 縦横比が崩れたり見切れたりするのを防ぐため、デフォルトで 'contain'（アスペクト比維持）を適用
-    params.append('resize', 'contain');
-  }
+  // 品質指定 (デフォルト75)
+  const quality = options.quality || 75;
+  params.append('quality', quality.toString());
+  
+  // リサイズ指定 (アスペクト比維持のためデフォルト contain)
+  const resize = options.resize || 'contain';
+  params.append('resize', resize);
 
-  // フォーマット（デフォルトで次世代フォーマット webp を使用）
+  // フォーマット指定 (デフォルトで明示的に webp を付与しクローラーにもWebPを保証)
   const format = options.format || 'webp';
   if (format !== 'origin') {
     params.append('format', format);
   }
 
-  // オプションが何も指定されていない場合はオリジナルのURLを返す
   const paramString = params.toString();
-  if (!paramString) return publicUrl;
 
   // object/public/ を render/image/public/ に置換してパラメータを付与
   return publicUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?' + paramString;
@@ -93,11 +86,11 @@ export function getTransformedImageUrl(
 export type ImagePreset = 'hero' | 'banner' | 'content' | 'thumb' | 'icon';
 
 export const IMAGE_PRESETS = {
-  hero: { width: 1600, quality: 75 },    // メインビジュアル、ヒーロー
-  banner: { width: 1200, quality: 75 },  // フッターバナー、ニュース画像
-  content: { width: 800, quality: 75 },  // 通常コンテンツ用画像
-  thumb: { width: 400, quality: 70 },    // キャストサムネイル、ギャラリー
-  icon: { width: 200, quality: 70 },     // アイコン、小サムネイル
+  hero: { width: 800, quality: 75 },     // メインビジュアル、FVヒーロー (LCP最優先)
+  banner: { width: 800, quality: 75 },   // バナー、ニュース画像
+  content: { width: 800, quality: 75 },  // 本文挿入画像、詳細画像
+  thumb: { width: 400, quality: 75 },    // キャストサムネイル、日記カード
+  icon: { width: 300, quality: 75 },     // アイコン、小サムネイル
 } as const;
 
 /**
@@ -109,6 +102,6 @@ export function getOptimizedImageUrl(
   slug?: string
 ): string | undefined {
   const config = IMAGE_PRESETS[preset];
-  return getTransformedImageUrl(path, { width: config.width, quality: config.quality, slug }) || undefined;
+  return getTransformedImageUrl(path, { width: config.width, quality: config.quality, slug }) || (path || undefined);
 }
 
