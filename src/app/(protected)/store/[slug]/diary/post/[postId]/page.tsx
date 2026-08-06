@@ -11,6 +11,9 @@ import { Metadata } from 'next';
 
 import { notFound, redirect, RedirectType } from 'next/navigation';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface Props {
   params: { slug: string; postId: string };
 }

@@ -11,6 +11,9 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { STORE_META } from '@/lib/store/storeMeta';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const { slug } = params;
   const s = STORE_META[slug];
