@@ -35,6 +35,7 @@ const DiarySection: React.FC<DiarySectionProps> = ({
   useEffect(() => {
     const fetchDiaries = async () => {
       try {
+        const now = new Date().toISOString();
         const { data, error } = await supabase
           .from('blogs')
           .select(
@@ -42,8 +43,10 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             id,
             title,
             created_at,
+            published_at,
             casts (
               name,
+              is_active,
               cast_store_memberships (
                 stores ( slug )
               )
@@ -53,32 +56,38 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             )
           `,
           )
-          .eq('status', 'published')
-          .order('created_at', { ascending: false });
+          .in('status', ['published', 'scheduled'])
+          .lte('published_at', now)
+          .order('published_at', { ascending: false });
 
         if (error) throw error;
 
-        const filtered = data
-          ?.filter((blog: any) => {
-            const memberships = blog.casts?.cast_store_memberships || [];
-            return memberships.some((m: any) => m.stores?.slug === storeSlug);
+        const filtered = (data || [])
+          .filter((blog: any) => {
+            const castObj = Array.isArray(blog.casts) ? blog.casts[0] : blog.casts;
+            if (!castObj || castObj.is_active === false) return false;
+
+            const memberships = castObj?.cast_store_memberships ?? [];
+            const slugs = Array.isArray(memberships)
+              ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
+              : [];
+            return slugs.includes(storeSlug);
           })
           .slice(0, 4)
-          .map((blog: any) => ({
-            id: blog.id,
-            castName: blog.casts?.name || '不明なキャスト',
-            title: blog.title,
-            image:
-              blog.blog_images?.[0]?.image_url ||
-              'https://via.placeholder.com/400x300?text=No+Image',
-            date: new Date(blog.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
-          }));
+          .map((blog: any) => {
+            const castObj = Array.isArray(blog.casts) ? blog.casts[0] : blog.casts;
+            return {
+              id: blog.id,
+              castName: castObj?.name || 'セラピスト',
+              title: blog.title,
+              image:
+                blog.blog_images?.[0]?.image_url ||
+                'https://via.placeholder.com/400x300?text=No+Image',
+              date: new Date(blog.published_at || blog.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+            };
+          });
 
-        if (filtered && filtered.length > 0) {
-          setDiaries(filtered);
-        } else {
-          setDiaries([]);
-        }
+        setDiaries(filtered);
       } catch (err) {
         console.error('Error fetching diaries:', err);
         setDiaries([]);

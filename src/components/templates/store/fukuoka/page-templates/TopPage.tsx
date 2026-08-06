@@ -190,7 +190,7 @@ export default function FukuokaPage({
           />
         </>
       )}
-      <ReviewSection />
+      <ReviewSection storeSlug={storeSlug || 'fukuoka'} />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <>
           <FAQSection

@@ -180,7 +180,7 @@ export default function YokohamaPage({
           />
         </>
       )}
-      <ReviewSection />
+      <ReviewSection storeSlug={storeSlug || 'yokohama'} />
       {(!safeConfig || safeConfig.faq.isVisible || isEditing) && (
         <>
           <FAQSection

@@ -5,13 +5,37 @@ import type { Review } from '@/types/store'; // または '@/types/store'
 import { Calendar, Star, User } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-export default function ReviewSection() {
-  const { store } = useStore();
-  const [currentReview, setCurrentReview] = useState<number>(0);
+interface ReviewSectionProps {
+  storeSlug?: string;
+}
 
-  // 安全のためにデフォルト値を確保
-  const reviews = store.reviews || [];
-  const theme = store.theme || { gradient: 'from-blue-500 to-indigo-600' };
+export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
+  const { store } = useStore();
+  const slug = storeSlug || store?.slug || 'fukuoka';
+
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [totalCount, setTotalCount] = useState<number>(0);
+  const [currentReview, setCurrentReview] = useState<number>(0);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const theme = store?.theme || { gradient: 'from-blue-500 to-indigo-600' };
+
+  useEffect(() => {
+    const fetchReviews = async () => {
+      try {
+        const { getReviewsByStore } = await import('@/lib/getReviewsByStore');
+        const res = await getReviewsByStore(slug, { limit: 10, offset: 0 });
+        setReviews(res.reviews || []);
+        setTotalCount(res.totalCount || 0);
+      } catch (err) {
+        console.error('ReviewSection fetch error:', err);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReviews();
+  }, [slug]);
 
   useEffect(() => {
     if (reviews.length > 0) {
@@ -22,16 +46,15 @@ export default function ReviewSection() {
     }
   }, [reviews.length]);
 
-  if (reviews.length === 0) {
+  if (isLoading || reviews.length === 0) {
     return null;
   }
 
-  // 実データからの動的計算（20件以上の場合のみ表示）
-  const reviewCount = reviews.length;
-  const showStats = reviewCount >= 20;
+  // 実データからの動的計算（店舗の総件数が20件以上の場合のみ表示）
+  const showStats = totalCount >= 20;
 
   const totalRating = reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
-  const avgRating = showStats ? (totalRating / reviewCount).toFixed(1) : null;
+  const avgRating = showStats ? (totalRating / reviews.length).toFixed(1) : null;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -102,7 +125,7 @@ export default function ReviewSection() {
               <div className="text-gray-600">平均評価</div>
             </div>
             <div className="text-center">
-              <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">{reviewCount}件</div>
+              <div className="mb-2 text-3xl font-bold text-gray-800 md:text-4xl">{totalCount}件</div>
               <div className="text-gray-600">レビュー数</div>
             </div>
           </div>
