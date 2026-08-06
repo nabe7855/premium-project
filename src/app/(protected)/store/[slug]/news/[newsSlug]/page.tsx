@@ -37,8 +37,8 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     return { title: 'Not Found' };
   }
 
-  // アクセス中の店舗が.jp内の配信対象に含まれていればその店舗自身をcanonical、そうでなければ第一所属店舗
-  const canonicalStoreSlug = jpTargetSlugs.includes(slug) ? slug : jpTargetSlugs[0];
+  // targetStoreSlugsの先頭要素の店舗を正規とする(ただし.jp内店舗に限る)
+  const canonicalStoreSlug = jpTargetSlugs[0];
   const storeData = await getStoreData(canonicalStoreSlug);
 
   if (!storeData) {
