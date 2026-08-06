@@ -159,7 +159,7 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
       />
 
       {/* プロフィール */}
-      <CastProfile cast={cast} />
+      <CastProfile cast={cast} storeSlug={storeSlug} />
 
       {/* ✨ インタビューバナーエリア: 1本→明るいバナー、、2本以上→横スクロールカードストリップ */}
       {interviewArticles.length > 0 && (

@@ -6,17 +6,29 @@ import { Cast } from '@/types/cast';
 
 interface CastProfileProps {
   cast: Cast;
+  storeSlug?: string;
 }
 
-const CastProfile: React.FC<CastProfileProps> = ({ cast }) => {
+const CastProfile: React.FC<CastProfileProps> = ({ cast, storeSlug }) => {
   const today = new Date().toISOString().split('T')[0];
   const todaySchedules = cast.availability?.[today] ?? [];
   const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
+
+  const storeLabel = storeSlug === 'yokohama'
+    ? 'ストロベリーボーイズ横浜店'
+    : storeSlug === 'fukuoka'
+    ? 'ストロベリーボーイズ福岡店'
+    : 'ストロベリーボーイズ';
 
   return (
     <div className="bg-white border-b border-neutral-200">
       <div className="px-4 py-5 sm:px-6 sm:py-8">
         <div className="mb-4">
+          {/* 店舗・地域を示す可視ラベル */}
+          <p className="text-xs sm:text-sm font-bold text-[#E8567A] mb-1 tracking-wider">
+            {storeLabel} セラピスト
+          </p>
+
           {/* 名前 */}
           <h1 className="text-2xl sm:text-3xl font-bold text-neutral-800 mb-2 font-serif">
             {cast.name}

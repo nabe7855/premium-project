@@ -17,6 +17,8 @@ interface Props {
   params: { slug: string; cast: string };
 }
 
+import { STORE_META } from '@/lib/store/storeMeta';
+
 // ✅ メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cast = await getCastProfileBySlug(params.cast);
@@ -28,12 +30,29 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
+  const s = STORE_META[params.slug] || {
+    city: params.slug === 'yokohama' ? '横浜' : params.slug === 'fukuoka' ? '福岡' : '各地域',
+    area: params.slug === 'yokohama' ? 'みなとみらい・関内' : params.slug === 'fukuoka' ? '天神・博多' : '主要エリア',
+  };
+
+  const storeName = `ストロベリーボーイズ${s.city}店`;
+  const catchText = cast.catchCopy ? `（${cast.catchCopy}）` : '';
+  const title = `${cast.name}${catchText}｜${s.city}の女性用風俗セラピスト｜${storeName}`;
+
+  // プロフィール文が存在する場合は先頭80文字を優先、無い場合は標準エリア定型文
+  const cleanProfile = cast.profile
+    ? cast.profile.replace(/<[^>]*>/g, '').replace(/\s+/g, ' ').trim().slice(0, 80)
+    : '';
+  const description = cleanProfile
+    ? `${cleanProfile}…【${s.city}（${s.area}）で活動するセラピスト「${cast.name}」の出勤スケジュール・ご予約】`
+    : `${s.city}（${s.area}）で活動するセラピスト「${cast.name}」のプロフィール。施術スタイル・出勤スケジュール・ご予約はこちらから。`;
+
   return {
-    title: `${cast.name} - ${cast.catchCopy ?? ''} | ${params.slug} | Strawberry Boys`,
-    description: `${cast.name} (${cast.age ?? '??'}歳) - ${cast.catchCopy ?? ''}。エロス係数 ${cast.sexinessLevel ?? 100}%。`,
+    title,
+    description,
     openGraph: {
-      title: `${cast.name} - ${cast.catchCopy ?? ''}`,
-      description: cast.catchCopy ?? '',
+      title,
+      description,
       images: cast.imageUrl ? [cast.imageUrl] : [],
     },
     alternates: {
