@@ -22,19 +22,24 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
   const { slug, newsSlug } = params;
 
   if (!JP_STORES.includes(slug)) {
-    return { title: 'Not Found' };
+    notFound();
   }
 
   const page = await getPublishedPageBySlug(newsSlug);
   if (!page || page.status !== 'published') {
-    return { title: 'Not Found' };
+    notFound();
   }
 
   const targetSlugs = page.targetStoreSlugs || [];
   const jpTargetSlugs = targetSlugs.filter((s) => JP_STORES.includes(s));
 
   if (jpTargetSlugs.length === 0) {
-    return { title: 'Not Found' };
+    notFound();
+  }
+
+  if (!jpTargetSlugs.includes(slug)) {
+    const primaryStoreSlug = jpTargetSlugs[0];
+    redirect(`/store/${primaryStoreSlug}/news/${newsSlug}`, RedirectType.replace);
   }
 
   // アクセス中の店舗が.jp内の配信対象に含まれていればその店舗自身をcanonical、そうでなければ第一所属店舗
@@ -42,7 +47,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
   const storeData = await getStoreData(canonicalStoreSlug);
 
   if (!storeData) {
-    return { title: 'Not Found' };
+    notFound();
   }
 
   const publishedAt = page.storeSettings?.[canonicalStoreSlug]?.publishedAt || page.updatedAt;
