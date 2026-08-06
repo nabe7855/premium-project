@@ -61,8 +61,20 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+import { redirect } from 'next/navigation';
+
+// ✅ 旧アカウントから現役アカウントへの301リダイレクトマップ
+const CAST_301_REDIRECTS: Record<string, string> = {
+  '-348075': '-c9616d', // 旧キセキ -> 現役キセキ
+};
+
 // ✅ ページ本体
 export default async function CastDetailPage({ params }: Props) {
+  // 301リダイレクトチェック
+  if (CAST_301_REDIRECTS[params.cast]) {
+    redirect(`/store/${params.slug}/cast/${CAST_301_REDIRECTS[params.cast]}`);
+  }
+
   let cast: Cast | null = await getCastProfileBySlug(params.cast);
 
   if (!cast) {
