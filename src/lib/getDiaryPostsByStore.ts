@@ -1,7 +1,7 @@
 import { DiaryPost } from '@/types/diary';
 import { supabase } from './supabaseClient';
 
-export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost[]> {
+export async function getDiaryPostsByStore(storeSlug: string): Promise<(DiaryPost & { primaryStoreSlug: string })[]> {
   const { data, error } = await supabase
     .from('blogs')
     .select(
@@ -15,6 +15,8 @@ export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost
       casts (
         id,
         name,
+        slug,
+        is_active,
         cast_store_memberships (
           stores (
             slug
@@ -32,27 +34,38 @@ export async function getDiaryPostsByStore(storeSlug: string): Promise<DiaryPost
     return [];
   }
 
-  // ✅ 店舗ごとにフィルタリング
+  // ✅ 店舗ごとにフィルタリング (非アクティブ・未登録を除外)
   return (
     data
       ?.filter((post: any) => {
-        const memberships = post.casts?.cast_store_memberships ?? [];
+        const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        if (!castObj || castObj.is_active === false) return false;
+
+        const memberships = castObj?.cast_store_memberships ?? [];
         const storeSlugs = memberships.map((m: any) => m.stores?.slug).filter(Boolean);
         return storeSlugs.includes(storeSlug);
       })
-      .map((post: any) => ({
-        id: post.id,
-        title: post.title,
-        content: post.content ?? '',
-        excerpt: post.content?.slice(0, 100) ?? '',
-        date: post.published_at || post.created_at,
-        storeSlug,
-        castName: post.casts?.name ?? '不明なキャスト',
-        castId: post.casts?.id ?? '',
-        castSlug: post.casts?.slug ?? '',
-        tags: [],
-        reactions: { total: 0 },
-        commentCount: 0,
-      })) ?? []
+      .map((post: any) => {
+        const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        const memberships = castObj?.cast_store_memberships ?? [];
+        const storeSlugs = memberships.map((m: any) => m.stores?.slug).filter(Boolean);
+        const primaryStoreSlug = storeSlugs[0] || storeSlug;
+
+        return {
+          id: post.id,
+          title: post.title,
+          content: post.content ?? '',
+          excerpt: post.content?.slice(0, 100) ?? '',
+          date: post.published_at || post.created_at,
+          storeSlug,
+          primaryStoreSlug,
+          castName: castObj?.name ?? '不明なキャスト',
+          castId: castObj?.id ?? '',
+          castSlug: castObj?.slug ?? '',
+          tags: [],
+          reactions: { total: 0 },
+          commentCount: 0,
+        };
+      }) ?? []
   );
 }

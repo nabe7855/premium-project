@@ -2,7 +2,7 @@ import { getSupabasePublicUrl } from '@/lib/image-url';
 import { PostType } from '@/types/diary';
 import { supabase } from './supabaseClient';
 
-export async function getDiaryPostById(postId: string, slug: string): Promise<PostType | null> {
+export async function getDiaryPostById(postId: string, slug: string): Promise<(PostType & { storeSlugs: string[]; primaryStoreSlug: string }) | null> {
   const { data, error } = await supabase
     .from('blogs')
     .select(
@@ -13,7 +13,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
       status,
       published_at,
       created_at,
-      casts ( id, name, image_url, slug ),
+      casts ( id, name, image_url, slug, is_active, cast_store_memberships ( stores ( slug ) ) ),
       blog_images ( image_url ),
       blog_tags ( blog_tag_master ( name ) ),
       is_comment_enabled,
@@ -23,13 +23,27 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
     .eq('id', postId)
     .in('status', ['published', 'scheduled'])
     .lte('published_at', new Date().toISOString())
-    .maybeSingle(); // 406 error might occur with .single() if no row matches filter, .maybeSingle() is safer.
+    .maybeSingle();
 
   if (error || !data) {
     return null;
   }
 
   const castData = Array.isArray(data.casts) ? data.casts[0] : data.casts;
+  if (!castData || castData.is_active === false) {
+    return null;
+  }
+
+  const memberships = castData?.cast_store_memberships ?? [];
+  const storeSlugs: string[] = Array.isArray(memberships)
+    ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
+    : [];
+
+  if (storeSlugs.length === 0) {
+    return null; // 所属店舗なしの日記は詳細もアクセス不可 (404)
+  }
+
+  const primaryStoreSlug = storeSlugs[0];
 
   const rawImage = data.blog_images?.[0]?.image_url;
   const rawAvatar = castData?.image_url;
@@ -44,6 +58,8 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<Po
       .replace(/\//g, '.'),
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug: slug,
+    storeSlugs,
+    primaryStoreSlug,
     castName: castData?.name || '不明なキャスト',
     castId: castData?.id || '',
     castSlug: castData?.slug || '',

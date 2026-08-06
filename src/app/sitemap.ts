@@ -120,16 +120,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       console.error(`Sitemap: Error fetching casts for store ${storeSlug}:`, e);
     }
 
-    // Diary posts
+    // Diary posts (Only primary store URL is included to prevent duplicates in sitemap)
     try {
       const diaries = await getDiaryPostsByStore(storeSlug);
       for (const post of diaries) {
-        storePages.push({
-          url: `${baseUrl}${storeBase}/diary/post/${post.id}`,
-          lastModified: new Date(post.date),
-          changeFrequency: 'never',
-          priority: 0.4,
-        });
+        if (post.primaryStoreSlug === storeSlug) {
+          storePages.push({
+            url: `${baseUrl}${storeBase}/diary/post/${post.id}`,
+            lastModified: new Date(post.date),
+            changeFrequency: 'never',
+            priority: 0.4,
+          });
+        }
       }
     } catch (e) {
       console.error(`Sitemap: Error fetching diaries for store ${storeSlug}:`, e);

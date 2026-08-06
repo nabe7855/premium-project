@@ -37,6 +37,7 @@ export default function DiarySection() {
             created_at,
             casts (
               name,
+              is_active,
               cast_store_memberships (
                 stores ( slug )
               )
@@ -54,7 +55,10 @@ export default function DiarySection() {
         // 当前店铺的过滤
         const filtered = data
           ?.filter((blog: any) => {
-            const memberships = blog.casts?.cast_store_memberships || [];
+            const castObj = Array.isArray(blog.casts) ? blog.casts[0] : blog.casts;
+            if (!castObj || castObj.is_active === false) return false;
+
+            const memberships = castObj?.cast_store_memberships || [];
             return memberships.some((m: any) => m.stores?.slug === storeSlug);
           })
           .slice(0, 3)

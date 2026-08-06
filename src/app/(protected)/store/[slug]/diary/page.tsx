@@ -49,7 +49,7 @@ async function getInitialDiaryPosts(storeSlug: string): Promise<DiaryPost[]> {
       .from('blogs')
       .select(`
         id, title, content, created_at, published_at, updated_at, status,
-        casts ( id, name, image_url, main_image_url, cast_store_memberships ( stores ( slug ) ) ),
+        casts ( id, name, image_url, main_image_url, is_active, cast_store_memberships ( stores ( slug ) ) ),
         blog_images ( image_url ),
         blog_tags ( blog_tag_master ( name ) ),
         is_comment_enabled, blog_comments ( count ), view_count
@@ -63,6 +63,8 @@ async function getInitialDiaryPosts(storeSlug: string): Promise<DiaryPost[]> {
     return data
       .filter((post: any) => {
         const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        if (!castObj || castObj.is_active === false) return false;
+
         const memberships = castObj?.cast_store_memberships ?? [];
         const slugs = Array.isArray(memberships)
           ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)

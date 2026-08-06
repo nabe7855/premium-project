@@ -9,6 +9,8 @@ import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Metadata } from 'next';
 
+import { notFound, redirect, RedirectType } from 'next/navigation';
+
 interface Props {
   params: { slug: string; postId: string };
 }
@@ -29,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${post.title}｜${post.castName}の写メ日記｜ストロベリーボーイズ${s.city}店`;
   const description = post.excerpt || `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する${post.castName}さんの写メ日記です。${(post.content || '').slice(0, 50)}...`;
   const siteUrl = 'https://www.sutoroberrys.jp';
-  const pageUrl = `${siteUrl}/store/${params.slug}/diary/post/${params.postId}`;
+  const canonicalUrl = `${siteUrl}/store/${post.primaryStoreSlug}/diary/post/${params.postId}`;
 
   return {
     title,
@@ -37,7 +39,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: {
       title,
       description,
-      url: pageUrl,
+      url: canonicalUrl,
       siteName: 'Strawberry Boys',
       images: post.image ? [{ url: post.image, width: 1200, height: 630, alt: post.title }] : [],
       type: 'article',
@@ -52,7 +54,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: post.image ? [post.image] : [],
     },
     alternates: {
-      canonical: pageUrl,
+      canonical: canonicalUrl,
     },
   };
 }
@@ -60,6 +62,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function DiaryDetailPage({ params }: Props) {
   const { slug, postId } = params;
   const post = await getDiaryPostById(postId, slug);
+
+  if (!post) {
+    notFound();
+  }
+
+  // 🚀 他店舗パスからのアクセスは、プライマリ所属店舗へ 301 リダイレクト
+  if (!post.storeSlugs.includes(slug)) {
+    redirect(`/store/${post.primaryStoreSlug}/diary/post/${postId}`, RedirectType.replace);
+  }
+
   const result = await getStoreTopConfig(slug);
   const topConfig = result.success ? (result.config as StoreTopPageConfig) : null;
 
