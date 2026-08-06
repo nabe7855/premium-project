@@ -104,6 +104,7 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
 }
 
 export async function getPublishedPageBySlug(newsSlug: string): Promise<PageData | null> {
+  noStore();
   try {
     const record = await prisma.pageRequest.findFirst({
       where: { slug: newsSlug, status: 'published' },
