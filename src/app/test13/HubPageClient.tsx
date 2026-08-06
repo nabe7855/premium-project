@@ -1003,7 +1003,7 @@ export default function HubPageClient({
                   <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
                   <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
                   <div className="mb-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[1]?.price || 18000).toLocaleString()}</span>
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[1]?.price || 16000).toLocaleString()}</span>
                     <span className="text-sm font-bold text-slate-400">〜（税込）</span>
                   </div>
                 </div>
@@ -1019,7 +1019,7 @@ export default function HubPageClient({
                   <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
                   <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
                   <div className="mb-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[2]?.price || 24000).toLocaleString()}</span>
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[2]?.price || 20000).toLocaleString()}</span>
                     <span className="text-sm font-bold text-slate-400">〜（税込）</span>
                   </div>
                 </div>
@@ -1069,7 +1069,7 @@ export default function HubPageClient({
                   <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
                   <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
                   <div className="mb-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[1]?.price || 18000).toLocaleString()}</span>
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[1]?.price || 16000).toLocaleString()}</span>
                     <span className="text-sm font-bold text-slate-400">〜（税込）</span>
                   </div>
                 </div>
@@ -1085,7 +1085,7 @@ export default function HubPageClient({
                   <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
                   <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
                   <div className="mb-6 flex items-baseline gap-1">
-                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[2]?.price || 24000).toLocaleString()}</span>
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[2]?.price || 20000).toLocaleString()}</span>
                     <span className="text-sm font-bold text-slate-400">〜（税込）</span>
                   </div>
                 </div>

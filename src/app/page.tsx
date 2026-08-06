@@ -80,13 +80,13 @@ async function getStorePrices() {
   const fallback = {
     fukuoka: [
       { minutes: 60, price: 12000 },
-      { minutes: 90, price: 18000 },
-      { minutes: 120, price: 24000 },
+      { minutes: 90, price: 16000 },
+      { minutes: 120, price: 20000 },
     ],
     yokohama: [
       { minutes: 60, price: 12000 },
-      { minutes: 90, price: 18000 },
-      { minutes: 120, price: 24000 },
+      { minutes: 90, price: 16000 },
+      { minutes: 120, price: 20000 },
     ],
   };
 
@@ -98,7 +98,7 @@ async function getStorePrices() {
         price_config: {
           select: {
             courses: {
-              where: { name: { contains: '基本' } },
+              where: { name: { contains: 'スタンダード' } },
               select: {
                 plans: {
                   select: { minutes: true, price: true },
@@ -116,7 +116,16 @@ async function getStorePrices() {
     stores.forEach(s => {
       const plans = s.price_config?.courses?.[0]?.plans;
       if (plans && plans.length > 0) {
-        prices[s.slug as keyof typeof fallback] = plans.map(p => ({ minutes: p.minutes, price: p.price }));
+        // 60分, 90分, 120分のプランを抽出
+        const p60 = plans.find(p => p.minutes === 60);
+        const p90 = plans.find(p => p.minutes === 90);
+        const p120 = plans.find(p => p.minutes === 120);
+
+        prices[s.slug as keyof typeof fallback] = [
+          { minutes: 60, price: p60 ? p60.price : 12000 },
+          { minutes: 90, price: p90 ? p90.price : 16000 },
+          { minutes: 120, price: p120 ? p120.price : 20000 },
+        ];
       }
     });
 
