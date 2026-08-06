@@ -34,16 +34,20 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
     return null;
   }
 
+  const JP_STORES = ['fukuoka', 'yokohama'];
   const memberships = castData?.cast_store_memberships ?? [];
   const storeSlugs: string[] = Array.isArray(memberships)
     ? memberships.map((m: any) => m.stores?.slug).filter(Boolean)
     : [];
 
-  if (storeSlugs.length === 0) {
-    return null; // 所属店舗なしの日記は詳細もアクセス不可 (404)
+  const jpStoreSlugs = storeSlugs.filter((s) => JP_STORES.includes(s));
+
+  if (jpStoreSlugs.length === 0) {
+    return null; // .jp サイト内に正規店舗を持たない日記は 404
   }
 
-  const primaryStoreSlug = storeSlugs[0];
+  // アクセス中の店舗が .jp 内の所属店舗であればその店舗自身を canonical とする。そうでなければ .jp 内の第一所属店舗。
+  const primaryStoreSlug = jpStoreSlugs.includes(slug) ? slug : jpStoreSlugs[0];
 
   const rawImage = data.blog_images?.[0]?.image_url;
   const rawAvatar = castData?.image_url;
@@ -58,7 +62,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
       .replace(/\//g, '.'),
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug: slug,
-    storeSlugs,
+    storeSlugs: jpStoreSlugs,
     primaryStoreSlug,
     castName: castData?.name || '不明なキャスト',
     castId: castData?.id || '',
