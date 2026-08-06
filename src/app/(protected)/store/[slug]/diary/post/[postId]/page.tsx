@@ -26,9 +26,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const post = await getDiaryPostById(params.postId, params.slug);
 
   if (!post || !s) {
-    return {
-      title: '記事が見つかりません | ストロベリーボーイズ',
-    };
+    notFound();
+  }
+
+  if (!post.storeSlugs.includes(params.slug)) {
+    redirect(`/store/${post.primaryStoreSlug}/diary/post/${params.postId}`, RedirectType.replace);
   }
 
   const title = `${post.title}｜${post.castName}の写メ日記｜ストロベリーボーイズ${s.city}店`;
