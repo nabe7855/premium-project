@@ -1,5 +1,6 @@
 // Server Component - ルートトップページ (test13ハブデザイン正式適用)
 import { getMediaArticles } from '@/lib/actions/media';
+import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
 import { getAllCasts } from '@/lib/getAllCasts';
 import { getTotalReviewCount } from '@/lib/getTotalReviewCount';
 import { supabase } from '@/lib/supabaseClient';
@@ -58,12 +59,77 @@ async function getOwnedMediaArticles() {
   return { amolabArticles: [], sweetStayArticles: [], ikeoArticles: [] };
 }
 
-import { getPublishedPagesByStore } from '@/lib/actions/news-pages';
+import { prisma } from '@/lib/prisma';
+
+async function getFeaturedCasts() {
+  try {
+    const data: any = await prisma.$queryRawUnsafe(`
+      SELECT id, name, store_name, store_slug, catch_copy, image_url, link_url, is_external, display_order
+      FROM featured_casts
+      WHERE is_active = true
+      ORDER BY display_order ASC, created_at DESC
+    `);
+    return data || [];
+  } catch (e) {
+    console.error('getFeaturedCasts error:', e);
+    return [];
+  }
+}
+
+async function getStorePrices() {
+  const fallback = {
+    fukuoka: [
+      { minutes: 60, price: 12000 },
+      { minutes: 90, price: 18000 },
+      { minutes: 120, price: 24000 },
+    ],
+    yokohama: [
+      { minutes: 60, price: 12000 },
+      { minutes: 90, price: 18000 },
+      { minutes: 120, price: 24000 },
+    ],
+  };
+
+  try {
+    const stores = await prisma.store.findMany({
+      where: { slug: { in: ['fukuoka', 'yokohama'] } },
+      select: {
+        slug: true,
+        price_config: {
+          select: {
+            courses: {
+              where: { name: { contains: '基本' } },
+              select: {
+                plans: {
+                  select: { minutes: true, price: true },
+                  orderBy: { display_order: 'asc' }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+
+    const prices = { ...fallback };
+
+    stores.forEach(s => {
+      const plans = s.price_config?.courses?.[0]?.plans;
+      if (plans && plans.length > 0) {
+        prices[s.slug as keyof typeof fallback] = plans.map(p => ({ minutes: p.minutes, price: p.price }));
+      }
+    });
+
+    return prices;
+  } catch (e) {
+    return fallback;
+  }
+}
 
 export const dynamic = 'force-dynamic';
 
 export default async function RootHomePage() {
-  const [casts, stores, videos, diaries, mediaArticles, fukuokaNews, yokohamaNews, totalReviews] = await Promise.allSettled([
+  const [casts, stores, videos, diaries, mediaArticles, fukuokaNews, yokohamaNews, totalReviews, featuredCasts, storePrices] = await Promise.allSettled([
     getAllCasts(),
     getStores(),
     getLatestVideos(),
@@ -72,6 +138,8 @@ export default async function RootHomePage() {
     getPublishedPagesByStore('fukuoka'),
     getPublishedPagesByStore('yokohama'),
     getTotalReviewCount(),
+    getFeaturedCasts(),
+    getStorePrices(),
   ]);
 
   // 実数が取れなかった場合は 0 → 表示側で非表示にフォールバック（偽の固定値は入れない）
@@ -97,6 +165,11 @@ export default async function RootHomePage() {
       diaries={diaries.status === 'fulfilled' ? diaries.value : []}
       newsPages={allNewsPages}
       reviewCount={reviewCount}
+      featuredCasts={featuredCasts.status === 'fulfilled' ? featuredCasts.value : []}
+      storePrices={storePrices.status === 'fulfilled' ? storePrices.value : {
+        fukuoka: [{ minutes: 60, price: 12000 }, { minutes: 90, price: 18000 }, { minutes: 120, price: 24000 }],
+        yokohama: [{ minutes: 60, price: 12000 }, { minutes: 90, price: 18000 }, { minutes: 120, price: 24000 }],
+      }}
       mediaArticles={
         mediaArticles.status === 'fulfilled'
           ? (mediaArticles.value as any)

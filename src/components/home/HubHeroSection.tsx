@@ -331,7 +331,7 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
 
       {/* 👑 2. ヒーローエリア */}
       <h1 className="sr-only">
-        女風・女性用風俗なら福岡(博多・天神)・横浜(関内・みなとみらい)対応のストロベリーボーイズ|女性専用出張サービス
+        初めての方に優しい女性用風俗｜福岡(博多・天神)・横浜(関内・みなとみらい)の女性用風俗・女風 ストロベリーボーイズ【公式】
       </h1>
 
       {/* ━━━ PC レイアウト (md 以上) ━━━ */}
@@ -342,16 +342,34 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
           <span className="absolute bottom-1/3 right-1/4 text-rose-300/60 text-base">🌸</span>
         </div>
         <div className="grid grid-cols-12 gap-6 items-center min-h-[480px]">
-          <div className="col-span-6 text-left space-y-6 z-20">
-            <p className="text-xs font-bold tracking-[0.35em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
-            <p className="font-serif text-5xl lg:text-6xl font-extrabold leading-[1.25] tracking-tight text-[#2b181c]">
+          <div className="col-span-6 text-left space-y-5 z-20">
+            <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50/80 px-3 py-1 text-xs font-bold text-[#b8324f]">
+              <span>🌸 初めての方に優しい女性用風俗</span>
+            </div>
+            <p className="font-serif text-4xl lg:text-5xl font-extrabold leading-[1.25] tracking-tight text-[#2b181c]">
               大人になっても、<br />
               <span className="text-[#d64567]">ときめ</span>いていい。
             </p>
             <p className="text-sm font-medium leading-relaxed tracking-wider text-[#634950] max-w-md">
-              あなたの街で、心ほどける時間を。<br />
-              全国の店舗からお選びください。
+              福岡・横浜の女性用風俗・女風 ストロベリーボーイズ。<br />
+              あなたの街で、心ほどける時間を。全国の店舗からお選びください。
             </p>
+
+            {/* 🏆 信頼実績バッジ帯 (PC) */}
+            <div className="pt-2 flex flex-wrap gap-2 text-xs font-bold text-slate-700">
+              <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm text-rose-600">
+                ⭐ グループ累計 口コミ4,000件以上
+              </span>
+              <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
+                🏆 Since 2018（グループ運営8年）
+              </span>
+              <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
+                🏙️ 全国主要都市展開（東京・横浜・名古屋・大阪・福岡）
+              </span>
+              <span className="rounded-xl border border-rose-100 bg-white px-3 py-1.5 shadow-sm">
+                ✨ 完全審査制セラピスト
+              </span>
+            </div>
           </div>
           <div className="col-span-6 relative flex justify-end items-center">
             <div className="relative w-full max-w-[460px] aspect-[4/4.6] rounded-3xl overflow-hidden shadow-xl border border-white/60">
@@ -388,12 +406,30 @@ export default function HubHeroSection({ stores = [], casts = [] }: HubHeroSecti
 
       {/* ━━━ スマホレイアウト (md 未満) ━━━ */}
       <div className="md:hidden">
-        <div className="text-center px-4 pb-3 space-y-0.5">
-          <p className="text-[9px] font-bold tracking-[0.3em] text-slate-400 uppercase">WOMEN'S PRIVATE SERVICE</p>
-          <p className="font-serif text-[26px] font-extrabold leading-snug tracking-tight text-[#2b181c]">
+        <div className="text-center px-4 pb-3 space-y-1">
+          <div className="inline-flex items-center gap-1 rounded-full border border-rose-200 bg-rose-50/90 px-2.5 py-0.5 text-[10px] font-bold text-[#b8324f]">
+            <span>🌸 初めての方に優しい女性用風俗</span>
+          </div>
+          <p className="font-serif text-[24px] font-extrabold leading-snug tracking-tight text-[#2b181c]">
             大人になっても、<br />
             <span className="text-[#d64567]">ときめ</span>いていい。
           </p>
+          <p className="text-[10px] font-medium text-[#634950]">
+            福岡・横浜の女性用風俗・女風 ストロベリーボーイズ
+          </p>
+
+          {/* 🏆 信頼実績バッジ帯 (SP) */}
+          <div className="pt-1.5 flex flex-wrap items-center justify-center gap-1 text-[10px] font-bold text-slate-700">
+            <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm text-rose-600">
+              ⭐ グループ累計 口コミ4,000件以上
+            </span>
+            <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm">
+              🏆 運営8年(Since 2018)
+            </span>
+            <span className="rounded-lg border border-rose-100 bg-white px-2 py-0.5 shadow-sm">
+              🏙️ 全国主要都市展開
+            </span>
+          </div>
         </div>
         <div className="relative w-full aspect-[3/4] overflow-hidden">
           <AnimatePresence mode="wait">

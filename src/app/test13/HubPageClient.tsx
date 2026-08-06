@@ -102,6 +102,8 @@ interface HubPageClientProps {
   diaries: any[];
   newsPages?: any[];
   reviewCount?: number;
+  featuredCasts?: any[];
+  storePrices?: Record<string, { minutes: number; price: number }[]>;
   mediaArticles: {
     amolabArticles: any[];
     sweetStayArticles: any[];
@@ -290,12 +292,15 @@ export default function HubPageClient({
   diaries,
   newsPages,
   reviewCount,
+  featuredCasts = [],
+  storePrices,
   mediaArticles,
 }: HubPageClientProps) {
   // 実データが10件以上あるときだけ表示（0件・取得失敗時は非表示。偽の固定値は使わない）
   const showReviewCount = typeof reviewCount === 'number' && reviewCount >= 10;
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'news' | 'video'>('news');
+  const [priceTab, setPriceTab] = useState<'fukuoka' | 'yokohama'>('fukuoka');
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   const filteredCasts = casts.filter(
@@ -465,85 +470,109 @@ export default function HubPageClient({
         </div>
       </section>
 
-      {/* ─── 1.4 全国から選ばれた人気者 (Marquee Version) ─── */}
-      <section className="overflow-hidden bg-slate-50 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
-        <div className="mx-auto max-w-7xl px-6 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="mb-4 text-4xl font-black tracking-tighter text-slate-900 md:text-6xl">
-              全国の<span className="text-rose-500">人気セラピスト</span>たち
-            </h2>
-            <div className="mx-auto mb-6 h-1 w-24 rounded-full bg-rose-500" />
-            <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">
-              NATIONAL POPULAR THERAPISTS
-            </p>
-          </motion.div>
-        </div>
+      {/* ─── 1.4 全国から選ばれた人気者 (手動選定 ＆ 自社・外部連携) ─── */}
+      {(() => {
+        const displayCasts = featuredCasts.length > 0
+          ? featuredCasts
+          : validCasts.map(c => ({
+              id: c.id,
+              name: c.name,
+              store_name: c.stores?.[0]?.name || (c.storeSlug === 'yokohama' ? '横浜店' : '福岡店'),
+              store_slug: c.storeSlug || c.store_slug || 'fukuoka',
+              catch_copy: c.catchCopy || c.catch_copy || 'THERAPIST',
+              image_url: c.imageUrl || c.mainImageUrl || '/ゆうと.png',
+              link_url: `/store/${c.storeSlug || 'fukuoka'}/cast/${c.slug || c.id}`,
+              is_external: false,
+            }));
 
-        {/* 自動無限スクロール (Marquee) */}
-        <div className="relative mt-8 flex overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-32 before:bg-gradient-to-r before:from-slate-50 before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-32 after:bg-gradient-to-l after:from-slate-50 after:to-transparent">
-          <div className="animate-scroll-text flex cursor-pointer space-x-12 whitespace-nowrap py-10 hover:[animation-play-state:paused]">
-            {[...validCasts.slice(0, 10), ...validCasts.slice(0, 10)].map((cast: any, i: number) => {
-              // 店舗スタイル (店舗名に応じてカラーリングを変更)
-              const firstStore = cast.stores?.[0] || cast.store;
-              const storeName = firstStore?.name;
+        if (!displayCasts || displayCasts.length === 0) return null;
 
-              const getStoreStyle = (name?: string) => {
-                if (!name) return 'border-amber-400';
-                if (name.includes('福岡')) return 'border-blue-400';
-                if (name.includes('横浜')) return 'border-rose-400';
-                return 'border-amber-400';
-              };
-              const storeBorder = getStoreStyle(storeName);
+        // 自社店舗（fukuoka, yokohama）を先頭、外部店舗を後方に並び替え
+        const sortedCasts = [...displayCasts].sort((a: any, b: any) => {
+          const aExt = Boolean(a.is_external || ['tokyo', 'osaka', 'nagoya'].includes(a.store_slug));
+          const bExt = Boolean(b.is_external || ['tokyo', 'osaka', 'nagoya'].includes(b.store_slug));
+          if (aExt === bExt) return (a.display_order || 0) - (b.display_order || 0);
+          return aExt ? 1 : -1;
+        });
 
-              const castStoreSlug = firstStore?.slug || cast.storeSlug || cast.store_slug;
-              if (!castStoreSlug || ['tokyo', 'osaka', 'nagoya'].includes(castStoreSlug)) return null;
+        const marqueeCasts = [...sortedCasts, ...sortedCasts];
 
-              return (
-                <div key={`${cast.id}-${i}`} className="inline-block w-48 shrink-0 text-center">
-                  <Link href={`/store/${castStoreSlug}/cast/${cast.slug || cast.id}`}>
+        return (
+          <section className="overflow-hidden bg-slate-50 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
+            <div className="mx-auto max-w-7xl px-6 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                className="mb-12"
+              >
+                <div className="inline-flex items-center gap-2 rounded-full border border-rose-200 bg-rose-50 px-3.5 py-1 text-xs font-bold text-rose-600 mb-3">
+                  ✨ 全国の人気セラピストをピックアップ
+                </div>
+                <h2 className="mb-4 text-3xl font-black tracking-tighter text-slate-900 md:text-5xl">
+                  全国の<span className="text-rose-500">人気セラピスト</span>たち
+                </h2>
+                <div className="mx-auto mb-4 h-1 w-24 rounded-full bg-rose-500" />
+                <p className="text-xs font-black uppercase tracking-[0.4em] text-slate-400">
+                  NATIONAL POPULAR THERAPISTS
+                </p>
+              </motion.div>
+            </div>
+
+            {/* 自動無限スクロール (Marquee) */}
+            <div className="relative mt-4 flex overflow-hidden before:absolute before:left-0 before:top-0 before:z-10 before:h-full before:w-24 before:bg-gradient-to-r before:from-slate-50 before:to-transparent after:absolute after:right-0 after:top-0 after:z-10 after:h-full after:w-24 after:bg-gradient-to-l after:from-slate-50 after:to-transparent">
+              <div className="animate-scroll-text flex cursor-pointer space-x-8 whitespace-nowrap py-6 hover:[animation-play-state:paused]">
+                {marqueeCasts.map((cast: any, i: number) => {
+                  const isExt = Boolean(cast.is_external || ['tokyo', 'osaka', 'nagoya'].includes(cast.store_slug));
+                  const storeName = cast.store_name || (cast.store_slug === 'yokohama' ? '横浜店' : cast.store_slug === 'fukuoka' ? '福岡店' : 'グループ店');
+                  const altText = `${cast.name}(${storeName})`;
+
+                  const CardInner = (
                     <div className="group">
-                      {/* 丸い画像と店舗別カラーの枠線 */}
-                      <div
-                        className={`relative mx-auto mb-6 h-44 w-44 overflow-hidden rounded-full border-4 border-solid ${storeBorder} bg-white p-1.5 shadow-xl transition-all duration-700 group-hover:scale-110 md:h-52 md:w-52`}
-                      >
+                      <div className="relative mx-auto mb-4 h-40 w-40 overflow-hidden rounded-full border-4 border-solid border-rose-300 bg-white p-1.5 shadow-xl transition-all duration-500 group-hover:scale-105 md:h-48 md:w-48">
                         <div className="h-full w-full overflow-hidden rounded-full ring-2 ring-slate-50">
                           <img
-                            // validCasts で画像未設定のキャストを除外済みのため
-                            // フォールバック画像（別人の写真）は使わない
-                            src={cast.imageUrl || cast.mainImageUrl}
-                            alt={cast.name}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                            src={cast.image_url}
+                            alt={altText}
+                            loading="lazy"
+                            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                           />
                         </div>
                       </div>
-                      <div className="px-4 text-center">
-                        <h3 className="text-xl font-black tracking-tight text-slate-800 transition-colors group-hover:text-rose-500">
+                      <div className="px-2 text-center">
+                        <div className="mb-1 inline-flex items-center gap-1 rounded-full bg-slate-900/80 px-2.5 py-0.5 text-[9px] font-bold text-white shadow-xs">
+                          {isExt && <span className="h-1.5 w-1.5 rounded-full bg-rose-400" />}
+                          <span>{storeName}</span>
+                        </div>
+                        <h3 className="text-lg font-black tracking-tight text-slate-800 transition-colors group-hover:text-rose-500">
                           {cast.name}
                         </h3>
-                        <p
-                          className={`mb-2 mt-0.5 truncate text-[10px] font-black uppercase tracking-widest text-rose-400 opacity-80`}
-                        >
-                          {cast.catchCopy || 'THERAPIST'}
+                        <p className="mt-0.5 truncate text-[10px] font-bold text-rose-400 opacity-90 max-w-[160px] mx-auto">
+                          {cast.catch_copy || 'セラピスト'}
                         </p>
-                        {storeName && (
-                          <p className="mt-1 text-xs font-bold italic text-slate-400">
-                            @ {storeName}
-                          </p>
-                        )}
                       </div>
                     </div>
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+                  );
+
+                  return (
+                    <div key={`${cast.id || cast.name}-${i}`} className="inline-block w-44 shrink-0 text-center">
+                      {isExt ? (
+                        <a href={cast.link_url} target="_blank" rel="noopener noreferrer" className="block">
+                          {CardInner}
+                        </a>
+                      ) : (
+                        <Link href={cast.link_url} className="block">
+                          {CardInner}
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {/* ─── 1.5 最新の写メ日記 (Diary Section Refined) ─── */}
       <section className="bg-white px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
@@ -564,10 +593,10 @@ export default function HubPageClient({
             </div>
           </motion.div>
 
-          {/* 横スクロールカード */}
-          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-12 md:gap-8">
+          {/* 横スクロールカード (最大4件) */}
+          <div className="no-scrollbar flex snap-x snap-mandatory gap-4 overflow-x-auto pb-6 md:gap-8">
             {diaries.length > 0
-              ? diaries.slice(0, 6).map((diary, i) => {
+              ? diaries.slice(0, 4).map((diary, i) => {
                   const thumbnail = diary.images?.[0]?.image_url || FALLBACK_CAST_IMG;
                   const rawCast = (diary as any).casts || (diary as any).cast;
                   const castData = Array.isArray(rawCast) ? rawCast[0] : rawCast;
@@ -632,8 +661,7 @@ export default function HubPageClient({
                     </Link>
                   );
                 })
-              : // 記事がない場合のフォールバック
-                [1, 2, 3].map((i) => (
+              : [1, 2, 3, 4].map((i) => (
                   <div
                     key={i}
                     className="min-w-[300px] animate-pulse rounded-[2.5rem] border border-slate-100 bg-slate-50 p-10"
@@ -643,6 +671,51 @@ export default function HubPageClient({
                     <div className="h-6 w-3/4 rounded bg-slate-200" />
                   </div>
                 ))}
+          </div>
+
+          {/* 📍 店舗別写メ日記誘導リンクボタン帯 */}
+          <div className="pt-4 border-t border-slate-100">
+            <p className="text-xs font-bold text-slate-500 mb-3 text-center sm:text-left">
+              各店舗の最新写メ日記はこちらから
+            </p>
+            <div className="flex flex-wrap gap-2 text-xs font-bold">
+              <Link
+                href="/store/fukuoka/diary"
+                className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-rose-600 hover:bg-rose-100 transition shadow-xs"
+              >
+                福岡店の写メ日記一覧 →
+              </Link>
+              <Link
+                href="/store/yokohama/diary"
+                className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-rose-600 hover:bg-rose-100 transition shadow-xs"
+              >
+                横浜店の写メ日記一覧 →
+              </Link>
+              <a
+                href="https://sutoroberrys.com/main/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+              >
+                東京店 外部サイト ↗
+              </a>
+              <a
+                href="https://sutoroberrys-osaka.com/main.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+              >
+                大阪店 外部サイト ↗
+              </a>
+              <a
+                href="https://sutoroberrys-aichi.com/main.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+              >
+                名古屋店 外部サイト ↗
+              </a>
+            </div>
           </div>
         </div>
       </section>
@@ -679,49 +752,96 @@ export default function HubPageClient({
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
+                className="space-y-8"
               >
-                {((newsPages && newsPages.length > 0) ? newsPages : (diaries.length > 0 ? diaries.slice(0, 6) : [])).map((news: any, idx: number) => {
-                  const title = news.title || '最新のおしらせ・トピックス';
-                  const thumbnail = news.thumbnailUrl || news.thumbnail_url || news.images?.[0]?.image_url || FALLBACK_CAST_IMG;
-                  const dateRaw = news.createdAt || news.created_at || news.publishedAt || news.published_at;
-                  const dateStr = dateRaw
-                    ? new Date(dateRaw).toLocaleDateString('ja-JP')
-                    : new Date().toLocaleDateString('ja-JP');
-                  const storeSlug = news.store_slug || news.storeSlug || (news.store_id === 'yokohama' ? 'yokohama' : 'fukuoka');
-                  const newsHref = news.slug ? `/store/${storeSlug}/news/${news.slug}` : `/store/${storeSlug}/news`;
+                <div className="grid grid-cols-2 gap-3 md:grid-cols-2 md:gap-8 lg:grid-cols-4">
+                  {((newsPages && newsPages.length > 0) ? newsPages.slice(0, 4) : (diaries.length > 0 ? diaries.slice(0, 4) : [])).map((news: any, idx: number) => {
+                    const title = news.title || '最新のおしらせ・トピックス';
+                    const thumbnail = news.thumbnailUrl || news.thumbnail_url || news.images?.[0]?.image_url || FALLBACK_CAST_IMG;
+                    const dateRaw = news.createdAt || news.created_at || news.publishedAt || news.published_at;
+                    const dateStr = dateRaw
+                      ? new Date(dateRaw).toLocaleDateString('ja-JP')
+                      : new Date().toLocaleDateString('ja-JP');
+                    const storeSlug = news.store_slug || news.storeSlug || (news.store_id === 'yokohama' ? 'yokohama' : 'fukuoka');
+                    const newsHref = news.slug ? `/store/${storeSlug}/news/${news.slug}` : `/store/${storeSlug}/news`;
 
-                  return (
-                    <Link href={newsHref} key={news.id || idx} className="block group">
-                      <motion.div
-                        whileHover={{ y: -8 }}
-                        className="overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2.5rem] md:p-2"
-                      >
-                        <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[2rem]">
-                          <img
-                            src={thumbnail}
-                            className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
-                            alt={title}
-                            loading="lazy"
-                          />
-                        </div>
-                        <div className="p-3 md:p-6">
-                          <div className="mb-2 flex items-center gap-2">
-                            <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
-                              NEWS
-                            </span>
-                            <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
-                              {dateStr}
-                            </span>
+                    return (
+                      <Link href={newsHref} key={news.id || idx} className="block group">
+                        <motion.div
+                          whileHover={{ y: -6 }}
+                          className="overflow-hidden rounded-[1.2rem] bg-slate-50 p-1 md:rounded-[2rem] md:p-2"
+                        >
+                          <div className="relative aspect-video overflow-hidden rounded-[1rem] md:rounded-[1.5rem]">
+                            <img
+                              src={thumbnail}
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-110"
+                              alt={title}
+                              loading="lazy"
+                            />
                           </div>
-                          <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-xl">
-                            {title}
-                          </h3>
-                        </div>
-                      </motion.div>
+                          <div className="p-3 md:p-4">
+                            <div className="mb-1.5 flex items-center gap-2">
+                              <span className="text-[8px] font-black uppercase tracking-widest text-rose-500 md:text-[10px]">
+                                NEWS
+                              </span>
+                              <span className="text-[8px] font-bold text-slate-400 md:text-[10px]">
+                                {dateStr}
+                              </span>
+                            </div>
+                            <h3 className="line-clamp-2 text-xs font-black text-slate-800 transition-colors group-hover:text-rose-500 md:text-base">
+                              {title}
+                            </h3>
+                          </div>
+                        </motion.div>
+                      </Link>
+                    );
+                  })}
+                </div>
+
+                {/* 📍 店舗別ニュース誘導リンクボタン帯 */}
+                <div className="pt-4 border-t border-slate-100">
+                  <p className="text-xs font-bold text-slate-500 mb-3 text-center sm:text-left">
+                    各店舗の最新ニュース・お知らせはこちらから
+                  </p>
+                  <div className="flex flex-wrap gap-2 text-xs font-bold">
+                    <Link
+                      href="/store/fukuoka/news"
+                      className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-rose-600 hover:bg-rose-100 transition shadow-xs"
+                    >
+                      福岡店のニュース一覧 →
                     </Link>
-                  );
-                })}
+                    <Link
+                      href="/store/yokohama/news"
+                      className="rounded-full border border-rose-200 bg-rose-50 px-4 py-2 text-rose-600 hover:bg-rose-100 transition shadow-xs"
+                    >
+                      横浜店のニュース一覧 →
+                    </Link>
+                    <a
+                      href="https://sutoroberrys.com/main/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+                    >
+                      東京店 外部サイト ↗
+                    </a>
+                    <a
+                      href="https://sutoroberrys-osaka.com/main.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+                    >
+                      大阪店 外部サイト ↗
+                    </a>
+                    <a
+                      href="https://sutoroberrys-aichi.com/main.html"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="rounded-full border border-slate-200 bg-white px-4 py-2 text-slate-700 hover:bg-slate-100 transition shadow-xs"
+                    >
+                      名古屋店 外部サイト ↗
+                    </a>
+                  </div>
+                </div>
               </motion.div>
             )}
 
@@ -814,10 +934,10 @@ export default function HubPageClient({
         </div>
       </section>
 
-      {/* ─── 4.4 明朗会計と料金目安 (Price & Trust Block) ─── */}
+      {/* ─── 4.4 明朗会計と料金目安 (Price & Trust Block - SSR全埋め込みタブ) ─── */}
       <section className="bg-gradient-to-b from-white to-pink-50/50 px-6 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-16 text-center">
+          <div className="mb-12 text-center">
             <span className="mb-3 inline-block rounded-full bg-rose-100 px-4 py-1.5 text-xs font-black text-rose-600 tracking-wider">
               CLEAR PRICING & TRUST
             </span>
@@ -825,85 +945,185 @@ export default function HubPageClient({
               明朗会計・安心の料金プラン
             </h2>
             <p className="mt-4 text-sm font-bold text-slate-500 max-w-2xl mx-auto leading-relaxed">
-              ストロベリーボーイズは不当な追加請求や入会金・年会費等は一切発生いたしません。事前のコース料金と出張交通費のみの明確な料金体系です。<br />
-              <span className="text-xs text-rose-500 font-normal">※コース料金・プラン内容は店舗（福岡店・横浜店等）や出張先により異なります。正確な料金詳細は各店舗の料金表をご確認ください。</span>
+              ストロベリーボーイズは不当な追加請求や入会金・年会費等は一切発生いたしません。事前のコース料金と出張交通費のみの明確な料金体系です。
             </p>
-          </div>
 
-          {/* 3つのコース料金カード */}
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-16">
-            <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                  お試しショート
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-2">60分コース</h3>
-                <p className="text-xs text-slate-400 mb-6">初めての方や短時間で癒やされたい方に</p>
-                <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-rose-500">¥12,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
-                </div>
-              </div>
-              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> 初回お試しカウンセリング付き
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> 指名料・出張費別途明記
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-[2.5rem] border-2 border-rose-400 bg-white p-8 shadow-2xl transition-all relative overflow-hidden flex flex-col justify-between transform md:-translate-y-2">
-              <div className="absolute top-0 right-0 rounded-bl-2xl bg-rose-500 px-4 py-1 text-[10px] font-black text-white uppercase tracking-wider">
-                1番人気コース
-              </div>
-              <div>
-                <div className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-600">
-                  人気No.1 標準プラン
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
-                <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
-                <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-rose-500">¥18,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
-                </div>
-              </div>
-              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> 人気No.1の贅沢満足コース
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> フルボディオイルトリートメント
-                </li>
-              </ul>
-            </div>
-
-            <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all relative overflow-hidden flex flex-col justify-between">
-              <div>
-                <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                  極上ディープ
-                </div>
-                <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
-                <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
-                <div className="mb-6 flex items-baseline gap-1">
-                  <span className="text-4xl font-black text-rose-500">¥24,000</span>
-                  <span className="text-sm font-bold text-slate-400">〜（目安・税込）</span>
-                </div>
-              </div>
-              <ul className="space-y-3 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> 心身をリセットする特別コース
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="text-rose-500">✓</span> お好みのご要望に合わせた施術
-                </li>
-              </ul>
+            {/* 店舗切替タブ (福岡店 / 横浜店) */}
+            <div className="mt-8 flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => setPriceTab('fukuoka')}
+                className={`rounded-full px-6 py-2.5 text-xs sm:text-sm font-black transition-all ${
+                  priceTab === 'fukuoka'
+                    ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-rose-50'
+                }`}
+              >
+                福岡店の料金プラン
+              </button>
+              <button
+                type="button"
+                onClick={() => setPriceTab('yokohama')}
+                className={`rounded-full px-6 py-2.5 text-xs sm:text-sm font-black transition-all ${
+                  priceTab === 'yokohama'
+                    ? 'bg-rose-500 text-white shadow-md shadow-rose-500/20'
+                    : 'bg-white text-slate-600 border border-slate-200 hover:bg-rose-50'
+                }`}
+              >
+                横浜店の料金プラン
+              </button>
             </div>
           </div>
 
+          {/* 福岡店 料金カード (SSRテキスト埋め込み) */}
+          <div className={`${priceTab === 'fukuoka' ? 'block' : 'hidden'}`}>
+            <div className="text-center mb-6">
+              <span className="text-xs font-bold text-slate-500">【ストロベリーボーイズ福岡店 基本コース価格】</span>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-10">
+              <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">お試しショート</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">60分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">初めての方や短時間で癒やされたい方に</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[0]?.price || 12000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 初回お試しカウンセリング付き</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 福岡市内・博多・天神エリア対応</li>
+                </ul>
+              </div>
+
+              <div className="rounded-[2.5rem] border-2 border-rose-400 bg-white p-8 shadow-2xl transition-all flex flex-col justify-between transform md:-translate-y-2">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-600">人気No.1 標準プラン</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[1]?.price || 18000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 人気No.1の満足コース</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> フルボディオイルトリートメント</li>
+                </ul>
+              </div>
+
+              <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">極上ディープ</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.fukuoka?.[2]?.price || 24000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 特別な夜のためのロングコース</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> ご要望に応じたオーダーメイド施術</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/store/fukuoka/price"
+                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-8 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg hover:bg-rose-600 transition"
+              >
+                <span>福岡店の詳細料金表（オプション・交通費）を見る</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 横浜店 料金カード (SSRテキスト埋め込み) */}
+          <div className={`${priceTab === 'yokohama' ? 'block' : 'hidden'}`}>
+            <div className="text-center mb-6">
+              <span className="text-xs font-bold text-slate-500">【ストロベリーボーイズ横浜店 基本コース価格】</span>
+            </div>
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3 mb-10">
+              <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">お試しショート</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">60分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">初めての方や短時間で癒やされたい方に</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[0]?.price || 12000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 初回お試しカウンセリング付き</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 横浜・関内・みなとみらいエリア対応</li>
+                </ul>
+              </div>
+
+              <div className="rounded-[2.5rem] border-2 border-rose-400 bg-white p-8 shadow-2xl transition-all flex flex-col justify-between transform md:-translate-y-2">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-600">人気No.1 標準プラン</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">90分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">じっくり全身の施術と会話を満喫</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[1]?.price || 18000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 人気No.1の満足コース</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> フルボディオイルトリートメント</li>
+                </ul>
+              </div>
+
+              <div className="rounded-[2.5rem] border border-slate-100 bg-white p-8 shadow-lg hover:shadow-xl transition-all flex flex-col justify-between">
+                <div>
+                  <div className="mb-4 inline-block rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">極上ディープ</div>
+                  <h3 className="text-2xl font-black text-slate-900 mb-2">120分コース</h3>
+                  <p className="text-xs text-slate-400 mb-6">時間を忘れて最高峰の癒やしを体験</p>
+                  <div className="mb-6 flex items-baseline gap-1">
+                    <span className="text-4xl font-black text-rose-500">¥{(storePrices?.yokohama?.[2]?.price || 24000).toLocaleString()}</span>
+                    <span className="text-sm font-bold text-slate-400">〜（税込）</span>
+                  </div>
+                </div>
+                <ul className="space-y-2.5 border-t border-slate-100 pt-6 text-xs font-bold text-slate-600">
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> 特別な夜のためのロングコース</li>
+                  <li className="flex items-center gap-2"><span className="text-rose-500">✓</span> ご要望に応じたオーダーメイド施術</li>
+                </ul>
+              </div>
+            </div>
+
+            <div className="text-center">
+              <Link
+                href="/store/yokohama/price"
+                className="inline-flex items-center gap-2 rounded-full bg-rose-500 px-8 py-3.5 text-xs sm:text-sm font-bold text-white shadow-lg hover:bg-rose-600 transition"
+              >
+                <span>横浜店の詳細料金表（オプション・交通費）を見る</span>
+                <ChevronRight className="h-4 w-4" />
+              </Link>
+            </div>
+          </div>
+
+          {/* 外部系列店舗の案内リンク行 */}
+          <div className="mt-12 text-center text-xs font-bold text-slate-500 border-t border-rose-100/60 pt-6">
+            <span>※東京・大阪・名古屋など系列他店舗の料金につきましては、各店舗の公式サイトをご確認ください:</span>
+            <div className="mt-2 flex flex-wrap justify-center gap-3">
+              <a href="https://sutoroberrys.com/main/" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">
+                東京店 料金 ↗
+              </a>
+              <a href="https://sutoroberrys-osaka.com/main.html" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">
+                大阪店 料金 ↗
+              </a>
+              <a href="https://sutoroberrys-aichi.com/main.html" target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">
+                名古屋店 料金 ↗
+              </a>
+            </div>
+          </div>
           {/* 信頼バッジ ＆ 料金ページへの導線 */}
-          <div className="rounded-3xl bg-white border border-rose-100 p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="mt-12 rounded-3xl bg-white border border-rose-100 p-8 shadow-sm flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex flex-wrap items-center gap-6 text-center md:text-left">
               <div className="flex items-center gap-3">
                 <Lock className="h-6 w-6 text-rose-500 shrink-0" />

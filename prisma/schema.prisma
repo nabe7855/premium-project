@@ -972,3 +972,20 @@ model InterviewCastLink {
 
   @@map("interview_cast_links")
 }
+
+model FeaturedCast {
+  id            String   @id @default(uuid())
+  name          String
+  store_name    String
+  store_slug    String
+  catch_copy    String?
+  image_url     String
+  link_url      String
+  is_external   Boolean  @default(false)
+  display_order Int      @default(0)
+  is_active     Boolean  @default(true)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+
+  @@map("featured_casts")
+}
