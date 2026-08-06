@@ -1,36 +1,54 @@
 
-export function getSupabasePublicUrl(path: string | null | undefined, slug?: string): string | undefined {
+export interface SupabaseUrlOptions {
+  slug?: string;
+  raw?: boolean;
+  width?: number;
+  quality?: number;
+}
+
+export function getSupabasePublicUrl(
+  path: string | null | undefined, 
+  options?: SupabaseUrlOptions | string
+): string | undefined {
   if (!path || path.trim() === '') return undefined;
+
+  const opts: SupabaseUrlOptions = typeof options === 'string' ? { slug: options } : (options || {});
   
   // プレースホルダーの置換 ({slug} 等)
   let processedPath = path;
-  if (slug) {
-    processedPath = processedPath.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, slug);
+  if (opts.slug) {
+    processedPath = processedPath.replace(/(?:\{slug\}|\[slug\]|%7Bslug%7D|%5Bslug%5D)/gi, opts.slug);
   }
 
-  if (processedPath.startsWith('http')) {
-    return processedPath;
+  let publicUrl = processedPath;
+  if (!processedPath.startsWith('http') && !processedPath.startsWith('/')) {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    if (!supabaseUrl) return processedPath;
+    const baseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
+    const cleanPath = processedPath.startsWith('/') ? processedPath.slice(1) : processedPath;
+    const finalPath = cleanPath.includes('/') ? cleanPath : `gallery/${cleanPath}`;
+    publicUrl = `${baseUrl}/storage/v1/object/public/${finalPath}`;
   }
 
-  // ローカル静的資産（スラッシュ開始）はそのまま返す
-  if (processedPath.startsWith('/')) {
-    return processedPath;
+  // raw: true の場合は変換せず原寸 URL をそのまま返す (OGP・管理画面用)
+  if (opts.raw) {
+    return publicUrl;
   }
 
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  if (!supabaseUrl) {
-    return processedPath;
+  // Supabase Storage URL の場合は動的最適化を自動適用 (デフォルト width: 800)
+  if (publicUrl.includes('/storage/v1/object/public/')) {
+    const width = opts.width || 800;
+    const quality = opts.quality || 75;
+    const params = new URLSearchParams();
+    params.append('width', width.toString());
+    params.append('quality', quality.toString());
+    params.append('resize', 'contain');
+    params.append('format', 'webp');
+
+    return publicUrl.replace('/storage/v1/object/public/', '/storage/v1/render/image/public/') + '?' + params.toString();
   }
 
-  const baseUrl = supabaseUrl.endsWith('/') ? supabaseUrl.slice(0, -1) : supabaseUrl;
-  
-  // 先頭のスラッシュを削除
-  const cleanPath = processedPath.startsWith('/') ? processedPath.slice(1) : processedPath;
-  
-  // バケット名が含まれていない場合は 'gallery/' とみなす（歴史的経緯）
-  const finalPath = cleanPath.includes('/') ? cleanPath : `gallery/${cleanPath}`;
-  
-  return `${baseUrl}/storage/v1/object/public/${finalPath}`;
+  return publicUrl;
 }
 
 export interface ImageTransformOptions {
