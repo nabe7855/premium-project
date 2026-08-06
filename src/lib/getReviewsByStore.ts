@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import { mapReview } from './mappers/reviewMapper';
 import { Review, ReviewRaw } from '@/types/review';
+import { prisma } from './prisma';
 
 /**
  * ストアごとのレビューをページネーション付きで取得
@@ -17,103 +18,104 @@ export async function getReviewsByStore(
     castId,
   }: { limit?: number; offset?: number; castId?: string } = {}
 ): Promise<{ reviews: Review[]; totalCount: number }> {
-  let query = supabase
-    .from('reviews')
-    .select(
-      `
-      id,
-      cast_id,
-      user_name,
-      rating,
-      comment,
-      created_at,
-      casts (
+  try {
+    let targetCastIds: string[] = [];
+
+    if (castId) {
+      targetCastIds = [castId];
+    } else {
+      // 当該店舗に所属するアクティブキャストのIDリストを取得
+      const activeCasts = await prisma.cast.findMany({
+        where: {
+          is_active: true,
+          memberships: {
+            some: {
+              store: { slug: storeSlug }
+            }
+          }
+        },
+        select: { id: true }
+      });
+      targetCastIds = activeCasts.map((c) => c.id);
+    }
+
+    if (targetCastIds.length === 0) {
+      return { reviews: [], totalCount: 0 };
+    }
+
+    // DBレベルで対象キャストの口コミのみを厳密クエリ＆総件数取得
+    const { data, error, count } = await supabase
+      .from('reviews')
+      .select(
+        `
         id,
-        slug,
-        name,
-        main_image_url,
-        is_active,
-        cast_store_memberships (
-          stores (
-            id,
-            slug,
-            name
-          )
+        cast_id,
+        user_name,
+        rating,
+        comment,
+        created_at,
+        casts (
+          id,
+          slug,
+          name,
+          main_image_url,
+          is_active
+        ),
+        review_tag_links (
+          review_tag_master ( id, name )
         )
-      ),
-      review_tag_links (
-        review_tag_master ( id, name )
+      `,
+        { count: 'exact' }
       )
-    `,
-      { count: 'exact' } // ✅ 総件数も取得
-    )
-    .order('created_at', { ascending: false })
-    .range(offset, offset + limit - 1);
+      .in('cast_id', targetCastIds)
+      .order('created_at', { ascending: false })
+      .range(offset, offset + limit - 1);
 
-  // ✅ キャストIDで絞り込み
-  if (castId) {
-    query = query.eq('cast_id', castId);
-  }
+    if (error) {
+      console.error('❌ レビュー取得エラー:', error.message);
+      return { reviews: [], totalCount: 0 };
+    }
 
-  const { data, error, count } = await query;
-
-  if (error) {
-    console.error('❌ レビュー取得エラー:', error.message);
-    return { reviews: [], totalCount: 0 };
-  }
-
-  // Supabase → ReviewRaw に整形
-  const rawReviews: ReviewRaw[] = (data || []).map((d: any) => ({
-    id: d.id,
-    cast_id: d.cast_id,
-    user_name: d.user_name,
-    rating: d.rating,
-    comment: d.comment,
-    created_at: d.created_at,
-    casts: d.casts
-      ? {
-          id: d.casts.id,
-          slug: d.casts.slug,
-          name: d.casts.name,
-          main_image_url: d.casts.main_image_url || null,
-          is_active: d.casts.is_active,
-          cast_store_memberships: d.casts.cast_store_memberships || [],
-        }
-      : null,
-    review_tag_links: (d.review_tag_links || []).map((l: any) => ({
-      review_tag_master: l.review_tag_master
+    // Supabase → ReviewRaw に整形
+    const rawReviews: ReviewRaw[] = (data || []).map((d: any) => ({
+      id: d.id,
+      cast_id: d.cast_id,
+      user_name: d.user_name,
+      rating: d.rating,
+      comment: d.comment,
+      created_at: d.created_at,
+      casts: d.casts
         ? {
-            id: l.review_tag_master.id,
-            name: l.review_tag_master.name,
+            id: d.casts.id,
+            slug: d.casts.slug,
+            name: d.casts.name,
+            main_image_url: d.casts.main_image_url || null,
+            is_active: d.casts.is_active,
+            cast_store_memberships: [],
           }
         : null,
-    })),
-  }));
+      review_tag_links: (d.review_tag_links || []).map((l: any) => ({
+        review_tag_master: l.review_tag_master
+          ? {
+              id: l.review_tag_master.id,
+              name: l.review_tag_master.name,
+            }
+          : null,
+      })),
+    }));
 
-  // 店舗slug + 在籍フィルタリング
-  const filtered = rawReviews.filter((review) => {
-    const cast = review.casts;
-    if (!cast) {
-      console.log(`⚠️ cast が null のため除外 review.id=${review.id}`);
-      return false;
-    }
-    if (!cast.is_active) {
-      console.log(`⚠️ 非アクティブキャスト除外 review.id=${review.id}`);
-      return false;
-    }
-    return (cast.cast_store_memberships || []).some(
-      (m) => m.stores?.slug === storeSlug
+    const mapped = rawReviews.map(mapReview);
+
+    console.log(
+      `📊 getReviewsByStore: store=${storeSlug}, castId=${castId ?? 'ALL'}, offset=${offset}, limit=${limit}, 返却件数=${mapped.length}, 店舗総件数=${count ?? 0}`
     );
-  });
 
-  const mapped = filtered.map(mapReview);
-
-  console.log(
-    `📊 getReviewsByStore: store=${storeSlug}, castId=${castId ?? 'ALL'}, offset=${offset}, limit=${limit}, 返却件数=${mapped.length}, 総件数=${count ?? 0}`
-  );
-
-  return {
-    reviews: mapped,
-    totalCount: count ?? 0,
-  };
+    return {
+      reviews: mapped,
+      totalCount: count ?? 0,
+    };
+  } catch (err: any) {
+    console.error('❌ getReviewsByStore 処理エラー:', err.message);
+    return { reviews: [], totalCount: 0 };
+  }
 }
