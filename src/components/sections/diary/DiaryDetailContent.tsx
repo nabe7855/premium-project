@@ -220,11 +220,11 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               if (imageList.length === 0) return null;
 
               return (
-                <div className="flex flex-col">
+                <div className="flex flex-col gap-4 p-4 bg-gray-50/30 border-b border-pink-50">
                   {imageList.map((imgSrc, idx) => {
                     const optimizedSrc = getSupabasePublicUrl(imgSrc) || imgSrc;
                     return (
-                      <div key={idx} className="relative flex justify-center bg-gray-50/50 min-h-[300px] aspect-[4/3] w-full border-b border-pink-50 overflow-hidden">
+                      <div key={idx} className="relative w-full flex justify-center overflow-hidden rounded-xl">
                         <img
                           src={optimizedSrc}
                           alt={`${post.title} - ${post.castName}の日記${imageList.length > 1 ? ` - 画像${idx + 1}` : ''}`}
@@ -232,7 +232,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
                           decoding="async"
                           width={800}
                           height={600}
-                          className="h-full w-full object-contain"
+                          className="h-auto max-h-[75vh] w-auto max-w-full object-contain rounded-xl shadow-xs"
                         />
                       </div>
                     );
@@ -267,7 +267,24 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
                   )}
                 </span>
               </Link>
-              <div className="prose mb-8 max-w-none whitespace-pre-wrap">{post.content}</div>
+              {/* 日記本文：本文内に入っている <img> タグに対しても loading/decoding/width/height をパース付与 */}
+              <div 
+                className="prose mb-8 max-w-none whitespace-pre-wrap leading-relaxed text-gray-700"
+                dangerouslySetInnerHTML={{
+                  __html: (post.content || '').replace(
+                    /<img\s+([^>]*?)>/gi,
+                    (match, p1) => {
+                      let attrs = p1;
+                      if (!attrs.includes('loading=')) attrs += ' loading="lazy"';
+                      if (!attrs.includes('decoding=')) attrs += ' decoding="async"';
+                      if (!attrs.includes('width=')) attrs += ' width="800"';
+                      if (!attrs.includes('height=')) attrs += ' height="600"';
+                      if (!attrs.includes('class=')) attrs += ' class="h-auto max-w-full rounded-xl my-4 mx-auto"';
+                      return `<img ${attrs}>`;
+                    }
+                  )
+                }}
+              />
 
               {/* 🚀 キャストが選択したリアルSEO集客タグ ＆ 地域LP連携リンク */}
               {(() => {
