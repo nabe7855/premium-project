@@ -22,10 +22,11 @@ import { STORE_META } from '@/lib/store/storeMeta';
 
 // ✅ メタデータ生成 (SEO対策)
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const JP_STORES = ['fukuoka', 'yokohama'];
   const s = STORE_META[params.slug];
   const post = await getDiaryPostById(params.postId, params.slug);
 
-  if (!post || !s) {
+  if (!post || !s || !JP_STORES.includes(params.slug)) {
     notFound();
   }
 
@@ -36,7 +37,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const title = `${post.title}｜${post.castName}の写メ日記｜ストロベリーボーイズ${s.city}店`;
   const description = post.excerpt || `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する${post.castName}さんの写メ日記です。${(post.content || '').slice(0, 50)}...`;
   const siteUrl = 'https://www.sutoroberrys.jp';
-  const canonicalUrl = `${siteUrl}/store/${post.primaryStoreSlug}/diary/post/${params.postId}`;
+  const targetSlug = JP_STORES.includes(params.slug) ? params.slug : post.primaryStoreSlug;
+  const canonicalUrl = `${siteUrl}/store/${targetSlug}/diary/post/${params.postId}`;
 
   return {
     title,
