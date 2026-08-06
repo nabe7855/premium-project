@@ -7,6 +7,9 @@ import { notFound, redirect, RedirectType } from 'next/navigation';
 import NewsDetailClient from './NewsDetailClient';
 import React from 'react';
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 interface NewsDetailPageProps {
   params: {
     slug: string;
