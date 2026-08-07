@@ -3,6 +3,7 @@ import { Cast } from '@/types/cast';
 import { getCastQuestions } from './getCastQuestions';
 import { normalizeCast } from './normalizeCast';
 import { supabase } from './supabaseClient';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 
 export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   const decodedSlug = decodeURIComponent(slug);
@@ -132,8 +133,7 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
     schedules.forEach((s) => {
       const dateStr = s.work_date;
       if (!availability[dateStr]) availability[dateStr] = [];
-      const startTime = new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Tokyo' });
-      availability[dateStr].push(startTime);
+      availability[dateStr].push(formatScheduleTime(s.start_datetime, s.end_datetime, '〜'));
     });
   }
 

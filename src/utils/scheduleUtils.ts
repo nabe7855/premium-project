@@ -1,4 +1,5 @@
 import { Schedule } from '@/types/schedule';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 
 export function convertSchedulesToAvailability(schedules: Schedule[]): { [key: string]: string[] } {
   const availability: { [key: string]: string[] } = {};
@@ -9,9 +10,7 @@ export function convertSchedulesToAvailability(schedules: Schedule[]): { [key: s
     }
 
     if (s.start_datetime && s.end_datetime) {
-      const start = new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-      const end = new Date(s.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-      availability[s.work_date].push(`${start}〜${end}`);
+      availability[s.work_date].push(formatScheduleTime(s.start_datetime, s.end_datetime, '〜'));
     }
   });
 

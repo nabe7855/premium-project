@@ -1,5 +1,6 @@
 import { fetchDailyCasts } from '@/actions/cast';
 import { TodayCast } from '@/lib/getTodayCastsByStore';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 import { CastConfig, CastItem } from '@/lib/store/storeTopConfig';
 import { getTransformedImageUrl } from '@/lib/image-url';
 import { ArrowUpDown, RotateCcw, Search, Star, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -53,9 +54,7 @@ const CastSection: React.FC<CastSectionProps> = ({
       reviewCount: c.review_count,
       sexinessStrawberry: c.sexiness_strawberry,
       sexinessLevel: c.sexiness_level ?? 100,
-      attendance: c.start_datetime && c.end_datetime 
-        ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
-        : 'お問い合わせください',
+      attendance: formatScheduleTime(c.start_datetime, c.end_datetime, '〜'),
       schedule: [], 
       isIchioshi: c.isIchioshi,
       ichioshiPoint: c.ichioshiPoint || config?.items?.find(item => item.id === c.id)?.ichioshiPoint,
@@ -146,9 +145,7 @@ const CastSection: React.FC<CastSectionProps> = ({
           reviewCount: c.review_count,
           sexinessStrawberry: c.sexiness_strawberry,
           sexinessLevel: c.sexiness_level || 100,
-          attendance: c.start_datetime && c.end_datetime 
-            ? `${new Date(c.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}〜${new Date(c.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit', hour12: false })}`
-            : 'お問い合わせください',
+          attendance: formatScheduleTime(c.start_datetime, c.end_datetime, '〜'),
           schedule: [selectedDate],
           isIchioshi: c.isIchioshi,
           ichioshiPoint: config?.items?.find(item => item.id === c.id)?.ichioshiPoint,

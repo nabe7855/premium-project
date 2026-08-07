@@ -1,6 +1,7 @@
 // lib/getTwoWeeksSchedule.ts
 import { Cast, CastStatus, ScheduleDay } from '@/types/schedule';
 import { supabase } from './supabaseClient';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 
 export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
   const today = new Date();
@@ -116,7 +117,7 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
           age: castData.age ?? 0,
           photo: castData.main_image_url ?? '',
           slug: castData.slug ?? '',
-          workingHours: `${row.start_datetime?.slice(11, 16) ?? '??:??'} - ${row.end_datetime?.slice(11, 16) ?? '??:??'}`,
+          workingHours: formatScheduleTime(row.start_datetime, row.end_datetime, ' - '),
           status: 'active',
           scheduleStatus,
           description: castData.catch_copy ?? '',

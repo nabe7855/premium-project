@@ -3,6 +3,7 @@ import DateNavigation from '@/components/sections/schedule/DateNavigation';
 import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 import React, { useEffect, useState } from 'react';
 import BookingModal from '../casts/modals/BookingModal';
 
@@ -91,10 +92,7 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSch
                 age: cast?.age ?? 0,
                 photo: cast?.main_image_url ?? '',
                 slug: cast?.slug ?? '',
-                workingHours:
-                  s.start_datetime && s.end_datetime
-                    ? `${new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${new Date(s.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`
-                    : '時間未定',
+                workingHours: formatScheduleTime(s.start_datetime, s.end_datetime, ' - '),
                 status: 'available',
                 description: cast?.catch_copy ?? '',
                 isFavorite: false,

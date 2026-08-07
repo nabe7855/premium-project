@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ショウタ インタビュー vol.5 ｜ ドラフトプレビュー</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;}
+  body{margin:0;background:#FAFAF8;color:#1a1a1a;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP","Yu Gothic",sans-serif;-webkit-font-smoothing:antialiased;}
+  .serif{font-family:"Hiragino Mincho ProN","Yu Mincho",serif;}
+  .draftbar{position:sticky;top:0;z-index:50;background:#1f2937;color:#fff;padding:10px 16px;display:flex;flex-wrap:wrap;align-items:center;gap:10px 16px;font-size:12px;line-height:1.6;}
+  .draftbar strong{color:#fca5a5;letter-spacing:.08em;}
+  .draftbar .sep{opacity:.35;}
+  .draftbar button{background:#374151;color:#fff;border:1px solid #4b5563;border-radius:999px;padding:5px 14px;font-size:11px;cursor:pointer;font-family:inherit;}
+  .draftbar button:hover{background:#4b5563;}
+  .chk{background:linear-gradient(transparent 58%, #FDE68A 58%);border-bottom:1px dashed #d97706;cursor:help;position:relative;}
+  .chk::after{content:attr(data-note);position:absolute;left:0;top:calc(100% + 6px);z-index:20;background:#1f2937;color:#fff;font-size:11px;line-height:1.6;padding:8px 10px;border-radius:8px;width:260px;opacity:0;pointer-events:none;transition:opacity .15s;font-weight:400;font-style:normal;}
+  .chk:hover::after{opacity:1;}
+  body.clean .chk{background:none;border-bottom:none;cursor:auto;}
+  body.clean .chk::after{display:none;}
+  body.clean .devnote{display:none;}
+  .wrap{max-width:720px;margin:0 auto;padding:24px 20px 0;}
+  .wrap-body{max-width:720px;margin:0 auto;padding:0 20px 60px;}
+  .badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px;}
+  .badge-series{background:#E8567A;color:#fff;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:700;}
+  .badge-area{border:1px solid #E8567A;color:#E8567A;border-radius:999px;padding:5px 13px;font-size:12px;font-weight:500;}
+  h1{font-size:24px;font-weight:700;line-height:1.45;letter-spacing:-0.3px;margin:0 0 16px;}
+  .lead{font-size:14px;line-height:2;color:#555;margin:0 0 20px;}
+  .metabar{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #E8E5DE;border-bottom:1px solid #E8E5DE;padding:12px 0;font-size:12px;color:#888;margin-bottom:40px;}
+  .tags{display:flex;flex-wrap:wrap;gap:4px;}
+  .tag{background:#F9D1DA;color:#E8567A;border-radius:999px;padding:2px 9px;font-size:10px;}
+  h2{font-size:18px;font-weight:700;border-left:4px solid #E8567A;padding-left:16px;margin:0 0 24px;line-height:1.5;}
+  .section{margin-bottom:40px;}
+  .items{display:flex;flex-direction:column;gap:20px;}
+  .bubble-row{display:flex;align-items:flex-start;gap:12px;}
+  .bubble-row.cast{flex-direction:row-reverse;}
+  .avatar-col{flex-shrink:0;width:44px;}
+  .avatar{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;}
+  .avatar.i{background:#9ca3af;}
+  .avatar.c{background:#E8567A;}
+  .avatar-name{margin:4px 0 0;text-align:center;font-size:10px;font-weight:500;}
+  .avatar-name.i{color:#9ca3af;}
+  .avatar-name.c{color:#E8567A;}
+  .bubble{max-width:calc(100% - 80px);padding:12px 16px;font-size:14px;box-shadow:0 1px 2px rgba(0,0,0,.05);}
+  .bubble p{margin:0;line-height:1.85;}
+  .bubble.i{background:#f3f4f6;border-radius:0 18px 18px 18px;}
+  .bubble.c{background:#FFF0F3;border-radius:18px 0 18px 18px;}
+  .narration{padding:0 8px;font-size:14px;line-height:2;color:#555;margin:0;}
+  .editor-note{background:#F7F5F0;color:#888;border-radius:12px;padding:12px 16px;font-size:14px;font-style:italic;line-height:2;}
+  .photo-ph{margin:32px 0;border:2px dashed #E8A0B4;border-radius:12px;background:#FFF8FA;padding:22px 18px;text-align:center;}
+  .photo-ph .k{display:inline-block;background:#E8567A;color:#fff;border-radius:999px;padding:3px 12px;font-size:10px;font-weight:700;letter-spacing:.06em;margin-bottom:10px;}
+  .photo-ph .fig{height:150px;border-radius:8px;background:repeating-linear-gradient(45deg,#FDEEF2,#FDEEF2 10px,#FBE3EA 10px,#FBE3EA 20px);display:flex;align-items:center;justify-content:center;color:#D98BA2;font-size:12px;margin-bottom:12px;}
+  .photo-ph.portrait .fig{max-width:300px;margin-left:auto;margin-right:auto;height:200px;}
+  .photo-ph dl{margin:0;text-align:left;font-size:11px;line-height:1.9;color:#8a5b68;}
+  .photo-ph dt{display:inline;font-weight:700;color:#B4526C;}
+  .photo-ph dd{display:inline;margin:0;}
+  .photo-ph dd::after{content:"";display:block;}
+  .profile{border:1px solid #F9D1DA;background:#FFFBFC;border-radius:16px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .profile-head{display:flex;align-items:center;gap:16px;padding:16px 20px;background:#FFF0F3;}
+  .profile-av{width:68px;height:68px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,#E8567A,#f4a0b5);display:flex;align-items:center;justify-content:center;color:#fff;font-size:22px;font-weight:700;}
+  .profile-head .lbl{font-size:11px;font-weight:500;letter-spacing:.18em;color:#E8567A;margin:0;}
+  .profile-head h3{font-size:20px;font-weight:700;margin:2px 0 0;letter-spacing:-0.3px;}
+  .profile-head .rom{font-size:12px;letter-spacing:.18em;color:#9ca3af;margin:2px 0 0;}
+  .profile dl{margin:0;padding:16px 20px;}
+  .profile .row{display:flex;align-items:baseline;gap:12px;margin-bottom:10px;}
+  .profile dt{width:88px;flex-shrink:0;font-size:11px;font-weight:700;letter-spacing:.05em;color:#9ca3af;}
+  .profile dd{margin:0;font-size:14px;line-height:1.7;}
+  details.faq{border:1px solid #F9D1DA;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#FFFBFC;}
+  details.faq[open]{border-color:#E8567A;}
+  details.faq summary{list-style:none;cursor:pointer;display:flex;align-items:flex-start;justify-content:space-between;padding:16px 20px;background:#FFFBFC;gap:12px;}
+  details.faq[open] summary{background:#FFF0F3;}
+  details.faq summary::-webkit-details-marker{display:none;}
+  .qbadge{background:#E8567A;color:#fff;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .qtext{font-size:14px;font-weight:500;line-height:1.7;}
+  .plus{color:#E8567A;font-size:18px;flex-shrink:0;transition:transform .2s;}
+  details.faq[open] .plus{transform:rotate(45deg);}
+  .faq-body{border-top:1px solid #F9D1DA;padding:16px 20px;display:flex;gap:12px;}
+  .abadge{background:#F9D1DA;color:#E8567A;border-radius:999px;padding:2px 8px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .faq-body p{margin:0;font-size:14px;line-height:2;color:#555;}
+  .wnote{margin-top:48px;background:#FFF0F3;border-radius:16px;padding:24px;}
+  .wnote .cap{font-size:11px;font-weight:700;letter-spacing:.2em;color:#E8567A;margin:0 0 12px;}
+  .wnote p{font-size:14px;line-height:2;color:#333;margin:0 0 16px;}
+  .wnote .sig{text-align:right;font-weight:700;margin:0;}
+  .cta{margin-top:48px;background:linear-gradient(135deg,#FFF0F3,#FFF8FA);border-radius:16px;padding:24px;text-align:center;}
+  .cta .cap{font-size:11px;font-weight:700;letter-spacing:.2em;color:#E8567A;margin:0 0 8px;}
+  .cta .sub{font-size:14px;color:#555;margin:0 0 20px;}
+  .cta a{display:inline-block;background:#E8567A;color:#fff;border-radius:999px;padding:12px 32px;font-size:14px;font-weight:700;text-decoration:none;box-shadow:0 2px 6px rgba(232,86,122,.3);}
+  .links{margin-top:40px;}
+  .links h2{margin-bottom:16px;}
+  .links ul{list-style:none;margin:0;padding:0;display:grid;gap:12px;}
+  @media(min-width:640px){.links ul{grid-template-columns:repeat(3,1fr);}}
+  .links a{display:flex;flex-direction:column;height:100%;background:#fff;border:1px solid #F0DCE1;border-radius:12px;padding:16px;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .links .l{font-size:14px;font-weight:700;color:#E8567A;}
+  .links .d{font-size:12px;line-height:1.7;color:#777;margin-top:4px;}
+  .bottomnav{margin-top:56px;padding-top:40px;border-top:1px solid #e2e8f0;}
+  .bottomnav h3{font-size:16px;font-weight:700;color:#1e293b;margin:0 0 16px;}
+  .rel{display:grid;gap:16px;}
+  @media(min-width:640px){.rel{grid-template-columns:repeat(2,1fr);}}
+  .rel a{display:flex;gap:12px;background:#fff;border:1px solid #f1f5f9;border-radius:12px;padding:12px;text-decoration:none;box-shadow:0 1px 2px rgba(0,0,0,.04);}
+  .rel .thumb{width:96px;height:80px;flex-shrink:0;border-radius:8px;background:#fff1f2;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fda4af;}
+  .rel .n{font-size:11px;font-weight:700;color:#f43f5e;}
+  .rel .t{font-size:12px;font-weight:700;line-height:1.5;color:#1e293b;margin:2px 0 0;}
+  .backbtn{text-align:center;margin-top:40px;}
+  .backbtn a{display:inline-block;border:1px solid #fb7185;background:#fff;color:#f43f5e;border-radius:999px;padding:10px 24px;font-size:12px;font-weight:700;text-decoration:none;}
+  .devnote{max-width:720px;margin:0 auto 8px;padding:10px 14px;background:#EEF2FF;border:1px solid #C7D2FE;border-left:4px solid #6366F1;border-radius:8px;font-size:11px;line-height:1.8;color:#3730A3;}
+  .devnote b{color:#1e1b4b;}
+  .footerbox{max-width:720px;margin:40px auto 60px;padding:0 20px;}
+  .footerbox .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;}
+  .footerbox h4{margin:0 0 12px;font-size:14px;}
+  .footerbox table{width:100%;border-collapse:collapse;font-size:12px;}
+  .footerbox th,.footerbox td{border-bottom:1px solid #f1f5f9;padding:8px 6px;text-align:left;vertical-align:top;line-height:1.7;}
+  .footerbox th{width:120px;color:#6b7280;font-weight:600;white-space:nowrap;}
+</style>
+</head>
+<body>
+
+<div class="draftbar">
+  <strong>DRAFT</strong>
+  <span>ショウタ インタビュー vol.5 ／ 公開前プレビュー</span>
+  <span class="sep">|</span>
+  <span>写真3枚未着・本人確認前</span>
+  <span class="sep">|</span>
+  <button id="toggle" onclick="toggleClean()">要確認マーカーを隠す</button>
+  <span style="opacity:.6">黄色の下線にカーソルを合わせると確認理由が出ます</span>
+</div>
+
+<div class="devnote"><b>このプレビューについて</b>：実装後のサイト表示（InterviewArticleUI）を再現したものです。青い枠のメモと写真のダッシュ枠は実ページには出ません。「要確認マーカーを隠す」でショウタさん本人に見せられるクリーン表示になります。</div>
+
+<article>
+<div class="wrap">
+
+  <div class="badges">
+    <span class="badge-series">キャストインタビュー vol.5</span>
+    <span class="badge-area">福岡エリア</span>
+  </div>
+
+  <h1 class="serif">イトウが行く！キャスト丸裸インタビュー vol.5｜肌を見て、選んであげたい — 福岡の新人セラピスト・<span class="chk" data-note="表記ゆれ確認：議事録・ファイル名・音声で「ショウタ/ショータ/翔太」が混在。DBのキャスト名と揃えてください（指名検索の受け皿が割れるため）。">ショウタ</span>(183cm)の「<span class="chk" data-note="サービス化の確定確認：「美容鑑定」は取材中に生まれた案で、提供実態がまだありません。店として正式メニュー化するか・呼び名を確定してから公開してください（鉄則1：事実だけを書く）。">美容鑑定</span>」</h1>
+
+  <p class="lead">第一印象は、眼力の強いクールな人。ところが30分後、ポケモンの話で満面の笑みに変わります。元ドラッグストア店員5年の化粧品知識で、あなたの肌に合うものを選んでくれる「美容鑑定」。183cmの聞き上手で、本心は甘えん坊。福岡の新人セラピスト・ショウタさんの素顔を、たっぷり聞きました。</p>
+
+  <div class="metabar">
+    <span>2026年8月◯日</span>
+    <div class="tags">
+      <span class="tag">#福岡</span>
+      <span class="tag">#新人セラピスト</span>
+      <span class="tag">#美容鑑定</span>
+    </div>
+  </div>
+
+  <div class="devnote">サムネイル画像：<b>写真①（portrait・183cmが伝わる1枚）</b>が入ります。</div>
+
+</div>
+
+<div class="wrap-body">
+
+  <div class="section">
+    <h2 class="serif">第一印象は「眼力」。でも、それは30分しか持ちませんでした</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>ショウタさん、今日はよろしくお願いします。画面越しでも思ったんですけど、目鼻立ちがはっきりされてますね。眼力が強いというか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>ありがとうございます。目鼻立ちのことはよく言われるんですけど、眼力はあまり言われないです（笑）。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>ご出身は福岡ですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>ずっと福岡です。今は市内から30分くらいのところに住んでます。</p></div></div>
+      <div class="editor-note">📝 第一印象はクールな人。ですがこの取材、30分後にはポケモンの話で満面の笑みを見ることになります。最後まで読んでください。</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="serif">元ドラッグストア店員、5年分の化粧品知識</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>画面越しでも肌ツヤがいいのが分かります。何かされてるんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>ケアはしてます。といっても、化粧水と乳液だけですけど。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>以前はドラッグストアで働かれていたそうですね。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>5年働いてました。商品の説明をする仕事だったので、薬と、基本的なスキンケアや化粧品の知識はあります。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>では聞かせてください。おすすめの化粧品、1位から3位まで。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>1位は無印良品です。量があってコスパがよくて、ちゃんと効く。2位はドラッグストアで買えるものなら結構何でもよくて、ハトムギ化粧水とかでも十分です。あと、肌が弱い方にはキュレルがおすすめです。肌質で3種類に分かれているので選びやすいんですよ。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>高い化粧品って、実際のところ値段に見合うんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>人それぞれです。肌に合う・合わないが結局すべてで。ただ、高いものは「合わない」が起こりにくいんです。100とは言わないけど、99くらいの感覚です。</p></div></div>
+      <p class="narration">触れた肌の質感に合わせて、化粧品や入浴剤を選んで提案する——取材の中で、ショウタさんの「<span class="chk" data-note="サービス化の確定まで、この段落は公開不可です。">美容鑑定</span>」の構想が生まれた瞬間でした。手に取りやすい市販のものを、あなたの肌に合わせて。元ドラッグストア店員にしかできない気配りです。</p>
+
+      <div class="photo-ph">
+        <span class="k">写真③ beauty</span>
+        <div class="fig">愛用スキンケア用品</div>
+        <dl>
+          <dt>alt：</dt><dd>ショウタが愛用しているスキンケア用品</dd>
+          <dt>キャプション：</dt><dd>ケアは化粧水と乳液だけ。「やりすぎない」のがコツ</dd>
+          <dt>撮影指定：</dt><dd>化粧水と乳液を並べた1枚。洗面台や棚の上でOK。顔は不要。</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="serif">小学校からずっとポケモン。大会にも出ます</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>趣味の話を聞かせてください。ハマっているものはありますか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>小学校からポケモンがずっと好きです。ゲームも、グッズも。今は特にポケモンカードにハマっていて、休みの日は朝からカードをやりに行きます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>コレクションですか？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>戦う方です。大会にも出ます。成績がいい方ではないですけど（笑）。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>世界大会もあるんですよね。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>あるので、いつかそこは頑張りたいなと思ってます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>UFOキャッチャーにハマっていた時期もあったとか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>ぬいぐるみを取りに、わざわざ行ってました（笑）。</p></div></div>
+      <div class="editor-note">📝 眼力の強いクールな人が、ポケモンの話になると声のトーンが上がる。このギャップは、ぜひ会って確かめてほしいところです。</div>
+
+      <div class="photo-ph">
+        <span class="k">写真② pokemon</span>
+        <div class="fig">ポケモンコレクション</div>
+        <dl>
+          <dt>alt：</dt><dd>ショウタのポケモンコレクション</dd>
+          <dt>キャプション：</dt><dd>小学校からずっとポケモン。今はカードの大会にも出場</dd>
+          <dt>撮影指定：</dt><dd>ぬいぐるみやカードと一緒の1枚。顔出し不要。持って撮るとキャラが伝わります。</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="serif">183cm、元ピッチャー。スポッチャは任せてください</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>運動はされてたんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>高校まで野球をやってました。ピッチャーです。大学ではバレーボールのサークルに入って、まったく触ったことがなかったのに、できるようになっちゃいました。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>運動神経いいんですね。身長は？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>183あります。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>それは……甘えたくなっちゃいますね。デートで体を動かしたい人にはよさそう。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>スポッチャなら任せてください。運動に関しては全然できるので。カラオケも、体で盛り上がるタイプです。踊りながら歌います（笑）。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>よく歌うのは？</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>backnumberが好きです。曲の長いやつ。あとは有名どころをノリで押さえてる感じです。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>料理もされるんですよね。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>一人暮らしをしていたので自炊はしてました。作るのは好きです。</p></div></div>
+
+      <div class="photo-ph portrait">
+        <span class="k">写真① portrait</span>
+        <div class="fig">183cmが伝わる1枚</div>
+        <dl>
+          <dt>alt：</dt><dd>183cmのショウタ</dd>
+          <dt>キャプション：</dt><dd>身長183cm。「甘えたくなる」と言われる高さです</dd>
+          <dt>撮影指定：</dt><dd>身長の高さが伝わる全身または上半身。明るい場所で。サムネイル兼用。</dd>
+        </dl>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2 class="serif">「よく喋ってくれる方が嬉しい」— 聞き上手の本心は甘えん坊</h2>
+    <div class="items">
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>どんなお客様が来てくれたら、いい時間を提供できそうですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>よく喋る方だと嬉しいです。話題を振るのがそんなに得意じゃないと思っているので。聞くのは得意です。聞き上手とはよく言われます。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>年下の扱いには慣れてるんですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>妹がいるので、年下のお世話は慣れてます。今まで、年下から慕われることが多かったですね。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>得意な関わり方のスタイルはありますか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>本心は結構、甘えん坊なんです。なので甘えられたい方が来ると、いいかもしれないです。……でも183cmなので、甘えたくなっちゃう方が多いかもしれませんね（笑）。甘やかしつつ、甘えつつ、で。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>最後に、この仕事でどうなっていきたいですか。</p></div></div>
+      <div class="bubble-row cast"><div class="avatar-col"><div class="avatar c">シ</div><p class="avatar-name c">ショウタ</p></div><div class="bubble c"><p>帰るときに「癒されたな」「心が軽くなったな」と思ってもらえるようになりたいです。漠然とですけど、それが一番です。</p></div></div>
+      <div class="bubble-row"><div class="avatar-col"><div class="avatar i">イ</div><p class="avatar-name i">イトウ</p></div><div class="bubble i"><p>ショウタさん、今日はありがとうございました。</p></div></div>
+    </div>
+  </div>
+
+  <div style="margin-top:48px;">
+    <h2 class="serif" style="border:none;padding-left:0;">出演キャスト</h2>
+    <div class="profile">
+      <div class="profile-head">
+        <div class="profile-av">シ</div>
+        <div>
+          <p class="lbl">CAST PROFILE</p>
+          <h3 class="serif">ショウタ</h3>
+          <p class="rom">SHOTA</p>
+        </div>
+      </div>
+      <dl>
+        <div class="row"><dt>活動エリア</dt><dd>福岡（博多・天神エリア中心）</dd></div>
+        <div class="row"><dt>年齢</dt><dd><span class="chk" data-note="音声が不明瞭（27か28）。本人に公表年齢を確認してください。">27歳</span></dd></div>
+        <div class="row"><dt>身長</dt><dd>183cm</dd></div>
+        <div class="row"><dt>前職の知識</dt><dd>薬・化粧品・スキンケア（ドラッグストア勤務5年）</dd></div>
+        <div class="row"><dt>趣味</dt><dd>ポケモンカード（大会出場）、カラオケ（backnumber）、料理</dd></div>
+        <div class="row"><dt>スポーツ</dt><dd>野球（投手）・バレーボール。スポッチャ得意</dd></div>
+        <div class="row"><dt>性格</dt><dd>聞き上手。クールに見えて、本心は甘えん坊</dd></div>
+        <div class="row"><dt>ひとこと</dt><dd>よく喋ってくれる方、大歓迎です。聞くのは得意です。</dd></div>
+      </dl>
+    </div>
+  </div>
+
+  <section style="margin-top:48px;">
+    <h2 class="serif" style="border:none;padding-left:0;">よくある質問</h2>
+    <details class="faq" open>
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q1</span><span class="qtext">女性用風俗を利用するのが初めてで、緊張しています。会話が続くか不安です。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p>ショウタさんは自他ともに認める聞き上手です。「話題を振るより、聞くのが得意」と話しているので、あなたのペースで好きなことを話してください。実はご本人も「初対面は緊張するタイプ」とのこと。一緒に少しずつほぐれていく感覚で大丈夫です。</p></div>
+    </details>
+    <details class="faq">
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q2</span><span class="qtext">福岡で、ショウタさんとはどんな時間を過ごせますか。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p>「その人がしたいことを一番に考える」のがショウタさんのスタイルです。福岡市内なら動物園や水族館、体を動かしたい日はスポッチャ、盛り上がりたい日はカラオケ（backnumberを踊りながら歌うそうです）。元野球部・183cmの運動神経で、アクティブなデートは特に得意です。</p></div>
+    </details>
+    <details class="faq">
+      <summary><span style="display:flex;gap:12px;align-items:flex-start;"><span class="qbadge">Q3</span><span class="qtext">「美容鑑定」とは何ですか。</span></span><span class="plus">＋</span></summary>
+      <div class="faq-body"><span class="abadge">A</span><p><span class="chk" data-note="サービス化の確定（確認C）が済むまで、このFAQは公開不可です。内容確定後に文言を合わせて修正してください。">元ドラッグストア店員として5年間、薬や化粧品の説明をしてきたショウタさんならではの提案です。あなたの肌質に合わせて、無印良品やキュレルなど、手に取りやすい市販の化粧品や入浴剤を選んでアドバイスします。高いものを勧めるのではなく「あなたの肌に合うもの」を一緒に探すのがモットーです。</span></p></div>
+    </details>
+  </section>
+
+  <div class="wnote">
+    <p class="cap">WRITER'S NOTE</p>
+    <p>「何を言うかで知性が測れて、何を言わないかで品性が測れる」という言葉がありますが、ショウタさんと話していて感じたのはまさに品性でした。余計なことを言わない。でも聞けば、ちゃんと面白い。</p>
+    <p>眼力の強いクールな見た目で、中身はポケモンカードの大会に出る人。183cmで、本心は甘えん坊。このギャップの多さは、通うほど発見があるタイプだと思います。</p>
+    <p>取材の中で生まれた「美容鑑定」、私はかなり本気で楽しみにしています。肌を見てもらいに、福岡へ。</p>
+    <p class="sig">— イトウ</p>
+  </div>
+
+  <div class="cta">
+    <p class="cap">RESERVATION</p>
+    <p class="sub">ショウタに会いに行く</p>
+    <a href="#">ご予約・お問い合わせはこちら →</a>
+  </div>
+
+  <nav class="links" aria-label="関連ページ">
+    <h2 class="serif" style="border:none;padding-left:0;">次はこちらもどうぞ</h2>
+    <ul>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/schedule"><span class="l">ショウタの出勤スケジュールを見る</span><span class="d">最新の出勤日と空き状況はこちらから確認できます</span></a></li>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/price"><span class="l">料金・コースを確認する</span><span class="d">コース料金と延長・交通費の考え方をまとめています</span></a></li>
+      <li><a href="https://www.sutoroberrys.jp/store/fukuoka/first-time"><span class="l">初めての方へ</span><span class="d">予約から当日の流れまで、初めての方向けにご案内します</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="bottomnav">
+    <h3 class="serif">他のセラピストインタビュー</h3>
+    <div class="rel">
+      <a href="#"><div class="thumb">INTERVIEW</div><div><span class="n">セイラ</span><p class="t">35歳、最後のチャンス — 福岡の新人セラピスト・セイラが「尽くしたい」と言う理由</p></div></a>
+      <a href="#"><div class="thumb">INTERVIEW</div><div><span class="n">サイ</span><p class="t">塩顔セラピスト・サイに聞いた、植物とパスタとVaundyの話</p></div></a>
+    </div>
+    <div class="backbtn"><a href="#">← インタビュー一覧へ戻る</a></div>
+  </div>
+
+</div>
+</article>
+
+<div class="footerbox">
+  <div class="card">
+    <h4>この記事の設定値（実装用）</h4>
+    <table>
+      <tr><th>slug</th><td>shota-interview-vol5</td></tr>
+      <tr><th>正規URL</th><td>https://www.sutoroberrys.jp/store/fukuoka/interview/{castId}/shota-interview-vol5</td></tr>
+      <tr><th>status</th><td>draft（写真3枚＋確認A〜Dの完了後に published）</td></tr>
+      <tr><th>seo_title</th><td>肌を見て、選んであげたい — 福岡の新人セラピスト・ショウタ(183cm)の「美容鑑定」</td></tr>
+    </table>
+  </div>
+  <div class="card" style="margin-top:16px;">
+    <h4>公開前に必要なこと</h4>
+    <table>
+      <tr><th>もり</th><td>① 表記「ショウタ/ショータ」の確定　② 公表年齢の確認（27 or 28）　③ 「美容鑑定」のサービス化確定　④ 本人確認＋写真3枚の受け取り</td></tr>
+      <tr><th>第2弾で回収</th><td>お客様へのメッセージ（今回未収録）／美容鑑定の実施第1号レポート／実務フリクション</td></tr>
+    </table>
+  </div>
+</div>
+
+<script>
+function toggleClean(){
+  document.body.classList.toggle('clean');
+  var b=document.getElementById('toggle');
+  b.textContent = document.body.classList.contains('clean') ? '要確認マーカーを表示' : '要確認マーカーを隠す';
+}
+</script>
+</body>
+</html>

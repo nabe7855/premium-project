@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
+import { formatScheduleTime } from '@/lib/utils/formatSchedule';
 
 async function getInitialScheduleData(storeSlug: string): Promise<ScheduleDayType[]> {
   try {
@@ -85,10 +86,7 @@ async function getInitialScheduleData(storeSlug: string): Promise<ScheduleDayTyp
               age: cast?.age ?? 0,
               photo: cast?.main_image_url ?? '',
               slug: cast?.slug ?? '',
-              workingHours:
-                s.start_datetime && s.end_datetime
-                  ? `${new Date(s.start_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })} - ${new Date(s.end_datetime).toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' })}`
-                  : '時間未定',
+              workingHours: formatScheduleTime(s.start_datetime, s.end_datetime, ' - '),
               status: 'available',
               description: cast?.catch_copy ?? '',
               isFavorite: false,
