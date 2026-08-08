@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     siteName: 'ストロベリーボーイズ',
     title: '女性用風俗・出張ホスト｜ストロベリーボーイズ【福岡・横浜】',
     description: '福岡（博多・天神）・横浜（関内・みなとみらい）で展開。完全審査制のイケメンセラピストが極上の癒やしを提供する女性専用出張サロン。グループ店舗（東京・大阪・名古屋）とも連携。',
-    images: [{ url: '/ogp/default.png', width: 1200, height: 630, alt: 'ストロベリーボーイズ' }],
+    images: [{ url: 'https://www.sutoroberrys.jp/ogp/default-v2.png', width: 1200, height: 630, alt: 'ストロベリーボーイズ' }],
   },
   robots: {
     index: true,
