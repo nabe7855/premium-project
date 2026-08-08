@@ -32,13 +32,13 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       title,
       description,
       url: `https://www.sutoroberrys.jp/store/${slug}/reviews`,
-      images: [{ url: `/ogp/store-${slug}.png`, width: 1200, height: 630 }],
+      images: [{ url: `https://www.sutoroberrys.jp/ogp/store-${slug}.png`, width: 1200, height: 630 }],
     },
     twitter: {
       card: "summary_large_image",
       title,
       description,
-      images: [`/ogp/store-${slug}.png`]
+      images: [`https://www.sutoroberrys.jp/ogp/store-${slug}.png`]
     }
   };
 }
