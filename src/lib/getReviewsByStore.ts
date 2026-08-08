@@ -1,7 +1,6 @@
 import { supabase } from './supabaseClient';
 import { mapReview } from './mappers/reviewMapper';
 import { Review, ReviewRaw } from '@/types/review';
-import { prisma } from './prisma';
 
 /**
  * ストアごとのレビューをページネーション付きで取得
@@ -24,19 +23,19 @@ export async function getReviewsByStore(
     if (castId) {
       targetCastIds = [castId];
     } else {
-      // 当該店舗に所属するアクティブキャストのIDリストを取得
-      const activeCasts = await prisma.cast.findMany({
-        where: {
-          is_active: true,
-          memberships: {
-            some: {
-              store: { slug: storeSlug }
-            }
-          }
-        },
-        select: { id: true }
-      });
-      targetCastIds = activeCasts.map((c) => c.id);
+      // 当該店舗に所属するアクティブキャストのIDリストをSupabaseで取得 (Client/Server両対応)
+      const { data: activeCastsData, error: castError } = await supabase
+        .from('casts')
+        .select('id, cast_store_memberships!inner(stores!inner(slug))')
+        .eq('is_active', true)
+        .eq('cast_store_memberships.stores.slug', storeSlug);
+
+      if (castError) {
+        console.error('❌ アクティブキャスト取得エラー:', castError.message);
+        return { reviews: [], totalCount: 0 };
+      }
+
+      targetCastIds = (activeCastsData || []).map((c: any) => c.id);
     }
 
     if (targetCastIds.length === 0) {
