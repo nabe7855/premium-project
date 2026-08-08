@@ -475,10 +475,20 @@ export default function NoteArticleUI({
             font-style: normal;
           }
         `}</style>
+        {category === 'ikeo' && (
+          <div className="mb-8 rounded-xl bg-slate-100 p-4 text-xs font-bold text-slate-600 border border-slate-200">
+            ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
+          </div>
+        )}
         <div
           className={`prose prose-lg ${theme.prose} max-w-none leading-[1.85] tracking-[0.02em] text-[#333] prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-[#222] prose-h2:mb-8 prose-h2:mt-16 prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-4 prose-h2:text-[24px] prose-h3:mb-6 prose-h3:mt-12 prose-h3:text-[20px] prose-p:mb-8 prose-p:mt-0 prose-blockquote:my-10 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:not-italic prose-img:my-10 prose-img:rounded-xl prose-a:text-${theme.primary}-500 prose-a:underline prose-a:underline-offset-4 prose-li:my-2`}
           dangerouslySetInnerHTML={{ __html: article.content }}
         />
+        {category === 'ikeo' && (
+          <div className="mt-8 rounded-xl bg-slate-100 p-4 text-xs font-bold text-slate-600 border border-slate-200">
+            ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
+          </div>
+        )}
 
         {/* タグ */}
         <div className="mt-16 flex flex-wrap gap-2">

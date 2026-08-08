@@ -119,9 +119,17 @@ const FAQ: React.FC = () => {
             <p className="mb-6 text-gray-600">
               どんな小さなことでも、お気軽にご相談ください。女性スタッフが親身にお答えします。
             </p>
-            <button className="rounded-full bg-pink-500 px-8 py-3 text-white transition-colors hover:bg-pink-600">
-              直接相談してみる
-            </button>
+            <div className="flex flex-wrap items-center justify-center gap-4">
+              <button className="rounded-full bg-pink-500 px-8 py-3 text-white transition-colors hover:bg-pink-600 font-bold text-sm">
+                直接相談してみる
+              </button>
+              <a
+                href="/ikeo"
+                className="rounded-full border border-pink-400 bg-white px-8 py-3 text-pink-600 font-bold text-sm transition-colors hover:bg-pink-50 shadow-sm"
+              >
+                セラピストの働き方を知る（イケオラボ）→
+              </a>
+            </div>
           </div>
         </div>
       </div>

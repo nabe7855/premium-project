@@ -26,20 +26,33 @@ export default async function CareerMediaTopPage({
   const banners = bannersRes.success ? bannersRes.banners : [];
 
   const result = await getMediaArticles('ikeo', 'recruit');
-  let allArticles = result.success
+  const allPublishedArticles = result.success
     ? result.articles?.filter((a: any) => a.status === 'published') || []
     : [];
+
+  let allArticles = allPublishedArticles;
 
   const tagsResult = await getMediaTags('recruit');
   const allTags = tagsResult.success ? tagsResult.tags || [] : [];
 
   if (selectedTag) {
     allArticles = allArticles.filter((article: any) =>
-      article.tags.some((t: any) => t.tag.name === selectedTag),
+      article.tags?.some((t: any) => t.tag.name === selectedTag),
     );
   }
 
-  const sections = [
+  // 公開記事に実際に存在するタグ名集合を取得
+  const activeTagNames = new Set(
+    allPublishedArticles.flatMap((a: any) => a.tags?.map((t: any) => t.tag.name) || [])
+  );
+
+  const rawSections = [
+    {
+      title: '初心者ガイド・採用事情',
+      tag: '初心者ガイド',
+      icon: TrophyIcon,
+      desc: '未経験からプロの道へ。',
+    },
     {
       title: 'ファッション・美容',
       tag: 'ファッション・美容',
@@ -63,7 +76,12 @@ export default async function CareerMediaTopPage({
     },
   ];
 
-  const subNav = [
+  // 記事が存在しない空カテゴリは非表示にフィルタ（全記事表示時のみ全表示fallback）
+  const sections = activeTagNames.size > 0 
+    ? rawSections.filter((s) => activeTagNames.has(s.tag))
+    : rawSections;
+
+  const rawSubNav = [
     { label: '初心者ガイド', tag: '初心者ガイド' },
     { label: 'ファッション', tag: 'ファッション・美容' },
     { label: '恋愛・デート', tag: '恋愛・デート' },
@@ -72,6 +90,10 @@ export default async function CareerMediaTopPage({
     { label: 'ラブグッズ', tag: 'ラブグッズ' },
     { label: 'セラピストの流儀', tag: 'セラピストの流儀' },
   ];
+
+  const subNav = activeTagNames.size > 0 
+    ? rawSubNav.filter((item) => activeTagNames.has(item.tag))
+    : rawSubNav;
 
   return (
     <div className="min-h-screen bg-[#fcfdff]">

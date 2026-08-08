@@ -282,5 +282,31 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error('Sitemap: Error fetching recruit columns:', e);
   }
 
+  // イケオラボ (/ikeo & /ikeo/[slug]) - category='ikeo' かつ published の記事を追加
+  try {
+    const { getMediaArticles } = await import('@/lib/actions/media');
+    const ikeoResult = await getMediaArticles('ikeo', 'recruit');
+    if (ikeoResult.success && ikeoResult.articles) {
+      mediaPages.push({
+        url: `${baseUrl}/ikeo`,
+        lastModified: new Date(),
+        changeFrequency: 'weekly',
+        priority: 0.8,
+      });
+
+      const publishedIkeo = ikeoResult.articles.filter((a: any) => a.status === 'published');
+      for (const article of publishedIkeo) {
+        mediaPages.push({
+          url: `${baseUrl}/ikeo/${article.slug}`,
+          lastModified: new Date(article.updated_at || article.created_at),
+          changeFrequency: 'weekly',
+          priority: 0.8,
+        });
+      }
+    }
+  } catch (e) {
+    console.error('Sitemap: Error fetching ikeo articles:', e);
+  }
+
   return [...staticPages, ...storePages, ...mediaPages];
 }

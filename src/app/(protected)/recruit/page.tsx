@@ -23,13 +23,30 @@ export const metadata: Metadata = {
   },
 };
 
+import { getMediaArticles } from '@/lib/actions/media';
+
 export default async function RecruitHubPage() {
-  const [columns, interviewResult] = await Promise.all([
+  const [columns, interviewResult, ikeoResult] = await Promise.all([
     getPublishedRecruitColumns(),
     getInterviewArticles({ limit: 3 }),
+    getMediaArticles('ikeo', 'recruit'),
   ]);
 
   const interviews = interviewResult?.articles || [];
+  const ikeoArticles = ikeoResult?.success
+    ? (ikeoResult.articles || [])
+        .filter((a: any) => a.status === 'published')
+        .map((a: any) => ({
+          id: a.id,
+          title: a.title,
+          slug: a.slug,
+          thumbnailUrl: a.eyecatch_image || '/ogp/default-v2.png',
+          updatedAt: a.updated_at || a.created_at,
+          url: `/ikeo/${a.slug}`,
+        }))
+    : [];
+
+  const displayColumns = ikeoArticles.length > 0 ? ikeoArticles : columns.map((c: any) => ({ ...c, url: `/recruit/column/${c.slug}` }));
 
   // BreadcrumbList JSON-LD
   const jsonLd = {
@@ -288,8 +305,8 @@ export default async function RecruitHubPage() {
             </div>
 
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {columns.slice(0, 3).map((col) => {
-                const articleUrl = `/recruit/column/${col.slug}`;
+              {displayColumns.slice(0, 3).map((col: any) => {
+                const articleUrl = col.url;
                 const publishedDate = new Date(col.updatedAt);
                 const dateStr = publishedDate.toLocaleDateString('ja-JP', {
                   year: 'numeric',
@@ -311,7 +328,7 @@ export default async function RecruitHubPage() {
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center bg-slate-900 text-amber-400 text-xs font-bold">
-                          RECRUIT COLUMN
+                          IKEO LAB
                         </div>
                       )}
                     </Link>
@@ -319,7 +336,7 @@ export default async function RecruitHubPage() {
                     <div className="flex flex-1 flex-col justify-between p-5">
                       <div>
                         <div className="flex items-center justify-between text-[11px] text-slate-400 mb-2">
-                          <span className="font-semibold text-amber-400">求人コラム</span>
+                          <span className="font-semibold text-amber-400">求人コラム・イケオラボ</span>
                           <time dateTime={publishedDate.toISOString()}>{dateStr}</time>
                         </div>
 
@@ -344,10 +361,10 @@ export default async function RecruitHubPage() {
 
             <div className="mt-8 text-center">
               <Link
-                href="/recruit/column"
+                href="/ikeo"
                 className="inline-flex items-center rounded-full bg-slate-900 border border-slate-700 px-6 py-2.5 text-xs font-bold text-amber-400 shadow-md transition-all hover:bg-slate-800 hover:text-amber-300"
               >
-                コラム一覧を見る →
+                イケオラボコラム一覧を見る →
               </Link>
             </div>
           </section>
