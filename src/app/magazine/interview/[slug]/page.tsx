@@ -22,9 +22,20 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   const { article } = result;
 
+  const meta = article.interview_meta as any;
+  const rawArea = meta?.area || 'fukuoka';
+  const areaMap: Record<string, string> = { '福岡': 'fukuoka', '横浜': 'yokohama', fukuoka: 'fukuoka', yokohama: 'yokohama' };
+  const area = areaMap[rawArea] || 'fukuoka';
+  const castLink = meta?.cast_links?.[0];
+  const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+  const canonicalUrl = `https://www.sutoroberrys.jp/store/${area}/interview/${castSlug}/${article.slug}`;
+
   return {
     title: `${article.seo_title || article.title} | ストロベリーボーイズ インタビュー`,
     description: article.seo_description || article.excerpt || '',
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: article.seo_title || article.title,
       description: article.seo_description || article.excerpt || '',

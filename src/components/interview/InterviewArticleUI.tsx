@@ -167,7 +167,7 @@ export default async function InterviewArticleUI({
     if (!speakerName) return undefined;
     
     // 2. インタビュアー（スタッフ）の場合: photos.staff_photos[speakerName]
-    if (speakerType === 'interviewer') {
+    if (speakerType === 'interviewer' || speakerType === 'staff') {
       return photosAny?.staff_photos?.[speakerName] ?? undefined;
     }
     
@@ -475,6 +475,37 @@ export default async function InterviewArticleUI({
             ご予約・お問い合わせはこちら →
           </a>
         </div>
+
+        {/* cta_data 動的リンクカード群（存在する場合のみ3カラム/モバイル1カラムで出力） */}
+        {(() => {
+          const ctaDataAny = (interviewMeta as any)?.cta_data;
+          const links = ctaDataAny?.links;
+          if (!links || !Array.isArray(links) || links.length === 0) return null;
+
+          return (
+            <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {links.map((link: any, idx: number) => (
+                <a
+                  key={idx}
+                  href={link.href}
+                  className="flex flex-col justify-between rounded-xl border border-rose-100 bg-white p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:border-rose-300 hover:shadow-md"
+                >
+                  <div>
+                    <span className="mb-1 block text-xs font-bold text-rose-500">
+                      {link.label}
+                    </span>
+                    <p className="text-xs leading-relaxed text-gray-600">
+                      {link.description}
+                    </p>
+                  </div>
+                  <span className="mt-3 block text-right text-[11px] font-bold text-rose-400">
+                    詳しく見る →
+                  </span>
+                </a>
+              ))}
+            </div>
+          );
+        })()}
 
         {/* 関連記事（同店舗の他インタビュー2件） & インタビュー一覧へ戻るナビゲーション */}
         {(() => {

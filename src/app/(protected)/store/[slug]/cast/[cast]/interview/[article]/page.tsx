@@ -32,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
   const meta = article.interview_meta;
   const baseUrl = 'https://www.sutoroberrys.jp';
-  const canonicalUrl = `${baseUrl}/store/${params.slug}/cast/${params.cast}/interview/${params.article}`;
+  const canonicalUrl = `${baseUrl}/store/${params.slug}/interview/${params.cast}/${params.article}`;
 
   return {
     title: article.seo_title || article.title,
