@@ -52,6 +52,11 @@ export const metadata: Metadata = {
     description: '福岡（博多・天神）・横浜（関内・みなとみらい）で展開。完全審査制のイケメンセラピストが極上の癒やしを提供する女性専用出張サロン。グループ店舗（東京・大阪・名古屋）とも連携。',
     images: [{ url: 'https://www.sutoroberrys.jp/ogp/default-v2.png', width: 1200, height: 630, alt: 'ストロベリーボーイズ' }],
   },
+  icons: {
+    icon: '/favicon.png',
+    shortcut: '/favicon.png',
+    apple: '/apple-touch-icon.png',
+  },
   robots: {
     index: true,
     follow: true,
