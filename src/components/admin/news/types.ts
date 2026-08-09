@@ -59,5 +59,6 @@ export interface PageData {
   category?: string;
   tags?: string[];
   showInSlider?: boolean;
+  seoTitle?: string;
   storeSettings?: Record<string, StoreSetting>; // 各店舗ごとの公開設定
 }

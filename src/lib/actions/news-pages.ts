@@ -20,6 +20,7 @@ const mapPrismaToPageData = (record: any): PageData => {
     category: misc.category,
     tags: misc.tags || [],
     showInSlider: misc.showInSlider,
+    seoTitle: misc.seoTitle,
     targetStoreSlugs: record.targetStoreSlugs || [],
     storeSettings: misc.storeSettings || {},
   };

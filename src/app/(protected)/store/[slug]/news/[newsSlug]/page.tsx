@@ -68,15 +68,19 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     }
   }
   const metaDescription = plainTextDescription || page.title;
+  const rawTitle = page.seoTitle || page.title;
+  const fullTitle = `${rawTitle}｜${storeData.name}`;
 
   return {
-    title: `${page.title} | ${storeData.name}`,
+    title: {
+      absolute: fullTitle,
+    },
     description: metaDescription,
     alternates: {
       canonical: `https://www.sutoroberrys.jp/store/${canonicalStoreSlug}/news/${newsSlug}`,
     },
     openGraph: {
-      title: `${page.title} | ${storeData.name}`,
+      title: fullTitle,
       description: metaDescription,
       images: page.thumbnailUrl ? [page.thumbnailUrl] : [],
       type: 'article',
@@ -84,7 +88,7 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${page.title} | ${storeData.name}`,
+      title: fullTitle,
       description: metaDescription,
       images: page.thumbnailUrl ? [page.thumbnailUrl] : [],
     },

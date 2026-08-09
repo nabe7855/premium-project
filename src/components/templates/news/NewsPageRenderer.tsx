@@ -79,7 +79,7 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
         {/* Lead Content (First Content Section's Description or Hero Image) */}
         <div className="article-body">
           {contentSections.map((section, idx) => (
-            <SectionRenderer key={section.id} section={section} isFirst={idx === 0} altMap={altMap} />
+            <SectionRenderer key={section.id} section={section} isFirst={idx === 0} altMap={altMap} pageTitle={page.title} />
           ))}
         </div>
 
@@ -142,10 +142,11 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
   );
 };
 
-const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean; altMap: Map<string, string> }> = ({
+const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean; altMap: Map<string, string>; pageTitle?: string }> = ({
   section,
   isFirst,
   altMap,
+  pageTitle,
 }) => {
   const { type, content } = section;
 
@@ -172,7 +173,7 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean; altMa
               className={`${pClass} text-lg font-medium italic`}
             />
           )}
-          {content.title && <h2 className={h2Class}>{content.title}</h2>}
+          {content.title && content.title !== pageTitle && <h2 className={h2Class}>{content.title}</h2>}
         </div>
       );
 
