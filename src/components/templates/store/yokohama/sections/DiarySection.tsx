@@ -76,14 +76,24 @@ const DiarySection: React.FC<DiarySectionProps> = ({
           .slice(0, 4)
           .map((blog: any) => {
             const castObj = Array.isArray(blog.casts) ? blog.casts[0] : blog.casts;
+            const castName = castObj?.name || 'セラピスト';
+            const publishedDate = new Date(blog.published_at || blog.created_at);
+            const jstFormattedDate = publishedDate.toLocaleDateString('ja-JP', {
+              timeZone: 'Asia/Tokyo',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            });
+            const fallbackTitle = `${castName}の日記（${jstFormattedDate}）`;
+
             return {
               id: blog.id,
-              castName: castObj?.name || 'セラピスト',
-              title: blog.title,
+              castName: castName,
+              title: blog.title && blog.title.trim() !== '' ? blog.title : fallbackTitle,
               image:
                 blog.blog_images?.[0]?.image_url ||
                 'https://via.placeholder.com/400x300?text=No+Image',
-              date: new Date(blog.published_at || blog.created_at).toLocaleDateString('ja-JP').replace(/\//g, '.'),
+              date: publishedDate.toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' }).replace(/\//g, '.'),
             };
           });
 

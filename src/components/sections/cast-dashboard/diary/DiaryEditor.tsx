@@ -142,6 +142,12 @@ export default function DiaryEditor({ castId, storeSlug, initialData, onSave, on
   // ✅ 保存処理（新規・更新）
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (!title || title.trim() === '') {
+      alert('タイトルを入力してください');
+      return;
+    }
+
     setUploading(true);
 
     try {
@@ -359,6 +365,7 @@ export default function DiaryEditor({ castId, storeSlug, initialData, onSave, on
           <label className="mb-2 block text-[10px] font-black uppercase tracking-widest text-gray-400">タイトル（検索結果や一覧に表示されます）</label>
           <input
             type="text"
+            required
             placeholder="読者の目を引くタイトルを入力..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}

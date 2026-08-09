@@ -76,9 +76,19 @@ async function getInitialDiaryPosts(storeSlug: string): Promise<DiaryPost[]> {
       })
       .map((post: any) => {
         const castObj = Array.isArray(post.casts) ? post.casts[0] : post.casts;
+        const castName = castObj?.name || 'セラピスト';
+        const publishedDate = new Date(post.published_at || post.created_at);
+        const jstFormattedDate = publishedDate.toLocaleDateString('ja-JP', {
+          timeZone: 'Asia/Tokyo',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+        });
+        const fallbackTitle = `${castName}の日記（${jstFormattedDate}）`;
+
         return {
           id: post.id,
-          title: post.title,
+          title: post.title && post.title.trim() !== '' ? post.title : fallbackTitle,
           content: post.content ?? '',
           excerpt: post.content ? post.content.slice(0, 100).replace(/\n/g, ' ') + '...' : '',
           date: post.published_at || post.created_at,

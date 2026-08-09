@@ -52,13 +52,23 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
   const rawImage = data.blog_images?.[0]?.image_url;
   const rawAvatar = castData?.image_url;
 
+  const castName = castData?.name || 'セラピスト';
+  const publishedDate = new Date(data.published_at || data.created_at);
+  const jstFormattedDate = publishedDate.toLocaleDateString('ja-JP', {
+    timeZone: 'Asia/Tokyo',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+  const fallbackTitle = `${castName}の日記（${jstFormattedDate}）`;
+
   return {
     id: data.id,
-    title: data.title,
+    title: data.title && data.title.trim() !== '' ? data.title : fallbackTitle,
     content: data.content || '',
     excerpt: data.content ? data.content.slice(0, 100) : '',
-    date: new Date(data.published_at || data.created_at)
-      .toLocaleDateString('ja-JP')
+    date: publishedDate
+      .toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })
       .replace(/\//g, '.'),
     tags: data.blog_tags?.map((t: any) => t.blog_tag_master?.name).filter(Boolean) || [],
     storeSlug: slug,
