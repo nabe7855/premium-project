@@ -53,7 +53,17 @@ const nextConfig = {
         permanent: true,
       },
       {
+        source: '/amolab/fukuoka-recruit-guide/',
+        destination: '/ikeo/fukuoka-recruit-guide',
+        permanent: true,
+      },
+      {
         source: '/amolab/yokohama-recruit-guide',
+        destination: '/ikeo/yokohama-recruit-guide',
+        permanent: true,
+      },
+      {
+        source: '/amolab/yokohama-recruit-guide/',
         destination: '/ikeo/yokohama-recruit-guide',
         permanent: true,
       },

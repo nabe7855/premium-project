@@ -21,10 +21,6 @@ export async function generateMetadata({
     return { title: '記事が見つかりません' };
   }
 
-  if (article.category === 'ikeo') {
-    redirect(`/ikeo/${params.slug}`);
-  }
-
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
 
   const cleanTitle = (article.seo_title || article.title)
