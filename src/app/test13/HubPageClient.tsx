@@ -488,15 +488,11 @@ export default function HubPageClient({
 
         if (!displayCasts || displayCasts.length === 0) return null;
 
-        // 自社店舗（fukuoka, yokohama）を先頭、外部店舗を後方に並び替え
-        const sortedCasts = [...displayCasts].sort((a: any, b: any) => {
-          const aExt = Boolean(a.is_external || ['tokyo', 'osaka', 'nagoya'].includes(a.store_slug));
-          const bExt = Boolean(b.is_external || ['tokyo', 'osaka', 'nagoya'].includes(b.store_slug));
-          if (aExt === bExt) return (a.display_order || 0) - (b.display_order || 0);
-          return aExt ? 1 : -1;
-        });
+        // display_order の順序をそのまま尊重
+        const sortedCasts = [...displayCasts];
 
-        const marqueeCasts = [...sortedCasts, ...sortedCasts];
+        // キャスト数が十分にある場合はそのまま、少ない場合のみ無限ループ用にダブらせる
+        const marqueeCasts = sortedCasts.length >= 8 ? sortedCasts : [...sortedCasts, ...sortedCasts];
 
         return (
           <section className="overflow-hidden bg-slate-50 py-24 [content-visibility:auto] [contain-intrinsic-size:500px]">

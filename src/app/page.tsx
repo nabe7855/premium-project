@@ -63,15 +63,20 @@ import { prisma } from '@/lib/prisma';
 
 async function getFeaturedCasts() {
   try {
-    const data: any = await prisma.$queryRawUnsafe(`
-      SELECT id, name, store_name, store_slug, catch_copy, image_url, link_url, is_external, display_order
-      FROM featured_casts
-      WHERE is_active = true
-      ORDER BY display_order ASC, created_at DESC
-    `);
+    const { data, error } = await supabase
+      .from('featured_casts')
+      .select('id, name, store_name, store_slug, catch_copy, image_url, link_url, is_external, display_order')
+      .eq('is_active', true)
+      .order('display_order', { ascending: true })
+      .limit(16);
+
+    if (error) {
+      console.error('getFeaturedCasts error:', error);
+      return [];
+    }
     return data || [];
   } catch (e) {
-    console.error('getFeaturedCasts error:', e);
+    console.error('getFeaturedCasts exception:', e);
     return [];
   }
 }

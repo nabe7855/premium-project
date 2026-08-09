@@ -88,9 +88,40 @@ export default function NoteArticleUI({
     month: 'long',
     day: 'numeric',
   });
+  // FAQPage JSON-LD 構造化データの動的生成（HTML本文中の Q. / A. 構造から自動抽出）
+  const faqList: { question: string; answer: string }[] = [];
+  if (article.content) {
+    const qMatches = Array.from(article.content.matchAll(/<h3[^>]*>Q\.\s*([\s\S]*?)<\/h3>[\s\S]*?<p[^>]*>A\.\s*([\s\S]*?)<\/p>/gi));
+    for (const m of qMatches) {
+      const qText = ((m as RegExpMatchArray)[1] || '').replace(/<[^>]+>/g, '').trim();
+      const aText = ((m as RegExpMatchArray)[2] || '').replace(/<[^>]+>/g, '').trim();
+      if (qText && aText) {
+        faqList.push({ question: qText, answer: aText });
+      }
+    }
+  }
+
+  const faqSchema = faqList.length > 0 ? {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: faqList.map(item => ({
+      '@type': 'Question',
+      name: item.question,
+      acceptedAnswer: {
+        '@type': 'Answer',
+        text: item.answer,
+      },
+    })),
+  } : null;
 
   return (
     <div className="bg-white">
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
       <article className="mx-auto max-w-[740px] px-5 py-12 md:py-20">
         {/* 記事ヘッダー */}
         <header className="mb-10 md:mb-16">
