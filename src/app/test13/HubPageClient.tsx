@@ -473,8 +473,14 @@ export default function HubPageClient({
 
       {/* ─── 1.4 全国から選ばれた人気者 (手動選定 ＆ 自社・外部連携) ─── */}
       {(() => {
-        const displayCasts = featuredCasts.length > 0
-          ? featuredCasts
+        // 🚀 DB上の実在アクティブキャスト（福岡店・横浜店等）のみを厳密抽出
+        const filteredFeatured = (featuredCasts || []).filter((fc: any) => {
+          const slug = fc.store_slug || fc.storeSlug;
+          return slug === 'fukuoka' || slug === 'yokohama' || (fc.store_name && !fc.is_external && !['osaka', 'nagoya'].includes(slug));
+        });
+
+        const displayCasts = filteredFeatured.length > 0
+          ? filteredFeatured
           : validCasts.map(c => ({
               id: c.id,
               name: c.name,
