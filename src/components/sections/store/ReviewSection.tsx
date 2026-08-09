@@ -82,16 +82,16 @@ export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
                 {renderStars(reviews[currentReview].rating)}
               </div>
               <blockquote className="mb-6 text-xl italic leading-relaxed text-gray-800 md:text-2xl">
-                "{reviews[currentReview].content}"
+                "{reviews[currentReview].comment}"
               </blockquote>
               <div className="flex items-center justify-center gap-4 text-gray-600">
                 <div className="flex items-center gap-1">
                   <User className="h-4 w-4" />
-                  <span>{reviews[currentReview].author}</span>
+                  <span>{reviews[currentReview].userName}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="h-4 w-4" />
-                  <span>{reviews[currentReview].date}</span>
+                  <span>{new Date(reviews[currentReview].createdAt).toLocaleDateString('ja-JP', { timeZone: 'Asia/Tokyo' })}</span>
                 </div>
               </div>
               {reviews[currentReview].service && (
