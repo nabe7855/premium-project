@@ -29,7 +29,7 @@ export default async function RecruitHubPage() {
   const [columns, interviewResult, ikeoResult] = await Promise.all([
     getPublishedRecruitColumns(),
     getInterviewArticles({ limit: 3 }),
-    getMediaArticles('ikeo', 'recruit'),
+    getMediaArticles('ikeo'),
   ]);
 
   const interviews = interviewResult?.articles || [];
