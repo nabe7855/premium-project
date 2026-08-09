@@ -46,6 +46,17 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      // R1-2: 求人記事の重複統合（/amolab -> /ikeo 301 転送）
+      {
+        source: '/amolab/fukuoka-recruit-guide',
+        destination: '/ikeo/fukuoka-recruit-guide',
+        permanent: true,
+      },
+      {
+        source: '/amolab/yokohama-recruit-guide',
+        destination: '/ikeo/yokohama-recruit-guide',
+        permanent: true,
+      },
       {
         source: '/store/honten',
         destination: '/store/fukuoka',

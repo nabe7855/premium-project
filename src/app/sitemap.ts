@@ -285,7 +285,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // イケオラボ (/ikeo & /ikeo/[slug]) - category='ikeo' かつ published の記事を追加
   try {
     const { getMediaArticles } = await import('@/lib/actions/media');
-    const ikeoResult = await getMediaArticles('ikeo', 'recruit');
+    const ikeoResult = await getMediaArticles('ikeo');
     if (ikeoResult.success && ikeoResult.articles) {
       mediaPages.push({
         url: `${baseUrl}/ikeo`,

@@ -2,7 +2,7 @@ import NoteArticleUI from '@/components/media/NoteArticleUI';
 import { getRelatedArticles } from '@/lib/actions/media';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -66,6 +66,11 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
   // 記事がない、または下書きの場合は404ページへ
   if (!article || article.status !== 'published') {
     notFound();
+  }
+
+  // R1-1: category ガード（ikeo カテゴリの記事が /amolab/[slug] にアクセスされた場合は /ikeo/[slug] へ 301 転送）
+  if (article.category === 'ikeo') {
+    redirect(`/ikeo/${params.slug}`);
   }
 
   // 関連記事の取得

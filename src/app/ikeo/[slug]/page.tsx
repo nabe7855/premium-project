@@ -2,7 +2,7 @@ import NoteArticleUI from '@/components/media/NoteArticleUI';
 import { getRelatedArticles } from '@/lib/actions/media';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
@@ -18,14 +18,20 @@ export async function generateMetadata({
     return { title: '記事が見つかりません' };
   }
 
+  const canonicalUrl = `https://www.sutoroberrys.jp/ikeo/${params.slug}`;
+
   return {
     title: `${article.title}｜イケオラボ`,
     description: article.seo_description || article.excerpt || '',
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: article.seo_title || article.title,
       description: article.seo_description || article.excerpt || '',
       images: article.thumbnail_url ? [article.thumbnail_url] : [],
       type: 'article',
+      url: canonicalUrl,
     },
   };
 }
@@ -44,6 +50,11 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
   // 記事がない、または下書きの場合は404ページへ
   if (!article || article.status !== 'published') {
     notFound();
+  }
+
+  // R1-1: category ガード（amolab / amolab-jiten カテゴリの記事が /ikeo/[slug] にアクセスされた場合は /amolab/[slug] へ 301 転送）
+  if (article.category === 'amolab' || article.category === 'amolab-jiten') {
+    redirect(`/amolab/${params.slug}`);
   }
 
   // 関連記事を取得
