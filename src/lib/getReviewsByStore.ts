@@ -16,7 +16,7 @@ export async function getReviewsByStore(
     offset = 0,
     castId,
   }: { limit?: number; offset?: number; castId?: string } = {}
-): Promise<{ reviews: Review[]; totalCount: number }> {
+): Promise<{ reviews: Review[]; totalCount: number; averageRating?: string }> {
   try {
     let targetCastIds: string[] = [];
 
@@ -105,16 +105,31 @@ export async function getReviewsByStore(
 
     const mapped = rawReviews.map(mapReview);
 
+    // 🚀 店舗全体の平均評価（全件を対象とした動的計算。丸めルール: 小数第1位・四捨五入）
+    const { data: allRatingsData } = await supabase
+      .from('reviews')
+      .select('rating')
+      .in('cast_id', targetCastIds);
+
+    let averageRating = '0.0';
+    if (allRatingsData && allRatingsData.length > 0) {
+      const sum = allRatingsData.reduce((acc: number, r: any) => acc + (r.rating || 0), 0);
+      const rawAvg = sum / allRatingsData.length;
+      // 小数第1位で四捨五入（例: 4.78125 -> 4.8, 4.9419 -> 4.9）
+      averageRating = (Math.round(rawAvg * 10) / 10).toFixed(1);
+    }
+
     console.log(
-      `📊 getReviewsByStore: store=${storeSlug}, castId=${castId ?? 'ALL'}, offset=${offset}, limit=${limit}, 返却件数=${mapped.length}, 店舗総件数=${count ?? 0}`
+      `📊 getReviewsByStore: store=${storeSlug}, castId=${castId ?? 'ALL'}, 返却件数=${mapped.length}, 店舗総件数=${count ?? 0}, 店舗全体平均=${averageRating}`
     );
 
     return {
       reviews: mapped,
       totalCount: count ?? 0,
+      averageRating,
     };
   } catch (err: any) {
-    console.error('❌ getReviewsByStore 処理エラー:', err.message);
-    return { reviews: [], totalCount: 0 };
+    console.error('getReviewsByStore exception:', err);
+    return { reviews: [], totalCount: 0, averageRating: '0.0' };
   }
 }

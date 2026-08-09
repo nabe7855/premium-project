@@ -15,6 +15,7 @@ export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
 
   const [reviews, setReviews] = useState<any[]>([]);
   const [totalCount, setTotalCount] = useState<number>(0);
+  const [averageRating, setAverageRating] = useState<string>('0.0');
   const [currentReview, setCurrentReview] = useState<number>(0);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,6 +28,7 @@ export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
         const res = await getReviewsByStore(slug, { limit: 10, offset: 0 });
         setReviews(res.reviews || []);
         setTotalCount(res.totalCount || 0);
+        setAverageRating(res.averageRating || '0.0');
       } catch (err) {
         console.error('ReviewSection fetch error:', err);
       } finally {
@@ -50,11 +52,10 @@ export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
     return null;
   }
 
-  // 実データからの動的計算（店舗の総件数が20件以上の場合のみ表示）
+  // 🚀 実データ全件からの動的計算（店舗の総件数が20件以上の場合のみ表示）
+  // 丸めルール: 小数第1位で四捨五入（例: 福岡店 153/32=4.78125 -> 4.8、横浜店 1532/310=4.9419 -> 4.9）
   const showStats = totalCount >= 20;
-
-  const totalRating = reviews.reduce((acc, r) => acc + (r.rating || 5), 0);
-  const avgRating = showStats ? (totalRating / reviews.length).toFixed(1) : null;
+  const avgRating = showStats ? averageRating : null;
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
