@@ -44,11 +44,11 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             title,
             created_at,
             published_at,
-            casts (
+            casts!inner (
               name,
               is_active,
-              cast_store_memberships (
-                stores ( slug )
+              cast_store_memberships!inner (
+                stores!inner ( slug )
               )
             ),
             blog_images (
@@ -56,6 +56,8 @@ const DiarySection: React.FC<DiarySectionProps> = ({
             )
           `,
           )
+          .eq('casts.is_active', true)
+          .eq('casts.cast_store_memberships.stores.slug', storeSlug)
           .in('status', ['published', 'scheduled'])
           .lte('published_at', now)
           .order('published_at', { ascending: false });
