@@ -29,6 +29,19 @@ interface DialogueEditorProps {
 }
 
 export default function DialogueEditor({ sections, participants, photos, onPhotosChange, onChange }: DialogueEditorProps) {
+  const isNameMatch = (a: string | undefined, b: string | undefined): boolean => {
+    if (!a || !b) return false;
+    if (a === b || a.includes(b) || b.includes(a)) return true;
+    const extractKana = (s: string) => {
+      const match = s.match(/[（\(](.*?)[）\)]/);
+      const text = match ? match[1] : s;
+      return text.replace(/[\u3041-\u3096]/g, (m) => String.fromCharCode(m.charCodeAt(0) + 0x60));
+    };
+    const normA = extractKana(a);
+    const normB = extractKana(b);
+    return !!(normA && normB && (normA === normB || normA.includes(normB) || normB.includes(normA)));
+  };
+
   const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(new Set());
   const [uploadingSlotId, setUploadingSlotId] = useState<string | null>(null);
   const [activeSlotPhotoKey, setActiveSlotPhotoKey] = useState<string | null>(null);
@@ -275,19 +288,9 @@ export default function DialogueEditor({ sections, participants, photos, onPhoto
             {section.items.map((item) => {
               const participant = participants.find(p => {
                 if (!p) return false;
-                // 1. IDでの完全一致
                 if (p.id === item.speaker) return true;
-                
-                // 2. 名前での完全一致 (例: "イトウ" === "イトウ")
-                if (p.name === item.speaker || p.name === item.speaker_name) return true;
-                
-                // 3. 部分一致・あいまい一致 (例: "采（サイ）" に "サイ" が含まれる場合)
-                if (item.speaker && (p.name.includes(item.speaker) || item.speaker.includes(p.name))) return true;
-                if (item.speaker_name && (p.name.includes(item.speaker_name) || item.speaker_name.includes(p.name))) return true;
-
-                // 4. "interviewer" のフォールバック (スタッフ名「イトウ」へのマッピング)
-                if (item.speaker === 'interviewer' && p.type === 'staff' && p.name === 'イトウ') return true;
-
+                if (isNameMatch(p.name, item.speaker) || isNameMatch(p.name, item.speaker_name)) return true;
+                if (item.speaker === 'interviewer' && p.type === 'staff' && (p.name === 'イトウ' || isNameMatch(p.name, 'イトウ'))) return true;
                 return false;
               });
               const isSelected = selectedItemIds.has(item.id);

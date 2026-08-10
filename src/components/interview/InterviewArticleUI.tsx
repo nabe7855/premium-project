@@ -187,11 +187,24 @@ export default async function InterviewArticleUI({
     // speakerType が castId に一致するか確認
     let castId = speakerType && castPhotoMap.has(speakerType) ? speakerType : undefined;
     
-    // 見つからなければ名前で完全一致または部分一致を試みる
+    const isNameMatch = (a: string | undefined, b: string | undefined): boolean => {
+      if (!a || !b) return false;
+      if (a === b || a.includes(b) || b.includes(a)) return true;
+      const extractKana = (s: string) => {
+        const match = s.match(/[（\(](.*?)[）\)]/);
+        const text = match ? match[1] : s;
+        return text.replace(/[\u3041-\u3096]/g, (m) => String.fromCharCode(m.charCodeAt(0) + 0x60));
+      };
+      const normA = extractKana(a);
+      const normB = extractKana(b);
+      return !!(normA && normB && (normA === normB || normA.includes(normB) || normB.includes(normA)));
+    };
+
+    // 見つからなければ名前で完全一致または部分一致・よみがな一致を試みる
     if (!castId && speakerName) {
       castId = castNameToIdMap.get(speakerName);
       if (!castId) {
-        castId = Array.from(castNameToIdMap.entries()).find(([name]) => name.includes(speakerName) || speakerName.includes(name))?.[1];
+        castId = Array.from(castNameToIdMap.entries()).find(([name]) => isNameMatch(name, speakerName))?.[1];
       }
     }
 
