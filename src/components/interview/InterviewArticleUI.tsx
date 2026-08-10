@@ -397,7 +397,7 @@ export default async function InterviewArticleUI({
                   );
                 }
 
-                if (item.type === 'photo' && item.photo_key) {
+                if (((item as any).type === 'photo' || (item as any).type === 'image') && item.photo_key) {
                   const photo = photos[item.photo_key] as any;
                   if (!photo) return null;
 
