@@ -69,7 +69,7 @@ export default function ReviewSection({ storeSlug }: ReviewSectionProps) {
   };
 
   return (
-    <section id="reviews" className="bg-gradient-to-br from-blue-50 to-indigo-100 px-4 py-16">
+    <section id="reviews" className="bg-gradient-to-br from-gray-50 to-white px-4 py-16">
       <div className="mx-auto max-w-6xl">
         <div className="mb-12 text-center">
           <h2 className="mb-4 text-3xl font-bold md:text-4xl">お客様の声</h2>
