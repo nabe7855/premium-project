@@ -154,11 +154,23 @@ export default async function InterviewArticleUI({
       profileList.push(profileDataRaw as CastProfileData);
     }
   }
-  const writerNoteList: string[] = writerNote
-    ? Array.isArray(writerNote)
-      ? writerNote
-      : [writerNote]
-    : [];
+  const rawWriterNote = interviewMeta?.writer_note as any;
+  let writerNoteList: string[] = [];
+  if (rawWriterNote) {
+    if (Array.isArray(rawWriterNote)) {
+      writerNoteList = rawWriterNote.map((item) =>
+        typeof item === 'object' && item !== null
+          ? item.note || item.text || JSON.stringify(item)
+          : String(item)
+      );
+    } else if (typeof rawWriterNote === 'object' && rawWriterNote !== null) {
+      writerNoteList = [
+        rawWriterNote.note || rawWriterNote.text || JSON.stringify(rawWriterNote),
+      ];
+    } else if (typeof rawWriterNote === 'string') {
+      writerNoteList = [rawWriterNote];
+    }
+  }
 
   // ✅ speaker_name と speaker タイプからアイコンURLを解決するヘルパー
   const resolveIconUrl = (speakerType: string | undefined, speakerName: string | undefined, itemIconUrl: string | undefined): string | undefined => {
