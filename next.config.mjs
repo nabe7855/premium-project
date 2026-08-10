@@ -46,6 +46,11 @@ const nextConfig = {
   },
   async redirects() {
     return [
+      {
+        source: '/store/fukuoka/interview/8df77013-ed2c-435f-8f9e-83f1cb60f41f/:path*',
+        destination: '/store/fukuoka/interview/-130642/:path*',
+        permanent: true,
+      },
       // R1-2: 求人記事の重複統合（/amolab -> /ikeo 301 転送）
       {
         source: '/amolab/fukuoka-recruit-guide',
