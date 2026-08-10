@@ -173,7 +173,7 @@ const SectionRenderer: React.FC<{ section: SectionData; isFirst?: boolean; altMa
               className={`${pClass} text-lg font-medium italic`}
             />
           )}
-          {content.title && content.title !== pageTitle && <h2 className={h2Class}>{content.title}</h2>}
+          {content.title && content.title.replace(/[「」『』\s]/g, '') !== pageTitle?.replace(/[「」『』\s]/g, '') && <h2 className={h2Class}>{content.title}</h2>}
         </div>
       );
 

@@ -68,8 +68,10 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     }
   }
   const metaDescription = plainTextDescription || page.title;
-  const rawTitle = page.seoTitle || page.title;
-  const fullTitle = `${rawTitle}｜${storeData.name}`;
+  const rawTitle = (page.seoTitle || page.title).trim();
+  const fullTitle = rawTitle.includes('ストロベリーボーイズ') || rawTitle.includes('【福岡店】') || rawTitle.includes('【横浜店】')
+    ? rawTitle
+    : `${rawTitle}｜${storeData.name}`;
 
   return {
     title: {
