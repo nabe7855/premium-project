@@ -23,6 +23,7 @@ export default function DialogueBubble({
   text,
 }: DialogueBubbleProps) {
   const isInterviewer = speaker === 'interviewer';
+  const displayName = speakerName === 'セイラ' || speakerName === 'せいら' ? '青空（せいら）' : speakerName;
 
   return (
     <div
@@ -33,7 +34,7 @@ export default function DialogueBubble({
         {iconUrl ? (
           <img
             src={iconUrl}
-            alt={speakerName ?? speaker}
+            alt={displayName ?? speaker}
             className="h-11 w-11 rounded-full border-2 object-cover"
             style={{
               borderColor: isInterviewer ? '#d1d5db' : '#F9D1DA',
@@ -46,15 +47,15 @@ export default function DialogueBubble({
               background: isInterviewer ? '#9ca3af' : '#E8567A',
             }}
           >
-            {speakerName ? speakerName.charAt(0) : (isInterviewer ? 'I' : 'C')}
+            {displayName ? displayName.charAt(0) : (isInterviewer ? 'I' : 'C')}
           </div>
         )}
-        {speakerName && (
+        {displayName && (
           <p
             className="mt-1 text-center text-[10px] font-medium"
             style={{ color: isInterviewer ? '#9ca3af' : '#E8567A' }}
           >
-            {speakerName}
+            {displayName}
           </p>
         )}
       </div>

@@ -222,6 +222,39 @@ export default async function InterviewArticleUI({
     return fallbackUrl;
   };
 
+  // ✅ スピーカー表示名をキャストの正式名（例: 青空（せいら））に昇格するヘルパー
+  const resolveSpeakerName = (speakerType: string | undefined, speakerName: string | undefined): string | undefined => {
+    if (!speakerName) return undefined;
+    if (speakerType === 'interviewer' || speakerType === 'staff') return speakerName;
+
+    if (speakerName === 'セイラ' || speakerName === 'せいら' || speakerName === '青空') {
+      const seiraCast = castLinks?.find(c => c.cast_name.includes('せいら') || c.cast_name.includes('青空'));
+      if (seiraCast && seiraCast.cast_name) return seiraCast.cast_name;
+      return '青空（せいら）';
+    }
+
+    if (castLinks && castLinks.length > 0) {
+      const isNameMatch = (a: string | undefined, b: string | undefined): boolean => {
+        if (!a || !b) return false;
+        if (a === b || a.includes(b) || b.includes(a)) return true;
+        const extractKana = (s: string) => {
+          const match = s.match(/[（\(](.*?)[）\)]/);
+          const text = match ? match[1] : s;
+          return text.replace(/[\u3041-\u3096]/g, (m) => String.fromCharCode(m.charCodeAt(0) + 0x60));
+        };
+        const normA = extractKana(a);
+        const normB = extractKana(b);
+        return !!(normA && normB && (normA === normB || normA.includes(normB) || normB.includes(normA)));
+      };
+
+      const matchedCast = castLinks.find(c => isNameMatch(c.cast_name, speakerName) || isNameMatch(c.cast_name_romaji || undefined, speakerName));
+      if (matchedCast && matchedCast.cast_name) {
+        return matchedCast.cast_name;
+      }
+    }
+    return speakerName;
+  };
+
   const publishedDate = article.published_at ?? article.created_at;
   const dateStr = publishedDate.toLocaleDateString('ja-JP', {
     year: 'numeric',
@@ -333,7 +366,7 @@ export default async function InterviewArticleUI({
                     <DialogueBubble
                       key={ii}
                       speaker={(item.speaker ?? 'cast') as SpeakerType}
-                      speakerName={item.speaker_name}
+                      speakerName={resolveSpeakerName(item.speaker, item.speaker_name)}
                       iconUrl={resolveIconUrl(item.speaker, item.speaker_name, item.icon_url)}
                       text={item.text}
                     />
