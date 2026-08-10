@@ -10,7 +10,7 @@ const PageLoading: React.FC = () => {
         {/* Text */}
         <div className="mt-8 flex flex-col items-center gap-2">
           <p className="animate-pulse text-xl font-black tracking-widest text-[#FF8BA7]">
-            ちょっと待ってね
+            Loading...
           </p>
           <div className="h-0.5 w-16 bg-gradient-to-r from-transparent via-[#FF8BA7] to-transparent" />
         </div>

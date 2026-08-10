@@ -10,7 +10,7 @@ import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 interface Props {
   params: {
@@ -30,15 +30,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: '記事が見つかりません' };
   }
 
-  const meta = article.interview_meta;
+  const meta = article.interview_meta as any;
+  const primaryCastLink = meta?.cast_links?.[0];
+  const canonicalCastSlug = primaryCastLink?.cast_name_romaji || params.cast;
+
   const baseUrl = 'https://www.sutoroberrys.jp';
-  // 新しいURL構造に合わせた正規URL
-  const canonicalUrl = `${baseUrl}/store/${params.slug}/interview/${params.cast}/${params.article}`;
+  const canonicalUrl = `${baseUrl}/store/${params.slug}/interview/${canonicalCastSlug}/${params.article}`;
 
   return {
     title: article.seo_title || article.title,
     description: article.seo_description || article.excerpt,
-    keywords: (meta as any)?.seo_keywords || undefined,
+    keywords: meta?.seo_keywords || undefined,
     alternates: {
       canonical: canonicalUrl,
     },
@@ -60,6 +62,14 @@ export default async function CastInterviewPage({ params }: Props) {
   const { article, success } = await getInterviewArticleBySlug(params.article);
   if (!success || !article) {
     notFound();
+  }
+
+  // 301転送ガード: UUIDや非正規の [cast] パラメータでアクセスされた場合は正規の [cast_name_romaji] へ 301 永久転送
+  const meta = article.interview_meta as any;
+  const primaryCastLink = meta?.cast_links?.[0];
+  const canonicalCastSlug = primaryCastLink?.cast_name_romaji;
+  if (canonicalCastSlug && params.cast !== canonicalCastSlug) {
+    redirect(`/store/${params.slug}/interview/${canonicalCastSlug}/${params.article}`);
   }
 
   // 2. キャストデータの取得（存在しない場合でも記事本体を描画）
