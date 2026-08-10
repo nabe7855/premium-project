@@ -242,7 +242,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
           const area = areaMap[rawArea] || 'fukuoka';
 
           const castLink = meta?.cast_links?.[0];
-          const castSlug = castLink?.cast_id || castLink?.cast_name_romaji || 'unknown';
+          const castSlug = castLink?.cast_name_romaji || castLink?.cast_id || 'unknown';
           
           mediaPages.push({
             url: `${baseUrl}/store/${area}/interview/${castSlug}/${article.slug}`,
