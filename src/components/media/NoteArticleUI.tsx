@@ -209,6 +209,11 @@ export default function NoteArticleUI({
             color: #be123c;
             text-decoration-color: #be123c;
           }
+          /* CTAボタン等のユーティリティクラスを優先する */
+          .prose a.text-white {
+            color: #ffffff !important;
+            text-decoration: none !important;
+          }
           /* Hide redundant hero header inside content if present */
           .prose .hero {
             display: none !important;

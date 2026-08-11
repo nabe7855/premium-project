@@ -2,8 +2,11 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+import { sendStaffNotification, sendGenericAutoReply } from '@/lib/mail';
 
 // ---------------------------------------------------------------------------
+
 // 型定義
 // ---------------------------------------------------------------------------
 
@@ -434,3 +437,85 @@ export async function updateInterviewMeta(
     return { success: false, error: message };
   }
 }
+
+// ---------------------------------------------------------------------------
+// 体験談インタビュー応募フォーム (Client) 用のアクション
+// ---------------------------------------------------------------------------
+const interviewApplicationSchema = z.object({
+  theme: z.string().min(1, '必須項目です').max(500, '500文字以内で入力してください'),
+  usage_period: z.string().min(1, '必須項目です'),
+  interview_method: z.string().min(1, '必須項目です'),
+  contact_info: z.string().min(1, '必須項目です'),
+  agreements: z.array(z.boolean()).length(3).refine(arr => arr.every(Boolean), {
+    message: '全ての項目に同意する必要があります',
+  }),
+});
+
+export async function submitInterviewApplication(data: unknown) {
+  try {
+    const validatedData = interviewApplicationSchema.parse(data);
+
+    // 1. DBに保存
+    const application = await prisma.interviewApplication.create({
+      data: {
+        theme: validatedData.theme,
+        usage_period: validatedData.usage_period,
+        interview_method: validatedData.interview_method,
+        contact_info: validatedData.contact_info,
+        status: 'pending',
+      },
+    });
+
+    // 2. スタッフへの通知メール作成
+    const staffMessage = `
+新しい体験談インタビューの応募がありました。
+
+【希望テーマ】
+${validatedData.theme}
+
+【ご利用時期】
+${validatedData.usage_period}
+
+【希望インタビュー方法】
+${validatedData.interview_method}
+
+【ご連絡先】
+${validatedData.contact_info}
+    `.trim();
+
+    // 3. Send Staff Notification
+    const staffResult = await sendStaffNotification({
+      type: 'inquiry',
+      storeSlug: 'fukuoka',
+      subject: '体験談インタビュー応募のお知らせ',
+      data: {
+        '希望テーマ': validatedData.theme,
+        'ご利用時期': validatedData.usage_period,
+        '希望インタビュー方法': validatedData.interview_method,
+        'ご連絡先': validatedData.contact_info,
+      }
+    });
+    if (!staffResult.success) {
+      console.error('Failed to send staff notification for interview:', staffResult.error);
+    }
+
+    // 4. Send Auto Reply if contact_info looks like an email
+    if (validatedData.contact_info.includes('@')) {
+      const autoReplyResult = await sendGenericAutoReply({
+        to: validatedData.contact_info,
+        name: '応募者',
+        subject: '体験談インタビューへのご応募',
+        body: 'インタビューへのご応募',
+      });
+      if (!autoReplyResult.success) {
+        console.error('Failed to send auto reply for interview:', autoReplyResult.error);
+      }
+    }
+
+    return { success: true, id: application.id };
+  } catch (error: any) {
+    console.error('Error submitting interview application:', error);
+    return { success: false, error: '送信中にエラーが発生しました。時間をおいて再度お試しください。' };
+  }
+}
+
