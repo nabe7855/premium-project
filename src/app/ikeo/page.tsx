@@ -184,11 +184,76 @@ export default async function CareerMediaTopPage({
           </div>
         </section>
 
+        {/* 働く人の記録（固定枠） */}
+        <section className="mb-14">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="font-serif text-xl font-bold text-slate-800 md:text-2xl">
+              働く人の記録
+            </h2>
+            <Link href="/ikeo?tag=インタビュー" className="text-[11px] font-bold text-blue-600 hover:underline">
+              一覧を見る
+            </Link>
+          </div>
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            {allPublishedArticles
+              .filter((article: any) => article.tags?.some((t: any) => t.tag.name === 'インタビュー'))
+              .slice(0, 2)
+              .map((article: any) => (
+                <Link
+                  key={article.id}
+                  href={`/ikeo/${article.slug}`}
+                  className="group block overflow-hidden rounded-2xl border border-blue-100 bg-gradient-to-br from-white to-blue-50/50 shadow-sm transition-all hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+                    {article.thumbnail_url ? (
+                      <Image
+                        src={article.thumbnail_url}
+                        alt={article.title}
+                        fill
+                        className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-blue-900 text-white">
+                        <SparklesIcon size={48} className="opacity-20" />
+                      </div>
+                    )}
+                    <div className="absolute left-3 top-3">
+                      <span className="rounded-sm bg-blue-600 px-2 py-1 text-[10px] font-bold text-white shadow-sm">
+                        INTERVIEW
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="mb-3 font-bold leading-relaxed text-slate-800 transition-colors group-hover:text-blue-600 md:text-lg">
+                      {article.title}
+                    </h3>
+                    <p className="mb-4 line-clamp-2 text-xs leading-relaxed text-slate-500">
+                      {article.excerpt}
+                    </p>
+                    <div className="flex items-center justify-between border-t border-blue-100/50 pt-4">
+                      <span className="text-[10px] font-bold text-slate-400">
+                        {new Date(article.published_at || article.created_at).toLocaleDateString('ja-JP')}
+                      </span>
+                      <span className="flex items-center gap-1 text-[11px] font-bold text-blue-600">
+                        続きを読む <ChevronRightIcon size={14} />
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            {allPublishedArticles.filter((article: any) => article.tags?.some((t: any) => t.tag.name === 'インタビュー')).length === 0 && (
+              <div className="col-span-full rounded-2xl bg-slate-50 py-12 text-center text-sm text-slate-400">
+                インタビュー記事を準備中です。
+              </div>
+            )}
+          </div>
+        </section>
+
         {/* 記事一覧 */}
         <section>
           <div className="mb-6 flex items-center justify-between">
             <h2 className="font-serif text-xl font-bold text-slate-800 md:text-2xl">
-              {selectedTag ? `「${selectedTag}」の記事` : '最新コラム'}
+              {selectedTag ? `「${selectedTag}」の記事` : '新着記事'}
             </h2>
             {selectedTag && (
               <Link href="/ikeo" className="text-[11px] font-bold text-blue-600 hover:underline">

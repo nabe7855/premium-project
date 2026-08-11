@@ -152,8 +152,7 @@ const IncomeSimulation: React.FC<IncomeSimulationProps> = ({ isOpen, onClose }) 
                       const text = `【特別オファー適用希望】\n診断結果：月収${predictedIncome}万円\n性格：${value}\n勤務：${newSelections.time}・週${newSelections.days}\n特典：入店費用免除`;
                       navigator.clipboard.writeText(text);
                       alert('結果をコピーしました！応募フォームの備考欄に貼り付けてご応募ください。');
-                      // TODO: クライアントから公式LINEのURLが提供されるまでは応募フォームへ遷移
-                      window.location.href = '#application'; 
+                      window.location.href = 'https://lin.ee/pTajctJ'; 
                     }}
                     className="w-full rounded bg-amber-500 py-3 font-bold text-slate-900 shadow-lg transition-transform hover:scale-105 active:scale-95"
                   >

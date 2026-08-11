@@ -1,181 +1,145 @@
-import DictionarySearch from '@/components/media/DictionarySearch';
 import { getMediaArticles } from '@/lib/actions/media';
-import { ArrowRight, Book, Shield, Star } from 'lucide-react';
-import Image from 'next/image';
+import { BookOpenIcon, ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
-
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: '女風辞典 (Jiten) | 女性用風俗の不安を安心に変える初心者ガイド',
-  description:
-    '女性用風俗（女風）の用語、利用の流れ、マナー、料金などを分かりやすく解説。怖さや不安をあおらず、あなたが主体的に判断できるようになるための専門辞典です。',
+  title: '女性用風俗・用語集 | アモラボ',
+  description: '女性用風俗に関する専門用語や業界用語をわかりやすく解説する用語集です。',
 };
 
 export const revalidate = 3600;
 
-export default async function DictionaryTopPage() {
-  const result = await getMediaArticles('amolab-jiten', 'user');
-  const articles = result.success ? result.articles || [] : [];
+// 五十音順のインデックス
+const kanaRows = [
+  ['あ', 'い', 'う', 'え', 'お'],
+  ['か', 'き', 'く', 'け', 'こ'],
+  ['さ', 'し', 'す', 'せ', 'そ'],
+  ['た', 'ち', 'つ', 'て', 'と'],
+  ['な', 'に', 'ぬ', 'ね', 'の'],
+  ['は', 'ひ', 'ふ', 'へ', 'ほ'],
+  ['ま', 'み', 'む', 'め', 'も'],
+  ['や', null, 'ゆ', null, 'よ'],
+  ['ら', 'り', 'る', 'れ', 'ろ'],
+  ['わ', null, 'を', null, 'ん'],
+];
 
-  // カテゴリ分けのロジック（実際にはタグなどで分けるのが理想だが、一旦モック的に整理）
-  const categories = [
-    { title: 'はじめて読む', icon: <Star className="text-yellow-400" />, desc: '女風の基礎知識' },
-    {
-      title: '利用の流れ',
-      icon: <ArrowRight className="text-blue-400" />,
-      desc: '予約から当日まで',
-    },
-    {
-      title: '料金と見積もり',
-      icon: <Book className="text-emerald-400" />,
-      desc: '総額・内訳・指名料',
-    },
-    {
-      title: '安心・ルール',
-      icon: <Shield className="text-rose-400" />,
-      desc: '安全面・身バレ対策',
-    },
-  ];
+export default async function AmolabJitenTop() {
+  // getMediaArticles('amolab-jiten', 'category') or 'user'? 
+  // Existing page used ('amolab-jiten', 'user'). I'll use that to fetch the dictionary articles.
+  const result = await getMediaArticles('amolab-jiten', 'user');
+  const allArticles = result.success
+    ? result.articles?.filter((a: any) => a.status === 'published') || []
+    : [];
+
+  // 記事を最初の文字（ひらがな/カタカナ等）でグループ化する簡易ロジック
+  const groupedArticles = allArticles.reduce((acc: any, article: any) => {
+    let firstChar = article.title.charAt(0);
+    // カタカナをひらがなに変換（簡易的）
+    firstChar = firstChar.replace(/[\u30a1-\u30f6]/g, (match: string) =>
+      String.fromCharCode(match.charCodeAt(0) - 0x60)
+    );
+    // 濁点・半濁点の除去（簡易的）
+    const normalizedChar = firstChar.normalize('NFD').replace(/[\u3099\u309A]/g, '');
+    
+    if (!acc[normalizedChar]) {
+      acc[normalizedChar] = [];
+    }
+    acc[normalizedChar].push(article);
+    return acc;
+  }, {});
+
+  // 見出しとして存在する文字のリスト
+  const availableChars = new Set(Object.keys(groupedArticles));
 
   return (
-    <div className="min-h-screen bg-white">
-      {/* ヒーローセクション */}
-      <section className="relative overflow-hidden bg-[#fdfaf8] py-20 md:py-32">
-        <div className="absolute right-0 top-0 h-64 w-64 -translate-y-1/2 translate-x-1/2 rounded-full bg-pink-100/50 blur-3xl"></div>
-        <div className="absolute bottom-0 left-0 h-64 w-64 -translate-x-1/2 translate-y-1/2 rounded-full bg-blue-100/50 blur-3xl"></div>
-
-        <div className="container mx-auto max-w-4xl px-6 text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full bg-white px-4 py-1.5 text-xs font-bold text-gray-400 shadow-sm">
-            <span className="flex h-2 w-2 rounded-full bg-pink-400"></span>
-            初心者向け解説メディア
+    <div className="min-h-screen bg-[#fcfdff] font-sans text-slate-800">
+      <div className="bg-pink-50 py-16">
+        <div className="mx-auto max-w-4xl px-4 text-center sm:px-6">
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-white text-pink-500 shadow-sm">
+            <BookOpenIcon size={32} />
           </div>
-          <h1 className="mb-8 text-[32px] font-black leading-tight text-gray-900 md:text-[48px]">
-            女風辞典 <span className="text-pink-500">Jiten</span>
+          <h1 className="mb-4 font-serif text-3xl font-bold tracking-tight text-slate-900 md:text-4xl">
+            女風・用語集
           </h1>
-          <p className="mx-auto mb-12 max-w-2xl text-base leading-relaxed text-gray-500 md:text-lg">
-            怖さや恥ずかしさをあおらず、分からない言葉や流れをやさしく整理し、
-            自分で安心して判断できるようになるための辞典。
+          <p className="text-sm leading-relaxed text-slate-600 md:text-base">
+            女性用風俗の世界をより深く知るための専門用語・業界用語辞典。
           </p>
-
-          <DictionarySearch articles={articles} />
         </div>
-      </section>
+      </div>
 
-      {/* カテゴリセクション */}
-      <section className="py-20">
-        <div className="container mx-auto max-w-5xl px-6">
-          <div className="mb-12 text-center">
-            <h2 className="text-2xl font-bold text-gray-800">カテゴリから探す</h2>
-          </div>
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {categories.map((cat, idx) => (
-              <div
-                key={idx}
-                className="group cursor-pointer rounded-2xl border border-gray-100 bg-white p-8 shadow-sm transition-all hover:-translate-y-1 hover:border-pink-100 hover:shadow-xl hover:shadow-pink-50"
-              >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 transition-colors group-hover:bg-pink-50">
-                  {cat.icon}
-                </div>
-                <h3 className="mb-2 font-bold text-gray-800">{cat.title}</h3>
-                <p className="text-[13px] text-gray-400">{cat.desc}</p>
+      <main className="mx-auto max-w-4xl px-4 py-16 sm:px-6">
+        {/* 五十音インデックス（ナビゲーション） */}
+        <section className="mb-20 rounded-3xl border border-slate-100 bg-white p-6 shadow-sm md:p-10">
+          <h2 className="mb-6 text-center text-sm font-bold uppercase tracking-widest text-slate-400">
+            Index
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {kanaRows.map((row, rowIndex) => (
+              <div key={rowIndex} className="flex justify-between">
+                {row.map((char, colIndex) => {
+                  if (!char) return <div key={colIndex} className="w-10" />;
+                  const isActive = availableChars.has(char);
+                  return isActive ? (
+                    <a
+                      key={char}
+                      href={`#char-${char}`}
+                      className="flex h-10 w-10 items-center justify-center rounded-full bg-pink-50 font-bold text-pink-600 transition-colors hover:bg-pink-500 hover:text-white"
+                    >
+                      {char}
+                    </a>
+                  ) : (
+                    <div
+                      key={char}
+                      className="flex h-10 w-10 items-center justify-center rounded-full text-slate-300"
+                    >
+                      {char}
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 注目記事（まず読む3本） */}
-      <section className="bg-gray-50 py-20">
-        <div className="container mx-auto max-w-5xl px-6">
-          <div className="mb-12 flex items-center justify-between">
-            <h2 className="text-2xl font-bold text-gray-800">まず読むべき3本</h2>
-            <div className="mx-8 hidden h-[1px] flex-1 bg-gray-200 sm:block"></div>
-          </div>
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {articles.slice(0, 3).map((article: any) => (
-              <Link
-                key={article.id}
-                href={`/amolab/jiten/words/${article.slug}`}
-                className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-sm transition-all hover:shadow-xl"
-              >
-                <div className="relative aspect-[16/9] overflow-hidden">
-                  {article.thumbnail_url && (
-                    <Image
-                      src={article.thumbnail_url}
-                      alt={article.title}
-                      fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+        {/* 用語一覧（五十音順） */}
+        <section className="space-y-16">
+          {Object.keys(groupedArticles).sort().map((char) => (
+            <div key={char} id={`char-${char}`} className="scroll-mt-24">
+              <h3 className="mb-6 border-b-2 border-pink-100 pb-2 text-2xl font-bold text-slate-800">
+                {char}
+              </h3>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                {groupedArticles[char].map((article: any) => (
+                  <Link
+                    key={article.id}
+                    // The existing page used /amolab/jiten/words/[slug], let's maintain that if it exists
+                    href={`/amolab/jiten/words/${article.slug}`}
+                    className="group flex items-center justify-between rounded-xl border border-slate-100 bg-white p-5 shadow-sm transition-all hover:border-pink-200 hover:shadow-md"
+                  >
+                    <span className="font-bold text-slate-700 transition-colors group-hover:text-pink-600">
+                      {article.title}
+                    </span>
+                    <ChevronRightIcon
+                      size={18}
+                      className="text-slate-300 transition-transform group-hover:translate-x-1 group-hover:text-pink-400"
                     />
-                  )}
-                  <div className="absolute left-4 top-4 rounded-lg bg-white/90 px-3 py-1 text-[10px] font-bold text-gray-800 backdrop-blur-sm">
-                    MUST READ
-                  </div>
-                </div>
-                <div className="p-6">
-                  <h3 className="mb-3 line-clamp-2 text-lg font-bold leading-tight text-gray-800 group-hover:text-pink-500">
-                    {article.title}
-                  </h3>
-                  <p className="line-clamp-2 text-[13px] leading-relaxed text-gray-500">
-                    {article.excerpt}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
 
-      {/* 用語一覧 */}
-      <section className="py-20">
-        <div className="container mx-auto max-w-5xl px-6">
-          <div className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800">用語索引</h2>
-          </div>
-          <div className="grid grid-cols-2 gap-x-8 gap-y-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-            {articles.map((article: any) => (
-              <Link
-                key={article.id}
-                href={`/amolab/jiten/words/${article.slug}`}
-                className="flex items-center gap-2 py-2 text-[15px] font-medium text-gray-600 transition-colors hover:text-pink-500"
-              >
-                <div className="h-1.5 w-1.5 rounded-full bg-gray-200 group-hover:bg-pink-400"></div>
-                {article.title}
-              </Link>
-            ))}
-            {articles.length === 0 && (
-              <p className="col-span-full py-10 text-center italic text-gray-400">
-                現在、用語を準備中です。
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* 編集方針 */}
-      <section className="border-t border-gray-100 bg-white py-20">
-        <div className="container mx-auto max-w-2xl px-6 text-center">
-          <h2 className="mb-8 text-xl font-bold text-gray-800">女風辞典の編集方針</h2>
-          <p className="mb-10 text-sm leading-relaxed text-gray-500">
-            当辞典は、業界の専門用語を分かりやすく解説し、利用者が自分自身の意志で
-            納得して判断できることを目的としています。誇張した表現や不安を煽る記載は行いません。
-          </p>
-          <div className="flex justify-center gap-6">
-            <Link
-              href="/amolab/jiten/policy"
-              className="text-xs font-bold text-gray-400 underline underline-offset-4 hover:text-gray-600"
-            >
-              編集方針について
-            </Link>
-            <Link
-              href="/amolab/jiten/contacts"
-              className="text-xs font-bold text-gray-400 underline underline-offset-4 hover:text-gray-600"
-            >
-              トラブル・相談先
-            </Link>
-          </div>
-        </div>
-      </section>
+        <section className="mt-24 text-center">
+          <Link
+            href="/amolab/jyosei-fuzoku-guide"
+            className="inline-flex items-center gap-2 rounded-full border border-pink-200 px-8 py-3 text-sm font-bold text-pink-500 transition-colors hover:bg-pink-50"
+          >
+            女性用風俗のご利用ガイドに戻る
+          </Link>
+        </section>
+      </main>
     </div>
   );
 }

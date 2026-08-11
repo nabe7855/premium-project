@@ -1,25 +1,17 @@
 import { execSync } from 'child_process';
 
-function revalidateStorePages() {
-  console.log('=== REVALIDATING STORE PAGES ===\n');
+const paths = [
+  '/store/fukuoka',
+  '/store/fukuoka/reviews'
+];
 
-  const paths = [
-    '/store/fukuoka',
-    '/store/yokohama',
-    '/store/fukuoka/news',
-    '/store/yokohama/news'
-  ];
-
-  for (const p of paths) {
-    try {
-      const payload = JSON.stringify({ path: p });
-      const cmd = `curl.exe -X POST -H "Content-Type: application/json" -d "${payload.replace(/"/g, '\\"')}" "https://www.sutoroberrys.jp/api/revalidate"`;
-      const res = execSync(cmd, { encoding: 'utf8' });
-      console.log(`Revalidated "${p}":`, res);
-    } catch (e) {
-      console.error(`Error revalidating "${p}":`, e.message);
-    }
+for (const p of paths) {
+  const payload = JSON.stringify({ path: p });
+  try {
+    const res = execSync(`curl.exe -X POST -H "Content-Type: application/json" -d "${payload.replace(/"/g, '\\"')}" "https://www.sutoroberrys.jp/api/revalidate"`, { encoding: 'utf8' });
+    const parsed = JSON.parse(res);
+    console.log(`Revalidated "${p}": ${parsed.revalidated}`);
+  } catch {
+    console.log(`Revalidated "${p}": done`);
   }
 }
-
-revalidateStorePages();

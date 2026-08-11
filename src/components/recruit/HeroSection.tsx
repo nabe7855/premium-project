@@ -97,7 +97,7 @@ const HeroSection: React.FC = () => {
 
       <div className="fixed bottom-6 left-1/2 z-50 flex w-full max-w-md -translate-x-1/2 gap-2 px-4">
         <a
-          href="#entry-form"
+          href="https://line.me"
           className="flex flex-1 items-center justify-center gap-2 rounded-full bg-[#06C755] py-4 text-lg font-black text-white shadow-2xl transition-transform hover:scale-105"
         >
           <MessageCircle size={24} /> LINEで応募

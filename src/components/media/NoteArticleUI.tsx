@@ -516,10 +516,34 @@ export default function NoteArticleUI({
             ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
           </div>
         )}
-        <div
-          className={`prose prose-lg ${theme.prose} max-w-none leading-[1.85] tracking-[0.02em] text-[#333] prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-[#222] prose-h2:mb-8 prose-h2:mt-16 prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-4 prose-h2:text-[24px] prose-h3:mb-6 prose-h3:mt-12 prose-h3:text-[20px] prose-p:mb-8 prose-p:mt-0 prose-blockquote:my-10 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:not-italic prose-img:my-10 prose-img:rounded-xl prose-a:text-${theme.primary}-500 prose-a:underline prose-a:underline-offset-4 prose-li:my-2`}
-          dangerouslySetInnerHTML={{ __html: article.content }}
-        />
+        {(() => {
+          let displayContent = article.content || '';
+          
+          // HTMLのH1タグを抽出（最初のもの）
+          const h1Match = displayContent.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+          if (h1Match) {
+            const h1Text = h1Match[1].replace(/<[^>]+>/g, '').trim();
+            if (h1Text === (article.title || '').trim()) {
+              displayContent = displayContent.replace(h1Match[0], '');
+            }
+          }
+
+          // MarkdownのH1を抽出（最初のもの）
+          const mdH1Match = displayContent.match(/^#\s+(.*?)(\r?\n|$)/);
+          if (mdH1Match) {
+            const mdH1Text = mdH1Match[1].trim();
+            if (mdH1Text === (article.title || '').trim()) {
+              displayContent = displayContent.replace(mdH1Match[0], '');
+            }
+          }
+
+          return (
+            <div
+              className={`prose prose-lg ${theme.prose} max-w-none leading-[1.85] tracking-[0.02em] text-[#333] prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-[#222] prose-h2:mb-8 prose-h2:mt-16 prose-h2:border-b prose-h2:border-gray-100 prose-h2:pb-4 prose-h2:text-[24px] prose-h3:mb-6 prose-h3:mt-12 prose-h3:text-[20px] prose-p:mb-8 prose-p:mt-0 prose-blockquote:my-10 prose-blockquote:px-6 prose-blockquote:py-4 prose-blockquote:not-italic prose-img:my-10 prose-img:rounded-xl prose-a:text-${theme.primary}-500 prose-a:underline prose-a:underline-offset-4 prose-li:my-2`}
+              dangerouslySetInnerHTML={{ __html: displayContent }}
+            />
+          );
+        })()}
         {category === 'ikeo' && (
           <div className="mt-8 rounded-xl bg-slate-100 p-4 text-xs font-bold text-slate-600 border border-slate-200">
             ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
