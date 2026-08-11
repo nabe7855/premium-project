@@ -151,17 +151,21 @@ const IncomeSimulation: React.FC<IncomeSimulationProps> = ({ isOpen, onClose }) 
                     onClick={() => {
                       const text = `【特別オファー適用希望】\n診断結果：月収${predictedIncome}万円\n性格：${value}\n勤務：${newSelections.time}・週${newSelections.days}\n特典：入店費用免除`;
                       navigator.clipboard.writeText(text);
-                      alert('結果をコピーしました！LINEで送信してください。');
-                      window.location.href = 'https://line.me/R/ti/p/@example'; // Replace with actual LINE link
+                      alert('結果をコピーしました！応募フォームの備考欄に貼り付けてご応募ください。');
+                      // TODO: クライアントから公式LINEのURLが提供されるまでは応募フォームへ遷移
+                      window.location.href = '#application'; 
                     }}
-                    className="w-full rounded bg-green-600 py-3 font-bold text-white shadow-lg transition-transform hover:scale-105 active:scale-95"
+                    className="w-full rounded bg-amber-500 py-3 font-bold text-slate-900 shadow-lg transition-transform hover:scale-105 active:scale-95"
                   >
-                    LINEで結果を送って応募
+                    結果をコピーして応募フォームへ
                   </button>
                   <p className="mt-2 text-[10px] text-slate-400">
-                    ※面接時にこの画面またはコピーしたテキストをご提示ください
+                    ※面接時または応募フォームの備考欄に、コピーしたテキストをご提示ください
                   </p>
                 </div>
+                <p className="mt-3 text-[10px] text-slate-400 leading-tight text-left">
+                  ※実際の収入例ではなく、勤務条件から算出したモデルケースです。収入は指名数・出勤状況により変動します。
+                </p>
               </div>
             ),
           },

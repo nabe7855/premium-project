@@ -56,7 +56,11 @@ const ApplicationForm: React.FC = () => {
         <div className="rounded-[50px] border border-slate-50 bg-white p-8 shadow-2xl md:p-14">
           <div className="mb-14 flex flex-col gap-4 md:flex-row">
             <a
-              href="https://line.me"
+              href="#"
+              onClick={(e) => {
+                e.preventDefault();
+                alert('公式LINEアカウントは現在準備中です。下のフォームからご応募ください。');
+              }}
               className="flex flex-1 items-center justify-center rounded-2xl bg-[#06C755] p-5 font-bold text-white transition-all hover:shadow-lg active:scale-95"
             >
               <MessageCircle className="mr-3" /> LINEでクイック選考

@@ -5,11 +5,10 @@ import Link from 'next/link';
 export const metadata: Metadata = {
   title: {
     template: '%s | イケオラボ by ストロベリーボーイズ',
-    default:
-      '「イケてる男」になるための自己研鑽とモテるノウハウ｜イケオラボ by ストロベリーボーイズ',
+    default: '女性用風俗セラピストという働き方を、取材と記録で伝えるメディア | イケオラボ',
   },
   description:
-    '女性用風俗店がプロの目線で「女性を本当に喜ばせる方法」や垢抜け術を解説。自分磨きから会話術、女性を喜ばせるラブグッズの活用法まで、自信をつけて「選ばれる男」になるための情報と、その魅力を活かせる求人情報をお届けします。',
+    '女性用風俗セラピストという働き方を、取材と記録で伝える求人メディア。実際の体験談や面接・研修のガイドラインを通じて、リアルな情報をお届けします。',
 };
 
 const structuredData = {
@@ -17,7 +16,7 @@ const structuredData = {
   '@type': 'WebSite',
   name: 'イケオラボ',
   url: 'https://www.sutoroberrys.jp/ikeo',
-  description: '「イケてる男」になるための自己研鑽とモテるノウハウメディア',
+  description: '女性用風俗セラピストという働き方を、取材と記録で伝えるメディア',
   publisher: {
     '@type': 'Organization',
     name: 'ストロベリーボーイズ',
@@ -50,43 +49,22 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
 
           <nav className="hidden space-x-8 text-xs font-bold uppercase tracking-widest text-slate-500 md:flex">
             <Link href="/ikeo" className="transition-colors hover:text-blue-600">
-              Top
-            </Link>
-            <Link
-              href="/ikeo?tag=ファッション・美容"
-              className="transition-colors hover:text-blue-600"
-            >
-              Style
-            </Link>
-            <Link href="/ikeo?tag=会話・コミュ力" className="transition-colors hover:text-blue-600">
-              Commu.
-            </Link>
-            <Link href="/ikeo?tag=恋愛・デート" className="transition-colors hover:text-blue-600">
-              Romance
+              仕事を知る
             </Link>
             <Link
               href="/ikeo/recruit"
-              className="text-blue-600 transition-opacity hover:opacity-70"
+              className="transition-colors hover:text-blue-600"
             >
-              Career
+              応募と面接
+            </Link>
+            <Link href="/ikeo?tag=インタビュー" className="transition-colors hover:text-blue-600">
+              働く人の記録
             </Link>
           </nav>
 
           <div className="flex items-center gap-4">
-            <Link
-              href="/ikeo/diagnostic"
-              className="hidden text-xs font-bold text-slate-400 transition-colors hover:text-blue-600 sm:block"
-            >
-              Potetial Check
-            </Link>
-            <a
-              href="https://line.me/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full bg-slate-900 px-5 py-2 text-xs font-bold text-white shadow-md transition-all hover:-translate-y-0.5 hover:bg-slate-700"
-            >
-              Consultant
-            </a>
+            {/* Potential Check (Diagnostic) link removed per user request */}
+            {/* Consultant (LINE) link hidden for now as URL is not confirmed */}
           </div>
         </div>
       </header>
@@ -105,15 +83,15 @@ export default function CareerMediaLayout({ children }: { children: React.ReactN
             <br />
             洗練された知識を通じて、すべての男性が自分らしい輝きを放てる社会を目指しています。
           </p>
-          <div className="flex justify-center gap-8 text-[11px] font-bold uppercase tracking-widest text-slate-500">
+          <div className="flex justify-center gap-8 text-[11px] font-bold tracking-widest text-slate-500">
             <Link href="/terms" className="hover:text-blue-600">
-              Terms
+              利用規約
             </Link>
             <Link href="/privacy" className="hover:text-blue-600">
-              Privacy
+              プライバシーポリシー
             </Link>
             <Link href="/store/fukuoka/recruit" className="text-blue-600 hover:opacity-70">
-              Recruit Info
+              求人情報
             </Link>
           </div>
           <p className="mt-12 text-[10px] tracking-widest text-slate-300">
