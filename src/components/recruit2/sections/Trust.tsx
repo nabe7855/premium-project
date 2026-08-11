@@ -60,12 +60,7 @@ const DEFAULT_STATS = [
     unit: '%',
     desc: '稼げるから、続く。1年以上継続率92％。',
   },
-  {
-    label: '平均月収',
-    value: '85',
-    unit: '万円',
-    desc: '多くのキャストが3年以上在籍。続けられる＝稼げる証拠です。',
-  },
+
 ];
 
 const DEFAULT_LOCATIONS = [

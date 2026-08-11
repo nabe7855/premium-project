@@ -20,7 +20,7 @@ const SalarySection: React.FC = () => {
             <p className="text-stone-300 font-bold mb-4 uppercase text-xs tracking-widest">REGULAR STAFF</p>
             <h3 className="text-xl font-bold mb-2">週5日レギュラー</h3>
             <div className="text-5xl font-black text-white my-4">60<span className="text-sm font-medium ml-1 text-gold">万円〜</span></div>
-            <p className="text-stone-300 text-sm text-center">本業として安定して稼ぎたい方向け。平均月収60万円を目指せます。</p>
+            <p className="text-stone-300 text-sm text-center">本業として安定して稼ぎたい方向け。月収60万円を目指せます。</p>
           </div>
           <div className="bg-white/5 p-8 rounded-3xl border border-white/10 hover:border-strawberry/50 transition-all flex flex-col items-center">
             <p className="text-stone-400 font-bold mb-4 uppercase text-xs tracking-widest">TOP RUNNER</p>
@@ -33,6 +33,7 @@ const SalarySection: React.FC = () => {
           <p className="text-stone-300 text-sm font-bold flex items-center justify-center gap-2 mb-2">
             <CheckCircle2 size={16} className="text-gold" /> 完全歩合制 / 完全日払い対応
           </p>
+          <p className="text-xs text-stone-500 mb-1">※実際の収入例ではなく、勤務条件から算出したモデルケースです。収入は指名数・出勤状況により変動します。</p>
           <p className="text-xs text-stone-500">※ノルマ、罰金、衣装代などの不当な天引きは一切ありません。</p>
         </div>
       </div>

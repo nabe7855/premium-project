@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   const s = STORE_META[params.slug];
   // 横浜店等の店舗名タイトルの正確な記述を補償（例: ストロベリーボーイズ横浜店）
   const title = `${s.city}の女性用風俗セラピスト求人｜週1・未経験OK｜ストロベリーボーイズ${s.city}店`;
-  const desc  = `${s.city}で女性用風俗セラピストを募集中。未経験歓迎・週1日〜・全額日払い・登録料0円。最短10日デビュー、平均月収55万円。LINEで30秒応募。`;
+  const desc  = `${s.city}で女性用風俗セラピストを募集中。未経験歓迎・週1日〜・全額日払い・登録料0円。最短10日デビュー。LINEで30秒応募。`;
   return {
     title, description: desc,
     keywords: ["女性用風俗 求人", "女風 求人", "セラピスト 募集", s.city, ...s.areaKw, "出張ホスト 求人", "高収入"],

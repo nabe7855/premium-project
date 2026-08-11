@@ -3,41 +3,41 @@ import React from 'react';
 import { Quote, Star, Heart } from 'lucide-react';
 
 const Testimonials: React.FC = () => {
-  const testimonials = [
+  const modelCases = [
     {
-      name: "Aさん（26歳）",
-      period: "勤務歴：1年2ヶ月",
-      beforeTitle: "応募前の不安",
-      before: "未経験で何もわからない状態でした。本当に女性が安心して働ける環境なのか、プライバシーは守られるのか心配でした。",
-      afterTitle: "現在の状況",
-      after: "今では月収45万円を安定して稼げるようになりました。女性スタッフの方々が本当に親身になってサポートしてくれるので、安心して働けています。",
+      type: "週5・専業レギュラーの場合",
+      conditions: "週5日出勤 / 1日8時間稼働",
+      workingStyleTitle: "働き方の特徴",
+      workingStyle: "本業としてしっかり稼ぎたい方向けのモデルケースです。安定したシフトに入ることで、リピーター様もつきやすくなります。",
+      incomeTitle: "月収例（目安）",
+      income: "月収45万円〜（※指名数・出勤状況により変動します）",
       rating: 5
     },
     {
-      name: "Bさん（23歳）",
-      period: "勤務歴：8ヶ月",
-      beforeTitle: "応募前の悩み",
-      before: "副業として始めたかったのですが、本業との両立ができるか不安でした。また、周りにバレないか心配でした。",
-      afterTitle: "現在の充実感",
-      after: "週末だけの勤務で月収25万円を稼げています。完全個室制度のおかげで、プライバシーも守られていて安心です。",
+      type: "週2・バランス型の場合",
+      conditions: "週2日出勤 / 1日6時間稼働",
+      workingStyleTitle: "働き方の特徴",
+      workingStyle: "趣味やプライベートと両立したい方向け。無理のないペースで働きながら、確かな収入を得ることができます。",
+      incomeTitle: "月収例（目安）",
+      income: "月収25万円〜（※指名数・出勤状況により変動します）",
       rating: 5
     },
     {
-      name: "Cさん（29歳）",
-      period: "勤務歴：2年",
-      beforeTitle: "転職への不安",
-      before: "他店から転職してきました。前の職場は労働環境が悪く、女性への配慮が足りませんでした。",
-      afterTitle: "新しい環境での成長",
-      after: "ストロベリーボーイズに来てから、人生が本当に変わりました。自分に自信が持てるようになり、将来の目標も明確になりました。",
+      type: "週末のみ・副業ペースの場合",
+      conditions: "土日のみ週2日出勤 / 1日5時間稼働",
+      workingStyleTitle: "働き方の特徴",
+      workingStyle: "平日は本業がある方のための副業モデル。週末の空き時間を使って、効率よく収入をプラスできます。",
+      incomeTitle: "月収例（目安）",
+      income: "月収20万円〜（※指名数・出勤状況により変動します）",
       rating: 5
     },
     {
-      name: "Dさん（24歳）",
-      period: "勤務歴：6ヶ月",
-      beforeTitle: "経済的な不安",
-      before: "学費や生活費で経済的に困っていました。でも、怪しい仕事はしたくないし、安全な環境で働きたいと思っていました。",
-      afterTitle: "経済的な安定",
-      after: "しっかりとした研修を受けて、今では月収30万円を稼げています。スタッフの方々が家族のように支えてくれます。",
+      type: "週3・目標達成型の場合",
+      conditions: "週3日出勤 / 1日7時間稼働",
+      workingStyleTitle: "働き方の特徴",
+      workingStyle: "学費や生活費など、明確な目標額がある方向け。充実した研修制度により、未経験からでも早期に安定した収入を目指せます。",
+      incomeTitle: "月収例（目安）",
+      income: "月収30万円〜（※指名数・出勤状況により変動します）",
       rating: 5
     }
   ];
@@ -47,26 +47,26 @@ const Testimonials: React.FC = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4 font-rounded">
-            Voice of Strawberry
+            Model Cases
           </h2>
           <p className="text-xl text-gray-600 font-serif">
-            先輩セラピストの声
+            働き方別モデルケース
           </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {testimonials.map((testimonial, index) => (
+          {modelCases.map((model, index) => (
             <div key={index} className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
               <div className="flex items-center space-x-4 mb-4">
                 <div className="bg-pink-100 rounded-full p-3">
                   <Heart className="h-6 w-6 text-pink-500" />
                 </div>
                 <div>
-                  <div className="font-semibold text-gray-800">{testimonial.name}</div>
-                  <div className="text-sm text-gray-500">{testimonial.period}</div>
+                  <div className="font-semibold text-gray-800">{model.type}</div>
+                  <div className="text-sm text-gray-500">{model.conditions}</div>
                 </div>
                 <div className="ml-auto flex items-center space-x-1">
-                  {[...Array(testimonial.rating)].map((_, i) => (
+                  {[...Array(model.rating)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 text-yellow-400" fill="currentColor" />
                   ))}
                 </div>
@@ -76,20 +76,20 @@ const Testimonials: React.FC = () => {
                 <div className="bg-red-50 p-4 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
                     <Quote className="h-4 w-4 text-red-500" />
-                    <h4 className="font-semibold text-red-700">{testimonial.beforeTitle}</h4>
+                    <h4 className="font-semibold text-red-700">{model.workingStyleTitle}</h4>
                   </div>
                   <p className="text-gray-700 text-sm leading-relaxed font-serif">
-                    {testimonial.before}
+                    {model.workingStyle}
                   </p>
                 </div>
 
                 <div className="bg-green-50 p-4 rounded-lg">
                   <div className="flex items-center space-x-2 mb-2">
                     <Quote className="h-4 w-4 text-green-500" />
-                    <h4 className="font-semibold text-green-700">{testimonial.afterTitle}</h4>
+                    <h4 className="font-semibold text-green-700">{model.incomeTitle}</h4>
                   </div>
                   <p className="text-gray-700 text-sm leading-relaxed font-serif">
-                    {testimonial.after}
+                    {model.income}
                   </p>
                 </div>
               </div>
@@ -99,11 +99,8 @@ const Testimonials: React.FC = () => {
 
         <div className="mt-12 text-center">
           <p className="text-gray-600 text-sm mb-4">
-            ※掲載されている体験談は、個人の感想です。プライバシー保護のため、詳細は変更されています。
+            ※実際の収入例ではなく、勤務条件から算出したモデルケースです。収入は指名数・出勤状況により変動します。
           </p>
-          <button className="bg-pink-500 text-white px-8 py-3 rounded-full hover:bg-pink-600 transition-colors">
-            もっと先輩の声を見る
-          </button>
         </div>
       </div>
     </section>

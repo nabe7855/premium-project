@@ -349,7 +349,7 @@ const Income: React.FC<IncomeProps> = ({ config, isEditing, onUpdate, onImageUpl
                 onBlur={(e) => onUpdate?.('tipText', e.currentTarget.innerText)}
               >
                 {config?.tipText ||
-                  '※これらは実際のキャストの実績に基づくモデルケースです。ご自身の体調やライフスタイルに合わせて、自由にシフトを調整いただけます。'}
+                  '※実際の収入例ではなく、勤務条件から算出したモデルケースです。収入は指名数・出勤状況により変動します。'}
               </p>
             </div>
           </div>
