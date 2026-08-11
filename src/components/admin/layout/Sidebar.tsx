@@ -200,6 +200,11 @@ export default function Sidebar({ isOpen, setOpen }: SidebarProps) {
           icon: <DocumentTextIcon />,
           label: 'インタビュー管理',
         },
+        {
+          href: '/admin/interview-applications',
+          icon: <DocumentTextIcon />,
+          label: 'インタビュー応募一覧',
+        },
       ],
     },
   ];

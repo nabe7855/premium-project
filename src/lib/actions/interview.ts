@@ -519,3 +519,33 @@ ${validatedData.contact_info}
   }
 }
 
+// ---------------------------------------------------------------------------
+// 体験談インタビュー応募一覧 (Admin) 用のアクション
+// ---------------------------------------------------------------------------
+export async function getInterviewApplications() {
+  try {
+    const applications = await prisma.interviewApplication.findMany({
+      orderBy: { created_at: 'desc' },
+    });
+    return { success: true, applications };
+  } catch (error: any) {
+    console.error('Error fetching interview applications:', error);
+    return { success: false, error: '取得に失敗しました。' };
+  }
+}
+
+export async function updateInterviewApplicationStatus(id: string, status: string) {
+  try {
+    const application = await prisma.interviewApplication.update({
+      where: { id },
+      data: { status },
+    });
+    revalidatePath('/admin/interview-applications');
+    return { success: true, application };
+  } catch (error: any) {
+    console.error('Error updating interview application status:', error);
+    return { success: false, error: '更新に失敗しました。' };
+  }
+}
+
+
