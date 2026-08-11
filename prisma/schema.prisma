@@ -371,6 +371,19 @@ model VideoFeeling {
   videos Video[] @relation("VideoToVideoFeeling")
 }
 
+model InterviewApplication {
+  id               String   @id @default(uuid())
+  theme            String   @db.Text
+  usage_period     String
+  interview_method String
+  contact_info     String
+  status           String   @default("pending") // pending, contacted, completed, rejected
+  created_at       DateTime @default(now())
+  updated_at       DateTime @updatedAt
+
+  @@map("interview_applications")
+}
+
 model RecruitApplication {
   id               String         @id @default(uuid())
   type             String
