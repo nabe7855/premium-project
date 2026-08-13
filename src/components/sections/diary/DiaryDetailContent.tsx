@@ -271,18 +271,20 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               <div 
                 className="prose mb-8 max-w-none whitespace-pre-wrap leading-relaxed text-gray-700"
                 dangerouslySetInnerHTML={{
-                  __html: (post.content || '').replace(
-                    /<img\s+([^>]*?)>/gi,
-                    (match, p1) => {
-                      let attrs = p1;
-                      if (!attrs.includes('loading=')) attrs += ' loading="lazy"';
-                      if (!attrs.includes('decoding=')) attrs += ' decoding="async"';
-                      if (!attrs.includes('width=')) attrs += ' width="800"';
-                      if (!attrs.includes('height=')) attrs += ' height="600"';
-                      if (!attrs.includes('class=')) attrs += ' class="h-auto max-w-full rounded-xl my-4 mx-auto"';
-                      return `<img ${attrs}>`;
-                    }
-                  )
+                  __html: (post.content || '')
+                    .replace(/(^|[^"'])(https?:\/\/[^\s<>"]+)/g, '$1<a href="$2" target="_blank" rel="noopener noreferrer" class="text-pink-500 underline hover:text-pink-600 break-all">$2</a>')
+                    .replace(
+                      /<img\s+([^>]*?)>/gi,
+                      (match, p1) => {
+                        let attrs = p1;
+                        if (!attrs.includes('loading=')) attrs += ' loading="lazy"';
+                        if (!attrs.includes('decoding=')) attrs += ' decoding="async"';
+                        if (!attrs.includes('width=')) attrs += ' width="800"';
+                        if (!attrs.includes('height=')) attrs += ' height="600"';
+                        if (!attrs.includes('class=')) attrs += ' class="h-auto max-w-full rounded-xl my-4 mx-auto"';
+                        return `<img ${attrs}>`;
+                      }
+                    )
                 }}
               />
 
