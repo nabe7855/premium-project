@@ -3,6 +3,7 @@ import { Cast, CastStatus } from '@/types/cast';
 import { getSupabasePublicUrl } from './image-url';
 import { supabase } from './supabaseClient';
 import { convertSchedulesToAvailability } from '@/utils/scheduleUtils';
+import { parseCastSns } from './utils/sns-url';
 
 export interface CastListMini {
   id: string;
@@ -245,15 +246,7 @@ export async function getCastsByStore(storeSlug: string): Promise<Cast[]> {
         ichioshiPoint: ichioshiMap[cast.id]?.point,
         ichioshiRank: ichioshiMap[cast.id]?.rank,
         availability: availabilityMap[cast.id] || undefined, // 📅 本日出勤フィルター用
-        sns: (() => {
-          try {
-            const parsed = JSON.parse(cast.sns_url || '');
-            if (typeof parsed === 'object' && parsed !== null) return parsed;
-          } catch {
-            return undefined;
-          }
-          return undefined;
-        })(),
+        sns: parseCastSns(cast.sns_url),
         snsUrl: cast.sns_url ?? undefined,
         questionBoxUrl: cast.question_box_url ?? undefined,
         rating, // ⭐ 平均評価

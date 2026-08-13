@@ -1,6 +1,7 @@
 import { CastProfile, CastQuestion, CastStatus, Status } from '@/types/cast';
 import { getCastQuestions } from './getCastQuestions';
 import { supabase } from './supabaseClient';
+import { parseCastSns } from './utils/sns-url';
 
 interface CastFeatureRow {
   feature_id: string;
@@ -156,15 +157,7 @@ export async function getCastProfile(userId: string): Promise<CastProfile | null
     slug: cast.slug,
     snsUrl: cast.sns_url ?? undefined,
     questionBoxUrl: cast.question_box_url ?? undefined,
-    sns: (() => {
-      try {
-        const parsed = JSON.parse(cast.sns_url || '');
-        if (typeof parsed === 'object' && parsed !== null) return parsed;
-      } catch {
-        return undefined;
-      }
-      return undefined;
-    })(),
+    sns: parseCastSns(cast.sns_url),
     personalityIds,
     appearanceIds,
     services,

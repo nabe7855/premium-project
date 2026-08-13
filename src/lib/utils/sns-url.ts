@@ -60,3 +60,34 @@ export function formatSnsUrl(
 
   return trimmed;
 }
+
+export function parseCastSns(snsUrl: string | null | undefined): Record<string, string> | undefined {
+  if (!snsUrl) return undefined;
+  
+  try {
+    const parsed = JSON.parse(snsUrl);
+    if (typeof parsed === 'object' && parsed !== null) return parsed;
+  } catch {
+    // Plain text URL fallback
+    const snsObj: Record<string, string> = {};
+    const lower = snsUrl.toLowerCase();
+    
+    // Check if there's a URL in the text
+    const urlMatch = snsUrl.match(/https?:\/\/[^\s<>()]+/);
+    const targetStr = urlMatch ? urlMatch[0] : snsUrl;
+    const targetLower = targetStr.toLowerCase();
+
+    if (targetLower.includes('x.com') || targetLower.includes('twitter.com')) {
+      snsObj.twitter = targetStr;
+    } else if (targetLower.includes('instagram.com')) {
+      snsObj.instagram = targetStr;
+    } else if (targetLower.includes('lin.ee') || targetLower.includes('line.me')) {
+      snsObj.line = targetStr;
+    } else if (targetLower.includes('tiktok.com')) {
+      snsObj.tiktok = targetStr;
+    }
+
+    return Object.keys(snsObj).length > 0 ? snsObj : undefined;
+  }
+  return undefined;
+}
