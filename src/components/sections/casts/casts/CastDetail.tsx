@@ -142,7 +142,30 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
               <button className="p-2 text-neutral-600 hover:text-red-500">
                 <Heart className="h-5 w-5" />
               </button>
-              <button className="p-2 text-neutral-600 hover:text-neutral-800">
+              <button 
+                className="p-2 text-neutral-600 hover:text-neutral-800"
+                onClick={async () => {
+                  const url = window.location.href;
+                  if (navigator.share) {
+                    try {
+                      await navigator.share({
+                        title: `${cast.name}のプロフィール | ストロベリーボーイズ`,
+                        text: `出張ホスト ストロベリーボーイズ ${cast.name}のプロフィール`,
+                        url: url,
+                      });
+                    } catch (error) {
+                      if ((error as Error).name !== 'AbortError') {
+                        navigator.clipboard.writeText(url);
+                        toast.success('URLをコピーしました');
+                      }
+                    }
+                  } else {
+                    navigator.clipboard.writeText(url);
+                    toast.success('URLをコピーしました');
+                  }
+                }}
+                aria-label="プロフィールをシェアする"
+              >
                 <Share2 className="h-5 w-5" />
               </button>
             </div>
