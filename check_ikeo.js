@@ -1,0 +1,1 @@
+const { PrismaClient } = require('@prisma/client'); const prisma = new PrismaClient(); async function main() { const ikeo = await prisma.mediaArticle.findFirst({ where: { category: 'ikeo' } }); console.log(JSON.stringify(ikeo, null, 2)); } main().catch(console.error).finally(() = 

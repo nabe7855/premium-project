@@ -17,6 +17,7 @@ export default async function TopColumnVoiceSection({ storeSlug }: Props) {
   const articles = await prisma.mediaArticle.findMany({
     where: {
       status: 'published',
+      published_at: { lte: new Date() },
       category: 'amolab',
       tags: {
         some: {

@@ -211,6 +211,7 @@ export async function getMediaTags(targetAudience?: 'user' | 'recruit') {
               article: {
                 target_audience: targetAudience,
                 status: 'published',
+                published_at: { lte: new Date() },
               },
             },
           },
@@ -250,6 +251,7 @@ export async function getRelatedArticles(
         category: (article as any).category,
         target_audience: targetAudience,
         status: 'published',
+        published_at: { lte: new Date() },
         tags: {
           some: {
             tag_id: { in: tagIds },
@@ -272,6 +274,7 @@ export async function getRelatedArticles(
           },
           target_audience: targetAudience,
           status: 'published',
+          published_at: { lte: new Date() },
         },
         take: limit - relatedArticles.length,
         orderBy: { published_at: 'desc' },

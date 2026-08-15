@@ -176,6 +176,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const amolabArticles = await prisma.mediaArticle.findMany({
       where: {
         status: 'published',
+        published_at: { lte: new Date() },
         category: { in: ['amolab', 'amolab-jiten'] },
       },
       select: { slug: true, category: true, updated_at: true },
@@ -294,7 +295,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.8,
       });
 
-      const publishedIkeo = ikeoResult.articles.filter((a: any) => a.status === 'published');
+      const publishedIkeo = ikeoResult.articles.filter((a: any) => a.status === 'published' && (!a.published_at || new Date(a.published_at) <= new Date()));
       for (const article of publishedIkeo) {
         mediaPages.push({
           url: `${baseUrl}/ikeo/${article.slug}`,

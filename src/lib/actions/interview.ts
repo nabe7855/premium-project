@@ -93,6 +93,7 @@ export async function getInterviewArticles(options?: {
       where: {
         id: { in: articleIds },
         status: 'published',
+        published_at: { lte: new Date() },
         category: 'interview',
       },
       include: {
