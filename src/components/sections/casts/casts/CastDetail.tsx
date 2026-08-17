@@ -143,9 +143,33 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
                 <Heart className="h-5 w-5" />
               </button>
               <button 
-                className="p-2 text-neutral-600 hover:text-neutral-800"
+                className="p-2 text-neutral-600 hover:text-neutral-800 transition-colors"
                 onClick={async () => {
                   const url = window.location.href;
+                  let copied = false;
+                  try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                      await navigator.clipboard.writeText(url);
+                      copied = true;
+                    } else {
+                      const textArea = document.createElement('textarea');
+                      textArea.value = url;
+                      textArea.style.position = 'fixed';
+                      textArea.style.opacity = '0';
+                      document.body.appendChild(textArea);
+                      textArea.focus();
+                      textArea.select();
+                      copied = document.execCommand('copy');
+                      document.body.removeChild(textArea);
+                    }
+                  } catch (e) {
+                    console.error('Copy failed:', e);
+                  }
+
+                  if (copied) {
+                    toast.success('共有リンクをコピーしました');
+                  }
+
                   if (navigator.share) {
                     try {
                       await navigator.share({
@@ -154,14 +178,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
                         url: url,
                       });
                     } catch (error) {
-                      if ((error as Error).name !== 'AbortError') {
-                        navigator.clipboard.writeText(url);
-                        toast.success('URLをコピーしました');
-                      }
+                      // ユーザーキャンセル等は無視
                     }
-                  } else {
-                    navigator.clipboard.writeText(url);
-                    toast.success('URLをコピーしました');
                   }
                 }}
                 aria-label="プロフィールをシェアする"

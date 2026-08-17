@@ -50,6 +50,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
   const primaryStoreSlug = jpStoreSlugs.includes(slug) ? slug : jpStoreSlugs[0];
 
   const rawImage = data.blog_images?.[0]?.image_url;
+  const rawImages = (data.blog_images?.map((img: any) => getSupabasePublicUrl(img.image_url)).filter(Boolean) as string[]) || [];
   const rawAvatar = castData?.image_url;
 
   const castName = castData?.name || 'セラピスト';
@@ -79,6 +80,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
     castSlug: castData?.slug || '',
     image: (rawImage ? getSupabasePublicUrl(rawImage) : undefined) ||
       'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
+    images: rawImages,
     castAvatar: (rawAvatar ? getSupabasePublicUrl(rawAvatar) : undefined) ||
       `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(castData?.name || 'anonymous')}`,
     readTime: Math.max(Math.ceil((data.content?.length || 0) / 400), 1),

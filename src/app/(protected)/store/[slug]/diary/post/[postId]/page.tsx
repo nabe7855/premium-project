@@ -89,7 +89,7 @@ export default async function DiaryDetailPage({ params }: Props) {
         '@type': 'BlogPosting',
         headline: post.title,
         description: post.excerpt || (post.content || '').slice(0, 150),
-        image: [post.image],
+        image: post.images && post.images.length > 0 ? post.images : [post.image],
         datePublished: new Date(post.date).toISOString(),
         dateModified: post.updatedDate ? new Date(post.updatedDate).toISOString() : new Date(post.date).toISOString(),
         author: [

@@ -22,9 +22,49 @@ import {
   X,
 } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 import BookingModal from './BookingModal';
 import RadarChart from './RadarChart';
 import ReviewModal from './ReviewModal';
+
+const shareCastProfile = async (castName?: string) => {
+  const url = window.location.href;
+  let copied = false;
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(url);
+      copied = true;
+    } else {
+      const textArea = document.createElement('textarea');
+      textArea.value = url;
+      textArea.style.position = 'fixed';
+      textArea.style.opacity = '0';
+      document.body.appendChild(textArea);
+      textArea.focus();
+      textArea.select();
+      copied = document.execCommand('copy');
+      document.body.removeChild(textArea);
+    }
+  } catch (e) {
+    console.error('Copy failed:', e);
+  }
+
+  if (copied) {
+    toast.success('共有リンクをコピーしました');
+  }
+
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: `${castName || 'キャスト'}のプロフィール | ストロベリーボーイズ`,
+        text: `出張ホスト ストロベリーボーイズ ${castName || 'キャスト'}のプロフィール`,
+        url: url,
+      });
+    } catch (error) {
+      // ignore
+    }
+  }
+};
 
 interface CastDetailProps {
   cast: Cast;
@@ -127,6 +167,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, onBack }) => {
       alert(`${platform}リンクが登録されていません`);
     }
   };
+
+  const handleShare = () => shareCastProfile(cast.name);
 
   return (
     <div className="min-h-screen bg-neutral-50">
@@ -784,10 +826,10 @@ const GalleryTab: React.FC<{ cast: Cast }> = ({ cast }) => {
           <p className="text-sm text-neutral-600">写真、動画、音声メッセージをお楽しみください</p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <button onClick={() => shareCastProfile()} className="flex items-center gap-2 text-neutral-600 hover:text-neutral-900 transition-colors">
           <Share2 className="h-4 w-4 text-neutral-400" />
-          <span className="text-sm text-neutral-600">シェア</span>
-        </div>
+          <span className="text-sm">シェア</span>
+        </button>
       </div>
 
       {/* Category Filter */}
@@ -1033,7 +1075,7 @@ const MediaModal: React.FC<{
                 <button className="p-2 text-neutral-400 transition-colors duration-200 hover:text-neutral-600">
                   <Download className="h-4 w-4" />
                 </button>
-                <button className="p-2 text-neutral-400 transition-colors duration-200 hover:text-neutral-600">
+                <button onClick={() => shareCastProfile()} aria-label="シェアする" className="p-2 text-neutral-400 transition-colors duration-200 hover:text-neutral-600">
                   <Share2 className="h-4 w-4" />
                 </button>
               </div>

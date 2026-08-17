@@ -40,8 +40,9 @@ export async function compressImage(file: File, maxWidth = 1200, maxHeight = 120
         canvas.toBlob(
           (blob) => {
             if (blob) {
-              const compressedFile = new File([blob], file.name, {
-                type: 'image/jpeg',
+              const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '');
+              const compressedFile = new File([blob], `${nameWithoutExt}.webp`, {
+                type: 'image/webp',
                 lastModified: Date.now(),
               });
               resolve(compressedFile);
@@ -49,7 +50,7 @@ export async function compressImage(file: File, maxWidth = 1200, maxHeight = 120
               resolve(file);
             }
           },
-          'image/jpeg',
+          'image/webp',
           quality
         );
       };
