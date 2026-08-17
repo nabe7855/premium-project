@@ -13,7 +13,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
       status,
       published_at,
       created_at,
-      casts ( id, name, image_url, slug, is_active, cast_store_memberships ( stores ( slug ) ) ),
+      casts ( id, name, image_url, main_image_url, slug, is_active, cast_store_memberships ( stores ( slug ) ) ),
       blog_images ( image_url ),
       blog_tags ( blog_tag_master ( name ) ),
       is_comment_enabled,
@@ -51,7 +51,7 @@ export async function getDiaryPostById(postId: string, slug: string): Promise<(P
 
   const rawImage = data.blog_images?.[0]?.image_url;
   const rawImages = (data.blog_images?.map((img: any) => getSupabasePublicUrl(img.image_url)).filter(Boolean) as string[]) || [];
-  const rawAvatar = castData?.image_url;
+  const rawAvatar = castData?.main_image_url || castData?.image_url;
 
   const castName = castData?.name || 'セラピスト';
   const publishedDate = new Date(data.published_at || data.created_at);
