@@ -77,7 +77,7 @@ const DiaryDetailContent: React.FC<DiaryDetailContentProps> = ({ postId, slug, i
               storeSlug: slug,
               castName: castData?.name || '不明なキャスト',
               castId: castData?.id || '',
-              castSlug: castData?.slug || '',
+              castSlug: castData?.slug || castData?.id || '',
               image: getSupabasePublicUrl(data.blog_images?.[0]?.image_url) ||
                 'https://images.unsplash.com/photo-1516280440614-37939bbddcd2?q=80&w=800&auto=format&fit=crop',
               castAvatar: getSupabasePublicUrl(castData?.main_image_url || castData?.image_url) ||

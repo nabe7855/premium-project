@@ -48,6 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+import { redirect, RedirectType } from 'next/navigation';
+
 export default function CastPage({ params }: Props) {
-  return <CastClient params={{ store: params.slug, cast: params.cast }} />;
+  redirect(`/store/${params.slug}/cast/${params.cast}`, RedirectType.replace);
 }

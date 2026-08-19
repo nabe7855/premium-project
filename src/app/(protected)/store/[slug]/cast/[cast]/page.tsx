@@ -19,6 +19,9 @@ interface Props {
 
 import { STORE_META } from '@/lib/store/storeMeta';
 
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 // ✅ メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cast = await getCastProfileBySlug(params.cast);

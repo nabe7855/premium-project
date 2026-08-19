@@ -55,7 +55,7 @@ const CastCard: React.FC<CastCardProps> = ({ cast, expanded = false, showQuestio
 
   const storeSlug = cast.storeSlug || 'fukuoka'; // フォールバック
   const castId = cast.id || '';
-  const castSlug = cast.slug || '';
+  const castSlug = cast.slug || cast.id || '';
 
   return (
     <div className="rounded-xl border border-pink-100 bg-white p-4 shadow-sm sm:rounded-2xl sm:p-6">

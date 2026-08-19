@@ -30,7 +30,7 @@ const CastCard: React.FC<CastCardProps> = ({
   isReception = false,
   priority,
 }) => {
-  const href = storeSlug ? `/store/${storeSlug}/${slug}` : `/cast/${slug}`;
+  const href = storeSlug ? `/store/${storeSlug}/cast/${slug}` : `/cast/${slug}`;
 
   return (
     <Link
