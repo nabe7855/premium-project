@@ -7,25 +7,35 @@ import { notFound, redirect } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
+
+async function checkIsPreview(searchParams: any): Promise<boolean> {
+  if (!searchParams) return false;
+  try {
+    const sp = await Promise.resolve(searchParams);
+    if (!sp) return false;
+    const rawVal = sp.preview || sp['preview'];
+    const val = typeof rawVal === 'string' ? rawVal : Array.isArray(rawVal) ? rawVal[0] : undefined;
+    return val === PREVIEW_TOKEN || val === 'true';
+  } catch {
+    return false;
+  }
+}
+
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
   params,
   searchParams,
 }: {
   params: { slug: string } | Promise<{ slug: string }>;
-  searchParams?: { preview?: string } | Promise<{ preview?: string }>;
+  searchParams?: any;
 }): Promise<Metadata> {
   const resolvedParams = await Promise.resolve(params);
-  const resolvedSearchParams = await Promise.resolve(searchParams);
+  const isPreview = await checkIsPreview(searchParams);
 
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: resolvedParams.slug },
   });
-
-  const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
-  const rawPreview = resolvedSearchParams?.preview;
-  const previewVal = typeof rawPreview === 'string' ? rawPreview : Array.isArray(rawPreview) ? rawPreview[0] : undefined;
-  const isPreview = previewVal === PREVIEW_TOKEN;
 
   if (!article || (article.status !== 'published' && !isPreview)) {
     return {
@@ -74,15 +84,10 @@ export default async function MagazineArticlePage({
   searchParams,
 }: {
   params: { slug: string } | Promise<{ slug: string }>;
-  searchParams?: { preview?: string } | Promise<{ preview?: string }>;
+  searchParams?: any;
 }) {
   const resolvedParams = await Promise.resolve(params);
-  const resolvedSearchParams = await Promise.resolve(searchParams);
-
-  const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
-  const rawPreview = resolvedSearchParams?.preview;
-  const previewVal = typeof rawPreview === 'string' ? rawPreview : Array.isArray(rawPreview) ? rawPreview[0] : undefined;
-  const isPreview = previewVal === PREVIEW_TOKEN;
+  const isPreview = await checkIsPreview(searchParams);
 
   // DBから記事を取得、タグも結合して取得
   const article = await prisma.mediaArticle.findUnique({
@@ -101,7 +106,7 @@ export default async function MagazineArticlePage({
 
   // R1-1: category ガード（ikeo カテゴリの記事が /amolab/[slug] にアクセスされた場合は /ikeo/[slug] へ 301 転送）
   if (article.category === 'ikeo') {
-    redirect(`/ikeo/${params.slug}`);
+    redirect(`/ikeo/${resolvedParams.slug}`);
   }
 
   // 関連記事の取得
@@ -141,7 +146,7 @@ export default async function MagazineArticlePage({
     },
     mainEntityOfPage: {
       '@type': 'WebPage',
-      '@id': `https://www.sutoroberrys.jp/amolab/${params.slug}`,
+      '@id': `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`,
     },
   };
 
@@ -167,54 +172,7 @@ export default async function MagazineArticlePage({
         '@type': 'ListItem',
         position: 3,
         name: cleanTitle,
-        item: `https://www.sutoroberrys.jp/amolab/${params.slug}`,
-      },
-    ],
-  };
-
-  const faqLd = {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: [
-      {
-        '@type': 'Question',
-        name: '既婚で子どももいますが、女性用風俗を利用していいのでしょうか？',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'はい。既婚・子育て中の利用者も多くいます。家庭がある方ほど自分を後回しにしがちで、心のメンテナンスとして利用される方が多くいらっしゃいます。',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '初めてで、何をされるのか分からず怖いです。',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '「分からないこと」が不安の正体です。まずは当日の流れを知るところから始めるのがおすすめです。多くのセラピストは、初めての方にこそ丁寧に説明しながら進めてくれます。',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'どうやって予約すれば、ハードルが低いですか？',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '気になるセラピストとSNSなどで少し会話を重ねてから予約に進む方が、心理的なハードルは下がります。会話の延長で進める方が初めての方には自然です。もちろん通常の予約フォームも利用できます。',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: '容姿やスタイルに自信がありません。',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: '自信のなさは利用を止める理由にはなりません。自己肯定感が低かった利用者も「ちゃんと大事にしてもらえた」と感じ、少しずつ前を向けるようになっています。',
-        },
-      },
-      {
-        '@type': 'Question',
-        name: 'どこで待ち合わせるの？家族にバレませんか？',
-        acceptedAnswer: {
-          '@type': 'Answer',
-          text: 'ホテルのロビーや指定のお部屋で合流できます。ご家族や知人に知られることのないよう、店舗名やサービス内容がわかる形での連絡・通知は一切行いません。プライバシーを最優先に保護しておりますのでご安心ください。',
-        },
+        item: `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`,
       },
     ],
   };
@@ -228,10 +186,6 @@ export default async function MagazineArticlePage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
       />
       <NoteArticleUI
         article={article}
