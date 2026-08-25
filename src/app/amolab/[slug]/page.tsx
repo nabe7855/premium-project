@@ -24,7 +24,7 @@ export async function generateMetadata({
   if (!article) {
     return {
       title: '記事が見つかりません',
-      robots: { index: false, follow: false },
+      robots: 'noindex, nofollow' as any,
     };
   }
 
@@ -47,16 +47,7 @@ export async function generateMetadata({
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
     robots: isNoIndex
-      ? {
-          index: false,
-          follow: false,
-          nocache: true,
-          googleBot: {
-            index: false,
-            follow: false,
-            noimageindex: true,
-          },
-        }
+      ? ('noindex, nofollow' as any)
       : {
           index: true,
           follow: true,
