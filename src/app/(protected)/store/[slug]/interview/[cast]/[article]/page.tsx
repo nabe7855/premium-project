@@ -60,7 +60,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function CastInterviewPage({ params }: Props) {
   // 1. 記事データの取得
   const { article, success } = await getInterviewArticleBySlug(params.article);
-  if (!success || !article) {
+  if (
+    !success ||
+    !article ||
+    article.status !== 'published' ||
+    (article.published_at && new Date(article.published_at) > new Date())
+  ) {
     notFound();
   }
 

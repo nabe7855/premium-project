@@ -125,8 +125,15 @@ export default async function CastDetailPage({ params }: Props) {
   const interviewArticles: { title: string; url: string; thumbnailUrl: string | null; volNumber: number | null }[] = [];
   for (const link of castInterviewLinks) {
     if (!link.interview_meta) continue;
-    const article = await prisma.mediaArticle.findUnique({
-      where: { id: link.interview_meta.article_id, status: 'published' }
+    const article = await prisma.mediaArticle.findFirst({
+      where: {
+        id: link.interview_meta.article_id,
+        status: 'published',
+        OR: [
+          { published_at: null },
+          { published_at: { lte: new Date() } }
+        ]
+      }
     });
     if (article) {
       const castSlug = link.cast_id || link.cast_name_romaji || 'unknown';
