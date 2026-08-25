@@ -46,10 +46,21 @@ export async function generateMetadata({
   return {
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
-    robots: {
-      index: !isNoIndex,
-      follow: !isNoIndex,
-    },
+    robots: isNoIndex
+      ? {
+          index: false,
+          follow: false,
+          nocache: true,
+          googleBot: {
+            index: false,
+            follow: false,
+            noimageindex: true,
+          },
+        }
+      : {
+          index: true,
+          follow: true,
+        },
     alternates: {
       canonical: canonicalUrl,
     },
