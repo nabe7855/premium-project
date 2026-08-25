@@ -2,32 +2,10 @@ import NoteArticleUI from '@/components/media/NoteArticleUI';
 import { getRelatedArticles } from '@/lib/actions/media';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
-import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
-
-const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
-
-async function checkIsPreview(searchParams: any): Promise<boolean> {
-  const reqHeaders = headers();
-  const rawUrl = reqHeaders.get('x-url') || reqHeaders.get('referer') || '';
-  if (rawUrl.includes(PREVIEW_TOKEN) || rawUrl.includes('preview=')) {
-    return true;
-  }
-
-  if (!searchParams) return false;
-  try {
-    const sp = await Promise.resolve(searchParams);
-    if (!sp) return false;
-    const rawVal = sp.preview || sp['preview'];
-    const val = typeof rawVal === 'string' ? rawVal : Array.isArray(rawVal) ? rawVal[0] : undefined;
-    return val === PREVIEW_TOKEN || val === 'true';
-  } catch {
-    return false;
-  }
-}
 
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
@@ -38,18 +16,20 @@ export async function generateMetadata({
   searchParams?: any;
 }): Promise<Metadata> {
   const resolvedParams = await Promise.resolve(params);
-  const isPreview = await checkIsPreview(searchParams);
 
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: resolvedParams.slug },
   });
 
-  if (!article || (article.status !== 'published' && !isPreview)) {
+  if (!article) {
     return {
       title: '記事が見つかりません',
       robots: { index: false, follow: false },
     };
   }
+
+  const isFuturePublication = article.published_at ? new Date(article.published_at) > new Date() : false;
+  const isNoIndex = article.status !== 'published' || isFuturePublication;
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`;
 
@@ -64,8 +44,8 @@ export async function generateMetadata({
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
     robots: {
-      index: article.status === 'published' && !isPreview,
-      follow: article.status === 'published' && !isPreview,
+      index: !isNoIndex,
+      follow: !isNoIndex,
     },
     alternates: {
       canonical: canonicalUrl,
@@ -94,7 +74,6 @@ export default async function MagazineArticlePage({
   searchParams?: any;
 }) {
   const resolvedParams = await Promise.resolve(params);
-  const isPreview = await checkIsPreview(searchParams);
 
   // DBから記事を取得、タグも結合して取得
   const article = await prisma.mediaArticle.findUnique({
@@ -106,8 +85,8 @@ export default async function MagazineArticlePage({
     },
   });
 
-  // 記事がない、または下書きの場合は404ページへ（プレビュー時を除く）
-  if (!article || (article.status !== 'published' && !isPreview)) {
+  // 記事がない場合は404ページへ
+  if (!article) {
     notFound();
   }
 
