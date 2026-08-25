@@ -41,8 +41,7 @@ export async function generateMetadata({
     .replace(/｜アモラボ \(AmoLab\) by ストロベリーボーイズ$/g, '')
     .trim();
 
-  const baseTitle = article.seo_title ? article.seo_title : `${cleanTitle}｜体験談｜アモラボ`;
-  const pageTitle = isNoIndex ? `[NOINDEX_TEST] ${baseTitle}` : baseTitle;
+  const pageTitle = article.seo_title ? article.seo_title : `${cleanTitle}｜体験談｜アモラボ`;
 
   return {
     title: pageTitle,
