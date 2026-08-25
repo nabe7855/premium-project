@@ -2,6 +2,7 @@ import NoteArticleUI from '@/components/media/NoteArticleUI';
 import { getRelatedArticles } from '@/lib/actions/media';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { notFound, redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -10,6 +11,12 @@ export const revalidate = 0;
 const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
 
 async function checkIsPreview(searchParams: any): Promise<boolean> {
+  const reqHeaders = headers();
+  const rawUrl = reqHeaders.get('x-url') || reqHeaders.get('referer') || '';
+  if (rawUrl.includes(PREVIEW_TOKEN) || rawUrl.includes('preview=')) {
+    return true;
+  }
+
   if (!searchParams) return false;
   try {
     const sp = await Promise.resolve(searchParams);
