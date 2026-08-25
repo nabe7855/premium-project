@@ -12,21 +12,29 @@ export async function generateMetadata({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams?: { preview?: string };
+  params: { slug: string } | Promise<{ slug: string }>;
+  searchParams?: { preview?: string } | Promise<{ preview?: string }>;
 }): Promise<Metadata> {
+  const resolvedParams = await Promise.resolve(params);
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+
   const article = await prisma.mediaArticle.findUnique({
-    where: { slug: params.slug },
+    where: { slug: resolvedParams.slug },
   });
 
   const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
-  const isPreview = searchParams?.preview === PREVIEW_TOKEN;
+  const rawPreview = resolvedSearchParams?.preview;
+  const previewVal = typeof rawPreview === 'string' ? rawPreview : Array.isArray(rawPreview) ? rawPreview[0] : undefined;
+  const isPreview = previewVal === PREVIEW_TOKEN;
 
   if (!article || (article.status !== 'published' && !isPreview)) {
-    return { title: '記事が見つかりません' };
+    return {
+      title: '記事が見つかりません',
+      robots: { index: false, follow: false },
+    };
   }
 
-  const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${params.slug}`;
+  const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`;
 
   const cleanTitle = (article.seo_title || article.title)
     .replace(/(｜体験談|｜アモラボ)+$/g, '')
@@ -38,14 +46,10 @@ export async function generateMetadata({
   return {
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
-    ...(article.status !== 'published' || isPreview
-      ? {
-          robots: {
-            index: article.status === 'published' && !isPreview,
-            follow: article.status === 'published' && !isPreview,
-          },
-        }
-      : {}),
+    robots: {
+      index: article.status === 'published' && !isPreview,
+      follow: article.status === 'published' && !isPreview,
+    },
     alternates: {
       canonical: canonicalUrl,
     },
@@ -69,15 +73,20 @@ export default async function MagazineArticlePage({
   params,
   searchParams,
 }: {
-  params: { slug: string };
-  searchParams?: { preview?: string };
+  params: { slug: string } | Promise<{ slug: string }>;
+  searchParams?: { preview?: string } | Promise<{ preview?: string }>;
 }) {
+  const resolvedParams = await Promise.resolve(params);
+  const resolvedSearchParams = await Promise.resolve(searchParams);
+
   const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
-  const isPreview = searchParams?.preview === PREVIEW_TOKEN;
+  const rawPreview = resolvedSearchParams?.preview;
+  const previewVal = typeof rawPreview === 'string' ? rawPreview : Array.isArray(rawPreview) ? rawPreview[0] : undefined;
+  const isPreview = previewVal === PREVIEW_TOKEN;
 
   // DBから記事を取得、タグも結合して取得
   const article = await prisma.mediaArticle.findUnique({
-    where: { slug: params.slug },
+    where: { slug: resolvedParams.slug },
     include: {
       tags: {
         include: { tag: true },
