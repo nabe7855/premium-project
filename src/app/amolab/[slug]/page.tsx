@@ -48,7 +48,10 @@ export async function generateMetadata({
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
     robots: isNoIndex
-      ? ('noindex, nofollow' as any)
+      ? {
+          index: false,
+          follow: false,
+        }
       : {
           index: true,
           follow: true,
