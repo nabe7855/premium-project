@@ -28,8 +28,11 @@ export async function generateMetadata({
     };
   }
 
-  const isFuturePublication = article.published_at ? new Date(article.published_at) > new Date() : false;
-  const isNoIndex = article.status !== 'published' || isFuturePublication;
+  const now = new Date();
+  const pubDate = article.published_at ? new Date(article.published_at) : null;
+  const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
+  const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
+  const isNoIndex = article.status !== 'published' || isFuturePublication || isKanaePreRelease;
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`;
 
