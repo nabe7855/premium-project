@@ -45,9 +45,10 @@ function resolveImageAlts(pageTitle: string, sections: SectionData[]): Map<strin
 
 const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) => {
   // Separate sections into Content and CTA
-  const contentSections = page.sections.filter((s) => s.type !== 'cta');
-  const ctaSections = page.sections.filter((s) => s.type === 'cta');
-  const altMap = resolveImageAlts(page.title || '', page.sections || []);
+  const effectiveSections = (storeSlug && (page.storeSettings?.[storeSlug] as any)?.sections) || page.sections || [];
+  const contentSections = effectiveSections.filter((s: any) => s.type !== 'cta');
+  const ctaSections = effectiveSections.filter((s: any) => s.type === 'cta');
+  const altMap = resolveImageAlts(page.title || '', effectiveSections);
 
   return (
     <div className="w-full bg-white pb-10 pt-10">
@@ -78,7 +79,7 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
 
         {/* Lead Content (First Content Section's Description or Hero Image) */}
         <div className="article-body">
-          {contentSections.map((section, idx) => (
+          {contentSections.map((section: any, idx: number) => (
             <SectionRenderer key={section.id} section={section} isFirst={idx === 0} altMap={altMap} pageTitle={page.title} />
           ))}
         </div>
@@ -132,7 +133,7 @@ const NewsPageRenderer: React.FC<NewsPageRendererProps> = ({ page, storeSlug }) 
         {/* Action / CTA Section - Moved to bottom */}
         {ctaSections.length > 0 && (
           <div className="mt-10 space-y-8 border-t border-slate-100 pt-10">
-            {ctaSections.map((section) => (
+            {ctaSections.map((section: any) => (
               <SectionRenderer key={section.id} section={section} altMap={altMap} />
             ))}
           </div>

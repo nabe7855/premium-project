@@ -25,7 +25,8 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     return { title: 'Not Found' };
   }
 
-  const page = await getPublishedPageBySlug(newsSlug);
+  const page = await getPublishedPageBySlug(newsSlug, slug);
+
   if (!page || page.status !== 'published') {
     return { title: 'Not Found' };
   }
@@ -37,8 +38,8 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
     return { title: 'Not Found' };
   }
 
-  // targetStoreSlugsの先頭要素の店舗を正規とする(ただし.jp内店舗に限る)
-  const canonicalStoreSlug = jpTargetSlugs[0];
+  // 対象店舗内に現在のアクセス店舗が含まれている場合はそちらを正規化URLに使用
+  const canonicalStoreSlug = jpTargetSlugs.includes(slug) ? slug : jpTargetSlugs[0];
   const storeData = await getStoreData(canonicalStoreSlug);
 
   if (!storeData) {
@@ -46,11 +47,13 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
   }
 
   const publishedAt = page.storeSettings?.[canonicalStoreSlug]?.publishedAt || page.updatedAt;
+  const storeSeoTitle = (page.storeSettings?.[slug] as any)?.seoTitle || page.seoTitle;
 
   let plainTextDescription = '';
-  if (page.sections && page.sections.length > 0) {
+  const effectiveSections = (page.storeSettings?.[slug] as any)?.sections || page.sections;
+  if (effectiveSections && effectiveSections.length > 0) {
     const rawTexts: string[] = [];
-    page.sections.forEach((sec) => {
+    effectiveSections.forEach((sec: any) => {
       if (sec.content?.description) {
         rawTexts.push(sec.content.description);
       } else if (sec.content?.subtitle) {
@@ -67,8 +70,8 @@ export async function generateMetadata({ params }: NewsDetailPageProps): Promise
       plainTextDescription = combined.slice(0, 120);
     }
   }
-  const metaDescription = plainTextDescription || page.title;
-  const rawTitle = (page.seoTitle || page.title).trim();
+  const metaDescription = page.shortDescription || plainTextDescription || page.title;
+  const rawTitle = (storeSeoTitle || page.title).trim();
   const fullTitle = rawTitle.includes('ストロベリーボーイズ') || rawTitle.includes('【福岡店】') || rawTitle.includes('【横浜店】')
     ? rawTitle
     : `${rawTitle}｜${storeData.name}`;
@@ -105,8 +108,8 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
     notFound();
   }
 
-  // 1. 店舗に限定せず全公開記事から検索
-  const page = await getPublishedPageBySlug(newsSlug);
+  // 1. 店舗に限定せず全公開記事から検索 (店舗専用スラッグのフォールバック付き)
+  const page = await getPublishedPageBySlug(newsSlug, slug);
 
   if (!page || page.status !== 'published') {
     notFound();
@@ -157,13 +160,19 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
   const publishedAt = page.storeSettings?.[slug]?.publishedAt || page.updatedAt;
   const modifiedAt = page.updatedAt;
 
+  const effectivePage: any = {
+    ...page,
+    sections: (page.storeSettings?.[slug] as any)?.sections || page.sections,
+    seoTitle: (page.storeSettings?.[slug] as any)?.seoTitle || page.seoTitle,
+  };
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
-    headline: page.title,
+    headline: effectivePage.title,
     datePublished: new Date(publishedAt).toISOString(),
     dateModified: new Date(modifiedAt).toISOString(),
-    image: page.thumbnailUrl ? [page.thumbnailUrl] : [],
+    image: effectivePage.thumbnailUrl ? [effectivePage.thumbnailUrl] : [],
     publisher: {
       '@type': 'Organization',
       name: storeData.name,
@@ -181,7 +190,7 @@ export default async function NewsDetailPage({ params }: NewsDetailPageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <NewsDetailClient
-        page={page}
+        page={effectivePage}
         storeSlug={slug}
         template={template}
         config={config}

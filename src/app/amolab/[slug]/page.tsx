@@ -10,14 +10,19 @@ export const revalidate = 0;
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
   params,
+  searchParams,
 }: {
   params: { slug: string };
+  searchParams?: { preview?: string };
 }): Promise<Metadata> {
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: params.slug },
   });
 
-  if (!article || article.status !== 'published') {
+  const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
+  const isPreview = searchParams?.preview === PREVIEW_TOKEN;
+
+  if (!article || (article.status !== 'published' && !isPreview)) {
     return { title: '記事が見つかりません' };
   }
 
@@ -33,6 +38,14 @@ export async function generateMetadata({
   return {
     title: pageTitle,
     description: article.seo_description || article.excerpt || '',
+    ...(article.status !== 'published' || isPreview
+      ? {
+          robots: {
+            index: article.status === 'published' && !isPreview,
+            follow: article.status === 'published' && !isPreview,
+          },
+        }
+      : {}),
     alternates: {
       canonical: canonicalUrl,
     },
@@ -52,7 +65,16 @@ export async function generateMetadata({
   };
 }
 
-export default async function MagazineArticlePage({ params }: { params: { slug: string } }) {
+export default async function MagazineArticlePage({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams?: { preview?: string };
+}) {
+  const PREVIEW_TOKEN = 'kanae_sec_8f93a1c4b2e7d01695f241a38e70';
+  const isPreview = searchParams?.preview === PREVIEW_TOKEN;
+
   // DBから記事を取得、タグも結合して取得
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: params.slug },
@@ -63,8 +85,8 @@ export default async function MagazineArticlePage({ params }: { params: { slug: 
     },
   });
 
-  // 記事がない、または下書きの場合は404ページへ
-  if (!article || article.status !== 'published') {
+  // 記事がない、または下書きの場合は404ページへ（プレビュー時を除く）
+  if (!article || (article.status !== 'published' && !isPreview)) {
     notFound();
   }
 
