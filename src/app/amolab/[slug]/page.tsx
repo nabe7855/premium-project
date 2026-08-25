@@ -100,6 +100,12 @@ export default async function MagazineArticlePage({
     redirect(`/ikeo/${resolvedParams.slug}`);
   }
 
+  const now = new Date();
+  const pubDate = article.published_at ? new Date(article.published_at) : null;
+  const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
+  const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
+  const isNoIndex = article.status !== 'published' || isFuturePublication || isKanaePreRelease;
+
   // 関連記事の取得
   const relatedResult = await getRelatedArticles(article.id, 'user');
   const relatedArticles = relatedResult.success ? relatedResult.articles : [];
@@ -170,6 +176,7 @@ export default async function MagazineArticlePage({
 
   return (
     <>
+      {isNoIndex && <meta name="robots" content="noindex, nofollow" />}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleLd) }}
