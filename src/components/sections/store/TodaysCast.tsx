@@ -51,7 +51,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
           {/* Mobile carousel */}
           <div className="md:hidden">
             <div className="flex h-full flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft">
-              <Link href={`/store/${store.id}/cast/${currentCast.slug || currentCast.id}`}>
+              <Link href={`/store/${store.slug || store.id}/cast/${currentCast.slug || currentCast.id}`}>
                 <div className="relative aspect-[3/4] overflow-hidden">
                   <NextImage
                     src={currentCast.image}
@@ -114,7 +114,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                 </div>
 
                 <Link
-                  href={`/store/${store.id}/cast/${currentCast.slug || currentCast.id}`}
+                  href={`/store/${store.slug || store.id}/cast/${currentCast.slug || currentCast.id}`}
                   className={`mt-4 block w-full rounded-xl bg-rose-500 py-3 text-center text-xs font-black text-white shadow-lg shadow-rose-200 transition-all hover:scale-[1.02] active:scale-95`}
                 >
                   VIEW PROFILE
@@ -163,7 +163,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                 key={cast.id}
                 className="group flex flex-col overflow-hidden rounded-2xl border border-rose-50 bg-white shadow-soft transition-all duration-300 hover:scale-[1.02] hover:shadow-luxury"
               >
-                <Link href={`/store/${store.id}/cast/${cast.slug || cast.id}`}>
+                <Link href={`/store/${store.slug || store.id}/cast/${cast.slug || cast.id}`}>
                   <div className="relative aspect-[3/4] overflow-hidden">
                     <NextImage
                       src={cast.image}
@@ -230,7 +230,7 @@ const TodaysCast: React.FC<TodaysCastProps> = ({ store, castMembers }) => {
                       <span className="text-xs">🍓🍓🍓</span>
                     </div>
                     <Link
-                      href={`/store/${store.id}/cast/${cast.slug || cast.id}`}
+                      href={`/store/${store.slug || store.id}/cast/${cast.slug || cast.id}`}
                       className="rounded-full bg-rose-500 p-2 text-white shadow-md shadow-rose-200 transition-transform active:scale-90"
                       aria-label={`${cast.name}のプロフィールを見る`}
                     >

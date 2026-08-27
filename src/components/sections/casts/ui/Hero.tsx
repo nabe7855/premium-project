@@ -94,7 +94,7 @@ const Hero: React.FC<HeroProps> = ({ casts }) => {
             {casts.length > 0 ? (
               casts.map((cast, idx) => (
                 <div key={`${cast.id}-${idx}`} className="relative min-w-[320px] flex-[0_0_320px] px-4 pt-10 md:min-w-[380px] md:flex-[0_0_380px]">
-                  <Link href={`/store/${storeSlug}/cast/${cast.id}`} className="block">
+                  <Link href={`/store/${storeSlug}/cast/${cast.slug || cast.id}`} className="block">
                     {/* 🏷️ Cast Info Tag (Overlapping the card at the top) */}
                     <div className="absolute left-1/2 top-4 z-40 w-[80%] -translate-x-1/2">
                       <div className="relative bg-[#7EEDFF] border-[3px] border-black px-3 py-2 text-center shadow-[4px_4px_0px_#000]">

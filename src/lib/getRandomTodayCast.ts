@@ -3,6 +3,7 @@ import { supabase } from './supabaseClient';
 
 export interface RandomCast {
   id: string;
+  slug?: string | null;
   name: string;
   catch_copy?: string | null;
   ichioshi_point?: string | null;

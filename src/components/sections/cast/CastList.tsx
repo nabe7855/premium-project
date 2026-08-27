@@ -77,7 +77,7 @@ const CastList: React.FC = () => {
   };
 
   const handleCastSelect = (cast: Cast) => {
-    router.push(`/store/${storeSlug}/cast/${cast.id}`);
+    router.push(`/store/${storeSlug}/cast/${cast.slug || cast.id}`);
   };
 
   const handleBookingClick = (cast: Cast, e: React.MouseEvent) => {

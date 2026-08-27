@@ -1,5 +1,6 @@
 export interface Cast {
   id: string;
+  slug?: string;
   name: string;
   catchphrase: string;
   avatar: string;

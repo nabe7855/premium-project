@@ -4,6 +4,7 @@ export type StoreLocation = 'tokyo' | 'osaka' | 'nagoya' | 'fukuoka' | 'yokohama
 
 export interface Store {
   id: StoreLocation;
+  slug?: string;
   template: 'common' | 'fukuoka' | 'yokohama';
   name: string;
   displayName: string;
