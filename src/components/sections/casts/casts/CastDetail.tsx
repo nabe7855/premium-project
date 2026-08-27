@@ -27,6 +27,8 @@ import { formatSnsUrl } from '@/lib/utils/sns-url';
 import { useCastDetail } from '@/hooks/useCastDetail';
 import { Cast } from '@/types/cast';
 
+import { Review } from '@/types/review';
+import ReviewCard from '@/components/sections/reviews/ReviewCard';
 import BookingModal from '../modals/BookingModal';
 import CastGallery from './detail/CastGallery';
 import CastProfile from './detail/CastProfile';
@@ -45,10 +47,21 @@ interface CastDetailProps {
   storeId?: string;
   interviewUrl?: string | null;
   interviewArticles?: { title: string; url: string; thumbnailUrl: string | null; volNumber: number | null }[];
+  initialReviews?: Review[];
+  reviewCount?: number;
 }
 
-const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, interviewUrl, interviewArticles = [] }) => {
+const CastDetail: React.FC<CastDetailProps> = ({
+  cast,
+  storeSlug,
+  storeId,
+  interviewUrl,
+  interviewArticles = [],
+  initialReviews = [],
+  reviewCount = 0,
+}) => {
   const router = useRouter();
+  const [showAllReviews, setShowAllReviews] = React.useState(false);
 
   const {
     activeTab,
@@ -63,6 +76,8 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
   } = useCastDetail();
 
   const [isSnsModalOpen, setIsSnsModalOpen] = React.useState(false);
+
+  const displayReviews = showAllReviews ? initialReviews : initialReviews.slice(0, 5);
 
   // ✅ SNS情報取得ヘルパー（formatSnsUrlで404エラー防止）
   const getSnsList = React.useCallback(() => {
@@ -285,6 +300,53 @@ const CastDetail: React.FC<CastDetailProps> = ({ cast, storeSlug, storeId, inter
           )}
         </div>
       )}
+
+      {/* 💬 口コミセクション (SSR) */}
+      <section id="reviews" className="mx-4 my-8 scroll-mt-20 rounded-3xl border border-rose-100 bg-gradient-to-b from-rose-50/50 to-white p-6 shadow-sm md:scroll-mt-24 md:p-8">
+        <h2 className="mb-6 flex items-center gap-2 font-serif text-xl font-bold text-gray-800 md:text-2xl">
+          <MessageCircle className="h-6 w-6 text-pink-500 flex-shrink-0" />
+          <span>{cast.name}さんへの口コミ({reviewCount}件)</span>
+        </h2>
+
+        {displayReviews.length > 0 ? (
+          <div className="space-y-4">
+            {displayReviews.map((rev) => (
+              <ReviewCard key={rev.id} review={rev} />
+            ))}
+            {initialReviews.length > 5 && !showAllReviews && (
+              <button
+                onClick={() => setShowAllReviews(true)}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-pink-300 bg-white py-3.5 text-sm font-bold text-pink-600 shadow-sm transition-all hover:bg-pink-50 active:scale-[0.99]"
+              >
+                <span>口コミをもっと見る ({initialReviews.length - 5}件)</span>
+                <ChevronRight className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-pink-200 bg-white p-6 text-center">
+            <p className="mb-3 text-sm font-bold text-gray-700">まだ口コミはありません</p>
+            <p className="mb-4 text-xs text-gray-500">ご予約・ご利用後に温かいメッセージをお寄せいただけると幸いです💐</p>
+            <button
+              onClick={() => setActiveTab('reviews')}
+              className="inline-flex items-center gap-1.5 rounded-full bg-pink-500 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-pink-600"
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span>最初の口コミを投稿する</span>
+            </button>
+          </div>
+        )}
+
+        <div className="mt-6 border-t border-rose-100 pt-4 text-right">
+          <Link
+            href={`/store/${storeSlug}/reviews`}
+            className="inline-flex items-center gap-1 text-xs font-bold text-pink-600 transition-colors hover:text-pink-700 md:text-sm"
+          >
+            <span>店舗全体の口コミを見る</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+      </section>
 
       {/* アクションバー */}
       <div ref={actionBarRef}>

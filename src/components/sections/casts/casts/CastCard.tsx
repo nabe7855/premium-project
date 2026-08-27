@@ -88,20 +88,25 @@ const CastCard: React.FC<CastCardProps> = ({
   };
 
   // 評価セクション（視認性向上プラン）
+  const targetSlug = cast.slug || cast.id;
   const scoreSection = hasCompatibilityScore ? (
     <div className="mb-2 font-bold text-pink-600">
       💘 相性スコア: {Math.round((cast as ScoredCast).compatibilityScore)}%
     </div>
-  ) : (
+  ) : (cast.reviewCount && cast.reviewCount > 0) ? (
     <div className="mb-3 w-full">
-      <div className="flex w-full items-center justify-center gap-1.5 rounded bg-[#FF3366] py-1.5 text-white shadow-sm">
+      <a
+        href={`/store/${storeSlug}/cast/${targetSlug}#reviews`}
+        onClick={(e) => e.stopPropagation()}
+        className="flex w-full items-center justify-center gap-1.5 rounded bg-[#FF3366] py-1.5 text-white shadow-sm transition-colors hover:bg-[#e02e5b]"
+      >
         <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         <span className="text-[11px] font-medium tracking-widest sm:text-xs">
-           口コミ {cast.reviewCount ?? 0}件
+           口コミ {cast.reviewCount}件
         </span>
-      </div>
+      </a>
     </div>
-  );
+  ) : null;
 
 
   return (

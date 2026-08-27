@@ -5,13 +5,14 @@ import YokohamaFooter from '@/components/templates/store/yokohama/sections/Foote
 import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import { getCastProfileBySlug } from '@/lib/getCastProfileBySlug';
 import { getCastQuestions } from '@/lib/getCastQuestions';
+import { getReviewsByStore } from '@/lib/getReviewsByStore';
 import { prisma } from '@/lib/prisma';
 import { getStoreTopConfig } from '@/lib/store/getStoreTopConfig';
 import { getStoreData } from '@/lib/store/store-data';
 import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeTopConfig';
 import { Cast } from '@/types/cast';
 import { Metadata } from 'next';
-import { notFound } from 'next/navigation';
+import { notFound, permanentRedirect } from 'next/navigation';
 
 interface Props {
   params: { slug: string; cast: string };
@@ -50,6 +51,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     ? `${cleanProfile}…【${s.city}（${s.area}）で活動するセラピスト「${cast.name}」の出勤スケジュール・ご予約】`
     : `${s.city}（${s.area}）で活動するセラピスト「${cast.name}」のプロフィール。施術スタイル・出勤スケジュール・ご予約はこちらから。`;
 
+  const canonicalSlug = cast.slug || params.cast;
+
   return {
     title,
     description,
@@ -59,23 +62,21 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       images: cast.imageUrl ? [cast.imageUrl] : [],
     },
     alternates: {
-      canonical: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${params.cast}`,
+      canonical: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${canonicalSlug}`,
     },
   };
 }
 
-import { redirect } from 'next/navigation';
-
-// ✅ 旧アカウントから現役アカウントへの301リダイレクトマップ
+// ✅ 旧アカウントから現役アカウントへの308リダイレクトマップ
 const CAST_301_REDIRECTS: Record<string, string> = {
   '-348075': '-c9616d', // 旧キセキ -> 現役キセキ
 };
 
 // ✅ ページ本体
 export default async function CastDetailPage({ params }: Props) {
-  // 301リダイレクトチェック
+  // 308 permanentRedirect チェック (旧アカウント)
   if (CAST_301_REDIRECTS[params.cast]) {
-    redirect(`/store/${params.slug}/cast/${CAST_301_REDIRECTS[params.cast]}`);
+    permanentRedirect(`/store/${params.slug}/cast/${CAST_301_REDIRECTS[params.cast]}`);
   }
 
   let cast: Cast | null = await getCastProfileBySlug(params.cast);
@@ -83,6 +84,19 @@ export default async function CastDetailPage({ params }: Props) {
   if (!cast) {
     notFound();
   }
+
+  // 308 permanentRedirect チェック (UUIDアクセスは正規slugへリダイレクト)
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.cast);
+  if (isUUID && cast.slug && cast.slug !== params.cast) {
+    permanentRedirect(`/store/${params.slug}/cast/${cast.slug}`);
+  }
+
+  // ✅ 口コミデータ取得 (SSR: 最大20件)
+  const { reviews: initialReviews, totalCount: reviewCount } = await getReviewsByStore(params.slug, {
+    castId: cast.id,
+    limit: 20,
+    offset: 0,
+  });
 
   // ✅ Q&A を追加取得
   const castQuestions = await getCastQuestions(cast.id);
@@ -149,12 +163,7 @@ export default async function CastDetailPage({ params }: Props) {
   // 後方互換用: 最初の公開記事のURLのみ単独で使う場合も引き続き対応
   const interviewUrl = interviewArticles.length > 0 ? interviewArticles[0].url : null;
 
-  // ✅ デバッグログ
-  console.log('🟢 CastDetailPage params:', params);
-  console.log('🟢 CastDetailPage loaded cast:', cast);
-  console.log('🟢 CastDetailPage interviewUrl:', interviewUrl);
-
-  // ✅ 構造化データ (ProfilePage / Person)
+  // ✅ 構造化データ (ProfilePage / Person) - ※ AggregateRating / Review スキーマはポリシー遵守のため付与しない
   const castProfileSD = {
     '@context': 'https://schema.org',
     '@type': 'ProfilePage',
@@ -168,7 +177,7 @@ export default async function CastDetailPage({ params }: Props) {
         '@type': 'LocalBusiness',
         name: store?.name || 'Strawberry Boys',
       },
-      url: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${params.cast}`,
+      url: `https://www.sutoroberrys.jp/store/${params.slug}/cast/${cast.slug || params.cast}`,
     },
   };
 
@@ -192,8 +201,16 @@ export default async function CastDetailPage({ params }: Props) {
         </>
       )}
 
-      {/* ✅ storeSlug と storeId と interviewUrl と interviewArticles を渡す */}
-      <CastDetail cast={cast} storeSlug={params.slug} storeId={dbStore?.id} interviewUrl={interviewUrl} interviewArticles={interviewArticles} />
+      {/* ✅ storeSlug, storeId, interviewUrl, interviewArticles, initialReviews, reviewCount を渡す */}
+      <CastDetail
+        cast={cast}
+        storeSlug={params.slug}
+        storeId={dbStore?.id}
+        interviewUrl={interviewUrl}
+        interviewArticles={interviewArticles}
+        initialReviews={initialReviews}
+        reviewCount={reviewCount}
+      />
 
       {/* ✅ テンプレートに応じたフッターを表示 */}
       {store?.template === 'yokohama' ? (
