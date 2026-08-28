@@ -1,15 +1,18 @@
 'use client';
 
 import React from 'react';
-import { Star } from 'lucide-react';
+import { Star, ChevronRight } from 'lucide-react';
 import { Cast } from '@/types/cast';
 
 interface CastProfileProps {
   cast: Cast;
   storeSlug?: string;
+  reviewCount?: number;
+  onReviewsClick?: () => void;
 }
 
-const CastProfile: React.FC<CastProfileProps> = ({ cast, storeSlug }) => {
+const CastProfile: React.FC<CastProfileProps> = ({ cast, storeSlug, reviewCount: propReviewCount, onReviewsClick }) => {
+  const count = propReviewCount ?? cast.reviewCount ?? 0;
   const today = new Date().toISOString().split('T')[0];
   const todaySchedules = cast.availability?.[today] ?? [];
   const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
@@ -43,15 +46,39 @@ const CastProfile: React.FC<CastProfileProps> = ({ cast, storeSlug }) => {
 
           {/* 評価・年齢・出勤 */}
           <div className="flex flex-wrap items-center gap-3 mb-6 sm:gap-4">
-            {/* 評価 */}
-            {cast.reviewCount && cast.reviewCount > 0 ? (
-              <div className="flex items-center text-sm sm:text-base">
-                <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
-                <span className="font-semibold text-neutral-800">
-                  {(cast.rating ?? 0).toFixed(1)}
-                </span>
-                <span className="text-neutral-600 ml-1">🍓評価</span>
-              </div>
+            {/* 評価 (クリック可能アンカーバッジ) */}
+            {count > 0 ? (
+              onReviewsClick ? (
+                <button
+                  onClick={onReviewsClick}
+                  className="group flex items-center text-sm sm:text-base rounded-lg border border-amber-200/80 bg-amber-50/80 px-2.5 py-1 transition-all hover:bg-amber-100 hover:border-amber-300 shadow-xs"
+                >
+                  <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
+                  <span className="font-bold text-neutral-800">
+                    {(cast.rating ?? 0).toFixed(1)}
+                  </span>
+                  <span className="text-neutral-600 ml-1 text-xs sm:text-sm font-medium">
+                    🍓評価 ({count}件)
+                  </span>
+                  <ChevronRight className="w-3.5 h-3.5 text-neutral-400 ml-0.5 transition-transform group-hover:translate-x-0.5" />
+                </button>
+              ) : (
+                <div className="flex items-center text-sm sm:text-base">
+                  <Star className="w-4 h-4 text-amber-400 fill-current mr-1 sm:w-5 sm:h-5" />
+                  <span className="font-semibold text-neutral-800">
+                    {(cast.rating ?? 0).toFixed(1)}
+                  </span>
+                  <span className="text-neutral-600 ml-1">🍓評価 ({count}件)</span>
+                </div>
+              )
+            ) : onReviewsClick ? (
+              <button
+                onClick={onReviewsClick}
+                className="flex items-center text-xs sm:text-sm text-neutral-500 bg-neutral-100 px-3 py-1 rounded-full font-semibold hover:bg-neutral-200 transition-colors"
+              >
+                <span>評価はまだありません (口コミを書く)</span>
+                <ChevronRight className="w-3.5 h-3.5 text-neutral-400 ml-0.5" />
+              </button>
             ) : (
               <div className="flex items-center text-xs sm:text-sm text-neutral-400 bg-neutral-100 px-3 py-1 rounded-full font-semibold">
                 評価はまだありません

@@ -77,7 +77,22 @@ const CastDetail: React.FC<CastDetailProps> = ({
 
   const [isSnsModalOpen, setIsSnsModalOpen] = React.useState(false);
 
-  const displayReviews = showAllReviews ? initialReviews : initialReviews.slice(0, 5);
+  // 1. セクション上の表示は最新「最大3件」に厳選・固定
+  const displayReviews = initialReviews.slice(0, 3);
+
+  // 2. 「口コミ」タブへ切り替え＆2段スタッキーヘッダーオフセットを考慮したスムーズスクロール
+  const handleNavigateToReviewsTab = React.useCallback(() => {
+    setActiveTab('reviews');
+    setTimeout(() => {
+      if (actionBarRef.current) {
+        const elementPosition = actionBarRef.current.getBoundingClientRect().top + window.pageYOffset;
+        window.scrollTo({
+          top: Math.max(0, elementPosition - 110),
+          behavior: 'smooth',
+        });
+      }
+    }, 50);
+  }, [setActiveTab, actionBarRef]);
 
   // ✅ SNS情報取得ヘルパー（formatSnsUrlで404エラー防止）
   const getSnsList = React.useCallback(() => {
@@ -121,12 +136,12 @@ const CastDetail: React.FC<CastDetailProps> = ({
     setIsSnsModalOpen(true);
   }, [cast, getSnsList]);
 
-  // ✅ タブ
-  const tabs: { id: TabType; label: string; icon: any }[] = [
+  // ✅ タブ定義 (既存CastStickyActionBarのcount propを活用)
+  const tabs: { id: TabType; label: string; icon: any; count?: number }[] = [
     { id: 'basic', label: '基本情報', icon: User },
     { id: 'story', label: 'ストーリー', icon: BookOpen },
     { id: 'schedule', label: 'スケジュール', icon: Calendar },
-    { id: 'reviews', label: '口コミ投稿', icon: MessageCircle },
+    { id: 'reviews', label: '口コミ', icon: MessageCircle, count: reviewCount },
     { id: 'videos', label: '動画', icon: Play },
   ];
 
@@ -214,8 +229,13 @@ const CastDetail: React.FC<CastDetailProps> = ({
         onImageChange={setCurrentImageIndex}
       />
 
-      {/* プロフィール */}
-      <CastProfile cast={cast} storeSlug={storeSlug} />
+      {/* プロフィール (評価バッジをクリック可能アンカー化) */}
+      <CastProfile
+        cast={cast}
+        storeSlug={storeSlug}
+        reviewCount={reviewCount}
+        onReviewsClick={handleNavigateToReviewsTab}
+      />
 
       {/* ✨ インタビューバナーエリア: 1本→明るいバナー、、2本以上→横スクロールカードストリップ */}
       {interviewArticles.length > 0 && (
@@ -301,7 +321,7 @@ const CastDetail: React.FC<CastDetailProps> = ({
         </div>
       )}
 
-      {/* 💬 口コミセクション (SSR) */}
+      {/* 💬 口コミセクション (SSR: 最新3件のみ表示でコンパクト化 + タブ連動) */}
       <section id="reviews" className="mx-4 my-8 scroll-mt-20 rounded-3xl border border-rose-100 bg-gradient-to-b from-rose-50/50 to-white p-6 shadow-sm md:scroll-mt-24 md:p-8">
         <h2 className="mb-6 flex items-center gap-2 font-serif text-xl font-bold text-gray-800 md:text-2xl">
           <MessageCircle className="h-6 w-6 text-pink-500 flex-shrink-0" />
@@ -313,22 +333,20 @@ const CastDetail: React.FC<CastDetailProps> = ({
             {displayReviews.map((rev) => (
               <ReviewCard key={rev.id} review={rev} />
             ))}
-            {initialReviews.length > 5 && !showAllReviews && (
-              <button
-                onClick={() => setShowAllReviews(true)}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-pink-300 bg-white py-3.5 text-sm font-bold text-pink-600 shadow-sm transition-all hover:bg-pink-50 active:scale-[0.99]"
-              >
-                <span>口コミをもっと見る ({initialReviews.length - 5}件)</span>
-                <ChevronRight className="h-4 w-4" />
-              </button>
-            )}
+            <button
+              onClick={handleNavigateToReviewsTab}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl border border-pink-300 bg-white py-3.5 text-sm font-bold text-pink-600 shadow-sm transition-all hover:bg-pink-50 active:scale-[0.99]"
+            >
+              <span>口コミをもっと見る・投稿する ({reviewCount}件)</span>
+              <ChevronRight className="h-4 w-4" />
+            </button>
           </div>
         ) : (
           <div className="rounded-2xl border border-dashed border-pink-200 bg-white p-6 text-center">
             <p className="mb-3 text-sm font-bold text-gray-700">まだ口コミはありません</p>
             <p className="mb-4 text-xs text-gray-500">ご予約・ご利用後に温かいメッセージをお寄せいただけると幸いです💐</p>
             <button
-              onClick={() => setActiveTab('reviews')}
+              onClick={handleNavigateToReviewsTab}
               className="inline-flex items-center gap-1.5 rounded-full bg-pink-500 px-5 py-2 text-xs font-bold text-white shadow-sm transition-colors hover:bg-pink-600"
             >
               <MessageCircle className="h-4 w-4" />
@@ -369,7 +387,13 @@ const CastDetail: React.FC<CastDetailProps> = ({
           <CastTabSchedule cast={cast} onBookingOpen={handleBookingModalOpen} />
         )}
         {activeTab === 'reviews' && (
-          <CastTabReviewPage castId={cast.id} castName={cast.name} storeSlug={storeSlug} />
+          <CastTabReviewPage
+            castId={cast.id}
+            castName={cast.name}
+            storeSlug={storeSlug}
+            initialReviews={initialReviews}
+            reviewCount={reviewCount}
+          />
         )}
         {activeTab === 'videos' && <CastTabMovie cast={cast} />}
       </div>
