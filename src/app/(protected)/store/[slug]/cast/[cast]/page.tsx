@@ -23,6 +23,21 @@ import { STORE_META } from '@/lib/store/storeMeta';
 export const revalidate = 0;
 export const dynamic = 'force-dynamic';
 
+// ✅ 旧アカウントから現役アカウントへの308リダイレクトマップ
+const CAST_301_REDIRECTS: Record<string, string> = {
+  '-348075': '-c9616d', // 旧キセキ -> 現役キセキ
+};
+
+function checkRedirect(slug: string, castParam: string, castSlug?: string) {
+  if (CAST_301_REDIRECTS[castParam]) {
+    permanentRedirect(`/store/${slug}/cast/${CAST_301_REDIRECTS[castParam]}`);
+  }
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(castParam);
+  if (isUUID && castSlug && castSlug !== castParam) {
+    permanentRedirect(`/store/${slug}/cast/${castSlug}`);
+  }
+}
+
 // ✅ メタデータ生成
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const cast = await getCastProfileBySlug(params.cast);
@@ -33,6 +48,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: '指定されたキャストは存在しません。',
     };
   }
+
+  checkRedirect(params.slug, params.cast, cast.slug);
 
   const s = STORE_META[params.slug] || {
     city: params.slug === 'yokohama' ? '横浜' : params.slug === 'fukuoka' ? '福岡' : '各地域',
@@ -67,29 +84,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// ✅ 旧アカウントから現役アカウントへの308リダイレクトマップ
-const CAST_301_REDIRECTS: Record<string, string> = {
-  '-348075': '-c9616d', // 旧キセキ -> 現役キセキ
-};
-
 // ✅ ページ本体
 export default async function CastDetailPage({ params }: Props) {
-  // 308 permanentRedirect チェック (旧アカウント)
-  if (CAST_301_REDIRECTS[params.cast]) {
-    permanentRedirect(`/store/${params.slug}/cast/${CAST_301_REDIRECTS[params.cast]}`);
-  }
-
   let cast: Cast | null = await getCastProfileBySlug(params.cast);
 
   if (!cast) {
     notFound();
   }
 
-  // 308 permanentRedirect チェック (UUIDアクセスは正規slugへリダイレクト)
-  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.cast);
-  if (isUUID && cast.slug && cast.slug !== params.cast) {
-    permanentRedirect(`/store/${params.slug}/cast/${cast.slug}`);
-  }
+  checkRedirect(params.slug, params.cast, cast.slug);
 
   // ✅ 口コミデータ取得 (SSR: 最大20件)
   const { reviews: initialReviews, totalCount: reviewCount } = await getReviewsByStore(params.slug, {
