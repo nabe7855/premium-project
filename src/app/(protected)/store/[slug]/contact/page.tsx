@@ -147,9 +147,11 @@ export default function ContactPage() {
             >
               {/* アイコン & キャッチコピー */}
               <div className="mt-2 flex items-center gap-4 sm:mt-0">
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
-                  <MessageCircle className="h-8 w-8 fill-current stroke-emerald-500" />
-                </div>
+                <img
+                  src="/images/line-icon.jpg"
+                  alt="LINE"
+                  className="h-14 w-14 shrink-0 rounded-2xl object-cover shadow-md transition-transform group-hover:scale-110"
+                />
                 <div className="text-left">
                   <div className="flex items-center gap-2">
                     <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
