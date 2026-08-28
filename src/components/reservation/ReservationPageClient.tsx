@@ -283,12 +283,6 @@ ${formData.notes ? `【備考】: ${formData.notes}` : ''}
               }}
               className="group relative flex w-full flex-col items-center justify-between gap-4 rounded-3xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 via-white to-emerald-500/10 p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-xl sm:flex-row sm:p-6"
             >
-              {/* アイキャッチバッジ */}
-              <div className="absolute -top-3.5 left-6 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-3.5 py-0.5 text-[11px] font-extrabold tracking-wider text-white shadow-md flex items-center gap-1">
-                <Sparkles className="h-3 w-3 text-yellow-300 animate-pulse" />
-                <span>手軽で簡単♪ 返信最速・一番おすすめ</span>
-              </div>
-
               {/* アイコン & キャッチコピー */}
               <div className="mt-2 flex items-center gap-4 sm:mt-0">
                 <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
