@@ -90,7 +90,7 @@ export async function getReviewsByStore(
             name: d.casts.name,
             main_image_url: d.casts.main_image_url || null,
             is_active: d.casts.is_active,
-            cast_store_memberships: [{ stores: { slug: storeSlug } }],
+            cast_store_memberships: [{ stores: { id: storeSlug, slug: storeSlug, name: storeSlug } }],
           }
         : null,
       review_tag_links: (d.review_tag_links || []).map((l: any) => ({
