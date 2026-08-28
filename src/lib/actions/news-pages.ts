@@ -104,12 +104,50 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
   }
 }
 
-export async function getPublishedPageBySlug(newsSlug: string): Promise<PageData | null> {
+export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: string): Promise<PageData | null> {
   noStore();
   try {
-    const record = await prisma.pageRequest.findFirst({
+    let record = await prisma.pageRequest.findFirst({
       where: { slug: newsSlug, status: 'published' },
     });
+
+    if (record && storeSlug) {
+      const slugs = record.targetStoreSlugs as string[];
+      if (Array.isArray(slugs) && slugs.length > 0 && !slugs.includes(storeSlug)) {
+        // Current exact record does not target this store, check store-specific record
+        const storeRecord = await prisma.pageRequest.findFirst({
+          where: { slug: `${newsSlug}-${storeSlug}`, status: 'published' },
+        });
+        if (storeRecord) record = storeRecord;
+      }
+    }
+
+    if (!record && storeSlug) {
+      record = await prisma.pageRequest.findFirst({
+        where: { slug: `${newsSlug}-${storeSlug}`, status: 'published' },
+      });
+    }
+
+    if (!record) {
+      const matches = await prisma.pageRequest.findMany({
+        where: {
+          slug: { startsWith: newsSlug },
+          status: 'published',
+        },
+      });
+
+      if (matches.length > 0) {
+        if (storeSlug) {
+          const storeMatch = matches.find((m: any) => {
+            const slugs = m.targetStoreSlugs as string[];
+            return Array.isArray(slugs) && slugs.includes(storeSlug);
+          });
+          if (storeMatch) record = storeMatch;
+        }
+        if (!record) record = matches[0];
+      }
+    }
+
     if (!record) return null;
 
     const misc = (record.referenceUrls as any) || {};
