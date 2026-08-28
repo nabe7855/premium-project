@@ -1,8 +1,9 @@
 'use client';
 
+import { sendGAEvent } from '@next/third-parties/google';
 import { getStoreContactData, sendStoreInquiry } from '@/actions/store-contact';
 import { stores } from '@/data/stores';
-import { AlertCircle, CheckCircle2, Loader2, Mail, MessageCircle, Phone, Send } from 'lucide-react';
+import { AlertCircle, CheckCircle2, Loader2, Mail, MessageCircle, Phone, Send, Sparkles } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -104,20 +105,20 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-20 md:py-32">
+    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-rose-50 py-16 md:py-24">
       <div className="container mx-auto max-w-4xl px-4">
         {/* ヘッダー */}
-        <div className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-6 py-2 text-white shadow-lg">
-            <MessageCircle className="h-5 w-5" />
+        <div className="mb-8 text-center md:mb-10">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-pink-500 to-rose-500 px-5 py-1.5 text-sm text-white shadow-md">
+            <MessageCircle className="h-4 w-4" />
             <span className="font-bold">お問い合わせ</span>
           </div>
-          <h1 className="mb-4 text-3xl font-black leading-tight text-gray-800 md:text-5xl">
+          <h1 className="mb-3 text-2xl font-black leading-tight text-gray-800 md:text-4xl">
             {contactInfo.name}に
             <br className="md:hidden" />
             お気軽にご質問ください
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-sm font-medium text-gray-600 md:text-base">
             お問い合わせは下記のフォームからお願いいたします。
             <br />
             直接お電話、LINEからの問い合わせも出来ます。
@@ -125,50 +126,91 @@ export default function ContactPage() {
         </div>
 
         {/* 連絡先カード */}
-        <div className="mb-12 grid gap-4 md:grid-cols-3">
+        <div className={`mb-10 grid gap-4 ${contactInfo.lineUrl ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+          {/* LINEカード (A案: ポップ・親しみ系 & 目立つ最優先デザイン) */}
+          {contactInfo.lineUrl && (
+            <a
+              href={contactInfo.lineUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                try {
+                  sendGAEvent('event', 'click_line_inquiry', {
+                    store_slug: (slug as string) || 'unknown',
+                    page_location: 'contact_page',
+                  });
+                } catch (e) {
+                  console.error('GA event error:', e);
+                }
+              }}
+              className="group relative flex flex-col items-center justify-between rounded-3xl border-2 border-emerald-400 bg-gradient-to-b from-emerald-50 via-white to-emerald-500/10 p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-xl md:order-1"
+            >
+              {/* アイキャッチバッジ */}
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-3.5 py-0.5 text-[11px] font-extrabold tracking-wider text-white shadow-md flex items-center gap-1">
+                <Sparkles className="h-3 w-3 text-yellow-300 animate-pulse" />
+                <span>手軽で簡単♪ 一番おすすめ</span>
+              </div>
+
+              <div className="mt-2 flex flex-col items-center gap-2">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
+                  <MessageCircle className="h-8 w-8 fill-current stroke-emerald-500" />
+                </div>
+                <div className="text-center">
+                  <span className="inline-block rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
+                    返信最速・24h受付
+                  </span>
+                  <div className="mt-1 text-lg font-black text-emerald-900">LINEで手軽に相談</div>
+                  <div className="text-xs font-semibold text-emerald-700">
+                    {contactInfo.lineId ? `@${contactInfo.lineId.replace(/^@/, '')}` : '公式LINE'}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 w-full rounded-xl bg-emerald-500 py-2 text-center text-xs font-bold text-white shadow transition-colors group-hover:bg-emerald-600">
+                10秒で友だち追加・相談する ▶
+              </div>
+            </a>
+          )}
+
+          {/* 電話カード */}
           <a
             href={`tel:${contactInfo.phone.replace(/-/g, '')}`}
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-pink-100 bg-white p-6 transition-all hover:border-pink-300 hover:shadow-lg"
+            className="group flex flex-col items-center justify-between rounded-3xl border-2 border-pink-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-pink-300 hover:shadow-md md:order-2"
           >
-            <div className="rounded-full bg-gradient-to-br from-pink-100 to-rose-100 p-4 transition-transform group-hover:scale-110">
-              <Phone className="h-6 w-6 text-pink-600" />
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">お電話</div>
-              <div className="text-lg font-bold text-gray-800">
-                {contactInfo.phone || '03-XXXX-XXXX'}
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-600 transition-transform group-hover:scale-110">
+                <Phone className="h-6 w-6" />
               </div>
+              <div className="text-center">
+                <div className="text-xs font-medium text-gray-500">お電話でのご相談</div>
+                <div className="text-base font-bold text-gray-800">
+                  {contactInfo.phone || 'お電話番号'}
+                </div>
+              </div>
+            </div>
+            <div className="mt-3 w-full rounded-xl bg-pink-50 py-2 text-center text-xs font-bold text-pink-600 transition-colors group-hover:bg-pink-100">
+              直接電話をかける
             </div>
           </a>
 
+          {/* メールカード */}
           <a
-            href={contactInfo.lineUrl || 'https://line.me'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-green-100 bg-white p-6 transition-all hover:border-green-300 hover:shadow-lg"
+            href={`mailto:${contactInfo.email || ''}`}
+            className="group flex flex-col items-center justify-between rounded-3xl border-2 border-blue-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-md md:order-3"
           >
-            <div className="rounded-full bg-gradient-to-br from-green-100 to-emerald-100 p-4 transition-transform group-hover:scale-110">
-              <MessageCircle className="h-6 w-6 text-green-600" />
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">LINE</div>
-              <div className="text-lg font-bold text-gray-800">
-                {contactInfo.lineId || '@strawberryboys'}
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-600 transition-transform group-hover:scale-110">
+                <Mail className="h-6 w-6" />
+              </div>
+              <div className="text-center">
+                <div className="text-xs font-medium text-gray-500">メールでのお問い合わせ</div>
+                <div className="text-xs font-bold text-gray-700 truncate max-w-[180px]">
+                  {contactInfo.email || 'メールフォーム'}
+                </div>
               </div>
             </div>
-          </a>
-          <a
-            href={`mailto:${contactInfo.email || 'contactsutoroberrys@gmail.com'}`}
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-blue-100 bg-white p-6 transition-all hover:border-blue-300 hover:shadow-lg"
-          >
-            <div className="rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 p-4 transition-transform group-hover:scale-110">
-              <Mail className="h-6 w-6 text-blue-600" />
-            </div>
-            <div className="text-center">
-              <div className="text-sm font-medium text-gray-500">メール</div>
-              <div className="text-sm font-bold text-gray-800">
-                {contactInfo.email || 'contact@'}
-              </div>
+            <div className="mt-3 w-full rounded-xl bg-blue-50 py-2 text-center text-xs font-bold text-blue-600 transition-colors group-hover:bg-blue-100">
+              メールソフトを起動
             </div>
           </a>
         </div>

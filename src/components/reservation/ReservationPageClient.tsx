@@ -1,5 +1,6 @@
 'use client';
 
+import { sendGAEvent } from '@next/third-parties/google';
 import {
   Select,
   SelectContent,
@@ -24,6 +25,7 @@ import {
   MessageCircle,
   Phone,
   Send,
+  Sparkles,
   User,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -98,8 +100,11 @@ export default function ReservationPageClient({
     meetingPlace: '',
     course: '',
     outfit: '',
+    playStyle: '',
+    ngRequest: '',
     discount: '',
     message: '',
+    notes: '',
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -107,14 +112,15 @@ export default function ReservationPageClient({
     setIsSubmitting(true);
 
     try {
-      // 合計情報を notes にまとめる
       const combinedNotes = `
 【コース】: ${formData.course}
 【利用状況】: ${formData.usageStatus}
 【待ち合わせ】: ${formData.meetingPlace}
 【服装】: ${formData.outfit}
 【割引】: ${formData.discount}
+【プレイ形式/NG】: ${formData.playStyle || '-'} / ${formData.ngRequest || '-'}
 【メッセージ】: ${formData.message}
+${formData.notes ? `【備考】: ${formData.notes}` : ''}
       `.trim();
 
       const result = await createReservation({
@@ -130,12 +136,13 @@ export default function ReservationPageClient({
 
       if (result.success) {
         setIsSuccess(true);
+        toast.success('予約リクエストを送信しました');
       } else {
         toast.error('エラーが発生しました。お電話またはLINEにてお問い合わせください。');
       }
     } catch (error) {
-      console.error('Reservation error:', error);
-      toast.error('予期せぬエラーが発生しました。');
+      console.error('Reservation submit error:', error);
+      toast.error('予期せぬエラーが発生しました');
     } finally {
       setIsSubmitting(false);
     }
@@ -150,7 +157,6 @@ export default function ReservationPageClient({
     });
   };
 
-  // サンクス画面が表示されたらトップへスクロール（レンダリング完了後に実行）
   useEffect(() => {
     if (isSuccess) {
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -158,23 +164,25 @@ export default function ReservationPageClient({
   }, [isSuccess]);
 
   const configLineId = store.line_id || storeConfig?.lineId;
-  const rawLineUrl = store.line_url || storeConfig?.snsProfile?.followLink || 'https://line.me';
+  const rawLineUrl = store.line_url || storeConfig?.snsProfile?.followLink || '';
   
-  const lineHref = (rawLineUrl.startsWith('http') || rawLineUrl.startsWith('/') || rawLineUrl.includes(':'))
-    ? rawLineUrl
-    : `https://line.me/R/ti/p/${rawLineUrl.startsWith('@') ? rawLineUrl : '@' + rawLineUrl}`;
+  const lineHref = rawLineUrl
+    ? (rawLineUrl.startsWith('http') || rawLineUrl.startsWith('/') || rawLineUrl.includes(':'))
+      ? rawLineUrl
+      : `https://line.me/R/ti/p/${rawLineUrl.startsWith('@') ? rawLineUrl : '@' + rawLineUrl}`
+    : configLineId
+    ? `https://line.me/R/ti/p/${configLineId.startsWith('@') ? configLineId : '@' + configLineId}`
+    : null;
 
   const lineLabel = configLineId
     ? configLineId.startsWith('@')
       ? configLineId
       : `@${configLineId}`
-    : (rawLineUrl.includes('@') ? '@' + rawLineUrl.split('@').pop() : '@example');
+    : (rawLineUrl.includes('@') ? '@' + rawLineUrl.split('@').pop() : '公式LINE');
   const phoneHref = store.phone ? `tel:${store.phone}` : '#';
-  const phoneLabel = store.phone || '03-XXXX-XXXX';
-  const emailLabel = store.notification_email || 'contact@example.com';
+  const phoneLabel = store.phone || 'お電話番号';
 
   const receptionHours = storeConfig?.header?.receptionHours;
-  const businessHours = storeConfig?.header?.businessHours;
 
   if (isSuccess) {
     return (
@@ -227,7 +235,6 @@ export default function ReservationPageClient({
               <div className="flex items-center justify-center gap-2 text-sm font-bold text-gray-400">
                 <Clock className="h-4 w-4" />
                 迅速な対応を心がけていますが、混雑状況によりお返事が遅れる場合がございます。
-                お店からお返事が遅れている場合、当日ご利用、お急ぎのお客様はお手数をお掛け致しますがお電話にてご連絡を頂けますとスムーズです。
               </div>
             </div>
           </div>
@@ -237,65 +244,101 @@ export default function ReservationPageClient({
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-20 md:py-32">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50 via-white to-pink-50 py-16 md:py-24">
       <div className="container mx-auto max-w-4xl px-4">
-        {/* ヘッダー */}
-        <div className="mb-12 text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-6 py-2 text-white shadow-lg">
-            <Calendar className="h-5 w-5" />
+        <div className="mb-8 text-center md:mb-10">
+          <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-rose-500 to-pink-500 px-5 py-1.5 text-sm text-white shadow-md">
+            <Calendar className="h-4 w-4" />
             <span className="font-bold">ご予約フォーム</span>
           </div>
-          <h1 className="mb-4 text-3xl font-black leading-tight text-gray-800 md:text-5xl">
+          <h1 className="mb-3 text-2xl font-black leading-tight text-gray-800 md:text-4xl">
             {store.name}の
             <br className="md:hidden" />
             ご予約はこちら
           </h1>
-          <p className="text-lg text-gray-600">
+          <p className="text-sm font-medium text-gray-600 md:text-base">
             ご予約は下記のフォームからお願いいたします。
             <br />
             直接お電話、LINEからの問い合わせも出来ます。
           </p>
         </div>
 
-        {/* クイック連絡先 */}
-        <div className="mb-12 grid gap-4 md:grid-cols-3">
-          <a
-            href={lineHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-green-400 hover:shadow-xl"
-          >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-green-50 text-green-500 transition-colors group-hover:bg-green-500 group-hover:text-white">
-              <MessageCircle className="h-8 w-8" />
-            </div>
-            <div className="text-center">
-              <span className="text-xs font-bold text-gray-400">LINE ID</span>
-              <p className="text-lg font-black text-gray-700">{lineLabel}</p>
-            </div>
-          </a>
+        <div className={`mb-10 grid gap-4 ${lineHref ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+          {lineHref && (
+            <a
+              href={lineHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => {
+                try {
+                  sendGAEvent('event', 'click_line_reservation', {
+                    store_slug: store.slug || 'unknown',
+                    page_location: 'reservation_page',
+                  });
+                } catch (e) {
+                  console.error('GA event error:', e);
+                }
+              }}
+              className="group relative flex flex-col items-center justify-between rounded-3xl border-2 border-emerald-400 bg-gradient-to-b from-emerald-50 via-white to-emerald-500/10 p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-xl md:order-1"
+            >
+              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-3.5 py-0.5 text-[11px] font-extrabold tracking-wider text-white shadow-md flex items-center gap-1">
+                <Sparkles className="h-3 w-3 text-yellow-300 animate-pulse" />
+                <span>手軽で簡単♪ 一番おすすめ</span>
+              </div>
 
+              <div className="mt-2 flex flex-col items-center gap-2">
+                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
+                  <MessageCircle className="h-8 w-8 fill-current stroke-emerald-500" />
+                </div>
+                <div className="text-center">
+                  <span className="inline-block rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
+                    返信最速・簡単予約
+                  </span>
+                  <div className="mt-1 text-lg font-black text-emerald-900">LINE予約・問い合わせ</div>
+                  <div className="text-xs font-semibold text-emerald-700">{lineLabel}</div>
+                </div>
+              </div>
+
+              <div className="mt-3 w-full rounded-xl bg-emerald-500 py-2 text-center text-xs font-bold text-white shadow transition-colors group-hover:bg-emerald-600">
+                10秒でLINE予約する ▶
+              </div>
+            </a>
+          )}
+
+          {/* 電話カード */}
           <a
             href={phoneHref}
-            className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-rose-400 hover:shadow-xl"
+            className="group flex flex-col items-center justify-between rounded-3xl border-2 border-rose-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-rose-300 hover:shadow-md md:order-2"
           >
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-rose-50 text-rose-500 transition-colors group-hover:bg-rose-500 group-hover:text-white">
-              <Phone className="h-8 w-8" />
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-500 transition-transform group-hover:scale-110">
+                <Phone className="h-6 w-6" />
+              </div>
+              <div className="text-center">
+                <div className="text-xs font-medium text-gray-500">お電話でのご予約</div>
+                <div className="text-base font-bold text-gray-800">{phoneLabel}</div>
+              </div>
             </div>
-            <div className="text-center">
-              <span className="text-xs font-bold text-gray-400">TEL</span>
-              <p className="text-lg font-black text-gray-700">{phoneLabel}</p>
+            <div className="mt-3 w-full rounded-xl bg-rose-50 py-2 text-center text-xs font-bold text-rose-500 transition-colors group-hover:bg-rose-100">
+              直接電話をかける
             </div>
           </a>
 
-          <div className="group flex flex-col items-center gap-3 rounded-2xl border-2 border-rose-50 bg-white p-6 shadow-sm transition-all hover:-translate-y-1 hover:border-pink-400 hover:shadow-xl">
-            <div className="flex h-14 w-14 items-center justify-center rounded-full bg-pink-50 text-pink-500 transition-colors group-hover:bg-pink-500 group-hover:text-white">
-              <Clock className="h-8 w-8" />
+          {/* 受付時間カード */}
+          <div className="group flex flex-col items-center justify-between rounded-3xl border-2 border-pink-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-pink-300 hover:shadow-md md:order-3">
+            <div className="mt-2 flex flex-col items-center gap-2">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-500 transition-transform group-hover:scale-110">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div className="text-center">
+                <div className="text-xs font-medium text-gray-500">お電話受付時間</div>
+                <div className="text-xs font-bold text-gray-700">
+                  {receptionHours || 'お気軽にお問い合わせください'}
+                </div>
+              </div>
             </div>
-            <div className="text-center">
-              <span className="text-xs font-bold text-gray-400">受付時間</span>
-              <p className="text-sm font-black text-gray-700">
-                {receptionHours || 'お気軽にお電話ください'}
-              </p>
+            <div className="mt-3 w-full rounded-xl bg-pink-50 py-2 text-center text-xs font-bold text-pink-500">
+              24時間Web/LINE受付中
             </div>
           </div>
         </div>
