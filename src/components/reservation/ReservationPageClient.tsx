@@ -263,7 +263,9 @@ ${formData.notes ? `【備考】: ${formData.notes}` : ''}
           </p>
         </div>
 
-        <div className={`mb-10 grid gap-4 ${lineHref ? 'md:grid-cols-3' : 'md:grid-cols-2'}`}>
+        {/* 連絡先エリア */}
+        <div className="mb-10 space-y-4">
+          {/* 【最優先・横長全幅】LINE予約バナー (A案: ポップ・親しみ系) */}
           {lineHref && (
             <a
               href={lineHref}
@@ -279,66 +281,79 @@ ${formData.notes ? `【備考】: ${formData.notes}` : ''}
                   console.error('GA event error:', e);
                 }
               }}
-              className="group relative flex flex-col items-center justify-between rounded-3xl border-2 border-emerald-400 bg-gradient-to-b from-emerald-50 via-white to-emerald-500/10 p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-xl md:order-1"
+              className="group relative flex w-full flex-col items-center justify-between gap-4 rounded-3xl border-2 border-emerald-400 bg-gradient-to-r from-emerald-50 via-white to-emerald-500/10 p-5 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:border-emerald-500 hover:shadow-xl sm:flex-row sm:p-6"
             >
-              <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-3.5 py-0.5 text-[11px] font-extrabold tracking-wider text-white shadow-md flex items-center gap-1">
+              {/* アイキャッチバッジ */}
+              <div className="absolute -top-3.5 left-6 rounded-full bg-gradient-to-r from-emerald-500 to-green-500 px-3.5 py-0.5 text-[11px] font-extrabold tracking-wider text-white shadow-md flex items-center gap-1">
                 <Sparkles className="h-3 w-3 text-yellow-300 animate-pulse" />
-                <span>手軽で簡単♪ 一番おすすめ</span>
+                <span>手軽で簡単♪ 返信最速・一番おすすめ</span>
               </div>
 
-              <div className="mt-2 flex flex-col items-center gap-2">
-                <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
+              {/* アイコン & キャッチコピー */}
+              <div className="mt-2 flex items-center gap-4 sm:mt-0">
+                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-green-400 text-white shadow-md transition-transform group-hover:scale-110">
                   <MessageCircle className="h-8 w-8 fill-current stroke-emerald-500" />
                 </div>
-                <div className="text-center">
-                  <span className="inline-block rounded-md bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
-                    返信最速・簡単予約
-                  </span>
-                  <div className="mt-1 text-lg font-black text-emerald-900">LINE予約・問い合わせ</div>
-                  <div className="text-xs font-semibold text-emerald-700">{lineLabel}</div>
+                <div className="text-left">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-black text-emerald-800">
+                      24時間受付中
+                    </span>
+                    <span className="text-xs font-semibold text-emerald-700">{lineLabel}</span>
+                  </div>
+                  <div className="text-xl font-black text-emerald-900 md:text-2xl">
+                    LINEで簡単予約・お問い合わせ
+                  </div>
+                  <div className="text-xs font-medium text-gray-500">
+                    タップするだけで10秒でLINE予約・ご相談がスタートします
+                  </div>
                 </div>
               </div>
 
-              <div className="mt-3 w-full rounded-xl bg-emerald-500 py-2 text-center text-xs font-bold text-white shadow transition-colors group-hover:bg-emerald-600">
+              {/* 誘導ボタン */}
+              <div className="w-full shrink-0 rounded-2xl bg-gradient-to-r from-emerald-500 to-green-500 px-6 py-3.5 text-center text-sm font-black text-white shadow transition-all group-hover:from-emerald-600 group-hover:to-green-600 group-hover:shadow-md sm:w-auto">
                 10秒でLINE予約する ▶
               </div>
             </a>
           )}
 
-          {/* 電話カード */}
-          <a
-            href={phoneHref}
-            className="group flex flex-col items-center justify-between rounded-3xl border-2 border-rose-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-rose-300 hover:shadow-md md:order-2"
-          >
-            <div className="mt-2 flex flex-col items-center gap-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rose-100 text-rose-500 transition-transform group-hover:scale-110">
-                <Phone className="h-6 w-6" />
-              </div>
-              <div className="text-center">
-                <div className="text-xs font-medium text-gray-500">お電話でのご予約</div>
-                <div className="text-base font-bold text-gray-800">{phoneLabel}</div>
-              </div>
-            </div>
-            <div className="mt-3 w-full rounded-xl bg-rose-50 py-2 text-center text-xs font-bold text-rose-500 transition-colors group-hover:bg-rose-100">
-              直接電話をかける
-            </div>
-          </a>
-
-          {/* 受付時間カード */}
-          <div className="group flex flex-col items-center justify-between rounded-3xl border-2 border-pink-100 bg-white p-5 transition-all duration-300 hover:-translate-y-1 hover:border-pink-300 hover:shadow-md md:order-3">
-            <div className="mt-2 flex flex-col items-center gap-2">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-pink-100 text-pink-500 transition-transform group-hover:scale-110">
-                <Clock className="h-6 w-6" />
-              </div>
-              <div className="text-center">
-                <div className="text-xs font-medium text-gray-500">お電話受付時間</div>
-                <div className="text-xs font-bold text-gray-700">
-                  {receptionHours || 'お気軽にお問い合わせください'}
+          {/* 下部サブ連絡先（電話 ＆ 受付時間 2並列） */}
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* 電話カード */}
+            <a
+              href={phoneHref}
+              className="group flex items-center justify-between rounded-2xl border-2 border-rose-100 bg-white p-4 transition-all duration-300 hover:border-rose-300 hover:shadow-md"
+            >
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-500 transition-transform group-hover:scale-110">
+                  <Phone className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-500">お電話でのご予約</div>
+                  <div className="text-base font-bold text-gray-800">{phoneLabel}</div>
                 </div>
               </div>
-            </div>
-            <div className="mt-3 w-full rounded-xl bg-pink-50 py-2 text-center text-xs font-bold text-pink-500">
-              24時間Web/LINE受付中
+              <div className="rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-500 transition-colors group-hover:bg-rose-100">
+                電話をかける
+              </div>
+            </a>
+
+            {/* 受付時間カード */}
+            <div className="group flex items-center justify-between rounded-2xl border-2 border-pink-100 bg-white p-4 transition-all duration-300 hover:border-pink-300 hover:shadow-md">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-pink-100 text-pink-500 transition-transform group-hover:scale-110">
+                  <Clock className="h-5 w-5" />
+                </div>
+                <div>
+                  <div className="text-xs font-medium text-gray-500">お電話受付時間</div>
+                  <div className="text-xs font-bold text-gray-700">
+                    {receptionHours || 'お気軽にお問い合わせください'}
+                  </div>
+                </div>
+              </div>
+              <div className="rounded-xl bg-pink-50 px-3 py-1.5 text-xs font-bold text-pink-500">
+                24時間Web受付中
+              </div>
             </div>
           </div>
         </div>
