@@ -49,8 +49,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     };
   }
 
-  checkRedirect(params.slug, params.cast, cast.slug);
-
   const s = STORE_META[params.slug] || {
     city: params.slug === 'yokohama' ? '横浜' : params.slug === 'fukuoka' ? '福岡' : '各地域',
     area: params.slug === 'yokohama' ? 'みなとみらい・関内' : params.slug === 'fukuoka' ? '天神・博多' : '主要エリア',
