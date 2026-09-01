@@ -48,9 +48,6 @@ export async function getPublishedPagesByStore(storeSlug: string): Promise<PageD
     const now = new Date().getTime();
 
     const records = allPages.filter((record: any) => {
-      // 0. グローバルステータスが published でない場合は完全除外
-      if (record.status !== 'published') return false;
-
       const misc = (record.referenceUrls as any) || {};
 
       // 0.5 採用コラム (recruit-column) は顧客向けニュース一覧から完全除外
@@ -108,7 +105,7 @@ export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: strin
   noStore();
   try {
     let record = await prisma.pageRequest.findFirst({
-      where: { slug: newsSlug, status: 'published' },
+      where: { slug: newsSlug },
     });
 
     if (record && storeSlug) {
@@ -116,7 +113,7 @@ export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: strin
       if (Array.isArray(slugs) && slugs.length > 0 && !slugs.includes(storeSlug)) {
         // Current exact record does not target this store, check store-specific record
         const storeRecord = await prisma.pageRequest.findFirst({
-          where: { slug: `${newsSlug}-${storeSlug}`, status: 'published' },
+          where: { slug: `${newsSlug}-${storeSlug}` },
         });
         if (storeRecord) record = storeRecord;
       }
@@ -124,7 +121,7 @@ export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: strin
 
     if (!record && storeSlug) {
       record = await prisma.pageRequest.findFirst({
-        where: { slug: `${newsSlug}-${storeSlug}`, status: 'published' },
+        where: { slug: `${newsSlug}-${storeSlug}` },
       });
     }
 
@@ -132,7 +129,6 @@ export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: strin
       const matches = await prisma.pageRequest.findMany({
         where: {
           slug: { startsWith: newsSlug },
-          status: 'published',
         },
       });
 
@@ -153,6 +149,21 @@ export async function getPublishedPageBySlug(newsSlug: string, storeSlug?: strin
     const misc = (record.referenceUrls as any) || {};
     // 採用コラム (recruit-column) は店舗ニュース詳細パス (/store/◯/news/[slug]) からは閲覧不可（404）
     if (misc.category === 'recruit-column') return null;
+
+    // 店舗設定またはグローバル設定で公開されているかチェック
+    let isPublished = false;
+    if (storeSlug) {
+      const settings = misc.storeSettings?.[storeSlug];
+      if (settings && settings.status) {
+        isPublished = settings.status === 'published';
+      } else {
+        isPublished = record.status === 'published';
+      }
+    } else {
+      isPublished = record.status === 'published' || Object.values(misc.storeSettings || {}).some((s: any) => (s as any)?.status === 'published');
+    }
+
+    if (!isPublished) return null;
 
     return mapPrismaToPageData(record);
   } catch (error) {
@@ -337,6 +348,14 @@ export async function updatePage(id: string, data: Partial<PageData>): Promise<P
       newMisc.storeSettings = { ...currentMisc.storeSettings, ...storeSettings };
     }
     
+    // 店舗ごとの公開設定に1つでも'published'があれば、グローバルstatusも'published'に同期
+    const hasPublishedStore = Object.values(newMisc.storeSettings || {}).some(
+      (s: any) => s && s.status === 'published'
+    );
+    if (hasPublishedStore) {
+      updateData.status = 'published';
+    }
+
     updateData.referenceUrls = newMisc;
 
     // 🚀 公開（Publish）ボタンが押された初回のタイミングで、その時の最新カテゴリ・公開日に基いてスラッグを自動最終確定
