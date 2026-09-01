@@ -9,6 +9,7 @@
     "start": "next start",
     "lint": "next lint",
     "type-check": "tsc --noEmit",
+    "test": "vitest run",
     "prepare": "husky"
   },
   "dependencies": {
@@ -118,7 +119,8 @@
     "prettier": "^3.6.2",
     "prettier-plugin-tailwindcss": "^0.6.13",
     "prisma": "^5.22.0",
-    "typescript": "^5.5.3"
+    "typescript": "^5.5.3",
+    "vitest": "^1.6.1"
   },
   "lint-staged": {
     "src/**/*.{js,jsx,ts,tsx}": [
