@@ -11,15 +11,51 @@ import { DEFAULT_STORE_TOP_CONFIG, StoreTopPageConfig } from '@/lib/store/storeT
 import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
-const STORE_META: Record<string, {
-  city: string; cityKana: string; area: string; areaKw: string[];
-}> = {
-  tokyo:   { city: "東京",   cityKana: "とうきょう", area: "新宿・渋谷・池袋", areaKw: ["新宿","渋谷","池袋","東京駅","品川"] },
-  honten:  { city: "東京",   cityKana: "とうきょう", area: "新宿・渋谷・池袋", areaKw: ["新宿","渋谷","池袋","東京駅","品川"] },
-  yokohama:{ city: "横浜",   cityKana: "よこはま",   area: "みなとみらい・関内", areaKw: ["みなとみらい","関内","桜木町","新横浜"] },
-  nagoya:  { city: "名古屋", cityKana: "なごや",     area: "栄・名古屋駅",     areaKw: ["栄","名駅","金山","伏見"] },
-  osaka:   { city: "大阪",   cityKana: "おおさか",   area: "梅田・難波",       areaKw: ["梅田","難波","心斎橋","天王寺"] },
-  fukuoka: { city: "福岡",   cityKana: "ふくおか",   area: "天神・博多",       areaKw: ["天神","博多","中洲"] },
+const STORE_META: Record<
+  string,
+  {
+    city: string;
+    cityKana: string;
+    area: string;
+    areaKw: string[];
+  }
+> = {
+  tokyo: {
+    city: '東京',
+    cityKana: 'とうきょう',
+    area: '新宿・渋谷・池袋',
+    areaKw: ['新宿', '渋谷', '池袋', '東京駅', '品川'],
+  },
+  honten: {
+    city: '東京',
+    cityKana: 'とうきょう',
+    area: '新宿・渋谷・池袋',
+    areaKw: ['新宿', '渋谷', '池袋', '東京駅', '品川'],
+  },
+  yokohama: {
+    city: '横浜',
+    cityKana: 'よこはま',
+    area: 'みなとみらい・関内',
+    areaKw: ['みなとみらい', '関内', '桜木町', '新横浜'],
+  },
+  nagoya: {
+    city: '名古屋',
+    cityKana: 'なごや',
+    area: '栄・名古屋駅',
+    areaKw: ['栄', '名駅', '金山', '伏見'],
+  },
+  osaka: {
+    city: '大阪',
+    cityKana: 'おおさか',
+    area: '梅田・難波',
+    areaKw: ['梅田', '難波', '心斎橋', '天王寺'],
+  },
+  fukuoka: {
+    city: '福岡',
+    cityKana: 'ふくおか',
+    area: '天神・博多',
+    areaKw: ['天神', '博多', '中洲'],
+  },
 };
 
 interface StorePageProps {
@@ -51,7 +87,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
   const ogImage = config?.hero?.images?.[0] || store.seo.ogImage;
 
   const s = STORE_META[params.slug];
-  
+
   if (s) {
     let title = `【公式】${s.city}の女性用風俗・女風｜ストロベリーボーイズ${s.city}店【${s.area}】`;
     let metaDescription = `${s.city}（${s.area}）で女性用風俗・女風・出張ホストをお探しならストロベリーボーイズ${s.city}店。厳選された人気セラピストがご指定ホテルやご自宅で最高級の癒やしをお届け。明朗会計・初心者歓迎・当日予約OK！`;
@@ -69,23 +105,34 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
     return {
       title: { absolute: title },
       description: metaDescription,
-      keywords: ["女性用風俗", "女風", "出張ホスト", "出張セラピー", s.city, ...s.areaKw, "セラピスト", "女性専用"],
+      keywords: [
+        '女性用風俗',
+        '女風',
+        '出張ホスト',
+        '出張セラピー',
+        s.city,
+        ...s.areaKw,
+        'セラピスト',
+        '女性専用',
+      ],
       robots: isMainActiveStore ? { index: true, follow: true } : { index: false, follow: true },
       alternates: { canonical: `https://www.sutoroberrys.jp/store/${params.slug}` },
       openGraph: {
-        title, 
+        title,
         description: metaDescription,
         url: `https://www.sutoroberrys.jp/store/${params.slug}`,
-        siteName: "ストロベリーボーイズ",
-        images: [{ url: ogImage || `/images/store-logo.png`, width: 1200, height: 630, alt: shopName }],
-        locale: "ja_JP", 
-        type: "website",
+        siteName: 'ストロベリーボーイズ',
+        images: [
+          { url: ogImage || `/images/store-logo.png`, width: 1200, height: 630, alt: shopName },
+        ],
+        locale: 'ja_JP',
+        type: 'website',
       },
-      twitter: { 
-        card: "summary_large_image", 
-        title, 
-        description: metaDescription, 
-        images: [ogImage || `/images/store-logo.png`] 
+      twitter: {
+        card: 'summary_large_image',
+        title,
+        description: metaDescription,
+        images: [ogImage || `/images/store-logo.png`],
       },
     };
   }
@@ -112,7 +159,7 @@ export async function generateMetadata({ params }: StorePageProps): Promise<Meta
       type: 'website',
       locale: 'ja_JP',
       url: `https://www.sutoroberrys.jp/store/${params.slug}`,
-      siteName: "ストロベリーボーイズ",
+      siteName: 'ストロベリーボーイズ',
     },
     twitter: {
       card: 'summary_large_image',
@@ -131,8 +178,8 @@ export function generateStaticParams() {
 }
 
 export const dynamicParams = true;
-export const revalidate = 300;
-export const dynamic = 'force-static';
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
 
 export default async function StorePage({ params }: StorePageProps) {
   // ガード: fukuoka, yokohama 以外の店舗slug（tokyo, osaka, nagoyaなど）は内部表示せず404/リダイレクトへ落とす
@@ -194,8 +241,16 @@ export default async function StorePage({ params }: StorePageProps) {
           email: dbStore.notification_email || staticStore?.contact.email || '',
         },
         address: dbStore.address || staticStore?.address || '',
-        businessHours: (dbStore as any).business_hours || topConfig?.footer?.shopInfo?.businessHours || staticStore?.businessHours || '',
-        receptionHours: (dbStore as any).reception_hours || topConfig?.footer?.shopInfo?.receptionHours || staticStore?.receptionHours || '',
+        businessHours:
+          (dbStore as any).business_hours ||
+          topConfig?.footer?.shopInfo?.businessHours ||
+          staticStore?.businessHours ||
+          '',
+        receptionHours:
+          (dbStore as any).reception_hours ||
+          topConfig?.footer?.shopInfo?.receptionHours ||
+          staticStore?.receptionHours ||
+          '',
         seo: {
           ...staticStore?.seo,
           description: dbStore.description || staticStore?.seo.description || '',
@@ -212,24 +267,25 @@ export default async function StorePage({ params }: StorePageProps) {
     notFound();
   }
 
-  const areaServedData = store.city === '福岡' 
-    ? [
-        { '@type': 'City', name: '福岡市博多区' },
-        { '@type': 'City', name: '福岡市中央区' },
-        { '@type': 'City', name: '福岡市南区' },
-        { '@type': 'City', name: '福岡市早良区' },
-        { '@type': 'City', name: '福岡市東区' },
-        { '@type': 'City', name: '福岡市西区' },
-        { '@type': 'City', name: '福岡市城南区' }
-      ]
-    : store.city === '横浜'
-    ? [
-        { '@type': 'City', name: '横浜市西区' },
-        { '@type': 'City', name: '横浜市中区' },
-        { '@type': 'City', name: '横浜市神奈川区' },
-        { '@type': 'City', name: '横浜市南区' }
-      ]
-    : { '@type': 'City', name: store.city };
+  const areaServedData =
+    store.city === '福岡'
+      ? [
+          { '@type': 'City', name: '福岡市博多区' },
+          { '@type': 'City', name: '福岡市中央区' },
+          { '@type': 'City', name: '福岡市南区' },
+          { '@type': 'City', name: '福岡市早良区' },
+          { '@type': 'City', name: '福岡市東区' },
+          { '@type': 'City', name: '福岡市西区' },
+          { '@type': 'City', name: '福岡市城南区' },
+        ]
+      : store.city === '横浜'
+        ? [
+            { '@type': 'City', name: '横浜市西区' },
+            { '@type': 'City', name: '横浜市中区' },
+            { '@type': 'City', name: '横浜市神奈川区' },
+            { '@type': 'City', name: '横浜市南区' },
+          ]
+        : { '@type': 'City', name: store.city };
 
   const localBusinessSchema = {
     '@context': 'https://schema.org',
@@ -239,10 +295,10 @@ export default async function StorePage({ params }: StorePageProps) {
     description: topConfig?.hero?.description?.replace(/\n/g, ' ') || store.seo.description,
     address: {
       '@type': 'PostalAddress',
-      'streetAddress': topConfig?.footer?.shopInfo?.address || store.address,
-      'addressLocality': store.city,
-      'addressRegion': store.city === '福岡' ? '福岡県' : store.city === '横浜' ? '神奈川県' : '',
-      'addressCountry': 'JP',
+      streetAddress: topConfig?.footer?.shopInfo?.address || store.address,
+      addressLocality: store.city,
+      addressRegion: store.city === '福岡' ? '福岡県' : store.city === '横浜' ? '神奈川県' : '',
+      addressCountry: 'JP',
     },
     areaServed: areaServedData,
     telephone: '+81-50-5491-3991',
@@ -290,7 +346,8 @@ export default async function StorePage({ params }: StorePageProps) {
       {
         '@type': 'ListItem',
         position: 3,
-        name: store.city === '福岡' ? '福岡店' : store.city === '横浜' ? '横浜店' : `${store.city}店`,
+        name:
+          store.city === '福岡' ? '福岡店' : store.city === '横浜' ? '横浜店' : `${store.city}店`,
         item: `https://www.sutoroberrys.jp/store/${params.slug}`,
       },
     ],

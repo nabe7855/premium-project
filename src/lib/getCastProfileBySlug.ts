@@ -3,14 +3,16 @@ import { Cast } from '@/types/cast';
 import { getCastQuestions } from './getCastQuestions';
 import { normalizeCast } from './normalizeCast';
 import { supabase } from './supabaseClient';
-import { formatScheduleTime } from '@/lib/utils/formatSchedule';
+import { formatScheduleTime, getJstTodayString } from '@/lib/utils/formatSchedule';
 
 export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   const decodedSlug = decodeURIComponent(slug);
   console.log('🔍 getCastProfileBySlug called with slug:', decodedSlug);
 
   // UUID チェック
-  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(decodedSlug);
+  const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(
+    decodedSlug,
+  );
 
   // UUID かどうかでクエリを分岐（UUIDじゃない文字列を id.eq に渡すとエラーになるため）
   let query = supabase.from('casts').select(`
@@ -121,11 +123,8 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
       .from('schedules')
       .select('start_datetime, end_datetime, work_date')
       .eq('cast_id', cast.id)
-      .gte('work_date', new Date().toISOString().split('T')[0]),
-    supabase
-      .from('reviews')
-      .select('rating')
-      .eq('cast_id', cast.id)
+      .gte('work_date', getJstTodayString()),
+    supabase.from('reviews').select('rating').eq('cast_id', cast.id),
   ]);
 
   const availability: Record<string, string[]> = {};
@@ -140,9 +139,13 @@ export async function getCastProfileBySlug(slug: string): Promise<Cast | null> {
   const castReviews = reviewsData || [];
   const reviewCount = castReviews.length;
   const rating =
-        reviewCount > 0
-          ? Number((castReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount).toFixed(1))
-          : 0;
+    reviewCount > 0
+      ? Number(
+          (
+            castReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / reviewCount
+          ).toFixed(1),
+        )
+      : 0;
 
   // 7. 整形して返却
   const normalized = normalizeCast(

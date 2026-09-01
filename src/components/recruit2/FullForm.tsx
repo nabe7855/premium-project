@@ -197,17 +197,20 @@ const FullForm: React.FC<FullFormProps> = ({ storeName, storeSlug }) => {
               </h3>
               <div>
                 <label className="mb-2 block text-sm font-bold text-slate-700">
-                  当店をどこでお知りになりましたか？ <span className="font-normal text-slate-400">(任意)</span>
+                  当店をどこでお知りになりましたか？{' '}
+                  <span className="font-normal text-slate-400">(任意)</span>
                 </label>
                 <select
                   name="referral_source"
                   className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-900 outline-none focus:border-amber-500 focus:bg-white"
                 >
                   <option value="">選択してください (任意)</option>
+                  <option value="Google検索">Google検索</option>
+                  <option value="TikTok">TikTok</option>
+                  <option value="X(Twitter)">X(Twitter)</option>
                   <option value="求人サイト(kaikan等)">求人サイト(kaikan等)</option>
-                  <option value="Google等の検索">Google等の検索</option>
-                  <option value="X(Twitter)・SNS">X(Twitter)・SNS</option>
-                  <option value="知人の紹介">知人の紹介</option>
+                  <option value="求人コラム・記事を見た">求人コラム・記事を見た</option>
+                  <option value="友人・知人の紹介">友人・知人の紹介</option>
                   <option value="その他">その他</option>
                 </select>
               </div>

@@ -21,7 +21,7 @@ export async function generateMetadata({
   const canonicalUrl = `https://www.sutoroberrys.jp/ikeo/${params.slug}`;
 
   return {
-    title: `${article.title}｜イケオラボ`,
+    title: article.seo_title || `${article.title}｜イケオラボ`,
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,

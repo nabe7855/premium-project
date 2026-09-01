@@ -2,22 +2,25 @@
 import { supabase } from './supabaseClient';
 import { Schedule } from '@/types/schedule';
 
+import { getJstDateString, getJstTodayString } from '@/lib/utils/formatSchedule';
+
 export async function getCastSchedules(castId: string): Promise<Schedule[]> {
-  const today = new Date();
-  const twoWeeksLater = new Date();
-  twoWeeksLater.setDate(today.getDate() + 14);
+  const todayStr = getJstTodayString();
+  const twoWeeksLaterStr = getJstDateString(14);
 
   const { data, error } = await supabase
     .from('schedules')
-    .select(`
+    .select(
+      `
       work_date,
       start_datetime,
       end_datetime,
       status
-    `) // ✅ status を追加
+    `,
+    ) // ✅ status を追加
     .eq('cast_id', castId)
-    .gte('work_date', today.toISOString().split('T')[0])
-    .lte('work_date', twoWeeksLater.toISOString().split('T')[0])
+    .gte('work_date', todayStr)
+    .lte('work_date', twoWeeksLaterStr)
     .order('work_date', { ascending: true });
 
   if (error) {

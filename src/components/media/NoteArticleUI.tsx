@@ -91,7 +91,11 @@ export default function NoteArticleUI({
   // FAQPage JSON-LD 構造化データの動的生成（HTML本文中の Q. / A. 構造から自動抽出）
   const faqList: { question: string; answer: string }[] = [];
   if (article.content) {
-    const qMatches = Array.from(article.content.matchAll(/<h3[^>]*>Q\.\s*([\s\S]*?)<\/h3>[\s\S]*?<p[^>]*>A\.\s*([\s\S]*?)<\/p>/gi));
+    const qMatches = Array.from(
+      article.content.matchAll(
+        /<h3[^>]*>Q\.\s*([\s\S]*?)<\/h3>[\s\S]*?<p[^>]*>A\.\s*([\s\S]*?)<\/p>/gi,
+      ),
+    );
     for (const m of qMatches) {
       const qText = ((m as RegExpMatchArray)[1] || '').replace(/<[^>]+>/g, '').trim();
       const aText = ((m as RegExpMatchArray)[2] || '').replace(/<[^>]+>/g, '').trim();
@@ -101,18 +105,21 @@ export default function NoteArticleUI({
     }
   }
 
-  const faqSchema = faqList.length > 0 ? {
-    '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    mainEntity: faqList.map(item => ({
-      '@type': 'Question',
-      name: item.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: item.answer,
-      },
-    })),
-  } : null;
+  const faqSchema =
+    faqList.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqList.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
 
   return (
     <div className="bg-white">
@@ -188,8 +195,10 @@ export default function NoteArticleUI({
         <style jsx global>{`
           .prose {
             color: #292929;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            line-height: 2.0;
+            font-family:
+              -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
+              sans-serif;
+            line-height: 2;
             letter-spacing: 0.02em;
           }
           .prose p {
@@ -261,7 +270,7 @@ export default function NoteArticleUI({
             box-shadow: 0 4px 15px -3px rgba(244, 63, 94, 0.07);
           }
           .prose .pull::before {
-            content: "“";
+            content: '“';
             position: absolute;
             top: 0.25rem;
             right: 1.25rem;
@@ -277,9 +286,10 @@ export default function NoteArticleUI({
             border: 1px solid #ffe4e6;
             border-radius: 1rem;
             color: #4b5563;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
           }
-          .prose .memo h2, .prose .memo h3 {
+          .prose .memo h2,
+          .prose .memo h3 {
             margin-top: 0;
             padding: 0;
             border: none;
@@ -382,7 +392,7 @@ export default function NoteArticleUI({
             border: 1px solid #f1f5f9;
             border-radius: 1rem;
             transition: all 0.25s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
           }
           .prose .related li:hover {
             border-color: #fda4af;
@@ -451,74 +461,91 @@ export default function NoteArticleUI({
           .prose .sep {
             text-align: center;
             margin: 44px 0;
-            color: #D4B5A8;
+            color: #d4b5a8;
             font-size: 20px;
             letter-spacing: 0.5em;
           }
           .prose .personal-note {
-            background: #FDF8F5;
-            border: 1px solid #EDD9CE;
+            background: #fdf8f5;
+            border: 1px solid #edd9ce;
             border-radius: 12px;
             padding: 22px 24px;
             margin: 32px 0;
             font-size: 15px;
-            color: #5A3E36;
+            color: #5a3e36;
             line-height: 2;
           }
           .prose .personal-note .note-header {
             font-size: 12px;
-            color: #C4856A;
+            color: #c4856a;
             margin-bottom: 10px;
             font-weight: 500;
             letter-spacing: 0.06em;
           }
-          .prose .step-list { list-style: none; margin: 8px 0 24px; padding: 0; }
+          .prose .step-list {
+            list-style: none;
+            margin: 8px 0 24px;
+            padding: 0;
+          }
           .prose .step-list li {
             padding: 16px 0;
-            border-bottom: 1px dashed #E8E4DF;
+            border-bottom: 1px dashed #e8e4df;
             display: flex;
             gap: 14px;
             align-items: flex-start;
           }
-          .prose .step-list li:last-child { border-bottom: none; }
+          .prose .step-list li:last-child {
+            border-bottom: none;
+          }
           .prose .step-num {
             font-family: 'Noto Serif JP', serif;
             font-size: 20px;
-            color: #E0A090;
+            color: #e0a090;
             line-height: 1.4;
             flex-shrink: 0;
             width: 24px;
           }
-          .prose .step-body { flex: 1; }
+          .prose .step-body {
+            flex: 1;
+          }
           .prose .step-title {
             font-weight: 500 !important;
             font-size: 15px !important;
-            color: #2E2020 !important;
+            color: #2e2020 !important;
             margin-bottom: 4px !important;
             margin-top: 0 !important;
           }
-          .prose .step-desc { font-size: 14px; color: #6E5A55; line-height: 1.85; }
+          .prose .step-desc {
+            font-size: 14px;
+            color: #6e5a55;
+            line-height: 1.85;
+          }
           .prose blockquote {
-            background: #FFF6F2 !important;
-            border-left: 3px solid #E8B9A8 !important;
-            color: #6B4E44 !important;
+            background: #fff6f2 !important;
+            border-left: 3px solid #e8b9a8 !important;
+            color: #6b4e44 !important;
           }
           .prose blockquote cite {
             display: block;
             margin-top: 10px;
             font-size: 12px;
-            color: #B08070;
+            color: #b08070;
             font-style: normal;
           }
         `}</style>
+        {(category === 'amolab' || category === 'amolab-jiten' || category === 'ikejo') && (
+          <div className="mb-8 rounded-xl border border-pink-100 bg-pink-50 p-4 text-xs font-bold text-pink-700">
+            ※本メディア「アモラボ」は、女性用風俗ストロベリーボーイズが運営しています。
+          </div>
+        )}
         {category === 'ikeo' && (
-          <div className="mb-8 rounded-xl bg-slate-100 p-4 text-xs font-bold text-slate-600 border border-slate-200">
+          <div className="mb-8 rounded-xl border border-slate-200 bg-slate-100 p-4 text-xs font-bold text-slate-600">
             ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
           </div>
         )}
         {(() => {
           let displayContent = article.content || '';
-          
+
           // HTMLのH1タグを抽出（最初のもの）
           const h1Match = displayContent.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
           if (h1Match) {
@@ -544,11 +571,6 @@ export default function NoteArticleUI({
             />
           );
         })()}
-        {category === 'ikeo' && (
-          <div className="mt-8 rounded-xl bg-slate-100 p-4 text-xs font-bold text-slate-600 border border-slate-200">
-            ※本メディア「イケオラボ」は、女性用風俗ストロベリーボーイズが運営しています。
-          </div>
-        )}
 
         {/* タグ */}
         <div className="mt-16 flex flex-wrap gap-2">

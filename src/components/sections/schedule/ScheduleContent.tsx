@@ -3,7 +3,11 @@ import DateNavigation from '@/components/sections/schedule/DateNavigation';
 import ScheduleDay from '@/components/sections/schedule/ScheduleDay';
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
-import { formatScheduleTime } from '@/lib/utils/formatSchedule';
+import {
+  formatJstDateForDisplay,
+  formatScheduleTime,
+  getJstDateString,
+} from '@/lib/utils/formatSchedule';
 import React, { useEffect, useState } from 'react';
 import BookingModal from '../casts/modals/BookingModal';
 
@@ -15,7 +19,7 @@ interface ScheduleContentProps {
 const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSchedule }) => {
   const [schedule, setSchedule] = useState<ScheduleDayType[]>(initialSchedule || []);
   const [activeDate, setActiveDate] = useState<string>(
-    initialSchedule && initialSchedule.length > 0 ? initialSchedule[0].date : ''
+    initialSchedule && initialSchedule.length > 0 ? initialSchedule[0].date : '',
   );
   const [storeId, setStoreId] = useState<string>('');
   const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
@@ -27,14 +31,12 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSch
   };
 
   const generateDateRange = (): { date: string; dayOfWeek: string }[] => {
-    const today = new Date();
     const days = [];
-    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
     for (let i = 0; i < 14; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
-      days.push({ date: dateStr, dayOfWeek: dayNames[d.getDay()] });
+      const dateStr = getJstDateString(i);
+      const { displayText } = formatJstDateForDisplay(dateStr);
+      const dayOfWeek = displayText.slice(-2, -1);
+      days.push({ date: dateStr, dayOfWeek });
     }
     return days;
   };
@@ -48,7 +50,8 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSch
       const dateRange = generateDateRange();
       const { data: schedules, error } = await supabase
         .from('schedules')
-        .select(`
+        .select(
+          `
           *,
           casts!inner (
             *,
@@ -60,7 +63,8 @@ const ScheduleContent: React.FC<ScheduleContentProps> = ({ storeSlug, initialSch
               stores!inner ( id, slug )
             )
           )
-        `)
+        `,
+        )
         .gte('work_date', dateRange[0].date)
         .lte('work_date', dateRange[dateRange.length - 1].date)
         .eq('casts.cast_store_memberships.stores.slug', storeSlug);

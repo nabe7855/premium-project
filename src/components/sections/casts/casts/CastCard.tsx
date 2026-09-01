@@ -2,11 +2,22 @@
 
 import { Cast, ScoredCast } from '@/types/cast';
 import { motion } from 'framer-motion';
-import { Clock, Pause, Play, Star, MessageCircle, Instagram, Music, Globe, Mic } from 'lucide-react';
+import {
+  Clock,
+  Pause,
+  Play,
+  Star,
+  MessageCircle,
+  Instagram,
+  Music,
+  Globe,
+  Mic,
+} from 'lucide-react';
 import NextImage from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
 import { formatSnsUrl } from '@/lib/utils/sns-url';
+import { getJstTodayString } from '@/lib/utils/formatSchedule';
 
 interface CastCardProps {
   cast: Cast | ScoredCast;
@@ -30,7 +41,7 @@ const CastCard: React.FC<CastCardProps> = ({
   storeSlug,
 }) => {
   const router = useRouter();
-  const today = new Date().toISOString().split('T')[0];
+  const today = getJstTodayString();
   const todaySchedules = cast.availability?.[today] ?? [];
   const isAvailableToday = cast.isOnline || todaySchedules.length > 0;
 
@@ -40,7 +51,9 @@ const CastCard: React.FC<CastCardProps> = ({
   const audioRef = useRef<HTMLAudioElement>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioError, setAudioError] = useState(false);
-  const [imgSrc, setImgSrc] = useState(cast.mainImageUrl || cast.imageUrl || cast.avatar || '/cast-default.jpg');
+  const [imgSrc, setImgSrc] = useState(
+    cast.mainImageUrl || cast.imageUrl || cast.avatar || '/cast-default.jpg',
+  );
 
   const handleAudioToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -93,7 +106,7 @@ const CastCard: React.FC<CastCardProps> = ({
     <div className="mb-2 font-bold text-pink-600">
       💘 相性スコア: {Math.round((cast as ScoredCast).compatibilityScore)}%
     </div>
-  ) : (cast.reviewCount && cast.reviewCount > 0) ? (
+  ) : cast.reviewCount && cast.reviewCount > 0 ? (
     <div className="mb-3 w-full">
       <a
         href={`/store/${storeSlug}/cast/${targetSlug}#reviews`}
@@ -102,12 +115,11 @@ const CastCard: React.FC<CastCardProps> = ({
       >
         <MessageCircle className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
         <span className="text-[11px] font-medium tracking-widest sm:text-xs">
-           口コミ {cast.reviewCount}件
+          口コミ {cast.reviewCount}件
         </span>
       </a>
     </div>
   ) : null;
-
 
   return (
     <motion.div
@@ -203,9 +215,7 @@ const CastCard: React.FC<CastCardProps> = ({
         {cast.latestTweet && (
           <div className="pointer-events-none absolute bottom-3 left-1/2 max-w-[95%] -translate-x-1/2">
             <div className="animate-float relative rounded-2xl bg-white/90 px-3 py-2 text-xs text-gray-800 shadow-lg sm:px-4 sm:text-sm">
-              <p className="line-clamp-2 whitespace-pre-wrap leading-snug">
-                {cast.latestTweet}
-              </p>
+              <p className="line-clamp-2 whitespace-pre-wrap leading-snug">{cast.latestTweet}</p>
               {/* 吹き出しの三角 */}
               <div className="border-l-6 border-r-6 absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-t-8 border-l-transparent border-r-transparent border-t-white/90"></div>
             </div>
@@ -244,7 +254,8 @@ const CastCard: React.FC<CastCardProps> = ({
             MBTI: {cast.mbtiType || 'ヒミツ🍓'}
           </span>
           <span className="rounded-full bg-purple-100 px-2 py-0.5 text-[10px] text-purple-700 sm:text-xs">
-            顔タイプ: {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
+            顔タイプ:{' '}
+            {cast.faceType && cast.faceType.length > 0 ? cast.faceType.join(', ') : 'ヒミツ🍓'}
           </span>
         </div>
 
@@ -263,48 +274,89 @@ const CastCard: React.FC<CastCardProps> = ({
         {scoreSection}
 
         {/* 動的SNSアイコン表示 */}
-        {(cast.sns?.line || cast.sns?.twitter || cast.sns?.instagram || cast.sns?.tiktok || cast.snsUrl) && (
+        {(cast.sns?.line ||
+          cast.sns?.twitter ||
+          cast.sns?.instagram ||
+          cast.sns?.tiktok ||
+          cast.snsUrl) && (
           <div className="mb-3 flex flex-wrap gap-1.5">
             {cast.sns?.line && (
-              <a href={formatSnsUrl(cast.sns.line, 'line')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-[#06C755] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a
+                href={formatSnsUrl(cast.sns.line, 'line')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-[#06C755] text-white shadow-sm transition-opacity hover:opacity-80"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <span className="text-[9px] font-black tracking-tighter">LINE</span>
               </a>
             )}
             {cast.sns?.instagram && (
-              <a href={formatSnsUrl(cast.sns.instagram, 'instagram')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a
+                href={formatSnsUrl(cast.sns.instagram, 'instagram')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white shadow-sm transition-opacity hover:opacity-80"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Instagram className="h-4 w-4" />
               </a>
             )}
             {cast.sns?.twitter && (
-              <a href={formatSnsUrl(cast.sns.twitter, 'twitter')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a
+                href={formatSnsUrl(cast.sns.twitter, 'twitter')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <span className="font-serif text-sm font-bold">𝕏</span>
               </a>
             )}
             {cast.sns?.tiktok && (
-             <a href={formatSnsUrl(cast.sns.tiktok, 'tiktok')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
+              <a
+                href={formatSnsUrl(cast.sns.tiktok, 'tiktok')}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex h-8 w-8 items-center justify-center rounded-md bg-black text-white shadow-sm transition-opacity hover:opacity-80"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <Music className="h-4 w-4" />
               </a>
             )}
-             {/* フォールバック用: もし個別SNSが無く、汎用snsUrlだけある場合 */}
-             {!cast.sns?.line && !cast.sns?.instagram && !cast.sns?.twitter && !cast.sns?.tiktok && cast.snsUrl && (
-              <a href={formatSnsUrl(cast.snsUrl, 'other')} target="_blank" rel="noopener noreferrer" className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-500 shadow-sm transition-opacity hover:opacity-80" onClick={(e) => e.stopPropagation()}>
-                <Globe className="h-4 w-4" />
-              </a>
-            )}
+            {/* フォールバック用: もし個別SNSが無く、汎用snsUrlだけある場合 */}
+            {!cast.sns?.line &&
+              !cast.sns?.instagram &&
+              !cast.sns?.twitter &&
+              !cast.sns?.tiktok &&
+              cast.snsUrl && (
+                <a
+                  href={formatSnsUrl(cast.snsUrl, 'other')}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-100 text-neutral-500 shadow-sm transition-opacity hover:opacity-80"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Globe className="h-4 w-4" />
+                </a>
+              )}
           </div>
         )}
 
         {/* エロス係数 (Redesigned Style) */}
         <div className="mb-2 flex items-center gap-3">
           <span className="text-[10px] font-black uppercase tracking-wider text-rose-500/80">
-            エロス係数 <span className="ml-1 text-[11px] font-bold text-rose-600">{cast.sexinessLevel ?? 100}%</span>
+            エロス係数{' '}
+            <span className="ml-1 text-[11px] font-bold text-rose-600">
+              {cast.sexinessLevel ?? 100}%
+            </span>
           </span>
           <div className="flex flex-col gap-[1px]">
-            <div className="flex items-end gap-[1px] h-6">
+            <div className="flex h-6 items-end gap-[1px]">
               {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15].map((bar) => {
                 const level = Math.ceil((cast.sexinessLevel ?? 0) / 10); // 0-150 -> 1-15
                 const isActive = bar <= level;
-                
+
                 const getColor = () => {
                   if (bar <= 4) return 'bg-emerald-400';
                   if (bar <= 7) return 'bg-lime-400';
@@ -312,7 +364,7 @@ const CastCard: React.FC<CastCardProps> = ({
                   if (bar <= 13) return 'bg-orange-400';
                   return 'bg-rose-500';
                 };
-                
+
                 return (
                   <div
                     key={bar}
@@ -327,17 +379,21 @@ const CastCard: React.FC<CastCardProps> = ({
               })}
             </div>
             {/* Base Horizontal Bar */}
-            <div className="h-[2px] w-full rounded-full bg-neutral-200 overflow-hidden">
-               <div 
-                 className={`h-full transition-all duration-700 ${
-                   (cast.sexinessLevel ?? 0) > 130 ? 'bg-rose-500' :
-                   (cast.sexinessLevel ?? 0) > 100 ? 'bg-orange-400' :
-                   (cast.sexinessLevel ?? 0) > 70 ? 'bg-yellow-400' :
-                   (cast.sexinessLevel ?? 0) > 40 ? 'bg-lime-400' :
-                   'bg-emerald-400'
-                 }`}
-                 style={{ width: `${Math.min(100, ((cast.sexinessLevel ?? 100) / 150) * 100)}%` }}
-               />
+            <div className="h-[2px] w-full overflow-hidden rounded-full bg-neutral-200">
+              <div
+                className={`h-full transition-all duration-700 ${
+                  (cast.sexinessLevel ?? 0) > 130
+                    ? 'bg-rose-500'
+                    : (cast.sexinessLevel ?? 0) > 100
+                      ? 'bg-orange-400'
+                      : (cast.sexinessLevel ?? 0) > 70
+                        ? 'bg-yellow-400'
+                        : (cast.sexinessLevel ?? 0) > 40
+                          ? 'bg-lime-400'
+                          : 'bg-emerald-400'
+                }`}
+                style={{ width: `${Math.min(100, ((cast.sexinessLevel ?? 100) / 150) * 100)}%` }}
+              />
             </div>
           </div>
         </div>

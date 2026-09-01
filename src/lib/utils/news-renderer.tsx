@@ -6,28 +6,31 @@ interface RichTextContentProps {
   linkClassName?: string;
 }
 
-export const RichTextContent: React.FC<RichTextContentProps> = ({ 
-  content, 
+export const RichTextContent: React.FC<RichTextContentProps> = ({
+  content,
   className,
-  linkClassName = "text-rose-500 underline decoration-rose-500/30 underline-offset-4 hover:text-rose-600 hover:decoration-rose-600 transition-all font-bold"
+  linkClassName = 'text-rose-500 underline decoration-rose-500/30 underline-offset-4 hover:text-rose-600 hover:decoration-rose-600 transition-all font-bold',
 }) => {
   if (!content) return null;
-  
+
   // [テキスト](URL) 形式のリンクを抽出する正規表現
   const parts = content.split(/(\[.*?\]\(.*?\))/g);
-  
+
   return (
     <div className={className} style={{ whiteSpace: 'pre-wrap' }}>
       {parts.map((part, i) => {
         const match = part.match(/\[(.*?)\]\((.*?)\)/);
         if (match) {
           const [, text, url] = match;
+          const isExternal =
+            (url.startsWith('http://') || url.startsWith('https://')) &&
+            !url.includes('sutoroberrys.jp');
           return (
             <a
               key={i}
               href={url}
-              target="_blank"
-              rel="noopener noreferrer"
+              target={isExternal ? '_blank' : undefined}
+              rel={isExternal ? 'noopener noreferrer' : undefined}
               className={linkClassName}
               onClick={(e) => e.stopPropagation()}
             >

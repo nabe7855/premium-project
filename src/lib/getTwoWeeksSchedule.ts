@@ -1,12 +1,16 @@
 // lib/getTwoWeeksSchedule.ts
 import { Cast, CastStatus, ScheduleDay } from '@/types/schedule';
 import { supabase } from './supabaseClient';
-import { formatScheduleTime } from '@/lib/utils/formatSchedule';
+import {
+  formatJstDateForDisplay,
+  formatScheduleTime,
+  getJstDateString,
+  getJstTodayString,
+} from '@/lib/utils/formatSchedule';
 
 export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
-  const today = new Date();
-  const endDate = new Date();
-  endDate.setDate(today.getDate() + 13);
+  const todayStr = getJstTodayString();
+  const endDateStr = getJstDateString(13);
 
   const { data, error } = await supabase
     .from('schedules')
@@ -45,8 +49,8 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
       )
     `,
     )
-    .gte('work_date', today.toISOString().split('T')[0])
-    .lte('work_date', endDate.toISOString().split('T')[0])
+    .gte('work_date', todayStr)
+    .lte('work_date', endDateStr)
     .order('work_date', { ascending: true });
 
   if (error) {
@@ -60,27 +64,14 @@ export async function getTwoWeeksSchedule(): Promise<ScheduleDay[]> {
   const grouped: { [date: string]: ScheduleDay } = {};
 
   data?.forEach((row: any) => {
-    // ✅ row 単位のキー確認
-    console.log('🛠 row keys:', Object.keys(row));
-
-    // ✅ status の候補を徹底的にチェック
-    console.log('🛠 row.status:', row.status);
-    console.log('🛠 row.cast_id:', row.cast_id);
-    if (row.casts) {
-      (Array.isArray(row.casts) ? row.casts : [row.casts]).forEach((cast: any) => {
-        console.log('🛠 inside cast:', {
-          castName: cast.name,
-          directStatus: cast.status, // cast 側に入ってないか？
-          scheduleStatus: row.status, // schedule 側の値
-        });
-      });
-    }
-
     const date = row.work_date;
+    const { displayText } = formatJstDateForDisplay(date);
+    const dayOfWeek = displayText.slice(-2, -1); // e.g. "月"
+
     if (!grouped[date]) {
       grouped[date] = {
         date,
-        dayOfWeek: new Date(date).toLocaleDateString('ja-JP', { weekday: 'short' }),
+        dayOfWeek,
         casts: [],
         recommendedCasts: [],
       };

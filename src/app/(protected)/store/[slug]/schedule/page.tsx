@@ -12,7 +12,11 @@ import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { STORE_META } from '@/lib/store/storeMeta';
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const { slug } = params;
   const s = STORE_META[slug];
   if (!s) return {};
@@ -31,33 +35,36 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: [{ url: `/ogp/store-${slug}.png`, width: 1200, height: 630 }],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title,
       description,
-      images: [`/ogp/store-${slug}.png`]
-    }
+      images: [`/ogp/store-${slug}.png`],
+    },
   };
 }
 
 import { supabase } from '@/lib/supabaseClient';
 import { Cast, ScheduleDay as ScheduleDayType } from '@/types/schedule';
-import { formatScheduleTime } from '@/lib/utils/formatSchedule';
+import {
+  formatJstDateForDisplay,
+  formatScheduleTime,
+  getJstDateString,
+} from '@/lib/utils/formatSchedule';
 
 async function getInitialScheduleData(storeSlug: string): Promise<ScheduleDayType[]> {
   try {
-    const today = new Date();
     const days = [];
-    const dayNames = ['日', '月', '火', '水', '木', '金', '土'];
     for (let i = 0; i < 14; i++) {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      const dateStr = d.toISOString().split('T')[0];
-      days.push({ date: dateStr, dayOfWeek: dayNames[d.getDay()] });
+      const dateStr = getJstDateString(i);
+      const { displayText } = formatJstDateForDisplay(dateStr);
+      const dayOfWeek = displayText.slice(-2, -1);
+      days.push({ date: dateStr, dayOfWeek });
     }
 
     const { data: schedules } = await supabase
       .from('schedules')
-      .select(`
+      .select(
+        `
         *,
         casts!inner (
           *,
@@ -69,7 +76,8 @@ async function getInitialScheduleData(storeSlug: string): Promise<ScheduleDayTyp
             stores!inner ( id, slug )
           )
         )
-      `)
+      `,
+      )
       .gte('work_date', days[0].date)
       .lte('work_date', days[days.length - 1].date)
       .eq('casts.cast_store_memberships.stores.slug', storeSlug);

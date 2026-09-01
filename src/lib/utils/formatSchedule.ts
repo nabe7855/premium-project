@@ -48,7 +48,7 @@ export function getDateJST(datetime: string | Date): string {
 /**
  * 出勤スケジュールの開始〜終了時刻をJSTで一括整形する
  * 日跨ぎシフト(終了が翌日)の場合は 「12:00〜翌4:00」 のように 「翌」 を付与する
- * 
+ *
  * @param startDatetime 開始日時 (ISO文字列 / Date)
  * @param endDatetime 終了日時 (ISO文字列 / Date)
  * @param separator 区切り文字 (デフォルト: '〜')
@@ -56,7 +56,7 @@ export function getDateJST(datetime: string | Date): string {
 export function formatScheduleTime(
   startDatetime: string | Date | null | undefined,
   endDatetime: string | Date | null | undefined,
-  separator: string = '〜'
+  separator: string = '〜',
 ): string {
   if (!startDatetime && !endDatetime) return '時間未定';
   if (!startDatetime) return `??:??${separator}${formatTimeJST(endDatetime)}`;
@@ -66,7 +66,8 @@ export function formatScheduleTime(
   let endTimeStr = formatTimeJST(endDatetime);
 
   try {
-    const startDateObj = typeof startDatetime === 'string' ? new Date(startDatetime) : startDatetime;
+    const startDateObj =
+      typeof startDatetime === 'string' ? new Date(startDatetime) : startDatetime;
     const endDateObj = typeof endDatetime === 'string' ? new Date(endDatetime) : endDatetime;
 
     if (!isNaN(startDateObj.getTime()) && !isNaN(endDateObj.getTime())) {
@@ -74,7 +75,10 @@ export function formatScheduleTime(
       const endJSTDay = getDateJST(endDateObj);
 
       // JST日付比較で終了日が開始日より後の場合、または終了時刻が開始時刻以下の場合は「翌」を付与
-      if (endJSTDay > startJSTDay || (endJSTDay === startJSTDay && endDateObj.getTime() < startDateObj.getTime())) {
+      if (
+        endJSTDay > startJSTDay ||
+        (endJSTDay === startJSTDay && endDateObj.getTime() < startDateObj.getTime())
+      ) {
         endTimeStr = `翌${endTimeStr}`;
       } else if (endJSTDay === startJSTDay) {
         // 同日であっても、時刻文字列比較で数値が小さく日跨ぎとみなせる場合 (00:00含む)
@@ -90,4 +94,42 @@ export function formatScheduleTime(
   }
 
   return `${startTimeStr}${separator}${endTimeStr}`;
+}
+
+/**
+ * 日本標準時(JST)における今日の「YYYY-MM-DD」を取得する
+ */
+export function getJstTodayString(): string {
+  return new Date().toLocaleDateString('sv-SE', { timeZone: 'Asia/Tokyo' });
+}
+
+/**
+ * 日本標準時(JST)における「今日からoffsetDays日後のYYYY-MM-DD」を取得する
+ */
+export function getJstDateString(offsetDays: number = 0): string {
+  const todayStr = getJstTodayString();
+  const [y, m, d] = todayStr.split('-').map(Number);
+  const targetDate = new Date(y, m - 1, d + offsetDays);
+  const year = targetDate.getFullYear();
+  const month = String(targetDate.getMonth() + 1).padStart(2, '0');
+  const day = String(targetDate.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+/**
+ * 「YYYY-MM-DD」文字列から「M月D日(曜)」等の日本語表記と曜日番号を取得する
+ */
+export function formatJstDateForDisplay(dateStr: string): {
+  displayText: string;
+  dayOfWeekNum: number;
+} {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dateObj = new Date(y, m - 1, d);
+  const dayOfWeekNames = ['日', '月', '火', '水', '木', '金', '土'];
+  const dayOfWeekNum = isNaN(dateObj.getDay()) ? 0 : dateObj.getDay();
+  const dayOfWeekStr = dayOfWeekNames[dayOfWeekNum] || '';
+  return {
+    displayText: `${m}月${d}日(${dayOfWeekStr})`,
+    dayOfWeekNum,
+  };
 }
