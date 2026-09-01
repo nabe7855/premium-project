@@ -1,8 +1,13 @@
 import { createClient } from '@supabase/supabase-js';
+import 'dotenv/config';
 
-const supabaseUrl = 'https://vkrztvkpjcpejccyiviw.supabase.co';
-const supabaseAnonKey =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZrcnp0dmtwamNwZWpjY3lpdml3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTY4MzE0ODEsImV4cCI6MjA3MjQwNzQ4MX0.nB4T_OHDOvcYFAG5MTSB5KWius-sZLQr-wfyh2S0bTk';
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://vkrztvkpjcpejccyiviw.supabase.co';
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+
+if (!supabaseAnonKey) {
+  console.error('Error: NEXT_PUBLIC_SUPABASE_ANON_KEY is not set.');
+  process.exit(1);
+}
 
 const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
