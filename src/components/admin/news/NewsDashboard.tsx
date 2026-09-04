@@ -34,7 +34,7 @@ export const ALL_CATEGORY_LABELS: Record<string, string> = {
   media: 'メディア',
   promo: 'プロモーション',
   twitcasting: 'ツイキャス',
-  'お知らせ': '営業案内',
+  お知らせ: '営業案内',
 };
 
 export function getCategoryLabel(cat?: string): string {
@@ -183,7 +183,11 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
 
           <div className="flex flex-wrap gap-3">
             {pages
-              .filter((p) => p.storeSettings?.[selectedStore]?.status === 'published' || p.status === 'published')
+              .filter(
+                (p) =>
+                  p.storeSettings?.[selectedStore]?.status === 'published' ||
+                  p.status === 'published',
+              )
               .map((page) => {
                 const isSelected = recommendedIds.includes(page.id);
                 return (
@@ -263,18 +267,23 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     </div>
                   )}
                   <div className="absolute right-6 top-6 flex flex-col items-end gap-2">
-                    <div className="flex flex-col gap-1 items-end">
-                      {page.targetStoreSlugs?.map(slug => {
-                        const storeName = stores.find(s => s.slug === slug)?.city || slug;
+                    <div className="flex flex-col items-end gap-1">
+                      {page.targetStoreSlugs?.map((slug) => {
+                        const storeName = stores.find((s) => s.slug === slug)?.city || slug;
                         const isPub = page.storeSettings?.[slug]?.status === 'published';
                         return (
-                          <span key={slug} className={`rounded-full px-3 py-1 text-[9px] font-black uppercase shadow-sm backdrop-blur-md ${isPub ? 'bg-green-500/90 text-white' : 'bg-slate-700/80 text-white'}`}>
+                          <span
+                            key={slug}
+                            className={`rounded-full px-3 py-1 text-[9px] font-black uppercase shadow-sm backdrop-blur-md ${isPub ? 'bg-green-500/90 text-white' : 'bg-slate-700/80 text-white'}`}
+                          >
                             {storeName}: {isPub ? '公開中' : '非公開'}
                           </span>
                         );
                       })}
                       {(!page.targetStoreSlugs || page.targetStoreSlugs.length === 0) && (
-                         <span className="rounded-full bg-slate-400 px-3 py-1 text-[9px] font-black uppercase text-white shadow-sm">店舗未設定</span>
+                        <span className="rounded-full bg-slate-400 px-3 py-1 text-[9px] font-black uppercase text-white shadow-sm">
+                          店舗未設定
+                        </span>
                       )}
                     </div>
                     {page.category && (
@@ -328,18 +337,46 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                     {page.shortDescription ||
                       '説明文が設定されていません。編集画面から設定できます。'}
                   </p>
-                  <div className="mb-8 flex items-center gap-2">
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
-                      最終更新:
-                    </span>
-                    <span className="text-[11px] font-bold text-slate-400">
-                      {new Date(page.updatedAt).toLocaleDateString()}{' '}
-                      {new Date(page.updatedAt).toLocaleTimeString([], {
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </span>
-                  </div>
+                  {/* 日付表示: 店舗公開日時を優先表示し、最終更新も併記 */}
+                  {(() => {
+                    const storeSetting = page.storeSettings?.[selectedStore];
+                    const pubDateStr =
+                      storeSetting?.publishedAt ||
+                      (Object.values(page.storeSettings || {}) as any[]).find(
+                        (s: any) => s?.publishedAt,
+                      )?.publishedAt;
+
+                    return (
+                      <div className="mb-8 flex flex-wrap items-center gap-x-4 gap-y-1">
+                        {pubDateStr && (
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                              公開日時:
+                            </span>
+                            <span className="text-[11px] font-bold text-slate-600">
+                              {new Date(pubDateStr).toLocaleDateString()}{' '}
+                              {new Date(pubDateStr).toLocaleTimeString([], {
+                                hour: '2-digit',
+                                minute: '2-digit',
+                              })}
+                            </span>
+                          </div>
+                        )}
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                            最終更新:
+                          </span>
+                          <span className="text-[11px] font-bold text-slate-400">
+                            {new Date(page.updatedAt).toLocaleDateString()}{' '}
+                            {new Date(page.updatedAt).toLocaleTimeString([], {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
 
                   {/* Store Selection */}
                   <div className="mb-6 space-y-3">
@@ -492,11 +529,12 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                           {cat.label}
                         </option>
                       ))}
-                      {editingPage.category && !NEW_CATEGORIES.some((c) => c.id === editingPage.category) && (
-                        <option value={editingPage.category}>
-                          {getCategoryLabel(editingPage.category)}
-                        </option>
-                      )}
+                      {editingPage.category &&
+                        !NEW_CATEGORIES.some((c) => c.id === editingPage.category) && (
+                          <option value={editingPage.category}>
+                            {getCategoryLabel(editingPage.category)}
+                          </option>
+                        )}
                     </select>
                   </div>
                   <div>
@@ -538,7 +576,7 @@ const NewsDashboard: React.FC<NewsDashboardProps> = ({
                       type="text"
                       value={editingPage.slug}
                       readOnly
-                      className="flex-1 bg-transparent font-bold text-slate-500 cursor-not-allowed outline-none"
+                      className="flex-1 cursor-not-allowed bg-transparent font-bold text-slate-500 outline-none"
                     />
                   </div>
                 </div>

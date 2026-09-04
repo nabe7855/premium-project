@@ -136,7 +136,11 @@ const NewsNavigation: React.FC<NewsNavigationProps> = ({
                     {page.title}
                   </h4>
                   <div className="flex items-center gap-4 text-[11px] font-medium text-slate-400">
-                    <span>{new Date(page.updatedAt).toLocaleDateString()}</span>
+                    <span>
+                      {new Date(
+                        page.storeSettings?.[storeSlug]?.publishedAt || page.updatedAt,
+                      ).toLocaleDateString()}
+                    </span>
                   </div>
                 </div>
                 {page.thumbnailUrl && (
