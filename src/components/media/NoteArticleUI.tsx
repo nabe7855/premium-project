@@ -93,7 +93,7 @@ export default function NoteArticleUI({
   if (article.content) {
     const qMatches = Array.from(
       article.content.matchAll(
-        /<h3[^>]*>Q\.\s*([\s\S]*?)<\/h3>[\s\S]*?<p[^>]*>A\.\s*([\s\S]*?)<\/p>/gi,
+        /<(?:h3|p\s+class="q")[^>]*>Q\.\s*([\s\S]*?)<\/(?:h3|p)>[\s\S]*?<p(?: class="a")?[^>]*>A\.\s*([\s\S]*?)<\/p>/gi,
       ),
     );
     for (const m of qMatches) {
@@ -309,6 +309,72 @@ export default function NoteArticleUI({
             font-size: 0.8125rem;
             color: #6b7280;
             margin-top: 0.5rem;
+          }
+          .prose figure.photo {
+            margin: 2rem 0;
+            text-align: center;
+          }
+          .prose figure.photo img {
+            max-width: 100%;
+            max-height: 560px;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin: 0 auto;
+          }
+          .prose figure.photo figcaption {
+            font-size: 0.8125rem;
+            color: #6b7280;
+            margin-top: 0.5rem;
+          }
+          .prose .summary {
+            background: #f0f7ff;
+            border-left: 4px solid #3b82f6;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            font-size: 1rem;
+            line-height: 1.8;
+            margin: 2rem 0;
+          }
+          .prose .qa {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1.25rem;
+            margin: 1.5rem 0;
+          }
+          .prose .qa p.q {
+            font-weight: 700;
+            color: #2563eb;
+            margin-bottom: 0.25rem;
+          }
+          .prose .qa p.a {
+            margin-top: 0.25rem;
+            margin-bottom: 0.25rem;
+          }
+          .prose .honest {
+            background: #fefce8;
+            border: 1px solid #fef08a;
+            border-radius: 0.75rem;
+            padding: 1.25rem 1.5rem;
+            margin: 2rem 0;
+          }
+          .prose .faq {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin: 2rem 0;
+          }
+          .prose .faq h3 {
+            margin-top: 0;
+            color: #2563eb;
+          }
+          .prose .faq p.q {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+          }
+          .prose .faq p.a {
+            margin-top: 0;
           }
           .prose .comic-strip {
             display: grid;

@@ -75,11 +75,34 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
     },
   };
 
+  const breadcrumbLd = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      {
+        '@type': 'ListItem',
+        position: 1,
+        name: 'イケオラボ',
+        item: 'https://www.sutoroberrys.jp/ikeo',
+      },
+      {
+        '@type': 'ListItem',
+        position: 2,
+        name: article.title,
+        item: `https://www.sutoroberrys.jp/ikeo/${params.slug}`,
+      },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
       <NoteArticleUI
         article={article}
