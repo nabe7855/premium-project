@@ -72,7 +72,7 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
   if (article.content) {
     const qMatches = Array.from(
       article.content.matchAll(
-        /<(?:h3|p\s+class="q")[^>]*>Q\.\s*([\s\S]*?)<\/(?:h3|p)>[\s\S]*?<p(?: class="a")?[^>]*>A\.\s*([\s\S]*?)<\/p>/gi,
+        /<(?:h3|p\s+class="q")[^>]*>Q\.\s*([\s\S]*?)<\/(?:h3|p)>\s*<p(?: class="a")?[^>]*>(?:A\.\s*)?([\s\S]*?)<\/p>/gi,
       ),
     );
     for (const m of qMatches) {
