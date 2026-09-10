@@ -105,30 +105,8 @@ export default function NoteArticleUI({
     }
   }
 
-  const faqSchema =
-    faqList.length > 0
-      ? {
-          '@context': 'https://schema.org',
-          '@type': 'FAQPage',
-          mainEntity: faqList.map((item) => ({
-            '@type': 'Question',
-            name: item.question,
-            acceptedAnswer: {
-              '@type': 'Answer',
-              text: item.answer,
-            },
-          })),
-        }
-      : null;
-
   return (
     <div className="bg-white">
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      )}
       <article className="mx-auto max-w-[740px] px-5 py-12 md:py-20">
         {/* 記事ヘッダー */}
         <header className="mb-10 md:mb-16">

@@ -20,14 +20,20 @@ export async function generateMetadata({
 
   const canonicalUrl = `https://www.sutoroberrys.jp/ikeo/${params.slug}`;
 
+  const rawTitle = article.seo_title || article.title;
+  // layout.tsx の template: '%s | イケオラボ by ストロベリーボーイズ' による重複付与を防止
+  const cleanTitle = rawTitle
+    .replace(/[｜|]\s*イケオラボ(\s+by\s+ストロベリーボーイズ)?$/g, '')
+    .trim();
+
   return {
-    title: article.seo_title || `${article.title}｜イケオラボ`,
+    title: cleanTitle,
     description: article.seo_description || article.excerpt || '',
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: {
-      title: article.seo_title || article.title,
+      title: cleanTitle,
       description: article.seo_description || article.excerpt || '',
       images: article.thumbnail_url ? [article.thumbnail_url] : [],
       type: 'article',
@@ -60,6 +66,39 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
   // 関連記事を取得
   const relatedResult = await getRelatedArticles(article.id, 'recruit', 3);
   const relatedArticles = relatedResult.success ? relatedResult.articles || [] : [];
+
+  // FAQPage JSON-LD 構造化データの動的生成
+  const faqList: { question: string; answer: string }[] = [];
+  if (article.content) {
+    const qMatches = Array.from(
+      article.content.matchAll(
+        /<(?:h3|p\s+class="q")[^>]*>Q\.\s*([\s\S]*?)<\/(?:h3|p)>[\s\S]*?<p(?: class="a")?[^>]*>A\.\s*([\s\S]*?)<\/p>/gi,
+      ),
+    );
+    for (const m of qMatches) {
+      const qText = ((m as RegExpMatchArray)[1] || '').replace(/<[^>]+>/g, '').trim();
+      const aText = ((m as RegExpMatchArray)[2] || '').replace(/<[^>]+>/g, '').trim();
+      if (qText && aText) {
+        faqList.push({ question: qText, answer: aText });
+      }
+    }
+  }
+
+  const faqJsonLd =
+    faqList.length > 0
+      ? {
+          '@context': 'https://schema.org',
+          '@type': 'FAQPage',
+          mainEntity: faqList.map((item) => ({
+            '@type': 'Question',
+            name: item.question,
+            acceptedAnswer: {
+              '@type': 'Answer',
+              text: item.answer,
+            },
+          })),
+        }
+      : null;
 
   // 構造化データ（JSON-LD）
   const jsonLd = {
@@ -104,6 +143,12 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <NoteArticleUI
         article={article}
         relatedArticles={relatedArticles}
