@@ -148,7 +148,7 @@ export default async function InterviewArticleUI({
           name_romaji: primaryCast.cast_name_romaji || undefined,
           area: interviewMeta?.area || undefined,
           attributes: profileDataRaw.fields.map((f: any) => ({
-            label: f.key,
+            label: f.label || f.key,
             value: f.value,
           })),
           icon_url: mainPhotoUrl,
