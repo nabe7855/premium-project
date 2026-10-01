@@ -25,3 +25,7 @@ export function useStore() {
   }
   return context;
 }
+
+export function useOptionalStore() {
+  return useContext(StoreContext);
+}
