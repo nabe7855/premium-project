@@ -32,7 +32,9 @@ export async function generateMetadata({
   const pubDate = article.published_at ? new Date(article.published_at) : null;
   const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
   const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
-  const isNoIndex = article.status !== 'published' || isFuturePublication || isKanaePreRelease;
+  const isKazuPreRelease = resolvedParams.slug === 'voice-kazu' && article.status !== 'published';
+  const isNoIndex =
+    article.status !== 'published' || isFuturePublication || isKanaePreRelease || isKazuPreRelease;
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`;
 
@@ -107,7 +109,9 @@ export default async function MagazineArticlePage({
   const pubDate = article.published_at ? new Date(article.published_at) : null;
   const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
   const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
-  const isNoIndex = article.status !== 'published' || isFuturePublication || isKanaePreRelease;
+  const isKazuPreRelease = resolvedParams.slug === 'voice-kazu' && article.status !== 'published';
+  const isNoIndex =
+    article.status !== 'published' || isFuturePublication || isKanaePreRelease || isKazuPreRelease;
 
   // 関連記事の取得
   const relatedResult = await getRelatedArticles(article.id, 'user');
