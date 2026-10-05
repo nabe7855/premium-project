@@ -7,6 +7,11 @@ import { notFound, redirect } from 'next/navigation';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
+const PREVIEW_TOKENS: Record<string, string> = {
+  'voice-kanae': 'kanae_sec_8f93a1c4b2e7d01695f241a38e70',
+  'voice-kazu': 'kazu_sec_7a2b9c3e4d5f6081',
+};
+
 // 動的メタデータ生成（SEO対応）
 export async function generateMetadata({
   params,
@@ -16,25 +21,29 @@ export async function generateMetadata({
   searchParams?: any;
 }): Promise<Metadata> {
   const resolvedParams = await Promise.resolve(params);
+  const resolvedSearchParams = await Promise.resolve(searchParams);
 
   const article = await prisma.mediaArticle.findUnique({
     where: { slug: resolvedParams.slug },
   });
 
-  if (!article) {
+  const expectedToken = PREVIEW_TOKENS[resolvedParams.slug] || 'preview_secret_token_default';
+  const isPreview = resolvedSearchParams?.preview === expectedToken;
+
+  if (!article || (article.status !== 'published' && !isPreview)) {
     return {
       title: '記事が見つかりません',
-      robots: 'noindex, nofollow' as any,
+      robots: {
+        index: false,
+        follow: false,
+      },
     };
   }
 
   const now = new Date();
   const pubDate = article.published_at ? new Date(article.published_at) : null;
   const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
-  const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
-  const isKazuPreRelease = resolvedParams.slug === 'voice-kazu' && article.status !== 'published';
-  const isNoIndex =
-    article.status !== 'published' || isFuturePublication || isKanaePreRelease || isKazuPreRelease;
+  const isNoIndex = article.status !== 'published' || isFuturePublication || isPreview;
 
   const canonicalUrl = `https://www.sutoroberrys.jp/amolab/${resolvedParams.slug}`;
 
@@ -84,6 +93,7 @@ export default async function MagazineArticlePage({
   searchParams?: any;
 }) {
   const resolvedParams = await Promise.resolve(params);
+  const resolvedSearchParams = await Promise.resolve(searchParams);
 
   // DBから記事を取得、タグも結合して取得
   const article = await prisma.mediaArticle.findUnique({
@@ -95,8 +105,11 @@ export default async function MagazineArticlePage({
     },
   });
 
-  // 記事がない場合は404ページへ
-  if (!article) {
+  const expectedToken = PREVIEW_TOKENS[resolvedParams.slug] || 'preview_secret_token_default';
+  const isPreview = resolvedSearchParams?.preview === expectedToken;
+
+  // 記事がない、または下書き（かつプレビューでない）の場合は404ページへ
+  if (!article || (article.status !== 'published' && !isPreview)) {
     notFound();
   }
 
@@ -108,10 +121,7 @@ export default async function MagazineArticlePage({
   const now = new Date();
   const pubDate = article.published_at ? new Date(article.published_at) : null;
   const isFuturePublication = pubDate ? pubDate.getTime() > now.getTime() : false;
-  const isKanaePreRelease = resolvedParams.slug === 'voice-kanae';
-  const isKazuPreRelease = resolvedParams.slug === 'voice-kazu' && article.status !== 'published';
-  const isNoIndex =
-    article.status !== 'published' || isFuturePublication || isKanaePreRelease || isKazuPreRelease;
+  const isNoIndex = article.status !== 'published' || isFuturePublication || isPreview;
 
   // 関連記事の取得
   const relatedResult = await getRelatedArticles(article.id, 'user');
