@@ -1,24 +1,54 @@
 import { EditableImage } from '@/components/admin/EditableImage';
 import { CTAConfig } from '@/lib/store/firstTimeConfig';
+import { useOptionalStore } from '@/contexts/StoreContext';
 import React from 'react';
 
 interface CTAProps {
+  storeSlug?: string;
   lineId?: string;
+  lineUrl?: string;
   config?: CTAConfig;
   isEditing?: boolean;
   onUpdate?: (section: string, key: string, value: any) => void;
   onImageUpload?: (section: string, file: File) => void;
 }
 
+// 店舗ごとのデフォルト公式LINEアカウント情報
+const STORE_LINE_DEFAULTS: Record<string, { id: string; url: string }> = {
+  yokohama: { id: '@475nrvom', url: 'https://lin.ee/UozTcN6' },
+  fukuoka: { id: '@475nrvom', url: 'https://lin.ee/PgPw5yE' },
+};
+const DEFAULT_LINE = { id: '@475nrvom', url: 'https://lin.ee/UozTcN6' };
+
 export const CTA: React.FC<CTAProps> = ({
-  lineId = '@204ynfuu',
+  storeSlug,
+  lineId: propLineId,
+  lineUrl: propLineUrl,
   config,
   isEditing,
   onUpdate,
   onImageUpload,
 }) => {
+  const storeContext = useOptionalStore();
+  const currentSlug = storeSlug || storeContext?.store?.slug || 'yokohama';
+  const defaults = STORE_LINE_DEFAULTS[currentSlug] || DEFAULT_LINE;
+
+  // 優先順位: config(管理画面設定) > props > DB/StoreContext > 店舗デフォルト
+  const targetLineId =
+    config?.lineId || propLineId || (storeContext?.store as any)?.line_id || defaults.id;
+
+  const targetLineUrl =
+    config?.lineUrl ||
+    propLineUrl ||
+    (storeContext?.store as any)?.line_url ||
+    storeContext?.store?.contact?.line ||
+    defaults.url;
+
+  const finalHref = targetLineUrl || `https://line.me/R/ti/p/${targetLineId.replace('@', '')}`;
+
   const data = config || {
-    heading: 'まずは相談だけ、という方もお気軽に.\n私たちが貴女のデビューを\n大切にサポートします。',
+    heading:
+      'まずは相談だけ、という方もお気軽に.\n私たちが貴女のデビューを\n大切にサポートします。',
     imageUrl: '',
     isVisible: true,
   };
@@ -27,7 +57,7 @@ export const CTA: React.FC<CTAProps> = ({
 
   return (
     <section
-      className={`relative overflow-hidden bg-white pt-8 pb-24 ${!data.isVisible ? 'opacity-50' : ''}`}
+      className={`relative overflow-hidden bg-white pb-24 pt-8 ${!data.isVisible ? 'opacity-50' : ''}`}
     >
       <div className="container relative z-10 mx-auto max-w-4xl px-4 text-center">
         <div className="mb-8 flex justify-center">
@@ -62,7 +92,9 @@ export const CTA: React.FC<CTAProps> = ({
             </div>
           ) : (
             <div className="relative">
-              <style dangerouslySetInnerHTML={{ __html: `
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: `
                 @keyframes float-cta {
                   0% { transform: translateY(0px); }
                   50% { transform: translateY(-15px); }
@@ -71,11 +103,13 @@ export const CTA: React.FC<CTAProps> = ({
                 .animate-float-cta {
                   animation: float-cta 3s ease-in-out infinite;
                 }
-              `}} />
-              <img 
-                src="/img/guide/strawberry-chan.png" 
-                alt="Strawberry-chan" 
-                className="mx-auto h-48 w-auto animate-float-cta"
+              `,
+                }}
+              />
+              <img
+                src="/img/guide/strawberry-chan.png"
+                alt="Strawberry-chan"
+                className="animate-float-cta mx-auto h-48 w-auto"
               />
               {isEditing && (
                 <div className="mt-4">
@@ -109,18 +143,18 @@ export const CTA: React.FC<CTAProps> = ({
           )}
         </div>
 
-        <h2 
+        <h2
           contentEditable={isEditing}
           onBlur={(e) => onUpdate?.('cta', 'heading', e.currentTarget.innerText)}
           suppressContentEditableWarning
-          className="mb-6 text-2xl font-black leading-tight md:text-4xl whitespace-pre-wrap outline-none focus:ring-2 focus:ring-pink-200 rounded px-1 text-gray-900"
+          className="mb-6 whitespace-pre-wrap rounded px-1 text-2xl font-black leading-tight text-gray-900 outline-none focus:ring-2 focus:ring-pink-200 md:text-4xl"
         >
           {data.heading}
         </h2>
 
         <div className="flex flex-col items-center gap-6">
           <a
-            href={`https://line.me/R/ti/p/${lineId.replace('@', '')}`}
+            href={finalHref}
             target="_blank"
             rel="noopener noreferrer"
             className="group relative w-full max-w-lg"
@@ -144,9 +178,40 @@ export const CTA: React.FC<CTAProps> = ({
             </div>
           </a>
 
-          <div className="text-sm font-medium text-gray-500">
-            LINE ID: <span className="font-bold text-gray-800">{lineId}</span>
+          <div className="flex items-center justify-center gap-1.5 text-sm font-medium text-gray-500">
+            <span>LINE ID:</span>
+            {isEditing ? (
+              <span
+                contentEditable
+                onBlur={(e) => onUpdate?.('cta', 'lineId', e.currentTarget.innerText.trim())}
+                suppressContentEditableWarning
+                className="cursor-text rounded border border-yellow-200 bg-yellow-50 px-1.5 py-0.5 font-bold text-gray-800 outline-none focus:ring-2 focus:ring-pink-300"
+                title="クリックしてLINE IDを編集できます"
+              >
+                {targetLineId}
+              </span>
+            ) : (
+              <span className="font-bold text-gray-800">{targetLineId}</span>
+            )}
           </div>
+
+          {isEditing && (
+            <div className="w-full max-w-md rounded-lg border border-pink-200 bg-pink-50/70 p-3 text-left text-xs shadow-sm">
+              <div className="mb-1 flex items-center justify-between font-bold text-gray-700">
+                <span>LINEリンク先URL（編集用）</span>
+                <span className="text-[10px] font-normal text-pink-600">
+                  ※入力内容は自動反映されます
+                </span>
+              </div>
+              <input
+                type="text"
+                value={config?.lineUrl !== undefined ? config.lineUrl : targetLineUrl}
+                onChange={(e) => onUpdate?.('cta', 'lineUrl', e.target.value)}
+                placeholder="https://lin.ee/..."
+                className="w-full rounded border border-gray-300 bg-white px-2.5 py-1.5 text-xs text-gray-800 focus:border-pink-500 focus:outline-none"
+              />
+            </div>
+          )}
 
           <p className="text-xs text-gray-400">24時間受付中 / 相談だけでもOKです</p>
         </div>

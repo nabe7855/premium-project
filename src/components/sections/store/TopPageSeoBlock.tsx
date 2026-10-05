@@ -15,7 +15,7 @@ interface TopPageSeoBlockProps {
 // 店舗ごとの公式LINEアカウントURL（未指定・フォールバック用）
 const STORE_OFFICIAL_LINE_URLS: Record<string, string> = {
   fukuoka: 'https://lin.ee/PgPw5yE',
-  yokohama: 'https://lin.ee/PgPw5yE',
+  yokohama: 'https://lin.ee/UozTcN6',
 };
 const DEFAULT_OFFICIAL_LINE_URL = 'https://lin.ee/PgPw5yE';
 

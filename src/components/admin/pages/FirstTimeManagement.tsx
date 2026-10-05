@@ -1,6 +1,16 @@
 'use client';
 
-import { ChevronLeft, Download, Eye, GripVertical, History, Layout, Menu, Save, Upload } from 'lucide-react';
+import {
+  ChevronLeft,
+  Download,
+  Eye,
+  GripVertical,
+  History,
+  Layout,
+  Menu,
+  Save,
+  Upload,
+} from 'lucide-react';
 import { Reorder } from 'framer-motion';
 import { useEffect, useState, useCallback } from 'react';
 import { toast } from 'sonner';
@@ -19,11 +29,11 @@ import { Switch } from '@/components/ui/switch';
 import FirstTimePageContent from '@/components/sections/guide/first-time/FirstTimePageContent';
 import { StoreProvider } from '@/contexts/StoreContext';
 import { stores } from '@/data/stores';
-import { 
-  getFirstTimeConfig, 
+import {
+  getFirstTimeConfig,
   saveFirstTimeConfig,
   getFirstTimeHistory,
-  deleteFirstTimeHistory
+  deleteFirstTimeHistory,
 } from '@/lib/store/firstTimeActions';
 import {
   DEFAULT_FIRST_TIME_CONFIG,
@@ -388,18 +398,18 @@ export default function FirstTimeManagement() {
                 {getAllStores()
                   .filter((store) => !!store.slug)
                   .map((store) => {
-                  const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
-                  const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
-                  return (
-                    <SelectItem
-                      key={store.slug}
-                      value={store.slug}
-                      className="cursor-pointer font-bold focus:bg-slate-100 focus:text-black"
-                    >
-                      {finalName}
-                    </SelectItem>
-                  );
-                })}
+                    const displayName = store.name.replace(/ストロベリーボーイズ?/, '').trim();
+                    const finalName = displayName.endsWith('店') ? displayName : `${displayName}店`;
+                    return (
+                      <SelectItem
+                        key={store.slug}
+                        value={store.slug}
+                        className="cursor-pointer font-bold focus:bg-slate-100 focus:text-black"
+                      >
+                        {finalName}
+                      </SelectItem>
+                    );
+                  })}
               </SelectContent>
             </Select>
           </div>
@@ -424,7 +434,7 @@ export default function FirstTimeManagement() {
               className="h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-3"
             >
               <Download className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline text-[11px]">書き出し</span>
+              <span className="hidden text-[11px] sm:inline">書き出し</span>
             </Button>
 
             <div className="relative">
@@ -442,7 +452,7 @@ export default function FirstTimeManagement() {
                 className="h-8 border-gray-700 px-2 text-gray-300 sm:h-9 sm:px-3"
               >
                 <Upload className="h-4 w-4 sm:mr-2" />
-                <span className="hidden sm:inline text-[11px]">読み込み</span>
+                <span className="hidden text-[11px] sm:inline">読み込み</span>
               </Button>
             </div>
 
@@ -457,7 +467,7 @@ export default function FirstTimeManagement() {
               }
             >
               <Eye className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline text-[11px]">
+              <span className="hidden text-[11px] sm:inline">
                 {isPreviewMode ? '編集モード' : 'プレビュー'}
               </span>
             </Button>
@@ -492,7 +502,27 @@ export default function FirstTimeManagement() {
                 </div>
               </div>
             ) : (
-              <StoreProvider store={(stores[selectedStore] || stores['fukuoka']) as any}>
+              <StoreProvider
+                store={
+                  {
+                    ...(stores[selectedStore] || stores['fukuoka']),
+                    slug: selectedStore,
+                    line_id: '@475nrvom',
+                    line_url:
+                      selectedStore === 'yokohama'
+                        ? 'https://lin.ee/UozTcN6'
+                        : 'https://lin.ee/PgPw5yE',
+                    contact: {
+                      line:
+                        selectedStore === 'yokohama'
+                          ? 'https://lin.ee/UozTcN6'
+                          : 'https://lin.ee/PgPw5yE',
+                      phone: '',
+                      email: '',
+                    },
+                  } as any
+                }
+              >
                 <div className="pointer-events-auto">
                   <FirstTimePageContent
                     slug={selectedStore}

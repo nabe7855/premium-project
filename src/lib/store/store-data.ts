@@ -478,7 +478,7 @@ const storeData: Record<string, Store> = {
     },
     contact: {
       phone: '045-1234-5678',
-      line: '@strawberry-yokohama',
+      line: 'https://lin.ee/UozTcN6',
       email: 'yokohama@www.sutoroberrys.jp',
     },
     seo: {

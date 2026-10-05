@@ -48,7 +48,7 @@ export default function FirstTimePageContent({
 }: FirstTimePageContentProps) {
   const params = useParams();
   const slug = propSlug || (params?.slug as string) || 'fukuoka';
-  
+
   // サーバーサイドから渡された初期設定を使用し、不要なスピナー表示を回避
   const [config, setConfig] = useState<FirstTimeConfig>(propConfig || mergeConfig({}));
   const [isLoading, setIsLoading] = useState(!propConfig);
@@ -143,17 +143,17 @@ export default function FirstTimePageContent({
                   onImageUpload={onImageUpload}
                 />
                 {/* リアル体験談導線カード (あやさん) */}
-                <div className="mx-auto max-w-4xl px-4 my-10">
-                  <div className="relative overflow-hidden rounded-3xl bg-white border border-pink-100 p-6 md:p-8 shadow-sm transition-all hover:shadow-md">
-                    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="mx-auto my-10 max-w-4xl px-4">
+                  <div className="relative overflow-hidden rounded-3xl border border-pink-100 bg-white p-6 shadow-sm transition-all hover:shadow-md md:p-8">
+                    <div className="flex flex-col items-center justify-between gap-6 md:flex-row">
                       <div className="flex-1">
-                        <span className="inline-block rounded-full bg-pink-50 px-3 py-1 text-[11px] font-bold text-pink-500 mb-2">
+                        <span className="mb-2 inline-block rounded-full bg-pink-50 px-3 py-1 text-[11px] font-bold text-pink-500">
                           利用者のリアルな声
                         </span>
-                        <h3 className="font-serif text-lg md:text-xl font-bold text-gray-800 mb-2">
+                        <h3 className="mb-2 font-serif text-lg font-bold text-gray-800 md:text-xl">
                           「このままおばあさんになりたくなかった」
                         </h3>
-                        <p className="text-xs text-gray-500 leading-relaxed mb-4">
+                        <p className="mb-4 text-xs leading-relaxed text-gray-500">
                           半年以上迷った既婚のあやさん（30代）が、女性用風俗の予約ボタンを押すまでの不安と実際の体験談をご紹介。
                         </p>
                         <a
@@ -163,11 +163,11 @@ export default function FirstTimePageContent({
                           あやさんの体験記を読む →
                         </a>
                       </div>
-                      <div className="w-full md:w-44 flex-shrink-0 aspect-[16/10] overflow-hidden rounded-2xl bg-pink-50 relative">
+                      <div className="relative aspect-[16/10] w-full flex-shrink-0 overflow-hidden rounded-2xl bg-pink-50 md:w-44">
                         <img
                           src="/images/amolab/aya/aya-photo-top.webp"
                           alt="あやさん体験談"
-                          className="w-full h-full object-cover"
+                          className="h-full w-full object-cover"
                         />
                       </div>
                     </div>
@@ -276,6 +276,7 @@ export default function FirstTimePageContent({
             return (
               <CTA
                 key="cta"
+                storeSlug={slug}
                 config={config.cta}
                 isEditing={isEditing}
                 onUpdate={onUpdate}
