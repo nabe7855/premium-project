@@ -341,22 +341,6 @@ export default function HubPageClient({
 
   return (
     <div className="min-h-screen w-full max-w-[100vw] overflow-x-hidden bg-slate-50 text-slate-900 selection:bg-rose-500/30">
-      {/* ─── JSON-LD 構造化データ (AIO対応) ─── */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{
-          __html: JSON.stringify({
-            '@context': 'https://schema.org',
-            '@type': 'FAQPage',
-            mainEntity: FAQ_DATA.map((f) => ({
-              '@type': 'Question',
-              name: f.question,
-              acceptedAnswer: { '@type': 'Answer', text: f.answer },
-            })),
-          }),
-        }}
-      />
-
       {/* ─── 1. HERO (ワイヤーフレーム忠実再現の新HubHeroSection) ─── */}
       <HubHeroSection stores={stores} casts={casts} />
 
