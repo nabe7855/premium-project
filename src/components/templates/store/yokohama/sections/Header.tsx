@@ -22,7 +22,13 @@ interface HeaderProps {
   onImageUpload?: (section: string, file: File, index?: number, key?: string) => void;
 }
 
-export default function Header({ config, todayCasts = [], isEditing, onUpdate, onImageUpload }: HeaderProps) {
+export default function Header({
+  config,
+  todayCasts = [],
+  isEditing,
+  onUpdate,
+  onImageUpload,
+}: HeaderProps) {
   const { store } = useStore();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -103,7 +109,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
     if (!isEditing || !onUpdate) return;
     const currentLink = (config as any)[key] || '';
     const newLink = window.prompt(
-      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（yokohama等）に自動置換されます',
+      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
       currentLink,
     );
     if (newLink !== null) {
@@ -116,7 +122,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
     const sectionData = (config as any)[section];
     const currentLink = sectionData?.[key] || '';
     const newLink = window.prompt(
-      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（yokohama等）に自動置換されます',
+      'リンクURLを入力してください:\n※ {slug} は店舗スラグ（fukuoka等）に自動置換されます',
       currentLink,
     );
     if (newLink !== null) {
@@ -156,12 +162,15 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           <Link
             href={getAbsoluteHref(item.href)}
             onClick={closeMenu}
-            className="flex items-center gap-2 pl-8 pr-4 py-6"
+            className="flex items-center gap-2 py-6 pl-8 pr-4"
           >
             <div className="animate-bounce-slow relative h-24 w-24 flex-shrink-0">
               {item.imageUrl && (
                 <NextImage
-                  src={getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'content') || getAbsoluteHref(item.imageUrl)}
+                  src={
+                    getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'content') ||
+                    getAbsoluteHref(item.imageUrl)
+                  }
                   alt={item.name}
                   fill
                   className="object-contain"
@@ -236,7 +245,10 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
             {item.imageUrl ? (
               <div className="relative aspect-[4/1] w-full">
                 <NextImage
-                  src={getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'content') || getAbsoluteHref(item.imageUrl)}
+                  src={
+                    getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'content') ||
+                    getAbsoluteHref(item.imageUrl)
+                  }
                   alt={item.name}
                   fill
                   className="object-contain"
@@ -272,7 +284,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
     return (
       <div
         key={item.href}
-        className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pt-6 pb-10 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
+        className="group relative flex flex-col items-center justify-center rounded-[40px] bg-transparent px-2 pb-10 pt-6 shadow-[0_12px_24px_-8px_rgba(219,39,119,0.12)] transition-all hover:shadow-xl active:scale-95"
         style={{
           backgroundImage: 'url("/ハンバーガーメニュー背景.webp")',
           backgroundSize: '100% 100%',
@@ -287,7 +299,10 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
           <div className="relative mb-2 h-20 w-20 flex-shrink-0 transition-transform group-hover:scale-105">
             {item.imageUrl ? (
               <NextImage
-                src={getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'thumb') || getAbsoluteHref(item.imageUrl)}
+                src={
+                  getOptimizedImageUrl(getAbsoluteHref(item.imageUrl), 'thumb') ||
+                  getAbsoluteHref(item.imageUrl)
+                }
                 alt={item.name}
                 fill
                 className="object-contain"
@@ -342,7 +357,7 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
     return (
       <div
         key={key}
-        className={`group relative flex flex-1 items-center bg-white transition-colors hover:bg-slate-50 min-w-0 h-full ${
+        className={`group relative flex h-full min-w-0 flex-1 items-center bg-white transition-colors hover:bg-slate-50 ${
           banner.isVisible === false && isEditing ? 'opacity-30' : ''
         }`}
       >
@@ -353,7 +368,12 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
         >
           <div className="relative h-full w-full">
             <NextImage
-              src={getOptimizedImageUrl(getAbsoluteHref(banner.imageUrl || '/横浜募集バナー.png'), 'hero') || getAbsoluteHref(banner.imageUrl || '/横浜募集バナー.png')}
+              src={
+                getOptimizedImageUrl(
+                  getAbsoluteHref(banner.imageUrl || '/福岡募集バナー.png'),
+                  'hero',
+                ) || getAbsoluteHref(banner.imageUrl || '/福岡募集バナー.png')
+              }
               alt={banner.mainHeading || 'Banner'}
               fill
               sizes="(max-width: 768px) 33vw, 20vw"
@@ -380,222 +400,330 @@ export default function Header({ config, todayCasts = [], isEditing, onUpdate, o
   };
 
   return (
-    <header
-      id="header"
-      className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
-        scrollY > 20 ? 'bg-white/95 shadow-sm backdrop-blur-md py-1.5' : 'bg-white py-2'
-      } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
-    >
-      <div className="mx-auto max-w-full px-1 md:px-4 lg:px-6">
-        {/* 🚀 最高解像度のCSS可視ヘッダーテキストバー (H1二重化防止のためdiv化 + 公式決定文言) */}
-        <div className="w-full bg-[#fff5f6] py-1 px-2 border-b border-rose-100 flex items-center justify-center overflow-hidden">
-          <div className="text-[6.5px] xs:text-[7.5px] sm:text-[11px] md:text-[13.5px] font-extrabold text-center text-[#8C2849] tracking-tighter sm:tracking-wider whitespace-nowrap overflow-hidden">
-            ✨ 女性用風俗・出張ホスト｜完全審査制イケメン在籍【ストロベリーボーイズ公式】
-          </div>
-        </div>
-        <div className="flex items-stretch overflow-hidden rounded-b-xl border border-slate-200 bg-white shadow-sm h-12 md:h-14 w-full">
-          {/* Logo Section */}
-          <Link
-            href={getAbsoluteHref(
-              config?.logoLink === '/' || !config?.logoLink ? '/store/{slug}' : config.logoLink,
-            )}
-            className="group relative flex flex-[0.7] min-w-0 max-w-[70px] md:max-w-none md:flex-shrink-0 items-center justify-center bg-white px-1 transition-colors hover:bg-slate-50"
+    <>
+      <header
+        id="header"
+        className={`fixed top-0 z-[100] w-full transition-all duration-300 ${
+          scrollY > 20 ? 'bg-white/95 py-1.5 shadow-sm backdrop-blur-md' : 'bg-white py-2'
+        } ${config && !config.isVisible && isEditing ? 'opacity-40' : ''}`}
+      >
+        <div
+          className="relative mx-auto w-full max-w-[1200px] overflow-hidden bg-[#fffcf9] shadow-[0_12px_24px_-8px_rgba(219,39,119,0.15)] transition-all duration-500 ease-in-out"
+          style={{ borderBottomLeftRadius: '1.5rem', borderBottomRightRadius: '1.5rem' }}
+        >
+          <div
+            className="relative w-full transition-all duration-500 ease-in-out"
+            style={{
+              aspectRatio: '2169/725',
+              marginTop: scrollY > 20 ? '-4.68%' : '0%',
+              marginBottom: scrollY > 20 ? '-8.36%' : '0%',
+            }}
           >
-            {config?.logoUrl ? (
-              <div className="relative h-7 w-full md:h-10 md:w-24">
-                <NextImage
-                  src={getOptimizedImageUrl(getAbsoluteHref(config.logoUrl), 'icon') || getAbsoluteHref(config.logoUrl)}
-                  alt="Logo"
-                  fill
-                  priority
-                  className="object-contain"
-                  sizes="(max-width: 768px) 60px, 96px"
-                />
-              </div>
-            ) : (
-              <span className="font-serif text-xs font-black italic tracking-tighter text-[#D43D6F] md:text-xl">
-                {config?.logoText || '🍓'}
-              </span>
-            )}
-            {isEditing && (
-              <div className="absolute inset-0 flex items-center justify-center bg-black/20 opacity-0 transition-opacity group-hover:opacity-100">
-                <button
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); triggerLogoUpload(); }}
-                  className="rounded-full bg-black/60 p-1 text-white"
-                >
-                  <Camera size={12} />
-                </button>
-              </div>
-            )}
-          </Link>
+            {/* Base Background */}
+            <img
+              src="/images/store/fukuoka/new-header/04_background_base.webp"
+              className="pointer-events-none absolute left-0 top-0 h-full w-full object-fill"
+              alt=""
+            />
 
-          {/* Banners Section */}
-          <div className="flex flex-[3.8] items-stretch overflow-hidden min-w-0 border-x border-slate-100">
+            {/* 🚀 最高解像度のCSS可視ヘッダーテキストバー (H1二重化防止のためdiv化 + 公式決定文言) */}
+            <div
+              className={`absolute z-20 flex items-center justify-center px-2 transition-opacity duration-300 sm:px-4 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`}
+              style={{
+                left: '3.412%',
+                top: '1.8%',
+                width: '94.145%',
+                height: '9.5%',
+                background:
+                  'linear-gradient(90deg, rgba(255,240,243,0.95) 0%, rgba(255,248,250,0.98) 50%, rgba(255,240,243,0.95) 100%)',
+                borderRadius: '9999px',
+                border: '1px solid rgba(244, 114, 182, 0.3)',
+                boxShadow: '0 2px 8px -2px rgba(225, 29, 72, 0.08)',
+              }}
+            >
+              <div className="xs:text-[7.5px] flex w-full items-center justify-center overflow-hidden whitespace-nowrap text-center font-serif text-[6.5px] font-extrabold tracking-tighter text-[#9E3355] sm:text-[11px] sm:tracking-wider md:text-[13.5px]">
+                ✨ 女性用風俗・出張ホスト｜完全審査制イケメン在籍【ストロベリーボーイズ公式】
+              </div>
+            </div>
+
+            {/* 🚀 元の文字入り画像パーツ (02_top_info_bar.png) は重なり防止のため完全除去 */}
+            <img
+              src="/images/store/fukuoka/new-header/03_gold_divider.webp"
+              className={`pointer-events-none absolute transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`}
+              style={{ left: '5.071%', top: '11.586%', width: '89.811%', height: '4.138%' }}
+              alt=""
+            />
+            <img
+              src="/images/store/fukuoka/new-header/23_bottom_bar.webp"
+              className={`pointer-events-none absolute transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`}
+              style={{ left: '3.412%', top: '73.379%', width: '94.145%', height: '17.931%' }}
+              alt="Web予約・電話受付"
+            />
+            <img
+              src="/images/store/fukuoka/new-header/35_flower.webp"
+              className="pointer-events-none absolute"
+              style={{ left: '93.038%', top: '44.138%', width: '5.533%', height: '27.586%' }}
+              alt=""
+            />
+            <img
+              src="/images/store/fukuoka/new-header/36_sparkles.webp"
+              className="pointer-events-none absolute"
+              style={{ left: '16.413%', top: '25.103%', width: '1.936%', height: '41.379%' }}
+              alt=""
+            />
+            <img
+              src="/images/store/fukuoka/new-header/37b_ornament_line.webp"
+              className={`pointer-events-none absolute transition-opacity duration-300 ${scrollY > 20 ? 'opacity-0' : 'opacity-100'}`}
+              style={{ left: '5.071%', top: '11.310%', width: '89.811%', height: '4.690%' }}
+              alt=""
+            />
+
+            {/* Interactive Group: logo_center */}
+            <Link
+              href={getAbsoluteHref('/store/{slug}')}
+              className="absolute z-10 block transition-transform hover:scale-[1.02]"
+              style={{ left: '20.931%', top: '15.448%', width: '62.610%', height: '53.517%' }}
+            >
+              <img
+                src="/images/store/yokohama/new-header/00_main_logo_full.webp"
+                className="pointer-events-none absolute"
+                style={{
+                  left: '0.000%',
+                  top: '0.000%',
+                  width: '100.000%',
+                  height: '100.000%',
+                  objectFit: 'contain',
+                }}
+                alt="ストロベリーボーイズ横浜店"
+              />
+            </Link>
+
+            {/* 🚀 Interactive Group: today_card (実データがある時のみ動的バッジを表示し、ダミー固定数値は非表示化) */}
+            <Link
+              href={getAbsoluteHref('/store/{slug}/schedule')}
+              className="group absolute z-10 block transition-transform hover:scale-[1.05]"
+              style={{ left: '3.412%', top: '20.690%', width: '13.094%', height: '49.379%' }}
+            >
+              <img
+                src="/images/store/fukuoka/new-header/09_today_card.webp"
+                className="pointer-events-none absolute"
+                style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }}
+                alt="ストロベリーボーイズ横浜店 本日の出勤セラピスト"
+              />
+
+              {/* 実数データが存在する場合のみ表示 (スクロール時も見切れないよう top-0.5 の内側に適切配置) */}
+              {todayCasts.length > 0 && (
+                <div className="xs:text-[7.5px] absolute left-1/2 top-0.5 z-20 flex -translate-x-1/2 animate-pulse items-center justify-center gap-0.5 whitespace-nowrap rounded-full border border-white bg-gradient-to-r from-rose-500 to-pink-500 px-1.5 py-0.5 text-[6.5px] font-black text-white shadow-md sm:text-[9.5px]">
+                  <span>🔥</span>
+                  <span>本日{todayCasts.length}名</span>
+                </div>
+              )}
+            </Link>
+
+            {/* Interactive Group: menu_card */}
+            <button
+              onClick={() => {
+                if (!isMenuOpen) setIsMenuOpen(true);
+                else closeMenu();
+              }}
+              className="absolute z-20 block outline-none transition-transform hover:scale-[1.05]"
+              style={{ left: '86.307%', top: '20.690%', width: '10.881%', height: '49.379%' }}
+            >
+              <img
+                src="/images/store/fukuoka/new-header/19_menu_card.webp"
+                className="pointer-events-none absolute"
+                style={{ left: '0.000%', top: '0.000%', width: '100.000%', height: '100.000%' }}
+                alt="ストロベリーボーイズ横浜店 料金メニュー"
+              />
+            </button>
+
+            {/* Interactive Group: cta_left (Hitbox only) */}
+            <Link
+              href={getAbsoluteHref('/store/{slug}/reservation')}
+              className={`absolute z-10 block rounded-[1.2rem] transition-all duration-300 hover:bg-black/5 ${scrollY > 20 ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+              style={{ left: '4.887%', top: '74.207%', width: '44.906%', height: '16.276%' }}
+            ></Link>
+
+            {/* Interactive Group: phone_right (Hitbox only) */}
+            <a
+              href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/[^0-9]/g, '')}`}
+              className={`absolute z-10 block rounded-[1.2rem] transition-all duration-300 hover:bg-black/5 ${scrollY > 20 ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+              style={{ left: '50.207%', top: '74.207%', width: '44.906%', height: '16.276%' }}
+            ></a>
+          </div>
+
+          {/* 既存機能の保護: CMSバナー領域をレイアウト下部に保持（一時的に非表示） */}
+          {/* 
+        {(config?.specialBanner || config?.specialBanner2 || config?.specialBanner3) && (
+          <div className="flex w-full items-stretch overflow-hidden border-t border-slate-100 h-8 md:h-10">
             {renderHeaderBanner(config?.specialBanner, 'specialBanner')}
             {renderHeaderBanner(config?.specialBanner2, 'specialBanner2')}
             {renderHeaderBanner(config?.specialBanner3, 'specialBanner3')}
           </div>
+        )}
+        */}
+        </div>
 
-          {/* Buttons Section */}
-          <div className="flex flex-[0.5] items-stretch min-w-0">
-            {/* MENU Button */}
-            <button
-              onClick={() => { if (!isMenuOpen) setIsMenuOpen(true); else closeMenu(); }}
-              className={`flex flex-1 min-w-0 flex-col items-center justify-center px-0.5 transition-all active:bg-slate-300 ${
-                isMenuOpen
-                  ? 'bg-pink-100 text-pink-600'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
-            >
-              {isMenuOpen ? (
-                <X size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              ) : (
-                <Menu size={14} strokeWidth={2.5} className="md:h-5 md:w-5" />
-              )}
-              <span className="text-[7px] font-bold tracking-tighter md:text-[10px]">
-                {isMenuOpen ? '閉じる' : 'MENU'}
-              </span>
-            </button>
-          </div>
+        {/* モバイルメニューオーバーレイ */}
+        {(isMenuOpen || isAnimating) &&
+          typeof window !== 'undefined' &&
+          createPortal(
+            <>
+              <div
+                className={`fixed inset-0 z-[9999] overflow-y-auto bg-white transition-all duration-500 ${
+                  isAnimating ? 'translate-y-full' : 'translate-y-0'
+                }`}
+                style={{ top: '0' }}
+              >
+                {/* Menu Header (Sticky) */}
+                <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
+                  <div className="flex items-center gap-2">
+                    {config?.logoUrl ? (
+                      <div className="relative h-10 w-24 md:w-32">
+                        <NextImage
+                          src={getAbsoluteHref(config.logoUrl)}
+                          alt="Logo"
+                          fill
+                          className="object-contain object-left"
+                          sizes="140px"
+                        />
+                      </div>
+                    ) : (
+                      <span className="text-2xl font-black italic text-[#D43D6F]">
+                        {config?.logoText}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    onClick={closeMenu}
+                    aria-label="メニューを閉じる"
+                    className="rounded-full bg-pink-50 p-2 text-pink-500"
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                <div className="relative min-h-screen pb-32 pt-4">
+                  <BackgroundDecoration />
+
+                  <div className="relative z-10 mx-auto max-w-md space-y-6 px-5">
+                    {/* Highlights (News) */}
+                    {navLinks[0] && renderNavItem(navLinks[0], 0, 'highlight')}
+
+                    {/* Main Grid */}
+                    <div className="grid grid-cols-2 gap-4">
+                      {navLinks
+                        .slice(1, 9)
+                        .map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
+                    </div>
+
+                    {/* Secondary Buttons */}
+                    <div className="space-y-4 pt-4">
+                      {navLinks.slice(9).map((item, idx) => renderNavItem(item, idx + 9, 'full'))}
+                    </div>
+
+                    {/* Phone Section */}
+                    <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
+                      <div className="flex flex-col items-center">
+                        <a
+                          href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/[^0-9]/g, '')}`}
+                          className="mb-4 flex items-center justify-center gap-2 text-[#D43D6F] transition-opacity hover:opacity-70 sm:gap-4"
+                        >
+                          <div className="shrink-0 rounded-full bg-pink-50 p-2.5 ring-8 ring-pink-50/30 sm:p-3">
+                            <svg
+                              width="20"
+                              height="20"
+                              className="sm:h-6 sm:w-6"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+                            </svg>
+                          </div>
+                          <span className="whitespace-nowrap text-2xl font-black tabular-nums tracking-tighter sm:text-4xl">
+                            {store.contact?.phone || config?.phoneNumber || '050-5491-3991'}
+                          </span>
+                        </a>
+                        <p className="text-sm font-bold text-gray-600">
+                          受付時間: {config?.receptionHours || '10:00〜23:00'}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Special Banner */}
+                    {(config?.menuBottomBanner?.isVisible ?? true) && (
+                      <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
+                        <Link
+                          href={getAbsoluteHref(config?.menuBottomBanner?.link || '#recruit')}
+                          onClick={closeMenu}
+                          className="group relative block aspect-[16/7]"
+                        >
+                          {isEditing && (
+                            <button
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleNestedLinkUpdate('menuBottomBanner', 'link');
+                              }}
+                              className="absolute right-4 top-4 z-20 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
+                            >
+                              <Link2 size={20} />
+                            </button>
+                          )}
+                          {config?.menuBottomBanner?.imageUrl ? (
+                            <NextImage
+                              src={
+                                getOptimizedImageUrl(
+                                  getAbsoluteHref(config.menuBottomBanner.imageUrl),
+                                  'banner',
+                                ) || getAbsoluteHref(config.menuBottomBanner.imageUrl)
+                              }
+                              alt="Special Banner"
+                              fill
+                              className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
+                              sizes="(max-width: 768px) 100vw, 400px"
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-slate-800" />
+                          )}
+                          <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
+                              {config?.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
+                            </p>
+                            <h3 className="text-xl font-black leading-tight text-white">
+                              {config?.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
+                            </h3>
+                          </div>
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </>,
+            document.body,
+          )}
+      </header>
+
+      {/* Spacer to perfectly match the dynamic height of the fixed header and push the content below it down */}
+      <div
+        className={`pointer-events-none w-full opacity-0 transition-all duration-300 ${scrollY > 20 ? 'py-1.5' : 'py-2'}`}
+      >
+        <div className="mx-auto w-full max-w-[1200px] overflow-hidden transition-all duration-500 ease-in-out">
+          <div
+            className="w-full transition-all duration-500 ease-in-out"
+            style={{
+              aspectRatio: '2169/725',
+              marginTop: scrollY > 20 ? '-4.68%' : '0%',
+              marginBottom: scrollY > 20 ? '-8.36%' : '0%',
+            }}
+          />
         </div>
       </div>
-
-      {/* モバイルメニューオーバーレイ */}
-      {(isMenuOpen || isAnimating) &&
-        typeof window !== 'undefined' &&
-        createPortal(
-          <>
-            <div
-              className={`fixed inset-0 z-[9999] overflow-y-auto bg-white transition-all duration-500 ${
-                isAnimating ? 'translate-y-full' : 'translate-y-0'
-              }`}
-              style={{ top: '0' }}
-            >
-              {/* Menu Header (Sticky) */}
-              <div className="sticky top-0 z-50 flex items-center justify-between bg-white/80 px-6 py-4 backdrop-blur-md">
-                <div className="flex items-center gap-2">
-                  {config?.logoUrl ? (
-                    <div className="relative h-10 w-24 md:w-32">
-                      <NextImage
-                        src={getAbsoluteHref(config.logoUrl)}
-                        alt="Logo"
-                        fill
-                        className="object-contain object-left"
-                        sizes="140px"
-                      />
-                    </div>
-                  ) : (
-                    <span className="text-2xl font-black italic text-[#D43D6F]">
-                      {config?.logoText}
-                    </span>
-                  )}
-                </div>
-                <button
-                  onClick={closeMenu}
-                  aria-label="メニューを閉じる"
-                  className="rounded-full bg-pink-50 p-2 text-pink-500"
-                >
-                  <X size={24} />
-                </button>
-              </div>
-
-              <div className="relative min-h-screen pb-32 pt-4">
-                <BackgroundDecoration />
-
-                <div className="relative z-10 mx-auto max-w-md space-y-6 px-5">
-                  {/* Highlights (News) */}
-                  {navLinks[0] && renderNavItem(navLinks[0], 0, 'highlight')}
-
-                  {/* Main Grid */}
-                  <div className="grid grid-cols-2 gap-4">
-                    {navLinks.slice(1, 9).map((item, idx) => renderNavItem(item, idx + 1, 'grid'))}
-                  </div>
-
-                  {/* Secondary Buttons */}
-                  <div className="space-y-4 pt-4">
-                    {navLinks.slice(9).map((item, idx) => renderNavItem(item, idx + 9, 'full'))}
-                  </div>
-
-                  {/* Phone Section */}
-                  <div className="rounded-[40px] border border-pink-50/50 bg-white p-8 text-center shadow-[0_12px_24px_-8px_rgba(0,0,0,0.05)]">
-                    <div className="flex flex-col items-center">
-                      <a
-                        href={`tel:${(store.contact?.phone || config?.phoneNumber || '050-5491-3991').replace(/[^0-9]/g, '')}`}
-                        className="mb-4 flex items-center justify-center gap-2 text-[#D43D6F] transition-opacity hover:opacity-70 sm:gap-4"
-                      >
-                        <div className="shrink-0 rounded-full bg-pink-50 p-2.5 ring-8 ring-pink-50/30 sm:p-3">
-                          <svg
-                            width="20"
-                            height="20"
-                            className="sm:h-6 sm:w-6"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          >
-                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                          </svg>
-                        </div>
-                        <span className="whitespace-nowrap text-2xl font-black tabular-nums tracking-tighter sm:text-4xl">
-                          {store.contact?.phone || config?.phoneNumber || '050-5491-3991'}
-                        </span>
-                      </a>
-                      <p className="text-sm font-bold text-gray-600">
-                        受付時間: {config?.receptionHours || '10:00〜23:00'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Special Banner */}
-                  {(config?.menuBottomBanner?.isVisible ?? true) && (
-                    <div className="overflow-hidden rounded-[40px] bg-neutral-900 shadow-2xl transition-transform active:scale-[0.98]">
-                      <Link
-                        href={getAbsoluteHref(config?.menuBottomBanner?.link || '#recruit')}
-                        onClick={closeMenu}
-                        className="group relative block aspect-[16/7]"
-                      >
-                        {isEditing && (
-                          <button
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleNestedLinkUpdate('menuBottomBanner', 'link');
-                            }}
-                            className="absolute right-4 top-4 z-20 rounded-full bg-black/50 p-2 text-white opacity-0 transition-opacity group-hover:opacity-100"
-                          >
-                            <Link2 size={20} />
-                          </button>
-                        )}
-                        {config?.menuBottomBanner?.imageUrl ? (
-                          <NextImage
-                            src={getOptimizedImageUrl(getAbsoluteHref(config.menuBottomBanner.imageUrl), 'banner') || getAbsoluteHref(config.menuBottomBanner.imageUrl)}
-                            alt="Special Banner"
-                            fill
-                            className="object-cover opacity-60 transition-transform duration-700 group-hover:scale-110"
-                            sizes="(max-width: 768px) 100vw, 400px"
-                          />
-                        ) : (
-                          <div className="h-full w-full bg-slate-800" />
-                        )}
-                        <div className="absolute inset-0 flex flex-col justify-end bg-gradient-to-t from-black/80 via-transparent to-transparent p-6">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-white/70">
-                            {config?.menuBottomBanner?.subHeading || 'Strawberry Boys Premium'}
-                          </p>
-                          <h3 className="text-xl font-black leading-tight text-white">
-                            {config?.menuBottomBanner?.mainHeading || '甘い誘惑を、今夜貴女に。'}
-                          </h3>
-                        </div>
-                      </Link>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-          </>,
-          document.body,
-        )}
-    </header>
+    </>
   );
 }

@@ -58,8 +58,6 @@ export default function YokohamaPage({
             onUpdate={onUpdate}
             onImageUpload={onImageUpload}
           />
-          {/* Header Spacer - Match the actual header height (48px + py-2*2 = 64px) */}
-          <div className="h-[64px] md:h-[65px]" />
         </>
       )}
       {(!safeConfig || safeConfig.hero.isVisible || isEditing) && (
@@ -80,11 +78,19 @@ export default function YokohamaPage({
           items={[
             { name: 'ホーム', href: '/' },
             { name: '店舗一覧', href: '/store' },
-            { name: storeSlug === 'fukuoka' ? '福岡店' : storeSlug === 'yokohama' ? '横浜店' : `${storeSlug}店`, href: `/store/${storeSlug}` }
+            {
+              name:
+                storeSlug === 'fukuoka'
+                  ? '福岡店'
+                  : storeSlug === 'yokohama'
+                    ? '横浜店'
+                    : `${storeSlug}店`,
+              href: `/store/${storeSlug}`,
+            },
           ]}
         />
       )}
-      
+
       {/* もともとの店舗画像ジャンプバナー (元のUIを100%保持) */}
       <StoreJumpBanners currentStoreSlug={storeSlug} />
 
