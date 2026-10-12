@@ -1,5 +1,6 @@
 import DiaryListContent from '@/components/sections/diary/DiaryListContent';
-import Header from '@/components/templates/store/fukuoka/sections/Header';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sections/MobileStickyButton';
@@ -14,7 +15,11 @@ import { STORE_META } from '@/lib/store/storeMeta';
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}): Promise<Metadata> {
   const { slug } = params;
   const s = STORE_META[slug];
   if (!s) return {};
@@ -33,11 +38,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
       images: [{ url: `/ogp/store-${slug}.png`, width: 1200, height: 630 }],
     },
     twitter: {
-      card: "summary_large_image",
+      card: 'summary_large_image',
       title,
       description,
-      images: [`/ogp/store-${slug}.png`]
-    }
+      images: [`/ogp/store-${slug}.png`],
+    },
   };
 }
 
@@ -50,13 +55,15 @@ async function getInitialDiaryPosts(storeSlug: string): Promise<DiaryPost[]> {
     const now = new Date().toISOString();
     const { data, error } = await supabase
       .from('blogs')
-      .select(`
+      .select(
+        `
         id, title, content, created_at, published_at, updated_at, status,
         casts ( id, name, image_url, main_image_url, is_active, cast_store_memberships ( stores ( slug ) ) ),
         blog_images ( image_url ),
         blog_tags ( blog_tag_master ( name ) ),
         is_comment_enabled, blog_comments ( count ), view_count
-      `)
+      `,
+      )
       .in('status', ['published', 'scheduled'])
       .lte('published_at', now)
       .order('published_at', { ascending: false });
@@ -123,7 +130,8 @@ export default async function DiaryListPage({ params }: { params: { slug: string
   return (
     <div className="flex min-h-screen flex-col bg-gradient-to-br from-pink-50 to-white">
       {/* Header (Server fetched config ensures it renders immediately) */}
-      {topConfig?.header && <Header config={topConfig.header} />}
+      {slug === 'yokohama' && topConfig?.header && <YokohamaHeader config={topConfig.header} />}
+      {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       <div className="flex-grow pt-24 sm:pt-28 md:pt-32">
         <Suspense

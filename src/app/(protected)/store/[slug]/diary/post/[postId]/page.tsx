@@ -1,5 +1,6 @@
 import DiaryDetailContent from '@/components/sections/diary/DiaryDetailContent';
-import Header from '@/components/templates/store/fukuoka/sections/Header';
+import FukuokaHeader from '@/components/templates/store/fukuoka/sections/Header';
+import YokohamaHeader from '@/components/templates/store/yokohama/sections/Header';
 import FukuokaFooter from '@/components/templates/store/fukuoka/sections/Footer';
 import YokohamaFooter from '@/components/templates/store/yokohama/sections/Footer';
 import FukuokaMobileStickyButton from '@/components/templates/store/fukuoka/sections/MobileStickyButton';
@@ -35,7 +36,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const title = `${post.title}｜${post.castName}の写メ日記｜ストロベリーボーイズ${s.city}店`;
-  const description = post.excerpt || `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する${post.castName}さんの写メ日記です。${(post.content || '').slice(0, 50)}...`;
+  const description =
+    post.excerpt ||
+    `${s.city}（${s.area}）の女性用風俗「ストロベリーボーイズ${s.city}店」に在籍する${post.castName}さんの写メ日記です。${(post.content || '').slice(0, 50)}...`;
   const siteUrl = 'https://www.sutoroberrys.jp';
   const targetSlug = JP_STORES.includes(params.slug) ? params.slug : post.primaryStoreSlug;
   const canonicalUrl = `${siteUrl}/store/${targetSlug}/diary/post/${params.postId}`;
@@ -91,7 +94,9 @@ export default async function DiaryDetailPage({ params }: Props) {
         description: post.excerpt || (post.content || '').slice(0, 150),
         image: post.images && post.images.length > 0 ? post.images : [post.image],
         datePublished: new Date(post.date).toISOString(),
-        dateModified: post.updatedDate ? new Date(post.updatedDate).toISOString() : new Date(post.date).toISOString(),
+        dateModified: post.updatedDate
+          ? new Date(post.updatedDate).toISOString()
+          : new Date(post.date).toISOString(),
         author: [
           {
             '@type': 'Person',
@@ -124,7 +129,8 @@ export default async function DiaryDetailPage({ params }: Props) {
       )}
 
       {/* Header */}
-      {topConfig?.header.isVisible && <Header config={topConfig.header} />}
+      {slug === 'yokohama' && topConfig?.header && <YokohamaHeader config={topConfig.header} />}
+      {slug === 'fukuoka' && topConfig?.header && <FukuokaHeader config={topConfig.header} />}
 
       <div className="flex-grow pt-24 sm:pt-28 md:pt-32">
         <DiaryDetailContent slug={slug} postId={postId} initialPost={post} />
