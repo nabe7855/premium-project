@@ -595,6 +595,11 @@ export default function NoteArticleUI({
             displayContent = displayContent.replace(/dialogue_data\s*参照/gi, '').trim();
           }
 
+          // JSXコメント構文（{/* ... */}）の生表示を防止
+          if (displayContent.includes('{/*')) {
+            displayContent = displayContent.replace(/\{\/\*[\s\S]*?\*\/\}/g, '').trim();
+          }
+
           // HTMLのH1タグを抽出（最初のもの）
           const h1Match = displayContent.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
           if (h1Match) {
