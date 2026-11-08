@@ -590,6 +590,11 @@ export default function NoteArticleUI({
         {(() => {
           let displayContent = article.content || '';
 
+          // プレースホルダー文字列（dialogue_data 参照 等）の生表示を防止
+          if (displayContent.includes('dialogue_data')) {
+            displayContent = displayContent.replace(/dialogue_data\s*参照/gi, '').trim();
+          }
+
           // HTMLのH1タグを抽出（最初のもの）
           const h1Match = displayContent.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
           if (h1Match) {

@@ -1,5 +1,6 @@
 import NoteArticleUI from '@/components/media/NoteArticleUI';
 import { getRelatedArticles } from '@/lib/actions/media';
+import { resolveInterviewCanonicalPath } from '@/lib/actions/interview';
 import { prisma } from '@/lib/prisma';
 import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
@@ -21,7 +22,12 @@ export async function generateMetadata({
     return { title: '記事が見つかりません' };
   }
 
-  const canonicalUrl = `https://www.sutoroberrys.jp/ikeo/${params.slug}`;
+  const canonicalUrl =
+    article.category === 'interview'
+      ? `https://www.sutoroberrys.jp${await resolveInterviewCanonicalPath(params.slug)}`
+      : article.category === 'amolab' || article.category === 'amolab-jiten'
+        ? `https://www.sutoroberrys.jp/amolab/${params.slug}`
+        : `https://www.sutoroberrys.jp/ikeo/${params.slug}`;
 
   const rawTitle = article.seo_title || article.title;
   // layout.tsx の template: '%s | イケオラボ by ストロベリーボーイズ' による重複付与を防止
@@ -64,6 +70,12 @@ export default async function CareerArticlePage({ params }: { params: { slug: st
   // R1-1: category ガード（amolab / amolab-jiten カテゴリの記事が /ikeo/[slug] にアクセスされた場合は /amolab/[slug] へ 301 転送）
   if (article.category === 'amolab' || article.category === 'amolab-jiten') {
     redirect(`/amolab/${params.slug}`);
+  }
+
+  // R1-2: interview カテゴリの記事が /ikeo/[slug] にアクセスされた場合は正規のインタビューページへ 301 転送
+  if (article.category === 'interview') {
+    const targetUrl = await resolveInterviewCanonicalPath(params.slug);
+    redirect(targetUrl);
   }
 
   // 関連記事を取得

@@ -72,7 +72,12 @@ export async function getInterviewArticles(options?: {
   try {
     const metaWhere: Record<string, unknown> = {};
     if (options?.area) {
-      metaWhere.area = options.area === 'fukuoka' ? { in: ['fukuoka', '福岡'] } : options.area === 'yokohama' ? { in: ['yokohama', '横浜'] } : options.area;
+      metaWhere.area =
+        options.area === 'fukuoka'
+          ? { in: ['fukuoka', '福岡'] }
+          : options.area === 'yokohama'
+            ? { in: ['yokohama', '横浜'] }
+            : options.area;
     }
     if (options?.series_slug) metaWhere.series_slug = options.series_slug;
     if (options?.article_type) metaWhere.article_type = options.article_type;
@@ -184,7 +189,7 @@ export async function getAllCasts() {
       orderBy: { name: 'asc' },
     });
 
-    const casts = castsRaw.map(c => ({
+    const casts = castsRaw.map((c) => ({
       id: c.id,
       name: c.name,
       photoUrl: c.main_image_url || c.image_url || '',
@@ -227,6 +232,34 @@ export async function getInterviewArticleBySlug(slug: string) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[interview] getInterviewArticleBySlug error:', message);
     return { success: false, article: null, error: message };
+  }
+}
+
+/**
+ * インタビュー記事の正規パスを取得（キャスト紐付けURLまたはマガジンURL）
+ */
+export async function resolveInterviewCanonicalPath(slug: string): Promise<string> {
+  try {
+    const { article } = await getInterviewArticleBySlug(slug);
+    if (!article || !article.interview_meta) {
+      return `/magazine/interview/${slug}`;
+    }
+    const meta = article.interview_meta;
+    const rawArea = meta.area || 'fukuoka';
+    const areaMap: Record<string, string> = {
+      福岡: 'fukuoka',
+      横浜: 'yokohama',
+      fukuoka: 'fukuoka',
+      yokohama: 'yokohama',
+    };
+    const area = areaMap[rawArea] || 'fukuoka';
+    const castLink = meta.cast_links?.[0];
+    const castSlug = castLink?.cast_id || castLink?.cast_name_romaji;
+    return castSlug
+      ? `/store/${area}/interview/${castSlug}/${slug}`
+      : `/magazine/interview/${slug}`;
+  } catch {
+    return `/magazine/interview/${slug}`;
   }
 }
 
@@ -447,9 +480,12 @@ const interviewApplicationSchema = z.object({
   usage_period: z.string().min(1, '必須項目です'),
   interview_method: z.string().min(1, '必須項目です'),
   contact_info: z.string().min(1, '必須項目です'),
-  agreements: z.array(z.boolean()).length(3).refine(arr => arr.every(Boolean), {
-    message: '全ての項目に同意する必要があります',
-  }),
+  agreements: z
+    .array(z.boolean())
+    .length(3)
+    .refine((arr) => arr.every(Boolean), {
+      message: '全ての項目に同意する必要があります',
+    }),
 });
 
 export async function submitInterviewApplication(data: unknown) {
@@ -490,11 +526,11 @@ ${validatedData.contact_info}
       storeSlug: 'fukuoka',
       subject: '体験談インタビュー応募のお知らせ',
       data: {
-        '希望テーマ': validatedData.theme,
-        'ご利用時期': validatedData.usage_period,
-        '希望インタビュー方法': validatedData.interview_method,
-        'ご連絡先': validatedData.contact_info,
-      }
+        希望テーマ: validatedData.theme,
+        ご利用時期: validatedData.usage_period,
+        希望インタビュー方法: validatedData.interview_method,
+        ご連絡先: validatedData.contact_info,
+      },
     });
     if (!staffResult.success) {
       console.error('Failed to send staff notification for interview:', staffResult.error);
@@ -516,7 +552,10 @@ ${validatedData.contact_info}
     return { success: true, id: application.id };
   } catch (error: any) {
     console.error('Error submitting interview application:', error);
-    return { success: false, error: '送信中にエラーが発生しました。時間をおいて再度お試しください。' };
+    return {
+      success: false,
+      error: '送信中にエラーが発生しました。時間をおいて再度お試しください。',
+    };
   }
 }
 
@@ -548,5 +587,3 @@ export async function updateInterviewApplicationStatus(id: string, status: strin
     return { success: false, error: '更新に失敗しました。' };
   }
 }
-
-
