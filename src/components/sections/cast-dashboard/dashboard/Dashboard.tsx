@@ -62,9 +62,80 @@ export default function Dashboard({ cast }: DashboardProps) {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [activeTab, setActiveTab] = useState<
-    'dashboard' | 'schedule' | 'diary' | 'profile' | 'gallery' | 'voice' | 'reservation'
-  >('dashboard');
+  type DashboardTab =
+    | 'dashboard'
+    | 'schedule'
+    | 'diary'
+    | 'profile'
+    | 'gallery'
+    | 'voice'
+    | 'reservation';
+
+  const VALID_TABS: DashboardTab[] = [
+    'dashboard',
+    'schedule',
+    'diary',
+    'profile',
+    'gallery',
+    'voice',
+    'reservation',
+  ];
+
+  const [activeTab, setActiveTab] = useState<DashboardTab>('dashboard');
+
+  // 初期化時にURLパラメータまたはlocalStorageからタブを復元
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') as DashboardTab | null;
+      const hashParam = window.location.hash.replace('#', '') as DashboardTab;
+      const storedTab = localStorage.getItem('active_cast_tab') as DashboardTab | null;
+
+      const resolvedTab = [tabParam, hashParam, storedTab].find((t): t is DashboardTab =>
+        Boolean(t && VALID_TABS.includes(t)),
+      );
+
+      if (resolvedTab) {
+        setActiveTab(resolvedTab);
+        // URLパラメータがない場合は更新して同期
+        if (!tabParam) {
+          const url = new URL(window.location.href);
+          url.searchParams.set('tab', resolvedTab);
+          window.history.replaceState(null, '', url.toString());
+        }
+      }
+    } catch (e) {
+      console.warn('Error restoring tab state:', e);
+    }
+  }, []);
+
+  // ブラウザの戻る・進むに対応
+  useEffect(() => {
+    const handlePopState = () => {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get('tab') as DashboardTab | null;
+      if (tabParam && VALID_TABS.includes(tabParam)) {
+        setActiveTab(tabParam);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const handleTabChange = (newTab: DashboardTab) => {
+    setActiveTab(newTab);
+    try {
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('active_cast_tab', newTab);
+        const url = new URL(window.location.href);
+        url.searchParams.set('tab', newTab);
+        window.history.replaceState(null, '', url.toString());
+      }
+    } catch (e) {
+      console.warn('Failed to persist active tab:', e);
+    }
+  };
 
   const [castState, setCastState] = useState<CastProfile>(cast);
   const [diaries, setDiaries] = useState<CastDiary[]>([]);
@@ -288,7 +359,7 @@ export default function Dashboard({ cast }: DashboardProps) {
               return (
                 <button
                   key={tab.id}
-                  onClick={() => setActiveTab(tab.id as any)}
+                  onClick={() => handleTabChange(tab.id as any)}
                   className={`flex items-center gap-2 whitespace-nowrap rounded-xl px-5 py-2.5 text-sm font-bold transition-all duration-300 ${
                     isActive
                       ? 'scale-105 bg-gradient-to-r from-pink-500 to-rose-400 text-white shadow-lg shadow-pink-200 ring-4 ring-pink-500/10'
@@ -347,9 +418,9 @@ export default function Dashboard({ cast }: DashboardProps) {
 
       <Footer config={topConfig?.footer} />
 
-      <CastFooterNav 
-        activeTab={activeTab} 
-        onTabChange={setActiveTab} 
+      <CastFooterNav
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
         stores={allStores}
         castSlug={castState.slug}
       />

@@ -50,8 +50,8 @@ export default function CastDashboardPage() {
     fetchProfile();
   }, [user?.id, user?.isAuthenticated, user?.role, router, castProfile]);
 
-
-  if (authLoading || profileLoading) {
+  // 初回ロード時のみLoading画面を表示（すでにcastProfileがある場合はアンマウントによる状態消失を防ぐため画面を維持）
+  if ((authLoading || profileLoading) && !castProfile) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-pink-100 via-white to-rose-100">
         <div className="text-center">

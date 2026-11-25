@@ -11,8 +11,8 @@ interface CalendarEditorProps {
   schedules: CastSchedule[];
   onScheduleUpdate: (schedules: CastSchedule[]) => void;
   diaries: CastDiary[];
-  castId: string;   // ✅ キャストID（uuid）
-  storeId: string;  // ✅ 店舗ID（uuid）
+  castId: string; // ✅ キャストID（uuid）
+  storeId: string; // ✅ 店舗ID（uuid）
 }
 
 export default function CalendarEditor({
@@ -26,6 +26,28 @@ export default function CalendarEditor({
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // マウント時にsessionStorageから復元（別タブを開いて戻ってきた際やリロード時の状態保持）
+  React.useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const savedDate = sessionStorage.getItem('cast_schedule_calendar_date');
+      if (savedDate) {
+        const d = new Date(savedDate);
+        if (!isNaN(d.getTime())) {
+          setCurrentDate(d);
+        }
+      }
+      const savedSelected = sessionStorage.getItem('cast_schedule_selected_date');
+      const savedModalOpen = sessionStorage.getItem('cast_schedule_modal_open');
+      if (savedSelected && savedModalOpen === 'true') {
+        setSelectedDate(savedSelected);
+        setIsModalOpen(true);
+      }
+    } catch (e) {
+      console.warn('Error restoring calendar state from sessionStorage:', e);
+    }
+  }, []);
+
   const today = new Date();
   const year = currentDate.getFullYear();
   const month = currentDate.getMonth();
@@ -36,8 +58,18 @@ export default function CalendarEditor({
   const daysInMonth = lastDayOfMonth.getDate();
 
   const monthNames = [
-    '1月','2月','3月','4月','5月','6月',
-    '7月','8月','9月','10月','11月','12月',
+    '1月',
+    '2月',
+    '3月',
+    '4月',
+    '5月',
+    '6月',
+    '7月',
+    '8月',
+    '9月',
+    '10月',
+    '11月',
+    '12月',
   ];
   const weekDays = ['日', '月', '火', '水', '木', '金', '土'];
 
@@ -46,6 +78,13 @@ export default function CalendarEditor({
       const newDate = new Date(prev);
       if (direction === 'prev') newDate.setMonth(prev.getMonth() - 1);
       else newDate.setMonth(prev.getMonth() + 1);
+      try {
+        if (typeof window !== 'undefined') {
+          sessionStorage.setItem('cast_schedule_calendar_date', newDate.toISOString());
+        }
+      } catch (e) {
+        console.warn('Error saving calendar date to sessionStorage:', e);
+      }
       return newDate;
     });
   };
@@ -69,79 +108,96 @@ export default function CalendarEditor({
     return today.getFullYear() === year && today.getMonth() === month && today.getDate() === day;
   };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedDate(null);
+    try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem('cast_schedule_selected_date');
+        sessionStorage.removeItem('cast_schedule_modal_open');
+      }
+    } catch (e) {}
+  };
+
   const handleDateClick = (day: number) => {
     const dateStr = formatDate(day);
     setSelectedDate(dateStr);
     setIsModalOpen(true);
+    try {
+      if (typeof window !== 'undefined') {
+        sessionStorage.setItem('cast_schedule_selected_date', dateStr);
+        sessionStorage.setItem('cast_schedule_modal_open', 'true');
+      }
+    } catch (e) {}
   };
 
   // ✅ DB保存処理（start_datetime / end_datetime / status）
-const handleScheduleSave = async (scheduleData: { startTime: string; endTime: string; status: string }) => {
-  if (!selectedDate) return;
+  const handleScheduleSave = async (scheduleData: {
+    startTime: string;
+    endTime: string;
+    status: string;
+  }) => {
+    if (!selectedDate) return;
 
-  if (!castId || !storeId) {
-    console.error('❌ castId または storeId が空です');
-    return;
-  }
-
-  const existingSchedule = schedules.find((s) => s.work_date === selectedDate);
-
-  // 🔹 28時対応 → 翌日にシフト
-  const toDateTime = (date: string, time: string) => {
-    let [h, m] = time.split(':').map(Number);
-    let d = new Date(`${date}T00:00:00+09:00`); // 日本時間ベース
-    if (h >= 24) {
-      d.setDate(d.getDate() + 1);
-      h = h - 24;
+    if (!castId || !storeId) {
+      console.error('❌ castId または storeId が空です');
+      return;
     }
-    d.setHours(h, m, 0, 0);
-    return d.toISOString();
+
+    const existingSchedule = schedules.find((s) => s.work_date === selectedDate);
+
+    // 🔹 28時対応 → 翌日にシフト
+    const toDateTime = (date: string, time: string) => {
+      let [h, m] = time.split(':').map(Number);
+      let d = new Date(`${date}T00:00:00+09:00`); // 日本時間ベース
+      if (h >= 24) {
+        d.setDate(d.getDate() + 1);
+        h = h - 24;
+      }
+      d.setHours(h, m, 0, 0);
+      return d.toISOString();
+    };
+
+    const newSchedule = {
+      id: existingSchedule?.id ?? crypto.randomUUID(),
+      cast_id: castId,
+      store_id: storeId,
+      work_date: selectedDate, // YYYY-MM-DD
+      start_datetime: toDateTime(selectedDate, scheduleData.startTime),
+      end_datetime: toDateTime(selectedDate, scheduleData.endTime),
+      status: scheduleData.status, // ✅ 追加！
+    };
+
+    try {
+      const saved = await saveSchedule(newSchedule);
+      const updated = existingSchedule
+        ? schedules.map((s) => (s.id === saved.id ? saved : s))
+        : [...schedules, saved];
+
+      onScheduleUpdate(updated);
+    } catch (err) {
+      console.error('❌ スケジュール保存エラー:', err);
+    }
+
+    closeModal();
   };
 
-  const newSchedule = {
-    id: existingSchedule?.id ?? crypto.randomUUID(),
-    cast_id: castId,
-    store_id: storeId,
-    work_date: selectedDate, // YYYY-MM-DD
-    start_datetime: toDateTime(selectedDate, scheduleData.startTime),
-    end_datetime: toDateTime(selectedDate, scheduleData.endTime),
-    status: scheduleData.status,   // ✅ 追加！
+  const handleScheduleDelete = async (id: string) => {
+    try {
+      await deleteSchedule(id);
+      const updated = schedules.filter((s) => s.id !== id);
+      onScheduleUpdate(updated);
+      closeModal();
+    } catch (err) {
+      console.error('❌ スケジュール削除エラー:', err);
+      alert('削除に失敗しました');
+    }
   };
-
-  try {
-    const saved = await saveSchedule(newSchedule);
-    const updated = existingSchedule
-      ? schedules.map((s) => (s.id === saved.id ? saved : s))
-      : [...schedules, saved];
-
-    onScheduleUpdate(updated);
-  } catch (err) {
-    console.error('❌ スケジュール保存エラー:', err);
-  }
-
-  setIsModalOpen(false);
-  setSelectedDate(null);
-};
-
-const handleScheduleDelete = async (id: string) => {
-  try {
-    await deleteSchedule(id);
-    const updated = schedules.filter((s) => s.id !== id);
-    onScheduleUpdate(updated);
-    setIsModalOpen(false);
-    setSelectedDate(null);
-  } catch (err) {
-    console.error('❌ スケジュール削除エラー:', err);
-    alert('削除に失敗しました');
-  }
-};
-
-
 
   // ✅ 表示用フォーマッター（28時 → そのまま28:00表記）
   const formatTime = (datetime: string, baseDate: string) => {
     const d = new Date(datetime);
-    const base = new Date(baseDate + "T00:00:00+09:00");
+    const base = new Date(baseDate + 'T00:00:00+09:00');
     let hours = d.getHours();
     const minutes = d.getMinutes();
 
@@ -174,7 +230,9 @@ const handleScheduleDelete = async (id: string) => {
           }`}
           onClick={() => handleDateClick(day)}
         >
-          <div className={`mb-1 text-xs font-medium ${isTodayDate ? 'text-pink-600' : 'text-gray-700'}`}>
+          <div
+            className={`mb-1 text-xs font-medium ${isTodayDate ? 'text-pink-600' : 'text-gray-700'}`}
+          >
             {day}
             {isTodayDate && <span className="ml-1 hidden text-xs sm:inline">今日</span>}
           </div>
@@ -223,13 +281,19 @@ const handleScheduleDelete = async (id: string) => {
       <div className="mb-4 flex items-center justify-between sm:mb-6">
         <h3 className="text-base font-semibold text-gray-800 sm:text-lg">スケジュール管理</h3>
         <div className="flex items-center space-x-2 sm:space-x-4">
-          <button onClick={() => navigateMonth('prev')} className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600">
+          <button
+            onClick={() => navigateMonth('prev')}
+            className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600"
+          >
             <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
           <h4 className="min-w-[70px] text-center text-sm font-medium text-gray-800 sm:min-w-[80px] sm:text-lg">
             {year}年{monthNames[month]}
           </h4>
-          <button onClick={() => navigateMonth('next')} className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600">
+          <button
+            onClick={() => navigateMonth('next')}
+            className="rounded-lg p-2 text-gray-600 transition-colors hover:bg-pink-50 hover:text-pink-600"
+          >
             <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
           </button>
         </div>
@@ -238,7 +302,10 @@ const handleScheduleDelete = async (id: string) => {
       {/* Week days header */}
       <div className="mb-2 grid grid-cols-7 gap-1">
         {weekDays.map((day) => (
-          <div key={day} className="flex h-6 items-center justify-center text-xs font-medium text-gray-600 sm:h-8 sm:text-sm">
+          <div
+            key={day}
+            className="flex h-6 items-center justify-center text-xs font-medium text-gray-600 sm:h-8 sm:text-sm"
+          >
             {day}
           </div>
         ))}
@@ -268,10 +335,7 @@ const handleScheduleDelete = async (id: string) => {
 
       <ScheduleModal
         isOpen={isModalOpen}
-        onClose={() => {
-          setIsModalOpen(false);
-          setSelectedDate(null);
-        }}
+        onClose={closeModal}
         onSave={handleScheduleSave}
         onDelete={handleScheduleDelete}
         selectedDate={selectedDate}
